@@ -31,10 +31,10 @@ class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyR
 
         val kotlin = project.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val linuxX64Variant = fragments.create("linuxX64", KpmLinuxX64Variant::class.java)
-                val iosX64Variant = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val iosArm64Variant = fragments.create("iosArm64", KpmIosArm64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val linuxX64Variant = fragments.create("linuxX64", GradleKpmLinuxX64Variant::class.java)
+                val iosX64Variant = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val iosArm64Variant = fragments.create("iosArm64", GradleKpmIosArm64Variant::class.java)
                 val iosCommon = fragments.create("iosCommon")
                 val nativeCommon = fragments.create("nativeCommon")
 

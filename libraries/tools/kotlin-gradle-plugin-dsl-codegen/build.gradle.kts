@@ -45,7 +45,7 @@ val generateKpmNativeVariants by generator(
 listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer, generateKpmNativeVariants).forEach {
     it.systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
-        project(":kotlin-gradle-plugin").projectDir.resolve("src/main/kotlin").absolutePath
+        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
     )
 }
 

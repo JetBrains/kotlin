@@ -11,18 +11,16 @@ import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.ConfigurationPublications
 import org.gradle.api.artifacts.ConfigurationVariant
 
-/* Internal abbreviation */
-internal typealias FragmentArtifacts<T> = KotlinGradleFragmentConfigurationArtifacts<T>
 
-interface KotlinGradleFragmentConfigurationArtifacts<in T : KpmGradleFragment> {
-    fun addArtifacts(outgoing: ConfigurationPublications, fragment: T)
+interface GradleKpmConfigurationArtifactsSetup<in T : GradleKpmFragment> {
+    fun setupArtifacts(outgoing: ConfigurationPublications, fragment: T)
 
-    object None : KotlinGradleFragmentConfigurationArtifacts<KpmGradleFragment> {
-        override fun addArtifacts(outgoing: ConfigurationPublications, fragment: KpmGradleFragment) = Unit
+    object None : GradleKpmConfigurationArtifactsSetup<GradleKpmFragment> {
+        override fun setupArtifacts(outgoing: ConfigurationPublications, fragment: GradleKpmFragment) = Unit
     }
 }
 
-class KotlinGradleFragmentConfigurationArtifactsContext<T : KpmGradleFragment> internal constructor(
+class GradleKpmConfigurationArtifactsSetupContext<T : GradleKpmFragment> internal constructor(
     internal val outgoing: ConfigurationPublications,
     val fragment: T
 ) {
@@ -40,40 +38,43 @@ class KotlinGradleFragmentConfigurationArtifactsContext<T : KpmGradleFragment> i
 }
 
 @Suppress("FunctionName")
-fun <T : KpmGradleFragment> FragmentArtifacts(
-    addArtifacts: KotlinGradleFragmentConfigurationArtifactsContext<T>.() -> Unit
-): KotlinGradleFragmentConfigurationArtifacts<T> {
-    return object : KotlinGradleFragmentConfigurationArtifacts<T> {
-        override fun addArtifacts(outgoing: ConfigurationPublications, fragment: T) {
-            val context = KotlinGradleFragmentConfigurationArtifactsContext(outgoing, fragment)
+fun <T : GradleKpmFragment> GradleKpmConfigurationArtifactsSetup(
+    addArtifacts: GradleKpmConfigurationArtifactsSetupContext<T>.() -> Unit
+): GradleKpmConfigurationArtifactsSetup<T> {
+    return object : GradleKpmConfigurationArtifactsSetup<T> {
+        override fun setupArtifacts(outgoing: ConfigurationPublications, fragment: T) {
+            val context = GradleKpmConfigurationArtifactsSetupContext(outgoing, fragment)
             context.addArtifacts()
         }
     }
 }
 
-operator fun <T : KpmGradleFragment> FragmentArtifacts<T>.plus(other: FragmentArtifacts<T>): FragmentArtifacts<T> {
-    if (this === KotlinGradleFragmentConfigurationArtifacts.None) return other
-    if (other === KotlinGradleFragmentConfigurationArtifacts.None) return this
+operator fun <T : GradleKpmFragment> GradleKpmConfigurationArtifactsSetup<T>.plus(
+    other: GradleKpmConfigurationArtifactsSetup<T>
+): GradleKpmConfigurationArtifactsSetup<T> {
+    if (this === GradleKpmConfigurationArtifactsSetup.None) return other
+    if (other === GradleKpmConfigurationArtifactsSetup.None) return this
 
-    if (this is CompositeFragmentArtifacts && other is CompositeFragmentArtifacts) {
-        return CompositeFragmentArtifacts(this.children + other.children)
+    if (this is CompositeFragmentConfigurationArtifactsSetup && other is CompositeFragmentConfigurationArtifactsSetup) {
+        return CompositeFragmentConfigurationArtifactsSetup(this.children + other.children)
     }
 
-    if (this is CompositeFragmentArtifacts) {
-        return CompositeFragmentArtifacts(this.children + other)
+    if (this is CompositeFragmentConfigurationArtifactsSetup) {
+        return CompositeFragmentConfigurationArtifactsSetup(this.children + other)
     }
 
-    if (other is CompositeFragmentArtifacts) {
-        return CompositeFragmentArtifacts(listOf(this) + other.children)
+    if (other is CompositeFragmentConfigurationArtifactsSetup) {
+        return CompositeFragmentConfigurationArtifactsSetup(listOf(this) + other.children)
     }
 
-    return CompositeFragmentArtifacts(listOf(this, other))
+    return CompositeFragmentConfigurationArtifactsSetup(listOf(this, other))
 }
 
-internal class CompositeFragmentArtifacts<in T : KpmGradleFragment>(val children: List<FragmentArtifacts<T>>) :
-    FragmentArtifacts<T> {
+internal class CompositeFragmentConfigurationArtifactsSetup<in T : GradleKpmFragment>(
+    val children: List<GradleKpmConfigurationArtifactsSetup<T>>
+) : GradleKpmConfigurationArtifactsSetup<T> {
 
-    override fun addArtifacts(outgoing: ConfigurationPublications, fragment: T) {
-        children.forEach { child -> child.addArtifacts(outgoing, fragment) }
+    override fun setupArtifacts(outgoing: ConfigurationPublications, fragment: T) {
+        children.forEach { child -> child.setupArtifacts(outgoing, fragment) }
     }
 }

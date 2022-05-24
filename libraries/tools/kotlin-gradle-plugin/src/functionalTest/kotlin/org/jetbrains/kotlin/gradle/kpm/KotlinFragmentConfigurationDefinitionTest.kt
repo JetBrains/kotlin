@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.kpm
 
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
 import org.junit.Test
@@ -21,19 +20,19 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     private val testContext by lazy {
         val names = FragmentNameDisambiguation(kotlin.main, "test")
-        KotlinGradleFragmentConfigurationContextImpl(
-            kotlin.main, DefaultKotlinFragmentDependencyConfigurationsFactory.create(kotlin.main, names), names
+        GradleKpmFragmentConfigureContextImpl(
+            kotlin.main, GradleKpmDefaultFragmentDependencyConfigurationsFactory.create(kotlin.main, names), names
         )
     }
 
     private val dummyFragment by lazy {
-        KotlinCommonFragmentFactory(kotlin.main).create("testFragment")
+        GradleKpmCommonFragmentFactory(kotlin.main).create("testFragment")
     }
 
     @Test
     fun `test withProvider`() {
-        val testDefinition = ConfigurationDefinition<KpmGradleFragment>(
-            provider = ConfigurationProvider { project.configurations.create("a") }
+        val testDefinition = GradleKpmConfigurationSetup<GradleKpmFragment>(
+            provider = GradleKpmConfigurationProvider { project.configurations.create("a") }
         ).withConfigurationProvider { project.configurations.create("b") }
 
         assertEquals(
@@ -59,14 +58,14 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         val testAttribute2 = Attribute.of("testAttribute2", String::class.java)
         val testConfiguration = project.configurations.create("dummy")
 
-        val fragmentAttributes1 = FragmentAttributes<KpmGradleFragment> {
+        val fragmentAttributes1 = GradleKpmConfigurationAttributesSetup<GradleKpmFragment> {
             assertSame(testConfiguration.attributes, attributes)
             assertNull(attributes.getAttribute(testAttribute1))
             assertNull(attributes.getAttribute(testAttribute2))
             attribute(testAttribute1, "value1")
         }
 
-        val fragmentAttributes2 = FragmentAttributes<KpmGradleFragment> {
+        val fragmentAttributes2 = GradleKpmConfigurationAttributesSetup<GradleKpmFragment> {
             assertSame(testConfiguration.attributes, attributes)
             assertEquals(attributes.getAttribute(testAttribute1), "value1")
             assertNull(attributes.getAttribute(testAttribute2))
@@ -74,14 +73,14 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         }
 
         val composite = fragmentAttributes1 + fragmentAttributes2
-        if (composite !is CompositeFragmentAttributes)
-            fail("Expected ${CompositeFragmentAttributes::class} but found $composite")
+        if (composite !is GradleKpmCompositeConfigurationAttributesSetup)
+            fail("Expected ${GradleKpmCompositeConfigurationAttributesSetup::class} but found $composite")
 
         assertEquals(
             listOf(fragmentAttributes1, fragmentAttributes2), composite.children
         )
 
-        composite.setAttributes(testConfiguration.attributes, dummyFragment)
+        composite.setupAttributes(testConfiguration.attributes, dummyFragment)
 
         assertEquals(
             "value1", testConfiguration.attributes.getAttribute(testAttribute1),
@@ -96,34 +95,34 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + attributes`() {
-        val definition = ConfigurationDefinition<KpmGradleFragment>(
-            provider = ConfigurationProvider { project.configurations.create("a") }
+        val definition = GradleKpmConfigurationSetup<GradleKpmFragment>(
+            provider = GradleKpmConfigurationProvider { project.configurations.create("a") }
         )
 
-        val attributes1 = FragmentAttributes<KpmGradleFragment> { }
-        val attributes2 = FragmentAttributes<KpmGradleFragment> { }
+        val attributes1 = GradleKpmConfigurationAttributesSetup<GradleKpmFragment> { }
+        val attributes2 = GradleKpmConfigurationAttributesSetup<GradleKpmFragment> { }
 
         val newDefinition = definition + attributes1 + attributes2
         assertEquals(
-            listOf(attributes1, attributes2), (newDefinition.attributes as? CompositeFragmentAttributes)?.children,
+            listOf(attributes1, attributes2), (newDefinition.attributes as? GradleKpmCompositeConfigurationAttributesSetup)?.children,
             "Expected 'newDefinition' to list the two added attributes"
         )
     }
 
     @Test
     fun `test artifacts + artifacts`() {
-        val artifacts1 = FragmentArtifacts<KpmGradleFragment> {
+        val artifacts1 = GradleKpmConfigurationArtifactsSetup<GradleKpmFragment> {
             artifact(project.file("artifact1.jar"))
         }
 
-        val artifacts2 = FragmentArtifacts<KpmGradleFragment> {
+        val artifacts2 = GradleKpmConfigurationArtifactsSetup<GradleKpmFragment> {
             artifact(project.file("artifact2-a.jar"))
             artifact(project.file("artifact2-b.jar"))
         }
 
         val composite = artifacts1 + artifacts2
-        if (composite !is CompositeFragmentArtifacts) {
-            fail("Expected ${CompositeFragmentArtifacts::class.java}, but found $composite")
+        if (composite !is CompositeFragmentConfigurationArtifactsSetup) {
+            fail("Expected ${CompositeFragmentConfigurationArtifactsSetup::class.java}, but found $composite")
         }
 
         assertEquals(
@@ -131,7 +130,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         )
 
         project.configurations.create("dummy").apply {
-            composite.addArtifacts(outgoing, dummyFragment)
+            composite.setupArtifacts(outgoing, dummyFragment)
             assertEquals(
                 project.files("artifact1.jar", "artifact2-a.jar", "artifact2-b.jar").toSet(),
                 outgoing.artifacts.files.toSet()
@@ -141,40 +140,40 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + artifacts`() {
-        val definition = ConfigurationDefinition<KpmGradleFragment>(
-            provider = ConfigurationProvider { throw NotImplementedError() }
+        val definition = GradleKpmConfigurationSetup<GradleKpmFragment>(
+            provider = GradleKpmConfigurationProvider { throw NotImplementedError() }
         )
 
-        val artifacts1 = FragmentArtifacts<KpmGradleFragment> {}
-        val artifacts2 = FragmentArtifacts<KpmGradleFragment> {}
+        val artifacts1 = GradleKpmConfigurationArtifactsSetup<GradleKpmFragment> {}
+        val artifacts2 = GradleKpmConfigurationArtifactsSetup<GradleKpmFragment> {}
 
         val newDefinition = definition + artifacts1 + artifacts2
         assertEquals(
-            listOf(artifacts1, artifacts2), (newDefinition.artifacts as? CompositeFragmentArtifacts)?.children,
+            listOf(artifacts1, artifacts2), (newDefinition.artifacts as? CompositeFragmentConfigurationArtifactsSetup)?.children,
             "Expected 'newDefinition' to list new added artifacts"
         )
     }
 
     @Test
     fun `test capability + capability`() {
-        val capabilities1 = FragmentCapabilities<KpmGradleFragment> {
+        val capabilities1 = GradleKpmConfigurationCapabilitiesSetup<GradleKpmFragment> {
             capability("capability1")
         }
 
-        val capabilities2 = FragmentCapabilities<KpmGradleFragment> {
+        val capabilities2 = GradleKpmConfigurationCapabilitiesSetup<GradleKpmFragment> {
             capability("capability2")
         }
 
         val composite = capabilities1 + capabilities2
-        if (composite !is CompositeFragmentCapabilities) {
-            fail("Expected ${CompositeFragmentCapabilities::class}, but found $composite")
+        if (composite !is CompositeKpmCapabilitiesSetup) {
+            fail("Expected ${CompositeKpmCapabilitiesSetup::class}, but found $composite")
         }
 
         assertEquals(
             listOf(capabilities1, capabilities2), composite.children
         )
 
-        val testCapabilitiesContainer = object : KotlinGradleFragmentConfigurationCapabilities.CapabilitiesContainer {
+        val testCapabilitiesContainer = object : GradleKpmConfigurationCapabilitiesSetup.CapabilitiesContainer {
             val setCapabilities = mutableListOf<Any>()
             override fun capability(notation: Any) {
                 setCapabilities.add(notation)
@@ -191,16 +190,16 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test definition + capability`() {
-        val definition = ConfigurationDefinition<KpmGradleFragment>(
-            provider = ConfigurationProvider { throw NotImplementedError() }
+        val definition = GradleKpmConfigurationSetup<GradleKpmFragment>(
+            provider = GradleKpmConfigurationProvider { throw NotImplementedError() }
         )
 
-        val capabilities1 = FragmentCapabilities<KpmGradleFragment> {}
-        val capabilities2 = FragmentCapabilities<KpmGradleFragment> {}
+        val capabilities1 = GradleKpmConfigurationCapabilitiesSetup<GradleKpmFragment> {}
+        val capabilities2 = GradleKpmConfigurationCapabilitiesSetup<GradleKpmFragment> {}
         val newDefinition = definition + capabilities1 + capabilities2
 
         assertEquals(
-            listOf(capabilities1, capabilities2), (newDefinition.capabilities as? CompositeFragmentCapabilities)?.children,
+            listOf(capabilities1, capabilities2), (newDefinition.capabilities as? CompositeKpmCapabilitiesSetup)?.children,
             "Expected 'newDefinition' to list all added capabilities"
         )
     }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
  * Will add this jar artifact to the given configuration
  */
 
-val KotlinFragmentHostSpecificMetadataArtifact = FragmentArtifacts<KpmNativeVariantInternal> artifacts@{
+val GradleKpmHostSpecificMetadataArtifact = GradleKpmConfigurationArtifactsSetup<GradleKpmNativeVariantInternal> artifacts@{
     val hostSpecificMetadataElements = fragment.hostSpecificMetadataElementsConfiguration ?: return@artifacts
 
     val hostSpecificMetadataJar = project.registerTask<Jar>(fragment.disambiguateName("hostSpecificMetadataJar")) { jar ->

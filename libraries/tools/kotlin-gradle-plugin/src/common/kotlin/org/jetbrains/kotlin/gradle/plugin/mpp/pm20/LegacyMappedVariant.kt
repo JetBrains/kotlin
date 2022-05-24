@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.project.model.KpmModuleDependency
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal open class LegacyMappedVariant(
+internal open class GradleKpmLegacyMappedVariant(
     internal val compilation: KotlinCompilation<*>,
-) : KpmGradleVariant {
+) : GradleKpmVariant {
     override fun toString(): String = "variant mapped to $compilation"
 
     private val fragmentForDefaultSourceSet =
         (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
 
-    override val containingModule: KpmGradleModule get() = fragmentForDefaultSourceSet.containingModule
+    override val containingModule: GradleKpmModule get() = fragmentForDefaultSourceSet.containingModule
 
     override val platformType: KotlinPlatformType
         get() = compilation.platformType
@@ -89,11 +89,11 @@ internal open class LegacyMappedVariant(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    override fun refines(other: KpmGradleFragment) {
+    override fun refines(other: GradleKpmFragment) {
         fragmentForDefaultSourceSet.refines(other)
     }
 
-    override fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>) {
+    override fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>) {
         fragmentForDefaultSourceSet.refines(other)
     }
 
@@ -105,7 +105,7 @@ internal open class LegacyMappedVariant(
     override val fragmentName: String
         get() = fragmentForDefaultSourceSet.fragmentName + "Variant"
 
-    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
+    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
         get() = fragmentForDefaultSourceSet.declaredRefinesDependencies
 
     override val declaredModuleDependencies: Iterable<KpmModuleDependency>
@@ -148,9 +148,9 @@ internal open class LegacyMappedVariant(
         }
 }
 
-internal class LegacyMappedVariantWithRuntime(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
-    LegacyMappedVariant(compilationWithRuntime),
-    KpmGradleVariantWithRuntime {
+internal class GradleKpmLegacyMappedVariantWithRuntime(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
+    GradleKpmLegacyMappedVariant(compilationWithRuntime),
+    GradleKpmVariantWithRuntime {
 
     override val runtimeDependenciesConfiguration: Configuration
         get() = project.configurations.getByName(compilationWithRuntime.runtimeDependencyConfigurationName)
@@ -177,8 +177,8 @@ internal enum class PublicationRegistrationMode {
 internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, publicationRegistration: PublicationRegistrationMode) {
     target.compilations.all { compilation ->
         val variant = if (compilation is KotlinCompilationToRunnableFiles)
-            LegacyMappedVariantWithRuntime(compilation)
-        else LegacyMappedVariant(compilation)
+            GradleKpmLegacyMappedVariantWithRuntime(compilation)
+        else GradleKpmLegacyMappedVariant(compilation)
 
         val defaultSourceSetFragment = (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
         variant.refines(defaultSourceSetFragment)
@@ -194,9 +194,9 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
         }
 
     whenPublicationShouldRegister {
-        val mainModule = target.project.kpmModules.getByName(KpmGradleModule.MAIN_MODULE_NAME)
+        val mainModule = target.project.kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME)
         target.kotlinComponents.forEach { kotlinComponent ->
-            val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
+            val moduleHolder = GradleKpmDefaultSingleMavenPublishedModuleHolder(
                 mainModule,
                 kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
             )
@@ -220,16 +220,16 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
 
             // FIXME: include additional variants into project structure metadata?
 
-            val request = BasicPlatformPublicationToMavenRequest(
+            val request = GradleKpmBasicPlatformPublicationToMavenRequest(
                 kotlinComponent.name,
                 mainModule,
                 moduleHolder,
                 usages.map { usage ->
-                    val variant = mainModule.variants.withType<LegacyMappedVariant>().single {
+                    val variant = mainModule.variants.withType<GradleKpmLegacyMappedVariant>().single {
                         it.compilation == usage.compilation
                     }
                     (usage as? DefaultKotlinUsageContext) ?: error("unexpected KotlinUsageContext type: ${usage.javaClass}")
-                    AdvancedVariantPublicationRequest(
+                    KpmGradleAdvancedConfigurationPublicationRequest(
                         variant,
                         target.project.configurations.getByName(usage.dependencyConfigurationName),
                         usage.overrideConfigurationAttributes,
@@ -239,7 +239,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
                 }
             )
 
-            VariantPublishingConfigurator.get(target.project).configurePublishing(request)
+            GradleKpmVariantPublishingConfigurator.get(target.project).configurePublishing(request)
         }
     }
 }

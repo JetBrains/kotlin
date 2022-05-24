@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 
 interface SourceSetMappedFragmentLocator {
@@ -36,7 +36,7 @@ internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFrag
     override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
         val camelCaseParts = sourceSetName.camelCaseParts()
         if (camelCaseParts.size < 2) {
-            return SourceSetMappedFragmentLocator.FragmentLocation(KpmGradleModule.MAIN_MODULE_NAME, sourceSetName)
+            return SourceSetMappedFragmentLocator.FragmentLocation(GradleKpmModule.MAIN_MODULE_NAME, sourceSetName)
         }
 
         val androidTarget = when (val ext = project.topLevelExtension) {
@@ -55,7 +55,7 @@ internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFrag
                     androidSourceSetModuleName(androidTarget.name, sourceSetName)
                 else null
             } ?: candidateModuleNames.lastOrNull { project.kpmModules.findByName(it) != null }
-            ?: KpmGradleModule.MAIN_MODULE_NAME
+            ?: GradleKpmModule.MAIN_MODULE_NAME
 
         val fragmentName =
             if (sourceSetName.endsWith(moduleName, ignoreCase = true)) sourceSetName.dropLast(moduleName.length) else sourceSetName
@@ -67,7 +67,7 @@ internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFrag
         val compilationName = sourceSetName.removePrefix(targetName).takeIf { it != sourceSetName } ?: return null
         return when {
             "Test" in compilationName -> "test"
-            else -> KpmGradleModule.MAIN_MODULE_NAME
+            else -> GradleKpmModule.MAIN_MODULE_NAME
         }
     }
 

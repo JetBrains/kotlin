@@ -5,31 +5,29 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-abstract class KpmNativeVariantInternal(
-    containingModule: KpmGradleModule,
+abstract class GradleKpmNativeVariantInternal(
+    containingModule: GradleKpmModule,
     fragmentName: String,
     val konanTarget: KonanTarget,
-    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
+    dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
     compileDependencyConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     final override val hostSpecificMetadataElementsConfiguration: Configuration?
-) : KpmNativeVariant,
-    KpmGradleVariantInternal(
+) : GradleKpmNativeVariant,
+    GradleKpmVariantInternal(
         containingModule = containingModule,
         fragmentName = fragmentName,
         dependencyConfigurations = dependencyConfigurations,
         compileDependenciesConfiguration = compileDependencyConfiguration,
         apiElementsConfiguration = apiElementsConfiguration
     ),
-    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
+    GradleKpmSingleMavenPublishedModuleHolder by GradleKpmDefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
 
     override var enableEndorsedLibraries: Boolean = false
 
@@ -40,35 +38,7 @@ abstract class KpmNativeVariantInternal(
         DefaultCInteropSettings(project, cinteropName, compilationData)
     }
 
-    override val compilationData by lazy { KotlinNativeVariantCompilationData(this) }
-}
-
-class KotlinNativeVariantConstructor<T : KpmNativeVariantInternal>(
-    val konanTarget: KonanTarget,
-    val variantClass: Class<T>,
-    private val constructor: (
-        containingModule: KpmGradleModule,
-        fragmentName: String,
-        dependencyConfigurations: KotlinFragmentDependencyConfigurations,
-        compileDependencyConfiguration: Configuration,
-        apiElementsConfiguration: Configuration,
-        hostSpecificMetadataElementsConfiguration: Configuration?
-    ) -> T
-) {
-    operator fun invoke(
-        containingModule: KpmGradleModule,
-        fragmentName: String,
-        dependencyConfigurations: KotlinFragmentDependencyConfigurations,
-        compileDependencyConfiguration: Configuration,
-        apiElementsConfiguration: Configuration,
-        hostSpecificMetadataElementsConfiguration: Configuration?
-    ): T = constructor(
-        containingModule, fragmentName,
-        dependencyConfigurations,
-        compileDependencyConfiguration,
-        apiElementsConfiguration,
-        hostSpecificMetadataElementsConfiguration
-    )
+    override val compilationData by lazy { GradleKpmNativeVariantCompilationData(this) }
 }
 
 interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
@@ -76,27 +46,9 @@ interface KotlinNativeCompilationData<T : KotlinCommonOptions> : KotlinCompilati
     val enableEndorsedLibs: Boolean
 }
 
-internal class KotlinNativeVariantCompilationData(
-    val variant: KpmNativeVariantInternal
-) : KotlinVariantCompilationDataInternal<KotlinCommonOptions>, KotlinNativeCompilationData<KotlinCommonOptions> {
-    override val konanTarget: KonanTarget
-        get() = variant.konanTarget
-
-    override val enableEndorsedLibs: Boolean
-        get() = variant.enableEndorsedLibraries
-
-    override val project: Project
-        get() = variant.containingModule.project
-
-    override val owner: KpmNativeVariant
-        get() = variant
-
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
-}
-
 internal class KotlinMappedNativeCompilationFactory(
     target: KotlinNativeTarget,
-    private val variantClass: Class<out KpmNativeVariantInternal>
+    private val variantClass: Class<out GradleKpmNativeVariantInternal>
 ) : KotlinNativeCompilationFactory(target) {
     override fun create(name: String): KotlinNativeCompilation {
         val module = target.project.kpmModules.maybeCreate(name)

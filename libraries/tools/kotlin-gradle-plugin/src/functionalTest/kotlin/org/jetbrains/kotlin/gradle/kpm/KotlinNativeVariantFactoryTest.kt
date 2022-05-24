@@ -21,15 +21,15 @@ import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
 class KotlinNativeVariantFactoryTest(
-    private val variantConstructor: KotlinNativeVariantConstructor<*>,
+    private val variantConstructor: GradleKpmNativeVariantConstructor<*>,
     @Suppress("unused") private val variantClassName: String
 ) : AbstractKpmExtensionTest() {
 
-    private lateinit var variant: KpmNativeVariantInternal
+    private lateinit var variant: GradleKpmNativeVariantInternal
 
     @BeforeTest
     fun createVariant() {
-        variant = KotlinNativeVariantFactory(kotlin.main, variantConstructor).create("native")
+        variant = GradleKpmNativeVariantFactory(kotlin.main, variantConstructor).create("native")
     }
 
     @Test
@@ -87,12 +87,12 @@ class KotlinNativeVariantFactoryTest(
         @JvmStatic
         @Parameterized.Parameters(name = "{1}")
         fun data() = listOf(
-            KpmLinuxX64Variant.constructor,
-            KpmMacosX64Variant.constructor,
-            KpmMacosX64Variant.constructor,
-            KpmMacosArm64Variant.constructor,
-            KpmIosX64Variant.constructor,
-            KpmIosArm64Variant.constructor
+            GradleKpmLinuxX64Variant.constructor,
+            GradleKpmMacosX64Variant.constructor,
+            GradleKpmMacosX64Variant.constructor,
+            GradleKpmMacosArm64Variant.constructor,
+            GradleKpmIosX64Variant.constructor,
+            GradleKpmIosArm64Variant.constructor
         ).map { arrayOf(it, it.variantClass.simpleName) }
     }
 }

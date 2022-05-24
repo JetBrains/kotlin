@@ -7,24 +7,22 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.tasks.TaskProvider
 
-interface KotlinCompileTaskConfigurator<in T : KpmGradleVariant> {
+interface GradleKpmCompileTaskConfigurator<in T : GradleKpmVariant> {
     fun registerCompileTasks(variant: T): TaskProvider<*>
 }
 
-object KotlinJvmCompileTaskConfigurator : KotlinCompileTaskConfigurator<KpmJvmVariant> {
-    override fun registerCompileTasks(variant: KpmJvmVariant): TaskProvider<*> {
+object GradleKpmJvmCompileTaskConfigurator : GradleKpmCompileTaskConfigurator<GradleKpmJvmVariant> {
+    override fun registerCompileTasks(variant: GradleKpmJvmVariant): TaskProvider<*> {
         val compilationData = variant.compilationData
         LifecycleTasksManager(variant.project).registerClassesTask(compilationData)
-        return KotlinCompilationTaskConfigurator(variant.project).createKotlinJvmCompilationTask(variant, compilationData)
+        return GradleKpmCompilationTaskConfigurator(variant.project).createKotlinJvmCompilationTask(variant, compilationData)
     }
 }
 
-object KotlinNativeCompileTaskConfigurator : KotlinCompileTaskConfigurator<KpmNativeVariantInternal> {
-    override fun registerCompileTasks(variant: KpmNativeVariantInternal): TaskProvider<*> {
+object GradleKpmNativeCompileTaskConfigurator : GradleKpmCompileTaskConfigurator<GradleKpmNativeVariantInternal> {
+    override fun registerCompileTasks(variant: GradleKpmNativeVariantInternal): TaskProvider<*> {
         val compilationData = variant.compilationData
         LifecycleTasksManager(variant.project).registerClassesTask(compilationData)
-        return KotlinCompilationTaskConfigurator(variant.project).createKotlinNativeCompilationTask(variant, compilationData)
+        return GradleKpmCompilationTaskConfigurator(variant.project).createKotlinNativeCompilationTask(variant, compilationData)
     }
 }
-
-

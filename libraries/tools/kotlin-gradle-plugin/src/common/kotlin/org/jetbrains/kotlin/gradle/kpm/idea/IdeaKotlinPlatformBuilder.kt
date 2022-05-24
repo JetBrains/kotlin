@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 @Suppress("unused")
 /* Receiver acts as scope, or key to that function */
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: KpmGradleVariant): IdeaKotlinPlatform {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: GradleKpmVariant): IdeaKotlinPlatform {
     when (variant) {
-        is KpmJvmVariant -> return IdeaKotlinPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-        is KpmNativeVariantInternal -> return IdeaKotlinPlatform.native(variant.konanTarget.name)
-        is LegacyMappedVariant -> when (val compilation = variant.compilation) {
+        is GradleKpmJvmVariant -> return IdeaKotlinPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
+        is GradleKpmNativeVariantInternal -> return IdeaKotlinPlatform.native(variant.konanTarget.name)
+        is GradleKpmLegacyMappedVariant -> when (val compilation = variant.compilation) {
             is KotlinJvmCompilation -> return IdeaKotlinPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
             is KotlinJvmAndroidCompilation -> return IdeaKotlinPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
             is KotlinNativeCompilation -> return IdeaKotlinPlatform.native(compilation.konanTarget.name)

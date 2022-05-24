@@ -10,15 +10,15 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.GradleModuleVariantResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.KpmGradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.allDependencyModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.VariantResolution
+import org.jetbrains.kotlin.project.model.KpmVariantResolution
 
-interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : KotlinVariantCompilationData<T> {
+interface GradleKpmVariantCompilationDataInternal<T : KotlinCommonOptions> : GradleKpmVariantCompilationData<T> {
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName("compile", compilationPurpose.takeIf { it != "main" }, "Kotlin", compilationClassifier)
 
@@ -26,7 +26,7 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
         get() = owner.disambiguateName("classes")
 
     override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-        get() = owner.withRefinesClosure.filterIsInstance<KpmGradleVariant>().associate { it.disambiguateName("") to it.kotlinSourceRoots }
+        get() = owner.withRefinesClosure.filterIsInstance<GradleKpmVariant>().associate { it.disambiguateName("") to it.kotlinSourceRoots }
 
     override val friendPaths: Iterable<FileCollection>
         get() {
@@ -54,21 +54,21 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
     override val moduleName: String
         get() = // TODO accurate module names that don't rely on all variants having a main counterpart
             owner.containingModule.project.kpmModules
-                .getByName(KpmGradleModule.MAIN_MODULE_NAME).variants.findByName(owner.name)?.ownModuleName() ?: ownModuleName
+                .getByName(GradleKpmModule.MAIN_MODULE_NAME).variants.findByName(owner.name)?.ownModuleName() ?: ownModuleName
 
     override val ownModuleName: String
         get() = owner.ownModuleName()
 
-    private fun resolveFriendVariants(): Iterable<KpmGradleVariant> {
-        val moduleResolver = KpmGradleModuleDependencyResolver.getForCurrentBuild(project)
-        val variantResolver = GradleModuleVariantResolver.getForCurrentBuild(project)
-        val dependencyGraphResolver = KpmGradleDependencyGraphResolver(moduleResolver)
+    private fun resolveFriendVariants(): Iterable<GradleKpmVariant> {
+        val moduleResolver = GradleKpmModuleDependencyResolver.getForCurrentBuild(project)
+        val variantResolver = KpmGradleModuleVariantResolver.getForCurrentBuild(project)
+        val dependencyGraphResolver = GradleKpmDependencyGraphResolver(moduleResolver)
 
         val friendModules =
-            ((dependencyGraphResolver.resolveDependencyGraph(owner.containingModule) as? KpmGradleDependencyGraph)
+            ((dependencyGraphResolver.resolveDependencyGraph(owner.containingModule) as? GradleKpmDependencyGraph)
                 ?: error("Failed to resolve dependencies of ${owner.containingModule}"))
                 .allDependencyModules
-                .filterIsInstance<KpmGradleModule>()
+                .filterIsInstance<GradleKpmModule>()
                 .filter { dependencyModule ->
                     // the module comes from the same Gradle project // todo: extend to other friends once supported
                     dependencyModule.project == owner.containingModule.project
@@ -77,12 +77,12 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
         return friendModules
             .map { friendModule -> variantResolver.getChosenVariant(owner, friendModule) }
             // also, important to check that the owner variant really requests this module:
-            .filterIsInstance<VariantResolution.VariantMatch>()
-            .mapNotNull { variantMatch -> variantMatch.chosenVariant as? KpmGradleVariant }
+            .filterIsInstance<KpmVariantResolution.KpmVariantMatch>()
+            .mapNotNull { variantMatch -> variantMatch.chosenVariant as? GradleKpmVariant }
     }
 }
 
 fun KotlinCompilationData<*>.isMainCompilationData(): Boolean = when (this) {
     is KotlinCompilation<*> -> isMain()
-    else -> compilationPurpose == KpmGradleModule.MAIN_MODULE_NAME
+    else -> compilationPurpose == GradleKpmModule.MAIN_MODULE_NAME
 }

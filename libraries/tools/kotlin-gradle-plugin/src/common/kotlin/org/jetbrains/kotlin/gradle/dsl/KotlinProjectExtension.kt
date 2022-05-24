@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.DefaultKpmGradleProjectModelContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmDefaultProjectModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
@@ -113,7 +113,7 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
 
     internal val kpmModelContainer by lazy {
         if (project.kotlinPropertiesProvider.experimentalKpmModelMapping) {
-            DefaultKpmGradleProjectModelContainer.create(project)
+            GradleKpmDefaultProjectModelContainer.create(project)
         } else error("Model mapping is not enabled.")
     }
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 
-interface KotlinDependencyConfigurations {
+interface GradleKpmDependencyConfigurations {
     val apiConfiguration: Configuration
     val implementationConfiguration: Configuration
     val compileOnlyConfiguration: Configuration

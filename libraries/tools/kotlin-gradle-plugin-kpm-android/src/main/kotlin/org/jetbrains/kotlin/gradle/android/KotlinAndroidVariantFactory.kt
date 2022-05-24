@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.kpm.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
-fun KpmGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
-    val androidOutgoingArtifacts = FragmentArtifacts<KpmJvmVariant> {
+fun GradleKpmModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
+    val androidOutgoingArtifacts = GradleKpmConfigurationArtifactsSetup<GradleKpmJvmVariant> {
         variants.create("classes") { variant ->
             variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
             variant.artifact(project.provider { fragment.compilationOutputs.classesDirs.singleFile }) {
@@ -37,16 +37,16 @@ fun KpmGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
         }
     }
 
-    val androidElementsAttributes = FragmentAttributes<KpmJvmVariant> {
+    val androidElementsAttributes = GradleKpmConfigurationAttributesSetup<GradleKpmJvmVariant> {
         attribute(BuildTypeAttr.ATTRIBUTE, project.objects.named(androidVariant.buildType.name))
         attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
     }
 
     val kotlinVariant = createExternalJvmVariant(
-        "android${androidVariant.buildType.name.replaceFirstChar { it.uppercase() }}", KotlinJvmVariantConfig(
+        "android${androidVariant.buildType.name.replaceFirstChar { it.uppercase() }}", GradleKpmJvmVariantConfig(
             /* Only swap out configuration that is used. Default setup shall still be applied */
             compileDependencies = (DefaultKotlinCompileDependenciesDefinition +
-                    FragmentAttributes<KpmGradleFragment> {
+                    GradleKpmConfigurationAttributesSetup<GradleKpmFragment> {
                         namedAttribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, TargetJvmEnvironment.ANDROID)
                         attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
                     })
@@ -63,8 +63,8 @@ fun KpmGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
             runtimeElements = DefaultKotlinRuntimeElementsDefinition + androidElementsAttributes + androidOutgoingArtifacts,
 
             /* For now: Just publish 'release' (non-debuggable) variants */
-            publicationConfigurator = if (androidVariant.buildType.isDebuggable) KotlinPublicationConfigurator.NoPublication else
-                KotlinPublicationConfigurator.SingleVariantPublication
+            publicationConfigurator = if (androidVariant.buildType.isDebuggable) GradleKpmPublicationConfigurator.NoPublication else
+                GradleKpmPublicationConfigurator.SingleVariantPublication
         )
     )
 

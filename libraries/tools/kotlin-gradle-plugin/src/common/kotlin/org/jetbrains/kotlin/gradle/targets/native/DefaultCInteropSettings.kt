@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeVariantCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -136,7 +136,7 @@ open class DefaultCInteropSettings @Inject constructor(
 
 private fun KotlinNativeCompilationData<*>.disambiguateName(simpleName: String): String = when (this) {
     is AbstractKotlinNativeCompilation -> (this as AbstractKotlinCompilation<*>).disambiguateName(simpleName)
-    is KotlinNativeVariantCompilationData -> owner.disambiguateName(simpleName)
+    is GradleKpmNativeVariantCompilationData -> owner.disambiguateName(simpleName)
     else -> lowerCamelCaseName(
         this.compilationClassifier,
         this.compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },

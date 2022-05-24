@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
-val KotlinFragmentPlatformAttributes = FragmentAttributes<KpmGradleVariant> {
+val GradleKpmPlatformAttributes = GradleKpmConfigurationAttributesSetup<GradleKpmVariant> {
     if (isGradleVersionAtLeast(7, 0) && fragment.platformType == KotlinPlatformType.jvm) {
         namedAttribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, TargetJvmEnvironment.STANDARD_JVM)
     }
@@ -28,26 +28,26 @@ val KotlinFragmentPlatformAttributes = FragmentAttributes<KpmGradleVariant> {
     attribute(KotlinPlatformType.attribute, fragment.platformType)
 }
 
-val KotlinFragmentConsumerApiUsageAttribute = FragmentAttributes<KpmGradleVariant> {
+val GradleKpmConsumerApiUsageAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmVariant> {
     attribute(USAGE_ATTRIBUTE, consumerApiUsage(project, fragment.platformType))
 }
 
-val KotlinFragmentProducerApiUsageAttribute = FragmentAttributes<KpmGradleVariant> {
+val GradleKpmProducerApiUsageAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmVariant> {
     attribute(USAGE_ATTRIBUTE, producerApiUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentConsumerRuntimeUsageAttribute = FragmentAttributes<KpmGradleVariant> {
+val GradleKpmConsumerRuntimeUsageAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmVariant> {
     attribute(USAGE_ATTRIBUTE, consumerRuntimeUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentProducerRuntimeUsageAttribute = FragmentAttributes<KpmGradleVariant> {
+val GradleKpmProducerRuntimeUsageAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmVariant> {
     attribute(USAGE_ATTRIBUTE, producerRuntimeUsage(fragment.project, fragment.platformType))
 }
 
-val KotlinFragmentMetadataUsageAttribute = FragmentAttributes<KpmGradleFragment> {
+val GradleKpmMetadataUsageAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmFragment> {
     attribute(USAGE_ATTRIBUTE, fragment.project.usageByName(KotlinUsages.KOTLIN_METADATA))
 }
 
-val KotlinFragmentKonanTargetAttribute = FragmentAttributes<KpmNativeVariantInternal> {
+val GradleKpmKonanTargetAttribute = GradleKpmConfigurationAttributesSetup<GradleKpmNativeVariantInternal> {
     attributes.attribute(KotlinNativeTarget.konanTargetAttribute, fragment.konanTarget.name)
 }

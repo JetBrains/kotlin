@@ -80,10 +80,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             setupKpmModulesPublication(project)
             registerDefaultVariantFactories(project)
             with(project.kpmModules) {
-                create(KpmGradleModule.MAIN_MODULE_NAME) {
+                create(GradleKpmModule.MAIN_MODULE_NAME) {
                     it.makePublic()
                 }
-                create(KpmGradleModule.TEST_MODULE_NAME)
+                create(GradleKpmModule.TEST_MODULE_NAME)
             }
         }
 
@@ -282,7 +282,7 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 private fun applyUserDefinedAttributesWithKpm(
     target: AbstractKotlinTarget,
 ) {
-    fun copyAttributesToVariant(variant: KpmGradleVariant, from: AttributeContainer) {
+    fun copyAttributesToVariant(variant: GradleKpmVariant, from: AttributeContainer) {
         variant.gradleVariantNames.forEach { configurationOrVariantName ->
             val configuration = variant.project.configurations.findByName(configurationOrVariantName)
                 ?: return@forEach
@@ -307,7 +307,7 @@ private fun applyUserDefinedAttributesWithKpm(
     }
 
     // Also handle the legacy-mapped variants, which are not accessible through the compilations in the loop above
-    project.kpmModules.getByName(KpmGradleModule.MAIN_MODULE_NAME).variants.withType(LegacyMappedVariant::class.java).all { variant ->
+    project.kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME).variants.withType(GradleKpmLegacyMappedVariant::class.java).all { variant ->
         val compilation = variant.compilation
         copyAttributesToVariant(variant, compilation.attributes)
     }

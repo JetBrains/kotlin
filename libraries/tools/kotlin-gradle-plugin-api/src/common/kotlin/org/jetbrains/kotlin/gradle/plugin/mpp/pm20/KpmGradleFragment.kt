@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-interface KpmGradleFragment : KpmFragment, HasKotlinDependencies, KotlinFragmentDependencyConfigurations, Named {
+interface GradleKpmFragment : KpmFragment, HasKotlinDependencies, GradleKpmFragmentDependencyConfigurations, Named {
     override val kotlinSourceRoots: SourceDirectorySet
 
-    override val containingModule: KpmGradleModule
+    override val containingModule: GradleKpmModule
 
     override fun getName(): String = fragmentName
 
@@ -32,16 +32,16 @@ interface KpmGradleFragment : KpmFragment, HasKotlinDependencies, KotlinFragment
 
     val extras: MutableExtras
 
-    fun refines(other: KpmGradleFragment)
+    fun refines(other: GradleKpmFragment)
 
-    fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>)
+    fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>)
 
-    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
+    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
 
-    override val refinesClosure: Set<KpmGradleFragment>
+    override val refinesClosure: Set<GradleKpmFragment>
         get() = this.closure { it.declaredRefinesDependencies }
 
-    override val withRefinesClosure: Set<KpmGradleFragment>
+    override val withRefinesClosure: Set<GradleKpmFragment>
         get() = this.withClosure { it.declaredRefinesDependencies }
 
     override fun dependencies(configureClosure: Closure<Any?>) =
@@ -69,8 +69,8 @@ interface KpmGradleFragment : KpmFragment, HasKotlinDependencies, KotlinFragment
                 listOf(transitiveApiConfiguration.name, transitiveImplementationConfiguration.name)
 }
 
-val KpmGradleFragment.path: String
+val GradleKpmFragment.path: String
     get() = "${project.path}/${containingModule.name}/$fragmentName"
 
-val KpmGradleFragment.containingVariants: Set<KpmGradleVariant>
-    get() = containingModule.variantsContainingFragment(this).map { it as KpmGradleVariant }.toSet()
+val GradleKpmFragment.containingVariants: Set<GradleKpmVariant>
+    get() = containingModule.variantsContainingFragment(this).map { it as GradleKpmVariant }.toSet()

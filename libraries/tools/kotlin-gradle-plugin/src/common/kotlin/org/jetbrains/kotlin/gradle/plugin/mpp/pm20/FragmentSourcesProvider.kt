@@ -13,30 +13,30 @@ import java.io.File
 typealias SourceRoots = Iterable<File>
 typealias SourceRootsProvider = Provider<out SourceRoots>
 typealias MultipleSourceRootsProvider = Provider<out Iterable<SourceRootsProvider>>
-typealias SourceRootsProvidersByFragment = Map<KpmGradleFragment, SourceRootsProvider>
+typealias SourceRootsProvidersByFragment = Map<GradleKpmFragment, SourceRootsProvider>
 
 /** Note: the API is [Provider]-based rather than FileCollection-based because FileCollection API erases the internal structure of the
  * file sets, and this internal structure is currently needed for correctly inferring Java source roots from the sources added to the
  * JVM compilations (it is important to pass sources in SourceDirectorySets) */
-open class FragmentSourcesProvider {
+open class GradleKpmFragmentSourcesProvider {
     protected open fun getSourcesFromFragmentsAsMap(
-        fragments: Iterable<KpmGradleFragment>
+        fragments: Iterable<GradleKpmFragment>
     ): SourceRootsProvidersByFragment =
         fragments.associateWith { it.project.provider { it.kotlinSourceRoots } }
 
-    open fun getFragmentOwnSources(fragment: KpmGradleFragment): SourceRootsProvider =
+    open fun getFragmentOwnSources(fragment: GradleKpmFragment): SourceRootsProvider =
         getSourcesFromFragmentsAsMap(listOf(fragment)).values.single()
 
-    open fun getAllFragmentSourcesAsMap(module: KpmGradleModule): SourceRootsProvidersByFragment =
+    open fun getAllFragmentSourcesAsMap(module: GradleKpmModule): SourceRootsProvidersByFragment =
         getSourcesFromFragmentsAsMap(module.fragments)
 
-    open fun getSourcesFromRefinesClosureAsMap(fragment: KpmGradleFragment): SourceRootsProvidersByFragment =
+    open fun getSourcesFromRefinesClosureAsMap(fragment: GradleKpmFragment): SourceRootsProvidersByFragment =
         getSourcesFromFragmentsAsMap(fragment.withRefinesClosure)
 
-    open fun getSourcesFromRefinesClosure(fragment: KpmGradleFragment): MultipleSourceRootsProvider =
+    open fun getSourcesFromRefinesClosure(fragment: GradleKpmFragment): MultipleSourceRootsProvider =
         fragment.project.provider { getSourcesFromRefinesClosureAsMap(fragment).values }
 
-    open fun getCommonSourcesFromRefinesClosure(fragment: KpmGradleFragment): MultipleSourceRootsProvider {
+    open fun getCommonSourcesFromRefinesClosure(fragment: GradleKpmFragment): MultipleSourceRootsProvider {
         val containingModule = fragment.containingModule
         val project = containingModule.project
         getSourcesFromRefinesClosureAsMap(fragment)

@@ -12,16 +12,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class KotlinGradleModuleFragmentContainerTest : AbstractKpmExtensionTest() {
+class KpmGradleFragmentContainerTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test creating several different fragment types`() {
-        assertTrue(kotlin.main.fragments.create("some common") is KpmGradleFragmentInternal)
-        kotlin.main.fragments.create<KpmJvmVariant>("jvm")
-        kotlin.main.fragments.create<KpmLinuxX64Variant>("linuxX64")
-        kotlin.main.fragments.create<KpmMacosX64Variant>("macosX64")
-        kotlin.main.fragments.create<KpmMacosArm64Variant>("macosArm64")
-        kotlin.main.fragments.create<KpmIosX64Variant>("iosX64")
-        kotlin.main.fragments.create<KpmIosArm64Variant>("iosArm64")
+        assertTrue(kotlin.main.fragments.create("some common") is GradleKpmFragmentInternal)
+        kotlin.main.fragments.create<GradleKpmJvmVariant>("jvm")
+        kotlin.main.fragments.create<GradleKpmLinuxX64Variant>("linuxX64")
+        kotlin.main.fragments.create<GradleKpmMacosX64Variant>("macosX64")
+        kotlin.main.fragments.create<GradleKpmMacosArm64Variant>("macosArm64")
+        kotlin.main.fragments.create<GradleKpmIosX64Variant>("iosX64")
+        kotlin.main.fragments.create<GradleKpmIosArm64Variant>("iosArm64")
     }
 }

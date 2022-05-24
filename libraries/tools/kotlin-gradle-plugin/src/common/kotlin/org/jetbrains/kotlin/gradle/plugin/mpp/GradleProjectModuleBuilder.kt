@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.representsProject
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
@@ -32,7 +34,7 @@ class ProjectStructureMetadataModuleBuilder {
         component: ResolvedComponentResult,
         metadata: KotlinProjectStructureMetadata
     ): KpmModule {
-        val moduleData = KpmBasicModule(component.toSingleModuleIdentifier()).apply {
+        val moduleData = KpmBasicModule(component.toSingleKpmModuleIdentifier()).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
                 fragments.add(KpmBasicVariant(this@apply, variantName))
             }
@@ -69,7 +71,7 @@ class ProjectStructureMetadataModuleBuilder {
                 }
             }
         }
-        return KpmExternalImportedModule(
+        return GradleKpmExternalImportedModule(
             moduleData,
             metadata,
             moduleData.fragments.filterTo(mutableSetOf()) { it.fragmentName in metadata.hostSpecificSourceSets }
@@ -77,7 +79,7 @@ class ProjectStructureMetadataModuleBuilder {
     }
 
     fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KpmModule {
-        val moduleId = component.toSingleModuleIdentifier()
+        val moduleId = component.toSingleKpmModuleIdentifier()
         return modulesCache.getOrPut(moduleId) {
             buildModuleFromProjectStructureMetadata(
                 component,
@@ -188,7 +190,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 
                     // FIXME: Kotlin/Native implementation-effective-api dependencies are missing here. Introduce dependency scopes
                     requestedDependencies(project, sourceSet, listOf(KotlinDependencyScope.API_SCOPE)).forEach {
-                        val moduleDependency = it.toModuleDependency(project)
+                        val moduleDependency = it.toKpmModuleDependency(project)
                         fragment.declaredModuleDependencies.add(moduleDependency)
                     }
                 }
@@ -236,7 +238,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
     }
 }
 
-internal fun Dependency.toModuleDependency(
+internal fun Dependency.toKpmModuleDependency(
     project: Project
 ): KpmModuleDependency {
     return KpmModuleDependency(
@@ -261,30 +263,30 @@ internal fun Dependency.toModuleDependency(
 private fun KpmBasicModule.fragmentByName(name: String) =
     fragments.single { it.fragmentName == name }
 
-class CachingModuleVariantResolver(private val actualResolver: ModuleVariantResolver) : ModuleVariantResolver {
-    private val resultCacheByRequestingVariant: MutableMap<org.jetbrains.kotlin.project.model.KpmVariant, MutableMap<KpmModule, VariantResolution>> = mutableMapOf()
+class KpmCachingModuleVariantResolver(private val actualResolver: KpmModuleVariantResolver) : KpmModuleVariantResolver {
+    private val resultCacheByRequestingVariant: MutableMap<KpmVariant, MutableMap<KpmModule, KpmVariantResolution>> = mutableMapOf()
 
-    override fun getChosenVariant(requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant, dependencyModule: KpmModule): VariantResolution {
+    override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): KpmVariantResolution {
         val resultCache = resultCacheByRequestingVariant.getOrPut(requestingVariant) { mutableMapOf() }
         return resultCache.getOrPut(dependencyModule) { actualResolver.getChosenVariant(requestingVariant, dependencyModule) }
     }
 }
 
-class GradleModuleVariantResolver : ModuleVariantResolver {
-    override fun getChosenVariant(requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant, dependencyModule: KpmModule): VariantResolution {
+class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
+    override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): KpmVariantResolution {
         // TODO maybe improve this behavior? Currently it contradicts dependency resolution in that it may return a chosen variant for an
         //  unrequested dependency. This workaround is needed for synthetic modules which were not produced from module metadata, so maybe
         //  those modules should be marked somehow
-        if (dependencyModule is KpmExternalPlainModule) {
-            return VariantResolution.fromMatchingVariants(
+        if (dependencyModule is GradleKpmExternalPlainModule) {
+            return KpmVariantResolution.fromMatchingVariants(
                 requestingVariant,
                 dependencyModule,
                 listOf(dependencyModule.singleVariant)
             )
         }
 
-        if (requestingVariant !is KpmGradleVariant) {
-            return VariantResolution.Unknown(requestingVariant, dependencyModule)
+        if (requestingVariant !is GradleKpmVariant) {
+            return KpmVariantResolution.Unknown(requestingVariant, dependencyModule)
         }
 
         val module = requestingVariant.containingModule
@@ -300,9 +302,9 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
         val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
         val kotlinVariantName = when (dependencyModule) {
-            is KpmGradleModule -> {
+            is GradleKpmModule -> {
                 dependencyModule.variants.singleOrNull { resolvedGradleVariantName in it.gradleVariantNames }?.name
-                    ?: return VariantResolution.Unknown(requestingVariant, dependencyModule)
+                    ?: return KpmVariantResolution.Unknown(requestingVariant, dependencyModule)
             }
             else -> resolvedGradleVariantName?.let(::kotlinVariantNameFromPublishedVariantName)
         }
@@ -310,15 +312,15 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         val resultVariant = dependencyModule.variants.singleOrNull { it.fragmentName == kotlinVariantName }
 
         return if (resultVariant == null)
-            VariantResolution.NoVariantMatch(requestingVariant, dependencyModule)
+            KpmVariantResolution.KpmNoVariantMatch(requestingVariant, dependencyModule)
         else
-            VariantResolution.VariantMatch(requestingVariant, dependencyModule, resultVariant)
+            KpmVariantResolution.KpmVariantMatch(requestingVariant, dependencyModule, resultVariant)
     }
 
-    private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: org.jetbrains.kotlin.project.model.KpmVariant): Configuration =
+    private fun getCompileDependenciesConfigurationForVariant(project: Project, requestingVariant: KpmVariant): Configuration =
         when {
             project.hasKpmModel -> {
-                (requestingVariant as KpmGradleVariant).compileDependenciesConfiguration
+                (requestingVariant as GradleKpmVariant).compileDependenciesConfiguration
             }
             else -> {
                 val targets =
@@ -342,10 +344,10 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         }
 
     companion object {
-        fun getForCurrentBuild(project: Project): ModuleVariantResolver {
+        fun getForCurrentBuild(project: Project): KpmModuleVariantResolver {
             val extraPropertyName = "org.jetbrains.kotlin.dependencyResolution.variantResolver.${project.getKotlinPluginVersion()}"
             return project.getOrPutRootProjectProperty(extraPropertyName) {
-                CachingModuleVariantResolver(GradleModuleVariantResolver())
+                KpmCachingModuleVariantResolver(KpmGradleModuleVariantResolver())
             }
         }
     }

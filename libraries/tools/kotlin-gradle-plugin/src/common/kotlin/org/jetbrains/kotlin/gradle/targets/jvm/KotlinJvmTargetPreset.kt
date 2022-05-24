@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMappedJvmCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetWithTestsConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
@@ -35,7 +35,7 @@ class KotlinJvmTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJvmTarget> {
         val configurator = KotlinJvmTargetConfigurator()
         return if (project.hasKpmModel)
-            KpmAwareTargetWithTestsConfigurator(configurator)
+            GradleKpmAwareTargetWithTestsConfigurator(configurator)
         else configurator
     }
 

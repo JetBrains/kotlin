@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.project.model.*
 
 internal fun resolvableMetadataConfiguration(
-    module: KpmGradleModule
+    module: GradleKpmModule
 ) = module.project.configurations.getByName(module.resolvableMetadataConfigurationName)
 
 internal fun configurationToResolveMetadataDependencies(project: Project, requestingModule: KpmModule): Configuration =
     when {
-        project.hasKpmModel -> resolvableMetadataConfiguration(requestingModule as KpmGradleModule)
+        project.hasKpmModel -> resolvableMetadataConfiguration(requestingModule as GradleKpmModule)
         else -> resolvableMetadataConfiguration(
             project,
             project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?
@@ -29,34 +29,34 @@ internal fun configurationToResolveMetadataDependencies(project: Project, reques
     }
 
 
-class KpmGradleDependencyGraphResolver(
+class GradleKpmDependencyGraphResolver(
     private val moduleResolver: KpmModuleDependencyResolver
 ) : KpmDependencyGraphResolver {
 
-    private fun configurationToResolve(requestingModule: KpmGradleModule): Configuration =
+    private fun configurationToResolve(requestingModule: GradleKpmModule): Configuration =
         configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
 
     override fun resolveDependencyGraph(requestingModule: KpmModule): KpmDependencyGraphResolution {
-        if (requestingModule !is KpmGradleModule)
+        if (requestingModule !is GradleKpmModule)
             return KpmDependencyGraphResolution.Unknown(requestingModule)
         return resolveAsGraph(requestingModule)
     }
 
-    private fun resolveAsGraph(requestingModule: KpmGradleModule): KpmGradleDependencyGraph {
-        val nodeByModuleId = mutableMapOf<KpmModuleIdentifier, GradleDependencyGraphNode>()
+    private fun resolveAsGraph(requestingModule: GradleKpmModule): GradleKpmDependencyGraph {
+        val nodeByModuleId = mutableMapOf<KpmModuleIdentifier, GradleKpmDependencyGraphNode>()
 
         fun getKotlinModuleFromComponentResult(component: ResolvedComponentResult): KpmModule =
-            moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
+            moduleResolver.resolveDependency(requestingModule, component.toKpmModuleDependency())
                 ?: buildSyntheticPlainModule(
                     component,
                     component.variants.singleOrNull()?.displayName ?: "default",
                 )
 
-        fun nodeFromModule(componentResult: ResolvedComponentResult, kpmModule: KpmModule): GradleDependencyGraphNode {
+        fun nodeFromModule(componentResult: ResolvedComponentResult, kpmModule: KpmModule): GradleKpmDependencyGraphNode {
             val id = kpmModule.moduleIdentifier
             return nodeByModuleId.getOrPut(id) {
                 val metadataSourceComponent =
-                    (kpmModule as? KpmExternalImportedModule)
+                    (kpmModule as? GradleKpmExternalImportedModule)
                         ?.takeIf { it.hasLegacyMetadataModule }
                         ?.let { (componentResult.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
                         ?: componentResult
@@ -68,8 +68,8 @@ class KpmGradleDependencyGraphResolver(
                     .filterIsInstance<ResolvedDependencyResult>()
                     // This filter statement is used to only visit the dependencies of the variant(s) of the requested Kotlin module and not
                     // other variants. This prevents infinite recursion when visiting multiple Kotlin modules within one Gradle components
-                    .filter { dependency -> dependency.requested.toModuleIdentifiers().any { it in dependenciesRequestedByModule } }
-                    .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency.selected } }
+                    .filter { dependency -> dependency.requested.toKpmModuleIdentifiers().any { it in dependenciesRequestedByModule } }
+                    .flatMap { dependency -> dependency.requested.toKpmModuleIdentifiers().map { id -> id to dependency.selected } }
                     .toMap()
 
                 val fragmentDependencies = kpmModule.fragments.associateWith { it.declaredModuleDependencies }
@@ -81,7 +81,7 @@ class KpmGradleDependencyGraphResolver(
                     }
                 }
 
-                GradleDependencyGraphNode(
+                GradleKpmDependencyGraphNode(
                     kpmModule,
                     componentResult,
                     metadataSourceComponent,
@@ -90,24 +90,23 @@ class KpmGradleDependencyGraphResolver(
             }
         }
 
-        return KpmGradleDependencyGraph(
+        return GradleKpmDependencyGraph(
             requestingModule,
             nodeFromModule(configurationToResolve(requestingModule).incoming.resolutionResult.root, requestingModule)
         )
     }
 }
 
-class GradleDependencyGraphNode(
+class GradleKpmDependencyGraphNode(
     override val module: KpmModule,
     val selectedComponent: ResolvedComponentResult,
     /** If the Kotlin module description was provided by a different component, such as with legacy publishing layout using *-metadata
      * modules, then this property points to the other component. */
     val metadataSourceComponent: ResolvedComponentResult?,
-    override val dependenciesByFragment: Map<KpmFragment, Iterable<GradleDependencyGraphNode>>
+    override val dependenciesByFragment: Map<KpmFragment, Iterable<GradleKpmDependencyGraphNode>>
 ) : KpmDependencyGraphNode(module, dependenciesByFragment)
 
-class KpmGradleDependencyGraph(
-    override val requestingModule: KpmGradleModule,
-    override val root: GradleDependencyGraphNode
+class GradleKpmDependencyGraph(
+    override val requestingModule: GradleKpmModule,
+    override val root: GradleKpmDependencyGraphNode
 ) : KpmDependencyGraphResolution.KpmDependencyGraph(requestingModule, root)
-

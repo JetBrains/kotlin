@@ -14,8 +14,8 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
@@ -112,13 +112,13 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             if (isMpp) {
                 result.add(component)
                 component.dependents.forEach { dependent ->
-                    dependent.requested.toModuleIdentifiers().forEach { moduleId ->
+                    dependent.requested.toKpmModuleIdentifiers().forEach { moduleId ->
                         val moduleEntry = getEntryForModule(moduleId)
                         moduleEntry.resolvedVariantsByConfiguration[configuration] = listOf(dependent.resolvedVariant)
 
                         moduleEntry.dependenciesByConfiguration[configuration] = component.dependencies
                             .filterIsInstance<ResolvedDependencyResult>()
-                            .map { dependency -> dependency.selected.toSingleModuleIdentifier() }
+                            .map { dependency -> dependency.selected.toSingleKpmModuleIdentifier() }
 
                         if (component.id is ProjectComponentIdentifier) {
                             // Then the platform variant chosen for this module is definitely inside the module itself:
@@ -165,11 +165,11 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         artifactResolutionMode: ArtifactResolutionMode
     ) {
         val mppModuleIds = mppComponentIds.flatMapTo(mutableSetOf()) { componentId ->
-            componentId.toModuleIdentifiers()
+            componentId.toKpmModuleIdentifiers()
         }
 
         mppComponentIds.forEach { componentId ->
-            componentId.toModuleIdentifiers().forEach { moduleId ->
+            componentId.toKpmModuleIdentifiers().forEach { moduleId ->
                 val moduleEntry = getEntryForModule(moduleId)
                 val artifact = artifacts[componentId]
                 when {

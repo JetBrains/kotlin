@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinPlatformDependencyResolver.ArtifactResolution
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttributesSetup
 
 @DslMarker
 @ExternalVariantApi
@@ -35,7 +35,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     private val additionalDependencies = mutableListOf<IdeaKotlinDependencyResolver>()
 
     @ExternalVariantPlatformDependencyResolutionDsl
-    var platformResolutionAttributes: FragmentAttributes<KpmGradleFragment>? = null
+    var platformResolutionAttributes: GradleKpmConfigurationAttributesSetup<GradleKpmFragment>? = null
 
     @ExternalVariantPlatformDependencyResolutionDsl
     class ArtifactViewDslHandle(
@@ -43,11 +43,11 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
         var binaryType: String
     ) {
         @ExternalVariantPlatformDependencyResolutionDsl
-        var attributes: FragmentAttributes<KpmGradleFragment> = FragmentAttributes { }
+        var attributes: GradleKpmConfigurationAttributesSetup<GradleKpmFragment> = GradleKpmConfigurationAttributesSetup.None
 
         @ExternalVariantPlatformDependencyResolutionDsl
-        fun attributes(setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KpmGradleFragment>.() -> Unit) {
-            attributes += FragmentAttributes(setAttributes)
+        fun attributes(setAttributes: GradleKpmConfigurationAttributesSetupContext<GradleKpmFragment>.() -> Unit) {
+            attributes += GradleKpmConfigurationAttributesSetup(setAttributes)
         }
     }
 
@@ -64,9 +64,9 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
 
     @ExternalVariantPlatformDependencyResolutionDsl
     fun withPlatformResolutionAttributes(
-        setAttributes: KotlinGradleFragmentConfigurationAttributesContext<KpmGradleFragment>.() -> Unit
+        setAttributes: GradleKpmConfigurationAttributesSetupContext<GradleKpmFragment>.() -> Unit
     ) {
-        val additionalAttributes = FragmentAttributes(setAttributes)
+        val additionalAttributes = GradleKpmConfigurationAttributesSetup(setAttributes)
         this.platformResolutionAttributes = platformResolutionAttributes?.plus(additionalAttributes) ?: additionalAttributes
     }
 
@@ -76,7 +76,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     }
 
     @ExternalVariantPlatformDependencyResolutionDsl
-    fun additionalDependencies(dependencyProvider: (KpmGradleFragment) -> List<IdeaKotlinDependency>) {
+    fun additionalDependencies(dependencyProvider: (GradleKpmFragment) -> List<IdeaKotlinDependency>) {
         this.additionalDependencies += IdeaKotlinDependencyResolver { fragment -> dependencyProvider(fragment).toSet() }
     }
 
@@ -130,7 +130,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
         return parentConstraint and this.constraint
     }
 
-    private fun buildPlatformResolutionAttributes(): FragmentAttributes<KpmGradleFragment>? {
+    private fun buildPlatformResolutionAttributes(): GradleKpmConfigurationAttributesSetup<GradleKpmFragment>? {
         val parentAttributes = parent?.buildPlatformResolutionAttributes() ?: return this.platformResolutionAttributes
         return parentAttributes + (this.platformResolutionAttributes ?: return parentAttributes)
     }

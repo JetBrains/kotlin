@@ -11,17 +11,18 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-open class KpmJvmVariant(
-    containingModule: KpmGradleModule,
+open class GradleKpmJvmVariant(
+    containingModule: GradleKpmModule,
     fragmentName: String,
-    dependencyConfigurations: KotlinFragmentDependencyConfigurations,
+    dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
     compileDependenciesConfiguration: Configuration,
     apiElementsConfiguration: Configuration,
     runtimeDependenciesConfiguration: Configuration,
     runtimeElementsConfiguration: Configuration
-) : KpmGradlePublishedVariantWithRuntime(
+) : GradleKpmPublishedVariantWithRuntime(
     containingModule = containingModule,
     fragmentName = fragmentName,
     dependencyConfigurations = dependencyConfigurations,
@@ -30,20 +31,20 @@ open class KpmJvmVariant(
     runtimeDependencyConfiguration = runtimeDependenciesConfiguration,
     runtimeElementsConfiguration = runtimeElementsConfiguration
 ) {
-    override val compilationData: KotlinJvmVariantCompilationData by lazy { KotlinJvmVariantCompilationData(this) }
+    override val compilationData: GradleKpmJvmVariantCompilationData by lazy { GradleKpmJvmVariantCompilationData(this) }
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
 }
 
-class KotlinJvmVariantCompilationData(val variant: KpmJvmVariant) : KotlinVariantCompilationDataInternal<KotlinJvmOptions> {
-    override val owner: KpmJvmVariant get() = variant
+class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : GradleKpmVariantCompilationDataInternal<KotlinJvmOptions> {
+    override val owner: GradleKpmJvmVariant get() = variant
 
     // TODO pull out to the variant
     override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
 }
 
-internal fun KpmGradleVariant.ownModuleName(): String {
+internal fun GradleKpmVariant.ownModuleName(): String {
     val project = containingModule.project
     val baseName = project.archivesName
         ?: project.name
@@ -56,7 +57,7 @@ internal class KotlinMappedJvmCompilationFactory(
 ) : KotlinJvmCompilationFactory(target) {
     override fun create(name: String): KotlinJvmCompilation {
         val module = target.project.kpmModules.maybeCreate(name)
-        val variant = module.fragments.create(target.name, KpmJvmVariant::class.java)
+        val variant = module.fragments.create(target.name, GradleKpmJvmVariant::class.java)
 
         return KotlinJvmCompilation(
             VariantMappedCompilationDetailsWithRuntime(variant, target),

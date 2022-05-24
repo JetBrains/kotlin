@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
@@ -450,7 +450,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     it.dependsOn(compileTaskProvider)
                 }
             }
-            val shouldAddCompileOutputsToElements = compilation.owner is KpmGradleVariant || compilation.isMainCompilationData()
+            val shouldAddCompileOutputsToElements = compilation.owner is GradleKpmVariant || compilation.isMainCompilationData()
             if (shouldAddCompileOutputsToElements) {
                 createRegularKlibArtifact(compilation, compileTaskProvider)
             }
@@ -536,15 +536,15 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         private val KotlinNativeCompilationData<*>.apiElementsConfigurationName: String
             get() = when (val dataOwner = owner) {
-                is KpmGradleVariant -> dataOwner.apiElementsConfiguration.name
+                is GradleKpmVariant -> dataOwner.apiElementsConfiguration.name
                 is KotlinTarget -> dataOwner.apiElementsConfigurationName
                 else -> error("unexpected owner of $this")
             }
     }
 }
 
-internal class KpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
-    KpmAwareTargetConfigurator<T>(nativeTargetConfigurator) {
+internal class GradleKpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
+    GradleKpmAwareTargetConfigurator<T>(nativeTargetConfigurator) {
 
     override fun configureTarget(target: T) {
         super.configureTarget(target)

@@ -10,31 +10,32 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import javax.inject.Inject
 
-open class KpmGradleModuleInternal(
+open class GradleKpmModuleInternal(
     final override val project: Project,
     final override val moduleClassifier: String?
-) : KpmGradleModule {
+) : GradleKpmModule {
 
     @Inject
     constructor(project: Project, moduleName: CharSequence) : this(
         project,
-        moduleName.takeIf { it != KpmGradleModule.MAIN_MODULE_NAME }?.toString()
+        moduleName.takeIf { it != GradleKpmModule.MAIN_MODULE_NAME }?.toString()
     )
 
     override val moduleIdentifier: KpmModuleIdentifier =
         KpmLocalModuleIdentifier(project.currentBuildId().name, project.path, moduleClassifier)
 
-    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KpmGradleFragment> =
-        project.objects.polymorphicDomainObjectContainer(KpmGradleFragment::class.java)
+    override val fragments: ExtensiblePolymorphicDomainObjectContainer<GradleKpmFragment> =
+        project.objects.polymorphicDomainObjectContainer(GradleKpmFragment::class.java)
 
     // TODO DSL & build script model: find a way to create a flexible typed view on fragments?
-    override val variants: NamedDomainObjectSet<KpmGradleVariant> by lazy {
-        fragments.withType(KpmGradleVariant::class.java)
+    override val variants: NamedDomainObjectSet<GradleKpmVariant> by lazy {
+        fragments.withType(GradleKpmVariant::class.java)
     }
 
     override val plugins: Set<KpmCompilerPlugin> by lazy {
@@ -70,14 +71,14 @@ open class KpmGradleModuleInternal(
     override fun toString(): String = "$moduleIdentifier (Gradle)"
 }
 
-internal val KpmGradleModule.resolvableMetadataConfigurationName: String
+internal val GradleKpmModule.resolvableMetadataConfigurationName: String
     get() = lowerCamelCaseName(name, "DependenciesMetadata")
 
-internal val KpmGradleModule.isMain
+internal val GradleKpmModule.isMain
     get() = moduleIdentifier.moduleClassifier == null
 
-internal fun KpmGradleModule.disambiguateName(simpleName: String) =
+internal fun GradleKpmModule.disambiguateName(simpleName: String) =
     lowerCamelCaseName(moduleClassifier, simpleName)
 
-internal fun KpmGradleModule.variantsContainingFragment(fragment: KpmFragment): Iterable<KpmGradleVariant> =
-    (this as KpmModule).variantsContainingFragment(fragment).onEach { it as KpmGradleVariant } as Iterable<KpmGradleVariant>
+internal fun GradleKpmModule.variantsContainingFragment(fragment: KpmFragment): Iterable<GradleKpmVariant> =
+    (this as KpmModule).variantsContainingFragment(fragment).onEach { it as GradleKpmVariant } as Iterable<GradleKpmVariant>

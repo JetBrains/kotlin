@@ -41,7 +41,7 @@ fun kpmNativeVariantsSourceCode() = """
     ${kpmVariantClassFunction().indented(skipFirstLine = true)}
 """.trimIndent()
 
-private val fileName = "KpmNativeVariants.kt"
+private val fileName = "nativeVariants.kt"
 
 private val packageName = "org.jetbrains.kotlin.gradle.plugin.mpp.pm20"
 
@@ -53,13 +53,13 @@ private fun variantClasses() = allKonanTargets()
 
 private fun variantClass(konanTarget: KonanTarget) = """
     open class ${konanTarget.variantClassName} @Inject constructor(
-        containingModule: KotlinGradleModule,
+        containingModule: GradleKpmModule,
         fragmentName: String,
-        dependencyConfigurations: KotlinFragmentDependencyConfigurations,
+        dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
         compileDependencyConfiguration: Configuration,
         apiElementsConfiguration: Configuration,
         hostSpecificMetadataElementsConfiguration: Configuration?
-    ) : KotlinNativeVariantInternal(
+    ) : GradleKpmNativeVariantInternal(
         containingModule = containingModule,
         fragmentName = fragmentName,
         konanTarget = KonanTarget.${konanTarget.className},
@@ -69,7 +69,7 @@ private fun variantClass(konanTarget: KonanTarget) = """
         hostSpecificMetadataElementsConfiguration = hostSpecificMetadataElementsConfiguration
     ) {
         companion object {
-            val constructor = KotlinNativeVariantConstructor(
+            val constructor = GradleKpmNativeVariantConstructor(
                 KonanTarget.${konanTarget.className}, ${konanTarget.variantClassName}::class.java, ::${konanTarget.variantClassName}
             )
         }
@@ -81,7 +81,7 @@ private fun kpmVariantClassFunction(): String {
         .joinToString("\n") { "KonanTarget.${it.className} -> ${it.variantClassName}::class.java" }
 
     return """
-        internal fun kpmVariantClass(konanTarget: KonanTarget): Class<out KotlinNativeVariantInternal>? = when (konanTarget) {
+        internal fun kpmNativeVariantClass(konanTarget: KonanTarget): Class<out GradleKpmNativeVariantInternal>? = when (konanTarget) {
             ${konanTargetToVariant.indented(nSpaces = 12, skipFirstLine = true)}
             else -> null
         }
@@ -98,6 +98,6 @@ private fun allVariantConstructors() = allKonanTargets()
 private val KonanTarget.variantClassName
     get() = presetName
         .capitalizeUS()
-        .let { "Kotlin${it}Variant" }
+        .let { "GradleKpm${it}Variant" }
 
 private val KonanTarget.className get() = javaClass.simpleName

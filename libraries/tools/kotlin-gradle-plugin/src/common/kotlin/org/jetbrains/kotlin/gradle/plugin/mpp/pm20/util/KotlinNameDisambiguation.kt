@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KpmModule
 import org.jetbrains.kotlin.project.model.KpmFragment
@@ -30,33 +30,33 @@ import org.jetbrains.kotlin.project.model.KpmFragment
  * fragmentBar.disambiguateName("api") == "fragmentBarTestApi"
  * ```
  */
-interface KotlinNameDisambiguation {
+interface GradleKpmNameDisambiguation {
     fun disambiguateName(simpleName: String): String
 }
 
 /* Default implementation for fragments */
 
-internal fun FragmentNameDisambiguation(module: KpmModule, fragmentName: String): KotlinNameDisambiguation {
-    return DefaultKotlinFragmentNameDisambiguation(module, fragmentName)
+internal fun FragmentNameDisambiguation(module: KpmModule, fragmentName: String): GradleKpmNameDisambiguation {
+    return GradleKpmDefaultFragmentNameDisambiguation(module, fragmentName)
 }
 
-internal fun FragmentNameDisambiguationOmittingMain(module: KpmModule, fragmentName: String): KotlinNameDisambiguation {
-    return DefaultKotlinFragmentNameDisambiguationOmittingMain(module, fragmentName)
+internal fun FragmentNameDisambiguationOmittingMain(module: KpmModule, fragmentName: String): GradleKpmNameDisambiguation {
+    return GradleKpmDefaultFragmentNameDisambiguationOmittingMain(module, fragmentName)
 }
 
-private class DefaultKotlinFragmentNameDisambiguation(
+private class GradleKpmDefaultFragmentNameDisambiguation(
     private val module: KpmModule,
     private val fragmentName: String
-) : KotlinNameDisambiguation {
+) : GradleKpmNameDisambiguation {
     override fun disambiguateName(simpleName: String): String {
         return KpmFragment.disambiguateName(module, fragmentName, simpleName)
     }
 }
 
-private class DefaultKotlinFragmentNameDisambiguationOmittingMain(
+private class GradleKpmDefaultFragmentNameDisambiguationOmittingMain(
     private val module: KpmModule,
     private val fragmentName: String
-) : KotlinNameDisambiguation {
+) : GradleKpmNameDisambiguation {
     override fun disambiguateName(simpleName: String): String {
         return KpmFragment.disambiguateNameOmittingMain(module, fragmentName, simpleName)
     }
@@ -69,7 +69,7 @@ internal val KpmFragment.unambiguousNameInProject
     get() = disambiguateName("")
 
 internal fun KpmFragment.Companion.disambiguateName(module: KpmModule, fragmentName: String, simpleName: String) =
-    lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier ?: KpmGradleModule.MAIN_MODULE_NAME, simpleName)
+    lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier ?: GradleKpmModule.MAIN_MODULE_NAME, simpleName)
 
 internal fun KpmFragment.Companion.disambiguateNameOmittingMain(module: KpmModule, fragmentName: String, simpleName: String) =
     lowerCamelCaseName(fragmentName, module.moduleIdentifier.moduleClassifier, simpleName)

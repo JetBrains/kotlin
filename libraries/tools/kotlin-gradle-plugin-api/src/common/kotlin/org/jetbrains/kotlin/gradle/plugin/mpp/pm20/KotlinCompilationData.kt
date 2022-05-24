@@ -38,34 +38,3 @@ interface KotlinCompilationData<T : KotlinCommonOptions> {
     val friendPaths: Iterable<FileCollection>
 }
 
-interface KotlinVariantCompilationData<T : KotlinCommonOptions> : KotlinCompilationData<T> {
-    override val owner: KpmGradleVariant
-
-    override val project: Project get() = owner.containingModule.project
-
-    override val compilationPurpose: String
-        get() = owner.containingModule.name
-
-    override val compilationClassifier: String
-        get() = owner.name
-
-    override val output: KotlinCompilationOutput
-        get() = owner.compilationOutputs
-
-    override val compileKotlinTaskName: String
-
-    override val compileAllTaskName: String
-
-    override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-
-    override val compileDependencyFiles: FileCollection
-        get() = owner.compileDependencyFiles
-
-    override val languageSettings: LanguageSettings
-        get() = owner.languageSettings
-
-    override val platformType: KotlinPlatformType
-        get() = owner.platformType
-
-    override val ownModuleName: String
-}

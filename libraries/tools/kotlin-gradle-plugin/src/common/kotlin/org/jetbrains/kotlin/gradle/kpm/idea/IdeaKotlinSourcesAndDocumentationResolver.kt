@@ -14,13 +14,13 @@ import org.gradle.api.component.Artifact
 import org.gradle.jvm.JvmLibrary
 import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.language.java.artifact.JavadocArtifact
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 
 internal class IdeaKotlinSourcesAndDocumentationResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinDependency> {
-        if (fragment is KpmGradleVariant) {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+        if (fragment is GradleKpmVariant) {
             return resolve(fragment.project, fragment.compileDependenciesConfiguration)
         }
 

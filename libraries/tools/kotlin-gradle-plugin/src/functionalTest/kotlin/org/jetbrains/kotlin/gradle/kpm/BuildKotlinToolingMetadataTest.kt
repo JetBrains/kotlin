@@ -30,7 +30,7 @@ private fun Project.kotlinToolingMetadataOfModule(moduleName: String): KotlinToo
     return module.buildKotlinToolingMetadataTask!!.get().kotlinToolingMetadata
 }
 
-private val Project.kotlinToolingMetadataOfMainModule get() = kotlinToolingMetadataOfModule(KpmGradleModule.MAIN_MODULE_NAME)
+private val Project.kotlinToolingMetadataOfMainModule get() = kotlinToolingMetadataOfModule(GradleKpmModule.MAIN_MODULE_NAME)
 
 class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
     @Test
@@ -40,8 +40,8 @@ class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
             mainAndTest {
                 jvm
                 val linux = fragments.create("linux")
-                fragments.create<KpmLinuxX64Variant>("linuxX64").apply { refines(linux) }
-                fragments.create<KpmLinuxArm64Variant>("linuxArm64").apply { refines(linux) }
+                fragments.create<GradleKpmLinuxX64Variant>("linuxX64").apply { refines(linux) }
+                fragments.create<GradleKpmLinuxArm64Variant>("linuxArm64").apply { refines(linux) }
                 // No JS & Android variants available at the moment, only through [LegacyMappedVariant] which is tested below
             }
         }
@@ -57,13 +57,13 @@ class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
         assertEquals(3, metadata.projectTargets.size, "Expected 3 targets in KPM")
 
         val jvmTarget = metadata.projectTargets.single { it.platformType == jvm.name }
-        assertEquals(KpmJvmVariant::class.java.canonicalName, jvmTarget.target)
+        assertEquals(GradleKpmJvmVariant::class.java.canonicalName, jvmTarget.target)
 
         val nativeTargets = metadata.projectTargets.filter { it.platformType == native.name }.map { it.target }.toSet()
         assertEquals(
             setOf(
-                KpmLinuxArm64Variant::class.java.canonicalName,
-                KpmLinuxX64Variant::class.java.canonicalName
+                GradleKpmLinuxArm64Variant::class.java.canonicalName,
+                GradleKpmLinuxX64Variant::class.java.canonicalName
             ),
             nativeTargets
         )
@@ -121,10 +121,10 @@ class KotlinToolingMetadataWithModelMappingTest {
         }
 
         val expectedTargets = mapOf(
-            androidJvm to LegacyMappedVariantWithRuntime::class,
-            jvm to KpmJvmVariant::class,
-            js to LegacyMappedVariantWithRuntime::class,
-            native to KpmLinuxX64Variant::class
+            androidJvm to GradleKpmLegacyMappedVariantWithRuntime::class,
+            jvm to GradleKpmJvmVariant::class,
+            js to GradleKpmLegacyMappedVariantWithRuntime::class,
+            native to GradleKpmLinuxX64Variant::class
         )
 
         assertEquals(
@@ -212,11 +212,11 @@ class KotlinToolingMetadataWithModelMappingTest {
         )
 
         assertEquals(
-            KpmLinuxArm64Variant::class.java.canonicalName,
+            GradleKpmLinuxArm64Variant::class.java.canonicalName,
             linuxArm64.target
         )
         assertEquals(
-            KpmLinuxX64Variant::class.java.canonicalName,
+            GradleKpmLinuxX64Variant::class.java.canonicalName,
             linuxX64.target
         )
     }

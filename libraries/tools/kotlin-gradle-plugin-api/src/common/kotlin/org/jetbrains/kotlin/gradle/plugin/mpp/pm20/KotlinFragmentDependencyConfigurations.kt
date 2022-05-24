@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 
-interface KotlinFragmentDependencyConfigurations : KotlinDependencyConfigurations {
+interface GradleKpmFragmentDependencyConfigurations : GradleKpmDependencyConfigurations {
     /** This configuration includes the dependencies from the refines-parents */
     val transitiveApiConfiguration: Configuration
 
@@ -25,7 +25,7 @@ interface KotlinFragmentDependencyConfigurations : KotlinDependencyConfiguration
         override val transitiveApiConfiguration: Configuration,
         override val transitiveImplementationConfiguration: Configuration,
         override val transitiveRuntimeOnlyConfiguration: Configuration
-    ) : KotlinFragmentDependencyConfigurations
+    ) : GradleKpmFragmentDependencyConfigurations
 
     companion object {
         fun create(
@@ -36,7 +36,7 @@ interface KotlinFragmentDependencyConfigurations : KotlinDependencyConfiguration
             transitiveApiConfiguration: Configuration,
             transitiveImplementationConfiguration: Configuration,
             transitiveRuntimeOnlyConfiguration: Configuration
-        ): KotlinFragmentDependencyConfigurations = Impl(
+        ): GradleKpmFragmentDependencyConfigurations = Impl(
             apiConfiguration = apiConfiguration,
             implementationConfiguration = implementationConfiguration,
             compileOnlyConfiguration = compileOnlyConfiguration,

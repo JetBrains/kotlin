@@ -43,7 +43,7 @@ import java.util.concurrent.Callable
 interface CompilationDetails<T : KotlinCommonOptions> {
     val target: KotlinTarget
 
-    val compileDependencyFilesHolder: DependencyFilesHolder
+    val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
 
     val kotlinDependenciesHolder: HasKotlinDependencies
 
@@ -66,7 +66,7 @@ interface CompilationDetails<T : KotlinCommonOptions> {
 }
 
 interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDetails<T> {
-    val runtimeDependencyFilesHolder: DependencyFilesHolder
+    val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder
 }
 
 internal val CompilationDetails<*>.associateCompilationsClosure: Iterable<CompilationDetails<*>>
@@ -98,7 +98,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
             )
         )
 
-    override val compileDependencyFilesHolder: DependencyFilesHolder = project.newDependencyFilesHolder(
+    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder = project.newDependencyFilesHolder(
         lowerCamelCaseName(
             target.disambiguationClassifier,
             compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
@@ -328,7 +328,7 @@ open class DefaultCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
     compilationPurpose: String,
     createKotlinOptions: DefaultCompilationDetails<*>.() -> T
 ) : DefaultCompilationDetails<T>(target, compilationPurpose, createKotlinOptions), CompilationDetailsWithRuntime<T> {
-    override val runtimeDependencyFilesHolder: DependencyFilesHolder = project.newDependencyFilesHolder(
+    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder = project.newDependencyFilesHolder(
         lowerCamelCaseName(
             target.disambiguationClassifier,
             compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
@@ -346,7 +346,7 @@ open class NativeCompilationDetails(
     compilationPurpose,
     createKotlinOptions
 ) {
-    override val compileDependencyFilesHolder: DependencyFilesHolder = project.newDependencyFilesHolder(
+    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder = project.newDependencyFilesHolder(
         lowerCamelCaseName(
             target.disambiguationClassifier,
             compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
@@ -402,8 +402,8 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
     override val target: KotlinMetadataTarget,
     final override val compilationData: AbstractKotlinFragmentMetadataCompilationData<T>
 ) : CompilationDetails<T> {
-    override val compileDependencyFilesHolder: DependencyFilesHolder =
-        DependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
+    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder =
+        GradleKpmDependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = compilationData.fragment
@@ -432,7 +432,7 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
 }
 
 internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
-    open val variant: KpmGradleVariantInternal,
+    open val variant: GradleKpmVariantInternal,
     override val target: KotlinTarget
 ) : CompilationDetails<T> {
 
@@ -458,8 +458,8 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
 
     override val associateCompilations: Set<CompilationDetails<*>> get() = emptySet()
 
-    override val compileDependencyFilesHolder: DependencyFilesHolder
-        get() = DependencyFilesHolder.ofVariantCompileDependencies(variant)
+    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
+        get() = GradleKpmDependencyFilesHolder.ofVariantCompileDependencies(variant)
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = variant
@@ -469,12 +469,12 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
 }
 
 internal open class VariantMappedCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
-    override val variant: KpmGradleVariantWithRuntimeInternal,
+    override val variant: GradleKpmVariantWithRuntimeInternal,
     target: KotlinTarget
 ) : VariantMappedCompilationDetails<T>(variant, target),
     CompilationDetailsWithRuntime<T> {
-    override val runtimeDependencyFilesHolder: DependencyFilesHolder
-        get() = DependencyFilesHolder.ofVariantRuntimeDependencies(variant)
+    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder
+        get() = GradleKpmDependencyFilesHolder.ofVariantRuntimeDependencies(variant)
 }
 
 internal class WithJavaCompilationDetails<T : KotlinCommonOptions>(
@@ -490,14 +490,14 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions>(
 
     override val output: KotlinCompilationOutput by lazy { KotlinWithJavaCompilationOutput(compilation) }
 
-    override val compileDependencyFilesHolder: DependencyFilesHolder
-        get() = object : DependencyFilesHolder {
+    override val compileDependencyFilesHolder: GradleKpmDependencyFilesHolder
+        get() = object : GradleKpmDependencyFilesHolder {
             override val dependencyConfigurationName: String by javaSourceSet::compileClasspathConfigurationName
             override var dependencyFiles: FileCollection by javaSourceSet::compileClasspath
         }
 
-    override val runtimeDependencyFilesHolder: DependencyFilesHolder
-        get() = object : DependencyFilesHolder {
+    override val runtimeDependencyFilesHolder: GradleKpmDependencyFilesHolder
+        get() = object : GradleKpmDependencyFilesHolder {
             override val dependencyConfigurationName: String by javaSourceSet::runtimeClasspathConfigurationName
             override var dependencyFiles: FileCollection by javaSourceSet::runtimeClasspath
         }

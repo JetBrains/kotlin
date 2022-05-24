@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.VariantMappedCompilationDetails
 import java.util.concurrent.Callable
 
-internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
+internal open class GradleKpmAwareTargetConfigurator<T : KotlinTarget>(
     private val legacyModelTargetConfigurator: AbstractKotlinTargetConfigurator<T>,
 ) : AbstractKotlinTargetConfigurator<T>(true, legacyModelTargetConfigurator.createDefaultSourceSets),
     KotlinTargetConfigurator<T> by legacyModelTargetConfigurator {
@@ -31,7 +31,7 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
                 val compilationDetails = (compilation as? AbstractKotlinCompilation)?.compilationDetails
                 if (compilationDetails is VariantMappedCompilationDetails<*> && compilationDetails.variant.containingModule.isMain) {
                     val variant = compilationDetails.variant
-                    if (variant is SingleMavenPublishedModuleHolder) {
+                    if (variant is GradleKpmSingleMavenPublishedModuleHolder) {
                         variant.whenPublicationAssigned { publication ->
                             target.publicationConfigureActions.all { action ->
                                 action.execute(publication)
@@ -76,10 +76,10 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
     }
 }
 
-internal class KpmAwareTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>, T : KotlinTargetWithTests<*, R>, C>(
+internal class GradleKpmAwareTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>, T : KotlinTargetWithTests<*, R>, C>(
     private val legacyModelTargetWithTestsConfigurator: C
 ) :
-    KpmAwareTargetConfigurator<T>(legacyModelTargetWithTestsConfigurator),
+    GradleKpmAwareTargetConfigurator<T>(legacyModelTargetWithTestsConfigurator),
     KotlinTargetWithTestsConfigurator<R, T>
 
         where C : AbstractKotlinTargetConfigurator<T>,

@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertResolvedBinaryDependencies
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmIosArm64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmIosX64Variant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmJvmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosArm64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmJvmVariant
 import org.junit.Test
 
 class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
@@ -29,9 +29,9 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
 
         val kotlin = project.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val iosX64Variant = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val iosArm64Variant = fragments.create("iosArm64", KpmIosArm64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val iosX64Variant = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val iosArm64Variant = fragments.create("iosArm64", GradleKpmIosArm64Variant::class.java)
                 val iosCommon = fragments.create("iosCommon")
 
                 iosCommon.refines(common)
@@ -73,9 +73,9 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
 
         val kotlin = project.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val iosX64Variant = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val iosArm64Variant = fragments.create("iosArm64", KpmIosArm64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val iosX64Variant = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val iosArm64Variant = fragments.create("iosArm64", GradleKpmIosArm64Variant::class.java)
                 val iosCommon = fragments.create("iosCommon")
 
                 iosCommon.refines(common)
@@ -129,9 +129,9 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
 
         val kotlin = project.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val iosX64Variant = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val iosArm64Variant = fragments.create("iosArm64", KpmIosArm64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val iosX64Variant = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val iosArm64Variant = fragments.create("iosArm64", GradleKpmIosArm64Variant::class.java)
                 val iosCommon = fragments.create("iosCommon")
 
                 iosCommon.refines(common)

@@ -9,80 +9,80 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguationOmittingMain
 
-typealias KotlinJvmVariantFactory = KotlinGradleFragmentFactory<KpmJvmVariant>
+typealias GradleKpmJvmVariantFactory = GradleKpmFragmentFactory<GradleKpmJvmVariant>
 
-fun KotlinJvmVariantFactory(
-    module: KpmGradleModule, config: KotlinJvmVariantConfig = KotlinJvmVariantConfig()
-): KotlinJvmVariantFactory = KotlinJvmVariantFactory(
-    KotlinJvmVariantInstantiator(module, config),
-    KotlinJvmVariantConfigurator(config)
+fun GradleKpmJvmVariantFactory(
+    module: GradleKpmModule, config: GradleKpmJvmVariantConfig = GradleKpmJvmVariantConfig()
+): GradleKpmJvmVariantFactory = GradleKpmJvmVariantFactory(
+    GradleKpmJvmVariantInstantiator(module, config),
+    GradleKpmJvmVariantConfigurator(config)
 )
 
-data class KotlinJvmVariantConfig(
-    val dependenciesConfigurationFactory: KotlinFragmentDependencyConfigurationsFactory
-    = DefaultKotlinFragmentDependencyConfigurationsFactory,
+data class GradleKpmJvmVariantConfig(
+    val dependenciesConfigurationFactory: GradleKpmFragmentDependencyConfigurationsFactory
+    = GradleKpmDefaultFragmentDependencyConfigurationsFactory,
 
-    val compileDependencies: KotlinGradleFragmentConfigurationDefinition<KpmJvmVariant>
+    val compileDependencies: GradleKpmConfigurationSetup<GradleKpmJvmVariant>
     = DefaultKotlinCompileDependenciesDefinition,
 
-    val runtimeDependencies: KotlinGradleFragmentConfigurationDefinition<KpmJvmVariant>
+    val runtimeDependencies: GradleKpmConfigurationSetup<GradleKpmJvmVariant>
     = DefaultKotlinRuntimeDependenciesDefinition,
 
-    val apiElements: KotlinGradleFragmentConfigurationDefinition<KpmJvmVariant>
-    = DefaultKotlinApiElementsDefinition + KotlinFragmentCompilationOutputsJarArtifact,
+    val apiElements: GradleKpmConfigurationSetup<GradleKpmJvmVariant>
+    = DefaultKotlinApiElementsDefinition + GradleKpmCompilationOutputsJarArtifact,
 
-    val runtimeElements: KotlinGradleFragmentConfigurationDefinition<KpmJvmVariant>
+    val runtimeElements: GradleKpmConfigurationSetup<GradleKpmJvmVariant>
     = DefaultKotlinRuntimeElementsDefinition,
 
-    val compileTaskConfigurator: KotlinCompileTaskConfigurator<KpmJvmVariant>
-    = KotlinJvmCompileTaskConfigurator,
+    val compileTaskConfigurator: GradleKpmCompileTaskConfigurator<GradleKpmJvmVariant>
+    = GradleKpmJvmCompileTaskConfigurator,
 
-    val sourceArchiveTaskConfigurator: KotlinSourceArchiveTaskConfigurator<KpmJvmVariant>
-    = DefaultKotlinSourceArchiveTaskConfigurator,
+    val sourceArchiveTaskConfigurator: GradleKpmSourceArchiveTaskConfigurator<GradleKpmJvmVariant>
+    = GradleKpmDefaultKotlinSourceArchiveTaskConfigurator,
 
-    val sourceDirectoriesConfigurator: KotlinSourceDirectoriesConfigurator<KpmJvmVariant>
-    = DefaultKotlinSourceDirectoriesConfigurator,
+    val sourceDirectoriesConfigurator: GradleKpmSourceDirectoriesConfigurator<GradleKpmJvmVariant>
+    = GradleKpmDefaultSourceDirectoriesConfigurator,
 
-    val publicationConfigurator: KotlinPublicationConfigurator<KpmJvmVariant>
-    = KotlinPublicationConfigurator.SingleVariantPublication
+    val publicationConfigurator: GradleKpmPublicationConfigurator<GradleKpmJvmVariant>
+    = GradleKpmPublicationConfigurator.SingleVariantPublication
 )
 
-class KotlinJvmVariantInstantiator internal constructor(
-    private val module: KpmGradleModule,
-    private val config: KotlinJvmVariantConfig
-) : KotlinGradleFragmentFactory.FragmentInstantiator<KpmJvmVariant> {
+class GradleKpmJvmVariantInstantiator internal constructor(
+    private val module: GradleKpmModule,
+    private val config: GradleKpmJvmVariantConfig
+) : GradleKpmFragmentFactory.FragmentInstantiator<GradleKpmJvmVariant> {
 
-    override fun create(name: String): KpmJvmVariant {
+    override fun create(name: String): GradleKpmJvmVariant {
         val names = FragmentNameDisambiguationOmittingMain(module, name)
-        val context = KotlinGradleFragmentConfigurationContextImpl(
+        val context = GradleKpmFragmentConfigureContextImpl(
             module, config.dependenciesConfigurationFactory.create(module, names), names
         )
 
-        return KpmJvmVariant(
+        return GradleKpmJvmVariant(
             containingModule = module,
             fragmentName = name,
             dependencyConfigurations = context.dependencies,
             compileDependenciesConfiguration = config.compileDependencies.provider.getConfiguration(context).also { configuration ->
-                config.compileDependencies.relations.setExtendsFrom(configuration, context)
+                config.compileDependencies.relations.setupExtendsFromRelations(configuration, context)
             },
             runtimeDependenciesConfiguration = config.runtimeDependencies.provider.getConfiguration(context).also { configuration ->
-                config.runtimeElements.relations.setExtendsFrom(configuration, context)
+                config.runtimeElements.relations.setupExtendsFromRelations(configuration, context)
             },
             apiElementsConfiguration = config.apiElements.provider.getConfiguration(context).also { configuration ->
-                config.apiElements.relations.setExtendsFrom(configuration, context)
+                config.apiElements.relations.setupExtendsFromRelations(configuration, context)
             },
             runtimeElementsConfiguration = config.runtimeElements.provider.getConfiguration(context).also { configuration ->
-                config.runtimeElements.relations.setExtendsFrom(configuration, context)
+                config.runtimeElements.relations.setupExtendsFromRelations(configuration, context)
             }
         )
     }
 }
 
-class KotlinJvmVariantConfigurator internal constructor(
-    private val config: KotlinJvmVariantConfig
-) : KotlinGradleFragmentFactory.FragmentConfigurator<KpmJvmVariant> {
+class GradleKpmJvmVariantConfigurator internal constructor(
+    private val config: GradleKpmJvmVariantConfig
+) : GradleKpmFragmentFactory.FragmentConfigurator<GradleKpmJvmVariant> {
 
-    override fun configure(fragment: KpmJvmVariant) {
+    override fun configure(fragment: GradleKpmJvmVariant) {
         fragment.compileDependenciesConfiguration.configure(config.compileDependencies, fragment)
         fragment.runtimeDependenciesConfiguration.configure(config.runtimeDependencies, fragment)
         fragment.apiElementsConfiguration.configure(config.apiElements, fragment)

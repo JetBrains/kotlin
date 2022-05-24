@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragmentInternal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 
-val KpmGradleModule.androidCommon: KpmGradleFragmentInternal
+val GradleKpmModule.androidCommon: GradleKpmFragmentInternal
     get() = (fragments.findByName("androidCommon") ?: fragments.create("androidCommon") { fragment ->
         fragment.refines(common)
-    }) as KpmGradleFragmentInternal
+    }) as GradleKpmFragmentInternal

@@ -7,36 +7,36 @@ package org.jetbrains.kotlin.project.model
 
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 
-interface ModuleFragmentsResolver {
+interface KpmFragmentsResolver {
     fun getChosenFragments(
         requestingFragment: KpmFragment,
         dependencyModule: KpmModule
-    ): FragmentResolution
+    ): KpmFragmentResolution
 }
 
-sealed class FragmentResolution(val requestingFragment: KpmFragment, val dependencyModule: KpmModule) {
+sealed class KpmFragmentResolution(val requestingFragment: KpmFragment, val dependencyModule: KpmModule) {
     class ChosenFragments(
         requestingFragment: KpmFragment,
         dependencyModule: KpmModule,
         val visibleFragments: Iterable<KpmFragment>,
-        val variantResolutions: Iterable<VariantResolution>
-    ) : FragmentResolution(requestingFragment, dependencyModule)
+        val variantResolutions: Iterable<KpmVariantResolution>
+    ) : KpmFragmentResolution(requestingFragment, dependencyModule)
 
     class NotRequested(requestingFragment: KpmFragment, dependencyModule: KpmModule) :
-        FragmentResolution(requestingFragment, dependencyModule)
+        KpmFragmentResolution(requestingFragment, dependencyModule)
 
     // TODO: think about restricting calls with the type system to avoid partial functions in resolvers?
     class Unknown(requestingFragment: KpmFragment, dependencyModule: KpmModule) :
-        FragmentResolution(requestingFragment, dependencyModule)
+        KpmFragmentResolution(requestingFragment, dependencyModule)
 }
 
-class DefaultModuleFragmentsResolver(
-    private val variantResolver: ModuleVariantResolver
-) : ModuleFragmentsResolver {
+class KpmDefaultFragmentsResolver(
+    private val variantResolver: KpmModuleVariantResolver
+) : KpmFragmentsResolver {
     override fun getChosenFragments(
         requestingFragment: KpmFragment,
         dependencyModule: KpmModule
-    ): FragmentResolution {
+    ): KpmFragmentResolution {
         val dependingModule = requestingFragment.containingModule
         val containingVariants = dependingModule.variantsContainingFragment(requestingFragment)
 
@@ -44,12 +44,12 @@ class DefaultModuleFragmentsResolver(
 
         // TODO: extend this to more cases with non-matching variants, revisit the behavior when no matching variant is found once we fix
         //       local publishing of libraries with missing host-specific parts (it breaks transitive dependencies now)
-        if (chosenVariants.none { it is VariantResolution.VariantMatch })
-            return FragmentResolution.NotRequested(requestingFragment, dependencyModule)
+        if (chosenVariants.none { it is KpmVariantResolution.KpmVariantMatch })
+            return KpmFragmentResolution.NotRequested(requestingFragment, dependencyModule)
 
         val chosenFragments = chosenVariants.map { variantResolution ->
             when (variantResolution) {
-                is VariantResolution.VariantMatch -> variantResolution.chosenVariant.withRefinesClosure
+                is KpmVariantResolution.KpmVariantMatch -> variantResolution.chosenVariant.withRefinesClosure
                 else -> emptySet()
             }
         }
@@ -61,6 +61,6 @@ class DefaultModuleFragmentsResolver(
             .filter { it.isNotEmpty() }
             .reduce { acc, it -> acc.intersect(it) }
 
-        return FragmentResolution.ChosenFragments(requestingFragment, dependencyModule, result, chosenVariants)
+        return KpmFragmentResolution.ChosenFragments(requestingFragment, dependencyModule, result, chosenVariants)
     }
 }

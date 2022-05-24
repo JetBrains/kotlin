@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import java.io.File
 
@@ -57,7 +57,7 @@ internal class SourceSetVisibilityProvider(
         val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(visibleFrom)
 
         val component = resolvedRootMppDependency ?: resolvedMetadataDependency
-        val mppModuleIdentifier = component.toSingleModuleIdentifier()
+        val mppModuleIdentifier = component.toSingleKpmModuleIdentifier()
 
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
 

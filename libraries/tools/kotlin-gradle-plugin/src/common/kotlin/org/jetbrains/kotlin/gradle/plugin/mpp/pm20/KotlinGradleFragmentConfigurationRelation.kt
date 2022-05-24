@@ -8,60 +8,57 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationPublications
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
-/* Internal abbreviation */
-internal typealias FragmentConfigurationRelation = KotlinGradleFragmentConfigurationRelation
 
-interface KotlinGradleFragmentConfigurationRelation {
-    fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext)
+interface GradleKpmConfigurationRelationSetup {
+    fun setupExtendsFromRelations(configuration: Configuration, context: GradleKpmFragmentConfigureContext)
 
-    object None : KotlinGradleFragmentConfigurationRelation {
-        override fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext) = Unit
+    object None : GradleKpmConfigurationRelationSetup {
+        override fun setupExtendsFromRelations(configuration: Configuration, context: GradleKpmFragmentConfigureContext) = Unit
     }
 }
 
-operator fun FragmentConfigurationRelation.plus(other: FragmentConfigurationRelation): FragmentConfigurationRelation {
-    if (this === KotlinGradleFragmentConfigurationRelation.None) return other
-    if (other === KotlinGradleFragmentConfigurationRelation.None) return this
+operator fun GradleKpmConfigurationRelationSetup.plus(other: GradleKpmConfigurationRelationSetup): GradleKpmConfigurationRelationSetup {
+    if (this === GradleKpmConfigurationRelationSetup.None) return other
+    if (other === GradleKpmConfigurationRelationSetup.None) return this
 
-    if (this is CompositeFragmentConfigurationRelation && other is CompositeFragmentConfigurationRelation) {
-        return CompositeFragmentConfigurationRelation(this.children + other.children)
+    if (this is CompositeKpmConfigurationRelationSetup && other is CompositeKpmConfigurationRelationSetup) {
+        return CompositeKpmConfigurationRelationSetup(this.children + other.children)
     }
 
-    if (this is CompositeFragmentConfigurationRelation) {
-        return CompositeFragmentConfigurationRelation(this.children + other)
+    if (this is CompositeKpmConfigurationRelationSetup) {
+        return CompositeKpmConfigurationRelationSetup(this.children + other)
     }
 
-    if (other is CompositeFragmentConfigurationRelation) {
-        return CompositeFragmentConfigurationRelation(listOf(this) + other.children)
+    if (other is CompositeKpmConfigurationRelationSetup) {
+        return CompositeKpmConfigurationRelationSetup(listOf(this) + other.children)
     }
 
-    return CompositeFragmentConfigurationRelation(listOf(this, other))
+    return CompositeKpmConfigurationRelationSetup(listOf(this, other))
 }
 
-internal class CompositeFragmentConfigurationRelation(val children: List<FragmentConfigurationRelation>) :
-    FragmentConfigurationRelation {
+internal class CompositeKpmConfigurationRelationSetup(val children: List<GradleKpmConfigurationRelationSetup>) :
+    GradleKpmConfigurationRelationSetup {
 
-    override fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext) {
-        children.forEach { child -> child.setExtendsFrom(configuration, context) }
+    override fun setupExtendsFromRelations(configuration: Configuration, context: GradleKpmFragmentConfigureContext) {
+        children.forEach { child -> child.setupExtendsFromRelations(configuration, context) }
     }
 }
 
-class KotlinGradleFragmentConfigurationRelationContext internal constructor(
+class GradleKpmFragmentConfigureRelationContext internal constructor(
     val configuration: Configuration,
-    context: KotlinGradleFragmentConfigurationContext
-) : KotlinGradleFragmentConfigurationContext by context {
+    context: GradleKpmFragmentConfigureContext
+) : GradleKpmFragmentConfigureContext by context {
     fun extendsFrom(configuration: Configuration) = this.configuration.extendsFrom(configuration)
     fun extendsFrom(configuration: String) = project.addExtendsFromRelation(this.configuration.name, configuration)
 }
 
-fun FragmentConfigurationRelation(
-    setExtendsFrom: KotlinGradleFragmentConfigurationRelationContext.() -> Unit
-): KotlinGradleFragmentConfigurationRelation = object : KotlinGradleFragmentConfigurationRelation {
-    override fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext) {
-        val relationContext = KotlinGradleFragmentConfigurationRelationContext(configuration, context)
+fun GradleKpmConfigurationRelationSetup(
+    setExtendsFrom: GradleKpmFragmentConfigureRelationContext.() -> Unit
+): GradleKpmConfigurationRelationSetup = object : GradleKpmConfigurationRelationSetup {
+    override fun setupExtendsFromRelations(configuration: Configuration, context: GradleKpmFragmentConfigureContext) {
+        val relationContext = GradleKpmFragmentConfigureRelationContext(configuration, context)
         relationContext.setExtendsFrom()
     }
 }

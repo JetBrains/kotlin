@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmNativeVariantInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 
 internal class IdeaKotlinNativePlatformDependencyResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
         val konanTargets = fragment.containingVariants
-            .map { it as? KpmNativeVariantInternal ?: return emptySet() }
+            .map { it as? GradleKpmNativeVariantInternal ?: return emptySet() }
             .map { it.konanTarget }
             .toSet()
 

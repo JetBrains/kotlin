@@ -9,11 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 
-interface KotlinGradleFragmentConfigurationProvider {
-    fun getConfiguration(context: KotlinGradleFragmentConfigurationContext): Configuration
+interface GradleKpmConfigurationProvider {
+    fun getConfiguration(context: GradleKpmFragmentConfigureContext): Configuration
 }
 
-fun ConfigurationProvider(provider: KotlinGradleFragmentConfigurationContext.() -> Configuration):
-        KotlinGradleFragmentConfigurationProvider = object : KotlinGradleFragmentConfigurationProvider {
-    override fun getConfiguration(context: KotlinGradleFragmentConfigurationContext): Configuration = context.provider()
+fun GradleKpmConfigurationProvider(provider: GradleKpmFragmentConfigureContext.() -> Configuration):
+        GradleKpmConfigurationProvider = object : GradleKpmConfigurationProvider {
+    override fun getConfiguration(context: GradleKpmFragmentConfigureContext): Configuration = context.provider()
 }

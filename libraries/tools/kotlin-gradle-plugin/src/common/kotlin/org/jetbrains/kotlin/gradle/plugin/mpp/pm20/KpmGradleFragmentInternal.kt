@@ -14,7 +14,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.toKpmModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.FragmentConsistencyChecks
@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 
-open class KpmGradleFragmentInternal @Inject constructor(
-    final override val containingModule: KpmGradleModule,
+open class GradleKpmFragmentInternal @Inject constructor(
+    final override val containingModule: GradleKpmModule,
     final override val fragmentName: String,
-    dependencyConfigurations: KotlinFragmentDependencyConfigurations
-) : KpmGradleFragment,
-    KotlinFragmentDependencyConfigurations by dependencyConfigurations {
+    dependencyConfigurations: GradleKpmFragmentDependencyConfigurations
+) : GradleKpmFragment,
+    GradleKpmFragmentDependencyConfigurations by dependencyConfigurations {
 
     final override fun getName(): String = fragmentName
 
@@ -44,12 +44,12 @@ open class KpmGradleFragmentInternal @Inject constructor(
     // FIXME check for consistency
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override fun refines(other: KpmGradleFragment) {
+    override fun refines(other: GradleKpmFragment) {
         checkCanRefine(other)
         refines(containingModule.fragments.named(other.name))
     }
 
-    override fun refines(other: NamedDomainObjectProvider<KpmGradleFragment>) {
+    override fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>) {
         _directRefinesDependencies.add(other)
         other.configure { checkCanRefine(it) }
 
@@ -66,11 +66,11 @@ open class KpmGradleFragmentInternal @Inject constructor(
         )
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KpmGradleFragmentInternal, other.get())
+            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@GradleKpmFragmentInternal, other.get())
         }
     }
 
-    private fun checkCanRefine(other: KpmGradleFragment) {
+    private fun checkCanRefine(other: GradleKpmFragment) {
         check(containingModule == other.containingModule) {
             "Fragments can only refine each other within one module. Can't make $this refine $other"
         }
@@ -82,9 +82,9 @@ open class KpmGradleFragmentInternal @Inject constructor(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
-    private val _directRefinesDependencies = mutableSetOf<Provider<KpmGradleFragment>>()
+    private val _directRefinesDependencies = mutableSetOf<Provider<GradleKpmFragment>>()
 
-    override val declaredRefinesDependencies: Iterable<KpmGradleFragment>
+    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
         get() = _directRefinesDependencies.map { it.get() }.toSet()
 
     // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
@@ -92,7 +92,7 @@ open class KpmGradleFragmentInternal @Inject constructor(
     //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KpmModuleDependency>
         get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
-            exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
+            exportConfiguration.allDependencies.map { dependency -> dependency.toKpmModuleDependency(project) }
         }
 
     override val kotlinSourceRoots: SourceDirectorySet =
@@ -106,7 +106,7 @@ open class KpmGradleFragmentInternal @Inject constructor(
         FragmentConsistencyChecker(
             unitsName = "fragments",
             name = { name },
-            checks = FragmentConsistencyChecks<KpmGradleFragment>(
+            checks = FragmentConsistencyChecks<GradleKpmFragment>(
                 unitName = "fragment",
                 languageSettings = { languageSettings }
             ).allChecks

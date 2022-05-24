@@ -44,13 +44,13 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 
     private fun createDefaultModules(project: Project) {
         project.pm20Extension.apply {
-            modules.create(KpmGradleModule.MAIN_MODULE_NAME)
-            modules.create(KpmGradleModule.TEST_MODULE_NAME)
+            modules.create(GradleKpmModule.MAIN_MODULE_NAME)
+            modules.create(GradleKpmModule.TEST_MODULE_NAME)
             main { makePublic() }
         }
     }
 
-    private fun setupPublicationForModule(module: KpmGradleModule) {
+    private fun setupPublicationForModule(module: GradleKpmModule) {
         val project = module.project
 
         val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
@@ -87,62 +87,62 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     }
 }
 
-fun rootPublicationComponentName(module: KpmGradleModule) =
+fun rootPublicationComponentName(module: GradleKpmModule) =
     module.disambiguateName("root")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
 
-    internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
+    internal val kpmModelContainer = GradleKpmDefaultProjectModelContainer.create(project)
 
     internal val ideaKotlinProjectModelBuilder by lazy { IdeaKotlinProjectModelBuilder.default(this) }
 
-    val modules: NamedDomainObjectContainer<KpmGradleModule>
+    val modules: NamedDomainObjectContainer<GradleKpmModule>
         get() = project.kpmModules
 
     @Suppress("unused") // DSL function
-    fun mainAndTest(configure: KpmGradleModule.() -> Unit) {
+    fun mainAndTest(configure: GradleKpmModule.() -> Unit) {
         main(configure)
         test(configure)
     }
 
-    val main: KpmGradleModule
-        get() = modules.getByName(KpmGradleModule.MAIN_MODULE_NAME)
+    val main: GradleKpmModule
+        get() = modules.getByName(GradleKpmModule.MAIN_MODULE_NAME)
 
-    val test: KpmGradleModule
-        get() = modules.getByName(KpmGradleModule.TEST_MODULE_NAME)
+    val test: GradleKpmModule
+        get() = modules.getByName(GradleKpmModule.TEST_MODULE_NAME)
 
-    fun main(configure: KpmGradleModule.() -> Unit = { }) = main.apply(configure)
-    fun test(configure: KpmGradleModule.() -> Unit = { }) = test.apply(configure)
+    fun main(configure: GradleKpmModule.() -> Unit = { }) = main.apply(configure)
+    fun test(configure: GradleKpmModule.() -> Unit = { }) = test.apply(configure)
 
     @PublishedApi
     @JvmName("isAllowCommonizer")
     internal fun isAllowCommonizerForIde(@Suppress("UNUSED_PARAMETER") project: Project): Boolean = false
 }
 
-val KpmGradleModule.jvm: KpmJvmVariant
-    get() = fragments.maybeCreate("jvm", KpmJvmVariant::class.java)
+val GradleKpmModule.jvm: GradleKpmJvmVariant
+    get() = fragments.maybeCreate("jvm", GradleKpmJvmVariant::class.java)
 
-fun KpmGradleModule.jvm(configure: KpmJvmVariant.() -> Unit): KpmJvmVariant = jvm.apply(configure)
+fun GradleKpmModule.jvm(configure: GradleKpmJvmVariant.() -> Unit): GradleKpmJvmVariant = jvm.apply(configure)
 
-fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<KpmJvmVariant>.() -> Unit) {
-    val getOrCreateVariant: KpmGradleModule.() -> KpmJvmVariant = { jvm }
+fun KotlinPm20ProjectExtension.jvm(configure: KotlinFragmentSlice<GradleKpmJvmVariant>.() -> Unit) {
+    val getOrCreateVariant: GradleKpmModule.() -> GradleKpmJvmVariant = { jvm }
     mainAndTest { getOrCreateVariant(this) }
     val slice = KotlinFragmentSlice(this, getOrCreateVariant)
     configure(slice)
 }
 
-open class KotlinFragmentSlice<T : KpmGradleFragment>(
+open class KotlinFragmentSlice<T : GradleKpmFragment>(
     val pm20ProjectExtension: KotlinPm20ProjectExtension,
-    val getOrCreateFragment: (KpmGradleModule) -> T
+    val getOrCreateFragment: (GradleKpmModule) -> T
 ) {
     fun inMain(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KpmGradleModule.MAIN_MODULE_NAME).apply {
+        pm20ProjectExtension.modules.getByName(GradleKpmModule.MAIN_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
 
     fun inTest(configure: T.() -> Unit) {
-        pm20ProjectExtension.modules.getByName(KpmGradleModule.TEST_MODULE_NAME).apply {
+        pm20ProjectExtension.modules.getByName(GradleKpmModule.TEST_MODULE_NAME).apply {
             getOrCreateFragment(this).configure()
         }
     }
@@ -161,11 +161,11 @@ open class KotlinFragmentSlice<T : KpmGradleFragment>(
         pm20ProjectExtension.modules.getByName(moduleName).apply { getOrCreateFragment(this).configure() }
     }
 
-    fun inModule(module: NamedDomainObjectProvider<KpmGradleModule>, configure: T.() -> Unit) {
+    fun inModule(module: NamedDomainObjectProvider<GradleKpmModule>, configure: T.() -> Unit) {
         module.get().apply { inModule(this, configure) }
     }
 
-    fun inModule(module: KpmGradleModule, configure: T.() -> Unit) {
+    fun inModule(module: GradleKpmModule, configure: T.() -> Unit) {
         getOrCreateFragment(module).configure()
     }
 }

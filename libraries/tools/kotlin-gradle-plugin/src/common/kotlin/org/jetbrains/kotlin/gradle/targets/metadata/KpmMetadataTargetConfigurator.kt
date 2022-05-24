@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataMappedCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAwareTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 
-internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigurator: KotlinMetadataTargetConfigurator) :
-    KpmAwareTargetConfigurator<KotlinMetadataTarget>(metadataTargetConfigurator) {
+internal class GradleKpmMetadataTargetConfigurator(private val metadataTargetConfigurator: KotlinMetadataTargetConfigurator) :
+    GradleKpmAwareTargetConfigurator<KotlinMetadataTarget>(metadataTargetConfigurator) {
 
     override fun configureTarget(target: KotlinMetadataTarget) {
         super.configureTarget(target)
@@ -39,7 +39,7 @@ internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigura
 
     private fun configureTargetWithKpm(target: KotlinMetadataTarget) {
         target.project.whenEvaluated {
-            val mainModule = target.project.kpmModules.getByName(KpmGradleModule.MAIN_MODULE_NAME)
+            val mainModule = target.project.kpmModules.getByName(GradleKpmModule.MAIN_MODULE_NAME)
             val metadataCompilations = target.project.metadataCompilationRegistryByModuleId.getValue(mainModule.moduleIdentifier)
             mainModule.fragments.forEach { fragment ->
                 val compilationData = metadataCompilations.getForFragmentOrNull(fragment) ?: return@forEach
@@ -53,7 +53,7 @@ internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigura
                 val compilation = when {
                     isNative -> {
                         val konanTargets =
-                            mainModule.variantsContainingFragment(fragment).map { (it as KpmNativeVariantInternal).konanTarget }
+                            mainModule.variantsContainingFragment(fragment).map { (it as GradleKpmNativeVariantInternal).konanTarget }
                         KotlinSharedNativeCompilation(konanTargets, compilationDetails as CompilationDetails<KotlinCommonOptions>)
                     }
                     else -> KotlinCommonCompilation(compilationDetails as CompilationDetails<KotlinMultiplatformCommonOptions>)

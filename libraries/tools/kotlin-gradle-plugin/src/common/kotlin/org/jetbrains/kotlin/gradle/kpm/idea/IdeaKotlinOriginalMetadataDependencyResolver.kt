@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.KeepOriginalDependency
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentGranularMetadataResolverFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 
 internal class IdeaKotlinOriginalMetadataDependencyResolver(
-    private val fragmentGranularMetadataResolverFactory: FragmentGranularMetadataResolverFactory
+    private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
 ) : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
         val dependencyIdentifiers = fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<KeepOriginalDependency>()
             .mapNotNull { resolution -> resolution.dependency.id as? ModuleComponentIdentifier }

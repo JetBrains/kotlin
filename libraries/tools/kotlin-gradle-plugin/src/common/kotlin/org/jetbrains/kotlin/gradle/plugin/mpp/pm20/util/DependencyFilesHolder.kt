@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleVariantWithRuntime
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariantWithRuntime
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
-interface DependencyFilesHolder {
+interface GradleKpmDependencyFilesHolder {
     val dependencyConfigurationName: String
     var dependencyFiles: FileCollection
 
     companion object
 }
 
-internal fun DependencyFilesHolder.Companion.ofVariantCompileDependencies(variant: KpmGradleVariant): DependencyFilesHolder =
-    object : DependencyFilesHolder {
+internal fun GradleKpmDependencyFilesHolder.Companion.ofVariantCompileDependencies(variant: GradleKpmVariant): GradleKpmDependencyFilesHolder =
+    object : GradleKpmDependencyFilesHolder {
         override val dependencyConfigurationName: String
             get() = variant.compileDependenciesConfiguration.name
         override var dependencyFiles: FileCollection
@@ -29,8 +29,8 @@ internal fun DependencyFilesHolder.Companion.ofVariantCompileDependencies(varian
             set(value) { variant.compileDependencyFiles = value }
     }
 
-internal fun DependencyFilesHolder.Companion.ofVariantRuntimeDependencies(variant: KpmGradleVariantWithRuntime): DependencyFilesHolder =
-    object : DependencyFilesHolder {
+internal fun GradleKpmDependencyFilesHolder.Companion.ofVariantRuntimeDependencies(variant: GradleKpmVariantWithRuntime): GradleKpmDependencyFilesHolder =
+    object : GradleKpmDependencyFilesHolder {
         override val dependencyConfigurationName: String
             get() = variant.runtimeDependenciesConfiguration.name
         override var dependencyFiles: FileCollection
@@ -38,9 +38,9 @@ internal fun DependencyFilesHolder.Companion.ofVariantRuntimeDependencies(varian
             set(value) { variant.runtimeDependencyFiles = value }
     }
 
-internal fun DependencyFilesHolder.Companion.ofMetadataCompilationDependencies(
+internal fun GradleKpmDependencyFilesHolder.Companion.ofMetadataCompilationDependencies(
     compilationData: AbstractKotlinFragmentMetadataCompilationData<*>
-) = object : DependencyFilesHolder {
+) = object : GradleKpmDependencyFilesHolder {
     override val dependencyConfigurationName: String
         get() = compilationData.fragment.containingModule.resolvableMetadataConfigurationName
 
@@ -52,9 +52,9 @@ internal fun DependencyFilesHolder.Companion.ofMetadataCompilationDependencies(
 class SimpleDependencyFilesHolder(
     override val dependencyConfigurationName: String,
     override var dependencyFiles: FileCollection
-) : DependencyFilesHolder
+) : GradleKpmDependencyFilesHolder
 
-internal fun Project.newDependencyFilesHolder(dependencyConfigurationName: String): DependencyFilesHolder =
+internal fun Project.newDependencyFilesHolder(dependencyConfigurationName: String): GradleKpmDependencyFilesHolder =
     SimpleDependencyFilesHolder(
         dependencyConfigurationName,
         project.filesProvider { project.configurations.getByName(dependencyConfigurationName) }

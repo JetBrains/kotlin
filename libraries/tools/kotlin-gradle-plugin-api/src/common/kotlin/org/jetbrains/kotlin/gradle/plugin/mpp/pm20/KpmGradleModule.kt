@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.project.model.KpmModule
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmCompilerPlugin
 
-interface KpmGradleModule : KpmModule, Named, HasKotlinDependencies {
+interface GradleKpmModule : KpmModule, Named, HasKotlinDependencies {
     val project: Project
     val moduleClassifier: String?
 
-    override val fragments: ExtensiblePolymorphicDomainObjectContainer<KpmGradleFragment>
+    override val fragments: ExtensiblePolymorphicDomainObjectContainer<GradleKpmFragment>
 
     // TODO DSL & build script model: find a way to create a flexible typed view on fragments?
-    override val variants: NamedDomainObjectSet<KpmGradleVariant>
+    override val variants: NamedDomainObjectSet<GradleKpmVariant>
 
     override val plugins: Set<KpmCompilerPlugin>
 
@@ -47,10 +47,10 @@ interface KpmGradleModule : KpmModule, Named, HasKotlinDependencies {
 
     // DSL
 
-    val common: KpmGradleFragment
-        get() = fragments.getByName(KpmGradleFragment.COMMON_FRAGMENT_NAME)
+    val common: GradleKpmFragment
+        get() = fragments.getByName(GradleKpmFragment.COMMON_FRAGMENT_NAME)
 
-    fun common(configure: KpmGradleFragment.() -> Unit) =
+    fun common(configure: GradleKpmFragment.() -> Unit) =
         common.configure()
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) =

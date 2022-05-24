@@ -27,11 +27,11 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
 
         producer.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val linuxX64 = fragments.create("linuxX64", KpmLinuxX64Variant::class.java)
-                val iosX64 = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val iosArm64 = fragments.create("iosArm64", KpmIosArm64Variant::class.java)
-                val macos64 = fragments.create("macosX64", KpmMacosX64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val linuxX64 = fragments.create("linuxX64", GradleKpmLinuxX64Variant::class.java)
+                val iosX64 = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val iosArm64 = fragments.create("iosArm64", GradleKpmIosArm64Variant::class.java)
+                val macos64 = fragments.create("macosX64", GradleKpmMacosX64Variant::class.java)
 
                 val iosCommon = fragments.create("iosMain") {
                     it.refines(common)
@@ -55,10 +55,10 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
 
         val consumerKotlin = consumer.applyKpmPlugin {
             mainAndTest {
-                fragments.create("jvm", KpmJvmVariant::class.java)
-                val linuxX64 = fragments.create("linuxX64", KpmLinuxX64Variant::class.java)
-                val iosX64 = fragments.create("iosX64", KpmIosX64Variant::class.java)
-                val macosX64 = fragments.create("macosX64", KpmMacosX64Variant::class.java)
+                fragments.create("jvm", GradleKpmJvmVariant::class.java)
+                val linuxX64 = fragments.create("linuxX64", GradleKpmLinuxX64Variant::class.java)
+                val iosX64 = fragments.create("iosX64", GradleKpmIosX64Variant::class.java)
+                val macosX64 = fragments.create("macosX64", GradleKpmMacosX64Variant::class.java)
 
                 val appleCommon = fragments.create("appleCommon") {
                     it.refines(common)
@@ -80,10 +80,10 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
 
         consumerKotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
             fun ifTestModule(vararg any: Any?) =
-                listOf(*any).takeIf { module.name == KpmGradleModule.TEST_MODULE_NAME }
+                listOf(*any).takeIf { module.name == GradleKpmModule.TEST_MODULE_NAME }
 
             fun ifMainModule(vararg any: Any?) =
-                listOf(*any).takeIf { module.name == KpmGradleModule.MAIN_MODULE_NAME }
+                listOf(*any).takeIf { module.name == GradleKpmModule.MAIN_MODULE_NAME }
 
             module.assertContainsFragment("common").assertFragmentDependencies(
                 "regular::producer/main/common",

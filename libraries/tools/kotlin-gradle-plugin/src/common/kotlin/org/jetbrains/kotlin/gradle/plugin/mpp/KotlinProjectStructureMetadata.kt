@@ -14,7 +14,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -190,7 +190,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
     )
 }
 
-internal fun buildProjectStructureMetadata(module: KpmGradleModule): KotlinProjectStructureMetadata {
+internal fun buildProjectStructureMetadata(module: GradleKpmModule): KotlinProjectStructureMetadata {
     val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
 
     fun <T> expandVariantKeys(map: Map<String, T>) =

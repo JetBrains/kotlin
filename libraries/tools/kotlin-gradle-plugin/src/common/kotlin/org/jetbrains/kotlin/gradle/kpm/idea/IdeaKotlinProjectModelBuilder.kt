@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.FragmentConstraint
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 import org.jetbrains.kotlin.project.model.KpmVariant
@@ -94,7 +94,7 @@ interface IdeaKotlinProjectModelBuilder {
      * Used for scoping [IdeaKotlinDependencyResolver], [IdeaKotlinDependencyTransformer] and [IdeaKotlinDependencyEffect]
      */
     fun interface FragmentConstraint {
-        operator fun invoke(fragment: KpmGradleFragment): Boolean
+        operator fun invoke(fragment: GradleKpmFragment): Boolean
 
         companion object {
             val unconstrained = FragmentConstraint { true }

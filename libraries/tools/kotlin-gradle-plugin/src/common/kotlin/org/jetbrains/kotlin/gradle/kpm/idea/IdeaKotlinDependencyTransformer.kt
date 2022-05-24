@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 /**
  * An [IdeaKotlinDependencyTransformer] will be invoked after all [IdeaKotlinDependencyResolver] finished.
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
  */
 fun interface IdeaKotlinDependencyTransformer {
     fun transform(
-        fragment: KpmGradleFragment, dependencies: Set<IdeaKotlinDependency>
+        fragment: GradleKpmFragment, dependencies: Set<IdeaKotlinDependency>
     ): Set<IdeaKotlinDependency>
 }
 
@@ -54,7 +54,7 @@ private class CompositeIdeaKotlinDependencyTransformer(
     val transformers: List<IdeaKotlinDependencyTransformer>
 ) : IdeaKotlinDependencyTransformer {
     override fun transform(
-        fragment: KpmGradleFragment, dependencies: Set<IdeaKotlinDependency>
+        fragment: GradleKpmFragment, dependencies: Set<IdeaKotlinDependency>
     ): Set<IdeaKotlinDependency> {
         return transformers.fold(dependencies) { currentDependencies, transformer -> transformer.transform(fragment, currentDependencies) }
     }

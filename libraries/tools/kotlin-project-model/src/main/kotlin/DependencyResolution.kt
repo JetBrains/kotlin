@@ -11,4 +11,3 @@ package org.jetbrains.kotlin.project.model
 interface KpmModuleDependencyResolver {
     fun resolveDependency(requestingModule: KpmModule, moduleDependency: KpmModuleDependency): KpmModule?
 }
-

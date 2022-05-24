@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 }
 
-plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
+plugins.apply(KpmGradlePluginWithTransientPluginOptions::class.java)
 
 configure<KotlinPm20ProjectExtension> {
     main {
@@ -38,7 +38,7 @@ class KpmPluginWithTransientPluginOptions(
     override fun forPlatformCompilation(variant: KpmVariant) = pluginData()
 }
 
-class GradleKpmPluginWithTransientPluginOptions : GradleKpmCompilerPlugin {
+class KpmGradlePluginWithTransientPluginOptions : GradleKpmCompilerPlugin {
     private lateinit var project: Project
 
     override fun apply(target: Project) {

@@ -9,11 +9,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.metadata.KpmMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.GradleKpmMetadataTargetConfigurator
 
 class KotlinMetadataTargetPreset(
     project: Project
@@ -43,7 +42,7 @@ class KotlinMetadataTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinMetadataTarget> {
         val metadataConfigurator = KotlinMetadataTargetConfigurator()
         return if (project.hasKpmModel)
-            KpmMetadataTargetConfigurator(metadataConfigurator)
+            GradleKpmMetadataTargetConfigurator(metadataConfigurator)
         else metadataConfigurator
     }
 

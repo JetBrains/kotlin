@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 internal object IdeaKotlinNativeStdlibDependencyResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: KpmGradleFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
         return setOf(
             IdeaKotlinResolvedBinaryDependencyImpl(
                 binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,

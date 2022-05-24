@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCommonFragmentFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCommonFragmentFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,13 +15,13 @@ import kotlin.test.assertTrue
 class KotlinCommonFragmentFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test fragmentName`() {
-        val fragment = KotlinCommonFragmentFactory(kotlin.main).create("common")
+        val fragment = GradleKpmCommonFragmentFactory(kotlin.main).create("common")
         assertEquals("common", fragment.fragmentName)
     }
 
     @Test
     fun `test has source roots`() {
-        val fragment = KotlinCommonFragmentFactory(kotlin.main).create("common")
+        val fragment = GradleKpmCommonFragmentFactory(kotlin.main).create("common")
         assertTrue(fragment.kotlinSourceRoots.srcDirs.isNotEmpty())
     }
 }

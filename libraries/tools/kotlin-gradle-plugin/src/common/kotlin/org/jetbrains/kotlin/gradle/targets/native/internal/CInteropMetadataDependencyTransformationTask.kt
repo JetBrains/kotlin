@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
@@ -109,7 +109,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         @Input val visibleSourceSetsProvidingCInterops: Set<String>
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
-            dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toModuleIdentifiers(),
+            dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),
             projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
             visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
         )

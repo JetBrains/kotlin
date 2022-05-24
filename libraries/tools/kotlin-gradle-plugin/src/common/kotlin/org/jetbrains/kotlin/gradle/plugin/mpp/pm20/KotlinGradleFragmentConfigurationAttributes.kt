@@ -11,18 +11,17 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 
 /* Internal abbreviation */
-internal typealias FragmentAttributes<T> = KotlinGradleFragmentConfigurationAttributes<T>
 
-interface KotlinGradleFragmentConfigurationAttributes<in T : KpmGradleFragment> {
+interface GradleKpmConfigurationAttributesSetup<in T : GradleKpmFragment> {
 
-    fun setAttributes(attributes: AttributeContainer, fragment: T)
+    fun setupAttributes(attributes: AttributeContainer, fragment: T)
 
-    object None : FragmentAttributes<KpmGradleFragment> {
-        override fun setAttributes(attributes: AttributeContainer, fragment: KpmGradleFragment) = Unit
+    object None : GradleKpmConfigurationAttributesSetup<GradleKpmFragment> {
+        override fun setupAttributes(attributes: AttributeContainer, fragment: GradleKpmFragment) = Unit
     }
 }
 
-class KotlinGradleFragmentConfigurationAttributesContext<T : KpmGradleFragment> internal constructor(
+class GradleKpmConfigurationAttributesSetupContext<T : GradleKpmFragment> internal constructor(
     internal val attributes: AttributeContainer,
     val fragment: T,
 ) : AttributeContainer by attributes {
@@ -32,51 +31,51 @@ class KotlinGradleFragmentConfigurationAttributesContext<T : KpmGradleFragment> 
 
     inline fun <reified T : Named> namedAttribute(key: Attribute<T>, name: String) = apply { attribute(key, named(name)) }
 
-    override fun <K : Any> attribute(key: Attribute<K>, value: K): KotlinGradleFragmentConfigurationAttributesContext<T> = apply {
+    override fun <K : Any> attribute(key: Attribute<K>, value: K): GradleKpmConfigurationAttributesSetupContext<T> = apply {
         attributes.attribute(key, value)
     }
 }
 
 @Suppress("FunctionName")
-fun <T : KpmGradleFragment> FragmentAttributes(
-    setAttributes: KotlinGradleFragmentConfigurationAttributesContext<T>.() -> Unit
-): KotlinGradleFragmentConfigurationAttributes<T> {
-    return object : KotlinGradleFragmentConfigurationAttributes<T> {
-        override fun setAttributes(attributes: AttributeContainer, fragment: T) {
-            val context = KotlinGradleFragmentConfigurationAttributesContext(attributes, fragment)
+fun <T : GradleKpmFragment> GradleKpmConfigurationAttributesSetup(
+    setAttributes: GradleKpmConfigurationAttributesSetupContext<T>.() -> Unit
+): GradleKpmConfigurationAttributesSetup<T> {
+    return object : GradleKpmConfigurationAttributesSetup<T> {
+        override fun setupAttributes(attributes: AttributeContainer, fragment: T) {
+            val context = GradleKpmConfigurationAttributesSetupContext(attributes, fragment)
             context.setAttributes()
         }
     }
 }
 
-fun <T : KpmGradleFragment> AttributeContainer.apply(
-    attributes: KotlinGradleFragmentConfigurationAttributes<T>, fragment: T
+fun <T : GradleKpmFragment> AttributeContainer.apply(
+    attributes: GradleKpmConfigurationAttributesSetup<T>, fragment: T
 ) {
-    attributes.setAttributes(this, fragment)
+    attributes.setupAttributes(this, fragment)
 }
 
-operator fun <T : KpmGradleFragment> FragmentAttributes<T>.plus(other: FragmentAttributes<T>): FragmentAttributes<T> {
-    if (this === KotlinGradleFragmentConfigurationAttributes.None) return other
-    if (other === KotlinGradleFragmentConfigurationAttributes.None) return this
+operator fun <T : GradleKpmFragment> GradleKpmConfigurationAttributesSetup<T>.plus(other: GradleKpmConfigurationAttributesSetup<T>): GradleKpmConfigurationAttributesSetup<T> {
+    if (this === GradleKpmConfigurationAttributesSetup.None) return other
+    if (other === GradleKpmConfigurationAttributesSetup.None) return this
 
-    if (this is CompositeFragmentAttributes && other is CompositeFragmentAttributes) {
-        return CompositeFragmentAttributes(this.children + other.children)
+    if (this is GradleKpmCompositeConfigurationAttributesSetup && other is GradleKpmCompositeConfigurationAttributesSetup) {
+        return GradleKpmCompositeConfigurationAttributesSetup(this.children + other.children)
     }
 
-    if (this is CompositeFragmentAttributes) {
-        return CompositeFragmentAttributes(this.children + other)
+    if (this is GradleKpmCompositeConfigurationAttributesSetup) {
+        return GradleKpmCompositeConfigurationAttributesSetup(this.children + other)
     }
 
-    if (other is CompositeFragmentAttributes) {
-        return CompositeFragmentAttributes(listOf(this) + other.children)
+    if (other is GradleKpmCompositeConfigurationAttributesSetup) {
+        return GradleKpmCompositeConfigurationAttributesSetup(listOf(this) + other.children)
     }
 
-    return CompositeFragmentAttributes(listOf(this, other))
+    return GradleKpmCompositeConfigurationAttributesSetup(listOf(this, other))
 }
 
-internal class CompositeFragmentAttributes<in T : KpmGradleFragment>(val children: List<FragmentAttributes<T>>) :
-    FragmentAttributes<T> {
-    override fun setAttributes(attributes: AttributeContainer, fragment: T) {
-        children.forEach { child -> child.setAttributes(attributes, fragment) }
+internal class GradleKpmCompositeConfigurationAttributesSetup<in T : GradleKpmFragment>(val children: List<GradleKpmConfigurationAttributesSetup<T>>) :
+    GradleKpmConfigurationAttributesSetup<T> {
+    override fun setupAttributes(attributes: AttributeContainer, fragment: T) {
+        children.forEach { child -> child.setupAttributes(attributes, fragment) }
     }
 }

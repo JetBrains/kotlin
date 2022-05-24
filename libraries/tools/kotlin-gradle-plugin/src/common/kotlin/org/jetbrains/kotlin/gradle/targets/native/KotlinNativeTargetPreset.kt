@@ -124,7 +124,7 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTarget> {
         val configurator = KotlinNativeTargetConfigurator<KotlinNativeTarget>()
         return if (project.hasKpmModel)
-            KpmNativeTargetConfigurator(configurator)
+            GradleKpmNativeTargetConfigurator(configurator)
         else configurator
     }
 
@@ -139,7 +139,7 @@ open class KotlinNativeTargetWithHostTestsPreset(name: String, project: Project,
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithHostTests> {
         val configurator = KotlinNativeTargetWithHostTestsConfigurator()
         return if (project.hasKpmModel)
-            KpmNativeTargetConfigurator(configurator)
+            GradleKpmNativeTargetConfigurator(configurator)
         else configurator
     }
 
@@ -153,7 +153,7 @@ open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, project: Pro
     override fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinNativeTargetWithSimulatorTests> {
         val configurator = KotlinNativeTargetWithSimulatorTestsConfigurator()
         return if (project.hasKpmModel)
-            KpmNativeTargetConfigurator(configurator)
+            GradleKpmNativeTargetConfigurator(configurator)
         else configurator
     }
 

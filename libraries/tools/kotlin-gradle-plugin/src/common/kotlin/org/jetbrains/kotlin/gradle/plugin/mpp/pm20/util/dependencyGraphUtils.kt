@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmGradleDependencyGraph
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleDependencyGraphNode
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmDependencyGraph
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmDependencyGraphNode
 import org.jetbrains.kotlin.project.model.KpmModule
 import org.jetbrains.kotlin.tooling.core.withClosure
 
-internal val KpmGradleDependencyGraph.allDependencyNodes: Iterable<GradleDependencyGraphNode>
+internal val GradleKpmDependencyGraph.allDependencyNodes: Iterable<GradleKpmDependencyGraphNode>
     get() = root.withClosure { it.dependenciesByFragment.values.flatten() }
 
-internal val KpmGradleDependencyGraph.allDependencyModules: Iterable<KpmModule>
+internal val GradleKpmDependencyGraph.allDependencyModules: Iterable<KpmModule>
     get() = allDependencyNodes.map { it.module }

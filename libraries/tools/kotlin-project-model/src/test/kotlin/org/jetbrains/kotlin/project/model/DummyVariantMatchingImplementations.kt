@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.project.model
 
-class MatchVariantsByExactAttributes : ModuleVariantResolver {
-    override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): VariantResolution {
+class MatchVariantsByExactAttributes : KpmModuleVariantResolver {
+    override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): KpmVariantResolution {
         val candidates = dependencyModule.variants
         return candidates.filter { candidate ->
             candidate.variantAttributes.all { (attributeKey, candidateValue) ->
                 attributeKey !in requestingVariant.variantAttributes.keys ||
                         candidateValue == requestingVariant.variantAttributes.getValue(attributeKey)
             }
-        }.let { VariantResolution.fromMatchingVariants(requestingVariant, dependencyModule, it) }
+        }.let { KpmVariantResolution.fromMatchingVariants(requestingVariant, dependencyModule, it) }
     }
 }

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.artifacts.Configuration
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.FragmentConfigurator
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.FragmentInstantiator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentFactory.FragmentConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentFactory.FragmentInstantiator
 
 /**
- * Factory used by [KpmGradleModule] to polymorphic-ally create fragments/variants.
+ * Factory used by [GradleKpmModule] to polymorphic-ally create fragments/variants.
  * Fragments are created in two stages with this factory:
  *
  * [FragmentInstantiator]:
@@ -26,22 +26,22 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentFactory.F
  *   - Setting up additional Gradle tasks
  *   - Setting up publication
  */
-class KotlinGradleFragmentFactory<T : KpmGradleFragment>(
+class GradleKpmFragmentFactory<T : GradleKpmFragment>(
     private val fragmentInstantiator: FragmentInstantiator<T>,
     private val fragmentConfigurator: FragmentConfigurator<T>
 ) : NamedDomainObjectFactory<T> {
 
     /**
-     * @see KotlinGradleFragmentFactory
+     * @see GradleKpmFragmentFactory
      */
-    interface FragmentInstantiator<out T : KpmGradleFragment> {
+    interface FragmentInstantiator<out T : GradleKpmFragment> {
         fun create(name: String): T
     }
 
     /**
-     * @see KotlinGradleFragmentFactory
+     * @see GradleKpmFragmentFactory
      */
-    interface FragmentConfigurator<in T : KpmGradleFragment> {
+    interface FragmentConfigurator<in T : GradleKpmFragment> {
         fun configure(fragment: T)
     }
 
@@ -50,10 +50,10 @@ class KotlinGradleFragmentFactory<T : KpmGradleFragment>(
     }
 }
 
-internal fun <T : KpmGradleFragment> Configuration.configure(
-    definition: KotlinGradleFragmentConfigurationDefinition<T>, fragment: T
+internal fun <T : GradleKpmFragment> Configuration.configure(
+    definition: GradleKpmConfigurationSetup<T>, fragment: T
 ) {
-    definition.attributes.setAttributes(attributes, fragment)
-    definition.artifacts.addArtifacts(outgoing, fragment)
+    definition.attributes.setupAttributes(attributes, fragment)
+    definition.artifacts.setupArtifacts(outgoing, fragment)
     definition.capabilities.setCapabilities(outgoing, fragment)
 }
