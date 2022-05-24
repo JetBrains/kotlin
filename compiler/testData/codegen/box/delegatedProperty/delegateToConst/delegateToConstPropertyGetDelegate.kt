@@ -10,4 +10,7 @@ const val a = "TEXT"
 
 val s: String by a
 
-fun box() = if (::s.getDelegate() == "TEXT") "OK" else "FAILURE"
+fun box(): String {
+    assertEquals("TEXT", ::s.getDelegate())
+    return "OK"
+}

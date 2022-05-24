@@ -3,6 +3,8 @@
 
 import kotlin.reflect.KProperty
 
+import kotlin.test.assertEquals
+
 object Store {
     private val map = mutableMapOf<Pair<Any?, KProperty<*>>, String?>()
 
@@ -17,4 +19,8 @@ object O {
     var s: String? by Store
 }
 
-fun box() = if (O::s.getDelegate() == Store) "OK" else "FAILURE"
+fun box(): String  {
+    assertEquals(Store, O::s.getDelegate())
+    return "OK"
+}
+

@@ -9,4 +9,8 @@ operator fun Any?.getValue(x: Any?, y: Any?): String {
 
 val s: String by 1
 
-fun box() = if (::s.getDelegate() == 1) "OK" else "FAILURE"
+fun box(): String {
+    assertEquals(1, ::s.getDelegate())
+    return "OK"
+}
+
