@@ -4,6 +4,8 @@
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+import kotlin.test.assertEquals
+
 object O {
     val impl = 123
 }
@@ -13,6 +15,6 @@ operator fun Any?.getValue(thisRef: Any?, property: KProperty<*>) = "OK"
 val s: String by O.impl
 
 fun box(): String {
-    assertEquals(123, O::s.getDelegate())
+    assertEquals(123, ::s.getDelegate())
     return "OK"
 }
