@@ -1855,6 +1855,26 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             public void testUntilOperator() throws Exception {
                 runTest("compiler/testData/psi/operators/untilOperator.kt");
             }
+
+            @TestMetadata("untilOperatorDifferentContexts.kt")
+            public void testUntilOperatorDifferentContexts() throws Exception {
+                runTest("compiler/testData/psi/operators/untilOperatorDifferentContexts.kt");
+            }
+
+            @TestMetadata("untilOperatorGenericsClash.kt")
+            public void testUntilOperatorGenericsClash() throws Exception {
+                runTest("compiler/testData/psi/operators/untilOperatorGenericsClash.kt");
+            }
+
+            @TestMetadata("untilOperatorGreater.kt")
+            public void testUntilOperatorGreater() throws Exception {
+                runTest("compiler/testData/psi/operators/untilOperatorGreater.kt");
+            }
+
+            @TestMetadata("untilOperatorWithWhitespace.kt")
+            public void testUntilOperatorWithWhitespace() throws Exception {
+                runTest("compiler/testData/psi/operators/untilOperatorWithWhitespace.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/psi/packages")
