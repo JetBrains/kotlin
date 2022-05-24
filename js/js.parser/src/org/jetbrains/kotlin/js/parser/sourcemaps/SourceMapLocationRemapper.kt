@@ -18,6 +18,11 @@ package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import org.jetbrains.kotlin.js.backend.ast.*
 
+/**
+ * JS source map remapper takes parsed source maps
+ * together with JS AST with correct JS positioning information
+ * and converts the latter into Kotlin positioning information
+ */
 class SourceMapLocationRemapper(private val sourceMap: SourceMap, private val sourceMapPathMapper: (String) -> String = { it }) {
     fun remap(node: JsNode) {
         val listCollector = JsNodeFlatListCollector()
