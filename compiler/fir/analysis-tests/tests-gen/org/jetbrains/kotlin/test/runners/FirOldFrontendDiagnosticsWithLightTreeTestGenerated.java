@@ -34415,6 +34415,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("throwsByStarWinsBuiltin.kt")
+            public void testThrowsByStarWinsBuiltin() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/throwsByStarWinsBuiltin.kt");
+            }
+
+            @Test
             @TestMetadata("TransientOnDelegate.kt")
             public void testTransientOnDelegate() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/TransientOnDelegate.kt");

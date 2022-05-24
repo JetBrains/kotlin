@@ -112,7 +112,7 @@ package abc7
 import kotlin.*
 import kotlin.jvm.*
 
-@Throws(Exception::class)
+@<!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>(Exception::class)
 fun foo1() {}
 
 @kotlin.Throws(Exception::class)
@@ -121,7 +121,7 @@ fun foo2() {}
 @kotlin.jvm.Throws(Exception::class)
 fun foo3() {}
 
-fun foo5(x: Throws) {}
+fun foo5(x: <!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>) {}
 fun foo6(x: kotlin.Throws) {}
 fun foo7(x: kotlin.jvm.Throws) {}
 

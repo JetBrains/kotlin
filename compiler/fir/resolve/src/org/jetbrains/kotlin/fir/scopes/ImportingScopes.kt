@@ -49,6 +49,9 @@ private fun doCreateImportingScopes(
         scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_STAR_IMPORT) {
             FirDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH, excludedImportNames)
         },
+        scopeSession.getOrBuild(DefaultImportPriority.KOTLIN_THROWS, DEFAULT_SIMPLE_IMPORT) {
+            FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.KOTLIN_THROWS)
+        },
         FirExplicitStarImportingScope(file.imports, session, scopeSession, excludedImportNames),
 
         scopeSession.getOrBuild(DefaultImportPriority.LOW, DEFAULT_SIMPLE_IMPORT) {
