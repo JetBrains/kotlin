@@ -70,14 +70,14 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
         )
     }
 
-    override fun buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
+    override fun buildIdeaKotlinProjectModel(): IdeaKpmProject {
         return Context().IdeaKotlinProjectModel(extension)
     }
 
     override fun canBuild(modelName: String): Boolean =
-        modelName == IdeaKotlinProjectModel::class.java.name
+        modelName == IdeaKpmProject::class.java.name
 
-    override fun buildAll(modelName: String, project: Project): IdeaKotlinProjectModel {
+    override fun buildAll(modelName: String, project: Project): IdeaKpmProject {
         check(project === extension.project) { "Expected project ${extension.project.path}, found ${project.path}" }
         return buildIdeaKotlinProjectModel()
     }

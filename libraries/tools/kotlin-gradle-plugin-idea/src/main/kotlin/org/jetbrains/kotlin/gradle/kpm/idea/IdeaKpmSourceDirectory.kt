@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-sealed interface IdeaKotlinCompilationOutput : Serializable {
-    val classesDirs: Set<File>
-    val resourcesDir: File?
+sealed interface IdeaKpmSourceDirectory : Serializable {
+    val file: File
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinCompilationOutputImpl(
-    override val classesDirs: Set<File>,
-    override val resourcesDir: File?
-) : IdeaKotlinCompilationOutput {
+data class IdeaKpmSourceDirectoryImpl(
+    override val file: File,
+) : IdeaKpmSourceDirectory {
 
     @InternalKotlinGradlePluginApi
     companion object {
-        const val serialVersionUID = 0L
+        private const val serialVersionUID = 0L
     }
 }

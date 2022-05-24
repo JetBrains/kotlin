@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-internal fun IdeaKotlinLanguageSettings(languageSettings: LanguageSettings): IdeaKotlinLanguageSettings {
-    return IdeaKotlinLanguageSettingsImpl(
+internal fun IdeaKotlinLanguageSettings(languageSettings: LanguageSettings): IdeaKpmLanguageSettings {
+    return IdeaKpmLanguageSettingsImpl(
         languageVersion = languageSettings.languageVersion,
         apiVersion = languageSettings.apiVersion,
         isProgressiveMode = languageSettings.progressiveMode,

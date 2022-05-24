@@ -7,17 +7,17 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.DOCUMENTATION_BINARY_TYPE
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.SOURCES_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.DOCUMENTATION_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.SOURCES_BINARY_TYPE
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 import java.io.File
 import java.io.Serializable
 import java.util.*
 
-sealed interface IdeaKotlinDependency : Serializable {
-    val coordinates: IdeaKotlinDependencyCoordinates?
+sealed interface IdeaKpmDependency : Serializable {
+    val coordinates: IdeaKpmDependencyCoordinates?
     val extras: Extras
 
     companion object {
@@ -27,7 +27,7 @@ sealed interface IdeaKotlinDependency : Serializable {
     }
 }
 
-sealed interface IdeaKotlinFragmentDependency : IdeaKotlinDependency {
+sealed interface IdeaKpmFragmentDependency : IdeaKpmDependency {
     enum class Type : Serializable {
         Regular, Friend, Refines;
 
@@ -38,32 +38,32 @@ sealed interface IdeaKotlinFragmentDependency : IdeaKotlinDependency {
     }
 
     val type: Type
-    override val coordinates: IdeaKotlinFragmentCoordinates
+    override val coordinates: IdeaKpmFragmentCoordinates
 }
 
-sealed interface IdeaKotlinBinaryDependency : IdeaKotlinDependency {
-    override val coordinates: IdeaKotlinBinaryCoordinates?
+sealed interface IdeaKpmBinaryDependency : IdeaKpmDependency {
+    override val coordinates: IdeaKpmBinaryCoordinates?
 }
 
-sealed interface IdeaKotlinUnresolvedBinaryDependency : IdeaKotlinBinaryDependency {
+sealed interface IdeaKpmUnresolvedBinaryDependency : IdeaKpmBinaryDependency {
     val cause: String?
 }
 
-sealed interface IdeaKotlinResolvedBinaryDependency : IdeaKotlinBinaryDependency {
+sealed interface IdeaKpmResolvedBinaryDependency : IdeaKpmBinaryDependency {
     val binaryType: String
     val binaryFile: File
 }
 
-val IdeaKotlinResolvedBinaryDependency.isSourcesType get() = binaryType == SOURCES_BINARY_TYPE
-val IdeaKotlinResolvedBinaryDependency.isDocumentationType get() = binaryType == DOCUMENTATION_BINARY_TYPE
-val IdeaKotlinResolvedBinaryDependency.isClasspathType get() = binaryType == CLASSPATH_BINARY_TYPE
+val IdeaKpmResolvedBinaryDependency.isSourcesType get() = binaryType == SOURCES_BINARY_TYPE
+val IdeaKpmResolvedBinaryDependency.isDocumentationType get() = binaryType == DOCUMENTATION_BINARY_TYPE
+val IdeaKpmResolvedBinaryDependency.isClasspathType get() = binaryType == CLASSPATH_BINARY_TYPE
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinFragmentDependencyImpl(
-    override val type: IdeaKotlinFragmentDependency.Type,
-    override val coordinates: IdeaKotlinFragmentCoordinates,
+data class IdeaKpmFragmentDependencyImpl(
+    override val type: IdeaKpmFragmentDependency.Type,
+    override val coordinates: IdeaKpmFragmentCoordinates,
     override val extras: Extras = emptyExtras()
-) : IdeaKotlinFragmentDependency {
+) : IdeaKpmFragmentDependency {
 
     override fun toString(): String {
         @Suppress("DEPRECATION")
@@ -77,12 +77,12 @@ data class IdeaKotlinFragmentDependencyImpl(
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinResolvedBinaryDependencyImpl(
-    override val coordinates: IdeaKotlinBinaryCoordinates?,
+data class IdeaKpmResolvedBinaryDependencyImpl(
+    override val coordinates: IdeaKpmBinaryCoordinates?,
     override val binaryType: String,
     override val binaryFile: File,
     override val extras: Extras = emptyExtras()
-) : IdeaKotlinResolvedBinaryDependency {
+) : IdeaKpmResolvedBinaryDependency {
 
     override fun toString(): String {
         return "${binaryType.split(".").last()}://$coordinates/${binaryFile.name}"
@@ -95,11 +95,11 @@ data class IdeaKotlinResolvedBinaryDependencyImpl(
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinUnresolvedBinaryDependencyImpl(
+data class IdeaKpmUnresolvedBinaryDependencyImpl(
     override val cause: String?,
-    override val coordinates: IdeaKotlinBinaryCoordinates?,
+    override val coordinates: IdeaKpmBinaryCoordinates?,
     override val extras: Extras = emptyExtras()
-) : IdeaKotlinUnresolvedBinaryDependency {
+) : IdeaKpmUnresolvedBinaryDependency {
 
     @InternalKotlinGradlePluginApi
     companion object {

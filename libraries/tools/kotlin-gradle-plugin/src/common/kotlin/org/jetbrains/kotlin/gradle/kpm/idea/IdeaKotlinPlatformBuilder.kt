@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 @Suppress("unused")
 /* Receiver acts as scope, or key to that function */
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: GradleKpmVariant): IdeaKotlinPlatform {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: GradleKpmVariant): IdeaKpmPlatform {
     when (variant) {
-        is GradleKpmJvmVariant -> return IdeaKotlinPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-        is GradleKpmNativeVariantInternal -> return IdeaKotlinPlatform.native(variant.konanTarget.name)
+        is GradleKpmJvmVariant -> return IdeaKpmPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
+        is GradleKpmNativeVariantInternal -> return IdeaKpmPlatform.native(variant.konanTarget.name)
         is GradleKpmLegacyMappedVariant -> when (val compilation = variant.compilation) {
-            is KotlinJvmCompilation -> return IdeaKotlinPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-            is KotlinJvmAndroidCompilation -> return IdeaKotlinPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
-            is KotlinNativeCompilation -> return IdeaKotlinPlatform.native(compilation.konanTarget.name)
-            is KotlinJsIrCompilation -> return IdeaKotlinPlatform.js(isIr = true)
-            is KotlinJsCompilation -> return IdeaKotlinPlatform.js(isIr = false)
+            is KotlinJvmCompilation -> return IdeaKpmPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
+            is KotlinJvmAndroidCompilation -> return IdeaKpmPlatform.jvm(compilation.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
+            is KotlinNativeCompilation -> return IdeaKpmPlatform.native(compilation.konanTarget.name)
+            is KotlinJsIrCompilation -> return IdeaKpmPlatform.js(isIr = true)
+            is KotlinJsCompilation -> return IdeaKpmPlatform.js(isIr = false)
         }
     }
 
@@ -32,10 +32,10 @@ internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: G
     assert(false) { "Unable to build 'IdeaKotlinPlatform' from variant ${variant.path}" }
     return when (variant.platformType) {
         KotlinPlatformType.common -> throw IllegalArgumentException("Unexpected platformType 'common' for variant ${variant.name}")
-        KotlinPlatformType.jvm -> IdeaKotlinPlatform.jvm(JvmTarget.DEFAULT.name)
-        KotlinPlatformType.androidJvm -> IdeaKotlinPlatform.jvm(JvmTarget.DEFAULT.name)
-        KotlinPlatformType.js -> IdeaKotlinPlatform.js(false)
-        KotlinPlatformType.native -> IdeaKotlinPlatform.native(HostManager.host.name)
-        KotlinPlatformType.wasm -> IdeaKotlinPlatform.wasm()
+        KotlinPlatformType.jvm -> IdeaKpmPlatform.jvm(JvmTarget.DEFAULT.name)
+        KotlinPlatformType.androidJvm -> IdeaKpmPlatform.jvm(JvmTarget.DEFAULT.name)
+        KotlinPlatformType.js -> IdeaKpmPlatform.js(false)
+        KotlinPlatformType.native -> IdeaKpmPlatform.native(HostManager.host.name)
+        KotlinPlatformType.wasm -> IdeaKpmPlatform.wasm()
     }
 }

@@ -8,31 +8,32 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.Serializable
 
-sealed interface IdeaKotlinFragment : Serializable {
-    val coordinates: IdeaKotlinFragmentCoordinates
-    val platforms: Set<IdeaKotlinPlatform>
-    val languageSettings: IdeaKotlinLanguageSettings?
-    val dependencies: List<IdeaKotlinDependency>
-    val sourceDirectories: List<IdeaKotlinSourceDirectory>
-    val resourceDirectories: List<IdeaKotlinResourceDirectory>
+sealed interface IdeaKpmFragment : Serializable {
+    val coordinates: IdeaKpmFragmentCoordinates
+    val platforms: Set<IdeaKpmPlatform>
+    val languageSettings: IdeaKpmLanguageSettings?
+    val dependencies: List<IdeaKpmDependency>
+    val sourceDirectories: List<IdeaKpmSourceDirectory>
+    val resourceDirectories: List<IdeaKpmResourceDirectory>
     val extras: Extras
 }
 
-val IdeaKotlinFragment.name get() = coordinates.fragmentName
+val IdeaKpmFragment.name get() = coordinates.fragmentName
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinFragmentImpl(
-    override val coordinates: IdeaKotlinFragmentCoordinates,
-    override val platforms: Set<IdeaKotlinPlatform>,
-    override val languageSettings: IdeaKotlinLanguageSettings?,
-    override val dependencies: List<IdeaKotlinDependency>,
-    override val sourceDirectories: List<IdeaKotlinSourceDirectory>,
-    override val resourceDirectories: List<IdeaKotlinResourceDirectory>,
+data class IdeaKpmFragmentImpl(
+    override val coordinates: IdeaKpmFragmentCoordinates,
+    override val platforms: Set<IdeaKpmPlatform>,
+    override val languageSettings: IdeaKpmLanguageSettings?,
+    override val dependencies: List<IdeaKpmDependency>,
+    override val sourceDirectories: List<IdeaKpmSourceDirectory>,
+    override val resourceDirectories: List<IdeaKpmResourceDirectory>,
     override val extras: Extras
-) : IdeaKotlinFragment {
+) : IdeaKpmFragment {
 
     @InternalKotlinGradlePluginApi
     companion object {
         private const val serialVersionUID = 0L
     }
 }
+

@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import buildIdeaKotlinProjectModel
+import buildIdeaKpmProjectModel
 import createKpmProject
 import createProxyInstance
 import org.gradle.api.internal.project.ProjectInternal
@@ -57,12 +57,12 @@ class BackwardsCompatibilityDeserializationTest {
         }
         project.evaluate()
 
-        val model = project.buildIdeaKotlinProjectModel()
+        val model = project.buildIdeaKpmProjectModel()
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
 
         /* Use proxy instances to assert the deserialized model */
         run {
-            val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
+            val deserializedModelProxy = createProxyInstance<IdeaKpmProject>(deserializedModel)
 
             val deserializedMainModuleProxy = deserializedModelProxy.modules.firstOrNull { it.coordinates.moduleClassifier == null }
                 ?: fail("Missing main module")
@@ -94,9 +94,9 @@ class BackwardsCompatibilityDeserializationTest {
         kotlinExtension.main.common.extras[retainedModelKey] = RetainedModel(2411)
         kotlinExtension.main.common.extras[unretainedModelKey] = UnretainedModel(510)
 
-        val model = project.buildIdeaKotlinProjectModel()
+        val model = project.buildIdeaKpmProjectModel()
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
-        val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
+        val deserializedModelProxy = createProxyInstance<IdeaKpmProject>(deserializedModel)
 
         val deserializedMainModuleProxy = deserializedModelProxy.modules.find { it.coordinates.moduleClassifier == null }
             ?: fail("Missing main module")
@@ -106,7 +106,7 @@ class BackwardsCompatibilityDeserializationTest {
 
         run {
             val deserializedCommonFragment = unwrapProxyInstance(deserializedCommonFragmentProxy)
-            val extras = deserializedCommonFragment.serialize().deserialize<IdeaKotlinFragment>().extras
+            val extras = deserializedCommonFragment.serialize().deserialize<IdeaKpmFragment>().extras
             assertEquals(1, extras.keys.size)
             assertEquals(RetainedModel(2411), extras[retainedModelKey])
             assertNull(extras[unretainedModelKey])
@@ -128,7 +128,7 @@ private fun getClasspathForBackwardsCompatibilityTest(): List<File> {
         .flatMap { file -> if (file.isDirectory) file.listFiles().orEmpty().toList() else listOf(file) }
 }
 
-private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKotlinProjectModel): Any {
+private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKpmProject): Any {
     val backwardsCompatibilityClassLoader = getClassLoaderForBackwardsCompatibilityTest()
     val backwardsCompatibilityModel = model.serialize().deserialize(backwardsCompatibilityClassLoader)
 

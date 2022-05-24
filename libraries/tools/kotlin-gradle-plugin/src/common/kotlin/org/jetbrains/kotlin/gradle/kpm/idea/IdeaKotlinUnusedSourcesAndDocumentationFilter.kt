@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 internal object IdeaKotlinUnusedSourcesAndDocumentationFilter : IdeaKotlinDependencyTransformer {
     override fun transform(
-        fragment: GradleKpmFragment, dependencies: Set<IdeaKotlinDependency>
-    ): Set<IdeaKotlinDependency> {
+        fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>
+    ): Set<IdeaKpmDependency> {
         val sourcesAndDocumentationDependencies = dependencies
-            .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+            .filterIsInstance<IdeaKpmResolvedBinaryDependency>()
             .filter { dependency -> dependency.isSourcesType || dependency.isDocumentationType }
             .toSet()
 
-        val classpathCoordinates = dependencies.filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+        val classpathCoordinates = dependencies.filterIsInstance<IdeaKpmResolvedBinaryDependency>()
             .filter { dependency -> dependency.isClasspathType }
             .mapNotNull { it.coordinates }
             .toSet()

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-sealed interface IdeaKotlinLanguageSettings : Serializable {
+sealed interface IdeaKpmLanguageSettings : Serializable {
     val languageVersion: String?
     val apiVersion: String?
     val isProgressiveMode: Boolean
@@ -20,7 +20,7 @@ sealed interface IdeaKotlinLanguageSettings : Serializable {
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinLanguageSettingsImpl(
+data class IdeaKpmLanguageSettingsImpl(
     override val languageVersion: String?,
     override val apiVersion: String?,
     override val isProgressiveMode: Boolean,
@@ -29,7 +29,7 @@ data class IdeaKotlinLanguageSettingsImpl(
     override val compilerPluginArguments: List<String>,
     override val compilerPluginClasspath: List<File>,
     override val freeCompilerArgs: List<String>
-) : IdeaKotlinLanguageSettings {
+) : IdeaKpmLanguageSettings {
 
     @InternalKotlinGradlePluginApi
     companion object {

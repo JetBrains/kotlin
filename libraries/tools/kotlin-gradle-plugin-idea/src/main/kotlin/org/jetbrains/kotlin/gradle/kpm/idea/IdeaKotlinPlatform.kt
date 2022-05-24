@@ -9,12 +9,12 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinPlatform : Serializable {
+sealed interface IdeaKpmPlatform : Serializable {
     val platformType: String
-    val platformDetails: IdeaKotlinPlatformDetails?
+    val platformDetails: IdeaKpmPlatformDetails?
 
     companion object {
-        val unknown: IdeaKotlinPlatform = IdeaKotlinPlatformImpl("unknown", null)
+        val unknown: IdeaKpmPlatform = IdeaKpmPlatformImpl("unknown", null)
 
         const val wasmPlatformType = "wasm"
         const val nativePlatformType = "native"
@@ -23,77 +23,77 @@ sealed interface IdeaKotlinPlatform : Serializable {
     }
 }
 
-sealed interface IdeaKotlinPlatformDetails : Serializable
+sealed interface IdeaKpmPlatformDetails : Serializable
 
-sealed interface IdeaKotlinWasmPlatformDetails : IdeaKotlinPlatformDetails
+sealed interface IdeaKpmWasmPlatformDetails : IdeaKpmPlatformDetails
 
-sealed interface IdeaKotlinNativePlatformDetails : IdeaKotlinPlatformDetails {
+sealed interface IdeaKpmNativePlatformDetails : IdeaKpmPlatformDetails {
     val konanTarget: String
 }
 
-sealed interface IdeaKotlinJvmPlatformDetails : IdeaKotlinPlatformDetails {
+sealed interface IdeaKpmJvmPlatformDetails : IdeaKpmPlatformDetails {
     val jvmTarget: String
 }
 
-sealed interface IdeaKotlinJsPlatformDetails : IdeaKotlinPlatformDetails {
+sealed interface IdeaKpmJsPlatformDetails : IdeaKpmPlatformDetails {
     val isIr: Boolean
 }
 
 @InternalKotlinGradlePluginApi
-fun IdeaKotlinPlatform.Companion.wasm(): IdeaKotlinPlatform {
-    return IdeaKotlinPlatformImpl(wasmPlatformType, IdeaKotlinWasmPlatformDetailsImpl)
+fun IdeaKpmPlatform.Companion.wasm(): IdeaKpmPlatform {
+    return IdeaKpmPlatformImpl(wasmPlatformType, IdeaKpmWasmPlatformDetailsImpl)
 }
 
 @InternalKotlinGradlePluginApi
-fun IdeaKotlinPlatform.Companion.native(konanTarget: String): IdeaKotlinPlatform {
-    return IdeaKotlinPlatformImpl(nativePlatformType, IdeaKotlinNativePlatformDetailsImpl(konanTarget))
+fun IdeaKpmPlatform.Companion.native(konanTarget: String): IdeaKpmPlatform {
+    return IdeaKpmPlatformImpl(nativePlatformType, IdeaKpmNativePlatformDetailsImpl(konanTarget))
 }
 
 @InternalKotlinGradlePluginApi
-fun IdeaKotlinPlatform.Companion.jvm(jvmTarget: String): IdeaKotlinPlatform {
-    return IdeaKotlinPlatformImpl(jvmPlatformType, IdeaKotlinJvmPlatformDetailsImpl(jvmTarget))
+fun IdeaKpmPlatform.Companion.jvm(jvmTarget: String): IdeaKpmPlatform {
+    return IdeaKpmPlatformImpl(jvmPlatformType, IdeaKpmJvmPlatformDetailsImpl(jvmTarget))
 }
 
 @InternalKotlinGradlePluginApi
-fun IdeaKotlinPlatform.Companion.js(isIr: Boolean): IdeaKotlinPlatform {
-    return IdeaKotlinPlatformImpl(jsPlatformType, IdeaKotlinJsPlatformDetailsImpl(isIr))
+fun IdeaKpmPlatform.Companion.js(isIr: Boolean): IdeaKpmPlatform {
+    return IdeaKpmPlatformImpl(jsPlatformType, IdeaKpmJsPlatformDetailsImpl(isIr))
 }
 
-val IdeaKotlinPlatform.isWasm get() = platformType == IdeaKotlinPlatform.wasmPlatformType
-val IdeaKotlinPlatform.isNative get() = platformType == IdeaKotlinPlatform.nativePlatformType
-val IdeaKotlinPlatform.isJvm get() = platformType == IdeaKotlinPlatform.jvmPlatformType
-val IdeaKotlinPlatform.isJs get() = platformType == IdeaKotlinPlatform.jsPlatformType
+val IdeaKpmPlatform.isWasm get() = platformType == IdeaKpmPlatform.wasmPlatformType
+val IdeaKpmPlatform.isNative get() = platformType == IdeaKpmPlatform.nativePlatformType
+val IdeaKpmPlatform.isJvm get() = platformType == IdeaKpmPlatform.jvmPlatformType
+val IdeaKpmPlatform.isJs get() = platformType == IdeaKpmPlatform.jsPlatformType
 
-val IdeaKotlinPlatform.nativeOrNull get() = (platformDetails as? IdeaKotlinNativePlatformDetails)
-val IdeaKotlinPlatform.jvmOrNull get() = (platformDetails as? IdeaKotlinJvmPlatformDetails)
-val IdeaKotlinPlatform.jsOrNull get() = (platformDetails as? IdeaKotlinJsPlatformDetails)
+val IdeaKpmPlatform.nativeOrNull get() = (platformDetails as? IdeaKpmNativePlatformDetails)
+val IdeaKpmPlatform.jvmOrNull get() = (platformDetails as? IdeaKpmJvmPlatformDetails)
+val IdeaKpmPlatform.jsOrNull get() = (platformDetails as? IdeaKpmJsPlatformDetails)
 
-private data class IdeaKotlinPlatformImpl(
-    override val platformType: String, override val platformDetails: IdeaKotlinPlatformDetails?
-) : IdeaKotlinPlatform {
+private data class IdeaKpmPlatformImpl(
+    override val platformType: String, override val platformDetails: IdeaKpmPlatformDetails?
+) : IdeaKpmPlatform {
 
     companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private object IdeaKotlinWasmPlatformDetailsImpl : IdeaKotlinWasmPlatformDetails {
+private object IdeaKpmWasmPlatformDetailsImpl : IdeaKpmWasmPlatformDetails {
     private const val serialVersionUID = 0L
 }
 
-private data class IdeaKotlinJvmPlatformDetailsImpl(override val jvmTarget: String) : IdeaKotlinJvmPlatformDetails {
+private data class IdeaKpmJvmPlatformDetailsImpl(override val jvmTarget: String) : IdeaKpmJvmPlatformDetails {
     private companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private data class IdeaKotlinNativePlatformDetailsImpl(override val konanTarget: String) : IdeaKotlinNativePlatformDetails {
+private data class IdeaKpmNativePlatformDetailsImpl(override val konanTarget: String) : IdeaKpmNativePlatformDetails {
     private companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private data class IdeaKotlinJsPlatformDetailsImpl(override val isIr: Boolean) : IdeaKotlinJsPlatformDetails {
+private data class IdeaKpmJsPlatformDetailsImpl(override val isIr: Boolean) : IdeaKpmJsPlatformDetails {
     private companion object {
         const val serialVersionUID = 0L
     }

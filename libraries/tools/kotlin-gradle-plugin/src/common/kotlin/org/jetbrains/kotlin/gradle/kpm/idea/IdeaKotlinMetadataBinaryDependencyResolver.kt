@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.gradle.utils.withTemporaryDirectory
 internal class IdeaKotlinMetadataBinaryDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
 ) : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         return fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { resolution -> resolve(fragment, resolution) }
             .toSet()
     }
 
-    private fun resolve(fragment: GradleKpmFragment, resolution: ChooseVisibleSourceSets): Iterable<IdeaKotlinDependency> {
+    private fun resolve(fragment: GradleKpmFragment, resolution: ChooseVisibleSourceSets): Iterable<IdeaKpmDependency> {
         val gradleModuleIdentifier = resolution.dependency.id as? ModuleComponentIdentifier ?: return emptySet()
         val kotlinModuleIdentifier = resolution.dependency.toKpmModuleDependency().moduleIdentifier
 
@@ -56,10 +56,10 @@ internal class IdeaKotlinMetadataBinaryDependencyResolver(
                     .apply { if (!isFile) sourceBinaryFile.copyTo(this) }
             }
 
-            IdeaKotlinResolvedBinaryDependencyImpl(
-                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+            IdeaKpmResolvedBinaryDependencyImpl(
+                binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = binaryFile,
-                coordinates = IdeaKotlinBinaryCoordinatesImpl(
+                coordinates = IdeaKpmBinaryCoordinatesImpl(
                     group = gradleModuleIdentifier.group,
                     module = gradleModuleIdentifier.module,
                     version = gradleModuleIdentifier.version,

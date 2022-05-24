@@ -8,25 +8,25 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: GradleKpmFragment): IdeaKotlinFragment {
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
     return if (fragment is GradleKpmVariant) buildIdeaKotlinVariant(fragment)
     else buildIdeaKotlinFragment(fragment)
 }
 
-private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: GradleKpmFragment): IdeaKotlinFragment {
-    return IdeaKotlinFragmentImpl(
+private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
+    return IdeaKpmFragmentImpl(
         coordinates = IdeaKotlinFragmentCoordinates(fragment),
         platforms = fragment.containingVariants.map { variant -> IdeaKotlinPlatform(variant) }.toSet(),
         languageSettings = IdeaKotlinLanguageSettings(fragment.languageSettings),
         dependencies = dependencyResolver.resolve(fragment).toList(),
-        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKotlinSourceDirectoryImpl(file) },
+        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKpmSourceDirectoryImpl(file) },
         resourceDirectories = emptyList(), // TODO
         extras = emptyExtras() // TODO: Requires more sophisticated serialization
     )
 }
 
-private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinVariant(variant: GradleKpmVariant): IdeaKotlinVariant {
-    return IdeaKotlinVariantImpl(
+private fun IdeaKotlinProjectModelBuildingContext.buildIdeaKotlinVariant(variant: GradleKpmVariant): IdeaKpmVariant {
+    return IdeaKpmVariantImpl(
         fragment = buildIdeaKotlinFragment(variant),
         platform = IdeaKotlinPlatform(variant),
         variantAttributes = variant.variantAttributes.mapKeys { (key, _) -> key.uniqueName },

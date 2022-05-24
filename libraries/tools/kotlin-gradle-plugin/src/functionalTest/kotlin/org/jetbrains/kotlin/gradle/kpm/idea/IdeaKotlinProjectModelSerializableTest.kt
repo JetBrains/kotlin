@@ -16,13 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMacosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.fail
 
 class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
 
@@ -56,8 +51,8 @@ class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
         assertSerializeAndDeserializeEquals(kotlin.buildIdeaKotlinProjectModel())
     }
 
-    private fun assertSerializeAndDeserializeEquals(model: IdeaKotlinProjectModel) {
-        val deserializedModel = model.serialize().deserialize<IdeaKotlinProjectModel>()
+    private fun assertSerializeAndDeserializeEquals(model: IdeaKpmProject) {
+        val deserializedModel = model.serialize().deserialize<IdeaKpmProject>()
 
         assertEquals(
             model.toString(), deserializedModel.toString(),

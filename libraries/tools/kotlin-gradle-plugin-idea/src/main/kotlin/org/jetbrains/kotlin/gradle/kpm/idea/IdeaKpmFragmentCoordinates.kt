@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinFragmentCoordinates : Serializable, IdeaKotlinDependencyCoordinates {
-    val module: IdeaKotlinModuleCoordinates
+sealed interface IdeaKpmFragmentCoordinates : Serializable, IdeaKpmDependencyCoordinates {
+    val module: IdeaKpmModuleCoordinates
     val fragmentName: String
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinFragmentCoordinatesImpl(
-    override val module: IdeaKotlinModuleCoordinates,
+data class IdeaKpmFragmentCoordinatesImpl(
+    override val module: IdeaKpmModuleCoordinates,
     override val fragmentName: String
-) : IdeaKotlinFragmentCoordinates {
+) : IdeaKpmFragmentCoordinates {
 
     override fun toString(): String = path
 
@@ -26,5 +26,5 @@ data class IdeaKotlinFragmentCoordinatesImpl(
     }
 }
 
-val IdeaKotlinFragmentCoordinates.path: String
+val IdeaKpmFragmentCoordinates.path: String
     get() = "${module.path}/$fragmentName"

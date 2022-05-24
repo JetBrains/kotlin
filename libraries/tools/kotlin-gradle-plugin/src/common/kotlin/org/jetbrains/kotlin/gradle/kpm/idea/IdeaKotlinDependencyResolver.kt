@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 fun interface IdeaKotlinDependencyResolver {
-    fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency>
+    fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency>
 
     object Empty : IdeaKotlinDependencyResolver {
-        override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> = emptySet()
+        override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> = emptySet()
     }
 }
 
@@ -48,7 +48,7 @@ operator fun IdeaKotlinDependencyResolver.plus(
 private class CompositeIdeaKotlinDependencyResolver(
     val children: List<IdeaKotlinDependencyResolver>
 ) : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         return children.flatMap { child -> child.resolve(fragment) }.toSet()
     }
 }

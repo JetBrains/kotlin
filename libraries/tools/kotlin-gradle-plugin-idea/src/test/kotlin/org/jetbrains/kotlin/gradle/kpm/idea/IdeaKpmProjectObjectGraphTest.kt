@@ -21,7 +21,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalStdlibApi::class)
 @RunWith(Parameterized::class)
-class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppress("unused_parameter") clazzName: String) {
+class IdeaKpmProjectObjectGraphTest(private val node: KClass<*>, @Suppress("unused_parameter") clazzName: String) {
 
     @Test
     fun `test - node implements Serializable`() {
@@ -98,7 +98,7 @@ class IdeaKotlinProjectModelObjectGraphTest(private val node: KClass<*>, @Suppre
         @Parameterized.Parameters(name = "{1}")
         fun findNodes(): List<Array<Any>> {
             val classes = mutableSetOf<KClass<*>>()
-            val resolveQueue = ArrayDeque<KClass<*>>(listOf(IdeaKotlinProjectModel::class))
+            val resolveQueue = ArrayDeque<KClass<*>>(listOf(IdeaKpmProject::class))
 
             while (resolveQueue.isNotEmpty()) {
                 val next = resolveQueue.removeFirst()

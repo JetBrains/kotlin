@@ -1,30 +1,30 @@
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinFragmentDependency
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentDependency
 
-fun buildIdeaKotlinFragmentDependencyMatchers(notation: Any?): List<IdeaKotlinFragmentDependencyMatcher> {
+fun buildIdeaKpmFragmentDependencyMatchers(notation: Any?): List<IdeaKpmFragmentDependencyMatcher> {
     return when (notation) {
         null -> emptyList()
-        is Iterable<*> -> notation.flatMap { buildIdeaKotlinFragmentDependencyMatchers(it) }
-        is String -> listOf(IdeaKotlinFragmentDependencyMatcher.DependencyLiteral(notation))
-        is Regex -> listOf(IdeaKotlinFragmentDependencyMatcher.DependencyRegex(notation))
-        else -> error("Can't build ${IdeaKotlinFragmentDependencyMatcher::class.simpleName} from $notation")
+        is Iterable<*> -> notation.flatMap { buildIdeaKpmFragmentDependencyMatchers(it) }
+        is String -> listOf(IdeaKpmFragmentDependencyMatcher.DependencyLiteral(notation))
+        is Regex -> listOf(IdeaKpmFragmentDependencyMatcher.DependencyRegex(notation))
+        else -> error("Can't build ${IdeaKpmFragmentDependencyMatcher::class.simpleName} from $notation")
     }
 }
 
-interface IdeaKotlinFragmentDependencyMatcher : IdeaKotlinDependencyMatcher<IdeaKotlinFragmentDependency> {
-    class DependencyLiteral(private val dependencyLiteral: String) : IdeaKotlinFragmentDependencyMatcher {
+interface IdeaKpmFragmentDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmFragmentDependency> {
+    class DependencyLiteral(private val dependencyLiteral: String) : IdeaKpmFragmentDependencyMatcher {
         override val description: String = dependencyLiteral
 
-        override fun matches(dependency: IdeaKotlinFragmentDependency): Boolean {
+        override fun matches(dependency: IdeaKpmFragmentDependency): Boolean {
             return this.dependencyLiteral == dependency.toString()
         }
     }
 
-    class DependencyRegex(private val dependencyRegex: Regex) : IdeaKotlinFragmentDependencyMatcher {
+    class DependencyRegex(private val dependencyRegex: Regex) : IdeaKpmFragmentDependencyMatcher {
         override val description: String = dependencyRegex.pattern
 
-        override fun matches(dependency: IdeaKotlinFragmentDependency): Boolean {
+        override fun matches(dependency: IdeaKpmFragmentDependency): Boolean {
             return dependencyRegex.matches(dependency.coordinates.toString())
         }
     }

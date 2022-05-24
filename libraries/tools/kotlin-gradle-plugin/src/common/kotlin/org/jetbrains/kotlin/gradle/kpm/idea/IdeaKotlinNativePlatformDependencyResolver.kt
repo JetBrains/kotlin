@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 
 internal class IdeaKotlinNativePlatformDependencyResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         val konanTargets = fragment.containingVariants
             .map { it as? GradleKpmNativeVariantInternal ?: return emptySet() }
             .map { it.konanTarget }
@@ -36,17 +36,17 @@ internal class IdeaKotlinNativePlatformDependencyResolver : IdeaKotlinDependency
     }
 }
 
-private fun Project.resolveKlib(file: File): IdeaKotlinResolvedBinaryDependency? {
+private fun Project.resolveKlib(file: File): IdeaKpmResolvedBinaryDependency? {
     try {
         val kotlinLibrary = resolveSingleFileKlib(
             org.jetbrains.kotlin.konan.file.File(file.absolutePath),
             strategy = ToolingSingleFileKlibResolveStrategy
         )
 
-        return IdeaKotlinResolvedBinaryDependencyImpl(
-            binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+        return IdeaKpmResolvedBinaryDependencyImpl(
+            binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
             binaryFile = file,
-            coordinates = IdeaKotlinBinaryCoordinatesImpl(
+            coordinates = IdeaKpmBinaryCoordinatesImpl(
                 group = "org.jetbrains.kotlin.native",
                 module = kotlinLibrary.shortName ?: kotlinLibrary.uniqueName,
                 version = project.getKotlinPluginVersion()

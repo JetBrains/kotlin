@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.path
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal object IdeaKotlinMissingFileDependencyLogger : IdeaKotlinDependencyEffect {
-    override fun invoke(fragment: GradleKpmFragment, dependencies: Set<IdeaKotlinDependency>) {
-        dependencies.filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+    override fun invoke(fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>) {
+        dependencies.filterIsInstance<IdeaKpmResolvedBinaryDependency>()
             .filter { !it.binaryFile.exists() }
             .ifNotEmpty { fragment.project.logger.warn(buildWarningMessage(fragment, this)) }
     }
 
-    private fun buildWarningMessage(fragment: GradleKpmFragment, dependencies: List<IdeaKotlinResolvedBinaryDependency>) = buildString {
+    private fun buildWarningMessage(fragment: GradleKpmFragment, dependencies: List<IdeaKpmResolvedBinaryDependency>) = buildString {
         append("[WARNING] ${fragment.path}: Missing dependency files")
         dependencies.forEach { dependency ->
             appendLine(dependency.binaryFile)

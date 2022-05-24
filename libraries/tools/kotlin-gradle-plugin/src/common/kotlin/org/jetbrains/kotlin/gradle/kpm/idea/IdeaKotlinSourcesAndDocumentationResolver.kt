@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 
 internal class IdeaKotlinSourcesAndDocumentationResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         if (fragment is GradleKpmVariant) {
             return resolve(fragment.project, fragment.compileDependenciesConfiguration)
         }
@@ -28,26 +28,26 @@ internal class IdeaKotlinSourcesAndDocumentationResolver : IdeaKotlinDependencyR
         return resolve(fragment.project, metadataDependencies)
     }
 
-    private fun resolve(project: Project, configuration: Configuration): Set<IdeaKotlinDependency> {
+    private fun resolve(project: Project, configuration: Configuration): Set<IdeaKpmDependency> {
         val resolutionResult = project.dependencies.createArtifactResolutionQuery()
             .forComponents(configuration.incoming.resolutionResult.allComponents.map { it.id })
             .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java, JavadocArtifact::class.java)
             .execute()
 
-        return resolve(resolutionResult, SourcesArtifact::class.java, IdeaKotlinDependency.SOURCES_BINARY_TYPE) +
-                resolve(resolutionResult, JavadocArtifact::class.java, IdeaKotlinDependency.DOCUMENTATION_BINARY_TYPE)
+        return resolve(resolutionResult, SourcesArtifact::class.java, IdeaKpmDependency.SOURCES_BINARY_TYPE) +
+                resolve(resolutionResult, JavadocArtifact::class.java, IdeaKpmDependency.DOCUMENTATION_BINARY_TYPE)
     }
 
     fun resolve(
         resolutionResult: ArtifactResolutionResult, artifactType: Class<out Artifact>, binaryType: String
-    ): Set<IdeaKotlinDependency> {
+    ): Set<IdeaKpmDependency> {
         return resolutionResult.resolvedComponents.flatMap { resolved ->
             resolved.getArtifacts(artifactType)
                 .filterIsInstance<ResolvedArtifactResult>()
                 .mapNotNull { artifact ->
                     val id = artifact.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
-                    IdeaKotlinResolvedBinaryDependencyImpl(
-                        coordinates = IdeaKotlinBinaryCoordinatesImpl(group = id.group, module = id.module, version = id.version),
+                    IdeaKpmResolvedBinaryDependencyImpl(
+                        coordinates = IdeaKpmBinaryCoordinatesImpl(group = id.group, module = id.module, version = id.version),
                         binaryType = binaryType,
                         binaryFile = artifact.file
                     )

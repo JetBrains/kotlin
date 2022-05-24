@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.path
 
 internal object IdeaKotlinDependencyLogger : IdeaKotlinDependencyEffect {
     override fun invoke(
-        fragment: GradleKpmFragment, dependencies: Set<IdeaKotlinDependency>
+        fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>
     ) {
         val fragmentPathRegex = fragment.project.properties["idea.kotlin.log.dependencies"]?.toString() ?: return
         if (!fragment.path.matches(Regex(fragmentPathRegex))) return

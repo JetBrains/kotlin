@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinBinaryCoordinatesImpl
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinFragment
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinates
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryDependency
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragment
 
-fun parseIdeaKotlinBinaryCoordinates(coordinates: String): IdeaKotlinBinaryCoordinates {
+fun parseIdeaKpmBinaryCoordinates(coordinates: String): IdeaKpmBinaryCoordinates {
     val parts = coordinates.split(":")
     if (parts.size == 3) {
-        return IdeaKotlinBinaryCoordinatesImpl(parts[0], parts[1], parts[2])
+        return IdeaKpmBinaryCoordinatesImpl(parts[0], parts[1], parts[2])
     }
 
     if (parts.size == 5) {
-        return IdeaKotlinBinaryCoordinatesImpl(parts[0], parts[1], parts[2], parts[3], parts[4])
+        return IdeaKpmBinaryCoordinatesImpl(parts[0], parts[1], parts[2], parts[3], parts[4])
     }
 
-    throw IllegalArgumentException("Cannot parse $coordinates into ${IdeaKotlinBinaryCoordinates::class.java.simpleName}")
+    throw IllegalArgumentException("Cannot parse $coordinates into ${IdeaKpmBinaryCoordinates::class.java.simpleName}")
 }
 
-fun Iterable<IdeaKotlinBinaryCoordinates>.parsableString() =
+fun Iterable<IdeaKpmBinaryCoordinates>.parsableString() =
     joinToString("," + System.lineSeparator(), "", "") { "\"$it\"" }
 
 @Suppress("unused") // Debugging API
-fun IdeaKotlinFragment.parsableDependencyCoordinatesString(): String {
-    return dependencies.filterIsInstance<IdeaKotlinBinaryDependency>()
+fun IdeaKpmFragment.parsableDependencyCoordinatesString(): String {
+    return dependencies.filterIsInstance<IdeaKpmBinaryDependency>()
         .mapNotNull { it.coordinates }.toSet()
         .parsableString()
 }

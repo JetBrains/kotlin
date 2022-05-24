@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurati
 internal class IdeaKotlinOriginalMetadataDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
 ) : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         val dependencyIdentifiers = fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<KeepOriginalDependency>()
             .mapNotNull { resolution -> resolution.dependency.id as? ModuleComponentIdentifier }
@@ -29,10 +29,10 @@ internal class IdeaKotlinOriginalMetadataDependencyResolver(
         }.artifacts
             .map { artifact ->
                 val artifactId = artifact.variant.owner as ModuleComponentIdentifier
-                IdeaKotlinResolvedBinaryDependencyImpl(
-                    binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+                IdeaKpmResolvedBinaryDependencyImpl(
+                    binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
                     binaryFile = artifact.file,
-                    coordinates = IdeaKotlinBinaryCoordinatesImpl(artifactId.group, artifactId.module, artifactId.version)
+                    coordinates = IdeaKpmBinaryCoordinatesImpl(artifactId.group, artifactId.module, artifactId.version)
                 )
             }.toSet()
     }

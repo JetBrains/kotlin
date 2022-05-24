@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-sealed interface IdeaKotlinBinaryCoordinates : IdeaKotlinDependencyCoordinates {
+sealed interface IdeaKpmBinaryCoordinates : IdeaKpmDependencyCoordinates {
     val group: String
     val module: String
     val version: String
@@ -14,13 +14,13 @@ sealed interface IdeaKotlinBinaryCoordinates : IdeaKotlinDependencyCoordinates {
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinBinaryCoordinatesImpl(
+data class IdeaKpmBinaryCoordinatesImpl(
     override val group: String,
     override val module: String,
     override val version: String,
     override val kotlinModuleName: String? = null,
     override val kotlinFragmentName: String? = null
-) : IdeaKotlinBinaryCoordinates {
+) : IdeaKpmBinaryCoordinates {
 
     override fun toString(): String {
         return "$group:$module:$version" +

@@ -9,9 +9,9 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.external.project
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinDependency.Companion.CLASSPATH_BINARY_TYPE
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.FragmentConstraint
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinResolvedBinaryDependencyImpl
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependencyImpl
 import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.kpm.idea.configureIdeaKotlinSpecialPlatformDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -79,7 +79,7 @@ internal fun KotlinPm20ProjectExtension.setupIdeaKotlinFragmentDependencyResolve
 
             additionalDependencies {
                 project.getAndroidRuntimeJars().map { androidRuntimeJar ->
-                    IdeaKotlinResolvedBinaryDependencyImpl(
+                    IdeaKpmResolvedBinaryDependencyImpl(
                         binaryType = CLASSPATH_BINARY_TYPE,
                         binaryFile = androidRuntimeJar,
                         coordinates = null

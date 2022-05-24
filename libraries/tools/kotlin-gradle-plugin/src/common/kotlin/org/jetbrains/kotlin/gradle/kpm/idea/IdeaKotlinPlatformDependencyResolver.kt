@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttribu
  * to resolve those binaries. See [IdeaKotlinPlatformDependencyResolver.ArtifactResolution.PlatformFragment]
  */
 class IdeaKotlinPlatformDependencyResolver(
-    private val binaryType: String = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+    private val binaryType: String = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
     private val artifactResolution: ArtifactResolution = ArtifactResolution.Variant()
 ) : IdeaKotlinDependencyResolver {
 
@@ -51,7 +51,7 @@ class IdeaKotlinPlatformDependencyResolver(
         ) : ArtifactResolution()
     }
 
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinBinaryDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmBinaryDependency> {
         val artifacts = artifactResolution.createArtifactView(fragment)?.artifacts ?: return emptySet()
 
         val unresolvedDependencies = artifacts.failures
@@ -59,18 +59,18 @@ class IdeaKotlinPlatformDependencyResolver(
             .map { reason ->
                 val selector = (reason as? ModuleVersionResolveException)?.selector as? ModuleComponentSelector
                 /* Can't figure out the dependency here :( */
-                    ?: return@map IdeaKotlinUnresolvedBinaryDependencyImpl(
+                    ?: return@map IdeaKpmUnresolvedBinaryDependencyImpl(
                         coordinates = null, cause = reason.message?.takeIf { it.isNotBlank() }
                     )
 
-                IdeaKotlinUnresolvedBinaryDependencyImpl(
-                    coordinates = IdeaKotlinBinaryCoordinatesImpl(selector.group, selector.module, selector.version),
+                IdeaKpmUnresolvedBinaryDependencyImpl(
+                    coordinates = IdeaKpmBinaryCoordinatesImpl(selector.group, selector.module, selector.version),
                     cause = reason.message?.takeIf { it.isNotBlank() }
                 )
             }.toSet()
 
         val resolvedDependencies = artifacts.artifacts.mapNotNull { artifact ->
-            IdeaKotlinResolvedBinaryDependencyImpl(
+            IdeaKpmResolvedBinaryDependencyImpl(
                 coordinates = artifact.variant.owner.ideaKotlinBinaryCoordinates,
                 binaryType = binaryType,
                 binaryFile = artifact.file
@@ -81,9 +81,9 @@ class IdeaKotlinPlatformDependencyResolver(
     }
 }
 
-private val ComponentIdentifier.ideaKotlinBinaryCoordinates: IdeaKotlinBinaryCoordinates?
+private val ComponentIdentifier.ideaKotlinBinaryCoordinates: IdeaKpmBinaryCoordinates?
     get() = when (this) {
-        is ModuleComponentIdentifier -> IdeaKotlinBinaryCoordinatesImpl(group, module, version)
+        is ModuleComponentIdentifier -> IdeaKpmBinaryCoordinatesImpl(group, module, version)
         else -> null
     }
 

@@ -10,30 +10,30 @@ package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 import org.jetbrains.kotlin.gradle.kpm.idea.*
 import kotlin.test.fail
 
-fun IdeaKotlinProjectModel.assertIsNotEmpty(): IdeaKotlinProjectModel = apply {
+fun IdeaKpmProject.assertIsNotEmpty(): IdeaKpmProject = apply {
     if (this.modules.isEmpty()) fail("Expected at least one module in model")
 }
 
-fun IdeaKotlinProjectModel.assertContainsModule(name: String): IdeaKotlinModule {
+fun IdeaKpmProject.assertContainsModule(name: String): IdeaKpmModule {
     return modules.find { it.name == name }
         ?: fail("Missing module with name '$name'. Found: ${modules.map { it.name }}")
 }
 
-fun IdeaKotlinModule.assertContainsFragment(name: String): IdeaKotlinFragment {
+fun IdeaKpmModule.assertContainsFragment(name: String): IdeaKpmFragment {
     return fragments.find { it.name == name }
         ?: fail("Missing fragment with name '$name'. Found: ${fragments.map { it.name }}")
 }
 
-fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
+fun IdeaKpmFragment.assertResolvedBinaryDependencies(
     binaryType: String,
-    matchers: Set<IdeaKotlinBinaryDependencyMatcher>
-): Set<IdeaKotlinResolvedBinaryDependency> {
+    matchers: Set<IdeaKpmBinaryDependencyMatcher>
+): Set<IdeaKpmResolvedBinaryDependency> {
     val resolvedBinaryDependencies = dependencies
         .mapNotNull { dependency ->
             when (dependency) {
-                is IdeaKotlinResolvedBinaryDependencyImpl -> dependency
-                is IdeaKotlinUnresolvedBinaryDependencyImpl -> fail("Unexpected unresolved dependency: $dependency")
-                is IdeaKotlinFragmentDependencyImpl -> null
+                is IdeaKpmResolvedBinaryDependencyImpl -> dependency
+                is IdeaKpmUnresolvedBinaryDependencyImpl -> fail("Unexpected unresolved dependency: $dependency")
+                is IdeaKpmFragmentDependencyImpl -> null
             }
         }
         .filter { it.binaryType == binaryType }
@@ -83,16 +83,16 @@ fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
 }
 
 @JvmName("assertResolvedBinaryDependenciesByAnyMatcher")
-fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
+fun IdeaKpmFragment.assertResolvedBinaryDependencies(
     binaryType: String, matchers: Set<Any?>,
-) = assertResolvedBinaryDependencies(binaryType, matchers.flatMap { buildIdeaKotlinBinaryDependencyMatchers(it) }.toSet())
+) = assertResolvedBinaryDependencies(binaryType, matchers.flatMap { buildIdeaKpmBinaryDependencyMatchers(it) }.toSet())
 
-fun IdeaKotlinFragment.assertResolvedBinaryDependencies(
+fun IdeaKpmFragment.assertResolvedBinaryDependencies(
     binaryType: String, vararg matchers: Any?
 ) = assertResolvedBinaryDependencies(binaryType, matchers.toSet())
 
-fun IdeaKotlinFragment.assertFragmentDependencies(matchers: Set<IdeaKotlinFragmentDependencyMatcher>): Set<IdeaKotlinFragmentDependency> {
-    val sourceDependencies = dependencies.filterIsInstance<IdeaKotlinFragmentDependency>().toSet()
+fun IdeaKpmFragment.assertFragmentDependencies(matchers: Set<IdeaKpmFragmentDependencyMatcher>): Set<IdeaKpmFragmentDependency> {
+    val sourceDependencies = dependencies.filterIsInstance<IdeaKpmFragmentDependency>().toSet()
 
     val unexpectedDependencies = sourceDependencies
         .filter { dependency -> matchers.none { matcher -> matcher.matches(dependency) } }
@@ -133,8 +133,8 @@ fun IdeaKotlinFragment.assertFragmentDependencies(matchers: Set<IdeaKotlinFragme
 }
 
 @JvmName("assertSourceDependenciesByAnyMatcher")
-fun IdeaKotlinFragment.assertFragmentDependencies(matchers: Set<Any?>): Set<IdeaKotlinFragmentDependency> =
-    assertFragmentDependencies(matchers.flatMap { buildIdeaKotlinFragmentDependencyMatchers(it) }.toSet())
+fun IdeaKpmFragment.assertFragmentDependencies(matchers: Set<Any?>): Set<IdeaKpmFragmentDependency> =
+    assertFragmentDependencies(matchers.flatMap { buildIdeaKpmFragmentDependencyMatchers(it) }.toSet())
 
-fun IdeaKotlinFragment.assertFragmentDependencies(vararg matchers: Any?) =
+fun IdeaKpmFragment.assertFragmentDependencies(vararg matchers: Any?) =
     assertFragmentDependencies(matchers.toSet())

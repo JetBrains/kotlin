@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinDependencyCoordinates : Serializable
+sealed interface IdeaKpmDependencyCoordinates : Serializable

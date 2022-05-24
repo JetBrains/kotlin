@@ -76,7 +76,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     }
 
     @ExternalVariantPlatformDependencyResolutionDsl
-    fun additionalDependencies(dependencyProvider: (GradleKpmFragment) -> List<IdeaKotlinDependency>) {
+    fun additionalDependencies(dependencyProvider: (GradleKpmFragment) -> List<IdeaKpmDependency>) {
         this.additionalDependencies += IdeaKotlinDependencyResolver { fragment -> dependencyProvider(fragment).toSet() }
     }
 

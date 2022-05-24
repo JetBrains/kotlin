@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
 internal object IdeaKotlinNativeStdlibDependencyResolver : IdeaKotlinDependencyResolver {
-    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKotlinDependency> {
+    override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         return setOf(
-            IdeaKotlinResolvedBinaryDependencyImpl(
-                binaryType = IdeaKotlinDependency.CLASSPATH_BINARY_TYPE,
+            IdeaKpmResolvedBinaryDependencyImpl(
+                binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
                 binaryFile = KonanDistribution(fragment.project.konanHome).stdlib,
-                coordinates = IdeaKotlinBinaryCoordinatesImpl(
+                coordinates = IdeaKpmBinaryCoordinatesImpl(
                     "org.jetbrains.kotlin", "stdlib-native", fragment.project.getKotlinPluginVersion()
                 )
             )

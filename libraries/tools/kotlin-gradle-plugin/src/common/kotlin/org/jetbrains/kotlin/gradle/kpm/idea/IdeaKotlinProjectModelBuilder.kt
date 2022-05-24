@@ -124,13 +124,13 @@ interface IdeaKotlinProjectModelBuilder {
         constraint: FragmentConstraint
     )
 
-    fun buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel
+    fun buildIdeaKotlinProjectModel(): IdeaKpmProject
 
     companion object
 }
 
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinProjectModel(extension: KotlinPm20ProjectExtension): IdeaKotlinProjectModel {
-    return IdeaKotlinProjectModelImpl(
+internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinProjectModel(extension: KotlinPm20ProjectExtension): IdeaKpmProject {
+    return IdeaKpmProjectImpl(
         gradlePluginVersion = extension.project.getKotlinPluginVersion(),
         coreLibrariesVersion = extension.coreLibrariesVersion,
         explicitApiModeCliOption = extension.explicitApi?.cliOption,

@@ -8,22 +8,22 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import java.io.File
 import java.io.Serializable
 
-sealed interface IdeaKotlinProjectModel : Serializable {
+sealed interface IdeaKpmProject : Serializable {
     val gradlePluginVersion: String
     val coreLibrariesVersion: String
     val explicitApiModeCliOption: String?
     val kotlinNativeHome: File
-    val modules: List<IdeaKotlinModule>
+    val modules: List<IdeaKpmModule>
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinProjectModelImpl(
+data class IdeaKpmProjectImpl(
     override val gradlePluginVersion: String,
     override val coreLibrariesVersion: String,
     override val explicitApiModeCliOption: String?,
     override val kotlinNativeHome: File,
-    override val modules: List<IdeaKotlinModule>
-) : IdeaKotlinProjectModel {
+    override val modules: List<IdeaKpmModule>
+) : IdeaKpmProject {
 
     @InternalKotlinGradlePluginApi
     companion object {

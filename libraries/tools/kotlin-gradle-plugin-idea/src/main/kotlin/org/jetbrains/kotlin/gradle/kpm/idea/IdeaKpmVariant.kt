@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinVariant : IdeaKotlinFragment, Serializable {
-    val platform: IdeaKotlinPlatform
+sealed interface IdeaKpmVariant : IdeaKpmFragment, Serializable {
+    val platform: IdeaKpmPlatform
     val variantAttributes: Map<String, String>
-    val compilationOutputs: IdeaKotlinCompilationOutput
+    val compilationOutputs: IdeaKpmCompilationOutput
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKotlinVariantImpl(
-    internal val fragment: IdeaKotlinFragment,
-    override val platform: IdeaKotlinPlatform,
+data class IdeaKpmVariantImpl(
+    internal val fragment: IdeaKpmFragment,
+    override val platform: IdeaKpmPlatform,
     override val variantAttributes: Map<String, String>,
-    override val compilationOutputs: IdeaKotlinCompilationOutput,
-) : IdeaKotlinVariant, IdeaKotlinFragment by fragment {
+    override val compilationOutputs: IdeaKpmCompilationOutput,
+) : IdeaKpmVariant, IdeaKpmFragment by fragment {
 
     @InternalKotlinGradlePluginApi
     companion object {

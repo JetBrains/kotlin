@@ -10,7 +10,7 @@ import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModel
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 abstract class AbstractKpmExtensionTest {
@@ -27,6 +27,6 @@ fun Project.applyKpmPlugin(configure: KotlinPm20ProjectExtension.() -> Unit = {}
     return (extensions.getByName("kotlin") as KotlinPm20ProjectExtension).also(configure)
 }
 
-fun KotlinPm20ProjectExtension.buildIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
+fun KotlinPm20ProjectExtension.buildIdeaKotlinProjectModel(): IdeaKpmProject {
     return ideaKotlinProjectModelBuilder.buildIdeaKotlinProjectModel()
 }
