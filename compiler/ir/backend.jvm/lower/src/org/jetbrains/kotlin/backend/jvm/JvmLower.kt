@@ -367,6 +367,7 @@ private val jvmFilePhases = listOf(
     jvmSafeCallFoldingPhase,
     jvmOptimizationLoweringPhase,
     additionalClassAnnotationPhase,
+    recordEnclosingMethodsPhase,
     typeOperatorLowering,
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,
