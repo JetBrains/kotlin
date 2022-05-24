@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// CHECK_BYTECODE_LISTING
 
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
