@@ -42,12 +42,11 @@ class IrSourceCompilerForInline(
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
-            val root = codegen.inlineRoot
-            val rootFunction = root.enclosingFunctionForLocalObjects
+            val rootFunction = codegen.enclosingFunctionForLocalObjects
             return InlineCallSiteInfo(
-                root.classCodegen.type.internalName,
-                if (rootFunction === root.irFunction)
-                    root.signature.asmMethod
+                codegen.classCodegen.type.internalName,
+                if (rootFunction === codegen.irFunction)
+                    codegen.signature.asmMethod
                 else
                     codegen.methodSignatureMapper.mapAsmMethod(rootFunction),
                 rootFunction.inlineScopeVisibility,
@@ -66,7 +65,7 @@ class IrSourceCompilerForInline(
                 reifiedTypeParameters.addUsedReifiedParameter(typeParameter.name.asString())
             }
         }
-        return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen.inlineRoot, reifiedTypeParameters)
+        return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(reifiedTypeParameters)
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
@@ -100,7 +99,7 @@ class IrSourceCompilerForInline(
     override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smap, codegen.reifiedTypeParametersUsages
+            codegen.smap, codegen.reifiedTypeParametersUsages
         ).also {
             it.finallyDepth = curFinallyDepth
         }.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
