@@ -50,7 +50,7 @@ open class GradleKpmFragmentInternal @Inject constructor(
     }
 
     override fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>) {
-        _directRefinesDependencies.add(other)
+        _declaredRefinesDependencies.add(other)
         other.configure { checkCanRefine(it) }
 
         project.addExtendsFromRelation(
@@ -82,10 +82,10 @@ open class GradleKpmFragmentInternal @Inject constructor(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
-    private val _directRefinesDependencies = mutableSetOf<Provider<GradleKpmFragment>>()
+    private val _declaredRefinesDependencies = mutableSetOf<Provider<GradleKpmFragment>>()
 
     override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
-        get() = _directRefinesDependencies.map { it.get() }.toSet()
+        get() = _declaredRefinesDependencies.map { it.get() }.toSet()
 
     // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
     //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
