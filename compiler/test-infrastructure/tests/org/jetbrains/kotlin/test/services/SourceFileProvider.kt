@@ -27,6 +27,7 @@ abstract class SourceFileProvider : TestService {
     abstract val kotlinSourceDirectory: File
     abstract val javaSourceDirectory: File
     abstract val javaBinaryDirectory: File
+    abstract val additionalFilesDirectory: File
 
     abstract fun getContentOfSourceFile(testFile: TestFile): String
     abstract fun getRealFileForSourceFile(testFile: TestFile): File
@@ -37,9 +38,10 @@ abstract class SourceFileProvider : TestService {
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
 class SourceFileProviderImpl(val testServices: TestServices, override val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
-    override val kotlinSourceDirectory: File = testServices.getOrCreateTempDirectory("kotlin-files")
-    override val javaSourceDirectory: File = testServices.getOrCreateTempDirectory("java-files")
-    override val javaBinaryDirectory: File = testServices.getOrCreateTempDirectory("java-binary-files")
+    override val kotlinSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("kotlin-files") }
+    override val javaSourceDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-files") }
+    override val javaBinaryDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("java-binary-files") }
+    override val additionalFilesDirectory: File by lazy(LazyThreadSafetyMode.NONE) { testServices.getOrCreateTempDirectory("additional-files") }
 
     private val contentOfFiles = mutableMapOf<TestFile, String>()
     private val realFileMap = mutableMapOf<TestFile, File>()
@@ -55,7 +57,7 @@ class SourceFileProviderImpl(val testServices: TestServices, override val prepro
             val directory = when {
                 testFile.isKtFile -> kotlinSourceDirectory
                 testFile.isJavaFile -> javaSourceDirectory
-                else -> error("Unknown file type: ${testFile.name}")
+                else -> additionalFilesDirectory
             }
             directory.resolve(testFile.relativePath).also {
                 it.parentFile.mkdirs()
