@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
-import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
+import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
+class IdeaKpmProjectModelSerializableTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test - serialize and deserialize - empty project`() {
         project.evaluate()
         project.repositories.mavenLocal()
-        assertSerializeAndDeserializeEquals(kotlin.buildIdeaKotlinProjectModel())
+        assertSerializeAndDeserializeEquals(kotlin.buildIdeaKpmProjectModel())
     }
 
     @Test
@@ -48,7 +48,7 @@ class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
         }
 
         project.evaluate()
-        assertSerializeAndDeserializeEquals(kotlin.buildIdeaKotlinProjectModel())
+        assertSerializeAndDeserializeEquals(kotlin.buildIdeaKpmProjectModel())
     }
 
     private fun assertSerializeAndDeserializeEquals(model: IdeaKpmProject) {

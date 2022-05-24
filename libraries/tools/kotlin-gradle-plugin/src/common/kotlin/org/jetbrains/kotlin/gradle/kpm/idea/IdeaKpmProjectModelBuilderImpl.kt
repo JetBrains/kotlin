@@ -10,29 +10,29 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.*
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
-internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods instead") constructor(
+internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods instead") constructor(
     private val extension: KotlinPm20ProjectExtension,
-) : ToolingModelBuilder, IdeaKotlinProjectModelBuilder {
+) : ToolingModelBuilder, IdeaKpmProjectModelBuilder {
 
     private data class RegisteredDependencyResolver(
-        val resolver: IdeaKotlinDependencyResolver,
+        val resolver: IdeaKpmDependencyResolver,
         val constraint: FragmentConstraint,
         val phase: DependencyResolutionPhase,
         val level: DependencyResolutionLevel,
     )
 
     private data class RegisteredDependencyTransformer(
-        val transformer: IdeaKotlinDependencyTransformer,
+        val transformer: IdeaKpmDependencyTransformer,
         val constraint: FragmentConstraint,
         val phase: DependencyTransformationPhase
     )
 
     private data class RegisteredDependencyEffect(
-        val effect: IdeaKotlinDependencyEffect,
+        val effect: IdeaKpmDependencyEffect,
         val constraint: FragmentConstraint,
     )
 
@@ -41,7 +41,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
 
     override fun registerDependencyResolver(
-        resolver: IdeaKotlinDependencyResolver,
+        resolver: IdeaKpmDependencyResolver,
         constraint: FragmentConstraint,
         phase: DependencyResolutionPhase,
         level: DependencyResolutionLevel
@@ -52,7 +52,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
     }
 
     override fun registerDependencyTransformer(
-        transformer: IdeaKotlinDependencyTransformer,
+        transformer: IdeaKpmDependencyTransformer,
         constraint: FragmentConstraint,
         phase: DependencyTransformationPhase
     ) {
@@ -62,7 +62,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
     }
 
     override fun registerDependencyEffect(
-        effect: IdeaKotlinDependencyEffect,
+        effect: IdeaKpmDependencyEffect,
         constraint: FragmentConstraint
     ) {
         registeredDependencyEffects.add(
@@ -70,8 +70,8 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
         )
     }
 
-    override fun buildIdeaKotlinProjectModel(): IdeaKpmProject {
-        return Context().IdeaKotlinProjectModel(extension)
+    override fun buildIdeaKpmProjectModel(): IdeaKpmProject {
+        return Context().IdeaKpmProject(extension)
     }
 
     override fun canBuild(modelName: String): Boolean =
@@ -79,21 +79,21 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
 
     override fun buildAll(modelName: String, project: Project): IdeaKpmProject {
         check(project === extension.project) { "Expected project ${extension.project.path}, found ${project.path}" }
-        return buildIdeaKotlinProjectModel()
+        return buildIdeaKpmProjectModel()
     }
 
-    private inner class Context : IdeaKotlinProjectModelBuildingContext {
+    private inner class Context : IdeaKpmProjectModelBuildingContext {
         override val dependencyResolver = createDependencyResolver()
     }
 
-    private fun createDependencyResolver(): IdeaKotlinDependencyResolver {
-        return IdeaKotlinDependencyResolver(DependencyResolutionPhase.values().map { phase ->
+    private fun createDependencyResolver(): IdeaKpmDependencyResolver {
+        return IdeaKpmDependencyResolver(DependencyResolutionPhase.values().map { phase ->
             createDependencyResolver(phase)
         }).withTransformer(createDependencyTransformer())
             .withEffect(createDependencyEffect())
     }
 
-    private fun createDependencyResolver(phase: DependencyResolutionPhase) = IdeaKotlinDependencyResolver resolve@{ fragment ->
+    private fun createDependencyResolver(phase: DependencyResolutionPhase) = IdeaKpmDependencyResolver resolve@{ fragment ->
         val applicableResolvers = registeredDependencyResolvers
             .filter { it.phase == phase }
             .filter { it.constraint(fragment) }
@@ -103,7 +103,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
         DependencyResolutionLevel.values().reversed().forEach { level ->
             val resolvers = applicableResolvers[level].orEmpty().map { it.resolver }
             if (resolvers.isNotEmpty()) {
-                return@resolve IdeaKotlinDependencyResolver(resolvers).resolve(fragment)
+                return@resolve IdeaKpmDependencyResolver(resolvers).resolve(fragment)
             }
         }
 
@@ -111,15 +111,15 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
         emptySet()
     }
 
-    private fun createDependencyTransformer(): IdeaKotlinDependencyTransformer {
-        return IdeaKotlinDependencyTransformer(DependencyTransformationPhase.values().map { phase ->
+    private fun createDependencyTransformer(): IdeaKpmDependencyTransformer {
+        return IdeaKpmDependencyTransformer(DependencyTransformationPhase.values().map { phase ->
             createDependencyTransformer(phase)
         })
     }
 
-    private fun createDependencyTransformer(phase: DependencyTransformationPhase): IdeaKotlinDependencyTransformer {
-        return IdeaKotlinDependencyTransformer { fragment, dependencies ->
-            IdeaKotlinDependencyTransformer(
+    private fun createDependencyTransformer(phase: DependencyTransformationPhase): IdeaKpmDependencyTransformer {
+        return IdeaKpmDependencyTransformer { fragment, dependencies ->
+            IdeaKpmDependencyTransformer(
                 registeredDependencyTransformers
                     .filter { it.phase == phase }
                     .filter { it.constraint(fragment) }
@@ -128,7 +128,7 @@ internal class IdeaKotlinProjectModelBuilderImpl @UnsafeApi("Use factory methods
         }
     }
 
-    private fun createDependencyEffect(): IdeaKotlinDependencyEffect = IdeaKotlinDependencyEffect { fragment, dependencies ->
+    private fun createDependencyEffect(): IdeaKpmDependencyEffect = IdeaKpmDependencyEffect { fragment, dependencies ->
         registeredDependencyEffects
             .filter { it.constraint(fragment) }
             .forEach { it.effect(fragment, dependencies) }

@@ -8,8 +8,8 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinPlatformDependencyResolver.ArtifactResolution
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.*
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmPlatformDependencyResolver.ArtifactResolution
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttributesSetup
 
@@ -18,21 +18,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttribu
 annotation class ExternalVariantPlatformDependencyResolutionDsl
 
 @ExternalVariantApi
-fun KotlinPm20ProjectExtension.configureIdeaKotlinSpecialPlatformDependencyResolution(
-    configure: IdeaKotlinPlatformDependencyResolutionDslHandle.() -> Unit
+fun KotlinPm20ProjectExtension.configureIdeaKpmSpecialPlatformDependencyResolution(
+    configure: IdeaKpmPlatformDependencyResolutionDslHandle.() -> Unit
 ) {
-    IdeaKotlinPlatformDependencyResolutionDslHandle(ideaKotlinProjectModelBuilder).also(configure).setup()
+    IdeaKpmPlatformDependencyResolutionDslHandle(ideaKpmProjectModelBuilder).also(configure).setup()
 }
 
 @ExternalVariantPlatformDependencyResolutionDsl
-class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
-    private val toolingModelBuilder: IdeaKotlinProjectModelBuilder,
+class IdeaKpmPlatformDependencyResolutionDslHandle internal constructor(
+    private val toolingModelBuilder: IdeaKpmProjectModelBuilder,
     private val constraint: FragmentConstraint = FragmentConstraint.unconstrained,
-    private val parent: IdeaKotlinPlatformDependencyResolutionDslHandle? = null
+    private val parent: IdeaKpmPlatformDependencyResolutionDslHandle? = null
 ) {
     private val artifactViewDslHandles = mutableListOf<ArtifactViewDslHandle>()
-    private val children = mutableListOf<IdeaKotlinPlatformDependencyResolutionDslHandle>()
-    private val additionalDependencies = mutableListOf<IdeaKotlinDependencyResolver>()
+    private val children = mutableListOf<IdeaKpmPlatformDependencyResolutionDslHandle>()
+    private val additionalDependencies = mutableListOf<IdeaKpmDependencyResolver>()
 
     @ExternalVariantPlatformDependencyResolutionDsl
     var platformResolutionAttributes: GradleKpmConfigurationAttributesSetup<GradleKpmFragment>? = null
@@ -54,9 +54,9 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
     @ExternalVariantPlatformDependencyResolutionDsl
     fun withConstraint(
         constraint: FragmentConstraint,
-        configure: IdeaKotlinPlatformDependencyResolutionDslHandle.() -> Unit
+        configure: IdeaKpmPlatformDependencyResolutionDslHandle.() -> Unit
     ) {
-        children += IdeaKotlinPlatformDependencyResolutionDslHandle(
+        children += IdeaKpmPlatformDependencyResolutionDslHandle(
             toolingModelBuilder, constraint, this,
         ).apply(configure)
     }
@@ -77,7 +77,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
 
     @ExternalVariantPlatformDependencyResolutionDsl
     fun additionalDependencies(dependencyProvider: (GradleKpmFragment) -> List<IdeaKpmDependency>) {
-        this.additionalDependencies += IdeaKotlinDependencyResolver { fragment -> dependencyProvider(fragment).toSet() }
+        this.additionalDependencies += IdeaKpmDependencyResolver { fragment -> dependencyProvider(fragment).toSet() }
     }
 
     internal fun setup() {
@@ -89,7 +89,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
         /* Setup artifact views */
         artifactViewDslHandles.toList().forEach { artifactViewDslHandle ->
             toolingModelBuilder.registerDependencyResolver(
-                IdeaKotlinPlatformDependencyResolver(
+                IdeaKpmPlatformDependencyResolver(
                     binaryType = artifactViewDslHandle.binaryType,
                     artifactResolution = ArtifactResolution.Variant(artifactViewDslHandle.attributes)
                 ),
@@ -100,7 +100,7 @@ class IdeaKotlinPlatformDependencyResolutionDslHandle internal constructor(
 
             if (platformResolutionAttributes != null) {
                 toolingModelBuilder.registerDependencyResolver(
-                    IdeaKotlinPlatformDependencyResolver(
+                    IdeaKpmPlatformDependencyResolver(
                         binaryType = artifactViewDslHandle.binaryType,
                         artifactResolution = ArtifactResolution.PlatformFragment(
                             artifactViewAttributes = artifactViewDslHandle.attributes,

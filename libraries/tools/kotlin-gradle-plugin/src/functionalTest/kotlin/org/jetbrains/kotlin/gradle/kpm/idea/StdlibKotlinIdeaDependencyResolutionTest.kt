@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
-import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
+import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.IdeaKpmBinaryDependencyMatcher
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
@@ -44,7 +44,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             }
         }
 
-        kotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
+        kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().modules.forEach { module ->
             module.assertContainsFragment("common").assertResolvedBinaryDependencies(
                 CLASSPATH_BINARY_TYPE,
                 "org.jetbrains.kotlin:kotlin-stdlib-common:1.6.10"
@@ -88,7 +88,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             }
         }
 
-        kotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
+        kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().modules.forEach { module ->
             module.assertContainsFragment("common").assertResolvedBinaryDependencies(
                 CLASSPATH_BINARY_TYPE,
                 "org.jetbrains.kotlin:kotlin-stdlib-common:1.6.10",
@@ -140,7 +140,7 @@ class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependen
             }
         }
 
-        kotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
+        kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().modules.forEach { module ->
             module.assertContainsFragment("common").assertResolvedBinaryDependencies(
                 CLASSPATH_BINARY_TYPE,
                 "org.jetbrains.kotlin:kotlin-stdlib-common:${project.getKotlinPluginVersion()}"

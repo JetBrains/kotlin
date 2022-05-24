@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 
-internal class IdeaKotlinNativePlatformDependencyResolver : IdeaKotlinDependencyResolver {
+internal class IdeaKpmNativePlatformDependencyResolver : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         val konanTargets = fragment.containingVariants
             .map { it as? GradleKpmNativeVariantInternal ?: return emptySet() }

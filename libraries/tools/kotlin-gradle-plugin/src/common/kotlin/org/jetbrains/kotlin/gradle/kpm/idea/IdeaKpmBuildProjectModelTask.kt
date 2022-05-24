@@ -16,25 +16,25 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 
-internal fun Project.locateOrRegisterBuildIdeaKotlinProjectModelTask(): TaskProvider<BuildIdeaKotlinProjectModelTask> {
-    return locateOrRegisterTask(BuildIdeaKotlinProjectModelTask.defaultTaskName)
+internal fun Project.locateOrRegisterIdeaKpmBuildProjectModelTask(): TaskProvider<IdeaKpmBuildProjectModelTask> {
+    return locateOrRegisterTask(IdeaKpmBuildProjectModelTask.defaultTaskName)
 }
 
-internal open class BuildIdeaKotlinProjectModelTask : DefaultTask() {
+internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
     @OutputDirectory
-    val outputDirectory = project.buildDir.resolve("ideaKotlinProjectModel")
+    val outputDirectory = project.buildDir.resolve("ideaKpmProjectModel")
 
-    private val builder = project.pm20Extension.ideaKotlinProjectModelBuilder
+    private val builder = project.pm20Extension.ideaKpmProjectModelBuilder
 
     init {
         outputs.upToDateWhen { false }
     }
 
     @TaskAction
-    protected fun buildIdeaKotlinProjectModel() {
+    protected fun buildIdeaKpmProjectModel() {
         outputDirectory.mkdirs()
 
-        val model = builder.buildIdeaKotlinProjectModel()
+        val model = builder.buildIdeaKpmProjectModel()
         val textFile = outputDirectory.resolve("model.txt")
         textFile.writeText(model.toString())
 
@@ -49,6 +49,6 @@ internal open class BuildIdeaKotlinProjectModelTask : DefaultTask() {
     }
 
     companion object {
-        const val defaultTaskName = "buildIdeaKotlinProjectModel"
+        const val defaultTaskName = "buildIdeaKpmProjectModel"
     }
 }

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.mod
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
 import org.jetbrains.kotlin.gradle.utils.withTemporaryDirectory
 
-internal class IdeaKotlinMetadataBinaryDependencyResolver(
+internal class IdeaKpmMetadataBinaryDependencyResolver(
     private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
-) : IdeaKotlinDependencyResolver {
+) : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         return fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
             .filterIsInstance<ChooseVisibleSourceSets>()

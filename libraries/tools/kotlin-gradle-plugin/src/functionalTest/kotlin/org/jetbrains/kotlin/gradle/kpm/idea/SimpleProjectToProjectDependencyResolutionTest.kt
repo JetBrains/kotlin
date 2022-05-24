@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
-import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
+import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertIsNotEmpty
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertFragmentDependencies
@@ -78,7 +78,7 @@ class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDe
             }
         }
 
-        consumerKotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
+        consumerKotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().modules.forEach { module ->
             fun ifTestModule(vararg any: Any?) =
                 listOf(*any).takeIf { module.name == GradleKpmModule.TEST_MODULE_NAME }
 

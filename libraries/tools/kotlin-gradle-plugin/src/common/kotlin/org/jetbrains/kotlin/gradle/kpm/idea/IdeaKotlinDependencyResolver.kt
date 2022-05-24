@@ -7,47 +7,47 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
-fun interface IdeaKotlinDependencyResolver {
+fun interface IdeaKpmDependencyResolver {
     fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency>
 
-    object Empty : IdeaKotlinDependencyResolver {
+    object Empty : IdeaKpmDependencyResolver {
         override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> = emptySet()
     }
 }
 
-fun IdeaKotlinDependencyResolver(
-    resolvers: Iterable<IdeaKotlinDependencyResolver>
-): IdeaKotlinDependencyResolver {
+fun IdeaKpmDependencyResolver(
+    resolvers: Iterable<IdeaKpmDependencyResolver>
+): IdeaKpmDependencyResolver {
     val resolversList = resolvers.toList()
-    if (resolversList.isEmpty()) return IdeaKotlinDependencyResolver.Empty
-    return CompositeIdeaKotlinDependencyResolver(resolversList)
+    if (resolversList.isEmpty()) return IdeaKpmDependencyResolver.Empty
+    return IdeaKpmCompositeDependencyResolver(resolversList)
 }
 
-fun IdeaKotlinDependencyResolver(
-    vararg resolvers: IdeaKotlinDependencyResolver
-): IdeaKotlinDependencyResolver = IdeaKotlinDependencyResolver(resolvers.toList())
+fun IdeaKpmDependencyResolver(
+    vararg resolvers: IdeaKpmDependencyResolver
+): IdeaKpmDependencyResolver = IdeaKpmDependencyResolver(resolvers.toList())
 
-operator fun IdeaKotlinDependencyResolver.plus(
-    other: IdeaKotlinDependencyResolver
-): IdeaKotlinDependencyResolver {
-    if (this is CompositeIdeaKotlinDependencyResolver && other is CompositeIdeaKotlinDependencyResolver) {
-        return CompositeIdeaKotlinDependencyResolver(this.children + other.children)
+operator fun IdeaKpmDependencyResolver.plus(
+    other: IdeaKpmDependencyResolver
+): IdeaKpmDependencyResolver {
+    if (this is IdeaKpmCompositeDependencyResolver && other is IdeaKpmCompositeDependencyResolver) {
+        return IdeaKpmCompositeDependencyResolver(this.children + other.children)
     }
 
-    if (this is CompositeIdeaKotlinDependencyResolver) {
-        return CompositeIdeaKotlinDependencyResolver(this.children + other)
+    if (this is IdeaKpmCompositeDependencyResolver) {
+        return IdeaKpmCompositeDependencyResolver(this.children + other)
     }
 
-    if (other is CompositeIdeaKotlinDependencyResolver) {
-        return CompositeIdeaKotlinDependencyResolver(listOf(this) + other.children)
+    if (other is IdeaKpmCompositeDependencyResolver) {
+        return IdeaKpmCompositeDependencyResolver(listOf(this) + other.children)
     }
 
-    return CompositeIdeaKotlinDependencyResolver(listOf(this, other))
+    return IdeaKpmCompositeDependencyResolver(listOf(this, other))
 }
 
-private class CompositeIdeaKotlinDependencyResolver(
-    val children: List<IdeaKotlinDependencyResolver>
-) : IdeaKotlinDependencyResolver {
+private class IdeaKpmCompositeDependencyResolver(
+    val children: List<IdeaKpmDependencyResolver>
+) : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         return children.flatMap { child -> child.resolve(fragment) }.toSet()
     }

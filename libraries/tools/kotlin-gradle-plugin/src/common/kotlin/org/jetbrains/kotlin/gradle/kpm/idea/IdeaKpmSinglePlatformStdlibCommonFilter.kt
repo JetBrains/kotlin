@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 
-internal object IdeaKotlinSinglePlatformStdlibCommonFilter : IdeaKotlinDependencyTransformer {
+internal object IdeaKpmSinglePlatformStdlibCommonFilter : IdeaKpmDependencyTransformer {
     private const val stdlibCoordinatesGroup = "org.jetbrains.kotlin"
     private val stdlibCoordinatesModules = setOf("kotlin-stdlib-common", "kotlin-test-common", "kotlin-test-annotations-common")
 

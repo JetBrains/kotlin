@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 @Suppress("unused")
 /* Receiver acts as scope, or key to that function */
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: GradleKpmVariant): IdeaKpmPlatform {
+internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmPlatform(variant: GradleKpmVariant): IdeaKpmPlatform {
     when (variant) {
         is GradleKpmJvmVariant -> return IdeaKpmPlatform.jvm(variant.compilationData.kotlinOptions.jvmTarget ?: JvmTarget.DEFAULT.name)
         is GradleKpmNativeVariantInternal -> return IdeaKpmPlatform.native(variant.konanTarget.name)
@@ -29,7 +29,7 @@ internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinPlatform(variant: G
 
     /* Fallback calculation based on 'platformType' alone */
     /* This is a last line of defence, not expected to be actually executed */
-    assert(false) { "Unable to build 'IdeaKotlinPlatform' from variant ${variant.path}" }
+    assert(false) { "Unable to build 'IdeaKpmPlatform' from variant ${variant.path}" }
     return when (variant.platformType) {
         KotlinPlatformType.common -> throw IllegalArgumentException("Unexpected platformType 'common' for variant ${variant.name}")
         KotlinPlatformType.jvm -> IdeaKpmPlatform.jvm(JvmTarget.DEFAULT.name)

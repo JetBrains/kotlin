@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 
-internal object IdeaKotlinUnusedSourcesAndDocumentationFilter : IdeaKotlinDependencyTransformer {
+internal object IdeaKpmUnusedSourcesAndDocumentationFilter : IdeaKpmDependencyTransformer {
     override fun transform(
         fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>
     ): Set<IdeaKpmDependency> {

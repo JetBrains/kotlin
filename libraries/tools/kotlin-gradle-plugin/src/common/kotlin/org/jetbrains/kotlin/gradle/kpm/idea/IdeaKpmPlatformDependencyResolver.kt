@@ -12,7 +12,7 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinPlatformDependencyResolver.*
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmPlatformDependencyResolver.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttributesSetup
 
@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmConfigurationAttribu
  * 'platform' binaries refer to actually linkable/executable artifacts (like .class files bundled as jar, or linkable native klibs)
  * This resolver is capable of resolving those artifacts even for non-variant "platform-like" fragments.
  * It will then use the [GradleKpmFragment.transitiveApiConfiguration] and [GradleKpmFragment.transitiveImplementationConfiguratione]'s
- * to resolve those binaries. See [IdeaKotlinPlatformDependencyResolver.ArtifactResolution.PlatformFragment]
+ * to resolve those binaries. See [IdeaKpmPlatformDependencyResolver.ArtifactResolution.PlatformFragment]
  */
-class IdeaKotlinPlatformDependencyResolver(
+class IdeaKpmPlatformDependencyResolver(
     private val binaryType: String = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
     private val artifactResolution: ArtifactResolution = ArtifactResolution.Variant()
-) : IdeaKotlinDependencyResolver {
+) : IdeaKpmDependencyResolver {
 
     sealed class ArtifactResolution {
         /**

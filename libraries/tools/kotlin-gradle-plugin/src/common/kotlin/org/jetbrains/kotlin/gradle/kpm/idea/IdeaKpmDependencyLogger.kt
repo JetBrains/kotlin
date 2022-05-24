@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.path
 
-internal object IdeaKotlinDependencyLogger : IdeaKotlinDependencyEffect {
+internal object IdeaKpmDependencyLogger : IdeaKpmDependencyEffect {
     override fun invoke(
         fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>
     ) {

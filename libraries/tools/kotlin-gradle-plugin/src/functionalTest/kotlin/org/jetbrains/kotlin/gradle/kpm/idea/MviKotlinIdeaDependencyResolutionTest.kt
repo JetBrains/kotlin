@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.gradle.android.androidPrototype
 import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
-import org.jetbrains.kotlin.gradle.kpm.buildIdeaKotlinProjectModel
+import org.jetbrains.kotlin.gradle.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmDependency.Companion.CLASSPATH_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsFragment
 import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.assertContainsModule
@@ -51,7 +51,7 @@ class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyR
             }
         }
 
-        kotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().modules.forEach { module ->
+        kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().modules.forEach { module ->
             module.assertContainsFragment("common").assertResolvedBinaryDependencies(
                 CLASSPATH_BINARY_TYPE,
                 "com.arkivanov.mvikotlin:mvikotlin:3.0.0-beta01:main:commonMain",
@@ -197,7 +197,7 @@ class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyR
         /* Android requires project to evaluate */
         project.evaluate()
 
-        kotlin.buildIdeaKotlinProjectModel().assertIsNotEmpty().assertContainsModule("main").let { module ->
+        kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().assertContainsModule("main").let { module ->
             listOf("common", "jvm").forEach { fragmentName ->
                 module.assertContainsFragment(fragmentName).assertResolvedBinaryDependencies(
                     CLASSPATH_BINARY_TYPE,

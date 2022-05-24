@@ -4,7 +4,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder.FragmentConstraint
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.FragmentConstraint
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 import org.jetbrains.kotlin.project.model.KpmVariant
 import java.io.File
 
-internal interface IdeaKotlinProjectModelBuildingContext {
-    val dependencyResolver: IdeaKotlinDependencyResolver
+internal interface IdeaKpmProjectModelBuildingContext {
+    val dependencyResolver: IdeaKpmDependencyResolver
 
-    companion object Empty : IdeaKotlinProjectModelBuildingContext {
-        override val dependencyResolver: IdeaKotlinDependencyResolver = IdeaKotlinDependencyResolver.Empty
+    companion object Empty : IdeaKpmProjectModelBuildingContext {
+        override val dependencyResolver: IdeaKpmDependencyResolver = IdeaKpmDependencyResolver.Empty
     }
 }
 
-interface IdeaKotlinProjectModelBuilder {
+interface IdeaKpmProjectModelBuilder {
     /**
-     * Any [IdeaKotlinDependencyResolver] has to be registered for a given dependency resolution phase in which it participates
+     * Any [IdeaKpmDependencyResolver] has to be registered for a given dependency resolution phase in which it participates
      * The resolution phases will be executed in the order of their enum's ordinal.
      */
     enum class DependencyResolutionPhase {
@@ -49,7 +49,7 @@ interface IdeaKotlinProjectModelBuilder {
     }
 
     /**
-     * Any [IdeaKotlinDependencyResolver] has to be registered specifying a certain resolution level.
+     * Any [IdeaKpmDependencyResolver] has to be registered specifying a certain resolution level.
      * Generally, all resolvers registered in a given resolution level will work collaboratively, meaning the dependency resolution
      * result is the aggregation of all resolvers running.
      *
@@ -62,7 +62,7 @@ interface IdeaKotlinProjectModelBuilder {
     }
 
     /**
-     * Any [IdeaKotlinDependencyTransformer] has to be registered for a given transformation phase.
+     * Any [IdeaKpmDependencyTransformer] has to be registered for a given transformation phase.
      * The phases will be executed in the order of this enums ordinal.
      */
     enum class DependencyTransformationPhase {
@@ -73,7 +73,7 @@ interface IdeaKotlinProjectModelBuilder {
 
         /**
          * Dependency transformation phase that is free entirely free in its transformation type.
-         * Note: Adding dependencies to the resolution result might most likely better be modelled as [IdeaKotlinDependencyResolver]
+         * Note: Adding dependencies to the resolution result might most likely better be modelled as [IdeaKpmDependencyResolver]
          */
         FreeDependencyTransformationPhase,
 
@@ -91,7 +91,7 @@ interface IdeaKotlinProjectModelBuilder {
     }
 
     /**
-     * Used for scoping [IdeaKotlinDependencyResolver], [IdeaKotlinDependencyTransformer] and [IdeaKotlinDependencyEffect]
+     * Used for scoping [IdeaKpmDependencyResolver], [IdeaKpmDependencyTransformer] and [IdeaKpmDependencyEffect]
      */
     fun interface FragmentConstraint {
         operator fun invoke(fragment: GradleKpmFragment): Boolean
@@ -105,7 +105,7 @@ interface IdeaKotlinProjectModelBuilder {
 
     @ExternalVariantApi
     fun registerDependencyResolver(
-        resolver: IdeaKotlinDependencyResolver,
+        resolver: IdeaKpmDependencyResolver,
         constraint: FragmentConstraint,
         phase: DependencyResolutionPhase,
         level: DependencyResolutionLevel = DependencyResolutionLevel.Default,
@@ -113,29 +113,29 @@ interface IdeaKotlinProjectModelBuilder {
 
     @ExternalVariantApi
     fun registerDependencyTransformer(
-        transformer: IdeaKotlinDependencyTransformer,
+        transformer: IdeaKpmDependencyTransformer,
         constraint: FragmentConstraint,
         phase: DependencyTransformationPhase
     )
 
     @ExternalVariantApi
     fun registerDependencyEffect(
-        effect: IdeaKotlinDependencyEffect,
+        effect: IdeaKpmDependencyEffect,
         constraint: FragmentConstraint
     )
 
-    fun buildIdeaKotlinProjectModel(): IdeaKpmProject
+    fun buildIdeaKpmProjectModel(): IdeaKpmProject
 
     companion object
 }
 
-internal fun IdeaKotlinProjectModelBuildingContext.IdeaKotlinProjectModel(extension: KotlinPm20ProjectExtension): IdeaKpmProject {
+internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmProject(extension: KotlinPm20ProjectExtension): IdeaKpmProject {
     return IdeaKpmProjectImpl(
         gradlePluginVersion = extension.project.getKotlinPluginVersion(),
         coreLibrariesVersion = extension.coreLibrariesVersion,
         explicitApiModeCliOption = extension.explicitApi?.cliOption,
         kotlinNativeHome = File(extension.project.konanHome).absoluteFile,
-        modules = extension.modules.map { module -> IdeaKotlinModule(module) }
+        modules = extension.modules.map { module -> IdeaKpmModule(module) }
     )
 }
 

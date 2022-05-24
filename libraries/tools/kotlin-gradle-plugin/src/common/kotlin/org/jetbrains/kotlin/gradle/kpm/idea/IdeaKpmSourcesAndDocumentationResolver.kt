@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 
-internal class IdeaKotlinSourcesAndDocumentationResolver : IdeaKotlinDependencyResolver {
+internal class IdeaKpmSourcesAndDocumentationResolver : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
         if (fragment is GradleKpmVariant) {
             return resolve(fragment.project, fragment.compileDependenciesConfiguration)

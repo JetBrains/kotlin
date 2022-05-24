@@ -28,5 +28,5 @@ fun KotlinPm20ProjectExtension.androidPrototype() {
         instrumentedTest { createKotlinAndroidVariant(androidVariant.testVariant ?: return@instrumentedTest) }
     }
 
-    setupIdeaKotlinFragmentDependencyResolver()
+    setupIdeaKpmFragmentDependencyResolver()
 }

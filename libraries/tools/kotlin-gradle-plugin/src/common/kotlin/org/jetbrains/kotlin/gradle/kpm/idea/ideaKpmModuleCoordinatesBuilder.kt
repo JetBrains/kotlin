@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 
-internal fun IdeaKotlinModuleCoordinates(module: GradleKpmModule): IdeaKpmModuleCoordinates {
+internal fun IdeaKpmModuleCoordinates(module: GradleKpmModule): IdeaKpmModuleCoordinates {
     return IdeaKpmModuleCoordinatesImpl(
         buildId = module.project.currentBuildId().name,
         projectPath = module.project.path,

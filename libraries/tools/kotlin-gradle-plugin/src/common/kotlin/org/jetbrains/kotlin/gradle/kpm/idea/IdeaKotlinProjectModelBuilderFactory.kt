@@ -13,86 +13,86 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 @OptIn(UnsafeApi::class)
-internal fun IdeaKotlinProjectModelBuilder.Companion.default(
+internal fun IdeaKpmProjectModelBuilder.Companion.default(
     extension: KotlinPm20ProjectExtension
-) = IdeaKotlinProjectModelBuilderImpl(extension).apply {
+) = IdeaKpmProjectModelBuilderImpl(extension).apply {
     val fragmentMetadataResolverFactory = GradleKpmFragmentGranularMetadataResolverFactory()
 
     registerDependencyResolver(
-        resolver = IdeaKotlinRefinesDependencyResolver,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmRefinesDependencyResolver,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinGranularFragmentDependencyResolver(fragmentMetadataResolverFactory),
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmGranularFragmentDependencyResolver(fragmentMetadataResolverFactory),
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinMetadataBinaryDependencyResolver(fragmentMetadataResolverFactory),
-        constraint = !IdeaKotlinProjectModelBuilder.FragmentConstraint.isVariant,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmMetadataBinaryDependencyResolver(fragmentMetadataResolverFactory),
+        constraint = !IdeaKpmProjectModelBuilder.FragmentConstraint.isVariant,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinOriginalMetadataDependencyResolver(fragmentMetadataResolverFactory),
-        constraint = !IdeaKotlinProjectModelBuilder.FragmentConstraint.isVariant,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmOriginalMetadataDependencyResolver(fragmentMetadataResolverFactory),
+        constraint = !IdeaKpmProjectModelBuilder.FragmentConstraint.isVariant,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinPlatformDependencyResolver(),
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.isVariant,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmPlatformDependencyResolver(),
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.isVariant,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinNativeStdlibDependencyResolver,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.isNative,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmNativeStdlibDependencyResolver,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.isNative,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinNativePlatformDependencyResolver(),
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.isNative,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmNativePlatformDependencyResolver(),
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.isNative,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKotlinSourcesAndDocumentationResolver(),
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained,
-        phase = IdeaKotlinProjectModelBuilder.DependencyResolutionPhase.PostDependencyResolution,
-        level = IdeaKotlinProjectModelBuilder.DependencyResolutionLevel.Default
+        resolver = IdeaKpmSourcesAndDocumentationResolver(),
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained,
+        phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.PostDependencyResolution,
+        level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyTransformer(
-        transformer = IdeaKotlinSinglePlatformStdlibCommonFilter,
-        phase = IdeaKotlinProjectModelBuilder.DependencyTransformationPhase.DependencyFilteringPhase,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained
+        transformer = IdeaKpmSinglePlatformStdlibCommonFilter,
+        phase = IdeaKpmProjectModelBuilder.DependencyTransformationPhase.DependencyFilteringPhase,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained
     )
 
     registerDependencyTransformer(
-        transformer = IdeaKotlinUnusedSourcesAndDocumentationFilter,
-        phase = IdeaKotlinProjectModelBuilder.DependencyTransformationPhase.DependencyFilteringPhase,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained
+        transformer = IdeaKpmUnusedSourcesAndDocumentationFilter,
+        phase = IdeaKpmProjectModelBuilder.DependencyTransformationPhase.DependencyFilteringPhase,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained
     )
 
     registerDependencyEffect(
-        effect = IdeaKotlinDependencyLogger,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained
+        effect = IdeaKpmDependencyLogger,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained
     )
 
     registerDependencyEffect(
-        effect = IdeaKotlinMissingFileDependencyLogger,
-        constraint = IdeaKotlinProjectModelBuilder.FragmentConstraint.unconstrained
+        effect = IdeaKpmMissingFileDependencyLogger,
+        constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained
     )
 }
