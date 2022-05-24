@@ -122,36 +122,25 @@ class DoubleMathTest {
     }
 
     @Test fun cubeRoots() {
-        assertEquals(3.0, cbrt(27.0))
-        assertEquals(-3.0, cbrt(-27.0))
-
-        assertEquals(Double.POSITIVE_INFINITY, cbrt(Double.POSITIVE_INFINITY))
-        assertEquals(Double.NEGATIVE_INFINITY, cbrt(Double.NEGATIVE_INFINITY))
-
-        assertEquals(+0.0, cbrt(+0.0))
-        assertEquals(-0.0, cbrt(-0.0))
-
-        assertEquals(Double.NaN, cbrt(Double.NaN))
-
-        val smallestNormal = Double.fromBits(0x0010000000000000)
-        val smallestValue = Double.fromBits(0x1L) // denormal
-
-        // Test -cbrt(x) == cbrt(-x)
-        val reprocityValues = doubleArrayOf(
-            smallestNormal,
-            smallestValue,
-            -0.1,
-            -27.0,
-            -0.0,
-            0.0,
-            0.1,
-            27.0,
-            Double.POSITIVE_INFINITY,
-            Double.NEGATIVE_INFINITY,
-            Double.NaN
+        val testingPairs = mapOf(
+            Double.NaN to Double.NaN,
+            Double.POSITIVE_INFINITY to Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY to Double.NEGATIVE_INFINITY,
+            Double.fromBits(0x0010000000000000) to 2.812644285236262E-103, // smallest normal value
+            Double.fromBits(0x1L) to 1.7031839360032603E-108, // smallest value (denormal)
+            Double.MAX_VALUE to 5.643803094122362E102,
+            0.0 to 0.0,
+            0.9 to 0.9654893846056297,
+            9.9 to 2.1472291690189413,
+            27.0 to 3.0,
+            399.1289 to 7.362710510208026,
+            8123.452 to 20.102351976782558,
+            21717.639 to 27.9,
+            392890.22 to 73.24147345684439
         )
 
-        for (x in reprocityValues) {
+        for ((x, result) in testingPairs) {
+            assertEquals(result, cbrt(x), 1e-118)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
@@ -504,36 +493,25 @@ class FloatMathTest {
     }
 
     @Test fun cubeRoots() {
-        assertEquals(3.0f, cbrt(27.0f))
-        assertEquals(-3.0f, cbrt(-27.0f))
-
-        assertEquals(Float.POSITIVE_INFINITY, cbrt(Float.POSITIVE_INFINITY))
-        assertEquals(Float.NEGATIVE_INFINITY, cbrt(Float.NEGATIVE_INFINITY))
-
-        assertEquals(+0.0f, cbrt(+0.0f))
-        assertEquals(-0.0f, cbrt(-0.0f))
-
-        assertEquals(Float.NaN, cbrt(Float.NaN))
-
-        val smallestNormal = Float.fromBits(0x00800000)
-        val smallestValue = Float.fromBits(0x1) // denormal
-
-        // Test -cbrt(x) == cbrt(-x)
-        val reprocityValues = floatArrayOf(
-            smallestNormal,
-            smallestValue,
-            -0.1f,
-            -27.0f,
-            0.0f,
-            -0.0f,
-            0.1f,
-            27.0f,
-            Float.NEGATIVE_INFINITY,
-            Float.POSITIVE_INFINITY,
-            Float.NaN
+        val testingPairs = mapOf(
+            Float.NaN to Float.NaN,
+            Float.POSITIVE_INFINITY to Float.POSITIVE_INFINITY,
+            Float.NEGATIVE_INFINITY to Float.NEGATIVE_INFINITY,
+            Float.fromBits(0x00800000) to 2.2737368E-13f, // smallest normal value
+            Float.fromBits(0x1) to 1.1190347E-15f, // smallest value (denormal)
+            Float.MAX_VALUE to 6.9814636E12f,
+            0.0f to 0.0f,
+            0.9f to 0.9654894f,
+            9.9f to 2.1472292f,
+            27.0f to 3.0f,
+            399.1289f to 7.3627105f,
+            8123.452f to 20.102352f,
+            21717.639f to 27.9f,
+            392890.22f to 73.24147f
         )
 
-        for (x in reprocityValues) {
+        for ((x, result) in testingPairs) {
+            assertEquals(result, cbrt(x), 1e-22f)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }

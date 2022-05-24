@@ -356,7 +356,7 @@ public expect fun max(a: Double, b: Double): Double
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -365,6 +365,8 @@ public expect fun max(a: Double, b: Double): Double
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 public expect fun cbrt(x: Double): Double
 
 
@@ -833,7 +835,7 @@ public expect fun max(a: Float, b: Float): Float
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -842,6 +844,8 @@ public expect fun max(a: Float, b: Float): Float
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 public expect fun cbrt(x: Float): Float
 
 

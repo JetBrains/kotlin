@@ -382,7 +382,7 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -391,6 +391,8 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 @InlineOnly
 public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
 
@@ -917,7 +919,7 @@ public actual inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -926,6 +928,8 @@ public actual inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 @InlineOnly
 public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).toFloat()
 

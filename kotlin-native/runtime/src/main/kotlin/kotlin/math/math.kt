@@ -386,7 +386,7 @@ public actual fun max(a: Double, b: Double): Double = when {
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -395,8 +395,10 @@ public actual fun max(a: Double, b: Double): Double = when {
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 @GCUnsafeCall("Kotlin_math_cbrt")
-external public actual fun cbrt(x: Double): Double
+public external actual fun cbrt(x: Double): Double
 
 
 // extensions
@@ -951,7 +953,7 @@ public actual fun max(a: Float, b: Float): Float = when {
 
 
 /**
- * Returns the cube root of [x]. For positive finite `x`, `cbrt(-x) == -cbrt(x)`;
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
  * that is, the cube root of a negative value is the negative of the cube root
  * of that value's magnitude. Special cases:
  *
@@ -960,6 +962,8 @@ public actual fun max(a: Float, b: Float): Float = when {
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
 @GCUnsafeCall("Kotlin_math_cbrtf")
 external public actual fun cbrt(x: Float): Float
 
