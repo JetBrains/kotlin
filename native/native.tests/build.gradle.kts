@@ -1,4 +1,3 @@
-import org.gradle.internal.util.NumberUtil.formatBytes
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
@@ -139,31 +138,16 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(
             includeTags(*tags)
         }
 
-        fun formatExecutionParameters() = buildString {
-            appendLine("$path parallel test execution parameters:")
-            append("  Available CPU cores = $availableCpuCores")
-            systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
-                append("\n  $key = $value")
-            }
-        }
-
-        fun formatMemoryUsage(before: Boolean) = buildString {
-            with(Runtime.getRuntime()) {
-                appendLine("$path (${if (before) "before" else "after"}) memory info:")
-                appendLine("  Max memory (-Xmx) = ${formatBytes(maxMemory())}")
-                appendLine("  Allocated memory = ${formatBytes(totalMemory())}")
-                appendLine("    Used memory = ${formatBytes(totalMemory() - freeMemory())}")
-                append("    Free memory = ${formatBytes(freeMemory())}")
-            }
-        }
-
         doFirst {
-            logger.info(formatExecutionParameters())
-            logger.info(formatMemoryUsage(before = true))
-        }
-
-        doLast {
-            logger.info(formatMemoryUsage(before = false))
+            logger.info(
+                buildString {
+                    appendLine("$path parallel test execution parameters:")
+                    append("  Available CPU cores = $availableCpuCores")
+                    systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
+                        append("\n  $key = $value")
+                    }
+                }
+            )
         }
     } else
         doFirst {
