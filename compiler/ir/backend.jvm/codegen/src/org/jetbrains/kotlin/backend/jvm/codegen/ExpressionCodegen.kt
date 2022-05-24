@@ -148,6 +148,12 @@ class ExpressionCodegen(
 
     var finallyDepth = 0
 
+    val inlineRoot: ExpressionCodegen
+        get() = inlinedInto ?: this
+
+    val enclosingFunctionForLocalObjects: IrFunction
+        get() = generateSequence(inlineRoot.irFunction) { context.enclosingMethodOverride[it] }.last()
+
     val context = classCodegen.context
     val typeMapper = context.typeMapper
     val methodSignatureMapper = context.methodSignatureMapper
@@ -862,7 +868,7 @@ class ExpressionCodegen(
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
-            val childCodegen = ClassCodegen.getOrCreate(declaration, context, generateSequence(this) { it.inlinedInto }.last().irFunction)
+            val childCodegen = ClassCodegen.getOrCreate(declaration, context, enclosingFunctionForLocalObjects)
             childCodegen.generate()
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
         }

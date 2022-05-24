@@ -42,12 +42,16 @@ class IrSourceCompilerForInline(
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
-            val root = generateSequence(codegen) { it.inlinedInto }.last()
+            val root = codegen.inlineRoot
+            val rootFunction = root.enclosingFunctionForLocalObjects
             return InlineCallSiteInfo(
                 root.classCodegen.type.internalName,
-                root.signature.asmMethod,
-                root.irFunction.inlineScopeVisibility,
-                root.irFunction.fileParent.getIoFile(),
+                if (rootFunction === root.irFunction)
+                    root.signature.asmMethod
+                else
+                    codegen.methodSignatureMapper.mapAsmMethod(rootFunction),
+                rootFunction.inlineScopeVisibility,
+                rootFunction.fileParent.getIoFile(),
                 callElement.psiElement?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )
         }
@@ -62,7 +66,7 @@ class IrSourceCompilerForInline(
                 reifiedTypeParameters.addUsedReifiedParameter(typeParameter.name.asString())
             }
         }
-        return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen, reifiedTypeParameters)
+        return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(codegen.inlineRoot, reifiedTypeParameters)
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {

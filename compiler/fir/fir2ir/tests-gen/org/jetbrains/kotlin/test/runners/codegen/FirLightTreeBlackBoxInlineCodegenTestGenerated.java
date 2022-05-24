@@ -2231,6 +2231,12 @@ public class FirLightTreeBlackBoxInlineCodegenTestGenerated extends AbstractFirL
         }
 
         @Test
+        @TestMetadata("kt52417.kt")
+        public void testKt52417() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/enclosingInfo/kt52417.kt");
+        }
+
+        @Test
         @TestMetadata("objectInInlineFun.kt")
         public void testObjectInInlineFun() throws Exception {
             runTest("compiler/testData/codegen/boxInline/enclosingInfo/objectInInlineFun.kt");
