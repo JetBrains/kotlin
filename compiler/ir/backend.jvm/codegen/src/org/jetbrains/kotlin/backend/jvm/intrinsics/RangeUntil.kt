@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-object RangeTo : Range(RangeKind.TO)
+object RangeUntil : Range(RangeKind.UNTIL)

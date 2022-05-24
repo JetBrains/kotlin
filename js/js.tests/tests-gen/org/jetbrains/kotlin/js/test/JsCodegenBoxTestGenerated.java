@@ -23487,6 +23487,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
         }
 
+        @Test
+        @TestMetadata("untilOperator.kt")
+        public void testUntilOperator() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/untilOperator.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         @TestDataPath("$PROJECT_ROOT")

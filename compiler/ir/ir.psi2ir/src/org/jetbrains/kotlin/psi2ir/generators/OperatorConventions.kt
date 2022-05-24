@@ -36,6 +36,7 @@ fun getInfixOperator(ktOperator: IElementType): IrStatementOrigin? =
         KtTokens.DIV -> IrStatementOrigin.DIV
         KtTokens.PERC -> IrStatementOrigin.PERC
         KtTokens.RANGE -> IrStatementOrigin.RANGE
+        KtTokens.RANGE_UNTIL -> IrStatementOrigin.RANGE_UNTIL
         KtTokens.LT -> IrStatementOrigin.LT
         KtTokens.LTEQ -> IrStatementOrigin.LTEQ
         KtTokens.GT -> IrStatementOrigin.GT
@@ -90,6 +91,7 @@ val OPERATORS_DESUGARED_TO_CALLS =
         IrStatementOrigin.DIV,
         IrStatementOrigin.PERC,
         IrStatementOrigin.RANGE,
+        IrStatementOrigin.RANGE_UNTIL,
         IrStatementOrigin.EXCL,
         IrStatementOrigin.UMINUS,
         IrStatementOrigin.UPLUS

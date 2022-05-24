@@ -487,6 +487,7 @@ private val nameToOperationConventionOrigin = mutableMapOf(
     OperatorNameConventions.MOD to IrStatementOrigin.PERC,
     OperatorNameConventions.REM to IrStatementOrigin.PERC,
     OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE,
+    OperatorNameConventions.RANGE_UNTIL to IrStatementOrigin.RANGE_UNTIL,
     OperatorNameConventions.CONTAINS to IrStatementOrigin.IN,
 )
 

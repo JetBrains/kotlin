@@ -126,6 +126,7 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.MINUS, intType, "other" to charType, isOperator = true)
         val charRange = referenceClassByClassId(StandardClassIds.CharRange)!!.owner.defaultType
         createMemberFunction(OperatorNameConventions.RANGE_TO, charRange, "other" to charType, isIntrinsicConst = false)
+        createMemberFunction(OperatorNameConventions.RANGE_UNTIL, charRange, "other" to charType, isIntrinsicConst = false)
         createIntrinsicConstOfToStringAndEquals()
         finalizeClassDefinition()
     }

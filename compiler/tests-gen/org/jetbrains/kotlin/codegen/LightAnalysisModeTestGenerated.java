@@ -27397,6 +27397,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/operatorConventions/remOverModOperation.kt");
         }
 
+        @TestMetadata("untilOperator.kt")
+        public void testUntilOperator() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/untilOperator.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

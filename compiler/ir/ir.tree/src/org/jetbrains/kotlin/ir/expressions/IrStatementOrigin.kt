@@ -40,6 +40,7 @@ interface IrStatementOrigin {
     object DIV : IrStatementOriginImpl("DIV")
     object PERC : IrStatementOriginImpl("PERC")
     object RANGE : IrStatementOriginImpl("RANGE")
+    object RANGE_UNTIL : IrStatementOriginImpl("RANGE_UNTIL")
 
     object INVOKE : IrStatementOriginImpl("INVOKE")
     object VARIABLE_AS_FUNCTION : IrStatementOriginImpl("VARIABLE_AS_FUNCTION")
