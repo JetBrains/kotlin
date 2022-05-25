@@ -70,6 +70,12 @@ internal class TestFile<M : TestModule> private constructor(
     }
 }
 
+internal val TestFile<*>.isDefFile: Boolean
+    get() = this.location.name.endsWith(".def")
+
+internal val TestModule.isCinterop: Boolean
+    get() = this.files.any { it.isDefFile }
+
 /**
  * Represents a module in terms of Kotlin compiler. Includes one or more [TestFile]s. Can be compiled to executable file, KLIB
  * or any other artifact supported by the Kotlin/Native compiler.

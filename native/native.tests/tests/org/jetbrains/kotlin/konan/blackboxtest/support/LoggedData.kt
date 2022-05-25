@@ -56,6 +56,7 @@ internal abstract class LoggedData {
 
     class CompilerParameters(
         private val home: KotlinNativeHome,
+        private val tool: String,
         private val compilerArgs: Array<String>,
         private val sourceModules: Collection<TestModule>,
         private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
@@ -70,7 +71,7 @@ internal abstract class LoggedData {
             }
 
         override fun computeText() = buildString {
-            appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/kotlinc-native").path) + compilerArgs)
+            appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/$tool").path) + compilerArgs)
             appendLine()
             appendLine(environment)
 

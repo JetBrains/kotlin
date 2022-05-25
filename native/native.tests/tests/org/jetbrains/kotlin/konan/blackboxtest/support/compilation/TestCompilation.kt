@@ -26,16 +26,16 @@ internal abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
 }
 
-internal abstract class BasicCompilation<A : TestCompilationArtifact>(
+internal abstract class BasicBasicCompilation<A : TestCompilationArtifact>(
     protected val targets: KotlinNativeTargets,
     protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
-    private val optimizationMode: OptimizationMode,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val dependencies: CategorizedDependencies,
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
+    protected abstract val runner: CompilerToolRunner
 
     // Runs the compiler and memorizes the result on property access.
     final override val result: TestCompilationResult<out A> by lazy {
@@ -46,30 +46,15 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             doCompile()
     }
 
-    private fun ArgsBuilder.applyCommonArgs() {
-        add("-target", targets.testTarget.name)
-        optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        add(
-            "-enable-assertions",
-            "-Xskip-prerelease-check",
-            "-Xverify-ir",
-            "-Xbinary=runtimeAssertionsMode=panic"
-        )
-    }
-
+    protected abstract fun ArgsBuilder.applyCommonArgs()
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
     protected abstract fun applyDependencies(argsBuilder: ArgsBuilder)
-
     private fun ArgsBuilder.applyFreeArgs() {
         add(freeCompilerArgs.compilerArgs)
     }
 
-    private fun ArgsBuilder.applySources() {
-        addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
-    }
-
+    protected abstract fun ArgsBuilder.applySources()
     protected open fun postCompileCheck() = Unit
-
     private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
         val compilerArgs = buildArgs {
             applyCommonArgs()
@@ -79,10 +64,10 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             applySources()
         }
 
-        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules)
+        val loggedCompilerParameters = LoggedData.CompilerParameters(home, runner.toolName, compilerArgs, sourceModules)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
-            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
+            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = runner.run(
                 compilerArgs = compilerArgs,
                 kotlinNativeClassLoader = classLoader.classLoader
             )
@@ -109,6 +94,77 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
         return result
     }
+
+}
+
+internal class CinteropCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: KLIB,
+    private val sourceModule: TestModule
+) : BasicBasicCompilation<KLIB>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val runner: CompilerToolRunner
+        get() = CinteropRunner
+
+    override val sourceModules: Collection<TestModule>
+        get() = listOf(sourceModule)
+
+    override fun ArgsBuilder.applyCommonArgs() {
+        add("-target", targets.testTarget.name)
+    }
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        add("-repo", home.librariesDir.path) // TODO: is this required?
+        add("-output", expectedArtifact.path)
+    }
+
+    override fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+    }
+
+    override fun ArgsBuilder.applySources() {
+        val defFile = sourceModule.files.single()
+        check(defFile.location.name.endsWith(".def")) { defFile.location }
+        add("-def", defFile.location.path)
+    }
+}
+
+internal abstract class BasicCompilation<A : TestCompilationArtifact>(
+    targets: KotlinNativeTargets,
+    home: KotlinNativeHome,
+    classLoader: KotlinNativeClassLoader,
+    private val optimizationMode: OptimizationMode,
+    freeCompilerArgs: TestCompilerArgs,
+    dependencies: CategorizedDependencies,
+    expectedArtifact: A
+) : BasicBasicCompilation<A>(targets, home, classLoader, freeCompilerArgs, dependencies, expectedArtifact) {
+    override val runner: CompilerToolRunner
+        get() = CompilerRunner
+
+    override fun ArgsBuilder.applyCommonArgs() {
+        add("-target", targets.testTarget.name)
+        optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        add(
+            "-enable-assertions",
+            "-Xskip-prerelease-check",
+            "-Xverify-ir",
+            "-Xbinary=runtimeAssertionsMode=panic"
+        )
+    }
+
+    override fun ArgsBuilder.applySources() {
+        // FIXME: cinterop modules probably shouldn't get there.
+        addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
+    }
+
 }
 
 internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(

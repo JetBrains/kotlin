@@ -176,6 +176,8 @@ private class ExtTestDataFile(
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         var isStandaloneTest = false
 
+        if (hasDefFiles) return true
+
         filesToTransform.forEach { handler ->
             handler.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtFile(file: KtFile) = when {
@@ -255,6 +257,8 @@ private class ExtTestDataFile(
         val oldToNewPackageNameMapping: Map<FqName, FqName> = oldPackageNames.associateWith { oldPackageName ->
             basePackageName.child(oldPackageName)
         }
+
+        // FIXME: fix .def file package names
 
         filesToTransform.forEach { handler ->
             handler.accept(object : KtVisitor<Unit, Set<Name>>() {
@@ -627,6 +631,11 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
 
+        val hasDefFiles
+            get() = filesAndModules.modules.values.any { module ->
+                module.files.any { it.name.endsWith(".def") }
+            }
+
         val directives: Directives get() = filesAndModules.directives
 
         val filesToTransform: Iterable<CurrentFileHandler>
@@ -800,9 +809,9 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
             val modules = generatedFiles.map { it.module }.associateBy { it.name }
 
-            val (supportModuleFiles, nonSupportModuleFiles) = generatedFiles.partition { it.module.isSupport }
-            val parsedFiles = nonSupportModuleFiles.associateWith { psiFactory.createFile(it.name, it.text) }
-            val nonParsedFiles = supportModuleFiles.toMutableList()
+            val (filesToParse, filesNotToParse) = generatedFiles.partition { !it.module.isSupport && !it.name.endsWith(".def") }
+            val parsedFiles = filesToParse.associateWith { psiFactory.createFile(it.name, it.text) }
+            val nonParsedFiles = filesNotToParse.toMutableList()
 
             // Explicitly add support module to other modules' dependencies (as it is not listed there by default).
             val supportModule = modules[SUPPORT_MODULE_NAME]

@@ -221,22 +221,27 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         private fun fixPackageNames(testModules: Collection<TestModule.Exclusive>, basePackageName: PackageName, testDataFile: File) {
             testModules.forEach { testModule ->
                 testModule.files.forEach { testFile ->
-                    val firstMeaningfulLine = testFile.text.dropNonMeaningfulLines().firstOrNull()
+                    if (testFile.isDefFile) {
+                        testFile.update { text -> "package = $basePackageName\n$text" }
+                        // FIXME: fix the case when package is already specified.
+                    } else {
+                        val firstMeaningfulLine = testFile.text.dropNonMeaningfulLines().firstOrNull()
 
-                    // Retrieve the package name if it is declared inside the test file.
-                    val existingPackageName = firstMeaningfulLine?.getExistingPackageName()
-                    if (existingPackageName != null) {
-                        // Validate it.
-                        assertTrue(existingPackageName.startsWith(basePackageName)) {
-                            val location = Location(testDataFile, firstMeaningfulLine.number)
-                            """
+                        // Retrieve the package name if it is declared inside the test file.
+                        val existingPackageName = firstMeaningfulLine?.getExistingPackageName()
+                        if (existingPackageName != null) {
+                            // Validate it.
+                            assertTrue(existingPackageName.startsWith(basePackageName)) {
+                                val location = Location(testDataFile, firstMeaningfulLine.number)
+                                """
                                $location: Invalid package name declaration found: $firstMeaningfulLine
                                 Expected: package $basePackageName
                             """.trimIndent()
+                            }
+                        } else {
+                            // Add package declaration.
+                            testFile.update { text -> "package $basePackageName $text" }
                         }
-                    } else {
-                        // Add package declaration.
-                        testFile.update { text -> "package $basePackageName $text" }
                     }
                 }
             }

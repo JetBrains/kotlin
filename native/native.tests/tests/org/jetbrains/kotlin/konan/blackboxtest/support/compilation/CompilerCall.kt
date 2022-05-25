@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.lang.reflect.InvocationTargetException
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -64,6 +67,55 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
     }
 
     return CompilerCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), duration)
+}
+
+internal fun callCinterop(compilerArgs: Array<String>, kotlinNativeClassLoader: ClassLoader): CompilerCallResult {
+    val exitCode: ExitCode
+    var output = ""
+
+    @OptIn(ExperimentalTime::class)
+    val duration = measureTime {
+        val compilerClass = Class.forName("org.jetbrains.kotlin.cli.utilities.MainKt", true, kotlinNativeClassLoader)
+        val entryPoint = compilerClass.getMethod(
+            "main", // FIXME: need daemonMain
+            Array<String>::class.java
+        )
+
+        exitCode = try {
+            entryPoint.invoke(null, arrayOf("cinterop") + compilerArgs)
+            ExitCode.OK
+        } catch (e: Throwable) {
+            val cause = (e as? InvocationTargetException)?.cause ?: e
+            val stringWriter = StringWriter()
+            val printWriter = PrintWriter(stringWriter)
+            cause.printStackTrace(printWriter)
+            output = stringWriter.toString()
+            ExitCode.COMPILATION_ERROR
+        }
+    }
+
+    return CompilerCallResult(exitCode, output, exitCode != ExitCode.OK, duration)
+}
+
+internal interface CompilerToolRunner {
+    fun run(compilerArgs: Array<String>, kotlinNativeClassLoader: ClassLoader): CompilerCallResult
+    val toolName: String
+}
+
+internal object CompilerRunner : CompilerToolRunner {
+    override fun run(compilerArgs: Array<String>, kotlinNativeClassLoader: ClassLoader): CompilerCallResult =
+        callCompiler(compilerArgs, kotlinNativeClassLoader)
+
+    override val toolName: String
+        get() = "kotlinc-native"
+}
+
+internal object CinteropRunner : CompilerToolRunner {
+    override fun run(compilerArgs: Array<String>, kotlinNativeClassLoader: ClassLoader): CompilerCallResult =
+        callCinterop(compilerArgs, kotlinNativeClassLoader)
+
+    override val toolName: String
+        get() = "cinterop"
 }
 
 internal data class CompilerCallResult(

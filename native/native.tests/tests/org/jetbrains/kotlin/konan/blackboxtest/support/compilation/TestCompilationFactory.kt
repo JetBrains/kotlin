@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
@@ -150,13 +151,26 @@ internal class TestCompilationFactory {
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
-            val klibCompilation = LibraryCompilation(
-                settings = settings,
-                freeCompilerArgs = freeCompilerArgs,
-                sourceModules = sourceModules,
-                dependencies = dependencies.forKlib(),
-                expectedArtifact = klibArtifact
-            )
+            val klibCompilation = if (sourceModules.size == 1 && sourceModules.single().isCinterop) {
+                CinteropCompilation(
+                    settings = settings,
+                    freeCompilerArgs = freeCompilerArgs,
+                    sourceModule = sourceModules.single(),
+                    dependencies = dependencies.forKlib(),
+                    expectedArtifact = klibArtifact
+                )
+            } else {
+                sourceModules.forEach {
+                    check(!it.isCinterop) { it.name }
+                }
+                LibraryCompilation(
+                    settings = settings,
+                    freeCompilerArgs = freeCompilerArgs,
+                    sourceModules = sourceModules,
+                    dependencies = dependencies.forKlib(),
+                    expectedArtifact = klibArtifact
+                )
+            }
 
             val staticCacheCompilation: StaticCacheCompilation? =
                 staticCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
