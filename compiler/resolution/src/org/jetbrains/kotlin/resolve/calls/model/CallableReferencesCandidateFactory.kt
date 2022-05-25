@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.LazyWrappedTypeComputationException
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
@@ -239,8 +240,15 @@ class CallableReferencesCandidateFactory(
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 
+        fun isReturnTypeNonUnitSafe(): Boolean =
+            try {
+                descriptor.returnType?.isUnit() == false
+            } catch (e: LazyWrappedTypeComputationException) {
+                false
+            }
+
         val coercion =
-            if (returnExpectedType.isUnit() && descriptor.returnType?.isUnit() == false)
+            if (returnExpectedType.isUnit() && isReturnTypeNonUnitSafe())
                 CoercionStrategy.COERCION_TO_UNIT
             else
                 CoercionStrategy.NO_COERCION
