@@ -30,7 +30,7 @@ class SourceFilePathResolver(sourceRoots: List<File>, outputDir: File? = null) {
         val pathRelativeToOutput = calculatePathRelativeToOutput(file)
         if (pathRelativeToOutput != null) return pathRelativeToOutput
         val parts = mutableListOf<String>()
-        var currentFile: File? = file.canonicalFile
+        var currentFile: File? = file.absoluteFile.normalize()
         while (currentFile != null) {
             if (sourceRoots.contains(currentFile)) {
                 if (parts.isEmpty()) {
