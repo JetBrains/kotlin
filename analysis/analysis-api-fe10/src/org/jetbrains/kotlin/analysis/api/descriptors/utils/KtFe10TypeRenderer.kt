@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getKtNamedAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
@@ -136,8 +137,8 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             return
         }
 
-        val lowerBoundText = buildString { renderType(type.lowerBound) }
-        val upperBoundText = buildString { renderType(type.upperBound) }
+        val lowerBoundText = prettyPrint { renderType(type.lowerBound) }
+        val upperBoundText = prettyPrint { renderType(type.upperBound) }
         append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
     }
 
