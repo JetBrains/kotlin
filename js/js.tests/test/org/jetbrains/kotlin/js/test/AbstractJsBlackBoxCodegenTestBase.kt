@@ -104,7 +104,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
                 ::NodeJsGeneratorHandler,
                 ::JsBoxRunner,
                 ::JsMinifierRunner,
-                ::JsAstHandler
+                ::JsAstHandler,
+                ::JsSourceMapPathRewriter
             )
         }
     }
