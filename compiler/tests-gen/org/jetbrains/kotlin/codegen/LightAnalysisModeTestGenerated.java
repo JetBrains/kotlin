@@ -11882,6 +11882,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumGetDelegate.kt");
             }
 
+            @TestMetadata("delegateToEnumInAClass.kt")
+            public void testDelegateToEnumInAClass() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumInAClass.kt");
+            }
+
             @TestMetadata("delegateToSingleton.kt")
             public void testDelegateToSingleton() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
@@ -11895,6 +11900,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("withSideEffects.kt")
             public void testWithSideEffects() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffects.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DelegateToThis extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDelegateToThis() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("delegateToOuterThis.kt")
+            public void testDelegateToOuterThis() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToOuterThis.kt");
+            }
+
+            @TestMetadata("delegateToThis.kt")
+            public void testDelegateToThis() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToThis.kt");
+            }
+
+            @TestMetadata("delegateToThisByExtension.kt")
+            public void testDelegateToThisByExtension() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToThisByExtension.kt");
             }
         }
 

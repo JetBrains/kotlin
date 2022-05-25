@@ -6,6 +6,7 @@ public final class C {
     static method <clinit>(): void
     public method <init>(): void
     public final method getImpl(): int
+    public static method getS$delegate(p0: C): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 

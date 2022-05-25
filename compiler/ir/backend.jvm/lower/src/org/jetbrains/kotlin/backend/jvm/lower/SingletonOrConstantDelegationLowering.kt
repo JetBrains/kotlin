@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.cr
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.remapReceiver
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -49,26 +49,24 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
         if (!isDelegated || isFakeOverride || backingField == null) return null
-        val delegate = backingField?.initializer?.expression
-        if (delegate?.isConst() != true) {
-            return null
-        }
-
-        val receiverMapper = object : IrElementTransformer<Name> {
-            override fun visitCall(expression: IrCall, data: Name): IrExpression {
-                if (expression.symbol.owner.name == data) {
+        val delegate = backingField?.initializer?.expression?.takeIf { it.isConst() } ?: return null
+        val originalThis = parentAsClass.thisReceiver
+        val receiverMapper = object : IrElementTransformer<Pair<Name, IrExpression>> {
+            override fun visitCall(expression: IrCall, data: Pair<Name, IrExpression>): IrExpression {
+                val (name, newReceiver) = data
+                if (expression.symbol.owner.name == name) {
                     if ((expression.dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.dispatchReceiver = delegate.deepCopyWithVariables()
+                        expression.dispatchReceiver = newReceiver
                     } else if ((expression.extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.extensionReceiver = delegate.deepCopyWithVariables()
+                        expression.extensionReceiver = newReceiver
                     }
                 }
                 return expression
             }
         }
 
-        getter?.body?.transform(receiverMapper, OperatorNameConventions.GET_VALUE)
-        setter?.body?.transform(receiverMapper, OperatorNameConventions.SET_VALUE)
+        getter?.transform(receiverMapper,OperatorNameConventions.GET_VALUE to delegate.remapReceiver(originalThis, getter?.dispatchReceiverParameter))
+        setter?.transform(receiverMapper,OperatorNameConventions.SET_VALUE to delegate.remapReceiver(originalThis, setter?.dispatchReceiverParameter))
 
         backingField = null
 
@@ -79,12 +77,12 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
                 IrDeclarationOrigin.DEFINED,
                 IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
             ).apply {
-                body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.deepCopyWithVariables()))
+                body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.remapReceiver(null, null)))
             }
         else null
 
         val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
-            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.deepCopyWithVariables()) }
+            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.remapReceiver(originalThis, dispatchReceiverParameter)) }
         }
 
         return listOfNotNull(this, initializerBlock, delegateMethod)

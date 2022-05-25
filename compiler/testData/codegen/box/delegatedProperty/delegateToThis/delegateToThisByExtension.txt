@@ -1,0 +1,16 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'delegateToThisByExtension.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    static method <clinit>(): void
+    public method <init>(): void
+    public static method getS$delegate(p0: C): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class DelegateToThisByExtensionKt {
+    // source: 'delegateToThisByExtension.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: C, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+}

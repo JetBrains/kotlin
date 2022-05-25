@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// CHECK_BYTECODE_LISTING
 
 var initialized = false
 

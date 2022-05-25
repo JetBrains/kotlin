@@ -7,6 +7,8 @@ enum class E {
 
 operator fun E.getValue(x: Any?, y: Any?): String = name
 
-val s: String by E.OK
+class C {
+    val s: String by E.OK
+}
 
-fun box(): String = s
+fun box(): String = C().s
