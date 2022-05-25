@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -255,6 +253,14 @@ internal class ConeTypeIdeRenderer(
             return index == designation.lastIndex ||
                     (designation[index] as? FirRegularClass)?.isInner == true ||
                     (designation[index + 1] as? FirRegularClass)?.isInner == true
+        }
+
+        val classParentFqName = classId.relativeClassName.parent()
+        if (!classParentFqName.isRoot && designation.size == 1) {
+            // This code is added for a case we can't build designation (e.g. nested Java class),
+            // but still wish to render full class name
+            append(classParentFqName)
+            append(".")
         }
 
         designation.filterIsInstance<FirRegularClass>().forEachIndexed { index, currentClass ->
