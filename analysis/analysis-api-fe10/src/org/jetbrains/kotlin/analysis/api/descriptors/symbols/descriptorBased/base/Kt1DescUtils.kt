@@ -89,6 +89,7 @@ internal fun DeclarationDescriptor.toKtSymbol(analysisContext: Fe10AnalysisConte
 
     return when (this) {
         is ClassifierDescriptor -> toKtClassifierSymbol(analysisContext)
+        is ReceiverParameterDescriptor -> toKtReceiverParameterSymbol(analysisContext)
         is CallableDescriptor -> toKtCallableSymbol(analysisContext)
         is PackageViewDescriptor -> toKtPackageSymbol(analysisContext)
         else -> null
@@ -114,6 +115,10 @@ internal fun ClassDescriptor.toKtClassSymbol(analysisContext: Fe10AnalysisContex
 
 internal fun PackageViewDescriptor.toKtPackageSymbol(analysisContext: Fe10AnalysisContext): KtPackageSymbol {
     return KtFe10PackageSymbol(fqName, analysisContext)
+}
+
+internal fun ReceiverParameterDescriptor.toKtReceiverParameterSymbol(analysisContext: Fe10AnalysisContext): KtReceiverParameterSymbol {
+    return KtFe10ReceiverParameterSymbol(this, analysisContext)
 }
 
 internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
