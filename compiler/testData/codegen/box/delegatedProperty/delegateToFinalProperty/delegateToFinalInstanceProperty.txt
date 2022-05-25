@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'delegateToFinalInstanceProperty.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final field impl: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getImpl(): int
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class DelegateToFinalInstancePropertyKt {
+    // source: 'delegateToFinalInstanceProperty.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.reflect.KProperty): java.lang.String
+}

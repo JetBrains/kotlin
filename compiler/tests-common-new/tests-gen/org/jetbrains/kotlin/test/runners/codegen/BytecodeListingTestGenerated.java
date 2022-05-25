@@ -1033,12 +1033,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
 
         @Test
-        @TestMetadata("delegateToConst.kt")
-        public void testDelegateToConst() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegateToConst.kt");
-        }
-
-        @Test
         @TestMetadata("delegatedPropertiesInCompanionObject.kt")
         public void testDelegatedPropertiesInCompanionObject() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegatedPropertiesInCompanionObject.kt");

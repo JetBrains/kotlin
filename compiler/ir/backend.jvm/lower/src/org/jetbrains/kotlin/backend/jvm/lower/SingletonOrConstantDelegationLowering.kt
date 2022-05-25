@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.cr
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
@@ -54,12 +55,12 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
         }
 
         val receiverMapper = object : IrElementTransformer<Name> {
-            override fun visitCall(expression: IrCall, data: Name): IrCall {
+            override fun visitCall(expression: IrCall, data: Name): IrExpression {
                 if (expression.symbol.owner.name == data) {
                     if ((expression.dispatchReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.dispatchReceiver = delegate.shallowCopy()
+                        expression.dispatchReceiver = delegate.deepCopyWithVariables()
                     } else if ((expression.extensionReceiver as? IrGetField)?.symbol == backingField?.symbol) {
-                        expression.extensionReceiver = delegate.shallowCopy()
+                        expression.extensionReceiver = delegate.deepCopyWithVariables()
                     }
                 }
                 return expression
@@ -71,19 +72,19 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         backingField = null
 
-        val initializerBlock = if (delegate !is IrConst<*>)
+        val initializerBlock = if (delegate !is IrConst<*> && delegate !is IrGetValue)
             context.irFactory.createAnonymousInitializer(
                 delegate.startOffset,
                 delegate.endOffset,
                 IrDeclarationOrigin.DEFINED,
                 IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
             ).apply {
-                body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.shallowCopy()))
+                body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.deepCopyWithVariables()))
             }
         else null
 
         val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
-            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.shallowCopy()) }
+            body = context.createJvmIrBuilder(symbol).run { irExprBody(delegate.deepCopyWithVariables()) }
         }
 
         return listOfNotNull(this, initializerBlock, delegateMethod)
@@ -100,6 +101,8 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
                             && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
                 }
+            is IrGetValue ->
+                symbol.owner.name == SpecialNames.THIS
             else -> false
         }
 }

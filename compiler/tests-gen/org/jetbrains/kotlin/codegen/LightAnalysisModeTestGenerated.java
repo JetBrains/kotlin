@@ -11834,6 +11834,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("delegateToFinalInstanceProperty.kt")
+            public void testDelegateToFinalInstanceProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalInstanceProperty.kt");
+            }
+
             @TestMetadata("delegateToFinalObjectProperty.kt")
             public void testDelegateToFinalObjectProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectProperty.kt");

@@ -14497,6 +14497,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("delegateToFinalInstanceProperty.kt")
+            public void testDelegateToFinalInstanceProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalInstanceProperty.kt");
+            }
+
+            @Test
             @TestMetadata("delegateToFinalObjectProperty.kt")
             public void testDelegateToFinalObjectProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectProperty.kt");
