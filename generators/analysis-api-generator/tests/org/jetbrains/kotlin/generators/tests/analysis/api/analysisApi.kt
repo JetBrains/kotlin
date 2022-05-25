@@ -49,9 +49,8 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     test(
         AbstractReferenceResolveTest::class,
-        filter = frontendIs(FrontendKind.Fir) and
-                testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
-                analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
+                 analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
     ) { data ->
         when (data.moduleKind) {
             TestModuleKind.LibrarySource -> {
