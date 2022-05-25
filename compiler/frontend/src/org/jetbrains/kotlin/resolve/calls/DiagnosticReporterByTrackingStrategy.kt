@@ -610,14 +610,19 @@ class DiagnosticReporterByTrackingStrategy(
                         ?: typeVariable.toString()
 
                     @Suppress("UNCHECKED_CAST")
-                    val incompatibleTypes = error.incompatibleTypes as Collection<KotlinType>
+                    val incompatibleTypes = error.incompatibleTypes as List<KotlinType>
 
+                    @Suppress("UNCHECKED_CAST")
+                    val causingTypes = error.causingTypes as List<KotlinType>
+                    val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
                     val diagnostic = if (error.kind.isPossiblyEmpty()) {
-                        INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.on(expression, typeVariableText, incompatibleTypes)
+                        INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.on(
+                            expression, typeVariableText, incompatibleTypes, error.kind.description, causingTypesText
+                        )
                     } else {
                         INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.on(
                             context.languageVersionSettings, expression, typeVariableText,
-                            incompatibleTypes, error.kind.description?.let { " ($it)" }.orEmpty()
+                            incompatibleTypes, error.kind.description, causingTypesText
                         )
                     }
 

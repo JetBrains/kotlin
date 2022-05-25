@@ -902,15 +902,21 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
                     continue
                 }
                 else -> {
-                    val emptyIntersectionKind = constraintSystem.getEmptyIntersectionTypeKind(upperTypes).takeIf { it.isDefinitelyEmpty() }
-                        ?: continue
+                    val emptyIntersectionTypeInfo = constraintSystem.getEmptyIntersectionTypeKind(upperTypes) ?: continue
                     val isInferredEmptyIntersectionForbidden = callComponents.languageVersionSettings.supportsFeature(
                         LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
                     )
                     val errorFactory =
                         if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
 
-                    addError(errorFactory(upperTypes, variableWithConstraints.typeVariable, emptyIntersectionKind))
+                    addError(
+                        errorFactory(
+                            upperTypes,
+                            emptyIntersectionTypeInfo.casingTypes.toList(),
+                            variableWithConstraints.typeVariable,
+                            emptyIntersectionTypeInfo.kind
+                        )
+                    )
                 }
             }
         }

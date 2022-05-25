@@ -688,12 +688,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error<PsiElement> {
             parameter<String>("typeVariableDescription")
             parameter<Collection<ConeKotlinType>>("incompatibleTypes")
-            parameter<String>("kind")
+            parameter<String>("description")
+            parameter<String>("causingTypes")
         }
 
         val INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION by warning<PsiElement> {
             parameter<String>("typeVariableDescription")
             parameter<Collection<ConeKotlinType>>("incompatibleTypes")
+            parameter<String>("description")
+            parameter<String>("causingTypes")
         }
     }
 

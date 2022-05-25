@@ -1409,6 +1409,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersection::class
         abstract val typeVariableDescription: String
         abstract val incompatibleTypes: List<KtType>
+        abstract val description: String
+        abstract val causingTypes: String
+    }
+
+    abstract class InferredTypeVariableIntoPossibleEmptyIntersection : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoPossibleEmptyIntersection::class
+        abstract val typeVariableDescription: String
+        abstract val incompatibleTypes: List<KtType>
+        abstract val description: String
+        abstract val causingTypes: String
     }
 
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -38,7 +39,7 @@ class NewConstraintSystemImpl(
     private val typeVariablesTransaction: MutableList<TypeVariableMarker> = SmartList()
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
-    private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeKind> = mutableMapOf()
+    private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
     override var atCompletionState: Boolean = false
@@ -441,7 +442,7 @@ class NewConstraintSystemImpl(
         doPostponedComputationsIfAllVariablesAreFixed()
     }
 
-    override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeKind {
+    override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {
         if (types in intersectionTypesCache)
             return intersectionTypesCache.getValue(types)
 
@@ -458,18 +459,20 @@ class NewConstraintSystemImpl(
         if (upperTypes.size <= 1 || storage.errors.any { it is InferredEmptyIntersection && it.incompatibleTypes == upperTypes })
             return
 
-        val emptyIntersectionKind = getEmptyIntersectionTypeKind(upperTypes).takeIf { it.isEmpty() } ?: return
+        val emptyIntersectionTypeInfo = getEmptyIntersectionTypeKind(upperTypes) ?: return
 
         // Remove existing errors from the resolution stage because a completion stage error is always more precise
         storage.errors.removeIf { it is InferredEmptyIntersection }
 
         val isInferredEmptyIntersectionForbidden =
             languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
-        val errorFactory = if (emptyIntersectionKind.isDefinitelyEmpty() && isInferredEmptyIntersectionForbidden)
+        val errorFactory = if (emptyIntersectionTypeInfo.kind.isDefinitelyEmpty() && isInferredEmptyIntersectionForbidden)
             ::InferredEmptyIntersectionError
         else ::InferredEmptyIntersectionWarning
 
-        addError(errorFactory(upperTypes, variable, emptyIntersectionKind))
+        addError(
+            errorFactory(upperTypes.toList(), emptyIntersectionTypeInfo.casingTypes.toList(), variable, emptyIntersectionTypeInfo.kind)
+        )
     }
 
     private fun checkMissedConstraints() {

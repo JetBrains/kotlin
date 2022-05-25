@@ -31,6 +31,7 @@ class MixingNamedAndPositionArguments(override val argument: FirExpression) : In
 
 class InferredEmptyIntersectionDiagnostic(
     val incompatibleTypes: Collection<ConeKotlinType>,
+    val causingTypes: Collection<ConeKotlinType>,
     val typeVariable: ConeTypeVariable,
     val kind: EmptyIntersectionTypeKind
 ) : ResolutionDiagnostic(INAPPLICABLE)

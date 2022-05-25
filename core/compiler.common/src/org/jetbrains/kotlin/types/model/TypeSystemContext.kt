@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types.model
 
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
+import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -326,8 +327,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?
 
-    fun computeEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeKind =
-        EmptyIntersectionTypeChecker.computeEmptyIntersectionTypeKind(this, types)
+    fun computeEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? =
+        EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(this, types)
 
     private fun computeEffectiveVariance(parameter: TypeParameterMarker, argument: TypeArgumentMarker): TypeVariance? =
         AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())

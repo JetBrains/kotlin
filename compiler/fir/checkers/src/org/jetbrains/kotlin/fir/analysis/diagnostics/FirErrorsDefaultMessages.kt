@@ -950,16 +950,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INFERENCE_UNSUCCESSFUL_FORK, "Unsuccessful inference fork at position: {0}", TO_STRING)
         map.put(
             INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION,
-            "Type argument for a type parameter {0} can''t be inferred because it has incompatible upper bounds ({2}): {1}",
+            "Type argument for a type parameter {0} can''t be inferred because it has incompatible upper bounds: {1} ({2}{3})",
             TO_STRING,
             RENDER_COLLECTION_OF_TYPES,
+            TO_STRING,
             TO_STRING
         )
         map.put(
             INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION,
-            "Type argument for a type parameter {0} has possible incompatible upper bounds: {1}",
+            "Type argument for a type parameter {0} has possible incompatible upper bounds: {1} ({2}{3})",
             TO_STRING,
-            RENDER_COLLECTION_OF_TYPES
+            RENDER_COLLECTION_OF_TYPES,
+            TO_STRING,
+            TO_STRING
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)

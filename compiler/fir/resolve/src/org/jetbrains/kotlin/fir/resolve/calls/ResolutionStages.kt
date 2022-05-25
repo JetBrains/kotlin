@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -582,15 +581,15 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
                     continue
 
-                val emptyIntersectionKind = candidate.system.getEmptyIntersectionTypeKind(upperTypes).takeIf { it.isDefinitelyEmpty() }
-                    ?: continue
+                val emptyIntersectionTypeInfo = candidate.system.getEmptyIntersectionTypeKind(upperTypes) ?: continue
 
                 sink.yieldDiagnostic(
                     @Suppress("UNCHECKED_CAST")
                     InferredEmptyIntersectionDiagnostic(
-                        upperTypes as Collection<ConeKotlinType>,
+                        upperTypes as List<ConeKotlinType>,
+                        emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable as ConeTypeVariable,
-                        emptyIntersectionKind
+                        emptyIntersectionTypeInfo.kind
                     )
                 )
             }

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.types
 
-// TODO: add `SINGLE_FINAL_CLASS` later to report warnings
-enum class EmptyIntersectionTypeKind(val description: String? = null) {
-    NOT_EMPTY_INTERSECTION,
+enum class EmptyIntersectionTypeKind(val description: String) {
     MULTIPLE_CLASSES("multiple incompatible classes"),
     INCOMPATIBLE_SUPERTYPES("incompatible supertypes"),
     INCOMPATIBLE_TYPE_ARGUMENTS("incompatible type arguments"),
-    SINGLE_FINAL_CLASS
+    SINGLE_FINAL_CLASS("final class and interface")
 }
 
 fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
@@ -20,5 +18,3 @@ fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
             || this == EmptyIntersectionTypeKind.INCOMPATIBLE_TYPE_ARGUMENTS
 
 fun EmptyIntersectionTypeKind.isPossiblyEmpty(): Boolean = this == EmptyIntersectionTypeKind.SINGLE_FINAL_CLASS
-
-fun EmptyIntersectionTypeKind.isEmpty(): Boolean = this != EmptyIntersectionTypeKind.NOT_EMPTY_INTERSECTION

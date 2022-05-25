@@ -257,8 +257,9 @@ private fun mapInapplicableCandidateError(
                     diagnostic.candidate
                 )
             }
-            is InferredEmptyIntersectionDiagnostic ->
-                reportInferredIntoEmptyIntersectionError(source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.kind)
+            is InferredEmptyIntersectionDiagnostic -> reportInferredIntoEmptyIntersectionError(
+                source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.causingTypes, rootCause.kind
+            )
             else -> genericDiagnostic
         }
     }.distinct()
@@ -400,6 +401,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 source,
                 typeVariable as ConeTypeVariable,
                 incompatibleTypes as Collection<ConeKotlinType>,
+                causingTypes as Collection<ConeKotlinType>,
                 kind
             )
         }
@@ -411,18 +413,18 @@ private fun reportInferredIntoEmptyIntersectionError(
     source: KtSourceElement,
     typeVariable: ConeTypeVariable,
     incompatibleTypes: Collection<ConeKotlinType>,
+    causingTypes: Collection<ConeKotlinType>,
     kind: EmptyIntersectionTypeKind
 ): KtDiagnostic? {
     val typeVariableText =
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()
-    return if (kind.isPossiblyEmpty()) {
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.createOn(source, typeVariableText, incompatibleTypes)
-    } else {
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.createOn(
-            source, typeVariableText, incompatibleTypes, kind.description?.let { " ($it)" }.orEmpty()
-        )
-    }
+    val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
+    val factory = if (kind.isPossiblyEmpty())
+        FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION else
+        FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+
+    return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }
 
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType

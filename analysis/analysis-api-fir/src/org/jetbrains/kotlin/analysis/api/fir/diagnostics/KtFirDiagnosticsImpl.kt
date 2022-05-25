@@ -1690,9 +1690,20 @@ internal class PlatformClassMappedToKotlinImpl(
 internal class InferredTypeVariableIntoEmptyIntersectionImpl(
     override val typeVariableDescription: String,
     override val incompatibleTypes: List<KtType>,
+    override val description: String,
+    override val causingTypes: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InferredTypeVariableIntoEmptyIntersection(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class InferredTypeVariableIntoPossibleEmptyIntersectionImpl(
+    override val typeVariableDescription: String,
+    override val incompatibleTypes: List<KtType>,
+    override val description: String,
+    override val causingTypes: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InferredTypeVariableIntoPossibleEmptyIntersection(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,

@@ -67,10 +67,11 @@ class ClassicTypeSystemContextForCS(
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is UnwrappedType, type::errorMessage)
+        require(type is KotlinType, type::errorMessage)
+        val unwrappedType = type.unwrap()
         return when (this) {
-            is NewTypeSubstitutor -> safeSubstitute(type)
-            is TypeSubstitutor -> safeSubstitute(type, Variance.INVARIANT)
+            is NewTypeSubstitutor -> safeSubstitute(unwrappedType)
+            is TypeSubstitutor -> safeSubstitute(unwrappedType, Variance.INVARIANT)
             else -> error(this.errorMessage())
         }
     }
