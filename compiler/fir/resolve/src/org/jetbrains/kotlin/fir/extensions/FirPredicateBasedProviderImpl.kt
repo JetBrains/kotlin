@@ -39,11 +39,20 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         registerOwnersDeclarations(declaration, owners)
 
         if (declaration.annotations.isEmpty()) return
-        val matchingAnnotations = declaration.annotations.mapNotNull { it.fqName(session) }
+        val matchingAnnotations = declaration.annotations
+            .mapNotNull { it.fqName(session) }
             .filter { it in registeredPluginAnnotations.annotations }
-        if (matchingAnnotations.isEmpty()) return
+            .takeIf { it.isNotEmpty() }
+            ?: return
+
+        owners.lastOrNull()?.let { owner ->
+            matchingAnnotations.forEach { cache.declarationsHasAnnotated.put(it, owner) }
+            cache.annotationsOfHasAnnotated.putAll(owner, matchingAnnotations)
+        }
+
         matchingAnnotations.forEach { cache.declarationByAnnotation.put(it, declaration) }
         cache.annotationsOfDeclaration.putAll(declaration, matchingAnnotations)
+
         val file = owners.first() as FirFile
         cache.filesWithPluginAnnotations += file
     }
@@ -55,11 +64,14 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
     private fun registerOwnersDeclarations(declaration: FirDeclaration, owners: PersistentList<FirDeclaration>) {
         val lastOwner = owners.lastOrNull() ?: return
         val annotationsFromLastOwner = cache.annotationsOfDeclaration[lastOwner]
-        val annotationsFromPreviousOwners = cache.parentAnnotationsOfDeclaration[lastOwner]
+        val annotationsFromPreviousOwners = cache.annotationsOfUnderAnnotated[lastOwner]
+
+        annotationsFromLastOwner.forEach { cache.declarationsParentAnnotated.put(it, declaration) }
+        cache.annotationsOfParentAnnotated.putAll(declaration, annotationsFromLastOwner)
 
         val allParentDeclarations = annotationsFromLastOwner + annotationsFromPreviousOwners
         allParentDeclarations.forEach { cache.declarationsUnderAnnotated.put(it, declaration) }
-        cache.parentAnnotationsOfDeclaration.putAll(declaration, allParentDeclarations)
+        cache.annotationsOfUnderAnnotated.putAll(declaration, allParentDeclarations)
     }
 
     // ---------------------------------- Matching ----------------------------------
@@ -75,10 +87,6 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
             throw IllegalStateException("Should not be there")
         }
 
-        override fun visitAny(predicate: DeclarationPredicate.Any, data: FirDeclaration): Boolean {
-            return true
-        }
-
         override fun visitAnd(predicate: DeclarationPredicate.And, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) && predicate.b.accept(this, data)
         }
@@ -86,6 +94,8 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         override fun visitOr(predicate: DeclarationPredicate.Or, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
+
+        // ------------------------------------ Annotated ------------------------------------
 
         override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.annotations)
@@ -95,6 +105,16 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
             return matchUnder(data, predicate.annotations)
         }
 
+        override fun visitParentAnnotatedWith(predicate: ParentAnnotatedWith, data: FirDeclaration): Boolean {
+            return matchParentWith(data, predicate.annotations)
+        }
+
+        override fun visitHasAnnotatedWith(predicate: HasAnnotatedWith, data: FirDeclaration): Boolean {
+            return matchHasAnnotatedWith(data, predicate.annotations)
+        }
+
+        // ------------------------------------ Meta Annotated ------------------------------------
+
         override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.userDefinedAnnotations)
         }
@@ -102,6 +122,16 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirDeclaration): Boolean {
             return matchUnder(data, predicate.userDefinedAnnotations)
         }
+
+        override fun visitParentMetaAnnotatedWith(predicate: ParentMetaAnnotatedWith, data: FirDeclaration): Boolean {
+            return matchParentWith(data, predicate.userDefinedAnnotations)
+        }
+
+        override fun visitHasMetaAnnotatedWith(predicate: HasMetaAnnotatedWith, data: FirDeclaration): Boolean {
+            return matchHasAnnotatedWith(data, predicate.userDefinedAnnotations)
+        }
+
+        // ------------------------------------ Utilities ------------------------------------
 
         private val MetaAnnotated.userDefinedAnnotations: Set<AnnotationFqn>
             get() = metaAnnotations.flatMapTo(mutableSetOf()) { registeredPluginAnnotations.getAnnotationsWithMetaAnnotation(it) }
@@ -111,7 +141,15 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         }
 
         private fun matchUnder(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
-            return cache.parentAnnotationsOfDeclaration[declaration].any { it in annotations }
+            return cache.annotationsOfUnderAnnotated[declaration].any { it in annotations }
+        }
+
+        private fun matchParentWith(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+            return cache.annotationsOfParentAnnotated[declaration].any { it in annotations }
+        }
+
+        private fun matchHasAnnotatedWith(declaration: FirDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+            return cache.annotationsOfHasAnnotated[declaration].any { it in annotations }
         }
     }
 
@@ -122,7 +160,13 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         val annotationsOfDeclaration: LinkedHashMultimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirDeclaration> = LinkedHashMultimap.create()
-        val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
+        val annotationsOfUnderAnnotated: LinkedHashMultimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
+
+        val declarationsParentAnnotated: Multimap<AnnotationFqn, FirDeclaration> = LinkedHashMultimap.create()
+        val annotationsOfParentAnnotated: Multimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
+
+        val declarationsHasAnnotated: Multimap<AnnotationFqn, FirDeclaration> = LinkedHashMultimap.create()
+        val annotationsOfHasAnnotated: Multimap<FirDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val ownersForDeclaration: MutableMap<FirDeclaration, PersistentList<FirDeclaration>> = mutableMapOf()
 

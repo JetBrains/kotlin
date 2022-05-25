@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.has
-import org.jetbrains.kotlin.fir.extensions.predicate.metaHas
-import org.jetbrains.kotlin.fir.extensions.predicate.or
+import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -40,7 +38,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")
 
-        private val PREDICATE: DeclarationPredicate = has("NestedClassAndMaterializeMember".fqn())
+        private val PREDICATE: DeclarationPredicate = annotated("NestedClassAndMaterializeMember".fqn())
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

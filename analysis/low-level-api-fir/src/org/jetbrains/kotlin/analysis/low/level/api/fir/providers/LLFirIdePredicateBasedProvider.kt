@@ -107,10 +107,6 @@ internal class LLFirIdePredicateBasedProvider(
                           "this method should never be called, but it was called with $predicate")
         }
 
-        override fun visitAny(predicate: DeclarationPredicate.Any, data: FirDeclaration): Boolean {
-            return true
-        }
-
         override fun visitAnd(predicate: DeclarationPredicate.And, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) && predicate.b.accept(this, data)
         }

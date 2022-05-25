@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
-import org.jetbrains.kotlin.fir.extensions.predicate.has
-import org.jetbrains.kotlin.fir.extensions.predicate.metaHas
+import org.jetbrains.kotlin.fir.extensions.predicate.annotated
+import org.jetbrains.kotlin.fir.extensions.predicate.metaAnnotated
 import org.jetbrains.kotlin.fir.extensions.predicate.or
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -59,7 +59,7 @@ class FirAllOpenPredicateMatcher(
 
     override val predicate = run {
         val annotationFqNames = allOpenAnnotationFqNames.map { FqName(it) }
-        has(annotationFqNames) or metaHas(annotationFqNames)
+        annotated(annotationFqNames) or metaAnnotated(annotationFqNames)
     }
 }
 
