@@ -124,37 +124,29 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
     }
 
     private fun mapSourcePaths(inputFile: File, targetFile: File): Boolean {
-        val json = try {
-            parseJson(inputFile)
-        } catch (e: JsonSyntaxException) {
-            return false
-        }
-
-        val sourcesArray = (json as? JsonObject)?.properties?.get("sources") as? JsonArray ?: return false
-        val sources = sourcesArray.elements.map {
-            (it as? JsonString)?.value ?: return false
-        }
-
+        val jsonOut = StringWriter()
         val pathCalculator = RelativePathCalculator(targetFile.parentFile)
-        val mappedSources = sources.map {
-            val result = pathCalculator.calculateRelativePathTo(File(inputFile.parentFile, it))
-            if (result != null) {
-                if (File(targetFile.parentFile, result).exists()) {
-                    result
+        val sourceMapChanged = try {
+            SourceMap.mapSources(inputFile.readText(), jsonOut) {
+                val result = pathCalculator.calculateRelativePathTo(File(inputFile.parentFile, it))
+                if (result != null) {
+                    if (File(targetFile.parentFile, result).exists()) {
+                        result
+                    } else {
+                        it
+                    }
                 } else {
                     it
                 }
-            } else {
-                it
             }
+        } catch (e: SourceMapSourceReplacementException) {
+            false
         }
 
-        if (mappedSources == sources) return false
-
-        json.properties["sources"] = JsonArray(*mappedSources.map { JsonString(it) }.toTypedArray())
+        if (!sourceMapChanged) return false
 
         targetFile.parentFile.mkdirs()
-        OutputStreamWriter(FileOutputStream(targetFile), "UTF-8").use { it.write(json.toString()) }
+        OutputStreamWriter(FileOutputStream(targetFile), "UTF-8").use { it.write(jsonOut.toString()) }
 
         return true
     }
