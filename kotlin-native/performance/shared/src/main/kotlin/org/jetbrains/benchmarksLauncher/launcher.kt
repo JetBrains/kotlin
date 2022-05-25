@@ -46,10 +46,14 @@ abstract class Launcher {
         var i = repeatNumber
         return if (benchmark is BenchmarkEntryWithInit) {
             cleanup()
-            measureNanoTime {
+            val result = measureNanoTime {
                 while (i-- > 0) benchmark.lambda(benchmarkInstance!!)
                 cleanup()
             }
+            if (benchmark is BenchmarkEntryWithInitAndValidation) {
+                benchmark.validation(benchmarkInstance!!)
+            }
+            result
         } else if (benchmark is BenchmarkEntry) {
             cleanup()
             measureNanoTime {

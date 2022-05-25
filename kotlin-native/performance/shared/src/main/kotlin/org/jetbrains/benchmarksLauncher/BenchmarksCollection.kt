@@ -22,9 +22,19 @@ interface AbstractBenchmarkEntry {
     open val useAutoEvaluatedNumberOfMeasure: Boolean
 }
 
-class BenchmarkEntryWithInit(val ctor: ()->Any, val lambda: (Any) -> Any?): AbstractBenchmarkEntry {
+open class BenchmarkEntryWithInit(val ctor: ()->Any, val lambda: (Any) -> Any?): AbstractBenchmarkEntry {
     companion object {
         inline fun <T: Any> create(noinline ctor: ()->T, crossinline lambda: T.() -> Any?) = BenchmarkEntryWithInit(ctor) { (it as T).lambda() }
+    }
+
+    override val useAutoEvaluatedNumberOfMeasure: Boolean = true
+}
+
+class BenchmarkEntryWithInitAndValidation(ctor: () -> Any, benchmark: (Any) -> Any?, val validation: (Any) -> Any?)
+    : BenchmarkEntryWithInit(ctor, benchmark) {
+    companion object {
+        inline fun <T: Any> create(noinline ctor: ()->T, crossinline benchmark: T.() -> Any?, crossinline validation: T.() -> Any?)
+                = BenchmarkEntryWithInitAndValidation(ctor, { (it as T).benchmark() }, { (it as T).validation() })
     }
 
     override val useAutoEvaluatedNumberOfMeasure: Boolean = true
