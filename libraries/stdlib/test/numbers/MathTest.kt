@@ -140,7 +140,7 @@ class DoubleMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), 1e-118)
+            assertEquals(result, cbrt(x), 1e-15)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
@@ -511,7 +511,7 @@ class FloatMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), 1e-22f)
+            assertEquals(result, cbrt(x), 1e-15f)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
