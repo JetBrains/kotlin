@@ -9,8 +9,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
-import org.jetbrains.kotlin.GenerateCompilationDatabase
-import org.jetbrains.kotlin.MergeCompilationDatabases
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.ExecClang
+import org.jetbrains.kotlin.cpp.CompilationDatabaseExtension
+import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.supportedSanitizers
@@ -26,7 +29,8 @@ import javax.inject.Inject
  */
 open class CompileToBitcodePlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        target.extensions.create(EXTENSION_NAME, CompileToBitcodeExtension::class.java, target)
+        target.apply<CompilationDatabasePlugin>()
+        target.extensions.create<CompileToBitcodeExtension>(EXTENSION_NAME, target)
     }
 
     companion object {
@@ -35,6 +39,9 @@ open class CompileToBitcodePlugin : Plugin<Project> {
 }
 
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
+
+    private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
+    private val execClang = project.extensions.getByType<ExecClang>()
 
     private val targetList = with(project) {
         provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
@@ -54,22 +61,19 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         })
     }
 
-    private val compdbTasks by lazy {
-        targetList.get().associateBy(keySelector = { it }, valueTransform = {
-            val task = project.tasks.register("${it}${COMPILATION_DATABASE_TASK_NAME}", MergeCompilationDatabases::class.java)
-            task.configure {
-                outputFile = File(File(project.buildDir, it), "compile_commands.json")
+    private fun addToCompdb(compileTask: CompileToBitcode, konanTarget: KonanTarget) {
+        // No need to generate compdb entry for sanitizers.
+        if (compileTask.sanitizer != null) {
+            return
+        }
+        compilationDatabase.target(konanTarget) {
+            entry {
+                val args = listOf(execClang.resolveExecutable(compileTask.executable)) + compileTask.compilerFlags + execClang.clangArgsForCppRuntime(konanTarget.name)
+                directory.set(compileTask.objDir)
+                files.setFrom(compileTask.inputFiles)
+                arguments.set(args)
+                output.set(compileTask.outFile.absolutePath)
             }
-            task
-        })
-    }
-
-    private fun addToCompdb(compileTask: CompileToBitcode) {
-        val task = project.tasks.create("${compileTask.name}_CompilationDatabase", GenerateCompilationDatabase::class.java, compileTask.target, compileTask.inputFiles, compileTask.executable, compileTask.compilerFlags, compileTask.objDir)
-        val compdbTask = compdbTasks[compileTask.target]!!
-        compdbTask.configure {
-            dependsOn(task)
-            inputFiles.add(task.outputFile)
         }
     }
 
@@ -96,7 +100,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                     dependsOn(":kotlin-native:dependencies:update")
                     configurationBlock()
                 }
-                addToCompdb(task)
+                addToCompdb(task, target)
                 if (outputGroup == "main" && sanitizer == null) {
                     allMainModulesTask.configure {
                         dependsOn(taskName)
@@ -135,7 +139,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                         dependsOn("downloadGoogleTest")
                         compilerArgs.addAll(it.compilerArgs)
 
-                        addToCompdb(this)
+                        addToCompdb(this, konanTarget)
                     }
             if (task.inputFiles.count() == 0) null
             else task

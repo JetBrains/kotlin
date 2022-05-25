@@ -67,6 +67,7 @@ compile_commands.json
 
 # clangd caches
 .clangd/
+.cache/clangd
 
 # googletest framework used by runtime tests
 runtime/googletest/

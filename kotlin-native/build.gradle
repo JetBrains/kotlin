@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.CollisionDetector
 import org.jetbrains.kotlin.CollisionTransformer
-import org.jetbrains.kotlin.CompilationDatabaseKt
+import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -178,6 +178,8 @@ dependencies {
     commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
 }
+
+apply plugin: CompilationDatabasePlugin
 
 //task sharedJar {
 //    dependsOn gradle.includedBuild('shared').task(':jar')
@@ -742,19 +744,19 @@ task pusher(type: KotlinBuildPusher){
     token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
 }
 
-targetList.each { target ->
-    CompilationDatabaseKt.mergeCompilationDatabases(project, "${target}CompilationDatabase".toString(), [
-            ":kotlin-native::common:${target}CompilationDatabase".toString(),
-            ":kotlin-native:runtime:${target}CompilationDatabase".toString()
-    ]).configure {
-        outputFile = file("$buildDir/${target}/compile_commands.json")
+compilationDatabase {
+    allTargets {
+        mergeFrom(provider { project("common") })
+        mergeFrom(provider { project("runtime") })
     }
 }
 
-task compdb(type: Copy) {
-    dependsOn "${hostName}CompilationDatabase"
-    from "$buildDir/${hostName}/compile_commands.json"
-    into "$projectDir"
+tasks.register("compdb", Copy) {
+    from compilationDatabase.hostTarget.task
+    into layout.projectDirectory
+
+    group = compilationDatabase.TASK_GROUP
+    description = "Copy host compilation database to kotlin-native/"
 }
 
 targetList.each { targetName ->

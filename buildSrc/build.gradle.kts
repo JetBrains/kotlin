@@ -253,6 +253,10 @@ gradlePlugin {
             id = "runtime-testing"
             implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
         }
+        create("compilationDatabase") {
+            id = "compilation-database"
+            implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
+        }
         create("konan") {
             id = "konan"
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
