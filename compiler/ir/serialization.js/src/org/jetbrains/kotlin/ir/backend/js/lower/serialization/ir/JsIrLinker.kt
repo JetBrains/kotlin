@@ -69,15 +69,6 @@ class JsIrLinker(
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
         BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode)
 
-    override fun maybeWrapWithBuiltInAndInit(
-        moduleDescriptor: ModuleDescriptor,
-        moduleDeserializer: IrModuleDeserializer
-    ): IrModuleDeserializer {
-        return if (isBuiltInModule(moduleDescriptor)) {
-            IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer)
-        } else moduleDeserializer
-    }
-
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
         icData?.let {
