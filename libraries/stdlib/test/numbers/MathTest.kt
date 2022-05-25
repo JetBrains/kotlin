@@ -22,6 +22,20 @@ fun assertAlmostEquals(expected: Float, actual: Float, tolerance: Double? = null
     }
 }
 
+// For Kotlin JS tests
+private val Float.ulpCommon: Float
+    get() = when {
+        isNaN() -> Float.NaN
+        isInfinite() -> Float.POSITIVE_INFINITY
+        this == Float.MAX_VALUE || this == -Float.MAX_VALUE -> 2.0f.pow(104)
+        else -> {
+            val d = absoluteValue
+            // Ensure we never have -0.0f
+            val valueOrPositiveZero = (this + 0.0f).toBits();
+            Float.fromBits(valueOrPositiveZero + (if (valueOrPositiveZero >= 0) 1 else -1)) - d
+        }
+    }
+
 class DoubleMathTest {
 
     @Test fun trigonometric() {
@@ -140,7 +154,7 @@ class DoubleMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), 1e-15)
+            assertEquals(result, cbrt(x), if (x.isFinite()) 2.0 * x.ulp else 0.0)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
@@ -511,7 +525,7 @@ class FloatMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), 1e-15f)
+            assertEquals(result, cbrt(x), if (x.isFinite()) 2.0f * x.ulpCommon else 0.0f)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
