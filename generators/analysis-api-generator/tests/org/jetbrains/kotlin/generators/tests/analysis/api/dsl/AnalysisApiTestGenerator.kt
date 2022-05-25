@@ -14,8 +14,8 @@ internal class AnalysisApiTestGenerator(val suite: TestGroupSuite) {
     }
 }
 
-internal fun generate(args: Array<String>, init: AnalysisApiTestGroup.() -> Unit) {
-    generateTestGroupSuiteWithJUnit5(args, additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
+internal fun generate(testGeneratorName: String, args: Array<String>, init: AnalysisApiTestGroup.() -> Unit) {
+    generateTestGroupSuiteWithJUnit5(args, testGeneratorName, additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
         AnalysisApiTestGenerator(this).group(init)
     }
 }

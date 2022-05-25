@@ -76,7 +76,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    generateTestGroupSuiteWithJUnit5(args) {
+    generateTestGroupSuiteWithJUnit5(args, testGeneratorName = "GenerateJsTests.kt") {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$")

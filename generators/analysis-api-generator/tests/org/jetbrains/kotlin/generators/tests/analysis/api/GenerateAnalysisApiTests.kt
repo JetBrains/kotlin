@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.generate
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    generate(args) {
+    generate("GenerateAnalysApiTests.kt", args) {
         generateTests()
     }
 }
