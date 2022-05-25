@@ -44,7 +44,8 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
     val virtualFileCreator = PreprocessedFileCreator(project)
 
     for ((sourceRootPath, isCommon) in this) {
-        val vFile = localFileSystem.findFileByPath(sourceRootPath)
+        val sourceRoot = File(sourceRootPath)
+        val vFile = localFileSystem.findFileByPath(sourceRoot.normalize().path)
         if (vFile == null) {
             val message = "Source file or directory not found: $sourceRootPath"
 
@@ -63,10 +64,10 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
             continue
         }
 
-        for (file in File(sourceRootPath).walkTopDown()) {
+        for (file in sourceRoot.walkTopDown()) {
             if (!file.isFile) continue
 
-            val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
+            val virtualFile = localFileSystem.findFileByPath(file.absoluteFile.normalize().path)?.let(virtualFileCreator::create)
             if (virtualFile != null && processedFiles.add(virtualFile)) {
                 body(virtualFile, isCommon)
             }

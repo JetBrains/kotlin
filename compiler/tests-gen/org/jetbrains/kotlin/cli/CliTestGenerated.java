@@ -264,6 +264,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/duplicateSourcesInModule.args");
         }
 
+        @TestMetadata("duplicateSourcesNormalized.args")
+        public void testDuplicateSourcesNormalized() throws Exception {
+            runTest("compiler/testData/cli/jvm/duplicateSourcesNormalized.args");
+        }
+
         @TestMetadata("emptySources.args")
         public void testEmptySources() throws Exception {
             runTest("compiler/testData/cli/jvm/emptySources.args");
