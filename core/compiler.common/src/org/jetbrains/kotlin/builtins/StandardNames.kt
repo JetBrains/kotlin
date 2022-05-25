@@ -26,6 +26,8 @@ object StandardNames {
 
     @JvmField val DATA_CLASS_COPY = Name.identifier("copy")
 
+    @JvmField val DATA_CLASS_COMPONENT_PREFIX = "component"
+
     @JvmField val HASHCODE_NAME = Name.identifier("hashCode")
 
     @JvmField val CHAR_CODE = Name.identifier("code")

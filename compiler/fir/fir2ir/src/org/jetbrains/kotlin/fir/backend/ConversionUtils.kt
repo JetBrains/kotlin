@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
@@ -510,7 +511,7 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
                 source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
                     nameToOperationConventionOrigin[symbol.callableId.callableName]
                 source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
-                    IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix("component").toInt())
+                    IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
                 else ->
                     null
             }
