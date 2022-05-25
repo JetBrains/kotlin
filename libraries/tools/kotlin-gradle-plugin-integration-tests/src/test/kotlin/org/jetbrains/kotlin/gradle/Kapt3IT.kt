@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -975,6 +977,33 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("assemble") {
                 assertTasksExecuted(":example:kaptKotlin")
                 assertTasksUpToDate(":example:kaptGenerateStubsKotlin")
+            }
+        }
+    }
+
+    @DisplayName("KT-52392: Setup with different windows disks does not fail configuration")
+    @GradleTest
+    @EnabledOnOs(OS.WINDOWS)
+    fun testDifferentDisksSetupDoesNotFailConfiguration(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }
+
+            //language=Gradle
+            buildGradle.append(
+                """
+
+                allprojects {
+                    buildDir = "${findAnotherRoot()}:/gradle-build/${'$'}{rootProject.name}/${'$'}{project.name}"
+                    
+                    // with dry-run `BuildResult#tasks` is empty, so we emulate dry-run to use `assertTasksSkipped`
+                    tasks.configureEach {
+                        enabled = false
+                    }
+                }
+                """.trimIndent()
+            )
+            build("assemble") {
+                assertTasksSkipped(":kaptGenerateStubsKotlin")
             }
         }
     }
