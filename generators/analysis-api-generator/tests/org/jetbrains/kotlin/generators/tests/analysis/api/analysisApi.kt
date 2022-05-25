@@ -110,7 +110,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("symbolByFqName")
         }
 
-        test(AbstractSymbolByReferenceTest::class) {
+        test(AbstractSymbolByReferenceTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model("symbolByReference")
         }
     }
