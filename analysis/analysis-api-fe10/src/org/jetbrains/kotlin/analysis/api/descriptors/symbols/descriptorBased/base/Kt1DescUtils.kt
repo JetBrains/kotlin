@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.ba
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
@@ -90,6 +90,7 @@ internal fun DeclarationDescriptor.toKtSymbol(analysisContext: Fe10AnalysisConte
     return when (this) {
         is ClassifierDescriptor -> toKtClassifierSymbol(analysisContext)
         is CallableDescriptor -> toKtCallableSymbol(analysisContext)
+        is PackageViewDescriptor -> toKtPackageSymbol(analysisContext)
         else -> null
     }
 }
@@ -109,6 +110,10 @@ internal fun ClassDescriptor.toKtClassSymbol(analysisContext: Fe10AnalysisContex
     } else {
         KtFe10DescNamedClassOrObjectSymbol(this, analysisContext)
     }
+}
+
+internal fun PackageViewDescriptor.toKtPackageSymbol(analysisContext: Fe10AnalysisContext): KtPackageSymbol {
+    return KtFe10PackageSymbol(fqName, analysisContext)
 }
 
 internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
