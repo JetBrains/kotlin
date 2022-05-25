@@ -49,8 +49,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     test(
         AbstractReferenceResolveTest::class,
-        filter = frontendIs(FrontendKind.Fir) and
-                testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
                 analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
     ) { data ->
         when (data.moduleKind) {
@@ -196,7 +195,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("psiTypeProvider") {
-        test(AbstractAnalysisApiPsiTypeProviderTest::class, filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractAnalysisApiPsiTypeProviderTest::class) {
             model("psiType/forDeclaration")
         }
 
