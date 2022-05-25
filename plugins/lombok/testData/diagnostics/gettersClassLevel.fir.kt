@@ -34,7 +34,7 @@ fun test() {
     obj.getBoxedBoolean()
 
     //shouldn't be accesible from here
-    obj.<!INVISIBLE_MEMBER!>getName<!>()
+    obj.<!INVISIBLE_REFERENCE!>getName<!>()
 
     OverridenGetterTest().usage()
 }

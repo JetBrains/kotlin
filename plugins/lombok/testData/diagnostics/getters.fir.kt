@@ -31,14 +31,14 @@ fun test() {
     val property = obj.age
 
     //todo kotlin doesn't seee isBoolean methods as property
-    obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!>
+    obj.<!INVISIBLE_REFERENCE!>primitiveBoolean<!>
     obj.isPrimitiveBoolean()
 
     obj.boxedBoolean
     obj.getBoxedBoolean()
 
     //shouldn't be accesible from here
-    obj.<!INVISIBLE_MEMBER!>getName<!>()
+    obj.<!INVISIBLE_REFERENCE!>getName<!>()
 
     obj.<!UNRESOLVED_REFERENCE!>getInvisible<!>()
 

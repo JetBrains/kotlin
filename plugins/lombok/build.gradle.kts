@@ -8,11 +8,13 @@ plugins {
 dependencies {
     embedded(project(":kotlin-lombok-compiler-plugin.common"))
     embedded(project(":kotlin-lombok-compiler-plugin.k1"))
+    embedded(project(":kotlin-lombok-compiler-plugin.k2"))
     embedded(project(":kotlin-lombok-compiler-plugin.cli"))
 
     testImplementation(intellijCore())
     testImplementation(project(":kotlin-lombok-compiler-plugin.common"))
     testImplementation(project(":kotlin-lombok-compiler-plugin.k1"))
+    testImplementation(project(":kotlin-lombok-compiler-plugin.k2"))
     testImplementation(project(":kotlin-lombok-compiler-plugin.cli"))
 
     testImplementation("org.projectlombok:lombok:1.18.16")

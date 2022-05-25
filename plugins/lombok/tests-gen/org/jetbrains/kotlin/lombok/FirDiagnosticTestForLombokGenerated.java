@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/lombok/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForLombok {
+public class FirDiagnosticTestForLombokGenerated extends AbstractFirDiagnosticTestForLombok {
     @Test
     @TestMetadata("accessorsStripPrefixCombined.kt")
     public void testAccessorsStripPrefixCombined() throws Exception {

@@ -15,17 +15,20 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.CONFIG_FILE
+import org.jetbrains.kotlin.lombok.k2.FirLombokRegistrar
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import java.io.File
-import java.lang.IllegalArgumentException
 
 class LombokComponentRegistrar : ComponentRegistrar {
 
     companion object {
         fun registerComponents(project: Project, compilerConfiguration: CompilerConfiguration) {
-            val config = LombokPluginConfig(compilerConfiguration[CONFIG_FILE])
+            val configFile = compilerConfiguration[CONFIG_FILE]
+            val config = LombokPluginConfig(configFile)
             SyntheticJavaResolveExtension.registerExtension(project, LombokResolveExtension(config))
+            FirExtensionRegistrar.registerExtension(project, FirLombokRegistrar(configFile))
         }
     }
 

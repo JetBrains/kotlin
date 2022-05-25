@@ -45,7 +45,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val superTypeRefs: MutableList<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
-    internal val javaTypeParameterStack: JavaTypeParameterStack,
+    val javaTypeParameterStack: JavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true

@@ -1,6 +1,10 @@
+// FULL_JDK
+// WITH_STDLIB
 // FILE: DataExample.java
 
 import lombok.*;
+import java.util.List;
+import java.util.Arrays;
 
 @Data public class DataExample {
     private final String name;
@@ -13,6 +17,7 @@ import lombok.*;
     public static class Exercise<T> {
         private final String name;
         private final T value;
+        private final List<T> list;
     }
 
     public static void usage() {
@@ -21,7 +26,7 @@ import lombok.*;
         obj.getTags();
         obj.setScore(1.5);
 
-        Exercise<Integer> ex = Exercise.of("name", 12);
+        Exercise<Integer> ex = Exercise.of("name", 12, Arrays.asList(1, 2, 3));
     }
 }
 
@@ -38,6 +43,6 @@ fun box(): String {
     obj.score = 2.5
     assertEquals(obj.score, 2.5)
 
-    val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12)
+    val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12, listOf(1, 2, 3))
     return "OK"
 }

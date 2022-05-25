@@ -355,6 +355,7 @@ include ":plugins:parcelize:parcelize-compiler",
 include ":kotlin-lombok-compiler-plugin",
         ":kotlin-lombok-compiler-plugin.common",
         ":kotlin-lombok-compiler-plugin.k1",
+        ":kotlin-lombok-compiler-plugin.k2",
         ":kotlin-lombok-compiler-plugin.cli",
         ":kotlin-lombok"
 
@@ -699,6 +700,7 @@ project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/all
 project(':kotlin-lombok-compiler-plugin').projectDir = "$rootDir/plugins/lombok" as File
 project(':kotlin-lombok-compiler-plugin.cli').projectDir = "$rootDir/plugins/lombok/lombok.cli" as File
 project(':kotlin-lombok-compiler-plugin.k1').projectDir = "$rootDir/plugins/lombok/lombok.k1" as File
+project(':kotlin-lombok-compiler-plugin.k2').projectDir = "$rootDir/plugins/lombok/lombok.k2" as File
 project(':kotlin-lombok-compiler-plugin.common').projectDir = "$rootDir/plugins/lombok/lombok.common" as File
 
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg" as File

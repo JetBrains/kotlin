@@ -17,9 +17,9 @@ public class PrefixJava {
 
 fun test() {
     //not generated because doesn't have prefix from class level @Accessors
-    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!>, "A")
+    assertEquals(<!ARGUMENT_TYPE_MISMATCH!>PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!><!>, "A")
     //not generated because doesn't have prefix from config
-    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propC<!>, "C")
+    assertEquals(<!ARGUMENT_TYPE_MISMATCH!>PrefixJava().<!UNRESOLVED_REFERENCE!>propC<!><!>, "C")
     assertEquals(PrefixJava().propD, "D")
 }
 

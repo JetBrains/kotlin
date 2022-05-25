@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private fun FirAnnotation.toAnnotationLookupTag(): ConeClassLikeLookupTag? =
     // this cast fails when we have generic-typed annotations @T
@@ -159,10 +158,19 @@ fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
     return arguments.singleOrNull()
 }
 
-fun FirAnnotation.getStringArgument(name: Name): String? =
-    findArgumentByName(name)?.let { expression ->
-        expression.safeAs<FirConstExpression<*>>()?.value as? String
+fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumentValue(name)
+fun FirAnnotation.getStringArgument(name: Name): String? = getPrimitiveArgumentValue(name)
+fun FirAnnotation.getIntArgument(name: Name): Int? = getPrimitiveArgumentValue(name)
+fun FirAnnotation.getStringArrayArgument(name: Name): List<String>? {
+    val argument = findArgumentByName(name) as? FirArrayOfCall ?: return null
+    return argument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String }
+}
+
+private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name): T? {
+    return findArgumentByName(name)?.let { expression ->
+        (expression as? FirConstExpression<*>)?.value as? T
     }
+}
 
 fun FirAnnotationContainer.getJvmNameFromAnnotation(target: AnnotationUseSiteTarget? = null): String? {
     val annotationCalls = getAnnotationsByClassId(StandardClassIds.Annotations.JvmName)

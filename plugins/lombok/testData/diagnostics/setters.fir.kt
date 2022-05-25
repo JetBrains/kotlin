@@ -26,11 +26,11 @@ fun test() {
     obj.age = 42
 
     //synthetic property generated only when there is a getter
-    obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!> = false
+    obj.<!INVISIBLE_REFERENCE!>primitiveBoolean<!> = false
     obj.setPrimitiveBoolean(true)
 
     //shouldn't be accesible from here
-    obj.<!INVISIBLE_MEMBER!>setName<!>("abc")
+    obj.<!INVISIBLE_REFERENCE!>setName<!>("abc")
 
     OverridenGetterTest().usage()
 }

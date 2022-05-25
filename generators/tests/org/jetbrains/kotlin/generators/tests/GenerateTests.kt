@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTes
 import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
-import org.jetbrains.kotlin.lombok.AbstractBlackBoxCodegenTestForLombok
-import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
-import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
+import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
@@ -430,8 +428,14 @@ fun main(args: Array<String>) {
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
                 model("box")
             }
+            testClass<AbstractFirBlackBoxCodegenTestForLombok> {
+                model("box")
+            }
             testClass<AbstractDiagnosticTestForLombok> {
-                model("diagnostics")
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirDiagnosticTestForLombok> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
     }

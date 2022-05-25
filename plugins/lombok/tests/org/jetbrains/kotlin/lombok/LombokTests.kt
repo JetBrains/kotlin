@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -36,11 +39,26 @@ open class AbstractIrBlackBoxCodegenTestForLombok : AbstractIrBlackBoxCodegenTes
     }
 }
 
+open class AbstractFirBlackBoxCodegenTestForLombok : AbstractFirBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableLombok()
+    }
+}
+
 // ---------------------------- diagnostics ----------------------------
 
 open class AbstractDiagnosticTestForLombok : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        builder.enableLombok()
+    }
+}
+
+open class AbstractFirDiagnosticTestForLombok : AbstractFirDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurationForClassicAndFirTestsAlongside()
         builder.enableLombok()
     }
 }

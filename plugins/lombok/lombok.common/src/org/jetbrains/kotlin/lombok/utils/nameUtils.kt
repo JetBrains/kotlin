@@ -5,29 +5,10 @@
 
 package org.jetbrains.kotlin.lombok.utils
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
-
 object AccessorNames {
     const val IS = "is"
     const val GET = "get"
     const val SET = "set"
-}
-
-/**
- * Make property name from variable name
- * Returns null in case getter/setter shouldn't be generated at all
- */
-fun PropertyDescriptor.toAccessorBaseName(config: Accessors): String? {
-    val isPrimitiveBoolean = type.isPrimitiveBoolean()
-    return if (config.prefix.isEmpty()) {
-        val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()
-        toPropertyName(name.identifier, prefixes)
-    } else {
-        val id = name.identifier
-        val name = toPropertyName(id, config.prefix)
-        name.takeIf { it.length != id.length}
-    }
 }
 
 fun toPropertyName(name: String, prefixesToStrip: List<String> = emptyList()): String =

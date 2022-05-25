@@ -53,7 +53,6 @@ object FirGeneratedElementsValidator : FirDefaultVisitor<Unit, Any?>() {
     }
 
     override fun visitTypeRef(typeRef: FirTypeRef, data: Any?) {
-        require(typeRef is FirResolvedTypeRef)
         typeRef.acceptChildren(this, null)
     }
 

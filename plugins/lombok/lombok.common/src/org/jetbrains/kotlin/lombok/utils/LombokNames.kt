@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.utils
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 object LombokNames {
@@ -19,6 +20,16 @@ object LombokNames {
     val ALL_ARGS_CONSTRUCTOR = FqName("lombok.AllArgsConstructor")
     val REQUIRED_ARGS_CONSTRUCTOR = FqName("lombok.RequiredArgsConstructor")
 
+
+    val ACCESSORS_ID = ClassId.topLevel(ACCESSORS)
+    val GETTER_ID = ClassId.topLevel(GETTER)
+    val SETTER_ID = ClassId.topLevel(SETTER)
+    val WITH_ID = ClassId.topLevel(WITH)
+    val DATA_ID = ClassId.topLevel(DATA)
+    val VALUE_ID = ClassId.topLevel(VALUE)
+    val NO_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(NO_ARGS_CONSTRUCTOR)
+    val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
+    val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)
 
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(
