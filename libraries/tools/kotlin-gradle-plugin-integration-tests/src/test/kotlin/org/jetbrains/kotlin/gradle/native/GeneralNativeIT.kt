@@ -460,6 +460,34 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
+    fun testTransitiveExportIsNotRequiredForExportingVariant() = with(
+        transformNativeTestProjectWithPluginDsl(
+            wrapperVersion = GradleVersionRequired.AtLeast("6.8"), // See https://youtrack.jetbrains.com/issue/KT-52447
+            projectName = "export-published-lib",
+            directoryPrefix = "native-binaries"
+        )
+    ) {
+        val binaryName = "shared"
+        val headerPath = "shared/build/bin/linuxX64/debugStatic/lib${binaryName}_api.h"
+        val binaryBuildTask = "linkDebugStaticLinuxX64"
+
+        build(":lib:publish") {
+            assertSuccessful()
+        }
+
+        build(":shared:$binaryBuildTask") {
+            assertSuccessful()
+            assertFileExists(headerPath)
+            val headerContents = fileInWorkingDir(headerPath).readText()
+
+            assertTrue(headerContents.contains("funInShared"))
+
+            // Check that the function from exported published library (:lib) is included to the header:
+            assertTrue(headerContents.contains("funToExport"))
+        }
+    }
+
+    @Test
     fun testNativeExecutables() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
