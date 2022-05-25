@@ -397,6 +397,8 @@ fun RecursiveArtifact.archiveFromProject(project: Project, name: String? = null,
 
         (project.tasks.findByName("modularJar") as? Jar)?.let(::extractManifest)
         (project.tasks.findByName("resultJar") as? Jar)?.let(::extractManifest)
+        (project.tasks.findByName("result") as? Jar)?.let(::extractManifest)
+        (project.tasks.findByName("shadowJar") as? Jar)?.let(::extractManifest)
         (project.tasks["jar"] as? Jar)?.let(::extractManifest)
 
         if (!foundManifest) error("No manifest found for jar: $jarName in ${project.name}")
