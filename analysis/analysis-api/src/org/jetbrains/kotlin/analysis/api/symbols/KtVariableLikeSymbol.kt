@@ -193,4 +193,9 @@ public abstract class KtValueParameterSymbol : KtVariableLikeSymbol(), KtSymbolW
      * The names of the value parameters for `invoke()` are "item" and "p2" (its default parameter name).
      */
     abstract override val name: Name
+
+    /**
+     * The corresponding [KtPropertySymbol] if the current value parameter is a `val` or `var` declared inside the primary constructor.
+     */
+    public open val generatedPrimaryConstructorProperty: KtKotlinPropertySymbol? get() = null
 }

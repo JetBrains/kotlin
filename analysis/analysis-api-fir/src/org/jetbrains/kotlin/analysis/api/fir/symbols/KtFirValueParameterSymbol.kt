@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.arrayElementType
@@ -54,6 +56,15 @@ internal class KtFirValueParameterSymbol(
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
     override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
+
+    override val generatedPrimaryConstructorProperty: KtKotlinPropertySymbol? by cached {
+        val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@cached null
+        val ktPropertySymbol = builder.variableLikeBuilder.buildPropertySymbol(propertySymbol)
+        check(ktPropertySymbol is KtKotlinPropertySymbol) {
+            "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
+        }
+        ktPropertySymbol
+    }
 
     override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

@@ -1,1 +1,5 @@
-class A
+class A {
+  constructor(a: kotlin.Int, b: kotlin.String)
+
+  val a: kotlin.Int
+}

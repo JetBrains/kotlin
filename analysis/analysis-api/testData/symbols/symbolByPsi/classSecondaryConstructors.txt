@@ -18,6 +18,7 @@ KtConstructorSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
@@ -53,6 +54,7 @@ KtConstructorSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
@@ -69,6 +71,7 @@ KtValueParameterSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false

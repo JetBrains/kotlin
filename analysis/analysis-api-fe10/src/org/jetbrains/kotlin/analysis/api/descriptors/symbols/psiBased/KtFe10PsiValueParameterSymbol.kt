@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
@@ -17,8 +18,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,6 +33,13 @@ internal class KtFe10PsiValueParameterSymbol(
     override val descriptor: VariableDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.VALUE_PARAMETER, psi]
+    }
+
+    override val generatedPrimaryConstructorProperty: KtKotlinPropertySymbol? by cached {
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
+        val propertyDescriptor = bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, psi] ?: return@cached null
+
+        KtFe10DescKotlinPropertySymbol(propertyDescriptor as PropertyDescriptorImpl, analysisContext)
     }
 
     override val hasDefaultValue: Boolean

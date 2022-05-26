@@ -1,6 +1,7 @@
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Style.value)
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false

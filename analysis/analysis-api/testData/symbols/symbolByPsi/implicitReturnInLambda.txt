@@ -1,6 +1,7 @@
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
@@ -61,6 +62,7 @@ KtLocalVariableSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
@@ -176,6 +178,7 @@ KtFunctionSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false

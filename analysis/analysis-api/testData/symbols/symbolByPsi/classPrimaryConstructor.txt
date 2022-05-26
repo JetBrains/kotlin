@@ -1,3 +1,37 @@
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/A.a)
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: a
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: b
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
@@ -10,7 +44,10 @@ KtConstructorSymbol:
   returnType: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  valueParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(a)
+    KtValueParameterSymbol(b)
+  ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

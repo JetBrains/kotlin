@@ -1,6 +1,7 @@
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param1)
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
@@ -17,6 +18,7 @@ KtValueParameterSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param2)
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false

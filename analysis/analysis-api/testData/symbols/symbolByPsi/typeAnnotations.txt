@@ -123,6 +123,7 @@ KtNamedClassOrObjectSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
   isImplicitLambdaParameter: false
