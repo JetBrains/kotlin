@@ -1,0 +1,45 @@
+FILE: InnerClass.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|Outer.Inner| = this@R|/Outer|.R|/Outer.Inner.Inner|()
+            public get(): R|Outer.Inner|
+
+        public final val tag: R|kotlin/String| = String( )
+            public get(): R|kotlin/String|
+
+        public final inner class Inner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val innerTag: R|kotlin/String| = this@R|/Outer|.R|/Outer.tag|
+                public get(): R|kotlin/String|
+
+        }
+
+    }
+    public final class Outer1 : R|kotlin/Any| {
+        public constructor(outer1: R|Outer1|): R|Outer1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|Outer1.Inner| = this@R|/Outer1|.R|/Outer1.Inner.Inner|()
+            public get(): R|Outer1.Inner|
+
+        public final val b: R|kotlin/String| = this@R|/Outer1|.R|/Outer1.i|.R|/Outer1.Inner.a|.R|/Outer1.b|
+            public get(): R|kotlin/String|
+
+        public final inner class Inner : R|kotlin/Any| {
+            public Outer1.constructor(): R|Outer1.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|Outer1| = this@R|/Outer1|
+                public get(): R|Outer1|
+
+        }
+
+    }

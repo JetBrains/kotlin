@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration1
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,10 +19,10 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     sealed class Root(firElement: FirElement, length: Int = 0) : Potential(firElement, length) {
 
         fun effectsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Effects =
-            state.analyseDeclaration(firDeclaration).effects
+            state.analyseDeclaration1(firDeclaration).effects
 
         fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
-            state.analyseDeclaration(firDeclaration).potentials
+            state.analyseDeclaration1(firDeclaration).potentials
 
         data class This(val firThisReference: FirThisReference) : Root(firThisReference) {
             override fun toString(): String {
@@ -54,7 +54,7 @@ fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
     fun select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
         field is FirValueParameter -> emptyEffsAndPots
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 2 -> EffectsAndPotentials(
+        potential.length < 4 -> EffectsAndPotentials(
             FieldAccess(potential, field),
             FieldPotential(potential, field)
         )
@@ -92,15 +92,15 @@ fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotential
 fun promote(potentials: Potentials): Effects = potentials.map(::Promote)
 
 fun init(
+    potentials: Potentials,
     clazz: FirClass,
-    fieldsPots: List<Potentials>,
-    potentials: Potentials = emptyList()
+//    fieldsPots: List<Potentials>
 ): EffectsAndPotentials {
-    val propagateEffects = fieldsPots.flatMap(::promote)
+//    val propagateEffects = fieldsPots.flatMap(::promote)
     val prefixPotentials = potentials.map { pot -> Root.Warm(clazz, pot) }
     val initEffects = prefixPotentials.map { warm -> Init(warm, clazz) }
 
-    return EffectsAndPotentials(propagateEffects + initEffects, prefixPotentials)
+    return EffectsAndPotentials(/* propagateEffects + */ initEffects, prefixPotentials)
 }
 
 fun Potentials.viewChange(root: Potential): Potentials = map { pot -> viewChange(pot, root) }

@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_STDLIB
 
 class Init(b: Boolean, w: Boolean, init: Init) {
 
@@ -25,5 +25,25 @@ class Init(b: Boolean, w: Boolean, init: Init) {
             t = this
         }
         s = a // checkEffs(), Promote(pots)
+    }
+}
+
+class B {
+    var b = "Hello"
+    var a = foo()  // < < Доступ к неинициализированному полю
+
+    fun foo(): String {
+        a = b
+        return a.substring(1)
+    }
+}
+
+class B1 {
+    var b = "Hello"
+    var a: String
+
+    init {
+        a = b
+        a = a.substring(1)
     }
 }

@@ -9,17 +9,18 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.cache
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 object SafeInitialisationChecker : FirRegularClassChecker() {
 
-    private val cache = mutableSetOf<Checker.StateOfClass>()
-
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val state = Checker.StateOfClass(declaration)
-        val errors: Errors = state.checkClass()
+
+        val errors =
+            if (cache.containsKey(declaration)) cache[declaration]!!.errors
+            else Checker.StateOfClass(declaration, context).checkClass()
 
         for (error in errors) {
             when (error) {
@@ -42,7 +43,5 @@ object SafeInitialisationChecker : FirRegularClassChecker() {
                 }
             }
         }
-
-        cache.add(state)
     }
 }

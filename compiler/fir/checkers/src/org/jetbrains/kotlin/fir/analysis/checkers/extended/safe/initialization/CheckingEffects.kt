@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.anonymousInitializers
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -23,28 +25,28 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 class CheckingEffects {
 }
 
-
-fun resolveThis(
-    clazz: FirClass,
-    effsAndPots: EffectsAndPotentials,
-    innerClass: FirClass,
-): EffectsAndPotentials {
-    if (clazz === innerClass) return effsAndPots
-
-    val outerSelection = outerSelection(effsAndPots.potentials, innerClass)
-    val outerClass = TODO() // outerClass for innerClass
-    return resolveThis(clazz, outerSelection, outerClass)
-}
-
-@OptIn(SymbolInternals::class)
-fun resolve(thisReference: FirThisReference, firDeclaration: FirDeclaration): FirClass =
-    resolve(thisReference.boundSymbol?.fir as FirClass, firDeclaration)
-
-fun resolve(clazz: FirClass, firDeclaration: FirDeclaration): FirClass = clazz // maybe delete
-
 object Checker {
 
-    data class StateOfClass(val firClass: FirClass) {
+    fun resolveThis(
+        clazz: FirClass,
+        effsAndPots: EffectsAndPotentials,
+        stateOfClass: StateOfClass,
+    ): EffectsAndPotentials {
+        val innerClass = stateOfClass.firClass
+        if (clazz === innerClass) return effsAndPots
+
+        val outerSelection = outerSelection(effsAndPots.potentials, innerClass)
+        // val outerClass =  // outerClass for innerClass
+        return stateOfClass.outerClassState?.let { resolveThis(clazz, outerSelection, it) } ?: TODO()
+    }
+
+    @OptIn(SymbolInternals::class)
+    fun resolve(dec: FirCallableDeclaration): StateOfClass =
+        dec.dispatchReceiverType?.toRegularClassSymbol(dec.moduleData.session)?.fir?.let(cache::get) ?: TODO()
+
+    val cache = mutableMapOf<FirClass, StateOfClass>()
+
+    data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
         fun FirVariable.isPropertyInitialized(): Boolean =
             alreadyInitializedVariable.contains(this) || localInitedProperties.contains(this)
 
@@ -85,44 +87,40 @@ object Checker {
 
             for (init in inits)
                 init.initBlockAnalyser(p)
+
+            cache[firClass] = this
         }
     }
 
     fun StateOfClass.checkClass(): Errors {
-        errors + firClass.declarations.flatMap { dec ->
-            when (dec) {
-                is FirConstructor -> {
-                    if (dec.isPrimary)
-                        alreadyInitializedVariable + dec.valueParameters
-                    checkBody(dec)
+        val classErrors = firClass.declarations.flatMap { dec ->
+            val effsAndPots =
+                when (dec) {
+                    is FirConstructor -> {
+                        if (dec.isPrimary)
+                            alreadyInitializedVariable + dec.valueParameters
+                        analyseDeclaration(dec)
+                    }
+                    is FirAnonymousInitializer -> analyseDeclaration(dec)
+                    is FirRegularClass -> {
+                        analyseDeclaration(dec)
+                    }
+                    is FirPropertyAccessor -> TODO()
+                    //                is FirSimpleFunction -> checkBody(dec)
+                    is FirField -> TODO()
+                    is FirProperty -> {
+//                        if (dec.initializer != null) alreadyInitializedVariable.add(dec)
+                        analyseDeclaration(dec)
+                    }
+                    else -> return@flatMap emptyList()
                 }
-                is FirAnonymousInitializer -> {
-                    val (effs, _) = dec.body?.let(::analyser) ?: return@flatMap emptyList()
-                    effs.flatMap { effectChecking(it) }
-                }
-                is FirRegularClass -> {
-                    val state = StateOfClass(dec)
-                    val errors = state.checkClass()
-                    errors
-                }
-                is FirPropertyAccessor -> TODO()
-                //                is FirSimpleFunction -> checkBody(dec)
-                is FirField -> TODO()
-                is FirProperty -> {
-                    val (effs, _) = dec.initializer?.let(::analyser) ?: return emptyList()
-                    val errors = effs.flatMap { effectChecking(it) }
-                    alreadyInitializedVariable.add(dec)
-                    errors
-                }
-                else -> return@flatMap emptyList()
-            }
+            val errors = effsAndPots.effects.flatMap { effectChecking(it) }
+            if (dec is FirProperty && dec.initializer != null) alreadyInitializedVariable.add(dec)
+//            caches[dec] = effsAndPots
+            errors
         }
+        errors.addAll(classErrors)
         return errors
-    }
-
-    fun StateOfClass.checkBody(dec: FirFunction): Errors {
-        val (effs, _) = dec.body?.let(::analyser) ?: return emptyList()
-        return effs.flatMap { effectChecking(it) }
     }
 
     fun StateOfClass.potentialPropagation(potential: Potential): EffectsAndPotentials {
@@ -131,21 +129,21 @@ object Checker {
                 val (pot, field) = potential
                 when (pot) {
                     is Root.This -> {                                  // P-Acc1
-                        val clazz = resolve(pot.firThisReference, field)
-                        val potentials = pot.potentialsOf(this, field)
-                        EffectsAndPotentials(potentials = potentials.viewChange(pot))
+                        val state = resolve(field)
+                        val potentials = pot.potentialsOf(state, field)
+                        potentials.viewChange(pot).toEffectsAndPotentials()
                     }
                     is Root.Warm -> {                                         // P-Acc2
-                        val clazz = resolve(pot.clazz, field)
-                        val potentials = pot.potentialsOf(this, field)
-                        EffectsAndPotentials(potentials = potentials.viewChange(pot))
+                        val state = resolve(field)
+                        val potentials = pot.potentialsOf(state, field)
+                        potentials.viewChange(pot).toEffectsAndPotentials()
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot)) // or exception or empty list
                     is FunPotential -> throw IllegalArgumentException()
                     else -> {                                                       // P-Acc3
                         val (effects, potentials) = potentialPropagation(pot)
-                        val sel = select(potentials, field)
-                        EffectsAndPotentials(effects + sel.effects, sel.potentials)
+                        val (_, selectPots) = select(potentials, field)
+                        EffectsAndPotentials(effects, selectPots)
                     }
                 }
             }
@@ -153,14 +151,14 @@ object Checker {
                 val (pot, method) = potential
                 when (pot) {
                     is Root.This -> {                                     // P-Inv1
-                        val clazz = resolve(pot.firThisReference, method)
-                        val potentials = pot.potentialsOf(this, method)
-                        EffectsAndPotentials(emptyList(), potentials)
+                        val state = resolve(method)
+                        val potentials = pot.potentialsOf(state, method)
+                        potentials.toEffectsAndPotentials()
                     }
                     is Root.Warm -> {                                     // P-Inv2
-                        val clazz = resolve(pot.clazz, method)
-                        val potentials = pot.potentialsOf(this, method)
-                        EffectsAndPotentials(emptyList(), potentials.viewChange(pot))
+                        val state = resolve(method)
+                        val potentials = pot.potentialsOf(state, method)  // find real state
+                        potentials.viewChange(pot).toEffectsAndPotentials()
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot))
                     is FunPotential -> {
@@ -168,8 +166,8 @@ object Checker {
                     }
                     else -> {                                                       // P-Inv3
                         val (effects, potentials) = potentialPropagation(pot)
-                        val call = call(potentials, method)
-                        EffectsAndPotentials(effects + call.effects, call.potentials)
+                        val (_, callPots) = call(potentials, method)
+                        EffectsAndPotentials(effects, callPots)
                     }
                 }
             }
@@ -177,15 +175,19 @@ object Checker {
                 val (pot, outer) = potential
                 when (pot) {
                     is Root.This -> emptyEffsAndPots                // P-Out1
-                    is Root.Warm -> {                                     // P-Out2
-                        TODO()// просто вверх по цепочке наследования
+                    is Root.Warm -> {                               // P-Out2
+                        val (firClass, outerPot) = pot
+                        return EffectsAndPotentials(potential = outerPot)
+                        // TODO:
+                        //  if (firClass != this.firClass) rec: findParent(firClass)
+                        //  просто вверх по цепочке наследования если inner от кого-то наследуется
                     }
                     is Root.Cold -> EffectsAndPotentials(Promote(pot))  // or exception or empty list
                     is FunPotential -> throw IllegalArgumentException()
                     else -> {                                                       // P-Out3
                         val (effects, potentials) = potentialPropagation(pot)
-                        val out = outerSelection(potentials, outer)
-                        EffectsAndPotentials(effects + out.effects, out.potentials)
+                        val (_, outPots) = outerSelection(potentials, outer)
+                        EffectsAndPotentials(effects, outPots)
                     }
                 }
             }
@@ -215,12 +217,13 @@ object Checker {
                 val (pot, method) = effect
                 when (pot) {
                     is Root.This -> {                                     // C-Inv1
-                        val clazz = resolve(pot.firThisReference, method)
-                        pot.effectsOf(this, method).flatMap { effectChecking(it) }
+                        val state = resolve(method)
+                        val effectsOf = pot.effectsOf(state, method)
+                        effectsOf.flatMap { effectChecking(it) }
                     }
                     is Root.Warm -> {                                     // C-Inv2
-                        val clazz = resolve(pot.clazz, method)
-                        pot.effectsOf(this, method).flatMap { eff ->
+                        val state = resolve(method)
+                        pot.effectsOf(state, method).flatMap { eff ->
                             viewChange(eff, pot)
                             effectChecking(eff)
                         }
@@ -233,9 +236,10 @@ object Checker {
             }
             is Init -> {                                                     // C-Init
                 val (pot, clazz) = effect
-                pot.effectsOf(this, clazz).flatMap { eff ->
-                    viewChange(eff, pot)
-                    effectChecking(eff)
+                val effects = pot.effectsOf(this, clazz)
+                effects.flatMap { eff ->
+                    val eff1 = viewChange(eff, pot)
+                    effectChecking(eff1)
                 }
                 // ???
             }

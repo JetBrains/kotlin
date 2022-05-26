@@ -2577,6 +2577,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("InnerClass.kt")
+                public void testInnerClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/InnerClass.kt");
+                }
+
+                @Test
                 @TestMetadata("SimpleAccessToUninitializedValue.kt")
                 public void testSimpleAccessToUninitializedValue() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/SimpleAccessToUninitializedValue.kt");
