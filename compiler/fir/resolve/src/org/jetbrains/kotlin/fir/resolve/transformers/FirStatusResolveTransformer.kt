@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-@OptIn(AdapterForResolveProcessor::class)
 class FirStatusResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
@@ -392,9 +391,8 @@ abstract class AbstractFirStatusResolveTransformer(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun forceResolveStatusesOfClass(regularClass: FirRegularClass) {
-        if (regularClass.origin == FirDeclarationOrigin.Java || regularClass.origin == FirDeclarationOrigin.Precompiled) {
+        if (regularClass.origin is FirDeclarationOrigin.Java || regularClass.origin == FirDeclarationOrigin.Precompiled) {
             /*
              * If regular class has no corresponding file then it is platform class,
              *   so we need to resolve supertypes of this class because they could

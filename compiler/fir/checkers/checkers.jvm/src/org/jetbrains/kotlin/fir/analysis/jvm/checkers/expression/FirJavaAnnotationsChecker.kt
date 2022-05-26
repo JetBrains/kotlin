@@ -35,7 +35,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker() {
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val callableSymbol = expression.annotationTypeRef.toRegularClassSymbol(context.session)
-        if (callableSymbol?.origin != FirDeclarationOrigin.Java) return
+        if (callableSymbol?.origin !is FirDeclarationOrigin.Java) return
 
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->

@@ -31,6 +31,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val symbol: FirConstructorSymbol,
+    override val origin: FirDeclarationOrigin.Java,
     override val isPrimary: Boolean,
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
@@ -53,9 +54,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val body: FirBlock?
         get() = null
-
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
@@ -156,6 +154,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     lateinit var visibility: Visibility
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
+    var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     @OptIn(FirImplementationDetail::class)
@@ -164,6 +163,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             source,
             moduleData,
             symbol,
+            origin = javaOrigin(isFromSource),
             isPrimary,
             returnTypeRef,
             valueParameters,

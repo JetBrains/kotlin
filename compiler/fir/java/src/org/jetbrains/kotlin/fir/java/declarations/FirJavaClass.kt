@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
 
-@OptIn(FirImplementationDetail::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
+    override val origin: FirDeclarationOrigin.Java,
     override val annotations: MutableList<FirAnnotation>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
@@ -58,9 +58,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     init {
         symbol.bind(this)
     }
-
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
@@ -131,6 +128,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
     lateinit var visibility: Visibility
     var modality: Modality? = null
+    var isFromSource: Boolean by Delegates.notNull()
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
     var isNotSam: Boolean by Delegates.notNull()
@@ -153,6 +151,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
             moduleData,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
+            origin = javaOrigin(isFromSource),
             annotations,
             status,
             classKind,

@@ -31,10 +31,10 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
-@OptIn(FirImplementationDetail::class)
 class FirJavaField @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
+    override val origin: FirDeclarationOrigin.Java,
     override val symbol: FirFieldSymbol,
     override val name: Name,
     @Volatile
@@ -58,8 +58,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val setter: FirPropertyAccessor? get() = null
     override val backingField: FirBackingField? = null
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
@@ -170,6 +168,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
+    var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -179,6 +178,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
         return FirJavaField(
             source,
             moduleData,
+            origin = javaOrigin(isFromSource),
             symbol,
             name,
             resolvePhase,

@@ -127,7 +127,7 @@ fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boo
         getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable) != null
     ) {
         return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                getAnnotationRetention() == AnnotationRetention.SOURCE && origin == FirDeclarationOrigin.Java
+                getAnnotationRetention() == AnnotationRetention.SOURCE && origin is FirDeclarationOrigin.Java
     }
     return false
 }

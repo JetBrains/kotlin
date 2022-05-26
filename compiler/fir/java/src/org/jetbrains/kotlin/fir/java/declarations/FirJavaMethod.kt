@@ -46,10 +46,10 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
-@OptIn(FirImplementationDetail::class)
 class FirJavaMethod @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
+    override val origin: FirDeclarationOrigin.Java,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
@@ -74,9 +74,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override val containerSource: DeserializedContainerSource?
         get() = null
-
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
 
     override val contractDescription: FirContractDescription
         get() = FirEmptyContractDescription
@@ -207,6 +204,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+    var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
 
     @Deprecated("Modification of 'deprecation' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
@@ -239,6 +237,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
         return FirJavaMethod(
             source,
             moduleData,
+            origin = javaOrigin(isFromSource),
             resolvePhase,
             attributes,
             returnTypeRef as FirJavaTypeRef,
@@ -274,6 +273,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol
+    copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.typeParameters.addAll(original.typeParameters)
     val annotations = original.annotations

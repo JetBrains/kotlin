@@ -109,7 +109,7 @@ abstract class FirJavaFacade(
     ): FirTypeParameter {
         return buildTypeParameter {
             this.moduleData = moduleData
-            origin = FirDeclarationOrigin.Java
+            origin = javaOrigin(isFromSource)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             name = this@toFirTypeParameter.name
             symbol = FirTypeParameterSymbol()
@@ -240,6 +240,7 @@ abstract class FirJavaFacade(
             this.moduleData = moduleData
             symbol = classSymbol
             name = javaClass.name
+            isFromSource = javaClass.isFromSource
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
@@ -356,7 +357,7 @@ abstract class FirJavaFacade(
             if (classIsAnnotation) {
                 declarations +=
                     buildConstructorForAnnotationClass(
-                        classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor) as? KtFakeSourceElement,
+                        javaClass,
                         constructorId = constructorId,
                         ownerClassBuilder = this,
                         valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
@@ -412,7 +413,7 @@ abstract class FirJavaFacade(
                 }
                 returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                origin = FirDeclarationOrigin.Java
+                origin = javaOrigin(javaField.isFromSource)
                 // TODO: check if this works properly with annotations that take the enum class as an argument
                 annotations.addFromJava(session, javaField, javaTypeParameterStack)
             }.apply {
@@ -423,6 +424,7 @@ abstract class FirJavaFacade(
                 this.moduleData = moduleData
                 symbol = FirFieldSymbol(fieldId)
                 name = fieldName
+                isFromSource = javaField.isFromSource
                 status = FirResolvedDeclarationStatusImpl(
                     javaField.visibility,
                     javaField.modality,
@@ -473,6 +475,7 @@ abstract class FirJavaFacade(
             source = (javaMethod as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
             symbol = methodSymbol
             name = methodName
+            isFromSource = javaMethod.isFromSource
             returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
             isStatic = javaMethod.isStatic
             typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack, methodSymbol, moduleData)
@@ -518,6 +521,7 @@ abstract class FirJavaFacade(
             source = (javaMethod as? JavaElementImpl<*>)?.psi
                 ?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
             this.moduleData = moduleData
+            isFromSource = javaMethod.isFromSource
             returnTypeRef = firJavaMethod.returnTypeRef
             name = javaMethod.name
             isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == VALUE_METHOD_NAME
@@ -538,6 +542,7 @@ abstract class FirJavaFacade(
         return buildJavaConstructor {
             source = (javaConstructor as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
             this.moduleData = moduleData
+            isFromSource = javaClass.isFromSource
             symbol = constructorSymbol
             isInner = javaClass.outerClass != null && !javaClass.isStatic
             val isThisInner = this.isInner
@@ -575,15 +580,18 @@ abstract class FirJavaFacade(
     }
 
     private fun buildConstructorForAnnotationClass(
-        classSource: KtFakeSourceElement?,
+        javaClass: JavaClass,
         constructorId: CallableId,
         ownerClassBuilder: FirJavaClassBuilder,
         valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor,
         moduleData: FirModuleData,
     ): FirJavaConstructor {
         return buildJavaConstructor {
-            source = classSource
+            source = (javaClass as? JavaElementImpl<*>)
+                ?.psi
+                ?.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor) as? KtFakeSourceElement
             this.moduleData = moduleData
+            isFromSource = javaClass.isFromSource
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {

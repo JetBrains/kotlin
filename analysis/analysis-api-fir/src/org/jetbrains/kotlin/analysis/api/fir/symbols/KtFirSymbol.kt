@@ -50,7 +50,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     }
     FirDeclarationOrigin.Precompiled -> KtSymbolOrigin.SOURCE
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KtSymbolOrigin.LIBRARY
-    FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
+    is FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.IntersectionOverride -> KtSymbolOrigin.INTERSECTION_OVERRIDE

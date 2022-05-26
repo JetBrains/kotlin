@@ -47,16 +47,18 @@ val FirQualifiedAccess.referredPropertySymbol: FirPropertySymbol?
     }
 
 inline val FirDeclaration.isJava: Boolean
-    get() = origin == FirDeclarationOrigin.Java
+    get() = origin is FirDeclarationOrigin.Java
+inline val FirDeclaration.isJavaSource: Boolean
+    get() = origin == FirDeclarationOrigin.Java.Source
 inline val FirDeclaration.isFromLibrary: Boolean
-    get() = origin == FirDeclarationOrigin.Library
+    get() = origin == FirDeclarationOrigin.Library || origin == FirDeclarationOrigin.Java.Library
 inline val FirDeclaration.isPrecompiled: Boolean
     get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
     get() = origin == FirDeclarationOrigin.Synthetic
 
 inline val FirDeclaration.isJavaOrEnhancement: Boolean
-    get() = origin == FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
+    get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
-    get() = origin == FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
+    get() = origin is FirDeclarationOrigin.Java || origin == FirDeclarationOrigin.Enhancement
 

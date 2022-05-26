@@ -56,6 +56,7 @@ internal fun JavaValueParameter.toFirValueParameter(
 ): FirValueParameter {
     return buildJavaValueParameter {
         source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+        isFromSource = this@toFirValueParameter.isFromSource
         this.moduleData = moduleData
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)

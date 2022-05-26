@@ -43,7 +43,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
             val superClass = context.session.symbolProvider.getClassLikeSymbolByClassId(superClassId) as? FirRegularClassSymbol ?: continue
 
             if (!superClass.isSealed) continue
-            if (superClass.origin == FirDeclarationOrigin.Java) {
+            if (superClass.origin is FirDeclarationOrigin.Java) {
                 reporter.reportOn(superTypeRef.source, FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS, context)
                 continue
             }

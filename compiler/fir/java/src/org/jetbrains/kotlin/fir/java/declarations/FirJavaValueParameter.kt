@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
+    override val origin: FirDeclarationOrigin.Java,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
@@ -57,9 +59,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         get() = false
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
-
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
 
     override val receiverTypeRef: FirTypeRef?
         get() = null
@@ -199,13 +198,15 @@ class FirJavaValueParameterBuilder {
     lateinit var name: Name
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var defaultValue: FirExpression? = null
-    var isVararg: Boolean by kotlin.properties.Delegates.notNull()
+    var isVararg: Boolean by Delegates.notNull()
+    var isFromSource: Boolean by Delegates.notNull()
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirJavaValueParameter {
         return FirJavaValueParameter(
             source,
             moduleData,
+            origin = javaOrigin(isFromSource),
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             attributes,
             returnTypeRef,
@@ -231,6 +232,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     copyBuilder.source = original.source
     copyBuilder.moduleData = original.moduleData
     copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name
     val annotations = original.annotations

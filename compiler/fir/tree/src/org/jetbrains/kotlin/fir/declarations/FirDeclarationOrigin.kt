@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-sealed class FirDeclarationOrigin(private val displayName: String? = null, val fromSupertypes: Boolean = false, val generated: Boolean = false) {
-    object Source : FirDeclarationOrigin()
+sealed class FirDeclarationOrigin(
+    private val displayName: String? = null,
+    val fromSupertypes: Boolean = false,
+    val generated: Boolean = false,
+    val fromSource: Boolean = false
+) {
+    object Source : FirDeclarationOrigin(fromSource = true)
     object Library : FirDeclarationOrigin()
     object Precompiled : FirDeclarationOrigin() // currently used for incremental compilation
     object BuiltIns : FirDeclarationOrigin()
-    object Java : FirDeclarationOrigin()
+    sealed class Java(displayName: String, fromSource: Boolean = false) : FirDeclarationOrigin(displayName, fromSource = fromSource) {
+        object Source : Java("Java(Source)", fromSource = true)
+        object Library : Java("Java(Library)")
+    }
+
     object Synthetic : FirDeclarationOrigin()
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()

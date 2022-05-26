@@ -82,7 +82,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
 
     // Java static members, enums, and object members can be imported
-    val canBeImported = containingClass.origin == FirDeclarationOrigin.Java ||
+    val canBeImported = containingClass.origin is FirDeclarationOrigin.Java ||
             containingClass.classKind == ClassKind.ENUM_CLASS ||
             containingClass.classKind == ClassKind.OBJECT
 

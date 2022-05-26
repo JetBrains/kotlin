@@ -39,7 +39,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         var typeSymbol: FirRegularClassSymbol? = null
         if (!supportsDefaults && symbol.isStatic) {
             typeSymbol = getTypeSymbol() ?: return
-            if (typeSymbol.isInterface && typeSymbol.origin == FirDeclarationOrigin.Java) {
+            if (typeSymbol.isInterface && typeSymbol.origin is FirDeclarationOrigin.Java) {
                 reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
             }
         }
@@ -55,7 +55,7 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         if (typeSymbol == null) typeSymbol = getTypeSymbol() ?: return
 
         val jvmDefaultMode = context.session.jvmDefaultModeState
-        if (typeSymbol.isInterface && (typeSymbol.origin == FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(jvmDefaultMode))) {
+        if (typeSymbol.isInterface && (typeSymbol.origin is FirDeclarationOrigin.Java || symbol.isCompiledToJvmDefault(jvmDefaultMode))) {
             if (containingDeclaration.isInterface) {
                 val containingMember = context.findContainingMember()?.symbol
                 if (containingMember?.isCompiledToJvmDefault(jvmDefaultMode) == false) {
