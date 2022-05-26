@@ -37,6 +37,7 @@ abstract class BinaryJavaMethodBase(
 ) : JavaMember, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
+    override val isFromSource: Boolean get() = false
 
     companion object {
         private class MethodInfo(

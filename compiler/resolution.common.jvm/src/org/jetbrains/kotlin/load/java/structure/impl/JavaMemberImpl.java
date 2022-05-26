@@ -51,6 +51,11 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
         return Name.identifier(name);
     }
 
+    @Override
+    public final boolean isFromSource() {
+        return true;
+    }
+
     @NotNull
     @Override
     public JavaClass getContainingClass() {

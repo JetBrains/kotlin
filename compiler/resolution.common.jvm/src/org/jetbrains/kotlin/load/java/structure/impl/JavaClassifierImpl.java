@@ -41,6 +41,11 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
         }
     }
 
+    @Override
+    public final boolean isFromSource() {
+        return true;
+    }
+
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {

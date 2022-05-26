@@ -45,6 +45,8 @@ class BinaryJavaClass(
     override lateinit var typeParameters: List<JavaTypeParameter>
     override lateinit var supertypes: List<JavaClassifierType>
 
+    override val isFromSource: Boolean get() = false
+
     override val methods = arrayListOf<JavaMethod>()
     override val fields = arrayListOf<JavaField>()
     override val constructors = arrayListOf<JavaConstructor>()

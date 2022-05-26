@@ -31,6 +31,9 @@ abstract class SymbolBasedMember<out T : Element>(
         javac: JavacWrapper
 ) : SymbolBasedElement<T>(element, javac), JavaMember {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors.map { SymbolBasedAnnotation(it, javac) }
 

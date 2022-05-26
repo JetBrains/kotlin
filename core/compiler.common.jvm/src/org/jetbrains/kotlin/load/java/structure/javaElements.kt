@@ -25,6 +25,7 @@ interface JavaElement
 
 interface JavaNamedElement : JavaElement {
     val name: Name
+    val isFromSource: Boolean
 }
 
 interface JavaAnnotationOwner : JavaElement {
@@ -145,6 +146,7 @@ interface JavaValueParameter : JavaAnnotationOwner {
     val name: Name?
     val type: JavaType
     val isVararg: Boolean
+    val isFromSource: Boolean
 }
 
 interface JavaRecordComponent : JavaMember {

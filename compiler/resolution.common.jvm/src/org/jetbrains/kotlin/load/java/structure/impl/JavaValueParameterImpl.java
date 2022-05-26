@@ -58,6 +58,11 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
         return false;
     }
 
+    @Override
+    public boolean isFromSource() {
+        return true;
+    }
+
     @NotNull
     @Override
     public Visibility getVisibility() {

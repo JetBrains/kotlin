@@ -28,6 +28,9 @@ abstract class SymbolBasedClassifier<out T : Element>(
         javac: JavacWrapper
 ) : SymbolBasedElement<T>(element, javac), JavaClassifier, JavaAnnotationOwner {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val annotations: Collection<JavaAnnotation>
         get() = element.annotationMirrors.map { SymbolBasedAnnotation(it, javac) }
 

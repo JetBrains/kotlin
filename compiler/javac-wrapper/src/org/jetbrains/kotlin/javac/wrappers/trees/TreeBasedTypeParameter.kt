@@ -33,6 +33,9 @@ class TreeBasedTypeParameter(
         private val containingElement: JavaElement
 ) : TreeBasedElement<JCTree.JCTypeParameter>(tree, compilationUnit, javac), JavaTypeParameter {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val name: Name
         get() = Name.identifier(tree.name.toString())
 

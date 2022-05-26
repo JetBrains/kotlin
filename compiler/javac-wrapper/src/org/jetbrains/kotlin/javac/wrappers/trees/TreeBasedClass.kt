@@ -40,6 +40,9 @@ class TreeBasedClass(
         override val outerClass: JavaClass?
 ) : TreeBasedElement<JCTree.JCClassDecl>(tree, compilationUnit, javac), JavaClassWithClassId {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
 

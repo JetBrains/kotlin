@@ -33,6 +33,8 @@ class ReflectJavaClass(
 
     override val modifiers: Int get() = klass.modifiers
 
+    override val isFromSource: Boolean get() = false
+
     override val innerClassNames: List<Name>
         get() = klass.declaredClasses
             .asSequence()
