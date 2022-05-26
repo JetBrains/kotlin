@@ -11,6 +11,7 @@ import java.io.File
 import java.util.*
 import java.util.zip.ZipFile
 import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -100,6 +101,7 @@ class KlibBasedMppIT : BaseGradleIT() {
     }
 
     @Test
+    @Ignore("disable until kotlin/native dependency is updated to include KT-52226")
     fun testBuildWithPublishedDependency() = testBuildWithDependency {
         publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
     }
