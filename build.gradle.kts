@@ -133,7 +133,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.7.0-dev-1827"
+    extra["versions.kotlin-native"] = "1.7.0-RC2-253"
 }
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
