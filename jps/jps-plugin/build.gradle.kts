@@ -15,31 +15,28 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 }
 
 dependencies {
-    api(project(":kotlin-build-common"))
-    api(project(":core:descriptors"))
-    api(project(":core:descriptors.jvm"))
-    api(project(":kotlin-compiler-runner-unshaded"))
-    api(project(":kotlin-compiler-runner"))
-    api(project(":daemon-common"))
-    api(project(":daemon-common-new"))
-    api(project(":kotlin-daemon-client"))
-    api(project(":kotlin-daemon"))
+    implementation(project(":kotlin-build-common"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":kotlin-compiler-runner-unshaded"))
+    implementation(project(":daemon-common"))
+    implementation(project(":daemon-common-new"))
+    implementation(project(":kotlin-daemon-client"))
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(projectTests(":generators:test-generator"))
-    api(project(":compiler:frontend.java"))
-    api(project(":js:js.frontend"))
-    api(project(":kotlin-preloader"))
-    api(project(":jps:jps-common"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":js:js.frontend"))
+    implementation(project(":kotlin-preloader"))
+    implementation(project(":jps:jps-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(jpsModel())
-    compileOnly(jpsModelImpl())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
-    testApi(jpsModel())
+    testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
-    testApi(testFramework()) { isTransitive = false }
-    testApi("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
+    testImplementation(testFramework()) { isTransitive = false }
+    testImplementation("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:boot:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis:$intellijVersion") { isTransitive = false }
@@ -55,29 +52,20 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:lang:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:lang-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
+    testRuntimeOnly("com.google.code.gson:gson:2.8.9")
 
     testCompileOnly(project(":kotlin-reflect-api"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
-    testApi(commonDependency("junit:junit"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(projectTests(":kotlin-build-common"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
     testCompileOnly(jpsBuild())
-    testApi(devKitJps()) {
+    testImplementation(devKitJps()) {
         exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
     }
-    implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
 
-    testApi(jpsBuildTest())
+    testImplementation(jpsBuildTest())
     compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
 
-    testRuntimeOnly(toolsJar())
-    testRuntimeOnly(project(":kotlin-reflect"))
-    testRuntimeOnly(project(":kotlin-script-runtime"))
     testImplementation("org.projectlombok:lombok:1.18.16")
 }
 
