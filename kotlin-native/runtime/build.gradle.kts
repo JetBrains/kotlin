@@ -208,7 +208,7 @@ val hostRuntimeTests by tasks.registering {
 }
 
 val assemble by tasks.getting {
-    dependsOn(targetList.forEach { "${it}Runtime" })
+    dependsOn(targetList.map { "${it}Runtime" })
 }
 
 val hostAssemble by tasks.registering {
