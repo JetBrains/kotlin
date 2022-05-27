@@ -93,6 +93,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
             is IrCall ->
                 dispatchReceiver?.isConst() != false
                         && extensionReceiver?.isConst() != false
+                        && valueArgumentsCount == 0
                         && symbol.owner.run {
                     modality == Modality.FINAL
                             && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
