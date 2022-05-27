@@ -341,8 +341,9 @@ FILE: delegates.kt
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [STATUS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+    public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final [CONTRACTS] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -357,19 +358,19 @@ FILE: delegates.kt
     }
 
         [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        [STATUS] public get(): <implicit> {
+    public final [CONTRACTS] val valueWithExplicitType: R|kotlin/Int|by delegate#
+        [CONTRACTS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
         [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        [STATUS] public get(): <implicit> {
+    public final [CONTRACTS] var variableWithExplicitType: R|kotlin/Int|by delegate#
+        [CONTRACTS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
+        [CONTRACTS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|

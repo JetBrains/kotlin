@@ -1,5 +1,4 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
-// FIR_IDE_IGNORE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -24,6 +23,15 @@ fun case_2_1(x: Number?) {
     println(<!DEBUG_INFO_SMARTCAST!>x<!>.toByte())
 }
 
+// TESTCASE NUMBER: 3
+class Child : Base() {
+    fun case_3_1(x: Any?) {
+        if (case_3_2(x)) {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        }
+    }
+}
+
 // TESTCASE NUMBER: 1
 fun case_1_2(x: Any?): Boolean {
     contract { returns(true) implies (x is String) }
@@ -36,4 +44,10 @@ fun case_2_2(x: Any?) {
     if (x == null) throw Exception()
 }
 
-
+// TESTCASE NUMBER: 3
+open class Base {
+    fun case_3_2(x: Any?): Boolean {
+        contract { returns(true) implies (x is String) }
+        return x is String
+    }
+}

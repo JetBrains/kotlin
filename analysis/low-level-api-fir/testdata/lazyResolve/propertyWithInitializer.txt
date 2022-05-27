@@ -76,7 +76,7 @@ FILE: propertyWithInitializer.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
-    public final [STATUS] val property: R|kotlin/Int| = LAZY_EXPRESSION
+    public final [CONTRACTS] val property: R|kotlin/Int| = IntegerLiteral(10)
         [BODY_RESOLVE] public get(): R|kotlin/Int|
 
 FILE RAW TO BODY:

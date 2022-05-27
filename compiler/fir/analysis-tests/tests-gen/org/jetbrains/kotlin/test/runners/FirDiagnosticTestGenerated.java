@@ -1258,6 +1258,18 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("contractFromOtherModule.kt")
+            public void testContractFromOtherModule() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractFromOtherModule.kt");
+            }
+
+            @Test
+            @TestMetadata("contractFromOtherModule_samePackage.kt")
+            public void testContractFromOtherModule_samePackage() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractFromOtherModule_samePackage.kt");
+            }
+
+            @Test
             @TestMetadata("genericContract.kt")
             public void testGenericContract() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");

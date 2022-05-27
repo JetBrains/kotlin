@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

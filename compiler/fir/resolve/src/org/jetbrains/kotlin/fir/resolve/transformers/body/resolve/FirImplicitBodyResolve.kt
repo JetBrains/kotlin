@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -225,6 +227,8 @@ private class ReturnTypeCalculatorWithJump(
             )
         }
 
+        resolvedToContractsIfNecessary(declaration)
+
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
@@ -254,6 +258,20 @@ private class ReturnTypeCalculatorWithJump(
             is ImplicitBodyResolveComputationStatus.Computing ->
                 buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
             else -> computeReturnTypeRef(declaration)
+        }
+    }
+
+    private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
+        if (declaration.resolvePhase >= FirResolvePhase.CONTRACTS) return
+
+        val canHaveContracts = when {
+            declaration is FirProperty && !declaration.isLocal -> true
+            declaration is FirSimpleFunction && !declaration.isLocal -> true
+            else -> false
+        }
+
+        if (canHaveContracts) {
+            declaration.ensureResolved(FirResolvePhase.CONTRACTS)
         }
     }
 

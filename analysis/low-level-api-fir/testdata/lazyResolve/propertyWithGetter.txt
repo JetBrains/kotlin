@@ -87,9 +87,12 @@ FILE: propertyWithGetter.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [STATUS] val withGetter: R|kotlin/Int|
-        [STATUS] public get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final [CONTRACTS] val withGetter: R|kotlin/Int|
+        [CONTRACTS] public get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
 
 FILE RAW TO BODY:
 FILE: propertyWithGetter.kt
