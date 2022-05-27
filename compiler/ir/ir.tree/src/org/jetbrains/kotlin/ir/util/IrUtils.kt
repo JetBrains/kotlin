@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.DFS
@@ -263,10 +264,14 @@ val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
-    get() = when (val parent = parent) {
-        is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
-        is IrPackageFragment -> parent.fqName.child(name)
-        else -> null
+    get() {
+        if (this is IrErrorClassImpl) return FqName.ROOT.child(this.name)
+        return when (val parent = parent) {
+            is IrErrorClassImpl -> null
+            is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
+            is IrPackageFragment -> parent.fqName.child(name)
+            else -> null
+        }
     }
 
 val IrDeclaration.parentAsClass: IrClass
