@@ -6,11 +6,10 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation(project(":compiler:util"))
-    implementation(project(":compiler:cli-common"))
-    implementation(project(":compiler:frontend.java"))
-    implementation(project(":js:js.frontend"))
-    implementation(project(":kotlin-reflect"))
+    rootProject.extra["compilerModulesForJps"]
+        .let { it as List<String> }
+        .forEach { implementation(project(it)) }
+
     compileOnly(intellijUtilRt())
     compileOnly(intellijPlatformUtil())
     compileOnly(jpsModel())

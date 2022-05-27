@@ -15,18 +15,13 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 }
 
 dependencies {
-    implementation(project(":kotlin-build-common"))
-    implementation(project(":core:descriptors"))
-    implementation(project(":core:descriptors.jvm"))
-    implementation(project(":kotlin-compiler-runner-unshaded"))
-    implementation(project(":daemon-common"))
-    implementation(project(":daemon-common-new"))
-    implementation(project(":kotlin-daemon-client"))
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(projectTests(":generators:test-generator"))
-    implementation(project(":compiler:frontend.java"))
-    implementation(project(":js:js.frontend"))
-    implementation(project(":kotlin-preloader"))
+
+    rootProject.extra["compilerModulesForJps"]
+        .let { it as List<String> }
+        .forEach { implementation(project(it)) }
+
     implementation(project(":jps:jps-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(jpsModel())
