@@ -2712,9 +2712,13 @@ class ComposableFunctionBodyTransformer(
         val numChanged: Int
         val numRealValueParams: Int
 
-        if (expression.isInvoke()) {
-            // in the case of an invoke, all of the parameters are going to be type parameter
-            // args which won't have special names. In this case, we know that the values cannot
+        val hasDefaults = ownerFn.valueParameters.any {
+            it.name == KtxNameConventions.DEFAULT_PARAMETER
+        }
+        if (!hasDefaults && expression.isInvoke()) {
+            // in the case of an invoke without any defaults, all of the parameters are going to
+            // be type parameter args which won't have special names.
+            // In this case, we know that the values cannot
             // be defaulted though, so we can calculate the number of real parameters based on
             // the total number of parameters
             numDefaults = 0
@@ -2723,9 +2727,6 @@ class ComposableFunctionBodyTransformer(
                 1 - // composer param
                 numChanged
         } else {
-            val hasDefaults = ownerFn.valueParameters.any {
-                it.name == KtxNameConventions.DEFAULT_PARAMETER
-            }
             numRealValueParams = ownerFn.valueParameters.indexOfLast {
                 !it.name.asString().startsWith('$')
             } + 1
