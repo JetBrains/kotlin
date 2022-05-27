@@ -48,7 +48,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
         if (!isDelegated || isFakeOverride || backingField == null) return null
-        val delegate = backingField?.initializer?.expression?.takeIf { it.isConst() } ?: return null
+        val delegate = backingField?.initializer?.expression?.takeIf { it.isInlineable() } ?: return null
         val originalThis = parentAsClass.thisReceiver
         val receiverMapper = object : IrElementTransformer<Pair<Name, IrExpression>> {
             override fun visitCall(expression: IrCall, data: Pair<Name, IrExpression>): IrExpression {
@@ -87,12 +87,12 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
         return listOfNotNull(this, initializerBlock, delegateMethod)
     }
 
-    private fun IrExpression.isConst(): Boolean =
+    private fun IrExpression.isInlineable(): Boolean =
         when (this) {
             is IrConst<*>, is IrGetSingletonValue -> true
             is IrCall ->
-                dispatchReceiver?.isConst() != false
-                        && extensionReceiver?.isConst() != false
+                dispatchReceiver?.isInlineable() != false
+                        && extensionReceiver?.isInlineable() != false
                         && valueArgumentsCount == 0
                         && symbol.owner.run {
                     modality == Modality.FINAL
