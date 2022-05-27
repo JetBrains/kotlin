@@ -6,7 +6,11 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    rootProject.extra["compilerModulesForJps"]
+    rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
+        .let { it as List<String> }
+        .forEach { implementation(project(it)) }
+
+    rootProject.extra["kotlinJpsPluginMavenDependencies"]
         .let { it as List<String> }
         .forEach { implementation(project(it)) }
 
