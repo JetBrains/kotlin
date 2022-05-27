@@ -33503,6 +33503,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("invisiblePrivateThroughSubClass.kt")
+            public void testInvisiblePrivateThroughSubClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClass.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleSetterOfJavaClass.kt")
             public void testInvisibleSetterOfJavaClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");

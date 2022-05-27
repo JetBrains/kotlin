@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -97,7 +97,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 session,
                 useSiteFile,
                 containingDeclarations,
-                dispatchReceiver,
+                dispatchReceiver = null,
                 isCallToPropertySetter,
                 supertypeSupplier
             )
@@ -239,62 +239,26 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             )
         }
 
-        fun matchWithContainingDeclarations(): Boolean {
-            for (declaration in containingDeclarationOfUseSite) {
-                if (declaration !is FirClass) continue
-                val boundSymbol = declaration.symbol
-                if (boundSymbol.classId.isSame(ownerLookupTag.classId)) {
-                    return true
-                }
+        val ownerSymbol = ownerLookupTag.toSymbol(session) ?: return true
+
+        val dispatchReceiverValueOwnerLookupTag =
+            dispatchReceiver.ownerIfCompanion(session)
+                ?: dispatchReceiver?.type?.findClassRepresentation(
+                    ownerLookupTag.constructClassType(Array(ownerSymbol.fir.typeParameters.size) { ConeStarProjection }, isNullable = true),
+                    session,
+                )
+
+        if (dispatchReceiverValueOwnerLookupTag != null && ownerLookupTag != dispatchReceiverValueOwnerLookupTag) return false
+
+        for (declaration in containingDeclarationOfUseSite) {
+            if (declaration !is FirClass) continue
+            val boundSymbol = declaration.symbol
+            if (boundSymbol.classId.isSame(ownerLookupTag.classId)) {
+                return true
             }
-            return false
         }
 
-        return if (isVariableOrNamedFunction && dispatchReceiver?.type is ConeClassLikeType) {
-            if (dispatchReceiver is ImplicitDispatchReceiverValue) {
-                val dispatchReceiverOwnerClassId = dispatchReceiver.ownerIfCompanion(session)?.classId ?: dispatchReceiver.type.classId
-                var isMemberFound = false
-                for (declaration in containingDeclarationOfUseSite) {
-                    if (declaration !is FirClass) continue
-
-                    val boundSymbol = declaration.symbol
-                    var isSameClasses = false
-                    if (!isMemberFound) {
-                        isSameClasses = boundSymbol.classId.isSame(ownerLookupTag.classId)
-                        if (isSameClasses) {
-                            isMemberFound = true
-                        }
-                    }
-                    if (isMemberFound) {
-                        if (!isSameClasses && !(
-                                    declaration.isInner ||
-                                            (declaration.containingNonLocalClass(session) as? FirRegularClass)?.classKind == ClassKind.OBJECT)
-                        ) {
-                            // It should not be ordinary classes between use site and declaration
-                            return false
-                        }
-                        if (boundSymbol.classId.isSame(dispatchReceiverOwnerClassId!!)) {
-                            return true
-                        }
-                    }
-                }
-                isMemberFound
-            } else {
-                val receiverExpression = dispatchReceiver.receiverExpression
-                if (receiverExpression is FirThisReceiverExpression &&
-                    receiverExpression.source != null &&
-                    (containingDeclarationOfUseSite.lastOrNull() as? FirFunction)?.symbol?.isExtension != true
-                ) {
-                    // Processing of explicit no extension `this`
-                    val dispatchReceiverOwnerClassId = dispatchReceiver.ownerIfCompanion(session)?.classId ?: dispatchReceiver.type.classId
-                    dispatchReceiverOwnerClassId?.isSame(ownerLookupTag.classId) == true
-                } else {
-                    matchWithContainingDeclarations()
-                }
-            }
-        } else {
-            matchWithContainingDeclarations()
-        }
+        return false
     }
 
     // 'local' isn't taken into account here
