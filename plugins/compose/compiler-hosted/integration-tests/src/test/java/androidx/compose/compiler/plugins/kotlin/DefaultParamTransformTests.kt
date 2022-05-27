@@ -1531,4 +1531,53 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testDefaultArgsOnInvoke() = defaultParams(
+        """
+            object HasDefault {
+                @Composable
+                operator fun invoke(text: String = "SomeText"){
+                    println(text)
+                }
+            }
+
+            object NoDefault {
+                @Composable
+                operator fun invoke(text: String){
+                    println(text)
+                }
+            }
+
+            object MultipleDefault {
+                @Composable
+                operator fun invoke(text: String = "SomeText", value: Int = 5){
+                    println(text)
+                    println(value)
+                }
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Bar() {
+                HasDefault()
+                NoDefault("Some Text")
+                MultipleDefault()
+            }
+        """,
+        """
+            @NonRestartableComposable
+            @Composable
+            fun Bar(%composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Bar)<HasDef...>,<NoDefa...>,<Multip...>:Test.kt")
+              HasDefault(null, %composer, 0b00110000, 0b0001)
+              NoDefault("Some Text", %composer, 0b00110110)
+              MultipleDefault(null, 0, %composer, 0b000110000000, 0b0011)
+              %composer.endReplaceableGroup()
+            }
+
+        """
+        )
 }
