@@ -156,6 +156,10 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
 ) {
     baseClass.replaceOnlyDefault(if (templateClass == baseClassType.fromClass) baseClassType else KotlinType(templateClass))
     fileExtension.replaceOnlyDefault(mainAnnotation.fileExtension)
+    // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
+    if (get(fileExtension) == "gradle.kts") {
+        isStandalone(false)
+    }
     filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }

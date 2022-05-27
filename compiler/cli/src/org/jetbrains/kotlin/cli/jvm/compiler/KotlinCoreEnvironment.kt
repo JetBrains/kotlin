@@ -637,6 +637,7 @@ class KotlinCoreEnvironment private constructor(
             JsSyntheticTranslateExtension.registerExtensionPoint(project)
             CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
+            ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
             ExtraImportsProviderExtension.registerExtensionPoint(project)
             IrGenerationExtension.registerExtensionPoint(project)
             ScriptEvaluationExtension.registerExtensionPoint(project)

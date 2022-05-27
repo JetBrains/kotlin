@@ -278,6 +278,7 @@ enum class LanguageFeature(
     ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_1_9, kind = BUG_FIX), // KT-51221
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, kind = BUG_FIX), // KT-52502
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_1_9, kind = BUG_FIX), // KT-47986
+    SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),

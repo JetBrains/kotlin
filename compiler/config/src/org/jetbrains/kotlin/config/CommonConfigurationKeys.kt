@@ -74,6 +74,10 @@ object CommonConfigurationKeys {
     @JvmField
     val INCREMENTAL_COMPILATION =
         CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
+
+    @JvmField
+    val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS =
+        CompilerConfigurationKey.create<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

@@ -415,6 +415,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render internal names of warnings and errors")
     var renderInternalDiagnosticNames: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow to compile any scripts along with regular Kotlin sources")
+    var allowAnyScriptsInSourceRoots: Boolean by FreezableVar(false)
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -506,6 +509,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                     // breaking change manually instead of turning off whole progressive mode
                     if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
                 }
+            }
+
+            if (allowAnyScriptsInSourceRoots) {
+                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 
             // Internal arguments should go last, because it may be useful to override

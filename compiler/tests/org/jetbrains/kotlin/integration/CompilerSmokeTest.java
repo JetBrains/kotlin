@@ -172,7 +172,7 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     public void testCompileScript() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "script.jar";
 
-        runCompiler("script", "script.kts", "-d", jar);
+        runCompiler("script", "-Xallow-any-scripts-in-source-roots", "script.kts", "-d", jar);
     }
 
     public void testInlineOnly() throws Exception {

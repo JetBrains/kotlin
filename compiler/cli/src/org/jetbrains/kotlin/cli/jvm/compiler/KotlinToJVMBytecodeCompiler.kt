@@ -37,12 +37,10 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -236,8 +234,11 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
-        val sourceFiles = environment.getSourceFiles()
         val collector = environment.messageCollector
+        val sourceFiles = ProcessSourcesBeforeCompilingExtension.getInstances(environment.project)
+            .fold(environment.getSourceFiles() as Collection<KtFile>) { files, extension ->
+                extension.processSources(files, environment.configuration)
+            }
 
         // Can be null for Scripts/REPL
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)

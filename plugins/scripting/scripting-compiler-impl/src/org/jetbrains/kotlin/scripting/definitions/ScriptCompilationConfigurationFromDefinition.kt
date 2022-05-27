@@ -36,6 +36,10 @@ class ScriptCompilationConfigurationFromDefinition(
         platform(scriptDefinition.platform)
         @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
+        // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
+        if (scriptDefinition.fileExtension == "gradle.kts") {
+            isStandalone(false)
+        }
         ide {
             acceptedLocations.put(scriptDefinition.scriptExpectedLocations.mapLegacyExpectedLocations())
         }

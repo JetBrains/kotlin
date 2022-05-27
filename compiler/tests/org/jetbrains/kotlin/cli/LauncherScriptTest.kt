@@ -299,7 +299,7 @@ println(42)
             expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
-            "kotlin", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
+            "kotlin", "-Xallow-any-scripts-in-source-roots", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (noInline.myscript:1:7)
 compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: CompilerOptions
 @file:CompilerOptions("-Xno-inline")

@@ -171,6 +171,13 @@ val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.k
 val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
 
 /**
+ * Should the script be always considered standalone
+ * If true, it is ignored when compiled along with other sources (starting from 1.9, according to SkipStandaloneScriptsInSourceRoots language feature)
+ * true by default
+ */
+val ScriptCompilationConfigurationKeys.isStandalone by PropertiesCollection.key<Boolean>(true)
+
+/**
  * The sub-builder DSL for configuring refinement callbacks
  */
 val ScriptCompilationConfiguration.Builder.refineConfiguration get() = RefineConfigurationBuilder()
