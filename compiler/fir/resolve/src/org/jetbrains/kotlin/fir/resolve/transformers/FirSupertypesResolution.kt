@@ -289,7 +289,7 @@ open class FirSupertypeResolverVisitor(
         for (supertype in supertypes) {
             if (supertype !is ConeClassLikeType) continue
             val supertypeModuleSession = supertype.toSymbol(session)?.moduleData?.session ?: continue
-            val fir = getFirClassifierByFqName(supertypeModuleSession, supertype.lookupTag.classId) ?: continue
+            val fir = supertype.lookupTag.toSymbol(supertypeModuleSession)?.fir ?: continue
             resolveAllSupertypes(fir, fir.supertypeRefs(), visited)
         }
     }
