@@ -173,7 +173,7 @@ internal class Linker(val context: Context) {
             val finalOutputCommands = linker.finalLinkCommands(
                     objectFiles = linkerInput.objectFiles,
                     executable = executable,
-                    libraries = linker.linkStaticLibraries(includedBinaries) + linkerInput.caches.static,
+                    libraries = linkerInput.caches.static + linker.linkStaticLibraries(includedBinaries),
                     linkerArgs = linkerArgs,
                     optimize = optimize,
                     debug = debug,
