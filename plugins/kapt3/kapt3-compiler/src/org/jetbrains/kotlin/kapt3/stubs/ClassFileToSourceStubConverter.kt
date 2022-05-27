@@ -1009,13 +1009,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         parameters: JavacList<JCVariableDecl>,
         valueParametersFromDescriptor: List<ValueParameterDescriptor>
     ): Pair<SignatureParser.MethodGenericSignature, JCExpression?> {
+        val psiElement = kaptContext.origins[method]?.element
         val genericSignature = signatureParser.parseMethodSignature(
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->
                 if (descriptor is PropertySetterDescriptor && valueParametersFromDescriptor.size == 1 && index == 0) {
                     getNonErrorType(descriptor.correspondingProperty.returnType, METHOD_PARAMETER_TYPE,
                                     ktTypeProvider = {
-                                        val setterOrigin = (kaptContext.origins[method]?.element as? KtCallableDeclaration)
+                                        val setterOrigin = (psiElement as? KtCallableDeclaration)
                                             ?.takeIf { it !is KtFunction }
 
                                         setterOrigin?.typeReference
@@ -1023,7 +1024,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                                     ifNonError = { lazyType() })
                 } else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
                     val parameterDescriptor = valueParametersFromDescriptor[index]
-                    val sourceElement = kaptContext.origins[method]?.element as? KtFunction
+                    val sourceElement = when {
+                        psiElement is KtFunction -> psiElement
+                        descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
+                        else -> null
+                    }
 
                     getNonErrorType(
                         parameterDescriptor.type, METHOD_PARAMETER_TYPE,
@@ -1047,11 +1052,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val returnType = getNonErrorType(
             descriptor.returnType, RETURN_TYPE,
             ktTypeProvider = {
-                when (val element = kaptContext.origins[method]?.element) {
-                    is KtFunction -> element.typeReference
-                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                    is KtPropertyAccessor -> if (descriptor is PropertyGetterDescriptor) element.property.typeReference else null
-                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                when (psiElement) {
+                    is KtFunction -> psiElement.typeReference
+                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) psiElement.typeReference else null
+                    is KtPropertyAccessor -> if (descriptor is PropertyGetterDescriptor) psiElement.property.typeReference else null
+                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) psiElement.typeReference else null
                     else -> null
                 }
             },

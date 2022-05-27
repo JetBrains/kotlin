@@ -31,6 +31,7 @@ interface IrDeclarationOrigin {
     object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
     object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)
     object JVM_MULTIFILE_CLASS : IrDeclarationOriginImpl("JVM_MULTIFILE_CLASS")
+    object ERROR_CLASS : IrDeclarationOriginImpl("ERROR_CLASS")
 
     object SCRIPT_CLASS : IrDeclarationOriginImpl("SCRIPT_CLASS")
     object SCRIPT_STATEMENT : IrDeclarationOriginImpl("SCRIPT_STATEMENT")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter
+import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -56,6 +57,12 @@ object AbstractTypeMapper {
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: Writer? = null
     ): Type {
+        if (type.isError()) {
+            val jvmType = Type.getObjectType(NON_EXISTENT_CLASS_NAME)
+            with(context) { sw?.writeGenericType(type, jvmType, mode) }
+            return jvmType
+        }
+
         val typeConstructor = type.typeConstructor()
 
         if (type is SimpleTypeMarker) {
