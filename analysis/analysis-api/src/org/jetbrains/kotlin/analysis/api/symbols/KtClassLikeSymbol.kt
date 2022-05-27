@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtClassifierSymbol : KtSymbol, KtAnnotatedSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
+public sealed class KtClassifierSymbol : KtSymbol, KtPossiblyNamedSymbol, KtDeclarationSymbol
 
 public val KtClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
@@ -38,8 +38,8 @@ public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, 
 
 public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
     KtSymbolWithVisibility,
-    KtNamedSymbol,
-    KtAnnotatedSymbol {
+    KtNamedSymbol {
+
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
 
     /**
@@ -51,9 +51,7 @@ public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
 
-public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(),
-    KtAnnotatedSymbol,
-    KtSymbolWithMembers {
+public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithMembers {
 
     public abstract val classKind: KtClassKind
     public abstract val superTypes: List<KtType>

@@ -95,7 +95,6 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
-    KtAnnotatedSymbol,
     KtSymbolWithKind {
 
     public abstract val hasGetter: Boolean

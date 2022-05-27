@@ -13,7 +13,6 @@ public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
-    KtAnnotatedSymbol,
     KtSymbolWithKind {
 
     final override val isExtension: Boolean get() = false
