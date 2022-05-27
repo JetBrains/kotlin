@@ -246,11 +246,13 @@ class StabilityInferencer(val context: IrPluginContext) {
         "kotlin.ranges.ClosedFloatingPointRange" to 0b1,
     )
 
-    // TODO: mapOf, setOf, buildList, buildMap, buildSet, etc.
+    // TODO: buildList, buildMap, buildSet, etc.
     private val stableProducingFunctions = mapOf(
         "kotlin.collections.CollectionsKt.emptyList" to 0,
         "kotlin.collections.CollectionsKt.listOf" to 0b1,
         "kotlin.collections.CollectionsKt.listOfNotNull" to 0b1,
+        "kotlin.collections.MapsKt.mapOf" to 0b11,
+        "kotlin.collections.SetsKt.setOf" to 0b1,
     )
 
     fun stabilityOf(
