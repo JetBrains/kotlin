@@ -11797,6 +11797,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testWithSideEffects() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffects.kt");
             }
+
+            @TestMetadata("withSideEffectsFromFileClass.kt")
+            public void testWithSideEffectsFromFileClass() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffectsFromFileClass.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")

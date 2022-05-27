@@ -14583,6 +14583,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testWithSideEffects() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffects.kt");
             }
+
+            @Test
+            @TestMetadata("withSideEffectsFromFileClass.kt")
+            public void testWithSideEffectsFromFileClass() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/withSideEffectsFromFileClass.kt");
+            }
         }
 
         @Nested
