@@ -477,7 +477,7 @@ internal class KtFe10Renderer(
         }
 
         if (descriptor is CallableMemberDescriptor) {
-            renderModifier("override", descriptor.isExplicitOverride, RendererModifier.OVERRIDE)
+            renderModifier("override", descriptor !is DeserializedDescriptor && descriptor.isExplicitOverride, RendererModifier.OVERRIDE)
         }
 
         if (descriptor is ValueParameterDescriptor) {
