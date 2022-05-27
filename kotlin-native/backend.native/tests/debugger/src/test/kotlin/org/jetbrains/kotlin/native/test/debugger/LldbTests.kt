@@ -437,4 +437,62 @@ class LldbTests {
 """), "main.kt:2", 15)
     }
 
+    @Test
+    fun `works in native thread state`() = lldbComplexTest {
+        // This test checks that K/N runtime debug interface properly handles the cases when a calling thread is in native state.
+
+        // So we need to stop on a breakpoint in native code, but inspect Kotlin code.
+        // To achieve that, we set breakpoint on `write` function, and call `println` to trigger it.
+        // The `test` function is recursive -- this little trick helps us to switch to frame 10 in the debugger,
+        // and be sure that it is in `test` function regardless of how the inline works for println and its callees.
+
+        val program = """
+            fun main() {
+                test(10)
+            }
+
+            fun test(n: Int) {
+                val myData = MyData(1, longArrayOf(2, 3), "four", arrayOf("five", "six"))
+                val i = 7
+                val la = longArrayOf(8, 9)
+                val s = "ten"
+                val a = arrayOf("eleven")
+
+                if (n > 0) test(n - 1)
+
+                println("Hello")
+            }
+
+            class MyData(val i: Int, val la: LongArray, val s: String, val a: Array<String>)
+
+        """.trimIndent().binary("nativestate", "-g", "-Xbinary=runtimeAssertionsMode=panic")
+
+        // Now we can just stop on `write`, switch frame to Kotlin code and try using different debug interface functions, both directly
+        // and indirectly (through konan_lldb.py, which integrates the built-in lldb capabilities like `frame variable` command with
+        // K/N debug interface).
+        """
+            > b write
+            Breakpoint 1: [..]
+            > ${lldbCommandRunOrContinue()}
+            [..] stop reason = breakpoint [..]
+            > frame select 10
+            -> 12  	    if (n > 0) test(n - 1)
+            > frame variable
+            (int) i = 7
+            (ObjHeader *) myData = [la: ..., s: ..., a: ..., i: ...]
+            (ObjHeader *) la = [..., ...]
+            (ObjHeader *) s = [..]
+            (ObjHeader *) a = [...]
+            > expression -- (int32_t)Konan_DebugPrint(s)
+            ten(int32_t) [..] = 0
+            > expression -- (int32_t)Konan_DebugPrint(la)
+            [8, 9](int32_t) [..] = 0
+            > expression -- (int32_t)Konan_DebugPrint(myData)
+            MyData@[..](int32_t) [..] = 0
+            > script lldb.frame.FindVariable("myData").GetChildMemberWithName("i").Dereference().GetValue()
+            '1'
+            > q
+        """.trimIndent().lldb(program)
+    }
+
 }
