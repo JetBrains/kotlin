@@ -1,0 +1,27 @@
+FILE: extensionFunctions.kt
+    public final object a : R|kotlin/Any| {
+        private constructor(): R|a| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|a|.buildLiteral(body: R|B.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final operator fun R|B|.appendString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final operator fun R|B|.appendObject(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval arg: R|kotlin/Int| = Int(1)
+        Q|a|.R|/buildLiteral|(<L> = fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/appendString|(String(str ))
+            this@R|special/anonymous|.R|/appendObject|(R|<local>/arg|)
+        }
+        )
+    }

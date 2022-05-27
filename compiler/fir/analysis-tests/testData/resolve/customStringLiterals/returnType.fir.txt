@@ -1,0 +1,34 @@
+FILE: returnType.kt
+    public final object a : R|kotlin/Any| {
+        private constructor(): R|a| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|a|.buildLiteral(body: R|B.() -> kotlin/Unit|): R|kotlin/Int| {
+        ^buildLiteral R|/B.B|().R|kotlin/apply|<R|B|>(R|<local>/body|).R|/B.build|()
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun appendString(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final operator fun appendObject(x: R|kotlin/Any|): R|kotlin/Unit| {
+        }
+
+        public final fun build(): R|kotlin/Int| {
+            ^build Int(0)
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval arg: R|kotlin/Int| = Int(1)
+        lval result: R|kotlin/Int| = Q|a|.R|/buildLiteral|(<L> = fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/B.appendString|(String(str ))
+            this@R|special/anonymous|.R|/B.appendObject|(R|<local>/arg|)
+        }
+        )
+    }

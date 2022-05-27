@@ -109,11 +109,6 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/covariantArrayAsReceiver.kt");
     }
 
-    @TestMetadata("customStringLiterals.kt")
-    public void testCustomStringLiterals() throws Exception {
-        runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals.kt");
-    }
-
     @TestMetadata("defaultJavaImportHiding.kt")
     public void testDefaultJavaImportHiding() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/defaultJavaImportHiding.kt");
@@ -1050,6 +1045,49 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("genericContract.kt")
         public void testGenericContract() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/customStringLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CustomStringLiterals extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/customStringLiterals"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("classInstanceAsReceiver.kt")
+        public void testClassInstanceAsReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/classInstanceAsReceiver.kt");
+        }
+
+        @TestMetadata("extensionFunctions.kt")
+        public void testExtensionFunctions() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/extensionFunctions.kt");
+        }
+
+        @TestMetadata("multiLineString.kt")
+        public void testMultiLineString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/multiLineString.kt");
+        }
+
+        @TestMetadata("multipleOverloads.kt")
+        public void testMultipleOverloads() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/multipleOverloads.kt");
+        }
+
+        @TestMetadata("objectAsReceiver.kt")
+        public void testObjectAsReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/objectAsReceiver.kt");
+        }
+
+        @TestMetadata("returnType.kt")
+        public void testReturnType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/returnType.kt");
         }
     }
 

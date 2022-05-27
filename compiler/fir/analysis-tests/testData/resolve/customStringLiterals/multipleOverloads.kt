@@ -1,0 +1,14 @@
+object a
+operator fun a.buildLiteral(body: B.() -> Unit) {}
+
+class B {
+    operator fun appendString(s: String) {}
+    operator fun appendObject(x: Any) {}
+    operator fun appendObject(x: Int) {}
+    operator fun appendObject(s: String) {}
+}
+
+fun test() {
+    val arg = 1
+    a"str $arg"
+}
