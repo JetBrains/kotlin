@@ -91,6 +91,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(typeParameter) {
+            withCopy()
+        }
+
         builder(field) {
             parents += declarationBuilder
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
