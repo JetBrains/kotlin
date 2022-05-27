@@ -1,0 +1,78 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public open class ChildClass : ClashTest {
+    public constructor ChildClass()
+    invisible_fake final override /*1*/ /*fake_override*/ var age: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var human: kotlin.Boolean
+    invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var toOverride: kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getAge(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
+    @java.lang.Override public open override /*1*/ fun getToOverride(): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isHuman(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun isHuman(/*0*/ arg: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun setAge(/*0*/ age: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setHuman(/*0*/ human: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setToOverride(/*0*/ toOverride: kotlin.Int!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
+}
+
+@lombok.Getter @lombok.Setter public open class ClashTest : SuperClass {
+    public constructor ClashTest()
+    private final var age: kotlin.Int
+    private final var human: kotlin.Boolean
+    private final var name: kotlin.String!
+    private final var toOverride: kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getAge(): kotlin.Int
+    public open /*synthesized*/ fun getName(): kotlin.String!
+    public open /*synthesized*/ fun getToOverride(): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun isHuman(): kotlin.Boolean
+    public open fun isHuman(/*0*/ arg: kotlin.String!): kotlin.Boolean
+    public open fun setAge(/*0*/ age: kotlin.String!): kotlin.Unit
+    public open /*synthesized*/ fun setHuman(/*0*/ human: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*synthesized*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open /*synthesized*/ fun setToOverride(/*0*/ toOverride: kotlin.Int!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun test(): kotlin.Unit
+}
+
+public final class KotlinChildClass : ClashTest {
+    public constructor KotlinChildClass()
+    invisible_fake final override /*1*/ /*fake_override*/ var age: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var human: kotlin.Boolean
+    invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var toOverride: kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getAge(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
+    public open override /*1*/ fun getToOverride(): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isHuman(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun isHuman(/*0*/ arg: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun setAge(/*0*/ age: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setHuman(/*0*/ human: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setToOverride(/*0*/ toOverride: kotlin.Int!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SuperClass {
+    public constructor SuperClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

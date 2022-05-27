@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: SetterTest.java
 
 import lombok.AccessLevel;
@@ -20,20 +21,19 @@ public class SetterTest {
 
 // FILE: test.kt
 
-fun box(): String {
+fun test() {
     val obj = SetterTest()
     obj.setAge(42)
     obj.age = 42
 
     //synthetic property generated only when there is a getter
-//        obj.primitiveBoolean = false
+    obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!> = false
     obj.setPrimitiveBoolean(true)
 
     //shouldn't be accesible from here
-//        obj.setName("abc")
+    obj.<!INVISIBLE_MEMBER!>setName<!>("abc")
 
     OverridenGetterTest().usage()
-    return "OK"
 }
 
 class OverridenGetterTest : SetterTest() {

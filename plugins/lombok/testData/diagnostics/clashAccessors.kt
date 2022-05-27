@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: SuperClass.java
 
 import lombok.*;
@@ -79,13 +80,13 @@ class KotlinChildClass : ClashTest() {
 
 }
 
-fun box(): String {
+fun test() {
     val obj = ClashTest()
 
     obj.getAge()
     //thats shouldn't work because lombok doesn't generate clashing method
-//        obj.setAge(41)
-//        obj.age = 12
+    obj.setAge(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>41<!>)
+    <!VAL_REASSIGNMENT!>obj.age<!> = 12
     val age = obj.age
 
 
@@ -105,5 +106,4 @@ fun box(): String {
     childObj.setToOverride(34)
     childObj.toOverride
     childObj.toOverride = 412
-    return "OK"
 }

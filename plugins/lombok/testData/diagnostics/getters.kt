@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: GetterTest.java
 
 import lombok.AccessLevel;
@@ -25,25 +26,24 @@ public class GetterTest {
 
 // FILE: test.kt
 
-fun box(): String {
+fun test() {
     val obj = GetterTest()
     val getter = obj.getAge()
     val property = obj.age
 
     //todo kotlin doesn't seee isBoolean methods as property
-//    obj.primitiveBoolean
+    obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!>
     obj.isPrimitiveBoolean()
 
     obj.boxedBoolean
     obj.getBoxedBoolean()
 
     //shouldn't be accesible from here
-//    obj.getName()
+    obj.<!INVISIBLE_MEMBER!>getName<!>()
 
-//    obj.getInvisible()
+    obj.<!UNRESOLVED_REFERENCE!>getInvisible<!>()
 
     OverridenGetterTest().usage()
-    return "OK"
 }
 
 class OverridenGetterTest : GetterTest() {

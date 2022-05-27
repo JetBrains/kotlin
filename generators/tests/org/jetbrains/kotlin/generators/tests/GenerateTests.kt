@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterT
 import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.AbstractBlackBoxCodegenTestForLombok
+import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
 import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
@@ -424,10 +425,13 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
             testClass<AbstractBlackBoxCodegenTestForLombok> {
-                model("compile")
+                model("box")
             }
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
-                model("compile")
+                model("box")
+            }
+            testClass<AbstractDiagnosticTestForLombok> {
+                model("diagnostics")
             }
         }
     }

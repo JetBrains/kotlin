@@ -29,4 +29,4 @@ fun box(): String {
 
 // FILE: lombok.config
 lombok.accessors.fluent=true
-//lombok.accessors.chain=false
+#lombok.accessors.chain=false

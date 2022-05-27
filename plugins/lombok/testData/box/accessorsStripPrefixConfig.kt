@@ -5,7 +5,6 @@ import lombok.experimental.*;
 
 @Getter @Setter
 public class AccessorsTest {
-//    @Accessors
     private int age = 10;
     private int fTarget = 42;
     private String fieldValue;
@@ -18,9 +17,6 @@ public class AccessorsTest {
 
     static void test() {
         val obj = new AccessorsTest();
-
-//        obj.getAge();
-//        obj.setAge(123);
 
         obj.getTarget();
         obj.setTarget(34);
@@ -45,9 +41,6 @@ public class AccessorsTest {
 
 fun box(): String {
     val obj = AccessorsTest()
-
-//    obj.getAge()
-//    obj.setAge(123)
 
     obj.getTarget()
     obj.setTarget(34)

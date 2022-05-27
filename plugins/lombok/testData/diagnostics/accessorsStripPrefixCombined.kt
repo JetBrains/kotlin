@@ -1,4 +1,5 @@
-//KT-46529
+// FIR_IDENTICAL
+// KT-46529
 
 // FILE: PrefixJava.java
 
@@ -15,13 +16,12 @@ public class PrefixJava {
 
 // FILE: test.kt
 
-fun box(): String {
+fun test() {
     //not generated because doesn't have prefix from class level @Accessors
-    //assertEquals(PrefixJava().propA, "A")
+    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!>, "A")
     //not generated because doesn't have prefix from config
-    //assertEquals(PrefixJava().propC, "C")
+    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propC<!>, "C")
     assertEquals(PrefixJava().propD, "D")
-    return "OK"
 }
 
 // FILE: lombok.config

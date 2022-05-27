@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+
+// ---------------------------- box ----------------------------
 
 open class AbstractBlackBoxCodegenTestForLombok : AbstractBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -32,6 +35,17 @@ open class AbstractIrBlackBoxCodegenTestForLombok : AbstractIrBlackBoxCodegenTes
         builder.enableLombok()
     }
 }
+
+// ---------------------------- diagnostics ----------------------------
+
+open class AbstractDiagnosticTestForLombok : AbstractDiagnosticTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enableLombok()
+    }
+}
+
+// ---------------------------- configuration ----------------------------
 
 fun TestConfigurationBuilder.enableLombok() {
     useConfigurators(::LombokEnvironmentConfigurator)

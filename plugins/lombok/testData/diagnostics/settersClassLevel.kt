@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: SetterTest.java
 
 import lombok.AccessLevel;
@@ -23,7 +24,7 @@ public class SetterTest {
 
 // FILE: test.kt
 
-fun box(): String {
+fun test() {
     val obj = SetterTest()
     obj.setAge(42)
     assertEquals(obj.age, 42)
@@ -33,7 +34,6 @@ fun box(): String {
     obj.setPrimitiveBoolean(true)
 
 //    no setters generated for final variable
-//    obj.setFinalName("error")
-    return "OK"
+    obj.<!UNRESOLVED_REFERENCE!>setFinalName<!>("error")
 }
 

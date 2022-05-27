@@ -1,4 +1,4 @@
-//KT-47455
+// KT-47455
 
 // FILE: ParentClass.java
 public abstract class ParentClass {
