@@ -154,7 +154,7 @@ class DoubleMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), if (x.isFinite()) 2.0 * x.ulp else 0.0)
+            assertEquals(result, cbrt(x), if (result.isFinite()) 2.0 * result.ulp else 0.0)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
@@ -525,7 +525,7 @@ class FloatMathTest {
         )
 
         for ((x, result) in testingPairs) {
-            assertEquals(result, cbrt(x), if (x.isFinite()) 2.0f * x.ulpCommon else 0.0f)
+            assertEquals(result, cbrt(x), if (result.isFinite()) 2.0f * result.ulpCommon else 0.0f)
             assertEquals(cbrt(-x), -cbrt(x))
         }
     }
