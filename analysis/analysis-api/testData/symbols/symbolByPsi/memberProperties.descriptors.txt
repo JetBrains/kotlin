@@ -45,6 +45,7 @@ KtPropertyGetterSymbol:
   receiverType: kotlin/Int
   returnType: kotlin/Int
   symbolKind: ACCESSOR
+  typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): A

@@ -8,6 +8,7 @@ KtSamConstructorSymbol:
   receiverType: null
   returnType: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
+  typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(function)
   ]

@@ -48,6 +48,7 @@ KtPropertyGetterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: ACCESSOR
+  typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): Foo
@@ -66,6 +67,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -87,6 +89,7 @@ KtPropertySetterSymbol:
   receiverType: null
   returnType: kotlin/Unit
   symbolKind: ACCESSOR
+  typeParameters: []
   valueParameters: [
     KtValueParameterSymbol(value)
   ]

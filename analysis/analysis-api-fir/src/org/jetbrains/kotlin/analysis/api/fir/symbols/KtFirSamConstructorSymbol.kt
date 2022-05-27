@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -58,6 +59,9 @@ internal class KtFirSamConstructorSymbol(
     override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+
+    override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
     override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> {
         val callableId = firSymbol.callableId

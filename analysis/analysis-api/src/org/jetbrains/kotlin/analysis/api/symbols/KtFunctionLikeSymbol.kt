@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -28,6 +29,9 @@ public abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
     final override val callableIdIfNonLocal: CallableId? get() = null
 
+    final override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
+
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
 }
 
@@ -40,7 +44,6 @@ public abstract class KtSamConstructorSymbol : KtFunctionLikeSymbol(), KtNamedSy
 public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleMemberSymbol,
-    KtSymbolWithTypeParameters,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {
@@ -64,8 +67,7 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
 public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     KtPossibleMemberSymbol,
     KtAnnotatedSymbol,
-    KtSymbolWithVisibility,
-    KtSymbolWithTypeParameters {
+    KtSymbolWithVisibility {
     public abstract val isPrimary: Boolean
     public abstract val containingClassIdIfNonLocal: ClassId?
 

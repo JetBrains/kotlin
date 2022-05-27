@@ -3,6 +3,7 @@ KtTypeParameterSymbol:
   isReified: false
   name: X
   origin: SOURCE
+  typeParameters: []
   upperBounds: [
     kotlin/Any?
   ]
@@ -22,6 +23,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: X
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
