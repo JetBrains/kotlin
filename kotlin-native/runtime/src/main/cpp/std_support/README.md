@@ -12,8 +12,8 @@ Proposals:
 
 Adjustments:
 * `CStdlib.hpp` -
-  `std_support::malloc`, `std_support::aligned_alloc`, `std_support::calloc`, `std_support::realloc`, `std_support::free` that use custom allocation scheme,
-  `std_support::aligned_calloc` as a version of `calloc` that allows changing alignment.
+  `std_support::malloc`, `std_support::calloc`, `std_support::realloc`, `std_support::free` that use custom allocation scheme,
+  `std_support::aligned_malloc` and `std_support::aligned_free` as a version of `malloc` and `free` that allows changing alignment.
 * `Memory.hpp` -
   `std_support::allocator` using `std_support::calloc`/`std_support::free`,
   `std_support::default_delete` that uses `std_support::free`,

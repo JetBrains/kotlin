@@ -21,6 +21,7 @@
 #include <limits>
 #include <type_traits>
 
+#include "Alignment.hpp"
 #include "KAssert.h"
 #include "KString.h"
 #include "StackTrace.hpp"
@@ -87,20 +88,18 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
   if (size < 0 || static_cast<std::make_unsigned_t<decltype(size)>>(size) > std::numeric_limits<size_t>::max()) {
     return nullptr;
   }
-  RuntimeAssert(align > 0, "Unsupported alignment");
-  RuntimeAssert((align & (align - 1)) == 0, "Alignment must be power of two");
+  RuntimeAssert(align > 0, "Invalid alignment %d", align);
+  size_t actualAlign = static_cast<size_t>(align);
+  size_t actualSize = AlignUp(static_cast<size_t>(size), actualAlign);
 
-  void* result = std_support::aligned_calloc(align, 1, size);
-  if ((reinterpret_cast<uintptr_t>(result) & (align - 1)) != 0) {
-    // Unaligned!
-    RuntimeAssert(false, "unsupported alignment");
-  }
+  void* result = std::memset(std_support::aligned_malloc(actualAlign, actualSize), 0, actualSize);
+  RuntimeAssert(IsAligned(result, actualAlign), "aligned_malloc result %p is not aligned to %zu", result, actualAlign);
 
   return result;
 }
 
 void Kotlin_interop_free(void* ptr) {
-    std_support::free(ptr);
+    std_support::aligned_free(ptr);
 }
 
 void Kotlin_system_exitProcess(KInt status) {

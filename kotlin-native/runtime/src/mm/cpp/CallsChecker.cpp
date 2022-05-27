@@ -26,6 +26,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "\x01_mprotect",
         "close",
         "mprotect",
+        "posix_memalign",
 
         "_ZL15_objc_terminatev", // _objc_terminate()
         "_ZNKSt8__detail20_Prime_rehash_policy14_M_need_rehashEmmm", // std::__detail::_Prime_rehash_policy::_M_need_rehash(unsigned long, unsigned long, unsigned long) const
@@ -278,6 +279,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "K32GetProcessMemoryInfo",
         "VirtualFree",
         "madvise",
+        "_aligned_free",
+        "_aligned_malloc",
 };
 
 namespace {

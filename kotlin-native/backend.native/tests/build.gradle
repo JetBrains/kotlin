@@ -4553,14 +4553,6 @@ interopTest("interop_vectors") {
     interop = 'cvectors'
 }
 
-interopTest("interop_vectors_mimalloc") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
-    source = "interop/basics/vectors.kt"
-    interop = 'cvectors'
-    flags = [ "-Xallocator=mimalloc" ]
-    arguments = [ "mimalloc" ]
-}
-
 interopTest("interop_mangling") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/mangling.kt"
