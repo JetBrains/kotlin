@@ -1,1 +1,1 @@
-FROM registry.jetbrains.team/p/kti/containers/kotlin-build-env:1.0
+FROM registry.jetbrains.team/p/kti/containers-private/kotlin-build-env:2eb3f170
