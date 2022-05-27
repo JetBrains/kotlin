@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.descriptors.references
+package org.jetbrains.kotlin.references.fe10
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
-import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10ReferenceResolutionHelper
+import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
+import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
