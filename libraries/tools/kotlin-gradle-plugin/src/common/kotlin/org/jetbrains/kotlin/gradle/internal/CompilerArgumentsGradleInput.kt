@@ -53,6 +53,11 @@ internal object CompilerArgumentsGradleInput {
         K2JSCompilerArguments::verbose,
         K2JVMCompilerArguments::verbose,
 
+        CommonCompilerArguments::reportPerf,
+        K2MetadataCompilerArguments::reportPerf,
+        K2JSCompilerArguments::reportPerf,
+        K2JVMCompilerArguments::reportPerf,
+
         K2JVMCompilerArguments::destination, // handled by destinationDir
         K2JVMCompilerArguments::classpath, // handled by classpath of the Gradle tasks
         K2JVMCompilerArguments::friendPaths, // is part of the classpath

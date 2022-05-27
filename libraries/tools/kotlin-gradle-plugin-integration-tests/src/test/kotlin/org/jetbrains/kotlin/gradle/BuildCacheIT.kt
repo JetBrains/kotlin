@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.ExperimentalPathApi
@@ -117,6 +118,27 @@ class BuildCacheIT : KGPBaseTest() {
             }
 
             build("clean", ":assemble") {
+                assertTasksFromCache(":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Enabled statistic should not break build cache")
+    @GradleTest
+    fun testCacheWithStatistic(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build(
+                ":assemble"
+            ) {
+                assertTasksPackedToCache(":compileKotlin")
+            }
+
+            build(
+                "clean", ":assemble",
+                buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+            ) {
                 assertTasksFromCache(":compileKotlin")
             }
         }
