@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
@@ -352,7 +349,10 @@ internal val MemberDescriptor.ktModality: Modality
         if (selfModality == Modality.OPEN) {
             val containingDeclaration = this.containingDeclaration
             if (containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL) {
-                return Modality.FINAL
+                if (this !is CallableMemberDescriptor || dispatchReceiverParameter != null) {
+                    // Non-static open callables in final class are counted as final (to match FIR)
+                    return Modality.FINAL
+                }
             }
         }
 
