@@ -218,20 +218,18 @@ internal class ConeTypeIdeRenderer(
         }
 
         val classSymbolToRender = type.lookupTag.toSymbol(session)
-        if (classSymbolToRender == null) {
-            appendError("Unresolved type")
-            return
-        }
+        // To be able to render unresolved types like java.io.Serializable
+        val classId = classSymbolToRender?.classId ?: type.lookupTag.classId
 
-        if (!options.shortQualifiedNames && !classSymbolToRender.classId.isLocal) {
-            val packageName = classSymbolToRender.classId.packageFqName.asString()
+        if (!options.shortQualifiedNames && !classId.isLocal) {
+            val packageName = classId.packageFqName.asString()
             if (packageName.isNotEmpty()) {
                 append(packageName).append(".")
             }
         }
 
         if (classSymbolToRender !is FirRegularClassSymbol) {
-            append(classSymbolToRender.classId.shortClassName)
+            append(classId.shortClassName)
             if (type.typeArguments.any()) {
                 type.typeArguments.joinTo(this, ", ", prefix = "<", postfix = ">") {
                     renderTypeProjection(it)
