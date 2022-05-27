@@ -99,6 +99,8 @@ class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeri
             }
 
     private fun MemberScope.getSortedCallableDescriptors(): Collection<CallableMemberDescriptor> =
-            DescriptorUtils.getAllDescriptors(this).filterIsInstance<CallableMemberDescriptor>()
-                    .let { DescriptorSerializer.sort(it) }
+        DescriptorUtils.getAllDescriptors(this)
+            .filterIsInstance<CallableMemberDescriptor>()
+            .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+            .let { DescriptorSerializer.sort(it) }
 }

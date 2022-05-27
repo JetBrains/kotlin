@@ -135,11 +135,10 @@ class DescriptorSerializer private constructor(
                 ?: sort(
                     DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)
                         .filterIsInstance<CallableMemberDescriptor>()
+                        .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
                 )
 
         for (descriptor in callableMembers) {
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
-
             when (descriptor) {
                 is PropertyDescriptor -> propertyProto(descriptor)?.let { builder.addProperty(it) }
                 is FunctionDescriptor -> functionProto(descriptor)?.let { builder.addFunction(it) }
