@@ -310,6 +310,64 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testMapOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "mapOf(1 to 1)",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testMapOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+            class B
+        """,
+        "mapOf(A() to B())",
+        "Stable,Stable"
+    )
+
+    @Test
+    fun testMapOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        "",
+        "mapOf(A() to B())",
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
+    fun testSetOfCallWithPrimitiveTypesIsStable() = assertStability(
+        "",
+        "",
+        "setOf(1)",
+        "Stable"
+    )
+
+    @Test
+    fun testSetOfCallWithStableTypeIsStable() = assertStability(
+        "",
+        """
+            class A
+        """,
+        "setOf(A())",
+        "Stable"
+    )
+
+    @Test
+    fun testSetOfCallWithExternalInferredStableTypeIsRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        "",
+        "setOf(A())",
+        "Runtime(A)"
+    )
+
+    @Test
     fun testEmptyClass() = assertTransform(
         """
             class Foo
