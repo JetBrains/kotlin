@@ -45,8 +45,7 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleMemberSymbol,
     KtSymbolWithModality,
-    KtSymbolWithVisibility,
-    KtAnnotatedSymbol {
+    KtSymbolWithVisibility {
 
     public abstract val isSuspend: Boolean
     public abstract val isOperator: Boolean
@@ -66,8 +65,8 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
 
 public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     KtPossibleMemberSymbol,
-    KtAnnotatedSymbol,
     KtSymbolWithVisibility {
+
     public abstract val isPrimary: Boolean
     public abstract val containingClassIdIfNonLocal: ClassId?
 
