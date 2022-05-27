@@ -86,6 +86,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker = when (this) {
         is IrCapturedType -> constructor
         is IrSimpleType -> classifier
+        is IrErrorType -> symbol
         else -> error("Unknown type constructor")
     }
 

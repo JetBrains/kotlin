@@ -1138,6 +1138,7 @@ fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
                 it
             }
         }
+    is IrErrorType -> kotlinType ?: error("Can't find KotlinType in IrErrorType: " + (this as IrType).render())
     else ->
         throw AssertionError("Unexpected type: $this = ${this.render()}")
 }
