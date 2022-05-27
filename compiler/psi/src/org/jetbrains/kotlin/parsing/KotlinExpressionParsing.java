@@ -709,7 +709,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return true;
         } else {
             parseSimpleNameExpression();
-            if (at(OPEN_QUOTE)) {
+            if (at(OPEN_QUOTE) && !myBuilder.newlineBeforeCurrentToken()) {
+                if (WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))) {
+                    return false;
+                }
                 parseStringTemplateTail();
                 return true;
             } else {

@@ -13,21 +13,13 @@ KtFile: CustomStringLiterals.kt
     PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
-<<<<<<< HEAD
-      PsiWhiteSpace('\n\t')
-=======
       PsiWhiteSpace('\n    ')
->>>>>>> c2013afb136... fixup! Add support of string template prefix to parser
       STRING_TEMPLATE
         PsiElement(OPEN_QUOTE)('"')
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('string without prefix')
         PsiElement(CLOSING_QUOTE)('"')
-<<<<<<< HEAD
-      PsiWhiteSpace('\n\t')
-=======
       PsiWhiteSpace('\n    ')
->>>>>>> c2013afb136... fixup! Add support of string template prefix to parser
       STRING_TEMPLATE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('string')
@@ -35,7 +27,7 @@ KtFile: CustomStringLiterals.kt
         LITERAL_STRING_TEMPLATE_ENTRY
           PsiElement(REGULAR_STRING_PART)('with prefix')
         PsiElement(CLOSING_QUOTE)('"')
-      PsiWhiteSpace('\n\t')
+      PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
@@ -45,7 +37,7 @@ KtFile: CustomStringLiterals.kt
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
-      PsiWhiteSpace('\n\t')
+      PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
@@ -55,7 +47,7 @@ KtFile: CustomStringLiterals.kt
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('3')
-      PsiWhiteSpace('\n\t')
+      PsiWhiteSpace('\n    ')
       STRING_TEMPLATE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('s')
