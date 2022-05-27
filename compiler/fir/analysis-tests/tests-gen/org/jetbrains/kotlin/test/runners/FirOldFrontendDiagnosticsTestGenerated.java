@@ -33509,6 +33509,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("invisiblePrivateThroughSubClassDoubleSmartCast.kt")
+            public void testInvisiblePrivateThroughSubClassDoubleSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClassDoubleSmartCast.kt");
+            }
+
+            @Test
+            @TestMetadata("invisiblePrivateThroughSubClassSmartCast.kt")
+            public void testInvisiblePrivateThroughSubClassSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClassSmartCast.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleSetterOfJavaClass.kt")
             public void testInvisibleSetterOfJavaClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");

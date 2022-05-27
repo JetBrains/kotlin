@@ -138,11 +138,7 @@ class MemberScopeTowerLevel(
             }
 
             val visibleCandidatesFromSmartcast = visibleCandidates.filter { candidatesMapping.getValue(it) }
-            if (visibleCandidatesFromSmartcast.isNotEmpty()) {
-                candidates += visibleCandidatesFromSmartcast
-            } else {
-                group.filterNotTo(candidates) { candidatesMapping.getValue(it) }
-            }
+            candidates += visibleCandidatesFromSmartcast.ifEmpty { group }
         }
         consumeCandidates(output, candidates)
     }

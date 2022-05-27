@@ -6,17 +6,20 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirVisibilityChecker
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.isIntersectionOverride
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
-import org.jetbrains.kotlin.fir.originalIfFakeOverride
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullableNothing
+import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
+import org.jetbrains.kotlin.fir.types.typeContext
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
@@ -55,27 +58,59 @@ fun FirVisibilityChecker.isVisible(
 ): Boolean {
     val callInfo = candidate.callInfo
 
-    val visible = isVisible(
-        declaration,
-        callInfo,
-        candidate.dispatchReceiverValue
-    )
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiverValue)) {
+        val dispatchReceiverWithoutSmartCastType =
+            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiverValue, candidate.callInfo.session) ?: return false
 
-    if (visible) {
-        val backingField = declaration.getBackingFieldIfApplicable()
-        if (backingField != null) {
-            candidate.hasVisibleBackingField = isVisible(
-                backingField,
-                callInfo.session,
-                callInfo.containingFile,
-                callInfo.containingDeclarations,
-                candidate.dispatchReceiverValue,
-                candidate.callInfo.callSite is FirVariableAssignment,
-            )
+        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType)) return false
+
+        candidate.dispatchReceiverValue = dispatchReceiverWithoutSmartCastType
+    }
+
+    val backingField = declaration.getBackingFieldIfApplicable()
+    if (backingField != null) {
+        candidate.hasVisibleBackingField = isVisible(
+            backingField,
+            callInfo.session,
+            callInfo.containingFile,
+            callInfo.containingDeclarations,
+            candidate.dispatchReceiverValue,
+            candidate.callInfo.callSite is FirVariableAssignment,
+        )
+    }
+
+    return true
+}
+
+private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue: ReceiverValue?, session: FirSession): ReceiverValue? {
+    val expressionWithSmartcastIfStable =
+        (dispatchReceiverValue?.receiverExpression as? FirExpressionWithSmartcast)?.takeIf { it.isStable } ?: return null
+
+    if (dispatchReceiverValue.type.isNullableNothing) return null
+
+    val originalTypeNotNullable =
+        expressionWithSmartcastIfStable.originalType.coneType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+
+    // Basically, this `if` is just for sake of optimizaton
+    // We have only nullability enhancement, here, so return initial smart cast receiver value
+    if (originalTypeNotNullable == dispatchReceiverValue.type) return null
+
+    val expressionForReceiver = with(session.typeContext) {
+        when {
+            expressionWithSmartcastIfStable.originalType.coneType.isNullableType() && !dispatchReceiverValue.type.isNullableType() ->
+                buildExpressionWithSmartcast {
+                    originalExpression = expressionWithSmartcastIfStable.originalExpression
+                    smartcastType =
+                        expressionWithSmartcastIfStable.originalExpression.typeRef.resolvedTypeFromPrototype(originalTypeNotNullable)
+                    typesFromSmartCast = listOf(originalTypeNotNullable)
+                    smartcastStability = expressionWithSmartcastIfStable.smartcastStability
+                }
+            else -> expressionWithSmartcastIfStable.originalExpression
         }
     }
 
-    return visible
+    return ExpressionReceiverValue(expressionForReceiver)
+
 }
 
 private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {

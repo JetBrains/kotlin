@@ -33593,6 +33593,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("invisiblePrivateThroughSubClass.kt")
+            public void testInvisiblePrivateThroughSubClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClass.kt");
+            }
+
+            @Test
+            @TestMetadata("invisiblePrivateThroughSubClassDoubleSmartCast.kt")
+            public void testInvisiblePrivateThroughSubClassDoubleSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClassDoubleSmartCast.kt");
+            }
+
+            @Test
+            @TestMetadata("invisiblePrivateThroughSubClassSmartCast.kt")
+            public void testInvisiblePrivateThroughSubClassSmartCast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/invisiblePrivateThroughSubClassSmartCast.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleSetterOfJavaClass.kt")
             public void testInvisibleSetterOfJavaClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/invisibleSetterOfJavaClass.kt");

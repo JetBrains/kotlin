@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class Candidate(
     override val symbol: FirBasedSymbol<*>,
-    override val dispatchReceiverValue: ReceiverValue?,
+    override var dispatchReceiverValue: ReceiverValue?,
     // In most cases, it contains zero or single element
     // More than one, only in case of context receiver group
     val givenExtensionReceiverOptions: List<ReceiverValue>,
