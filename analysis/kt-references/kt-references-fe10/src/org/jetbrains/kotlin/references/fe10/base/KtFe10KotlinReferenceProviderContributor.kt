@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.descriptors.references.base
+package org.jetbrains.kotlin.references.fe10.base
 
 import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.analysis.api.descriptors.references.*
+import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.idea.references.KotlinPsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContributor {

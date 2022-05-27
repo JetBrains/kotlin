@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.descriptors.references
+package org.jetbrains.kotlin.references.fe10
 
-import org.jetbrains.kotlin.analysis.api.descriptors.references.base.KtFe10Reference
+import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
