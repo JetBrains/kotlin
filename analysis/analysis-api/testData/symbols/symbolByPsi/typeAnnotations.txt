@@ -135,6 +135,7 @@ KtValueParameterSymbol:
       psi: KtAnnotationEntry
   ] @R|Anno2|()  I
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 

@@ -10,6 +10,7 @@ KtJavaFieldSymbol:
   receiverType: null
   returnType: ft<kotlin/CharArray, kotlin/CharArray?>
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Private
   getDispatchReceiver(): java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
@@ -27,6 +28,7 @@ KtJavaFieldSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Private
   getDispatchReceiver(): java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"
@@ -70,6 +72,7 @@ KtJavaFieldSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   visibility: Private
   getDispatchReceiver(): java/lang/String
   getContainingModule: KtSdkModule "SDK jdk"

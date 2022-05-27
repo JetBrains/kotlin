@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -21,6 +22,9 @@ public val KtClassifierSymbol.nameOrAnonymous: Name
 public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
 
+    final override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
+
     public abstract val upperBounds: List<KtType>
     public abstract val variance: Variance
     public abstract val isReified: Boolean
@@ -33,7 +37,6 @@ public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, 
 }
 
 public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
-    KtSymbolWithTypeParameters,
     KtSymbolWithVisibility,
     KtNamedSymbol,
     KtAnnotatedSymbol {
@@ -64,11 +67,13 @@ public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
     final override val name: Name? get() = null
 
+    final override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
+
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol>
 }
 
 public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
-    KtSymbolWithTypeParameters,
     KtSymbolWithModality,
     KtSymbolWithVisibility,
     KtNamedSymbol {

@@ -10,6 +10,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -25,6 +26,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -40,6 +42,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -95,6 +98,7 @@ KtAnonymousFunctionSymbol:
   receiverType: null
   returnType: MyColor
   symbolKind: LOCAL
+  typeParameters: []
   valueParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -141,6 +145,7 @@ KtAnonymousFunctionSymbol:
   receiverType: null
   returnType: MyColor
   symbolKind: LOCAL
+  typeParameters: []
   valueParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

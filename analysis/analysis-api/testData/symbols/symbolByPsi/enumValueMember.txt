@@ -10,6 +10,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/String
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -46,6 +47,7 @@ KtPropertyGetterSymbol:
   receiverType: null
   returnType: kotlin/String
   symbolKind: ACCESSOR
+  typeParameters: []
   valueParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -94,6 +96,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: Style
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 

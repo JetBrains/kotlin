@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
@@ -16,6 +17,9 @@ public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
     KtSymbolWithKind {
 
     final override val isExtension: Boolean get() = false
+
+    final override val typeParameters: List<KtTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
 
     public abstract val isDefault: Boolean
     public abstract val isInline: Boolean

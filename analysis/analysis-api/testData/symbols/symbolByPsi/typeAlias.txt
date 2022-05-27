@@ -3,6 +3,7 @@ KtTypeParameterSymbol:
   isReified: false
   name: T
   origin: SOURCE
+  typeParameters: []
   upperBounds: [
     kotlin/Any?
   ]
@@ -39,6 +40,7 @@ KtTypeParameterSymbol:
   isReified: false
   name: Z
   origin: SOURCE
+  typeParameters: []
   upperBounds: [
     kotlin/Any?
   ]

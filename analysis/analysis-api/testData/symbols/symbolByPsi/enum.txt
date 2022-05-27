@@ -8,6 +8,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: X
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -21,6 +22,7 @@ KtEnumEntrySymbol:
   receiverType: null
   returnType: X
   symbolKind: CLASS_MEMBER
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 

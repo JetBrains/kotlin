@@ -10,6 +10,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Int
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -52,6 +53,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Float?
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -94,6 +96,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: kotlin/Any
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -136,6 +139,7 @@ KtValueParameterSymbol:
   receiverType: null
   returnType: ERROR_TYPE
   symbolKind: LOCAL
+  typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
