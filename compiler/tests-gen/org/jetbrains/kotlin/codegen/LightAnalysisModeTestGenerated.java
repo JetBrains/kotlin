@@ -11806,19 +11806,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
             }
 
-            @TestMetadata("delegateToConstGetDelegate.kt")
-            public void testDelegateToConstGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstGetDelegate.kt");
-            }
-
             @TestMetadata("delegateToConstProperty.kt")
             public void testDelegateToConstProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
-            }
-
-            @TestMetadata("delegateToConstPropertyGetDelegate.kt")
-            public void testDelegateToConstPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstPropertyGetDelegate.kt");
             }
         }
 
@@ -11844,19 +11834,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectProperty.kt");
             }
 
-            @TestMetadata("delegateToFinalObjectPropertyGetDelegate.kt")
-            public void testDelegateToFinalObjectPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectPropertyGetDelegate.kt");
-            }
-
             @TestMetadata("delegateToFinalProperty.kt")
             public void testDelegateToFinalProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalProperty.kt");
-            }
-
-            @TestMetadata("delegateToFinalPropertyGetDelegate.kt")
-            public void testDelegateToFinalPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalPropertyGetDelegate.kt");
             }
         }
 
@@ -11877,11 +11857,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
             }
 
-            @TestMetadata("delegateToEnumGetDelegate.kt")
-            public void testDelegateToEnumGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumGetDelegate.kt");
-            }
-
             @TestMetadata("delegateToEnumInAClass.kt")
             public void testDelegateToEnumInAClass() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumInAClass.kt");
@@ -11890,11 +11865,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("delegateToSingleton.kt")
             public void testDelegateToSingleton() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
-            }
-
-            @TestMetadata("delegateToSingletonGetDelegate.kt")
-            public void testDelegateToSingletonGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingletonGetDelegate.kt");
             }
 
             @TestMetadata("withSideEffects.kt")
@@ -34119,6 +34089,36 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     @TestMetadata("delegateToAnother.kt")
                     public void testDelegateToAnother() throws Exception {
                         runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToAnother.kt");
+                    }
+
+                    @TestMetadata("delegateToConst.kt")
+                    public void testDelegateToConst() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToConst.kt");
+                    }
+
+                    @TestMetadata("delegateToConstProperty.kt")
+                    public void testDelegateToConstProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToConstProperty.kt");
+                    }
+
+                    @TestMetadata("delegateToEnum.kt")
+                    public void testDelegateToEnum() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToEnum.kt");
+                    }
+
+                    @TestMetadata("delegateToFinalObjectProperty.kt")
+                    public void testDelegateToFinalObjectProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToFinalObjectProperty.kt");
+                    }
+
+                    @TestMetadata("delegateToFinalProperty.kt")
+                    public void testDelegateToFinalProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToFinalProperty.kt");
+                    }
+
+                    @TestMetadata("delegateToSingleton.kt")
+                    public void testDelegateToSingleton() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToSingleton.kt");
                     }
                 }
             }

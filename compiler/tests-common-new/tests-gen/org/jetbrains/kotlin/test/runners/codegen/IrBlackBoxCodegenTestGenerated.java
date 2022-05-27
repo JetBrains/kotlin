@@ -14589,21 +14589,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
-            @TestMetadata("delegateToConstGetDelegate.kt")
-            public void testDelegateToConstGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstGetDelegate.kt");
-            }
-
-            @Test
             @TestMetadata("delegateToConstProperty.kt")
             public void testDelegateToConstProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
-            }
-
-            @Test
-            @TestMetadata("delegateToConstPropertyGetDelegate.kt")
-            public void testDelegateToConstPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstPropertyGetDelegate.kt");
             }
         }
 
@@ -14629,21 +14617,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
-            @TestMetadata("delegateToFinalObjectPropertyGetDelegate.kt")
-            public void testDelegateToFinalObjectPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectPropertyGetDelegate.kt");
-            }
-
-            @Test
             @TestMetadata("delegateToFinalProperty.kt")
             public void testDelegateToFinalProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalProperty.kt");
-            }
-
-            @Test
-            @TestMetadata("delegateToFinalPropertyGetDelegate.kt")
-            public void testDelegateToFinalPropertyGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalPropertyGetDelegate.kt");
             }
         }
 
@@ -14663,12 +14639,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
-            @TestMetadata("delegateToEnumGetDelegate.kt")
-            public void testDelegateToEnumGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumGetDelegate.kt");
-            }
-
-            @Test
             @TestMetadata("delegateToEnumInAClass.kt")
             public void testDelegateToEnumInAClass() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumInAClass.kt");
@@ -14678,12 +14648,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("delegateToSingleton.kt")
             public void testDelegateToSingleton() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
-            }
-
-            @Test
-            @TestMetadata("delegateToSingletonGetDelegate.kt")
-            public void testDelegateToSingletonGetDelegate() throws Exception {
-                runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingletonGetDelegate.kt");
             }
 
             @Test
@@ -42908,6 +42872,42 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     @TestMetadata("delegateToAnother.kt")
                     public void testDelegateToAnother() throws Exception {
                         runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToAnother.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToConst.kt")
+                    public void testDelegateToConst() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToConst.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToConstProperty.kt")
+                    public void testDelegateToConstProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToConstProperty.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToEnum.kt")
+                    public void testDelegateToEnum() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToEnum.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToFinalObjectProperty.kt")
+                    public void testDelegateToFinalObjectProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToFinalObjectProperty.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToFinalProperty.kt")
+                    public void testDelegateToFinalProperty() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToFinalProperty.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("delegateToSingleton.kt")
+                    public void testDelegateToSingleton() throws Exception {
+                        runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/method/delegateToSingleton.kt");
                     }
                 }
             }
