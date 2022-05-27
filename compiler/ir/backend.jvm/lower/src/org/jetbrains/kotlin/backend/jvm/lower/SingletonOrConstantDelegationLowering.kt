@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
@@ -100,7 +99,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
                             && ((body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField)?.symbol?.owner?.isFinal == true
                 }
             is IrGetValue ->
-                symbol.owner.name == SpecialNames.THIS
+                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
             else -> false
         }
 }
