@@ -183,7 +183,7 @@ fun Project.projectTest(
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
         val memoryPerTestProcessMb = maxHeapSizeMb ?: if (jUnitMode == JUnitMode.JUnit5)
-            totalMaxMemoryForTestsMb.coerceAtMost(defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
+            totalMaxMemoryForTestsMb.coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
         else
             defaultMaxMemoryPerTestWorkerMb
 
@@ -243,7 +243,7 @@ fun Project.projectTest(
             val forks = (totalMaxMemoryForTestsMb / memoryPerTestProcessMb).coerceAtMost(16)
             maxParallelForks =
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
-                    ?: forks.coerceAtMost(Runtime.getRuntime().availableProcessors())
+                    ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
     }.apply { configure(body) }
 }
