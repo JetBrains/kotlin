@@ -55,7 +55,7 @@ object Checker {
         data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
 
         val initializationOrder = mutableMapOf<FirExpression, InitializationPointInfo>()
-
+        val effectsInProcess = mutableListOf<Effect>()
 
         val localInitedProperties = LinkedHashSet<FirVariable>()
         val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()
@@ -142,8 +142,8 @@ object Checker {
                     is FunPotential -> throw IllegalArgumentException()
                     else -> {                                                       // P-Acc3
                         val (effects, potentials) = potentialPropagation(pot)
-                        val (_, selectPots) = select(potentials, field)
-                        EffectsAndPotentials(effects, selectPots)
+                        val select = select(potentials, field)
+                        select + effects
                     }
                 }
             }
@@ -166,8 +166,8 @@ object Checker {
                     }
                     else -> {                                                       // P-Inv3
                         val (effects, potentials) = potentialPropagation(pot)
-                        val (_, callPots) = call(potentials, method)
-                        EffectsAndPotentials(effects, callPots)
+                        val call = call(potentials, method)
+                        call + effects
                     }
                 }
             }
@@ -197,6 +197,9 @@ object Checker {
     }
 
     fun StateOfClass.effectChecking(effect: Effect): Errors {
+        if (effectsInProcess.contains(effect)) return emptyList()
+        effectsInProcess.add(effect)
+        val lastEffect = effectsInProcess.lastIndex
         val errors = when (effect) {
             is FieldAccess -> {
                 val (pot, field) = effect
@@ -270,6 +273,8 @@ object Checker {
             }
         }
         for (error in errors) error.trace.add(effect)
+
+        effectsInProcess.removeAt(lastEffect)
 
         return errors
     }

@@ -1,17 +1,14 @@
 FILE: SimpleAccessToUninitializedValue.kt
-    public final class Hello : R|kotlin/Any| {
-        public constructor(): R|Hello| {
+    public final class Small : R|kotlin/Any| {
+        public constructor(): R|Small| {
             super<R|kotlin/Any|>()
         }
 
         public final fun foo(): R|kotlin/String| {
-            ^foo this@R|/Hello|.R|/Hello.name|
+            ^foo this@R|/Small|.R|/Small.b|.R|kotlin/text/substring|(Int(1))
         }
 
-        public final val nameLength: R|kotlin/Int| = this@R|/Hello|.R|/Hello.foo|().R|kotlin/String.length|
-            public get(): R|kotlin/Int|
-
-        public final val name: R|kotlin/String| = String(Alice)
+        public final val b: R|kotlin/String| = this@R|/Small|.R|/Small.foo|()
             public get(): R|kotlin/String|
 
     }
@@ -23,7 +20,7 @@ FILE: SimpleAccessToUninitializedValue.kt
         public final fun foo(b: R|B|): R|kotlin/String| {
             ^foo when () {
                 this@R|/B|.R|/B.d|.R|kotlin/text/isEmpty|() ->  {
-                    R|<local>/b|.R|/B.hello|.R|/Hello.name|
+                    this@R|/B|.R|/B.d|.R|kotlin/text/substring|(Int(1))
                 }
                 else ->  {
                     String()
@@ -40,5 +37,21 @@ FILE: SimpleAccessToUninitializedValue.kt
 
         public final val hello: R|Hello| = R|/Hello.Hello|()
             public get(): R|Hello|
+
+    }
+    public final class Hello : R|kotlin/Any| {
+        public constructor(): R|Hello| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo this@R|/Hello|.R|/Hello.name|
+        }
+
+        public final val nameLength: R|kotlin/Int| = this@R|/Hello|.R|/Hello.foo|().R|kotlin/String.length|
+            public get(): R|kotlin/Int|
+
+        public final val name: R|kotlin/String| = String(Alice)
+            public get(): R|kotlin/String|
 
     }
