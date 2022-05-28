@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.P
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 typealias Potentials = List<Potential>
 
@@ -26,27 +27,52 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
 
         data class This(val firThisReference: FirThisReference) : Root(firThisReference) {
             override fun toString(): String {
-                return "This(class=this@${firThisReference.labelName})"
+                return "this@${(firThisReference.boundSymbol as? FirRegularClassSymbol)?.toLookupTag()}"
             }
         }
 
-        data class Warm(val clazz: FirClass, val outer: Potential) : Root(clazz, outer.length + 1)
-        data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration)
+        data class Warm(val clazz: FirClass, val outer: Potential) : Root(clazz, outer.length + 1) {
+            override fun toString(): String {
+                return "warm(${clazz.symbol.classId.shortClassName}, $outer)"
+            }
+        }
+
+        data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration) {
+            override fun toString(): String {
+                return "cold(${firDeclaration.symbol})"
+            }
+        }
     }
 
     data class MethodPotential(val potential: Potential, val method: FirFunction) :
-        Potential(method, potential.length + 1)
+        Potential(method, potential.length + 1) {
+        override fun toString(): String {
+            return "$potential.${method.symbol.callableId.callableName}"
+        }
+    }
 
     data class FieldPotential(val potential: Potential, val field: FirVariable) :
-        Potential(field, potential.length + 1)
+        Potential(field, potential.length + 1) {
+        override fun toString(): String {
+            return "$potential.${field.symbol.callableId.callableName}"
+        }
+    }
 
     data class OuterPotential(val potential: Potential, val outerClass: FirClass) :
-        Potential(outerClass, potential.length + 1)
+        Potential(outerClass, potential.length + 1) {
+        override fun toString(): String {
+            return "$potential.outer(${outerClass.symbol.classId}))"
+        }
+    }
 
     data class FunPotential(
         val effectsAndPotentials: EffectsAndPotentials,
         val anonymousFunction: FirAnonymousFunction
-    ) : Potential(anonymousFunction, effectsAndPotentials.maxLength())
+    ) : Potential(anonymousFunction, effectsAndPotentials.maxLength()) {
+        override fun toString(): String {
+            return "Fun($effectsAndPotentials, ${anonymousFunction.symbol.callableId.callableName})"
+        }
+    }
 }
 
 fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {

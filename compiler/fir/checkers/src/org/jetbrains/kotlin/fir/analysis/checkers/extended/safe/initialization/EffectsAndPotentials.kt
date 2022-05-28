@@ -41,6 +41,10 @@ data class EffectsAndPotentials(
 
     fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
 
+    override fun toString(): String {
+        return "(Φ=$effects, Π=$potentials)"
+    }
+
     companion object {
         fun Potentials.toEffectsAndPotentials() = EffectsAndPotentials(potentials = this)
     }

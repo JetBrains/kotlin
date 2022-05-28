@@ -34,6 +34,10 @@ sealed class _Effect<P : Potential>(val potential: P) {
 
     @Suppress("EqualsOrHashCode")
     class Promote(potential: Potential) : _Effect<Potential>(potential) {
+        override fun toString(): String {
+            return "$potential↑"
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Promote) return false
@@ -44,6 +48,10 @@ sealed class _Effect<P : Potential>(val potential: P) {
 
     class FieldAccess(potential: Potential, val field: FirVariable) : _Effect<Potential>(potential) {
         operator fun component2() = field
+
+        override fun toString(): String {
+            return "$potential.${field.symbol.callableId.callableName}!"
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -66,6 +74,10 @@ sealed class _Effect<P : Potential>(val potential: P) {
     class MethodAccess(potential: Potential, var method: FirFunction) : _Effect<Potential>(potential) {
         operator fun component2() = method
 
+        override fun toString(): String {
+            return "$potential.${method.symbol.callableId.callableName}◊"
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is MethodAccess) return false
@@ -85,6 +97,10 @@ sealed class _Effect<P : Potential>(val potential: P) {
 
     class Init(potential: Root.Warm, val clazz: FirClass) : _Effect<Root.Warm>(potential) {
         operator fun component2() = clazz
+
+        override fun toString(): String {
+            return "$potential.init(${clazz.symbol.classId.shortClassName})"
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
