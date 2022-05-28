@@ -50,27 +50,3 @@ data class EffectsAndPotentials(
 operator fun Effects.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
 @JvmName("plus2")
 operator fun Potentials.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
-
-class AA {
-    val aa: String = bb.a.substring(1)
-
-    companion object {
-        val bb = AA().BB()
-    }
-
-    inner class BB {
-        val a = this@AA.aa
-    }
-}
-
-class AA1 {
-    val aa: String = BB().bb.a.substring(1)
-
-    inner class BB1 {
-        val a = this@AA1.aa
-    }
-}
-
-class BB {
-    val bb = AA1().BB1()
-}
