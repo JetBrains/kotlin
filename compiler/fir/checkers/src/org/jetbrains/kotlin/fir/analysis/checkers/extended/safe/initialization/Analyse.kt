@@ -107,7 +107,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         is FirConstExpression<*> -> emptyEffsAndPots  // ???
         is FirWhenBranch -> firElement.run {
             val localSize = localInitedProperties.size
-            val effsAndPots = analyser(condition) + analyser(result)
+            val effsAndPots = analyser(condition).effects + analyser(result)
 
             var i = 0
             localInitedProperties.removeIf { i++ >= localSize }
