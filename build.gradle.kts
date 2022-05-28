@@ -501,8 +501,7 @@ tasks {
         )).forEach {
             dependsOn("$it:check")
         }
-        // Temporary disabled while bootstrapping is in progress
-        // dependsOn(":kotlin-stdlib-wasm:runWasmStdLibTestsWithD8") //Instead of :kotlin-stdlib-wasm:check
+        dependsOn(":kotlin-stdlib-wasm:runWasmStdLibTestsWithD8") //Instead of :kotlin-stdlib-wasm:check
     }
 
     register("gradlePluginTest") {
