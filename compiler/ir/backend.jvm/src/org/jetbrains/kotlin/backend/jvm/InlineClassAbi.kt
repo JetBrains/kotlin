@@ -72,18 +72,20 @@ object InlineClassAbi {
             return irFunction.name
         }
 
-        val base = when {
-            irFunction.isGetter ->
-                JvmAbi.getterName(irFunction.propertyName.asString())
-            irFunction.isSetter ->
-                JvmAbi.setterName(irFunction.propertyName.asString())
-            irFunction.name.isSpecial ->
-                error("Unhandled special name in mangledNameFor: ${irFunction.name}")
-            else ->
-                irFunction.name.asString()
-        }
+        val base = functionNameBase(irFunction)
 
         return Name.identifier("$base-${suffix ?: "impl"}")
+    }
+
+    fun functionNameBase(irFunction: IrFunction) = when {
+        irFunction.isGetter ->
+            JvmAbi.getterName(irFunction.propertyName.asString())
+        irFunction.isSetter ->
+            JvmAbi.setterName(irFunction.propertyName.asString())
+        irFunction.name.isSpecial ->
+            error("Unhandled special name in mangledNameFor: ${irFunction.name}")
+        else ->
+            irFunction.name.asString()
     }
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =

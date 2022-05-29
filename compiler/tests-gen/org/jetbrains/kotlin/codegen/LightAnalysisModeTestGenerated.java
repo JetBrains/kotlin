@@ -21224,6 +21224,70 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                         }
                     }
 
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class AbstractVal extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringAbstractVal_I1_I2_O1.kt")
+                        public void ignoreStringAbstractVal_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal/stringAbstractVal_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringAbstractVal_I1_I2_O1_I3.kt")
+                        public void ignoreStringAbstractVal_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal/stringAbstractVal_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringAbstractVal_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringAbstractVal_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal/stringAbstractVal_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringAbstractVal_I1_I2_O1_O2.kt")
+                        public void ignoreStringAbstractVal_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal/stringAbstractVal_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringAbstractVal_I1_O1_I3_O2.kt")
+                        public void ignoreStringAbstractVal_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal/stringAbstractVal_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInAbstractVal() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractVal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractValMiddle")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class AbstractValMiddle extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringAbstractValMiddle_I2_I3_O2.kt")
+                        public void ignoreStringAbstractValMiddle_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractValMiddle/stringAbstractValMiddle_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInAbstractValMiddle() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/abstractValMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/hashCode")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
@@ -21877,6 +21941,482 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                         }
                     }
 
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class InterfaceValAbstract extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringInterfaceValAbstract_I1.kt")
+                        public void ignoreStringInterfaceValAbstract_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_I3.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_O1.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I2_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I3.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_O1.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_O1_I3.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_O1_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I1_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I2_O1.kt")
+                        public void ignoreStringInterfaceValAbstract_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValAbstract_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValAbstract_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValAbstract_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract/stringInterfaceValAbstract_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInInterfaceValAbstract() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValAbstract"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class InterfaceValDefaultAll extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringInterfaceValDefaultAllN.kt")
+                        public void ignoreStringInterfaceValDefaultAllN() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAllN.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_O1.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I2_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_O1.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_O1.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I2_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_O1.kt")
+                        public void ignoreStringInterfaceValDefaultAll_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultAll_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultAll_O2.kt")
+                        public void ignoreStringInterfaceValDefaultAll_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll/stringInterfaceValDefaultAll_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInInterfaceValDefaultAll() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultAll"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class InterfaceValDefaultDefault extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringInterfaceValDefaultDefaultN.kt")
+                        public void ignoreStringInterfaceValDefaultDefaultN() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefaultN.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_O1.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I2_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_O1.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_O1.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I2_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_O1.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_O1_I3.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_O1_I3_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_O1_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringInterfaceValDefaultDefault_O2.kt")
+                        public void ignoreStringInterfaceValDefaultDefault_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault/stringInterfaceValDefaultDefault_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInInterfaceValDefaultDefault() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/interfaceValDefaultDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
                     @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/methodBottom")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
@@ -22050,6 +22590,140 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                         public void testAllFilesPresentInOpenMethodMiddle() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openMethodMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class OpenVal extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringOpenVal_I1.kt")
+                        public void ignoreStringOpenVal_I1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2.kt")
+                        public void ignoreStringOpenVal_I1_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_I3.kt")
+                        public void ignoreStringOpenVal_I1_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_I3_O2.kt")
+                        public void ignoreStringOpenVal_I1_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_O1.kt")
+                        public void ignoreStringOpenVal_I1_I2_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_O1_I3.kt")
+                        public void ignoreStringOpenVal_I1_I2_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_O1_I3_O2.kt")
+                        public void ignoreStringOpenVal_I1_I2_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_O1_O2.kt")
+                        public void ignoreStringOpenVal_I1_I2_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I2_O2.kt")
+                        public void ignoreStringOpenVal_I1_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I3.kt")
+                        public void ignoreStringOpenVal_I1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_I3_O2.kt")
+                        public void ignoreStringOpenVal_I1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_O1.kt")
+                        public void ignoreStringOpenVal_I1_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_O1_I3.kt")
+                        public void ignoreStringOpenVal_I1_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_O1_I3_O2.kt")
+                        public void ignoreStringOpenVal_I1_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_O1_O2.kt")
+                        public void ignoreStringOpenVal_I1_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenVal_I1_O2.kt")
+                        public void ignoreStringOpenVal_I1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal/stringOpenVal_I1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInOpenVal() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openVal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class OpenValMiddle extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringOpenValMiddle_I2.kt")
+                        public void ignoreStringOpenValMiddle_I2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle/stringOpenValMiddle_I2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenValMiddle_I2_I3.kt")
+                        public void ignoreStringOpenValMiddle_I2_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle/stringOpenValMiddle_I2_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenValMiddle_I2_I3_O2.kt")
+                        public void ignoreStringOpenValMiddle_I2_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle/stringOpenValMiddle_I2_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringOpenValMiddle_I2_O2.kt")
+                        public void ignoreStringOpenValMiddle_I2_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle/stringOpenValMiddle_I2_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInOpenValMiddle() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/openValMiddle"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                         }
                     }
 
@@ -22227,6 +22901,48 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                         public void testAllFilesPresentInToString() throws Exception {
                             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/toString"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class ValBottom extends AbstractLightAnalysisModeTest {
+                        @TestMetadata("stringValBottom_I3_O2.kt")
+                        public void ignoreStringValBottom_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom/stringValBottom_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringValBottom_O1.kt")
+                        public void ignoreStringValBottom_O1() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom/stringValBottom_O1.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringValBottom_O1_I3.kt")
+                        public void ignoreStringValBottom_O1_I3() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom/stringValBottom_O1_I3.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringValBottom_O1_I3_O2.kt")
+                        public void ignoreStringValBottom_O1_I3_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom/stringValBottom_O1_I3_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        @TestMetadata("stringValBottom_O1_O2.kt")
+                        public void ignoreStringValBottom_O1_O2() throws Exception {
+                            runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom/stringValBottom_O1_O2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                        }
+
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                            KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInValBottom() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods/_string/valBottom"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                         }
                     }
                 }

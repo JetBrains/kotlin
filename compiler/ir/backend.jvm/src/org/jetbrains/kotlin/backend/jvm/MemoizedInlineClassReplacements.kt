@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -218,14 +216,16 @@ class MemoizedInlineClassReplacements(
                 "Expected method in sealed inline class child"
             }
             irFactory.buildFun {
-                name = method.name
+                name = Name.identifier(InlineClassAbi.functionNameBase(method.function))
                 origin = JvmLoweredDeclarationOrigin.GENERATED_SEALED_INLINE_CLASS_METHOD
-                returnType = method.returnType
+                returnType = method.function.returnType
             }.apply {
                 parent = top
-                copyTypeParameters(method.typeParameters)
-                val substitutionMap = method.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
+                copyTypeParameters(method.function.typeParameters)
 
+                copyPropertyIfNeeded(method.function)
+
+                val substitutionMap = method.function.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
                 // Replace dispatch parameter from child to top
                 dispatchReceiverParameter = factory.createValueParameter(
                     startOffset, endOffset, origin,
@@ -236,10 +236,10 @@ class MemoizedInlineClassReplacements(
                 ).also { parameter ->
                     parameter.parent = this
                 }
-                extensionReceiverParameter = method.extensionReceiver?.copyTo(this)
+                extensionReceiverParameter = method.function.extensionReceiverParameter?.copyTo(this)
 
                 val shift = valueParameters.size
-                valueParameters = method.valueParameters.map {
+                valueParameters = method.function.valueParameters.map {
                     it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
                 }
             }
@@ -388,30 +388,7 @@ class MemoizedInlineClassReplacements(
         copyAttributes(function as? IrAttributeContainer)
 
         if (function is IrSimpleFunction) {
-            val propertySymbol = function.correspondingPropertySymbol
-            if (propertySymbol != null) {
-                val property = propertyMap.getOrPut(propertySymbol) {
-                    irFactory.buildProperty {
-                        name = propertySymbol.owner.name
-                        updateFrom(propertySymbol.owner)
-                    }.apply {
-                        parent = propertySymbol.owner.parent
-                        copyAttributes(propertySymbol.owner)
-                        annotations = propertySymbol.owner.annotations
-                        // In case this property is declared in an object in another file which is not yet lowered, its backing field will
-                        // be made static later. We have to handle it here though, because this new property will be saved to the cache
-                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was unlowered.
-                        backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
-                            ?: propertySymbol.owner.backingField
-                    }
-                }
-                correspondingPropertySymbol = property.symbol
-                when (function) {
-                    propertySymbol.owner.getter -> property.getter = this
-                    propertySymbol.owner.setter -> property.setter = this
-                    else -> error("Orphaned property getter/setter: ${function.render()}")
-                }
-            }
+            copyPropertyIfNeeded(function)
 
             overriddenSymbols = replaceOverriddenSymbols(function)
         }
@@ -431,11 +408,54 @@ class MemoizedInlineClassReplacements(
             function.overriddenSymbols = replaceOverriddenSymbols(function)
         }
 
-    data class SimpleFunctionWithoutReceiver(
-        val name: Name,
-        val typeParameters: List<IrTypeParameter>,
-        val returnType: IrType,
-        val extensionReceiver: IrValueParameter?,
-        val valueParameters: List<IrValueParameter>,
-    )
+    private fun IrSimpleFunction.copyPropertyIfNeeded(function: IrSimpleFunction) {
+        val propertySymbol = function.correspondingPropertySymbol
+        if (propertySymbol != null) {
+            val property = propertyMap.getOrPut(propertySymbol) {
+                irFactory.buildProperty {
+                    name = propertySymbol.owner.name
+                    updateFrom(propertySymbol.owner)
+                }.apply {
+                    parent = propertySymbol.owner.parent
+                    copyAttributes(propertySymbol.owner)
+                    annotations = propertySymbol.owner.annotations
+                    // In case this property is declared in an object in another file which is not yet lowered, its backing field will
+                    // be made static later. We have to handle it here though, because this new property will be saved to the cache
+                    // and reused when lowering the same call in all subsequent files, which would be incorrect if it was unlowered.
+                    backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
+                        ?: propertySymbol.owner.backingField
+                }
+            }
+            correspondingPropertySymbol = property.symbol
+            when (function.withoutReceiver()) {
+                propertySymbol.owner.getter?.withoutReceiver() -> property.getter = this
+                propertySymbol.owner.setter?.withoutReceiver() -> property.setter = this
+                else -> error("Orphaned property getter/setter: ${function.render()}")
+            }
+        }
+    }
+
+    class SimpleFunctionWithoutReceiver(
+        val function: IrSimpleFunction
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (other === this) return true
+            if (other !is SimpleFunctionWithoutReceiver) return false
+            return function.name == other.function.name &&
+                    function.typeParameters == other.function.typeParameters &&
+                    function.returnType == other.function.returnType &&
+                    function.extensionReceiverParameter == other.function.extensionReceiverParameter &&
+                    function.valueParameters == other.function.valueParameters
+        }
+
+        override fun hashCode(): Int {
+            return function.name.hashCode() xor
+                    function.typeParameters.hashCode() xor
+                    function.returnType.hashCode() xor
+                    function.extensionReceiverParameter.hashCode() xor
+                    function.valueParameters.hashCode()
+        }
+    }
 }
+
+fun IrSimpleFunction.withoutReceiver() = MemoizedInlineClassReplacements.SimpleFunctionWithoutReceiver(this)

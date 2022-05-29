@@ -890,11 +890,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 ) ?: error("Cannot find replacement for ${methodSymbol.owner.render()}")
             val oldBody = function.body
 
-            fun findFakeOverrideOfInterfaceMethod(): IrSimpleFunction? =
-                info.top.functions.find {
-                    it.name == methodSymbol.owner.name && it.isFakeOverride &&
-                            replacements.getSealedInlineClassChildFunctionInTop(info.top to it.withoutReceiver()).symbol == methodSymbol
-                }
+            fun findFakeOverrideOfInterfaceMethod(): IrSimpleFunction? = info.top.functions.find {
+                it.isFakeOverride &&
+                        replacements.getSealedInlineClassChildFunctionInTop(info.top to it.withoutReceiver()).symbol == methodSymbol
+            }
 
             with(context.createIrBuilder(function.symbol)) {
                 function.body = irBlockBody {
@@ -1337,10 +1336,6 @@ private class SealedInlineClassInfo(
         }
     }
 }
-
-private fun IrSimpleFunction.withoutReceiver() = MemoizedInlineClassReplacements.SimpleFunctionWithoutReceiver(
-    name, typeParameters, returnType, extensionReceiverParameter, valueParameters
-)
 
 private fun IrSimpleFunction.isFakeOverrideOfDefaultMethod(): Boolean =
     isFakeOverride && overriddenSymbols.any { it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT }
