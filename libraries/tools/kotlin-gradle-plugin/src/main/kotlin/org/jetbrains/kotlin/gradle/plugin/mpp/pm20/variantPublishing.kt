@@ -132,6 +132,7 @@ open class VariantPublishingConfigurator @Inject constructor(
             val componentName = request.componentName
 
             registerPlatformModulePublication(
+                request.fromModule,
                 componentName,
                 request.publicationHolder,
                 request.variantPublicationRequests
@@ -221,7 +222,7 @@ open class VariantPublishingConfigurator @Inject constructor(
                         })
                     },
                     overrideCapabilities = {
-                        ComputedCapability.forPublishedPlatformVariant(variant, publishedModuleHolder)
+                        ComputedCapability.forPublishedPlatformVariant(request.fromVariant, publishedModuleHolder)
                             ?.let(outgoing::capability)
                     }
                 )
