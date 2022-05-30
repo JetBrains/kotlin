@@ -87,7 +87,7 @@ fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.Synthe
 
 // Auxiliary class that stores signatures of corresponding field and method for a property.
 class PropertyAnnotationHolders(
-    val field: JvmMemberSignature?,
+    val field: JvmFieldSignature?,
     val method: JvmMethodSignature?,
 )
 
@@ -143,7 +143,7 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
                 property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
                 else -> flagsOf(Flag.IS_PRIVATE)
             }
-            addMember(property.fieldSignature, fieldVisibility, isReified = false)
+            addMember(property.fieldSignature, fieldVisibility, isReified = false, propertyAnnotation = propertyAnnotations)
         }
     }
 

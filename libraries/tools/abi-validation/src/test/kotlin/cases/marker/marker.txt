@@ -5,6 +5,9 @@ public final class cases/marker/Foo {
 public abstract interface annotation class cases/marker/HiddenField : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class cases/marker/HiddenMethod : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class cases/marker/HiddenProperty : java/lang/annotation/Annotation {
 }
 

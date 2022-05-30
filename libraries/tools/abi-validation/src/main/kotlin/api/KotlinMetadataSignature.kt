@@ -7,6 +7,7 @@ package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
 import kotlinx.validation.*
+import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
 
 @ExternalApi // Only name is part of the API, nothing else is used by stdlib
@@ -48,7 +49,8 @@ data class MethodBinarySignature(
     override val jvmMember: JvmMethodSignature,
     override val isPublishedApi: Boolean,
     override val access: AccessFlags,
-    override val annotations: List<AnnotationNode>
+    override val annotations: List<AnnotationNode>,
+    private val alternateDefaultSignature: JvmMethodSignature?
 ) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} fun $name $desc"
@@ -59,60 +61,51 @@ data class MethodBinarySignature(
                 && !isDummyDefaultConstructor()
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
-        return super.findMemberVisibility(classVisibility) ?: classVisibility?.let { alternateDefaultSignature(it.name)?.let(it::findMember) }
+        return super.findMemberVisibility(classVisibility)
+            ?: classVisibility?.let { alternateDefaultSignature?.let(it::findMember) }
     }
 
-    /**
-     * Checks whether the method is a $default counterpart of internal @PublishedApi method
-     */
-    public fun isPublishedApiWithDefaultArguments(
-        classVisibility: ClassVisibility?,
-        publishedApiSignatures: Set<JvmMethodSignature>
-    ): Boolean {
-        // Fast-path
-        findMemberVisibility(classVisibility)?.isInternal() ?: return false
-        val name = jvmMember.name
-        if (!name.endsWith("\$default")) return false
-        // Leverage the knowledge about modified signature
-        val expectedPublishedApiCounterPart = JvmMethodSignature(
-            name.removeSuffix("\$default"),
-            jvmMember.desc.replace( ";ILjava/lang/Object;)", ";)"))
-        return expectedPublishedApiCounterPart in publishedApiSignatures
-    }
+    private fun isAccessOrAnnotationsMethod() =
+        access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
 
-    private fun isAccessOrAnnotationsMethod() = access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
+    private fun isDummyDefaultConstructor() =
+        access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+}
 
-    private fun isDummyDefaultConstructor() = access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
-
-    /**
-     * Calculates the signature of this method without default parameters
-     *
-     * Returns `null` if this method isn't an entry point of a function
-     * or a constructor with default parameters.
-     * Returns an incorrect result, if there are more than 31 default parameters.
-     */
-    private fun alternateDefaultSignature(className: String): JvmMethodSignature? {
-        return when {
-            !access.isSynthetic -> null
-            name == "<init>" && "ILkotlin/jvm/internal/DefaultConstructorMarker;" in desc ->
-                JvmMethodSignature(name, desc.replace("ILkotlin/jvm/internal/DefaultConstructorMarker;", ""))
-            name.endsWith("\$default") && "ILjava/lang/Object;)" in desc ->
-                JvmMethodSignature(
-                    name.removeSuffix("\$default"),
-                    desc.replace("ILjava/lang/Object;)", ")").replace("(L$className;", "(")
-                )
-            else -> null
-        }
+/**
+ * Calculates the signature of this method without default parameters
+ *
+ * Returns `null` if this method isn't an entry point of a function
+ * or a constructor with default parameters.
+ * Returns an incorrect result, if there are more than 31 default parameters.
+ */
+internal fun MethodNode.alternateDefaultSignature(className: String): JvmMethodSignature? {
+    return when {
+        access and Opcodes.ACC_SYNTHETIC == 0 -> null
+        name == "<init>" && "ILkotlin/jvm/internal/DefaultConstructorMarker;" in desc ->
+            JvmMethodSignature(name, desc.replace("ILkotlin/jvm/internal/DefaultConstructorMarker;", ""))
+        name.endsWith("\$default") && "ILjava/lang/Object;)" in desc ->
+            JvmMethodSignature(
+                name.removeSuffix("\$default"),
+                desc.replace("ILjava/lang/Object;)", ")").replace("(L$className;", "(")
+            )
+        else -> null
     }
 }
 
-fun MethodNode.toMethodBinarySignature(propertyAnnotations: List<AnnotationNode>) =
-    MethodBinarySignature(
+fun MethodNode.toMethodBinarySignature(
+    extraAnnotations: List<AnnotationNode>,
+    alternateDefaultSignature: JvmMethodSignature?
+): MethodBinarySignature {
+    val allAnnotations = visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty() + extraAnnotations
+    return MethodBinarySignature(
         JvmMethodSignature(name, desc),
-        isPublishedApi(),
+        allAnnotations.isPublishedApi(),
         AccessFlags(access),
-        visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty() + propertyAnnotations
+        allAnnotations,
+        alternateDefaultSignature
     )
+}
 
 data class FieldBinarySignature(
     override val jvmMember: JvmFieldSignature,
@@ -129,13 +122,15 @@ data class FieldBinarySignature(
     }
 }
 
-fun FieldNode.toFieldBinarySignature() =
-    FieldBinarySignature(
+fun FieldNode.toFieldBinarySignature(extraAnnotations: List<AnnotationNode>): FieldBinarySignature {
+    val allAnnotations = visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty() + extraAnnotations
+    return FieldBinarySignature(
         JvmFieldSignature(name, desc),
-        isPublishedApi(),
+        allAnnotations.isPublishedApi(),
         AccessFlags(access),
-        annotations(visibleAnnotations, invisibleAnnotations))
-
+        allAnnotations
+    )
+}
 private val MemberBinarySignature.kind: Int
     get() = when (this) {
         is FieldBinarySignature -> 1
@@ -156,7 +151,9 @@ data class AccessFlags(val access: Int) {
     val isFinal: Boolean get() = isFinal(access)
     val isSynthetic: Boolean get() = isSynthetic(access)
 
-    fun getModifiers(): List<String> = ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
+    fun getModifiers(): List<String> =
+        ACCESS_NAMES.entries.mapNotNull { if (access and it.key != 0) it.value else null }
+
     fun getModifierString(): String = getModifiers().joinToString(" ")
 }
 

@@ -47,9 +47,7 @@ val ClassNode.outerClassName: String? get() = innerClassNode?.outerName
 
 const val publishedApiAnnotationName = "kotlin/PublishedApi"
 fun ClassNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
-fun MethodNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
-fun FieldNode.isPublishedApi() = findAnnotation(publishedApiAnnotationName, includeInvisible = true) != null
-
+fun List<AnnotationNode>.isPublishedApi() = firstOrNull { it.refersToName(publishedApiAnnotationName) } != null
 
 fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name.endsWith("\$DefaultImpls") && metadata.isSyntheticClass()
 
