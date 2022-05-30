@@ -293,6 +293,24 @@ public:
     }
 };
 
+template <typename Clock>
+struct WaitForPendingImpl {
+    void operator()() {}
+};
+
+template <>
+struct WaitForPendingImpl<test_support::manual_clock> {
+    void operator()() {
+        while (!test_support::manual_clock::pending()) {
+        }
+    }
+};
+
+template <typename Clock>
+void waitForPending() {
+    WaitForPendingImpl<Clock>()();
+}
+
 } // namespace
 
 template <typename T>
@@ -328,6 +346,7 @@ TYPED_TEST(ClockTest, CVWaitFor_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         {
             std::unique_lock guard(m);
             ok = true;
@@ -351,6 +370,7 @@ TYPED_TEST(ClockTest, CVWaitFor_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     std::unique_lock guard(m);
@@ -370,6 +390,7 @@ TYPED_TEST(ClockTest, CVWaitFor_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_for` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         {
@@ -392,6 +413,7 @@ TYPED_TEST(ClockTest, CVWaitUntil_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         {
             std::unique_lock guard(m);
             ok = true;
@@ -415,6 +437,7 @@ TYPED_TEST(ClockTest, CVWaitUntil_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     std::unique_lock guard(m);
@@ -434,6 +457,7 @@ TYPED_TEST(ClockTest, CVWaitUntil_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_until` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         {
@@ -457,6 +481,7 @@ TYPED_TEST(ClockTest, CVAnyWaitFor_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         {
             std::unique_lock guard(m);
             ok = true;
@@ -480,6 +505,7 @@ TYPED_TEST(ClockTest, CVAnyWaitFor_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     std::unique_lock guard(m);
@@ -499,6 +525,7 @@ TYPED_TEST(ClockTest, CVAnyWaitFor_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_for` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         {
@@ -521,6 +548,7 @@ TYPED_TEST(ClockTest, CVAnyWaitUntil_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         {
             std::unique_lock guard(m);
             ok = true;
@@ -544,6 +572,7 @@ TYPED_TEST(ClockTest, CVAnyWaitUntil_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     std::unique_lock guard(m);
@@ -563,6 +592,7 @@ TYPED_TEST(ClockTest, CVAnyWaitUntil_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_until` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         {
@@ -585,6 +615,7 @@ TYPED_TEST(ClockTest, FutureWaitFor_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         promise.set_value(42);
     });
     auto before = TypeParam::now();
@@ -613,6 +644,7 @@ TYPED_TEST(ClockTest, FutureWaitFor_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     auto before = TypeParam::now();
@@ -630,6 +662,7 @@ TYPED_TEST(ClockTest, FutureWaitFor_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_for` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         promise.set_value(42);
@@ -646,6 +679,7 @@ TYPED_TEST(ClockTest, FutureWaitUntil_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         promise.set_value(42);
     });
     auto until = TypeParam::now() + hours(10);
@@ -673,6 +707,7 @@ TYPED_TEST(ClockTest, FutureWaitUntil_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     auto until = TypeParam::now() + interval;
@@ -690,6 +725,7 @@ TYPED_TEST(ClockTest, FutureWaitUntil_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_until` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         promise.set_value(42);
@@ -707,6 +743,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitFor_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         promise.set_value(42);
     });
     auto before = TypeParam::now();
@@ -735,6 +772,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitFor_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     auto before = TypeParam::now();
@@ -752,6 +790,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitFor_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_for` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         promise.set_value(42);
@@ -768,6 +807,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitUntil_OK) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         promise.set_value(42);
     });
     auto until = TypeParam::now() + hours(10);
@@ -795,6 +835,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitUntil_Timeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         TypeParam::sleep_for(interval);
     });
     auto until = TypeParam::now() + interval;
@@ -812,6 +853,7 @@ TYPED_TEST(ClockTest, SharedFutureWaitUntil_InfiniteTimeout) {
     ScopedThread thread([&] {
         while (!go.load()) {
         }
+        waitForPending<TypeParam>();
         // Wait to see if `TypeParam::wait_until` wakes up from timeout.
         TypeParam::sleep_for(milliseconds(1));
         promise.set_value(42);
