@@ -50,6 +50,9 @@ internal open class LegacyMappedVariant(
             compilation.compileDependencyFiles = value
         }
 
+    override fun dependencies(configure: KpmKotlinDependencyHandler.() -> Unit) =
+        KpmKotlinDependencyHandlerImpl(this, project).run(configure)
+
     override val compilationOutputs: KotlinCompilationOutput
         get() = compilation.output
 
@@ -92,10 +95,6 @@ internal open class LegacyMappedVariant(
 
     override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
         fragmentForDefaultSourceSet.refines(other)
-    }
-
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        fragmentForDefaultSourceSet.dependencies(configure)
     }
 
     //FIXME map to the original name, require that the fragment for source set does not exist yet?
@@ -195,7 +194,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
         target.kotlinComponents.forEach { kotlinComponent ->
             val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
                 mainModule,
-                kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
+                { kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-") }
             )
             val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
                 is KotlinVariant -> kotlinComponent.usages
