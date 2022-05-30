@@ -50,3 +50,17 @@ FILE: smartcastToNothing.kt
         }
         ) }
     }
+    public final fun test_1(a: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/Nothing?|) ->  {
+                lval b: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|kotlin/String.length| }
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/Nothing|) ->  {
+                lval b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+            }
+        }
+
+    }
