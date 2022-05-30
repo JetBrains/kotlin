@@ -52,6 +52,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ValueParameterUsageInDefaultArgumentChecker,
     CyclicAnnotationsChecker,
     ExpressionAfterTypeParameterWithoutSpacingChecker,
+    UnsupportedUntilRangeDeclarationChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
