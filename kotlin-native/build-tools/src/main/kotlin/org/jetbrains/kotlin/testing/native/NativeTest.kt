@@ -10,13 +10,16 @@ import java.io.File
 import javax.inject.Inject
 import org.gradle.api.*
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.ExecClang
+import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.*
 import java.io.OutputStream
 
@@ -28,11 +31,7 @@ interface CompileNativeTestParameters : WorkParameters {
     var targetName: String
     var compilerArgs: List<String>
     var linkCommands: List<List<String>>
-
-    var konanHome: File
-    var llvmDir: File
-    var experimentalDistribution: Boolean
-    var isInfoEnabled: Boolean
+    val platformManager: Property<PlatformManager>
 }
 
 abstract class CompileNativeTestJob : WorkAction<CompileNativeTestParameters> {
@@ -55,13 +54,11 @@ abstract class CompileNativeTestJob : WorkAction<CompileNativeTestParameters> {
             // errors at the link stage. So we have to run llvm-link twice: the first one links all modules
             // except the one containing the entry point to a single *.bc without internalization. The second
             // run internalizes this big module and links it with a module containing the entry point.
-            execOperations.exec {
-                executable = "$llvmDir/bin/llvm-link"
+            execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
                 args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
             }
 
-            execOperations.exec {
-                executable = "$llvmDir/bin/llvm-link"
+            execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
                 args = listOf(
                         "-o", llvmLinkOutputFile.absolutePath,
                         mainFile.absolutePath,
@@ -74,11 +71,10 @@ abstract class CompileNativeTestJob : WorkAction<CompileNativeTestParameters> {
 
     private fun compile() {
         with(parameters) {
-            val platformManager = PlatformManager(buildDistribution(konanHome.absolutePath), experimentalDistribution)
-            val execClang = ExecClang.create(objects, platformManager, llvmDir)
-            val target = platformManager.targetByName(targetName)
+            val execClang = ExecClang.create(objects, platformManager.get())
+            val target = platformManager.get().targetByName(targetName)
 
-            val clangFlags = buildClangFlags(platformManager.platform(target).configurables)
+            val clangFlags = buildClangFlags(platformManager.get().platform(target).configurables)
 
             if (target.family.isAppleFamily) {
                 execClang.execToolchainClang(target) {
@@ -95,11 +91,13 @@ abstract class CompileNativeTestJob : WorkAction<CompileNativeTestParameters> {
     }
 
     private fun link() {
+        val logging = Logging.getLogger(CompileNativeTestJob::class.java)
+
         with(parameters) {
             for (command in linkCommands) {
                 execOperations.exec {
                     commandLine(command)
-                    if (!isInfoEnabled && command[0].endsWith("dsymutil")) {
+                    if (!logging.isInfoEnabled && command[0].endsWith("dsymutil")) {
                         // Suppress dsymutl's warnings.
                         // See: https://bugs.swift.org/browse/SR-11539.
                         val nullOutputStream = object: OutputStream() {
@@ -197,10 +195,7 @@ abstract class CompileNativeTest @Inject constructor(
             it.targetName = target.name
             it.compilerArgs = clangArgs + sanitizerFlags
             it.linkCommands = linkCommands
-
-            it.konanHome = project.project(":kotlin-native").projectDir
-            it.llvmDir = project.file(project.findProperty("llvmDir")!!)
-            it.isInfoEnabled = logger.isInfoEnabled
+            it.platformManager.set(platformManager)
         }
 
         workQueue.submit(CompileNativeTestJob::class.java, parameters)

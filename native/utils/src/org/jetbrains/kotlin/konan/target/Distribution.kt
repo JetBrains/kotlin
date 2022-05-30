@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
-class Distribution(
-        val konanHome: String,
-        private val onlyDefaultProfiles: Boolean = false,
-        private val runtimeFileOverride: String? = null,
-        private val propertyOverrides: Map<String, String>? = null
-) {
+class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
+    constructor(
+        konanHome: String,
+        onlyDefaultProfiles: Boolean = false,
+        runtimeFileOverride: String? = null,
+        propertyOverrides: Map<String, String>? = null
+    ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides))
+
+    val konanHome by serialized::konanHome
+    private val onlyDefaultProfiles by serialized::onlyDefaultProfiles
+    private val runtimeFileOverride by serialized::runtimeFileOverride
+    private val propertyOverrides by serialized::propertyOverrides
 
     val localKonanDir = DependencyDirectories.localKonanDir
 
@@ -109,6 +115,21 @@ class Distribution(
 
         fun getCompilerVersion(propertyVersion: String?, konanHome: String): String? =
             propertyVersion ?: getBundleVersion(konanHome)
+    }
+
+    private fun writeReplace(): Any = serialized
+
+    private data class Serialized(
+        val konanHome: String,
+        val onlyDefaultProfiles: Boolean,
+        val runtimeFileOverride: String?,
+        val propertyOverrides: Map<String, String>?,
+    ) : java.io.Serializable {
+        companion object {
+            private const val serialVersionUID: Long = 0L
+        }
+
+        private fun readResolve(): Any = Distribution(this)
     }
 }
 

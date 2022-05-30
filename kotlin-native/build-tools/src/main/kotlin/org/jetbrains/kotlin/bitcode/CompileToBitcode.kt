@@ -15,11 +15,14 @@ import javax.inject.Inject
 import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.platformManager
 
 interface CompileToBitcodeParameters : WorkParameters {
     var objDir: File
@@ -27,10 +30,7 @@ interface CompileToBitcodeParameters : WorkParameters {
     var compilerExecutable: String
     var compilerArgs: List<String>
     var llvmLinkArgs: List<String>
-
-    var konanHome: File
-    var llvmDir: File
-    var experimentalDistribution: Boolean
+    val platformManager: Property<PlatformManager>
 }
 
 abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
@@ -44,8 +44,7 @@ abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
         with(parameters) {
             objDir.mkdirs()
 
-            val platformManager = PlatformManager(buildDistribution(konanHome.absolutePath), experimentalDistribution)
-            val execClang = ExecClang.create(objects, platformManager, llvmDir)
+            val execClang = ExecClang.create(objects, platformManager.get())
 
             execClang.execKonanClang(target) {
                 workingDir = objDir
@@ -53,8 +52,7 @@ abstract class CompileToBitcodeJob : WorkAction<CompileToBitcodeParameters> {
                 args = compilerArgs
             }
 
-            execOperations.exec {
-                executable = "${llvmDir.absolutePath}/bin/llvm-link"
+            execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
                 args = llvmLinkArgs
             }
         }
@@ -234,9 +232,7 @@ abstract class CompileToBitcode @Inject constructor(
                     inputFiles.map {
                         bitcodeFileForInputFile(it).absolutePath
                     }
-
-            it.konanHome = project.project(":kotlin-native").projectDir
-            it.llvmDir = project.file(project.findProperty("llvmDir")!!)
+            it.platformManager.set(project.platformManager)
         }
 
         workQueue.submit(CompileToBitcodeJob::class.java, parameters)

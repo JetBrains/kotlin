@@ -34,10 +34,13 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(private val distribution: Distribution, experimental: Boolean = false) :
-        HostManager(distribution, experimental) {
+class PlatformManager private constructor(private val serialized: Serialized) :
+        HostManager(serialized.distribution, serialized.experimental), java.io.Serializable {
 
-    constructor(konanHome: String, experimental: Boolean = false): this(Distribution(konanHome), experimental)
+    constructor(konanHome: String, experimental: Boolean = false) : this(Distribution(konanHome), experimental)
+    constructor(distribution: Distribution, experimental: Boolean = false) : this(Serialized(distribution, experimental))
+
+    private val distribution by serialized::distribution
 
     private val loaders = enabled.map {
         it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)
@@ -51,5 +54,18 @@ class PlatformManager(private val distribution: Distribution, experimental: Bool
     val hostPlatform = platforms.getValue(host)
 
     fun loader(target: KonanTarget) = loaders.getValue(target)
+
+    private fun writeReplace(): Any = serialized
+
+    private data class Serialized(
+            val distribution: Distribution,
+            val experimental: Boolean
+    ) : java.io.Serializable {
+        companion object {
+            private const val serialVersionUID: Long = 0L
+        }
+
+        private fun readResolve(): Any = PlatformManager(this)
+    }
 }
 

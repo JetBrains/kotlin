@@ -8,8 +8,10 @@ package org.jetbrains.kotlin
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
 fun execLlvmUtility(project: Project, utility: String, action: Action<in ExecSpec>): ExecResult {
@@ -22,4 +24,12 @@ fun execLlvmUtility(project: Project, utility: String, action: Action<in ExecSpe
 
 fun execLlvmUtility(project: Project, utility: String, closure: Closure<in ExecSpec>): ExecResult {
     return execLlvmUtility(project, utility) { project.configure(this, closure) }
+}
+
+fun ExecOperations.execLlvmUtility(platformManager: PlatformManager, utility: String, action: Action<in ExecSpec>): ExecResult {
+    val llvmBinDirectory = "${platformManager.hostPlatform.absoluteLlvmHome}/bin"
+    return exec {
+        action.execute(this)
+        executable = "$llvmBinDirectory/$utility"
+    }
 }
