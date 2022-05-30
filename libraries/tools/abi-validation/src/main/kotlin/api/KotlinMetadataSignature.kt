@@ -7,7 +7,7 @@ package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
 import kotlinx.validation.*
-import org.objectweb.asm.Opcodes
+import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 
 @ExternalApi // Only name is part of the API, nothing else is used by stdlib
@@ -94,6 +94,12 @@ internal fun MethodNode.alternateDefaultSignature(className: String): JvmMethodS
 }
 
 fun MethodNode.toMethodBinarySignature(
+    /*
+     * Extra annotations are:
+     * * Annotations from the original method for synthetic `$default` method
+     * * Annotations from getter, setter or field for synthetic `$annotation` method
+     * * Annotations from a field for getter and setter
+     */
     extraAnnotations: List<AnnotationNode>,
     alternateDefaultSignature: JvmMethodSignature?
 ): MethodBinarySignature {
