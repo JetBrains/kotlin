@@ -8677,6 +8677,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/dataClasses/doubleParam.kt");
         }
 
+        @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+        public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/equalityChecksPrimitiveUnboxed.kt");
+        }
+
         @TestMetadata("floatParam.kt")
         public void testFloatParam() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/floatParam.kt");
@@ -14094,6 +14099,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("equalityChecksPrimitiveGeneric.kt")
         public void testEqualityChecksPrimitiveGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+        public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")

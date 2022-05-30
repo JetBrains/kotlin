@@ -10587,6 +10587,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/dataClasses/doubleParam.kt");
         }
 
+        @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+        public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/equalityChecksPrimitiveUnboxed.kt");
+        }
+
         @TestMetadata("floatParam.kt")
         public void testFloatParam() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/floatParam.kt");
@@ -17014,6 +17019,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("equalityChecksPrimitiveGeneric.kt")
         public void testEqualityChecksPrimitiveGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+        public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")
