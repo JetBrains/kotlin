@@ -43,8 +43,12 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                 val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
                 val fieldSignatures = fields
-                    .map { it.toFieldBinarySignature() }
-                    .filter {
+                    .map {
+                        val annotationHolders =
+                            mVisibility?.members?.get(JvmFieldSignature(it.name, it.desc))?.propertyAnnotation
+                        val foundAnnotations = methods.annotationsFor(annotationHolders?.method)
+                        it.toFieldBinarySignature(foundAnnotations)
+                    }.filter {
                         it.isEffectivelyPublic(classAccess, mVisibility)
                     }.filter {
                         /*
@@ -62,7 +66,7 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                     }
 
                 // NB: this 'map' is O(methods + properties * methods) which may accidentally be quadratic
-                val allMethods = methods.map {
+                val methodSignatures = methods.map {
                     /**
                      * For getters/setters, pull the annotations from the property
                      * This is either on the field if any or in a '$annotations' synthetic function.
@@ -70,32 +74,21 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                     val annotationHolders =
                         mVisibility?.members?.get(JvmMethodSignature(it.name, it.desc))?.propertyAnnotation
                     val foundAnnotations = ArrayList<AnnotationNode>()
-                    // lookup annotations from $annotations()
-                    val syntheticPropertyMethod = annotationHolders?.method
-                    if (syntheticPropertyMethod != null) {
-                        foundAnnotations += methods
-                            .firstOrNull { it.name == syntheticPropertyMethod.name && it.desc == syntheticPropertyMethod.desc }
-                            ?.visibleAnnotations ?: emptyList()
-                    }
+                    foundAnnotations += fields.annotationsFor(annotationHolders?.field)
+                    foundAnnotations += methods.annotationsFor(annotationHolders?.method)
 
-                    val backingField = annotationHolders?.field
-                    if (backingField != null) {
-                        foundAnnotations += fields
-                            .firstOrNull { it.name == backingField.name && it.desc == backingField.desc }
-                            ?.visibleAnnotations ?: emptyList()
+                    /**
+                     * For synthetic $default methods, pull the annotations from the corresponding method
+                     */
+                    val alternateDefaultSignature = mVisibility?.name?.let { className ->
+                        it.alternateDefaultSignature(className)
                     }
+                    foundAnnotations += methods.annotationsFor(alternateDefaultSignature)
 
-                    it.toMethodBinarySignature(foundAnnotations)
+                    it.toMethodBinarySignature(foundAnnotations, alternateDefaultSignature)
+                }.filter {
+                    it.isEffectivelyPublic(classAccess, mVisibility)
                 }
-                // Signatures marked with @PublishedApi
-                val publishedApiSignatures = allMethods.filter {
-                    it.isPublishedApi
-                }.map { it.jvmMember }.toSet()
-                val methodSignatures = allMethods
-                    .filter {
-                        it.isEffectivelyPublic(classAccess, mVisibility) ||
-                                it.isPublishedApiWithDefaultArguments(mVisibility, publishedApiSignatures)
-                    }
 
                 ClassBinarySignature(
                     name, superName, outerClassName, supertypes, fieldSignatures + methodSignatures, classAccess,
@@ -105,6 +98,24 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                 )
             }
         }
+}
+
+private fun List<MethodNode>.annotationsFor(methodSignature: JvmMethodSignature?): List<AnnotationNode> {
+    if (methodSignature == null) return emptyList()
+
+    return firstOrNull { it.name == methodSignature.name && it.desc == methodSignature.desc }
+        ?.run {
+            visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
+        } ?: emptyList()
+}
+
+private fun List<FieldNode>.annotationsFor(fieldSignature: JvmFieldSignature?): List<AnnotationNode> {
+    if (fieldSignature == null) return emptyList()
+
+    return firstOrNull { it.name == fieldSignature.name && it.desc == fieldSignature.desc }
+        ?.run {
+            visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
+        } ?: emptyList()
 }
 
 @ExternalApi
