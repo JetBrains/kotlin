@@ -22,3 +22,13 @@ fun test_0(results: List<Nothing>) {
     }
     s?.let { it.a }
 }
+
+fun test_1(a: String?) {
+    if (a is Nothing?) {
+        val b = a?.length
+    }
+
+    if (a is Nothing) {
+        val b = a.length
+    }
+}
