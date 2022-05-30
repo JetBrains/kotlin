@@ -33587,6 +33587,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("innerClassDelegatingConstructorCallToPrivate.kt")
+            public void testInnerClassDelegatingConstructorCallToPrivate() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/innerClassDelegatingConstructorCallToPrivate.kt");
+            }
+
+            @Test
             @TestMetadata("innerConstructorThroughSubclass.kt")
             public void testInnerConstructorThroughSubclass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/innerConstructorThroughSubclass.kt");

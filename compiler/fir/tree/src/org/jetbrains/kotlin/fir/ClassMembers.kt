@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -127,3 +125,9 @@ private object CorrespondingProperty : FirDeclarationDataKey()
  * The corresponding [FirProperty] if the current value parameter is a `val` or `var` declared inside the primary constructor.
  */
 var FirValueParameter.correspondingProperty: FirProperty? by FirDeclarationDataRegistry.data(CorrespondingProperty)
+
+val FirCallableDeclaration.propertyIfAccessor: FirCallableDeclaration
+    get() = (this as? FirPropertyAccessor)?.propertySymbol?.fir ?: this
+
+val FirCallableDeclaration.propertyIfBackingField: FirCallableDeclaration
+    get() = (this as? FirBackingField)?.propertySymbol?.fir ?: this

@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
@@ -40,7 +37,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                 } else {
                     val ownerLookupTag = symbol.getOwnerLookupTag() ?: return false
                     if (canSeeProtectedMemberOf(
-                            containingDeclarations, dispatchReceiver, ownerLookupTag, session,
+                            symbol, containingDeclarations, dispatchReceiver, ownerLookupTag, session,
                             isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
                             isSyntheticProperty = symbol.fir is FirSyntheticPropertyAccessor,
                             supertypeSupplier
