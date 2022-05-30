@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInfix
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.matchingParameterFunctionType
@@ -516,7 +518,8 @@ internal object CheckVisibility : CheckerStage() {
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            if (!checkVisibility(declaration, sink, candidate, visibilityChecker)) {
+            if (!visibilityChecker.isVisible(declaration, candidate)) {
+                sink.yieldDiagnostic(VisibilityError)
                 return
             }
         }
@@ -529,22 +532,12 @@ internal object CheckVisibility : CheckerStage() {
                 if (classSymbol.fir.classKind.isSingleton) {
                     sink.yieldDiagnostic(VisibilityError)
                 }
-                checkVisibility(classSymbol.fir, sink, candidate, visibilityChecker)
+
+                if (!visibilityChecker.isVisible(declaration, candidate.callInfo, dispatchReceiverValue = null)) {
+                    sink.yieldDiagnostic(VisibilityError)
+                }
             }
         }
-    }
-
-    private suspend fun <T : FirMemberDeclaration> checkVisibility(
-        declaration: T,
-        sink: CheckerSink,
-        candidate: Candidate,
-        visibilityChecker: FirVisibilityChecker
-    ): Boolean {
-        if (!visibilityChecker.isVisible(declaration, candidate)) {
-            sink.yieldDiagnostic(VisibilityError)
-            return false
-        }
-        return true
     }
 }
 

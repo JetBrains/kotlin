@@ -33497,6 +33497,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("innerConstructorThroughSubclass.kt")
+            public void testInnerConstructorThroughSubclass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/innerConstructorThroughSubclass.kt");
+            }
+
+            @Test
             @TestMetadata("innerNestedAndAnonymousClasses.kt")
             public void testInnerNestedAndAnonymousClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/innerNestedAndAnonymousClasses.kt");
