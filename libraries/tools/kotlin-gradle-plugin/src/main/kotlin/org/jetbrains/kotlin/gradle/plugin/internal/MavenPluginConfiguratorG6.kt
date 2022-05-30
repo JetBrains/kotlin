@@ -2,6 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
@@ -15,7 +16,6 @@ import org.gradle.api.tasks.Upload
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.PomDependenciesRewriter
 
-@Suppress("DEPRECATION")
 class MavenPluginConfiguratorG6 : MavenPluginConfigurator {
     override fun applyConfiguration(
         project: Project,
