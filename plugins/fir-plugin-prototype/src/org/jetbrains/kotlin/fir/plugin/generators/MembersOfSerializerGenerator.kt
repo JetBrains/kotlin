@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
@@ -57,7 +58,7 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         serializableClassIds.associateBy { Name.identifier("serialize${it.shortClassName.identifier}") }
     }
 
-    override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
+    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
         val dispatchReceiverClassId = callableId.classId ?: return emptyList()
         val function = buildSimpleFunction {

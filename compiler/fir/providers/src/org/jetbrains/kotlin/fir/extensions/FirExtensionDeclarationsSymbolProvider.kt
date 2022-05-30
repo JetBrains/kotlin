@@ -98,13 +98,13 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     private fun generateTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> {
         return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
-            .flatMap { it.generateFunctions(callableId, owner = null) }
+            .flatMap { it.generateFunctions(callableId, context = null) }
             .onEach { it.fir.validate() }
     }
 
     private fun generateTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> {
         return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
-            .flatMap { it.generateProperties(callableId, owner = null) }
+            .flatMap { it.generateProperties(callableId, context = null) }
             .onEach { it.fir.validate() }
     }
 

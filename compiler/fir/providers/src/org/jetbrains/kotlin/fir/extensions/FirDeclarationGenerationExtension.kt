@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -38,9 +40,9 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     open fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
     // Can be called on STATUS stage
-    open fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> = emptyList()
-    open fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> = emptyList()
-    open fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> = emptyList()
+    open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
+    open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = emptyList()
+    open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
     // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
@@ -77,6 +79,22 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>, Nothing?> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }
 
+}
+
+class MemberGenerationContext(
+    val owner: FirClassSymbol<*>,
+    val declaredMemberScope: FirClassDeclaredMemberScope?,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is MemberGenerationContext) {
+            return false
+        }
+        return owner == other.owner
+    }
+
+    override fun hashCode(): Int {
+        return owner.hashCode()
+    }
 }
 
 val FirExtensionService.declarationGenerators: List<FirDeclarationGenerationExtension> by FirExtensionService.registeredExtensions()

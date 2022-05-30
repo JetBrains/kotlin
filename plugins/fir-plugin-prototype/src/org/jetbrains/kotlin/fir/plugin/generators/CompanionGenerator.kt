@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
@@ -69,7 +70,8 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         return regularClass.symbol
     }
 
-    override fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> {
+    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
+        val owner = context?.owner
         if (owner == null || owner.origin != Key.origin) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
         val function = buildSimpleFunction {
@@ -89,8 +91,8 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         return listOf(function.symbol)
     }
 
-    override fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> {
-        val constructor = buildConstructor(owner.classId, isInner = false, Key)
+    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
+        val constructor = buildConstructor(context.owner.classId, isInner = false, Key)
         return listOf(constructor.symbol)
     }
 

@@ -26,15 +26,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirGeneratedClassDeclaredMemberScope private constructor(
     val useSiteSession: FirSession,
-    val firClass: FirClass,
+    private val generationContext: MemberGenerationContext,
     needNestedClassifierScope: Boolean,
     val extensionsByCallableName: Map<Name, List<FirDeclarationGenerationExtension>>,
     val allCallableNames: Set<Name>
-) : FirClassDeclaredMemberScope(firClass.classId) {
+) : FirClassDeclaredMemberScope(generationContext.owner.classId) {
     companion object {
-        fun create(session: FirSession, firClass: FirClass, needNestedClassifierScope: Boolean): FirGeneratedClassDeclaredMemberScope? {
+        fun create(
+            session: FirSession,
+            generationContext: MemberGenerationContext,
+            needNestedClassifierScope: Boolean
+        ): FirGeneratedClassDeclaredMemberScope? {
             val extensionsByCallableName = session.groupExtensionsByName(
-                firClass,
+                generationContext.owner.fir,
                 nameExtractor = { getCallableNamesForClass(it) },
                 nameTransformer = { it }
             )
@@ -42,13 +46,16 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             if (allCallableNames.isEmpty()) return null
             return FirGeneratedClassDeclaredMemberScope(
                 session,
-                firClass,
+                generationContext,
                 needNestedClassifierScope,
                 extensionsByCallableName,
                 allCallableNames
             )
         }
     }
+
+    private val firClass: FirClass
+        get() = generationContext.owner.fir
 
     private val nestedClassifierScope: FirNestedClassifierScope? = runIf(needNestedClassifierScope) {
         useSiteSession.nestedClassifierScope(firClass)
@@ -75,20 +82,20 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
     private fun generateMemberFunctions(name: Name): List<FirNamedFunctionSymbol> {
         if (name == SpecialNames.INIT) return emptyList()
         return extensionsByCallableName[name].orEmpty()
-            .flatMap { it.generateFunctions(CallableId(firClass.classId, name), firClass.symbol) }
+            .flatMap { it.generateFunctions(CallableId(firClass.classId, name), generationContext) }
             .onEach { it.fir.validate() }
     }
 
     private fun generateMemberProperties(name: Name): List<FirPropertySymbol> {
         if (name == SpecialNames.INIT) return emptyList()
         return extensionsByCallableName[name].orEmpty()
-            .flatMap { it.generateProperties(CallableId(firClass.classId, name), firClass.symbol) }
+            .flatMap { it.generateProperties(CallableId(firClass.classId, name), generationContext) }
             .onEach { it.fir.validate() }
     }
 
     private fun generateConstructors(): List<FirConstructorSymbol> {
         return extensionsByCallableName[SpecialNames.INIT].orEmpty()
-            .flatMap { it.generateConstructors(firClass.symbol) }
+            .flatMap { it.generateConstructors(generationContext) }
             .onEach { it.fir.validate() }
     }
 
