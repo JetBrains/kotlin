@@ -56,5 +56,9 @@ fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boole
     ReadWriteAccessChecker.getInstance().readWriteAccessWithFullExpression(this, useResolveForReadWrite)
 
 fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess =
-    ReadWriteAccessChecker.getInstance().readWriteAccessWithFullExpression(this, useResolveForReadWrite).first
+    object : ReadWriteAccessChecker {
+        override fun readWriteAccessWithFullExpressionByResolve(
+            assignment: KtBinaryExpression
+        ): Pair<ReferenceAccess, KtExpression>? = null
+    }.readWriteAccessWithFullExpression(this, useResolveForReadWrite).first
 
