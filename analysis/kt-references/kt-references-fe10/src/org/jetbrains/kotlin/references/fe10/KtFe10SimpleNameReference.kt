@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
-import org.jetbrains.kotlin.psi.KtImportAlias
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 
@@ -57,6 +57,26 @@ class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNa
                 }
             }
         }
+    }
+
+    // It's a copy of function in BindingContextUtils supporting some special cases (labels, this)
+    private fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
+        val descriptor = when (this) {
+            is KtLabelReferenceExpression -> {
+                val target = context[BindingContext.LABEL_TARGET, this]
+                target?.let { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
+            }
+            is KtReferenceExpression -> {
+                context[BindingContext.REFERENCE_TARGET, this]?.takeIf {
+                    this !is KtNameReferenceExpression || getReferencedNameElementType() != KtTokens.THIS_KEYWORD
+                } ?: getResolvedCall(context)?.resultingDescriptor
+            }
+            else -> {
+                null
+            }
+        }
+        if (descriptor != null) return listOf(descriptor)
+        return context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
     }
 
     override fun isReferenceToViaExtension(element: PsiElement): Boolean {
