@@ -10736,6 +10736,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+            public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+                runTest("compiler/testData/codegen/box/dataClasses/equalityChecksPrimitiveUnboxed.kt");
+            }
+
+            @Test
             @TestMetadata("floatParam.kt")
             public void testFloatParam() throws Exception {
                 runTest("compiler/testData/codegen/box/dataClasses/floatParam.kt");
@@ -16266,6 +16272,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17263,6 +17270,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testEqualityChecksPrimitiveGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("equalityChecksPrimitiveUnboxed.kt")
+            public void testEqualityChecksPrimitiveUnboxed() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveUnboxed.kt");
             }
 
             @Test

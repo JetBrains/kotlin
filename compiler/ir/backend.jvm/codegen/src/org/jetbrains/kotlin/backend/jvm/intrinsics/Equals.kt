@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -80,14 +81,16 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
 
         val leftType = with(codegen) { a.asmType }
+        if (expression.origin == IrStatementOrigin.EQEQEQ || expression.origin == IrStatementOrigin.EXCLEQEQ) {
+            return referenceEquals(a, b, leftType, codegen, data)
+        }
+
         val rightType = with(codegen) { b.asmType }
-        val opToken = expression.origin
 
         // Avoid boxing for `primitive == object` and `boxed primitive == primitive` where we know
         // what comparison means. The optimization does not apply to `object == primitive` as equals
         // could be overridden for the object.
-        if ((opToken == IrStatementOrigin.EQEQ || opToken == IrStatementOrigin.EXCLEQ) &&
-            ((AsmUtil.isIntOrLongPrimitive(leftType) && !isPrimitive(rightType)) ||
+        if (((AsmUtil.isIntOrLongPrimitive(leftType) && !isPrimitive(rightType)) ||
                     (AsmUtil.isIntOrLongPrimitive(rightType) && AsmUtil.isBoxedPrimitiveType(leftType)))
         ) {
             val aValue = a.accept(codegen, data).materializedAt(leftType, a.type)
@@ -95,29 +98,45 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             return PrimitiveToObjectComparison(operator, AsmUtil.isIntOrLongPrimitive(leftType), aValue, bValue)
         }
 
+        if (isPrimitive(leftType) && leftType == rightType) {
+            // Generic floating point equality is specified to be reflexive, with NaN == NaN and -0 != +0.
+            return if (leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE) {
+                val aValue = a.accept(codegen, data).materializedAt(leftType, a.type)
+                val bValue = b.accept(codegen, data).materializedAt(rightType, b.type)
+                return NonIEEE754FloatComparison(operator, aValue, bValue)
+            } else {
+                referenceEquals(a, b, leftType, codegen, data)
+            }
+        }
+
+        // We can use reference equality for enums, otherwise we fall back to boxed equality.
         val aIsEnum = a.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
         val bIsEnum = b.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
-        val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&
-                // `==` is `equals` for objects and floating-point numbers. In the latter case, the difference
-                // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
-                (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
-                // Reference equality can be used for enums.
-                && !aIsEnum && !bIsEnum
-        return if (useEquals) {
+        return if (aIsEnum || bIsEnum) {
+            referenceEquals(a, b, leftType, codegen, data)
+        } else {
             a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
             b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
             genAreEqualCall(codegen.mv)
             MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
+        }
+    }
+
+    private fun referenceEquals(
+        left: IrExpression,
+        right: IrExpression,
+        leftType: Type,
+        codegen: ExpressionCodegen,
+        data: BlockInfo
+    ): PromisedValue {
+        val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
+        return if (operandType == Type.INT_TYPE && (left.isIntegerConst(0) || right.isIntegerConst(0))) {
+            val nonZero = if (left.isIntegerConst(0)) right else left
+            IntegerZeroComparison(operator, nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
         } else {
-            val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
-            if (operandType == Type.INT_TYPE && (a.isIntegerConst(0) || b.isIntegerConst(0))) {
-                val nonZero = if (a.isIntegerConst(0)) b else a
-                IntegerZeroComparison(operator, nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
-            } else {
-                val aValue = a.accept(codegen, data).materializedAt(operandType, a.type)
-                val bValue = b.accept(codegen, data).materializedAt(operandType, b.type)
-                BooleanComparison(operator, aValue, bValue)
-            }
+            val leftValue = left.accept(codegen, data).materializedAt(operandType, left.type)
+            val rightValue = right.accept(codegen, data).materializedAt(operandType, right.type)
+            BooleanComparison(operator, leftValue, rightValue)
         }
     }
 }

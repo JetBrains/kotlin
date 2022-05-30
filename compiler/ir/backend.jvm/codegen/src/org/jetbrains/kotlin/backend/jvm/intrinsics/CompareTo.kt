@@ -115,7 +115,7 @@ class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: Mater
 }
 
 
-class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.codegen) {
+class NonIEEE754FloatComparison(op: IElementType, private val a: MaterialValue, private val b: MaterialValue) : BooleanValue(a.codegen) {
     private val numberCompareOpcode = NumberCompare.getNumberCompareOpcode(op)
 
     private fun invokeStaticComparison(type: Type) {
