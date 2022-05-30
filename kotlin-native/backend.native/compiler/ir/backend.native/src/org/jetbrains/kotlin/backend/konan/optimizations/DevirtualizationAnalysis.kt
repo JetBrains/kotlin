@@ -644,7 +644,7 @@ internal object DevirtualizationAnalysis {
 
             context.logMultiple {
                 +"Devirtualized from current module:"
-                result.forEach { virtualCall, devirtualizedCallSite ->
+                result.forEach { (virtualCall, devirtualizedCallSite) ->
                     if (virtualCall.irCallSite != null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -656,7 +656,7 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 +"Devirtualized from external modules:"
-                result.forEach { virtualCall, devirtualizedCallSite ->
+                result.forEach { (virtualCall, devirtualizedCallSite) ->
                     if (virtualCall.irCallSite == null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -896,7 +896,12 @@ internal object DevirtualizationAnalysis {
                     val body = function.body
                     val functionConstraintGraph = constraintGraph.functions[symbol]!!
 
-                    body.forEachNonScopeNode { dfgNodeToConstraintNode(functionConstraintGraph, it) }
+                    body.forEachNonScopeNode {
+                        val node = dfgNodeToConstraintNode(functionConstraintGraph, it)
+                        if (it is DataFlowIR.Node.Variable) {
+                            generateVariableEdges(functionConstraintGraph, it, node)
+                        }
+                    }
                     addEdge(functionNodesMap[body.returns]!!, functionConstraintGraph.returns)
                     addEdge(functionNodesMap[body.throws]!!, functionConstraintGraph.throws)
 
@@ -1077,9 +1082,19 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
+
+            fun generateVariableEdges(function: Function, node: DataFlowIR.Node.Variable, variableNode: Node) {
+                for (value in node.values) {
+                    addEdge(edgeToConstraintNode(function, value), variableNode)
+                }
+                if (node.kind == DataFlowIR.VariableKind.CatchParameter)
+                    function.throws.addCastEdge(createCastEdge(variableNode, node.type.resolved()))
+            }
+
             /**
              * Takes a function DFG's node and creates a constraint graph node corresponding to it.
-             * Also creates all necessary edges.
+             * Also creates all necessary edges, except for variable nodes.
+             * For variable nodes edges must be created separately, otherwise recursion can be too deep.
              */
             private fun dfgNodeToConstraintNode(function: Function, node: DataFlowIR.Node): Node {
 
@@ -1102,17 +1117,9 @@ internal object DevirtualizationAnalysis {
                 fun writeField(field: DataFlowIR.Field, value: Node) = addEdge(value, fieldNode(field))
 
                 if (node is DataFlowIR.Node.Variable && node.kind != DataFlowIR.VariableKind.Temporary) {
-                    var variableNode = variables[node]
-                    if (variableNode == null) {
-                        variableNode = ordinaryNode { "Variable\$${function.symbol}" }
-                        variables[node] = variableNode
-                        for (value in node.values) {
-                            addEdge(edgeToConstraintNode(value), variableNode)
-                        }
-                        if (node.kind == DataFlowIR.VariableKind.CatchParameter)
-                            function.throws.addCastEdge(createCastEdge(variableNode, node.type.resolved()))
+                    return variables.getOrPut(node) {
+                        ordinaryNode { "Variable\$${function.symbol}" }
                     }
-                    return variableNode
                 }
 
                 return functionNodesMap.getOrPut(node) {
