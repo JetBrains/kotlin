@@ -157,7 +157,13 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         {
                             task.devServer = KotlinWebpackConfig.DevServer(
                                 open = true,
-                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath),
+                                client = KotlinWebpackConfig.DevServer.Client(
+                                    KotlinWebpackConfig.DevServer.Client.Overlay(
+                                        errors = true,
+                                        warnings = false
+                                    )
+                                )
                             )
                         },
                         {

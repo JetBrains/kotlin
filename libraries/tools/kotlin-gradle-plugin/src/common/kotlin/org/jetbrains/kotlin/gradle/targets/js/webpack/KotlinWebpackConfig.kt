@@ -169,8 +169,18 @@ data class KotlinWebpackConfig(
         var port: Int? = null,
         var proxy: MutableMap<String, Any>? = null,
         var static: MutableList<String>? = null,
-        var contentBase: MutableList<String>? = null
-    ) : Serializable
+        var contentBase: MutableList<String>? = null,
+        var client: Client? = null
+    ) : Serializable {
+        data class Client(
+            var overlay: Any /* Overlay | Boolean */
+        ) : Serializable {
+            data class Overlay(
+                var errors: Boolean,
+                var warnings: Boolean
+            ) : Serializable
+        }
+    }
 
     fun save(configFile: File) {
         configFile.writer().use {
