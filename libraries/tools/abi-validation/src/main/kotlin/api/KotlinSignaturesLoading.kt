@@ -74,8 +74,10 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
                     val annotationHolders =
                         mVisibility?.members?.get(JvmMethodSignature(it.name, it.desc))?.propertyAnnotation
                     val foundAnnotations = ArrayList<AnnotationNode>()
-                    foundAnnotations += fields.annotationsFor(annotationHolders?.field)
-                    foundAnnotations += methods.annotationsFor(annotationHolders?.method)
+                    if (annotationHolders != null) {
+                        foundAnnotations += fields.annotationsFor(annotationHolders.field)
+                        foundAnnotations += methods.annotationsFor(annotationHolders.method)
+                    }
 
                     /**
                      * For synthetic $default methods, pull the annotations from the corresponding method

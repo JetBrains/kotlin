@@ -54,11 +54,6 @@ fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name
 
 fun ClassNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
     findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun MethodNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
-    findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-fun FieldNode.findAnnotation(annotationName: String, includeInvisible: Boolean = false) =
-    findAnnotation(annotationName, visibleAnnotations, invisibleAnnotations, includeInvisible)
-
 operator fun AnnotationNode.get(key: String): Any? = values.annotationValue(key)
 
 private fun List<Any>.annotationValue(key: String): Any? {
