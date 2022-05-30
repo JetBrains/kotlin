@@ -57,3 +57,11 @@ abstract class VariantImplementationFactories : BuildService<BuildServiceParamet
         fun get(gradle: Gradle): VariantImplementationFactories = getProvider(gradle).get()
     }
 }
+
+internal inline fun <reified T : VariantImplementationFactories.VariantImplementationFactory> Gradle.variantImplementationFactory(): T =
+    VariantImplementationFactories.get(this)[T::class]
+
+internal inline fun <
+        reified T : VariantImplementationFactories.VariantImplementationFactory
+        > Gradle.variantImplementationFactoryProvider(): Provider<T> =
+    VariantImplementationFactories.getProvider(this).map { it[T::class] }

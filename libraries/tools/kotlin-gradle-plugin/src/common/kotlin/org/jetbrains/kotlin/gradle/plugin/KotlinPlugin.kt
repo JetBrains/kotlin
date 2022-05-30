@@ -413,8 +413,8 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
 
-        VariantImplementationFactories
-            .get(project.gradle)[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class]
+        project.gradle
+            .variantImplementationFactory<MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory>()
             .getInstance()
             .applyConfiguration(project, target, shouldRewritePoms)
     }
