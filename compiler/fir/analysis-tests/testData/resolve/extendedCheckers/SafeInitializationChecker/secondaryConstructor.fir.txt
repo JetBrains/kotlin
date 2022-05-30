@@ -1,0 +1,20 @@
+FILE: secondaryConstructor.kt
+    public final class A : R|kotlin/Any| {
+        public final val xx: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public constructor(x: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+            this@R|/A|.R|/A.xx| = R|<local>/x|
+        }
+
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+            this@R|/A|.R|/A.xx| = this@R|/A|.R|/A.foo|()
+        }
+
+        public final fun foo(): <ERROR TYPE REF: Unresolved name: x> {
+            ^foo <Unresolved name: x>#
+        }
+
+    }

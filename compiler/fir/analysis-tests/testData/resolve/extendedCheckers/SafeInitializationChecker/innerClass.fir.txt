@@ -1,4 +1,4 @@
-FILE: InnerClass.kt
+FILE: innerClass.kt
     public final class Outer : R|kotlin/Any| {
         public constructor(): R|Outer| {
             super<R|kotlin/Any|>()

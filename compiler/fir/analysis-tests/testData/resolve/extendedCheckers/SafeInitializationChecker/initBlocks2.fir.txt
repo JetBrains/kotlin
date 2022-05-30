@@ -1,4 +1,4 @@
-FILE: InitBlocks.kt
+FILE: initBlocks2.kt
     public final class Init : R|kotlin/Any| {
         public constructor(b: R|kotlin/Boolean|, w: R|kotlin/Boolean|, init: R|Init|): R|Init| {
             super<R|kotlin/Any|>()
@@ -43,44 +43,6 @@ FILE: InitBlocks.kt
             }
 
             this@R|/Init|.R|/Init.s| = this@R|/Init|.R|/Init.a|
-        }
-
-    }
-    public final class B : R|kotlin/Any| {
-        public constructor(): R|B| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final var b: R|kotlin/String| = String(Hello)
-            public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
-
-        public final var a: R|kotlin/String| = this@R|/B|.R|/B.foo|()
-            public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
-
-        public final fun foo(): R|kotlin/String| {
-            this@R|/B|.R|/B.a| = this@R|/B|.R|/B.b|
-            ^foo this@R|/B|.R|/B.a|.R|kotlin/text/substring|(Int(1))
-        }
-
-    }
-    public final class B1 : R|kotlin/Any| {
-        public constructor(): R|B1| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final var b: R|kotlin/String| = String(Hello)
-            public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
-
-        public final var a: R|kotlin/String|
-            public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
-
-        init {
-            this@R|/B1|.R|/B1.a| = this@R|/B1|.R|/B1.b|
-            this@R|/B1|.R|/B1.a| = this@R|/B1|.R|/B1.a|.R|kotlin/text/substring|(Int(1))
         }
 
     }

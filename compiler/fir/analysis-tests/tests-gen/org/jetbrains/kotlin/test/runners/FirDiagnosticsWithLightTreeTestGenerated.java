@@ -2571,21 +2571,81 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
-                @TestMetadata("InitBlocks.kt")
-                public void testInitBlocks() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/InitBlocks.kt");
+                @TestMetadata("defaultArgument.kt")
+                public void testDefaultArgument() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/defaultArgument.kt");
                 }
 
                 @Test
-                @TestMetadata("InnerClass.kt")
+                @TestMetadata("delegation.kt")
+                public void testDelegation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/delegation.kt");
+                }
+
+                @Test
+                @TestMetadata("extensionReceiver.kt")
+                public void testExtensionReceiver() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/extensionReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("fullConstructionAnalysis1.kt")
+                public void testFullConstructionAnalysis1() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysis1.kt");
+                }
+
+                @Test
+                @TestMetadata("getterAndSetter.kt")
+                public void testGetterAndSetter() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/getterAndSetter.kt");
+                }
+
+                @Test
+                @TestMetadata("initBlock1.kt")
+                public void testInitBlock1() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlock1.kt");
+                }
+
+                @Test
+                @TestMetadata("initBlocks2.kt")
+                public void testInitBlocks2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks2.kt");
+                }
+
+                @Test
+                @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/InnerClass.kt");
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/innerClass.kt");
                 }
 
                 @Test
-                @TestMetadata("SimpleAccessToUninitializedValue.kt")
+                @TestMetadata("lambda1.kt")
+                public void testLambda1() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/lambda1.kt");
+                }
+
+                @Test
+                @TestMetadata("lambda2.kt")
+                public void testLambda2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/lambda2.kt");
+                }
+
+                @Test
+                @TestMetadata("lateinit.kt")
+                public void testLateinit() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/lateinit.kt");
+                }
+
+                @Test
+                @TestMetadata("secondaryConstructor.kt")
+                public void testSecondaryConstructor() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/secondaryConstructor.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleAccessToUninitializedValue.kt")
                 public void testSimpleAccessToUninitializedValue() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/SimpleAccessToUninitializedValue.kt");
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/simpleAccessToUninitializedValue.kt");
                 }
             }
 

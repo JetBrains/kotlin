@@ -1,0 +1,38 @@
+FILE: extensionReceiver.kt
+    public final class Test : R|kotlin/Any| {
+        public constructor(extFun: R|Test.() -> kotlin/String|): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/extFun|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(this@R|/Test|)
+            public get(): R|kotlin/String|
+
+    }
+    public final val kaboom: R|kotlin/String| = R|/Test.Test|(<L> = Test@fun R|Test|.<anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ this@R|special/anonymous|.R|/Test.x|
+    }
+    ).R|/Test.x|
+        public get(): R|kotlin/String|
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|Outer.Nested|.foo(): R|kotlin/String| {
+            ^foo this@R|/Outer.foo|.R|/Outer.Nested.x|
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(outer: R|Outer|): R|Outer.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/String| = R|kotlin/with|<R|Outer|, R|kotlin/String|>(R|<local>/outer|, <L> = with@fun R|Outer|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ (this@R|special/anonymous|, this@R|/Outer.Nested|).R|/Outer.foo|()
+            }
+            )
+                public get(): R|kotlin/String|
+
+        }
+
+    }

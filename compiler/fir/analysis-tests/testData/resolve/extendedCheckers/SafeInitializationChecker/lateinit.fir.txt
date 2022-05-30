@@ -1,0 +1,35 @@
+FILE: lateinit.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(bool: R|kotlin/Boolean|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final lateinit var a: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final var b: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final fun foo(aa: R|A|): R|kotlin/Unit| {
+            this@R|/A|.R|/A.a|
+        }
+
+        init {
+            when () {
+                R|<local>/bool| ->  {
+                    this@R|/A|.R|/A.a| = String(  )
+                    this@R|/A|.R|/A.b| = this@R|/A|.R|/A.a|
+                }
+                else ->  {
+                    this@R|/A|.R|/A.b| = String()
+                }
+            }
+
+            this@R|/A|.R|/A.foo|(this@R|/A|)
+            this@R|/A|.R|/A.a| = this@R|/A|.R|/A.b|
+            this@R|/A|.R|/A.foo|(this@R|/A|)
+        }
+
+    }

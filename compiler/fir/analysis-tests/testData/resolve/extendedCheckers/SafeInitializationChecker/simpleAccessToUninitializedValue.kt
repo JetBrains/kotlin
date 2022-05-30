@@ -1,8 +1,8 @@
 // WITH_STDLIB
 
-class Small {
-    fun foo() = b.substring(1)
+class A {
     <!ACCESS_TO_UNINITIALIZED_VALUE!>val b: String = foo()<!>
+    fun foo() = b.substring(1)
 }
 
 class B(bb: B) {
@@ -12,6 +12,15 @@ class B(bb: B) {
     <!ACCESS_TO_UNINITIALIZED_VALUE, ACCESS_TO_UNINITIALIZED_VALUE!>val d = foo(<!VALUE_CANNOT_BE_PROMOTED!>this<!>)<!>
     val c = foo(bb)
     val hello = Hello()
+}
+
+class C {
+    <!ACCESS_TO_UNINITIALIZED_VALUE!>var a = foo()<!>
+
+    fun foo(): String {
+        a = "Hello"
+        return a.substring(1)
+    }
 }
 
 class Hello {

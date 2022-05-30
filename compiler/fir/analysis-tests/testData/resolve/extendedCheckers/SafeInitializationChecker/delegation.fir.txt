@@ -1,0 +1,21 @@
+FILE: delegation.kt
+    public final class Hello : R|kotlin/Any| {
+        public constructor(): R|Hello| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val message: R|kotlin/String|by <Unresolved name: lazy>#(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ this@R|/Hello|.R|/Hello.name|
+        }
+        )
+            public get(): R|kotlin/String| {
+                ^ this@R|/Hello|.D|/Hello.message|.<Unresolved name: getValue>#(this@R|/Hello|, ::R|/Hello.message|)
+            }
+
+        public final val len: R|kotlin/Int| = this@R|/Hello|.R|/Hello.message|.R|kotlin/String.length|
+            public get(): R|kotlin/Int|
+
+        public final val name: R|kotlin/String| = String(Alice)
+            public get(): R|kotlin/String|
+
+    }
