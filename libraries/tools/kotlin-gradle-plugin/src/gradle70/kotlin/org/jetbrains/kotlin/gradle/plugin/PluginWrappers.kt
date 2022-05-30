@@ -44,10 +44,12 @@ open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginW
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 }
 
+@Suppress("unused")
 open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 }
 
+@Suppress("unused")
 open class KotlinPm20PluginWrapper @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinPm20PluginWrapper(objectFactory) {
