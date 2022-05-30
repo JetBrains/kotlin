@@ -54,6 +54,7 @@ class KtFe10AnalysisSession(
     override val jvmTypeMapperImpl: KtJvmTypeMapper = KtFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KtSymbolInfoProvider = KtFe10SymbolInfoProvider(this)
     override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
+    override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFe10ReferenceResolveProvider(this)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         return KtFe10AnalysisSession(elementToReanalyze, token)

@@ -139,6 +139,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val analysisScopeProvider: KtAnalysisScopeProvider get() = analysisScopeProviderImpl
     protected abstract val analysisScopeProviderImpl: KtAnalysisScopeProvider
 
+    internal val referenceResolveProvider: KtReferenceResolveProvider get() = referenceResolveProviderImpl
+    protected abstract val referenceResolveProviderImpl: KtReferenceResolveProvider
+
     @PublishedApi
     internal val typesCreator: KtTypeCreator
         get() = typesCreatorImpl

@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
 public interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
     public fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
-        return analysisSession.resolveToSymbols()
+        return analysisSession.referenceResolveProvider.resolveToSymbols(this)
     }
 
     public fun KtReference.resolveToSymbol(): KtSymbol? {
-        check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
         return resolveToSymbols().singleOrNull()
     }
 }

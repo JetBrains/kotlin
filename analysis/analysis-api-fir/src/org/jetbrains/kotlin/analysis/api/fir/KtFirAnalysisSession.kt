@@ -97,6 +97,8 @@ private constructor(
 
     override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
 
+    override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFirReferenceResolveProvider(this)
+
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
             "Cannot create context-dependent copy of KtAnalysis session from a context dependent one"
