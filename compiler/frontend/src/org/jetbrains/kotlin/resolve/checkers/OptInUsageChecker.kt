@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
@@ -96,6 +97,15 @@ class OptInUsageChecker(project: Project) : CallChecker {
                 )
                 return
             }
+        }
+        if (resultingDescriptor is SamConstructorDescriptor) {
+            // KT-47708 special case (warning only)
+            val methodDescriptor = resultingDescriptor.getSingleAbstractMethod()
+            val samOptIns = methodDescriptor.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
+                .map { (fqName, _, message) ->
+                    OptInDescription(fqName, OptInDescription.Severity.WARNING, message)
+                }
+            reportNotAllowedOptIns(samOptIns, reportOn, context)
         }
         reportNotAllowedOptIns(optIns, reportOn, context)
     }
