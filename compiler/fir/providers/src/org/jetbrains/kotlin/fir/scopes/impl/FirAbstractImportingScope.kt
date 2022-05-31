@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -67,7 +66,6 @@ abstract class FirAbstractImportingScope(
                 staticsScope.processFunctionsByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, importedName)) {
-                    symbol.ensureResolvedForCalls()
                     processor(symbol)
                 }
             }
@@ -83,7 +81,6 @@ abstract class FirAbstractImportingScope(
                 staticsScope.processPropertiesByName(importedName, processor)
             } else if (importedName.isSpecial || importedName.identifier.isNotEmpty()) {
                 for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, importedName)) {
-                    symbol.ensureResolvedForCalls()
                     processor(symbol)
                 }
             }
