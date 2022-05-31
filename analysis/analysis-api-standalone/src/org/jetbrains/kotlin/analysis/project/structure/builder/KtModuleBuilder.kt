@@ -12,9 +12,21 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 
 @KtModuleBuilderDsl
 public abstract class KtModuleBuilder {
-    public val directRegularDependencies: MutableList<KtModule> = mutableListOf()
-    public val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
-    public val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+    protected val directRegularDependencies: MutableList<KtModule> = mutableListOf()
+    protected val directRefinementDependencies: MutableList<KtModule> = mutableListOf()
+    protected val directFriendDependencies: MutableList<KtModule> = mutableListOf()
+
+    public fun addRegularDependency(module: KtModule) {
+        directRegularDependencies.add(module)
+    }
+
+    public fun addRefinementDependency(module: KtModule) {
+        directRefinementDependencies.add(module)
+    }
+
+    public fun addFriendDependency(module: KtModule) {
+        directFriendDependencies.add(module)
+    }
 
     public lateinit var contentScope: GlobalSearchScope
     public lateinit var platform: TargetPlatform
