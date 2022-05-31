@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeLldbTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -49,6 +50,16 @@ fun main() {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
+
+        // LLDB tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeLldbTest>(
+                suiteTestClassName = "LldbTestGenerated",
+                annotations = listOf(lldb(), provider<UseStandardTestCaseGroupProvider>())
+            ) {
+                model("lldb")
+            }
+        }
     }
 }
 
@@ -56,3 +67,4 @@ private inline fun <reified T : Annotation> provider() = annotation(T::class.jav
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun lldb() = annotation(Tag::class.java, "lldb")

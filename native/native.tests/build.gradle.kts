@@ -176,6 +176,7 @@ val codegenBoxTest = nativeTest("codegenBoxTest", "codegen")
 val stdlibTest = nativeTest("stdlibTest", "stdlib")
 val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test")
 val klibAbiTest = nativeTest("klibAbiTest", "klib-abi")
+val lldbTest = nativeTest("lldbTest", "lldb")
 
 // "test" task is created by convention. We can't just remove it. Let's enable it in developer's environment, so it can be used
 // to run any test from IDE or from console, but disable it at TeamCity where it is not supposed to be ever used.

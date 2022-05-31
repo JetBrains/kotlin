@@ -1,0 +1,70 @@
+(lldb) target create "/var/folders/j0/2q36q665127114x12tvx51_400z0j0/T/native.testsProject_lldbTest_13833305828383714875/debugger_test4917458458450532908/program.kexe"
+Current executable set to '/var/folders/j0/2q36q665127114x12tvx51_400z0j0/T/native.testsProject_lldbTest_13833305828383714875/debugger_test4917458458450532908/program.kexe' (arm64).
+(lldb) command script import "/Users/troels/kotlin/kotlin-native/dist/tools/konan_lldb.py"
+(lldb) b kt42208-2.kt:5
+Breakpoint 1: where = program.kexe`kfun:main$lambda-0#internal + 100 at kt42208-2.kt:5:5, address = 0x0000000100050f24
+(lldb) r
+Process 61456 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+   2   	class A
+   3   	val list = mutableListOf<A>()
+   4   	inline fun foo() = { ->
+-> 5   	    list.add(A())
+    	    ^
+   6   	}
+Target 0: (program.kexe) stopped.
+Process 61456 launched: '/var/folders/j0/2q36q665127114x12tvx51_400z0j0/T/native.testsProject_lldbTest_13833305828383714875/debugger_test4917458458450532908/program.kexe' (arm64)
+(lldb) bt
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+  * frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+    frame #1: 0x0000000100051050 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.invoke#internal(_this=[]) at kt42208-1.kt:2:5
+    frame #2: 0x00000001000510c0 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+    frame #3: 0x0000000100050d28 program.kexe`kfun:#main(){} at kt42208-1.kt:3:5
+    frame #4: 0x0000000100051178 program.kexe`Konan_start(args=[]) at kt42208-1.kt:1:1
+    frame #5: 0x00000001000979f0 program.kexe`Init_and_run_start + 108
+    frame #6: 0x00000001001c108c dyld`start + 520
+(lldb) c
+Process 61456 resuming
+Process 61456 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+   2   	class A
+   3   	val list = mutableListOf<A>()
+   4   	inline fun foo() = { ->
+-> 5   	    list.add(A())
+    	    ^
+   6   	}
+Target 0: (program.kexe) stopped.
+(lldb) bt
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+  * frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+    frame #1: 0x0000000100051050 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.invoke#internal(_this=[]) at kt42208-1.kt:2:5
+    frame #2: 0x00000001000510c0 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+    frame #3: 0x0000000100050d7c program.kexe`kfun:#main(){} at kt42208-1.kt:4:5
+    frame #4: 0x0000000100051178 program.kexe`Konan_start(args=[]) at kt42208-1.kt:1:1
+    frame #5: 0x00000001000979f0 program.kexe`Init_and_run_start + 108
+    frame #6: 0x00000001001c108c dyld`start + 520
+(lldb) c
+Process 61456 resuming
+Process 61456 stopped
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+   2   	class A
+   3   	val list = mutableListOf<A>()
+   4   	inline fun foo() = { ->
+-> 5   	    list.add(A())
+    	    ^
+   6   	}
+Target 0: (program.kexe) stopped.
+(lldb) bt
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+  * frame #0: 0x0000000100050f24 program.kexe`kfun:main$lambda-0#internal at kt42208-2.kt:5:5
+    frame #1: 0x0000000100051050 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.invoke#internal(_this=[]) at kt42208-1.kt:2:5
+    frame #2: 0x00000001000510c0 program.kexe`kfun:$main$lambda-0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[]){}kotlin.Boolean#internal at kt42208-1.kt:2:5
+    frame #3: 0x0000000100050dd0 program.kexe`kfun:#main(){} at kt42208-1.kt:5:5
+    frame #4: 0x0000000100051178 program.kexe`Konan_start(args=[]) at kt42208-1.kt:1:1
+    frame #5: 0x00000001000979f0 program.kexe`Init_and_run_start + 108
+    frame #6: 0x00000001001c108c dyld`start + 520
+(lldb) q
+
