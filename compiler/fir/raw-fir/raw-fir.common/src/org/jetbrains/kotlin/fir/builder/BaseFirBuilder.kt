@@ -56,6 +56,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     protected val implicitAnyType = baseSession.builtinTypes.anyType
     protected val implicitEnumType = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType = baseSession.builtinTypes.annotationType
+    protected val implicitExternalEnumType = baseSession.builtinTypes.externalEnumType
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String

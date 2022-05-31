@@ -109,6 +109,8 @@ object StandardNames {
 
         @JvmField val _enum: FqNameUnsafe = fqNameUnsafe("Enum")
 
+        @JvmField val _externalEnum: FqNameUnsafe = fqNameUnsafe("ExternalEnum")
+
         @JvmField val functionSupertype: FqNameUnsafe = fqNameUnsafe("Function")
 
         @JvmField val throwable: FqName = fqName("Throwable")

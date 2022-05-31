@@ -523,8 +523,9 @@ class DeclarationsConverter(
                     when {
                         modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
                             delegatedSuperTypeRef = buildResolvedTypeRef {
+                                val superType = if (classSymbol.isExternal) implicitExternalEnumType else implicitEnumType
                                 type = ConeClassLikeTypeImpl(
-                                    implicitEnumType.type.lookupTag,
+                                    superType.type.lookupTag,
                                     arrayOf(selfType.type),
                                     isNullable = false
                                 )

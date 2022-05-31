@@ -1,0 +1,19 @@
+package
+
+public fun main(): kotlin.Unit
+public fun manipulateWithEnum(/*0*/ x: kotlin.Enum<*>): kotlin.Int
+
+public final external enum class Foo : kotlin.ExternalEnum {
+    enum entry A
+
+    enum entry B
+
+    private constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo
+    public final /*synthesized*/ fun values(): kotlin.Array<Foo>
+}

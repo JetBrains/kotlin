@@ -942,6 +942,28 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeEnum")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NativeEnum {
+            @Test
+            public void testAllFilesPresentInNativeEnum() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeEnum"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("nativeEnumMethods.kt")
+            public void testNativeEnumMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeEnum/nativeEnumMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("nativeEnumMethodsWithExtendsEnum.kt")
+            public void testNativeEnumMethodsWithExtendsEnum() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeEnum/nativeEnumMethodsWithExtendsEnum.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter")
         @TestDataPath("$PROJECT_ROOT")
         public class NativeGetter {

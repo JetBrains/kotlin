@@ -68,6 +68,10 @@ class FirImplicitEnumTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Enum)
 
+class FirImplicitExternalEnumTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ExternalEnum)
+
 class FirImplicitAnnotationTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Annotation)
@@ -184,6 +188,7 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)
         is FirImplicitNullableAnyTypeRef -> FirImplicitNullableAnyTypeRef(newSource)
         is FirImplicitEnumTypeRef -> FirImplicitEnumTypeRef(newSource)
+        is FirImplicitExternalEnumTypeRef -> FirImplicitExternalEnumTypeRef(newSource)
         is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
         is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
         is FirImplicitByteTypeRef -> FirImplicitByteTypeRef(newSource)

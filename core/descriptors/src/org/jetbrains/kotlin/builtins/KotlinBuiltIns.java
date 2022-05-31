@@ -345,6 +345,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getExternalEnum() {
+        return getBuiltInClassByName("ExternalEnum");
+    }
+
+    @NotNull
     public ClassDescriptor getAnnotation() {
         return getBuiltInClassByName("Annotation");
     }
@@ -681,6 +686,11 @@ public abstract class KotlinBuiltIns {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Companion.getEmpty(), getEnum(), types);
+    }
+
+    @NotNull
+    public SimpleType getExternalEnumType() {
+        return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Companion.getEmpty(), getExternalEnum(), Collections.<TypeProjection>emptyList());
     }
 
     @NotNull

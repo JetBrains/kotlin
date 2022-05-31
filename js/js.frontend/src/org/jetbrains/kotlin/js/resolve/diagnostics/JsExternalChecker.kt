@@ -80,7 +80,7 @@ object JsExternalChecker : DeclarationChecker {
         if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ANNOTATION_CLASS) {
             val superClasses = (listOfNotNull(descriptor.getSuperClassNotAny()) + descriptor.getSuperInterfaces()).toMutableSet()
             if (descriptor.kind == ClassKind.ENUM_CLASS || descriptor.kind == ClassKind.ENUM_ENTRY) {
-                superClasses.removeAll { it.fqNameUnsafe == StandardNames.FqNames._enum }
+                superClasses.removeAll { it.fqNameUnsafe == StandardNames.FqNames._enum || it.fqNameUnsafe == StandardNames.FqNames._externalEnum }
             }
             if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != StandardNames.FqNames.throwable }) {
                 trace.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))

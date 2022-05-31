@@ -160,7 +160,9 @@ public class DescriptorResolver {
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
-            supertypes.add(0, builtIns.getEnumType(classDescriptor.getDefaultType()));
+            SimpleType defaultType = classDescriptor.getDefaultType();
+            SimpleType baseType = classDescriptor.isExternal() ? builtIns.getExternalEnumType() : builtIns.getEnumType(defaultType);
+            supertypes.add(0, baseType);
         }
 
         syntheticResolveExtension.addSyntheticSupertypes(classDescriptor, supertypes);
