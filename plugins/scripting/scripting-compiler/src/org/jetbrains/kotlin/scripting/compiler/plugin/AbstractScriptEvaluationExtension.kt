@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -133,8 +134,21 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         @Suppress("DEPRECATION_ERROR")
         return internalScriptingRunSuspend {
             val compiledScript = scriptCompiler.compile(script, scriptCompilationConfiguration).valueOr {
+                val lines = if (it.reports.isEmpty()) null else script.text.lines()
                 for (report in it.reports) {
-                    messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                    val location = report.location
+                    val sourcePath = report.sourcePath
+                    messageCollector.report(
+                        report.severity.toCompilerMessageSeverity(),
+                        report.render(withSeverity = false, withLocation = location == null || sourcePath == null),
+                        if (location != null && sourcePath != null) {
+                            CompilerMessageLocation.create(
+                                sourcePath,
+                                location.start.line, location.start.col,
+                                lines?.getOrNull(location.start.line - 1)
+                            )
+                        } else null
+                    )
                 }
                 return@internalScriptingRunSuspend ExitCode.COMPILATION_ERROR
             }

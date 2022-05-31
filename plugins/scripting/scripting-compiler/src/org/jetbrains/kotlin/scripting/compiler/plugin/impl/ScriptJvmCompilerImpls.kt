@@ -61,9 +61,8 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript> {
-        val parentMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
-        return withMessageCollector(script = script, parentMessageCollector = parentMessageCollector) { messageCollector ->
+    ): ResultWithDiagnostics<CompiledScript> =
+        withMessageCollector(script = script) { messageCollector ->
             withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
 
                 val initialConfiguration = scriptCompilationConfiguration.refineBeforeParsing(script).valueOr {
@@ -72,17 +71,17 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
 
                 val context = createCompilationContextFromEnvironment(initialConfiguration, environment, messageCollector)
 
+                val previousMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
                 try {
                     environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
                     compileImpl(script, context, initialConfiguration, messageCollector)
                 } finally {
-                    if (parentMessageCollector != null)
-                        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, parentMessageCollector)
+                    if (previousMessageCollector != null)
+                        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, previousMessageCollector)
                 }
             }
         }
-    }
 }
 
 private fun withScriptCompilationCache(
