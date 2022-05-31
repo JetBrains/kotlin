@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.checkRepeatedAnnotation
@@ -29,7 +30,8 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
         // See KT-33658 about annotations on non-expression statements
         if (expression is FirDeclaration ||
             expression !is FirExpression ||
-            expression is FirBlock && expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+            expression is FirBlock && (expression.source?.kind == KtRealSourceElementKind ||
+                    expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop)
         ) return
 
         val annotations = expression.annotations

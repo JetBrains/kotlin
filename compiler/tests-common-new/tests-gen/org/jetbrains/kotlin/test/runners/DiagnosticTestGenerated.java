@@ -997,6 +997,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("AnnotatedBlock.kt")
+            public void testAnnotatedBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedBlock.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotatedConstructor.kt")
             public void testAnnotatedConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructor.kt");
