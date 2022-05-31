@@ -262,19 +262,18 @@ abstract class AbstractKapt3Extension(
     ): KaptContextForStubGeneration {
         val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
 
+        val configuration = compilerConfiguration.copy().apply {
+            put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+        }
+
         val targetId = TargetId(
-            name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
+            name = configuration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
             type = "java-production"
         )
 
-        val isIrBackend = compilerConfiguration.getBoolean(JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR)
-        val generationState = GenerationState.Builder(
-            project,
-            builderFactory,
-            module,
-            bindingContext,
-            compilerConfiguration
-        ).targetId(targetId)
+        val isIrBackend = options.flags[KaptFlag.USE_JVM_IR]
+        val generationState = GenerationState.Builder(project, builderFactory, module, bindingContext, configuration)
+            .targetId(targetId)
             .isIrBackend(isIrBackend)
             .build()
 
@@ -283,7 +282,7 @@ abstract class AbstractKapt3Extension(
                 files,
                 generationState,
                 if (isIrBackend)
-                    JvmIrCodegenFactory(compilerConfiguration, compilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG))
+                    JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
                 else DefaultCodegenFactory
             )
         }

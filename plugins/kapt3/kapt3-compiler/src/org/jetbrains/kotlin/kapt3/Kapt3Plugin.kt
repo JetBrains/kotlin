@@ -127,6 +127,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             STRICT_MODE_OPTION -> setFlag(KaptFlag.STRICT, value)
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
             KEEP_KDOC_COMMENTS_IN_STUBS -> setFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, value)
+            USE_JVM_IR -> setFlag(KaptFlag.USE_JVM_IR, value)
+
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)
             DUMP_PROCESSOR_STATS -> processorsStatsReportFile = File(value)
             INCLUDE_COMPILE_CLASSPATH -> setFlag(KaptFlag.INCLUDE_COMPILE_CLASSPATH, value)

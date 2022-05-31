@@ -10,7 +10,6 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-// For now, just run one simple test to make sure Kapt launches at all with IR switched on.
 class IrKotlinKapt3IntegrationTests : AbstractIrKotlinKapt3IntegrationTest(), CustomJdkTestLauncher {
     override fun test(
         name: String,

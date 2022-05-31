@@ -85,11 +85,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> IR =
             CompilerConfigurationKey.create("IR");
 
-    // Temporary option to make it possible to test kapt with JVM IR. As soon as all tests start to pass, it can be removed,
-    // and the backend (old or IR) will be deduced from the compiler arguments provided by the user.
-    public static final CompilerConfigurationKey<Boolean> USE_KAPT_WITH_JVM_IR =
-            CompilerConfigurationKey.create("Enable JVM IR for kapt");
-
     public static final CompilerConfigurationKey<Boolean> USE_PSI_CLASS_FILES_READING =
             CompilerConfigurationKey.create("use a slower (PSI-based) class files reading implementation");
 

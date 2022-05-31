@@ -176,7 +176,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
                 .trimTrailingWhitespacesAndAddNewlineAtEOF()
                 .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
 
-            KotlinTestUtils.assertEqualsToFile(txtFile, actual)
+            checkTxtAccordingToBackend(txtFile, actual)
         } finally {
             options.sourcesOutputDir.deleteRecursively()
             options.incrementalDataOutputDir?.deleteRecursively()

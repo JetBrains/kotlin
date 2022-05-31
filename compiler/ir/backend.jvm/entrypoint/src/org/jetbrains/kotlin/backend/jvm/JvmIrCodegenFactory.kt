@@ -203,10 +203,7 @@ open class JvmIrCodegenFactory(
         // We need to compile all files we reference in Klibs
         irModuleFragment.files.addAll(dependencies.flatMap { it.files })
 
-        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && !input.configuration.getBoolean(
-                JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR
-            )
-        ) {
+        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
             val originalBindingContext = input.bindingContext as? CleanableBindingContext
                 ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${input.bindingContext}")
             originalBindingContext.clear()

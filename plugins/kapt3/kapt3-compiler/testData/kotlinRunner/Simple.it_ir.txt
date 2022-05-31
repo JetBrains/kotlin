@@ -1,0 +1,73 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+/**
+ * KDoc comment.
+ */
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
+public final class Simple {
+
+    public Simple() {
+        super();
+    }
+
+    @MyAnnotation()
+    public final void myMethod() {
+    }
+
+    public final int heavyMethod() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum EnumClass {
+    /*public static final*/ BLACK /* = new BLACK() */,
+    /*public static final*/ WHITE /* = new WHITE() */;
+
+    EnumClass() {
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MyAnnotation {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum EnumClass2 {
+    /*public static final*/ WHITE /* = new WHITE(null) */,
+    /*public static final*/ RED /* = new RED(null) */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String blah = null;
+
+    EnumClass2(java.lang.String blah) {
+    }
+}

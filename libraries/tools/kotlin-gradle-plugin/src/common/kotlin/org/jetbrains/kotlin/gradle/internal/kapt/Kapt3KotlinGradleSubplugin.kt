@@ -24,6 +24,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isInfoAsWarnings
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptKeepKdocCommentsInStubs
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptVerbose
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseJvmIr
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
@@ -117,6 +118,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun Project.isKaptKeepKdocCommentsInStubs(): Boolean {
             return getBooleanOptionValue(BooleanOption.KAPT_KEEP_KDOC_COMMENTS_IN_STUBS)
+        }
+
+        fun Project.isUseJvmIr(): Boolean {
+            return getBooleanOptionValue(BooleanOption.KAPT_USE_JVM_IR)
         }
 
         fun Project.classLoadersCacheSize(): Int = findPropertySafe(CLASSLOADERS_CACHE_SIZE)?.toString()?.toInt() ?: 0
@@ -219,7 +224,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             ),
             KAPT_INFO_AS_WARNINGS("kapt.info.as.warnings", false),
             KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
-            KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true)
+            KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true),
+            KAPT_USE_JVM_IR("kapt.use.jvm.ir", false),
         }
     }
 
@@ -573,6 +579,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${project.isKaptKeepKdocCommentsInStubs()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
+    pluginOptions += SubpluginOption("useJvmIr", "${project.isUseJvmIr()}")
     pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 

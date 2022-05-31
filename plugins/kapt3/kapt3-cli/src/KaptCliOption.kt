@@ -207,6 +207,13 @@ enum class KaptCliOption(
         "Keep KDoc comments in stubs"
     ),
 
+    USE_JVM_IR(
+        "useJvmIr",
+        "true | false",
+        "Use JVM IR backend",
+        cliToolOption = CliToolOption("-Kapt-use-jvm-ir", FLAG)
+    ),
+
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",

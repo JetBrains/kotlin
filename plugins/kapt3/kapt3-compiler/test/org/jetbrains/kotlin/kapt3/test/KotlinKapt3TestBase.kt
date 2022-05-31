@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.kapt3.test
 
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -48,6 +51,27 @@ abstract class KotlinKapt3TestBase : CodegenTestCase() {
         return KtTestUtil.tmpDir(name).also(directoriesToCleanup::add)
     }
 
+    protected fun checkTxtAccordingToBackend(txtFile: File, actual: String) {
+        val irTxtFile = File(txtFile.parentFile, txtFile.nameWithoutExtension + "_ir.txt")
+        val expectedFile =
+            if (backend.isIR && irTxtFile.exists()) irTxtFile
+            else txtFile
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+
+        if (backend.isIR && txtFile.exists() && irTxtFile.exists() && txtFile.readText() == irTxtFile.readText()) {
+            fail("JVM and JVM_IR golden files are identical. Remove $irTxtFile.")
+        }
+    }
+
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
+
+        if (backend.isIR) {
+            configuration.put(JVMConfigurationKeys.IR, true)
+            configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+        }
+    }
+
     override fun doTest(filePath: String) {
         val testFile = File(filePath)
 
@@ -56,6 +80,10 @@ abstract class KotlinKapt3TestBase : CodegenTestCase() {
         addOrRemoveFlag(KaptFlag.CORRECT_ERROR_TYPES, testFile)
         addOrRemoveFlag(KaptFlag.STRICT, testFile)
         addOrRemoveFlag(KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES, testFile)
+
+        if (backend.isIR) {
+            kaptFlagsToAdd.add(KaptFlag.USE_JVM_IR)
+        }
 
         super.doTest(filePath)
     }

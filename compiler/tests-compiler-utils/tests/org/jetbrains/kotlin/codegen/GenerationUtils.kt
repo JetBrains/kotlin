@@ -187,8 +187,7 @@ object GenerationUtils {
         configureGenerationState: GenerationState.Builder.() -> Unit = {},
     ): GenerationState {
         val isIrBackend =
-            (classBuilderFactory.classBuilderMode == ClassBuilderMode.FULL && configuration.getBoolean(JVMConfigurationKeys.IR)) ||
-                    configuration.getBoolean(JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR)
+            configuration.getBoolean(JVMConfigurationKeys.IR)
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             configuration
