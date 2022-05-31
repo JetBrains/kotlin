@@ -149,7 +149,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
             return if (File(gradle.gradleUserHomeDir, DISABLE_STATISTICS_FILE_NAME).exists()) {
                 false
             } else {
-                gradle.rootProject.properties[ENABLE_STATISTICS_PROPERTY_NAME]?.toString()?.toBoolean() ?: DEFAULT_STATISTICS_STATE
+                gradle.rootProject.findProperty(ENABLE_STATISTICS_PROPERTY_NAME)?.toString()?.toBoolean() ?: DEFAULT_STATISTICS_STATE
             }
         }
     }
