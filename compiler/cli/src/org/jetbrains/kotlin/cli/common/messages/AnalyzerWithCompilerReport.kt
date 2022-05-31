@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
 class AnalyzerWithCompilerReport(
@@ -114,7 +114,7 @@ class AnalyzerWithCompilerReport(
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
         if (!analysisResult.isError()) {
-            ExperimentalUsageChecker.checkCompilerArguments(
+            OptInUsageChecker.checkCompilerArguments(
                 analysisResult.moduleDescriptor, languageVersionSettings,
                 reportError = { message -> messageCollector.report(ERROR, message) },
                 reportWarning = { message -> messageCollector.report(WARNING, message) }

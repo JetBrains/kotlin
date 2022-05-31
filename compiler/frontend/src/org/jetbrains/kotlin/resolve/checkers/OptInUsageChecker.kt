@@ -59,45 +59,45 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ExperimentalUsageChecker(project: Project) : CallChecker {
+class OptInUsageChecker(project: Project) : CallChecker {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
-    interface ExperimentalityDiagnostic {
+    interface OptInDiagnosticReporter {
         fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
     }
 
-    class ExperimentalityDiagnostic2(
+    class OptInFactoryBasedReporter(
         val factory: DiagnosticFactory2<PsiElement, FqName, String>,
         val defaultMessage: (FqName) -> String
-    ) : ExperimentalityDiagnostic {
+    ) : OptInDiagnosticReporter {
         override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
             trace.reportDiagnosticOnce(factory.on(element, fqName, message?.takeIf { it.isNotBlank() } ?: defaultMessage(fqName)))
         }
     }
 
-    data class ExperimentalityDiagnostics(
-        val warning: ExperimentalityDiagnostic,
-        val error: ExperimentalityDiagnostic,
-        val futureError: ExperimentalityDiagnostic
+    data class OptInReporterMultiplexer(
+        val warning: OptInDiagnosticReporter,
+        val error: OptInDiagnosticReporter,
+        val futureError: OptInDiagnosticReporter
     )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val resultingDescriptor = resolvedCall.resultingDescriptor
-        val experimentalities = resultingDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
+        val optIns = resultingDescriptor.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
         if (resultingDescriptor is FunctionDescriptor &&
             resultingDescriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         ) {
             val propertyDescriptor = resultingDescriptor.findRelevantDataClassPropertyIfAny(context)
             if (propertyDescriptor != null) {
-                reportNotAcceptedExperimentalities(
-                    experimentalities + propertyDescriptor.loadExperimentalities(
+                reportNotAllowedOptIns(
+                    optIns + propertyDescriptor.loadOptIns(
                         moduleAnnotationsResolver, context.languageVersionSettings
                     ), reportOn, context
                 )
                 return
             }
         }
-        reportNotAcceptedExperimentalities(experimentalities, reportOn, context)
+        reportNotAllowedOptIns(optIns, reportOn, context)
     }
 
     private fun FunctionDescriptor.findRelevantDataClassPropertyIfAny(context: CallCheckerContext): PropertyDescriptor? {
@@ -122,61 +122,61 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             OptInNames.buildDefaultDiagnosticMessage(prefix, fqName.asString())
         }
 
-        private val USAGE_DIAGNOSTICS = ExperimentalityDiagnostics(
-            warning = ExperimentalityDiagnostic2(
+        private val USAGE_DIAGNOSTICS = OptInReporterMultiplexer(
+            warning = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE,
                 getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("should"))
             ),
-            error = ExperimentalityDiagnostic2(
+            error = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE_ERROR,
                 getDefaultDiagnosticMessage(OptInNames.buildMessagePrefix("must"))
             ),
-            futureError = ExperimentalityDiagnostic2(
+            futureError = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE_FUTURE_ERROR,
                 getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in 1.6)")
             ),
         )
 
-        fun reportNotAcceptedExperimentalities(
-            experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
+        fun reportNotAllowedOptIns(
+            descriptions: Collection<OptInDescription>, element: PsiElement, context: CheckerContext
         ) {
-            reportNotAcceptedExperimentalities(
-                experimentalities, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS
+            reportNotAllowedOptIns(
+                descriptions, element, context.languageVersionSettings, context.trace, USAGE_DIAGNOSTICS
             )
         }
 
-        fun reportNotAcceptedExperimentalities(
-            experimentalities: Collection<Experimentality>,
+        fun reportNotAllowedOptIns(
+            descriptions: Collection<OptInDescription>,
             element: PsiElement,
             languageVersionSettings: LanguageVersionSettings,
             trace: BindingTrace,
-            diagnostics: ExperimentalityDiagnostics
+            diagnostics: OptInReporterMultiplexer
         ) {
-            for ((annotationFqName, severity, message) in experimentalities) {
-                if (!element.isExperimentalityAccepted(annotationFqName, languageVersionSettings, trace.bindingContext)) {
+            for ((annotationFqName, severity, message) in descriptions) {
+                if (!element.isOptInAllowed(annotationFqName, languageVersionSettings, trace.bindingContext)) {
                     val diagnostic = when (severity) {
-                        Experimentality.Severity.WARNING -> diagnostics.warning
-                        Experimentality.Severity.ERROR -> diagnostics.error
-                        Experimentality.Severity.FUTURE_ERROR -> diagnostics.futureError
+                        OptInDescription.Severity.WARNING -> diagnostics.warning
+                        OptInDescription.Severity.ERROR -> diagnostics.error
+                        OptInDescription.Severity.FUTURE_ERROR -> diagnostics.futureError
                     }
                     diagnostic.report(trace, element, annotationFqName, message)
                 }
             }
         }
 
-        fun DeclarationDescriptor.loadExperimentalities(
+        fun DeclarationDescriptor.loadOptIns(
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             languageVersionSettings: LanguageVersionSettings,
             visited: MutableSet<DeclarationDescriptor> = mutableSetOf(),
             useFutureError: Boolean = false,
             useMarkersFromContainer: Boolean = true,
-        ): Set<Experimentality> {
+        ): Set<OptInDescription> {
             if (!visited.add(this)) return emptySet()
-            val result = SmartSet.create<Experimentality>()
+            val result = SmartSet.create<OptInDescription>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
                     result.addAll(
-                        overridden.loadExperimentalities(
+                        overridden.loadOptIns(
                             moduleAnnotationsResolver,
                             languageVersionSettings,
                             visited,
@@ -187,7 +187,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     if (useMarkersFromContainer) {
                         (containingDeclaration as? ClassDescriptor)?.let {
                             result.addAll(
-                                it.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError)
+                                it.loadOptIns(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError)
                             )
                         }
                     }
@@ -196,22 +196,22 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             for (annotation in annotations) {
-                result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation(useFutureError))
+                result.addIfNotNull(annotation.annotationClass?.loadOptInForMarkerAnnotation(useFutureError))
             }
 
             if (this is CallableDescriptor && this !is ClassConstructorDescriptor) {
                 result.addAll(
-                    returnType.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited)
+                    returnType.loadOptIns(moduleAnnotationsResolver, languageVersionSettings, visited)
                 )
                 result.addAll(
-                    extensionReceiverParameter?.type.loadExperimentalities(
+                    extensionReceiverParameter?.type.loadOptIns(
                         moduleAnnotationsResolver, languageVersionSettings, visited
                     )
                 )
                 if (this is FunctionDescriptor) {
                     valueParameters.forEach {
                         result.addAll(
-                            it.type.loadExperimentalities(
+                            it.type.loadOptIns(
                                 moduleAnnotationsResolver, languageVersionSettings, visited
                             )
                         )
@@ -220,76 +220,76 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             if (this is TypeAliasDescriptor) {
-                result.addAll(expandedType.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited))
+                result.addAll(expandedType.loadOptIns(moduleAnnotationsResolver, languageVersionSettings, visited))
             }
 
             if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
                 val accessibility = checkSinceKotlinVersionAccessibility(languageVersionSettings)
                 if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadExperimentalityForMarkerAnnotation() })
+                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadOptInForMarkerAnnotation() })
                 }
             }
 
             val container = containingDeclaration
             if (useMarkersFromContainer && container is ClassDescriptor && this !is ConstructorDescriptor) {
-                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
+                result.addAll(container.loadOptIns(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
             }
 
             return result
         }
 
-        private fun KotlinType?.loadExperimentalities(
+        private fun KotlinType?.loadOptIns(
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             languageVersionSettings: LanguageVersionSettings,
             visitedClassifiers: MutableSet<DeclarationDescriptor>
-        ): Set<Experimentality> =
+        ): Set<OptInDescription> =
             when {
                 this?.isError != false -> emptySet()
-                this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadExperimentalities(
+                this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers,
                     useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
-                ).orEmpty() + expandedType.loadExperimentalities(
+                ).orEmpty() + expandedType.loadOptIns(
                     moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers
                 )
-                else -> constructor.declarationDescriptor?.loadExperimentalities(
+                else -> constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers,
                     useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + arguments.flatMap {
                     if (it.isStarProjection) emptySet()
-                    else it.type.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers)
+                    else it.type.loadOptIns(moduleAnnotationsResolver, languageVersionSettings, visitedClassifiers)
                 }
             }
 
-        internal fun ClassDescriptor.loadExperimentalityForMarkerAnnotation(useFutureError: Boolean = false): Experimentality? {
-            val experimental =
+        internal fun ClassDescriptor.loadOptInForMarkerAnnotation(useFutureError: Boolean = false): OptInDescription? {
+            val optInAnnotationDescriptor =
                 annotations.findAnnotation(REQUIRES_OPT_IN_FQ_NAME)
                     ?: annotations.findAnnotation(OLD_EXPERIMENTAL_FQ_NAME)
                     ?: return null
 
-            val arguments = experimental.allValueArguments
+            val arguments = optInAnnotationDescriptor.allValueArguments
             val severity = when ((arguments[LEVEL] as? EnumValue)?.enumEntryName) {
-                WARNING_LEVEL -> Experimentality.Severity.WARNING
-                ERROR_LEVEL -> if (useFutureError) Experimentality.Severity.FUTURE_ERROR else Experimentality.Severity.ERROR
-                else -> if (Experimentality.DEFAULT_SEVERITY == Experimentality.Severity.ERROR && useFutureError) {
-                    Experimentality.Severity.FUTURE_ERROR
+                WARNING_LEVEL -> OptInDescription.Severity.WARNING
+                ERROR_LEVEL -> if (useFutureError) OptInDescription.Severity.FUTURE_ERROR else OptInDescription.Severity.ERROR
+                else -> if (OptInDescription.DEFAULT_SEVERITY == OptInDescription.Severity.ERROR && useFutureError) {
+                    OptInDescription.Severity.FUTURE_ERROR
                 } else {
-                    Experimentality.DEFAULT_SEVERITY
+                    OptInDescription.DEFAULT_SEVERITY
                 }
             }
 
             val message = (arguments[MESSAGE] as? StringValue)?.value
 
-            return Experimentality(fqNameSafe, severity, message)
+            return OptInDescription(fqNameSafe, severity, message)
         }
 
-        private fun PsiElement.isExperimentalityAccepted(annotationFqName: FqName, context: CheckerContext): Boolean =
-            isExperimentalityAccepted(annotationFqName, context.languageVersionSettings, context.trace.bindingContext)
+        private fun PsiElement.isOptInAllowed(annotationFqName: FqName, context: CheckerContext): Boolean =
+            isOptInAllowed(annotationFqName, context.languageVersionSettings, context.trace.bindingContext)
 
         /**
          * Checks whether there's an element lexically above in the tree, annotated with `@UseExperimental(X::class)`, or a declaration
          * annotated with `@X` where [annotationFqName] is the FQ name of X
          */
-        fun PsiElement.isExperimentalityAccepted(
+        fun PsiElement.isOptInAllowed(
             annotationFqName: FqName,
             languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext
@@ -340,7 +340,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             // "-opt-in" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
             val deprecationResolver = DeprecationResolver(
-                LockBasedStorageManager("ExperimentalUsageChecker"),
+                LockBasedStorageManager("OptInUsageChecker"),
                 languageVersionSettings,
                 DeprecationSettings.Default
             )
@@ -353,7 +353,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     return false
                 }
 
-                if (descriptor.loadExperimentalityForMarkerAnnotation() == null) {
+                if (descriptor.loadOptInForMarkerAnnotation() == null) {
                     reportWarning("Class $fqName is not an opt-in requirement marker")
                     return false
                 }
@@ -396,7 +396,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 is TypeAliasDescriptor -> targetDescriptor.classDescriptor
                 else -> null
             }
-            if (targetClass != null && targetClass.loadExperimentalityForMarkerAnnotation() != null) {
+            if (targetClass != null && targetClass.loadOptInForMarkerAnnotation() != null) {
                 if (!element.isUsageAsAnnotationOrImport() &&
                     !element.isUsageAsOptInArgument(context.trace.bindingContext)
                 ) {
@@ -407,16 +407,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             if (element.getParentOfType<KtImportDirective>(false) == null) {
-                val experimentalities = mutableSetOf<Experimentality>()
-                experimentalities += targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
+                val descriptions = mutableSetOf<OptInDescription>()
+                descriptions += targetDescriptor.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
                 if (targetDescriptor is TypeAliasDescriptor) {
-                    experimentalities.addAll(
-                        targetDescriptor.expandedType.loadExperimentalities(
+                    descriptions.addAll(
+                        targetDescriptor.expandedType.loadOptIns(
                             moduleAnnotationsResolver, context.languageVersionSettings, mutableSetOf(targetDescriptor)
                         )
                     )
                 }
-                reportNotAcceptedExperimentalities(experimentalities, element, context)
+                reportNotAllowedOptIns(descriptions, element, context)
             }
         }
 
@@ -466,27 +466,27 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
             if (descriptor !is CallableMemberDescriptor) return
 
-            val experimentalOverridden = descriptor.overriddenDescriptors.flatMap { member ->
-                member.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
-                    .map { experimentality -> experimentality to member }
+            val optInOverriddenDescriptorMap = descriptor.overriddenDescriptors.flatMap { overriddenMember ->
+                overriddenMember.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
+                    .map { description -> description to overriddenMember }
             }.toMap()
 
-            for ((experimentality, member) in experimentalOverridden) {
-                if (!declaration.isExperimentalityAccepted(experimentality.annotationFqName, context)) {
+            for ((description, overriddenMember) in optInOverriddenDescriptorMap) {
+                if (!declaration.isOptInAllowed(description.annotationFqName, context)) {
                     val reportOn = (declaration as? KtNamedDeclaration)?.nameIdentifier ?: declaration
 
-                    val (diagnostic, defaultMessageVerb) = when (experimentality.severity) {
-                        Experimentality.Severity.WARNING -> Errors.OPT_IN_OVERRIDE to "should"
-                        Experimentality.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
-                        Experimentality.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
+                    val (diagnostic, defaultMessageVerb) = when (description.severity) {
+                        OptInDescription.Severity.WARNING -> Errors.OPT_IN_OVERRIDE to "should"
+                        OptInDescription.Severity.ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
+                        OptInDescription.Severity.FUTURE_ERROR -> Errors.OPT_IN_OVERRIDE_ERROR to "must"
                     }
                     val message = OptInNames.buildOverrideMessage(
-                        supertypeName = member.containingDeclaration.name.asString(),
-                        markerMessage = experimentality.message,
+                        supertypeName = overriddenMember.containingDeclaration.name.asString(),
+                        markerMessage = description.message,
                         verb = defaultMessageVerb,
-                        markerName = experimentality.annotationFqName.asString()
+                        markerName = description.annotationFqName.asString()
                     )
-                    context.trace.report(diagnostic.on(reportOn, experimentality.annotationFqName, message))
+                    context.trace.report(diagnostic.on(reportOn, description.annotationFqName, message))
                 }
             }
         }

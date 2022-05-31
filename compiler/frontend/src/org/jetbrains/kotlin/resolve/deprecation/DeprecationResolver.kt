@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.SinceKotlinAccessibility
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
@@ -115,9 +115,9 @@ class DeprecationResolver(
 
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
             return if (callElement != null && bindingContext != null) {
-                with(ExperimentalUsageChecker) {
+                with(OptInUsageChecker) {
                     sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
-                        !callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
+                        !callElement.isOptInAllowed(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
                     }
                 }
             } else {

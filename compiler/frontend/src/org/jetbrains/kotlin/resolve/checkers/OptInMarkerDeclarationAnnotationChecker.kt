@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -16,12 +14,8 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
+class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
         actualTargets: List<KotlinTarget>,
@@ -42,7 +36,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         annotated: KtAnnotated?,
         languageVersionSettings: LanguageVersionSettings
     ) {
-        var isAnnotatedWithExperimental = false
+        var hasOptIn = false
 
         for (entry in entries) {
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
@@ -54,7 +48,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                     checkOptInUsage(annotationClasses, trace, entry)
                 }
                 in OptInNames.REQUIRES_OPT_IN_FQ_NAMES -> {
-                    isAnnotatedWithExperimental = true
+                    hasOptIn = true
                 }
             }
             val annotationClass = annotation.annotationClass ?: continue
@@ -85,34 +79,9 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             }
         }
 
-        if (isAnnotatedWithExperimental) {
+        if (hasOptIn) {
             checkMarkerTargetsAndRetention(entries, trace)
         }
-    }
-
-    private fun CallableMemberDescriptor.hasExperimentalOverriddenDescriptors(
-        experimentalFqName: FqName,
-        visited: MutableSet<CallableMemberDescriptor> = mutableSetOf()
-    ): Boolean {
-        if (!visited.add(this)) return false
-        for (overridden in overriddenDescriptors) {
-            if (overridden.annotations.any { it.fqName == experimentalFqName }) {
-                return true
-            }
-            var containingDeclaration = overridden.containingDeclaration
-            while (containingDeclaration is ClassDescriptor) {
-                if (containingDeclaration.annotations.any { it.fqName == experimentalFqName }) {
-                    return true
-                }
-                containingDeclaration = containingDeclaration.containingDeclaration
-            }
-            if (overridden.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-                overridden.hasExperimentalOverriddenDescriptors(experimentalFqName)
-            ) {
-                return true
-            }
-        }
-        return false
     }
 
     private fun checkOptInUsage(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry) {
@@ -125,10 +94,10 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
             val classDescriptor =
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
                     ?: continue
-            val experimentality = with(ExperimentalUsageChecker) {
-                classDescriptor.loadExperimentalityForMarkerAnnotation()
+            val optInDescription = with(OptInUsageChecker) {
+                classDescriptor.loadOptInForMarkerAnnotation()
             }
-            if (experimentality == null) {
+            if (optInDescription == null) {
                 trace.report(Errors.OPT_IN_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
             }
         }
@@ -145,7 +114,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         if (targetEntry != null) {
             val (entry, descriptor) = targetEntry
             val allowedTargets = AnnotationChecker.loadAnnotationTargets(descriptor!!) ?: return
-            val wrongTargets = allowedTargets.intersect(Experimentality.WRONG_TARGETS_FOR_MARKER)
+            val wrongTargets = allowedTargets.intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
             if (wrongTargets.isNotEmpty()) {
                 trace.report(
                     Errors.OPT_IN_MARKER_WITH_WRONG_TARGET.on(

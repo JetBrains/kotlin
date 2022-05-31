@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ClassicConstraint
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -105,9 +105,9 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<KotlinResolutionStatelessCallbacksImpl>()
     useImpl<DataFlowValueFactoryImpl>()
 
-    useImpl<ExperimentalUsageChecker>()
-    useImpl<ExperimentalUsageChecker.Overrides>()
-    useImpl<ExperimentalUsageChecker.ClassifierUsage>()
+    useImpl<OptInUsageChecker>()
+    useImpl<OptInUsageChecker.Overrides>()
+    useImpl<OptInUsageChecker.ClassifierUsage>()
 
     useImpl<ContractDeserializerImpl>()
     useImpl<CompilerDeserializationConfiguration>()

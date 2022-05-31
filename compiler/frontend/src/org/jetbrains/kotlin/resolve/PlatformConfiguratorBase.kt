@@ -123,7 +123,7 @@ abstract class PlatformConfiguratorBase(
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
-        container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
+        container.useImpl<OptInMarkerDeclarationAnnotationChecker>()
     }
 
     fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
