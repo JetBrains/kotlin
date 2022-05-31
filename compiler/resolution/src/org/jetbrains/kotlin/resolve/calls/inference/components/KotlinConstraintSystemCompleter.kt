@@ -150,8 +150,11 @@ class KotlinConstraintSystemCompleter(
                 continue
 
             // Stage 6: fix next ready type variable with proper constraints
-            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments))
-                continue
+            if (
+                fixNextReadyVariable(
+                    completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments, diagnosticsHolder
+                )
+            ) continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
             val areThereAppearedProperConstraintsForSomeVariable = tryToCompleteWithBuilderInference(
@@ -272,6 +275,7 @@ class KotlinConstraintSystemCompleter(
         topLevelType: UnwrappedType,
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean {
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
             this,
@@ -283,7 +287,7 @@ class KotlinConstraintSystemCompleter(
 
         if (!variableForFixation.hasProperConstraint) return false
 
-        fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms)
+        fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms, diagnosticsHolder)
 
         return true
     }
@@ -405,20 +409,41 @@ class KotlinConstraintSystemCompleter(
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
         variableWithConstraints: VariableWithConstraints,
-        topLevelAtoms: List<ResolvedAtom>
+        topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
-        fixVariable(c, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN, topLevelAtoms)
+        fixVariable(c, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN, topLevelAtoms, diagnosticsHolder)
+    }
+
+    private fun reportWarningIfFixedIntoDeclaredUpperBounds(
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+        variableWithConstraints: VariableWithConstraints
+    ) {
+        val areAllConstraintFromDeclaredUpperBounds = variableWithConstraints.constraints.all {
+            val position = it.position.from
+            position is BuilderInferenceSubstitutionConstraintPosition<*, *> && position.isFromNotSubstitutedDeclaredUpperBound
+        }
+
+        if (areAllConstraintFromDeclaredUpperBounds) {
+            diagnosticsHolder.addDiagnostic(
+                KotlinConstraintSystemDiagnostic(InferredIntoDeclaredUpperBounds(variableWithConstraints.typeVariable))
+            )
+        }
     }
 
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
         variableWithConstraints: VariableWithConstraints,
         direction: TypeVariableDirectionCalculator.ResolveDirection,
-        topLevelAtoms: List<ResolvedAtom>
+        topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
         val variable = variableWithConstraints.typeVariable
         val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+
+        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints)
+
         c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
     }
 

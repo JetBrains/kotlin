@@ -541,6 +541,22 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
+            InferredIntoDeclaredUpperBounds::class.java -> {
+                error as InferredIntoDeclaredUpperBounds
+
+                val psiCall = psiKotlinCall.psiCall
+                val expression = if (psiCall is CallTransformer.CallForImplicitInvoke) {
+                    psiCall.outerCall.calleeExpression
+                } else {
+                    psiCall.calleeExpression
+                } ?: return
+                val typeVariable = error.typeVariable as? TypeVariableFromCallableDescriptor ?: return
+
+                trace.reportDiagnosticOnce(
+                    INFERRED_INTO_DECLARED_UPPER_BOUNDS.on(expression, typeVariable.originalTypeParameter.name.asString())
+                )
+            }
+
             NotEnoughInformationForTypeParameterImpl::class.java -> {
                 error as NotEnoughInformationForTypeParameterImpl
 

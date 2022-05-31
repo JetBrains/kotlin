@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -589,10 +589,15 @@ class BuilderInferenceSession(
 
         if (lowerSubstituted == a && upperSubstituted == b) return this
 
-        val resultingPosition = if (upperSubstituted == b && position is DeclaredUpperBoundConstraintPosition<*>) {
+        val isInferringIntoUpperBoundsForbidden = expressionTypingServices.languageVersionSettings.supportsFeature(
+            LanguageFeature.ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+        )
+        val isFromNotSubstitutedDeclaredUpperBound = upperSubstituted == b && position is DeclaredUpperBoundConstraintPosition<*>
+
+        val resultingPosition = if (isFromNotSubstitutedDeclaredUpperBound && isInferringIntoUpperBoundsForbidden) {
             position
         } else {
-            BuilderInferenceSubstitutionConstraintPositionImpl(lambdaArgument, this)
+            BuilderInferenceSubstitutionConstraintPositionImpl(lambdaArgument, this, isFromNotSubstitutedDeclaredUpperBound)
         }
 
         return InitialConstraint(

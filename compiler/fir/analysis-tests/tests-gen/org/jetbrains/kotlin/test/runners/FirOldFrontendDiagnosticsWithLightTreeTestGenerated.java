@@ -14220,9 +14220,21 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
-                @TestMetadata("kt47986.kt")
-                public void testKt47986() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986.kt");
+                @TestMetadata("kt47986Default.kt")
+                public void testKt47986Default() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Default.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47986Disabled.kt")
+                public void testKt47986Disabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Disabled.kt");
+                }
+
+                @Test
+                @TestMetadata("kt47986Enabled.kt")
+                public void testKt47986Enabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Enabled.kt");
                 }
 
                 @Test

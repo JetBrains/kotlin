@@ -24,8 +24,11 @@ abstract class InjectedAnotherStubTypeConstraintPosition<T>(private val builderI
     override fun toString(): String = "Injected from $builderInferenceLambdaOfInjectedStubType builder inference call"
 }
 
-abstract class BuilderInferenceSubstitutionConstraintPosition<L, I>(private val builderInferenceLambda: L, val initialConstraint: I) :
-    ConstraintPosition(), OnlyInputTypeConstraintPosition {
+abstract class BuilderInferenceSubstitutionConstraintPosition<L, I>(
+    private val builderInferenceLambda: L,
+    val initialConstraint: I,
+    val isFromNotSubstitutedDeclaredUpperBound: Boolean = false
+) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "Incorporated builder inference constraint $initialConstraint " +
             "into $builderInferenceLambda call"
 }
@@ -127,6 +130,8 @@ open class NotEnoughInformationForTypeParameter<T>(
     val resolvedAtom: T,
     val couldBeResolvedWithUnrestrictedBuilderInference: Boolean
 ) : ConstraintSystemError(INAPPLICABLE)
+
+class InferredIntoDeclaredUpperBounds(val typeVariable: TypeVariableMarker) : ConstraintSystemError(RESOLVED)
 
 class ConstrainingTypeIsError(
     val typeVariable: TypeVariableMarker,

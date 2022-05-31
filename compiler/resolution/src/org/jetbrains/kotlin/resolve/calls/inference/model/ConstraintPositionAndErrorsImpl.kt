@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -19,9 +18,11 @@ class InjectedAnotherStubTypeConstraintPositionImpl(builderInferenceLambdaOfInje
     InjectedAnotherStubTypeConstraintPosition<LambdaKotlinCallArgument>(builderInferenceLambdaOfInjectedStubType)
 
 class BuilderInferenceSubstitutionConstraintPositionImpl(
-    builderInferenceLambda: LambdaKotlinCallArgument, initialConstraint: InitialConstraint
+    builderInferenceLambda: LambdaKotlinCallArgument,
+    initialConstraint: InitialConstraint,
+    isFromNotSubstitutedDeclaredUpperBound: Boolean = false
 ) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument, InitialConstraint>(
-    builderInferenceLambda, initialConstraint
+    builderInferenceLambda, initialConstraint, isFromNotSubstitutedDeclaredUpperBound
 )
 
 class ExpectedTypeConstraintPositionImpl(topLevelCall: KotlinCall) : ExpectedTypeConstraintPosition<KotlinCall>(topLevelCall)

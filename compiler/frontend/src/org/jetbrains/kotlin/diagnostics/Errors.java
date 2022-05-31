@@ -890,6 +890,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> INFERRED_INTO_DECLARED_UPPER_BOUNDS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
