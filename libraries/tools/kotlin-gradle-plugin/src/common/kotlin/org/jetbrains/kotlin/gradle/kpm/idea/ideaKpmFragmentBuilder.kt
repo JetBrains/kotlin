@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.jetbrains.kotlin.tooling.core.extrasOf
+import org.jetbrains.kotlin.tooling.core.withValue
 
 internal fun IdeaKpmProjectBuildingContext.IdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
     return if (fragment is GradleKpmVariant) buildIdeaKpmVariant(fragment)
@@ -13,6 +16,7 @@ internal fun IdeaKpmProjectBuildingContext.IdeaKpmFragment(fragment: GradleKpmFr
 }
 
 private fun IdeaKpmProjectBuildingContext.buildIdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
+    val compilerArguments = IdeaKpmCompilerArgumentsResolver.resolve(fragment)
     return IdeaKpmFragmentImpl(
         coordinates = IdeaKpmFragmentCoordinates(fragment),
         platforms = fragment.containingVariants.map { variant -> IdeaKpmPlatform(variant) }.toSet(),
@@ -21,7 +25,10 @@ private fun IdeaKpmProjectBuildingContext.buildIdeaKpmFragment(fragment: GradleK
         contentRoots = fragment.kotlinSourceRoots.sourceDirectories.files.map { file ->
             IdeaKpmContentRootImpl(file, type = IdeaKpmContentRoot.SOURCES_TYPE)
         },
-        extras = fragment.extras
+        extras = fragment.extras + extrasOf(
+            extrasKeyOf<IdeaKpmFragmentLanguageFeatures>() withValue IdeaKpmFragmentLanguageFeatures(compilerArguments),
+            extrasKeyOf<IdeaKpmFragmentAnalysisFlags>() withValue IdeaKpmFragmentAnalysisFlags(compilerArguments)
+        ) // TODO: Requires more sophisticated serialization
     )
 }
 
