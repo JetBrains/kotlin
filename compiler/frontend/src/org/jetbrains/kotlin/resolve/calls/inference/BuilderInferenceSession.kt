@@ -589,11 +589,17 @@ class BuilderInferenceSession(
 
         if (lowerSubstituted == a && upperSubstituted == b) return this
 
+        val resultingPosition = if (upperSubstituted == b && position is DeclaredUpperBoundConstraintPosition<*>) {
+            position
+        } else {
+            BuilderInferenceSubstitutionConstraintPositionImpl(lambdaArgument, this)
+        }
+
         return InitialConstraint(
             lowerSubstituted,
             upperSubstituted,
             constraintKind,
-            BuilderInferenceSubstitutionConstraintPositionImpl(lambdaArgument, this)
+            resultingPosition
         )
     }
 
