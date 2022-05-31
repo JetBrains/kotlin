@@ -17,6 +17,8 @@ fun Builder.generateCode(generationPath: File): GeneratedFile {
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()
+        println("@file:Suppress(\"DuplicatedCode\")")
+        println()
         println("package $packageName")
         println()
         val imports = collectImports()
