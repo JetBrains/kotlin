@@ -1114,6 +1114,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("compareResult")
         }
         val SENSELESS_NULL_IN_WHEN by warning<KtElement>()
+        val TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM by error<KtExpression>()
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {

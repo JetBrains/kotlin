@@ -3,10 +3,10 @@
 
 class Test {
   private val y = object {
-    val a = y;
+    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y<!>;
   }
 
-  val z = y.a;
+  val z = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y.a<!>;
 
 }
 
@@ -23,6 +23,6 @@ class Test2 {
     val y = 1
   }
 
-  val b = a.<!UNRESOLVED_REFERENCE!>x<!>
+  val b = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!>.<!UNRESOLVED_REFERENCE!>x<!>
   val c = a.y
 }

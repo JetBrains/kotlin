@@ -21,7 +21,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirUnderscoreChecker,
             FirExpressionAnnotationChecker,
-            FirDeprecationChecker
+            FirDeprecationChecker,
+            FirRecursiveProblemChecker
         )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>

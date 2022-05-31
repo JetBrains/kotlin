@@ -240,7 +240,7 @@ class Outer() {
 }
 
 class ForwardAccessToBackingField() { //kt-147
-    val a = a // error
+    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!> // error
     val b = c // error
     val c = 1
 }

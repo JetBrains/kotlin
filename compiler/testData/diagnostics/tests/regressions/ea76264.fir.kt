@@ -1,4 +1,4 @@
 // StackOverflow
-val p = ::p
+val p = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>::p<!>
 
-fun foo() = ::foo
+fun foo() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>::foo<!>

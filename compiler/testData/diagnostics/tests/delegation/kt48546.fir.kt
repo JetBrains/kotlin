@@ -3,7 +3,7 @@
 object DelegateTest {
     var result = ""
     val f by lazy {
-        result += f.toString() // Compiler crash
+        result += <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>.toString() // Compiler crash
         "hello"
     }
 }
