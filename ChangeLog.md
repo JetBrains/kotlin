@@ -1,3 +1,28 @@
+## 1.7.0-RC2
+
+### Compiler
+
+- [`KT-52311`](https://youtrack.jetbrains.com/issue/KT-52311) java.lang.VerifyError: Bad type on operand stack
+- [`KT-52503`](https://youtrack.jetbrains.com/issue/KT-52503) New green code appeared at the callable reference resolution
+
+### JavaScript
+
+- [`KT-52518`](https://youtrack.jetbrains.com/issue/KT-52518) Kotlin/JS IR: project with 1.6.21 fails to consume library built with 1.7.0-RC: ISE "Unexpected IrType kind: KIND_NOT_SET" at IrDeclarationDeserializer.deserializeIrTypeData()
+
+### Tools. CLI
+
+- [`KT-52409`](https://youtrack.jetbrains.com/issue/KT-52409) Report error when use-k2 with Multiplatform
+
+### Tools. Gradle
+
+- [`KT-52509`](https://youtrack.jetbrains.com/issue/KT-52509) Main variant published to Gradle plugin portal uses unshadowed artifact
+- [`KT-52392`](https://youtrack.jetbrains.com/issue/KT-52392) Gradle: 1.7.0 does not support custom gradle build configuration on Windows OS
+
+### Tools. Kapt
+
+- [`KT-52284`](https://youtrack.jetbrains.com/issue/KT-52284) FIR: add error in 1.7.0 branch if run with Kapt
+
+
 ## 1.7.0-RC
 
 ### Compiler
