@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.provider.ClassPathModeExceptionCollector
-import org.gradle.kotlin.dsl.provider.inLenientMode
-import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.provider.Provider
+import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 /**
@@ -58,12 +58,32 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
  */
 internal inline fun Project.runProjectConfigurationHealthCheck(check: Project.() -> Unit) {
     /* Running configuration checks on a failed project will only lead to false positive error messages */
-    if (state.failure != null || (inLenientMode() && serviceOf<ClassPathModeExceptionCollector>().exceptions.isNotEmpty())) {
+    if (state.failure != null || (inLenientMode() && syncExceptionsAreNotEmpty())) {
         return
     }
 
     check()
 }
+
+// ClassPathModeExceptionCollector is available only via 'gradleKotlinDsl()' dependency which brings in full Gradle jar
+private fun Project.syncExceptionsAreNotEmpty(): Boolean {
+    val classPathModeExceptionCollectionClass = Class.forName("org.gradle.kotlin.dsl.provider.ClassPathModeExceptionCollector")
+    val exceptionCollector = (this as ProjectInternal).services.get(classPathModeExceptionCollectionClass)
+    @Suppress("UNCHECKED_CAST")
+    val exceptionsList = classPathModeExceptionCollectionClass.methods
+        .first { it.name == "getExceptions" }
+        .invoke(exceptionCollector) as List<Exception>
+
+    return exceptionsList.isNotEmpty()
+}
+
+private val Project.providerModeSystemPropertyValue: Provider<String>
+    get() = providers
+        .systemProperty(KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME)
+        .forUseAtConfigurationTime()
+
+private fun Project.inLenientMode() =
+    providerModeSystemPropertyValue.orNull == KotlinDslModelsParameters.CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
 
 /**
  * Convenience function for

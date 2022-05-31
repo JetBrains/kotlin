@@ -13,7 +13,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.listProperty
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.InputChanges
 import org.gradle.workers.IsolationMode
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
 import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -59,7 +59,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     internal val projectDir = project.projectDir
 
     @get:Input
-    val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listProperty<String>().convention(emptyList())
+    val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val result = mutableMapOf<String, String>()

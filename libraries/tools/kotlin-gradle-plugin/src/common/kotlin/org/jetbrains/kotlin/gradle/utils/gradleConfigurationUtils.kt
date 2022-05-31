@@ -12,7 +12,6 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
-import org.gradle.kotlin.dsl.named
 import org.gradle.util.GradleVersion
 import java.lang.RuntimeException
 
