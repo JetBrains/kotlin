@@ -57,11 +57,6 @@ import java.nio.file.Path
  *     Current executable set to [..]program.kexe[..]
  */
 fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
-    lldbReasonToAbort()?.let {
-        println(it)
-        return
-    }
-
     val lldbSessionSpec = LldbSessionSpecification.parse(lldbSession)
 
     val tmpdir = Files.createTempDirectory("debugger_test")
@@ -76,21 +71,6 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     lldbSessionSpec.match(result)
 }
 
-fun lldbReasonToAbort() = when {
-    !haveLldb ->
-        "Skipping test: no LLDB"
-    !targetIsHost() && !simulatorTestEnabled() ->
-        "simulator tests disabled, check 'kotlin.native.test.debugger.simulator.enabled' property"
-    !isOsxDevToolsEnabled ->
-        """Development tools aren't available.
-           |Please consider to execute:
-           |  ${DistProperties.devToolsSecurity} -enable
-           |or
-           |  csrutil disable
-           |to run lldb tests""".trimMargin()
-    else -> null
-}
-
 /**
  * Another integration test for debug info.
  *
@@ -100,11 +80,6 @@ fun lldbReasonToAbort() = when {
  * lines in the given source files.
  */
 fun lldbCheckLineNumbers(src: Map<String, List<String>>, breakpoint: String, steps: Int) {
-    lldbReasonToAbort()?.let {
-        println(it)
-        return
-    }
-
     val tmpdir = Files.createTempDirectory("debugger_test")
     tmpdir.toFile().deleteOnExit()
 
