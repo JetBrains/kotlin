@@ -315,6 +315,25 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(greeting, output)
     }
 
+    @Test
+    fun testKotlinPackage() {
+        val greeting = "Hello from script!"
+        val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package"
+        val script = "package kotlin\nprintln(\"$greeting\")"
+        val res0 = evalScript(script)
+        Assert.assertTrue(res0.reports.any { it.message == error })
+        Assert.assertTrue(res0 is ResultWithDiagnostics.Failure)
+
+        val output = captureOut {
+            val res1 = evalScriptWithConfiguration(script) {
+                compilerOptions("-Xallow-kotlin-package")
+            }
+            Assert.assertTrue(res1.reports.none { it.message == error })
+            Assert.assertTrue(res1 is ResultWithDiagnostics.Success)
+        }
+        Assert.assertEquals(greeting, output)
+    }
+
     private fun doDiamondImportTest(evaluationConfiguration: ScriptEvaluationConfiguration? = null): List<String> {
         val mainScript = "sharedVar += 1\nprintln(\"sharedVar == \$sharedVar\")".toScriptSource("main.kts")
         val middleScript = File(TEST_DATA_DIR, "importTest/diamondImportMiddle.kts").toScriptSource()

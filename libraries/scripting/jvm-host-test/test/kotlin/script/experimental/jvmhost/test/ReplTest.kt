@@ -382,6 +382,29 @@ class ReplTest : TestCase() {
         }
     }
 
+    @Test
+    fun testKotlinPackage() {
+        val greeting = "Hello from script!"
+        val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package"
+        val script = "package kotlin\n\"$greeting\""
+        checkEvaluateInReplDiags(
+            sequenceOf(script),
+            sequenceOf(
+                makeFailureResult(
+                    error, path = "Line_0.simplescript.kts",
+                    location = SourceCode.Location(SourceCode.Position(1, 1), SourceCode.Position(1, 15))
+                )
+            )
+        )
+        checkEvaluateInRepl(
+            sequenceOf(script),
+            sequenceOf(greeting),
+            simpleScriptCompilationConfiguration.with {
+                compilerOptions("-Xallow-kotlin-package")
+            }
+        )
+    }
+
     companion object {
         private fun positionsEqual(a: SourceCode.Position?, b: SourceCode.Position?): Boolean {
             if (a == null || b == null) {

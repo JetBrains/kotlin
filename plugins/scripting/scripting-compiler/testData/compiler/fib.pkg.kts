@@ -1,4 +1,4 @@
-package kotlin.scripting.fibonacci
+package org.jetbrains.kotlin.scripting.fibonacci
 // this script expected parameter num : Int
 
 fun fib(n: Int): Int {
