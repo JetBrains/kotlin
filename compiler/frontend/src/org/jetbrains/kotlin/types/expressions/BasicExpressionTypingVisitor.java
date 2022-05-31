@@ -636,7 +636,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         BindingTrace trace = context.trace;
         Call call = CallMaker.makeCall(expression, null, null, expression, Collections.emptyList());
         OverloadResolutionResults<ReceiverParameterDescriptor> results =
-                components.callResolver.resolveThisOrSuperCallWithGivenDescriptor(context, call, descriptor);
+                components.callResolver.resolveCallWithGivenDescriptor(context, call, descriptor, TracingStrategy.EMPTY, null, null);
 
         ResolvedCall<?> resolvedCall = results.getResultingCall();
 
