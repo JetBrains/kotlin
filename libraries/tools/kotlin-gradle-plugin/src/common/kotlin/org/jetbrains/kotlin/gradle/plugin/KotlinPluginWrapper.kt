@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.internal.DefaultJavaSourceSetsAccessorVariantFactory
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -188,6 +190,11 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         factories.putIfAbsent(
             MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
             MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class,
+            DefaultJavaSourceSetsAccessorVariantFactory()
         )
     }
 

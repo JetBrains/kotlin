@@ -211,15 +211,18 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("Proper Gradle plugin variant is used")
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_0])
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_0],
+        maxVersion = TestVersions.Gradle.G_7_1
+    )
     @GradleTest
     internal fun pluginVariantIsUsed(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
             build("tasks") {
-                val expectedVariant = if (gradleVersion < GradleVersion.version("7.0")) {
-                    "main"
-                } else {
-                    "gradle70"
+                val expectedVariant = when (gradleVersion) {
+                    GradleVersion.version(TestVersions.Gradle.G_7_1) -> "gradle71"
+                    GradleVersion.version(TestVersions.Gradle.G_7_0) -> "gradle70"
+                    else -> "main"
                 }
 
                 assertOutputContains("Using Kotlin Gradle Plugin $expectedVariant variant")

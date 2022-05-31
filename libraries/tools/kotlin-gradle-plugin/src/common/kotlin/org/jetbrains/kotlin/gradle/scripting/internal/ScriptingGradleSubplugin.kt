@@ -17,13 +17,13 @@ import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -53,8 +53,12 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         project.plugins.apply(ScriptingKotlinGradleSubplugin::class.java)
 
         project.afterEvaluate {
-            val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
-            if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
+            val javaSourceSets = project
+                .gradle
+                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                .getInstance(project)
+                .sourceSetsIfAvailable
+            if (javaSourceSets?.isEmpty() == false) {
 
                 val configureAction: (KotlinCompile) -> (Unit) = ca@{ task ->
 

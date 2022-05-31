@@ -20,14 +20,12 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -37,6 +35,7 @@ import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDepen
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
@@ -103,7 +102,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             return (compilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet
                 ?: kotlinCompilation.owner.let {
                     if (it is KotlinJvmTarget && it.withJavaEnabled && compilation is KotlinJvmCompilation)
-                        project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.maybeCreate(compilation.name)
+                        project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                            .getInstance(project)
+                            .sourceSets
+                            .maybeCreate(compilation.name)
                     else null
                 }
         }
@@ -447,14 +449,35 @@ internal abstract class AbstractKotlinPlugin(
                 )
                 return
             }
-            val inspectTask =
-                project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") {
-                    it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
-                    it.archivePath.set(project.provider { jarTask.get().archivePathCompatible.canonicalPath })
-                    it.archiveName.set(project.provider { jarTask.get().archiveFileName.get() })
-                    it.dependsOn(classesTask)
-                }
-            jarTask.dependsOn(inspectTask)
+            val inspectTask = project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") { inspectTask ->
+                inspectTask.archivePath.set(jarTask.map { it.archivePathCompatible.canonicalPath })
+                inspectTask.archivePath.disallowChanges()
+
+                inspectTask.sourceSetName.set(SourceSet.MAIN_SOURCE_SET_NAME)
+                inspectTask.sourceSetName.disallowChanges()
+
+                inspectTask.classesListFile.set(
+                    project.layout.file(
+                        (project.kotlinExtension as KotlinSingleJavaTargetExtension)
+                            .target
+                            .defaultArtifactClassesListFile
+                    )
+                )
+                inspectTask.classesListFile.disallowChanges()
+
+                val sourceSetClassesDir = project.gradle
+                    .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                    .getInstance(project)
+                    .sourceSetsIfAvailable
+                    ?.findByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                    ?.output
+                    ?.classesDirs
+                    ?: project.objects.fileCollection()
+                inspectTask.sourceSetOutputClassesDir.from(sourceSetClassesDir).disallowChanges()
+
+                inspectTask.dependsOn(classesTask)
+            }
+            classesTask.configure { it.finalizedBy(inspectTask) }
         }
 
         internal fun setUpJavaSourceSets(
@@ -462,7 +485,11 @@ internal abstract class AbstractKotlinPlugin(
             duplicateJavaSourceSetsAsKotlinSourceSets: Boolean = true
         ) {
             val project = kotlinTarget.project
-            val javaSourceSets = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+            val javaSourceSets = project
+                .gradle
+                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                .getInstance(project)
+                .sourceSets
 
             val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
                 KotlinPlatformType.js -> KOTLIN_JS_DSL_NAME

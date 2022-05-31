@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
@@ -118,8 +117,9 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
 
                 // Workaround for older versions of Kotlin/Native overriding the old signature
-                commonProject.convention.findPlugin(JavaPluginConvention::class.java)
-                    ?.sourceSets
+                commonProject.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                    .getInstance(commonProject)
+                    .sourceSetsIfAvailable
                     ?.findByName(commonSourceSet.name)
                     ?.let { javaSourceSet ->
                         @Suppress("DEPRECATION")

@@ -11,15 +11,14 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG70
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "gradle70"
+private const val PLUGIN_VARIANT_NAME = "gradle71"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinPluginWrapper(registry) {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -31,6 +30,7 @@ open class KotlinPluginWrapper @Inject constructor(
 open class KotlinCommonPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinCommonPluginWrapper(registry) {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -42,6 +42,7 @@ open class KotlinCommonPluginWrapper @Inject constructor(
 open class KotlinAndroidPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinAndroidPluginWrapper(registry) {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -54,6 +55,7 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
 open class Kotlin2JsPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlin2JsPluginWrapper(registry) {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -63,6 +65,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 }
 
 open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginWrapper() {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -71,8 +74,8 @@ open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginW
     }
 }
 
-@Suppress("unused")
 open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -81,10 +84,10 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-@Suppress("unused")
 open class KotlinPm20PluginWrapper @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinPm20PluginWrapper(objectFactory) {
+
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
     override fun apply(project: Project) {
@@ -133,8 +136,5 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
-private fun Project.registerVariantImplementations() {
-    val factories = VariantImplementationFactories.get(gradle)
-    factories[JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class] =
-        JavaSourceSetsAccessorG70.JavaSourceSetAccessorVariantFactoryG70()
-}
+@Suppress("unused")
+private fun Project.registerVariantImplementations() {}

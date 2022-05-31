@@ -9,7 +9,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
@@ -27,9 +26,11 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.IsolatedKotlinClasspathClassCastException
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
@@ -310,7 +311,7 @@ internal open class GradleCompilerRunner(
                         }
                     }
                 } else if (task is InspectClassesForMultiModuleIC) {
-                    jarToClassListFile[File(task.archivePath.get())] = task.classesListFile
+                    jarToClassListFile[File(task.archivePath.get())] = task.classesListFile.get().asFile
                 }
             }
 
@@ -360,10 +361,15 @@ internal open class GradleCompilerRunner(
             }
         }
 
-        private fun jarForSourceSet(project: Project, sourceSetName: String): File? {
-            val javaConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
-                ?: return null
-            val sourceSet = javaConvention.sourceSets.findByName(sourceSetName) ?: return null
+        private fun jarForSourceSet(
+            project: Project,
+            sourceSetName: String
+        ): File? {
+            val sourceSets = project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                .getInstance(project)
+                .sourceSetsIfAvailable ?: return null
+            val sourceSet = sourceSets.findByName(sourceSetName) ?: return null
+
             val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar
             return jarTask?.archiveFile?.get()?.asFile
         }

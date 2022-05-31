@@ -442,7 +442,11 @@ class KotlinGradleIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                                     
-                archivesBaseName = 'a/really\\tricky\n\rmodule\tname'
+                archivesBaseName = 'a/really\\trick\n\rmodule\tname'
+                
+                tasks.withType(Jar.class).configureEach {
+                    archiveBaseName.set('typeAlias')
+                }
                 """.trimIndent()
             )
 

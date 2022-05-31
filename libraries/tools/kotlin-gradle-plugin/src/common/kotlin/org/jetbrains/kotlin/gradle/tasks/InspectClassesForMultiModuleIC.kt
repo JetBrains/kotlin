@@ -6,66 +6,45 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
+import javax.inject.Inject
 
-internal open class InspectClassesForMultiModuleIC : DefaultTask() {
+internal abstract class InspectClassesForMultiModuleIC @Inject constructor(
+    objects: ObjectFactory
+) : DefaultTask() {
     @get:Input
-    internal val archivePath = project.newProperty<String>()
+    internal abstract val archivePath: Property<String>
 
     @get:Input
-    internal val archiveName = project.newProperty<String>()
+    internal abstract val sourceSetName: Property<String>
 
-    @get:Input
-    lateinit var sourceSetName: String
-
-    @Suppress("MemberVisibilityCanBePrivate")
     @get:OutputFile
-    internal val classesListFile: File by lazy {
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile.get()
-    }
+    internal abstract val classesListFile: RegularFileProperty
 
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
-    internal val sourceSetOutputClassesDir by lazy {
-        project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.findByName(sourceSetName)?.output?.classesDirs
-    }
+    internal abstract val sourceSetOutputClassesDir: ConfigurableFileCollection
 
-    @get:Internal
-    internal val fileTrees
-        get() = sourceSetOutputClassesDir?.map {
-            objects.fileTree().from(it).include("**/*.class")
-        }
-
-    @get:Internal
-    internal val objects = project.objects
-
-    @Suppress("MemberVisibilityCanBePrivate")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
-    internal val classFiles: FileCollection
-        get() {
-            if (sourceSetOutputClassesDir != null) {
-                return objects.fileCollection().from(fileTrees)
-            }
-            return objects.fileCollection()
-        }
+    internal val classFiles: FileCollection = objects.fileCollection()
+        .from({ sourceSetOutputClassesDir.asFileTree.matching { it.include("**/*.class") } })
 
     @TaskAction
     fun run() {
-        classesListFile.parentFile.mkdirs()
-        val text = classFiles.map { it.absolutePath }.sorted().joinToString(File.pathSeparator)
-        classesListFile.writeText(text)
+        with(classesListFile.get().asFile) {
+            parentFile.mkdirs()
+            writeText(
+                classFiles.map { it.absolutePath }.sorted().joinToString(File.pathSeparator)
+            )
+        }
     }
-
-    private fun sanitizeFileName(candidate: String): String =
-        candidate.filter { it.isLetterOrDigit() }
 }

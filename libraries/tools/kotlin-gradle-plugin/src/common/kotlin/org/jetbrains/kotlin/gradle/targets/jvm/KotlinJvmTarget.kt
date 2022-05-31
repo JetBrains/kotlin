@@ -11,8 +11,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
@@ -20,6 +20,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -55,7 +56,9 @@ open class KotlinJvmTarget @Inject constructor(
         withJavaEnabled = true
 
         project.plugins.apply(JavaPlugin::class.java)
-        val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
+        val javaSourceSets = project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+            .getInstance(project)
+            .sourceSets
         AbstractKotlinPlugin.setUpJavaSourceSets(this, duplicateJavaSourceSetsAsKotlinSourceSets = false)
 
         // Below, some effort is made to ensure that a user or 3rd-party plugin that inspects or interacts
@@ -64,7 +67,7 @@ open class KotlinJvmTarget @Inject constructor(
         // * the relevant dependencies for Java and Kotlin are in sync,
         // * the Java outputs contain the outputs produced by Kotlin as well
 
-        javaPluginConvention.sourceSets.all { javaSourceSet ->
+        javaSourceSets.all { javaSourceSet ->
             val compilation = compilations.getByName(javaSourceSet.name)
             val compileJavaTask = project.tasks.withType<AbstractCompile>().named(javaSourceSet.compileJavaTaskName)
 
@@ -90,7 +93,7 @@ open class KotlinJvmTarget @Inject constructor(
                 project.configurations.findByName(outputConfigurationName)?.isCanBeConsumed = false
             }
 
-        disableJavaPluginTasks(javaPluginConvention)
+        disableJavaPluginTasks(javaSourceSets)
     }
 
     private fun setupJavaSourceSetSourcesAndResources(
@@ -122,12 +125,12 @@ open class KotlinJvmTarget @Inject constructor(
         }
     }
 
-    private fun disableJavaPluginTasks(javaPluginConvention: JavaPluginConvention) {
+    private fun disableJavaPluginTasks(javaSourceSet: SourceSetContainer) {
         // A 'normal' build should not do redundant job like running the tests twice or building two JARs,
         // so disable some tasks and just make them depend on the others:
         val targetJar = project.tasks.withType(Jar::class.java).named(artifactsTaskName)
 
-        project.tasks.withType(Jar::class.java).named(javaPluginConvention.sourceSets.getByName("main").jarTaskName) { javaJar ->
+        project.tasks.withType(Jar::class.java).named(javaSourceSet.getByName("main").jarTaskName) { javaJar ->
             (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
             javaJar.archiveFileName.set(targetJar.flatMap { it.archiveFileName })
             javaJar.dependsOn(targetJar)

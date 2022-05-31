@@ -11,6 +11,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG6
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfiguratorG6
 import javax.inject.Inject
@@ -142,4 +144,6 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactories.get(gradle)
     factories[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class] =
         MavenPluginConfiguratorG6.Gradle6MavenPluginConfiguratorVariantFactory()
+    factories[JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class] =
+        JavaSourceSetsAccessorG6.JavaSourceSetAccessorVariantFactoryG70()
 }
