@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -1304,7 +1305,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val arrayVariable = generateTemporaryVariable(
             session.moduleData,
             source = lhsGetCall.explicitReceiver?.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
-            specialName = "<array>",
+            name = SpecialNames.ARRAY,
             initializer = lhsGetCall.explicitReceiver ?: buildErrorExpression {
                 source = augmentedArraySetCall.source
                     ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
@@ -1321,7 +1322,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             generateTemporaryVariable(
                 session.moduleData,
                 source = index.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
-                specialName = "<index_$i>",
+                name = SpecialNames.subscribeOperatorIndex(i),
                 initializer = index
             )
         }

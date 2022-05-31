@@ -59,16 +59,16 @@ fun testPropPostfix() {
 fun testArrayPrefix() {
   val a1: Int = { // BLOCK
     val <array>: IntArray = <get-arr>()
-    val <index0>: Int = 0
-    val <unary-result>: Int = <array>.get(index = <index0>).inc()
-    <array>.set(index = <index0>, value = <unary-result>)
+    val <index_0>: Int = 0
+    val <unary-result>: Int = <array>.get(index = <index_0>).inc()
+    <array>.set(index = <index_0>, value = <unary-result>)
     <unary-result>
   }
   val a2: Int = { // BLOCK
     val <array>: IntArray = <get-arr>()
-    val <index0>: Int = 0
-    val <unary-result>: Int = <array>.get(index = <index0>).dec()
-    <array>.set(index = <index0>, value = <unary-result>)
+    val <index_0>: Int = 0
+    val <unary-result>: Int = <array>.get(index = <index_0>).dec()
+    <array>.set(index = <index_0>, value = <unary-result>)
     <unary-result>
   }
 }
@@ -76,16 +76,16 @@ fun testArrayPrefix() {
 fun testArrayPostfix() {
   val a1: Int = { // BLOCK
     val <array>: IntArray = <get-arr>()
-    val <index0>: Int = 0
-    val <unary>: Int = <array>.get(index = <index0>)
-    <array>.set(index = <index0>, value = <unary>.inc())
+    val <index_0>: Int = 0
+    val <unary>: Int = <array>.get(index = <index_0>)
+    <array>.set(index = <index_0>, value = <unary>.inc())
     <unary>
   }
   val a2: Int = { // BLOCK
     val <array>: IntArray = <get-arr>()
-    val <index0>: Int = 0
-    val <unary>: Int = <array>.get(index = <index0>)
-    <array>.set(index = <index0>, value = <unary>.dec())
+    val <index_0>: Int = 0
+    val <unary>: Int = <array>.get(index = <index_0>)
+    <array>.set(index = <index_0>, value = <unary>.dec())
     <unary>
   }
 }

@@ -174,18 +174,18 @@ FILE: arraySetWithPlusAssign.kt
     }
     public final fun test_7(x: R|G|): R|kotlin/Unit| {
          {
-            lval <<array>>: R|G| = R|<local>/x|
-            lval <<index_0>>: R|kotlin/Int| = Int(1)
-            lval <<index_1>>: R|kotlin/Int| = Int(2)
-            lval <<index_2>>: R|kotlin/Int| = Int(3)
-            R|<local>/<<array>>|.R|/G.set|(R|<local>/<<index_0>>|, R|<local>/<<index_1>>|, R|<local>/<<index_2>>|, R|<local>/<<array>>|.R|/G.get|(R|<local>/<<index_0>>|, R|<local>/<<index_1>>|, R|<local>/<<index_2>>|).R|/G.plus|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval <array>: R|G| = R|<local>/x|
+            lval <index_0>: R|kotlin/Int| = Int(1)
+            lval <index_1>: R|kotlin/Int| = Int(2)
+            lval <index_2>: R|kotlin/Int| = Int(3)
+            R|<local>/<array>|.R|/G.set|(R|<local>/<index_0>|, R|<local>/<index_1>|, R|<local>/<index_2>|, R|<local>/<array>|.R|/G.get|(R|<local>/<index_0>|, R|<local>/<index_1>|, R|<local>/<index_2>|).R|/G.plus|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 R|/someCallInsideLambda|()
                  {
-                    lval <<array>>: R|G| = R|<local>/x|
-                    lval <<index_0>>: R|kotlin/Int| = Int(1)
-                    lval <<index_1>>: R|kotlin/Int| = Int(2)
-                    lval <<index_2>>: R|kotlin/Int| = Int(3)
-                    R|<local>/<<array>>|.R|/G.set|(R|<local>/<<index_0>>|, R|<local>/<<index_1>>|, R|<local>/<<index_2>>|, R|<local>/<<array>>|.R|/G.get|(R|<local>/<<index_0>>|, R|<local>/<<index_1>>|, R|<local>/<<index_2>>|).R|/G.plus|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                    lval <array>: R|G| = R|<local>/x|
+                    lval <index_0>: R|kotlin/Int| = Int(1)
+                    lval <index_1>: R|kotlin/Int| = Int(2)
+                    lval <index_2>: R|kotlin/Int| = Int(3)
+                    R|<local>/<array>|.R|/G.set|(R|<local>/<index_0>|, R|<local>/<index_1>|, R|<local>/<index_2>|, R|<local>/<array>|.R|/G.get|(R|<local>/<index_0>|, R|<local>/<index_1>|, R|<local>/<index_2>|).R|/G.plus|(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                         R|/someCallInsideLambda|()
                         Q|kotlin/Unit|
                     }

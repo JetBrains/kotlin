@@ -715,7 +715,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val argumentReceiverVariable = generateTemporaryVariable(
                 baseModuleData,
                 argumentReceiver?.toFirSourceElement(),
-                Name.special("<receiver>"),
+                SpecialNames.RECEIVER,
                 initializer = receiverFir,
             ).also { statements += it }
 
@@ -795,7 +795,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
                 array?.toFirSourceElement(),
-                Name.special("<array>"),
+                name = SpecialNames.ARRAY,
                 initializer = arrayReceiver,
             ).also { statements += it }
 
@@ -803,7 +803,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 generateTemporaryVariable(
                     baseModuleData,
                     index.toFirSourceElement(),
-                    Name.special("<index$i>"),
+                    name = SpecialNames.subscribeOperatorIndex(i),
                     index.convert()
                 ).also { statements += it }
             }

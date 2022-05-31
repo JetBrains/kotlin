@@ -43,13 +43,13 @@ object X1 {
 fun test1(a: IntArray) {
   var i: Int = 0
   val <array>: IntArray = a
-  val <index0>: Int = { // BLOCK
+  val <index_0>: Int = { // BLOCK
     val <unary>: Int = i
     i = <unary>.inc()
     <unary>
   }
-  val <unary>: Int = <array>.get(index = <index0>)
-  <array>.set(index = <index0>, value = <unary>.inc())
+  val <unary>: Int = <array>.get(index = <index_0>)
+  <array>.set(index = <index_0>, value = <unary>.inc())
   <unary> /*~> Unit */
 }
 

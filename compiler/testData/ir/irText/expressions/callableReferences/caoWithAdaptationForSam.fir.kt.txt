@@ -45,40 +45,40 @@ fun withVararg(vararg xs: Int): Int {
 
 fun test1() {
   { // BLOCK
-    val <<array>>: A = A
-    val <<index_0>>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
+    val <array>: A = A
+    val <index_0>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
       withVararg(xs = [p0])
     }
 
-    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test2() {
   { // BLOCK
-    val <<array>>: B = B
-    val <<index_0>>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
+    val <array>: B = B
+    val <index_0>: KFunction1<Int, Unit> = local fun withVararg(p0: Int) {
       withVararg(xs = [p0])
     }
 
-    <<array>>.set(i = <<index_0>> /*-> IFoo2 */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+    <array>.set(i = <index_0> /*-> IFoo2 */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
-    val <<array>>: A = A
-    val <<index_0>>: Function1<Int, Unit> = fn
-    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+    val <array>: A = A
+    val <index_0>: Function1<Int, Unit> = fn
+    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test4(fn: Function1<Int, Unit>) {
   when {
     fn is IFoo -> { // BLOCK
-      val <<array>>: A = A
-      val <<index_0>>: IFoo = fn /*as IFoo */
-      <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+      val <array>: A = A
+      val <index_0>: IFoo = fn /*as IFoo */
+      <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
     }
   }
 }
@@ -86,9 +86,9 @@ fun test4(fn: Function1<Int, Unit>) {
 fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
-    val <<array>>: A = A
-    val <<index_0>>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+    val <array>: A = A
+    val <index_0>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -96,8 +96,8 @@ fun test6(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   a /*as Function1<Int, Unit> */ as IFoo /*~> Unit */
   { // BLOCK
-    val <<array>>: A = A
-    val <<index_0>>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+    val <array>: A = A
+    val <index_0>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
   }
 }

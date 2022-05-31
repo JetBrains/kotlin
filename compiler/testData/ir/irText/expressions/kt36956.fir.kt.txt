@@ -25,9 +25,9 @@ val aFloat: A<Float>
 val aInt: Float
   field = { // BLOCK
     val <array>: A<Float> = <get-aFloat>()
-    val <index0>: Int = 1
-    val <unary>: Float = <array>.get(i = <index0>)
-    <array>.set(i = <index0>, v = <unary>.dec())
+    val <index_0>: Int = 1
+    val <unary>: Float = <array>.get(i = <index_0>)
+    <array>.set(i = <index_0>, v = <unary>.dec())
     <unary>
   }
   get

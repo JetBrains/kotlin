@@ -55,9 +55,9 @@ fun testArrayAccess(nc: C?) {
       EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
       else -> { // BLOCK
         val <array>: Int = tmp2_safe_receiver.<get-p>()
-        val <index0>: Int = 0
-        val <unary>: Int = <array>.get(index = <index0>)
-        <array>.set(index = <index0>, value = <unary>.inc())
+        val <index_0>: Int = 0
+        val <unary>: Int = <array>.get(index = <index_0>)
+        <array>.set(index = <index_0>, value = <unary>.inc())
         <unary>
       }
     }

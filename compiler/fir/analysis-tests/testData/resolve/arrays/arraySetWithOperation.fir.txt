@@ -49,9 +49,9 @@ FILE: arraySetWithOperation.kt
     }
     public final fun test_2(a: R|A<C>|): R|kotlin/Unit| {
          {
-            lval <<array>>: R|A<C>| = R|<local>/a|
-            lval <<index_0>>: R|kotlin/Int| = Int(0)
-            R|<local>/<<array>>|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(R|<local>/<<index_0>>|, R|<local>/<<array>>|.R|SubstitutionOverride</A.get: R|C|>|(R|<local>/<<index_0>>|).R|/C.plus|(R|/C.C|()))
+            lval <array>: R|A<C>| = R|<local>/a|
+            lval <index_0>: R|kotlin/Int| = Int(0)
+            R|<local>/<array>|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</A.get: R|C|>|(R|<local>/<index_0>|).R|/C.plus|(R|/C.C|()))
         }
 
     }

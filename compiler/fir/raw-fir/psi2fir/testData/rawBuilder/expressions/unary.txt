@@ -58,17 +58,17 @@ FILE: unary.kt
     public? final? fun test3(arr: Array<Int>): R|kotlin/Unit| {
         lval x1: <implicit> =  {
             lval <array>: <implicit> = arr#
-            lval <index0>: <implicit> = IntegerLiteral(0)
-            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|)
-            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary>|.inc#())
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
             R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <array>: <implicit> = arr#
-            lval <index0>: <implicit> = IntegerLiteral(1)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary-result>|)
+            lval <index_0>: <implicit> = IntegerLiteral(1)
+            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
             R|<local>/<unary-result>|
         }
 
@@ -85,17 +85,17 @@ FILE: unary.kt
     public? final? fun test4(y: Y): R|kotlin/Unit| {
         lval x1: <implicit> =  {
             lval <array>: <implicit> = y#.arr#
-            lval <index0>: <implicit> = IntegerLiteral(0)
-            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|)
-            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary>|.inc#())
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
             R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
             lval <array>: <implicit> = y#.arr#
-            lval <index0>: <implicit> = IntegerLiteral(1)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary-result>|)
+            lval <index_0>: <implicit> = IntegerLiteral(1)
+            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
             R|<local>/<unary-result>|
         }
 
