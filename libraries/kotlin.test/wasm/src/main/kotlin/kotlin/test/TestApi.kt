@@ -41,6 +41,7 @@ internal var currentAdapter: FrameworkAdapter = TeamcityAdapter()
 
 // This is called from the js-launcher alongside wasm start function
 @JsExport
+@OptIn(kotlin.js.ExperimentalJsExport::class)
 internal fun startUnitTests() {
     // This will be filled with the corresponding code during lowering
 }
