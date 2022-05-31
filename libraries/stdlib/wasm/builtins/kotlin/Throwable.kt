@@ -28,6 +28,16 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
     }
 
     internal var suppressedExceptionsList: MutableList<Throwable>? = null
+
+    /**
+     * Returns the short description of this throwable consisting of the exception class name
+     * followed by the exception message if it is not null.
+     */
+    public override fun toString(): String {
+        val kClass = this::class
+        val s = kClass.simpleName ?: "Throwable"
+        return if (message != null) s + ": " + message.toString() else s
+    }
 }
 
 @JsFun("() => new Error().stack")
