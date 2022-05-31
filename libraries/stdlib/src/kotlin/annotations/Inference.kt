@@ -34,6 +34,8 @@ import kotlin.experimental.ExperimentalTypeInference
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.3")
 @ExperimentalTypeInference
+@Deprecated("BuilderInference annotation may not be used anymore. The builder inference is enabled automatically for builder calls if needed")
+@DeprecatedSinceKotlin(warningSince = "1.7", errorSince = "1.9", hiddenSince = "1.10")
 public annotation class BuilderInference
 
 
