@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="my.pack.name.WasmTest" tests="3" skipped="1" failures="2" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="test1[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+      <failure message="..." type="AssertionError">...</failure>
+    </testcase>
+    <testcase name="test2[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test3[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+      <failure message="..." type="AssertionError">...</failure>
+    </testcase>
+    <system-out />
+    <system-err />
+  </testsuite>
+  <testsuite name="my.pack.name.WasmTest.InnerIgnored" tests="3" skipped="3" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="test4[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test5[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <testcase name="test6[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+      <skipped />
+    </testcase>
+    <system-out />
+    <system-err />
+  </testsuite>
+</results>
+
