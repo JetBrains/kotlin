@@ -28,6 +28,7 @@ sealed interface IdeaKpmFragmentLanguageFeatures : Serializable {
     val languageFeatures: Collection<IdeaKpmFragmentLanguageFeature>
 }
 
+@InternalKotlinGradlePluginApi
 data class IdeaKpmFragmentLanguageFeaturesImpl(
     override val languageFeatures: Collection<IdeaKpmFragmentLanguageFeature>
 ) : IdeaKpmFragmentLanguageFeatures {

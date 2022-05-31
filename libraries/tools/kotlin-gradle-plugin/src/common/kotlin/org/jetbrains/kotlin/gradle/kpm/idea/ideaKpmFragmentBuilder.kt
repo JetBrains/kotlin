@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.extrasOf
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.tooling.core.withValue
 
 internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
@@ -16,7 +17,6 @@ internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmFragment(fragment: Gradle
 }
 
 private fun IdeaKpmProjectModelBuildingContext.buildIdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
-    val compilerArguments = IdeaKpmCompilerArgumentsResolver.resolve(fragment)
     return IdeaKpmFragmentImpl(
         coordinates = IdeaKpmFragmentCoordinates(fragment),
         platforms = fragment.containingVariants.map { variant -> IdeaKpmPlatform(variant) }.toSet(),
@@ -24,10 +24,12 @@ private fun IdeaKpmProjectModelBuildingContext.buildIdeaKpmFragment(fragment: Gr
         dependencies = dependencyResolver.resolve(fragment).toList(),
         sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKpmSourceDirectoryImpl(file) },
         resourceDirectories = emptyList(), // TODO
-        extras = extrasOf(
-            extrasKeyOf<IdeaKpmFragmentLanguageFeatures>() withValue IdeaKpmFragmentLanguageFeatures(compilerArguments),
-            extrasKeyOf<IdeaKpmFragmentAnalysisFlags>() withValue IdeaKpmFragmentAnalysisFlags(compilerArguments)
-        ) // TODO: Requires more sophisticated serialization
+        extras = mutableExtrasOf().apply {
+            val compilerArguments = IdeaKpmCompilerArgumentsResolver.resolve(fragment)
+            this[extrasKeyOf<IdeaKpmFragmentLanguageFeatures>()] = IdeaKpmFragmentLanguageFeatures(compilerArguments)
+            this[extrasKeyOf<IdeaKpmFragmentAnalysisFlags>()] = IdeaKpmFragmentAnalysisFlags(compilerArguments)
+        }
+        // TODO: Requires more sophisticated serialization
     )
 }
 
