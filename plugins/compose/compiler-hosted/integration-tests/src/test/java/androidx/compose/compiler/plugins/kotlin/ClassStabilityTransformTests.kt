@@ -178,6 +178,122 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testGuavaImmutableListIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: com.google.common.collect.ImmutableList<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testGuavaImmutableListCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: com.google.common.collect.ImmutableList<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testGuavaImmutableSetIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: com.google.common.collect.ImmutableSet<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testGuavaImmutableSetCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: com.google.common.collect.ImmutableSet<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testGuavaImmutableMapIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<K, V>(val x: com.google.common.collect.ImmutableMap<K, V>)
+        """,
+        "Parameter(K),Parameter(V)"
+    )
+
+    @Test
+    fun testGuavaImmutableMapCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        """
+            class Foo(val x: com.google.common.collect.ImmutableMap<A, B>)
+        """,
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
+    fun testKotlinxImmutableListIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.ImmutableList<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxImmutableListCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.ImmutableList<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testKotlinxImmutableSetIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<T>(val x: kotlinx.collections.immutable.ImmutableSet<T>)
+        """,
+        "Parameter(T)"
+    )
+
+    @Test
+    fun testKotlinxImmutableSetCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.ImmutableSet<A>)
+        """,
+        "Runtime(A)"
+    )
+
+    @Test
+    fun testKotlinxImmutableMapIsStableIfItsTypesAre() = assertStability(
+        """
+            class Foo<K, V>(val x: kotlinx.collections.immutable.ImmutableMap<K, V>)
+        """,
+        "Parameter(K),Parameter(V)"
+    )
+
+    @Test
+    fun testKotlinxImmutableMapCrossModuleTypesAreRuntimeStable() = assertStability(
+        """
+            class A
+            class B
+        """,
+        """
+            class Foo(val x: kotlinx.collections.immutable.ImmutableMap<A, B>)
+        """,
+        "Runtime(A),Runtime(B)"
+    )
+
+    @Test
     fun testVarPropDelegateWithCrossModuleStableDelegateTypeIsStable() = assertStability(
         """
             @Stable

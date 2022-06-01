@@ -49,12 +49,14 @@ dependencies {
     testImplementation(files(toolsJar))
 
     testImplementation(libs.kotlinStdlib)
+    testImplementation(libs.guavaAndroid)
     testImplementation(project(":compose:compiler:compiler-hosted"))
     testImplementation(projectOrArtifact(":compose:material:material"))
     testImplementation(project(":compose:runtime:runtime"))
     testImplementation(projectOrArtifact(":compose:ui:ui"))
     testImplementation("androidx.core:core-ktx:1.1.0")
     testImplementation("androidx.activity:activity-ktx:1.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
 }
 
 afterEvaluate {
