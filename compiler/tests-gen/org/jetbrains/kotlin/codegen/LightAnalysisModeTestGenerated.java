@@ -33942,6 +33942,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/getExtensionDelegate.kt");
                 }
 
+                @TestMetadata("getExtensionDelegateForDelegatedToAnother.kt")
+                public void testGetExtensionDelegateForDelegatedToAnother() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/getExtensionDelegateForDelegatedToAnother.kt");
+                }
+
                 @TestMetadata("kPropertyForDelegatedProperty.kt")
                 public void testKPropertyForDelegatedProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/kPropertyForDelegatedProperty.kt");

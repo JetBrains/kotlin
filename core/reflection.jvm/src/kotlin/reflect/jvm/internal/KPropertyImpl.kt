@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -25,6 +22,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
+import kotlin.reflect.jvm.isAccessible
 
 internal abstract class KPropertyImpl<out V> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -105,6 +103,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
 
             val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
             val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+            (fieldOrMethod as? AccessibleObject)?.isAccessible = isAccessible
             when (fieldOrMethod) {
                 null -> null
                 is Field -> fieldOrMethod.get(realReceiver1)
