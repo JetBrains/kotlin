@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.IncrementalJvmCache.Companion.MODULE_MAPPING_FILE_NAME
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -257,6 +258,9 @@ fun withSubtypes(
     typeFqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
+    if (typeFqName.asString() == MODULE_MAPPING_FILE_NAME) {
+        return setOf(typeFqName)
+    }
     val typesToProccess = LinkedHashSet(listOf(typeFqName))
     val proccessedTypes = hashSetOf<FqName>()
 

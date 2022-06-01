@@ -64,7 +64,7 @@ open class IncrementalJvmCache(
         private val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
         private val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
 
-        private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
+        val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
     override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, pathConverter))
