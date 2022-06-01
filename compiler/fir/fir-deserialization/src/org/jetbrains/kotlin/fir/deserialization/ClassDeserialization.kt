@@ -85,7 +85,7 @@ fun deserializeClassToSymbol(
             if (status.isCompanion) {
                 parentContext.constDeserializer
             } else {
-                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let { FirConstDeserializer(session, it) }
+                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let { FirJvmConstDeserializer(session, it) }
                     ?: parentContext.constDeserializer
             },
             status.isInner
