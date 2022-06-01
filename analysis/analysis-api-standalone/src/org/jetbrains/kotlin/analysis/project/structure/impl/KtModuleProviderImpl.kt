@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.project.structure.*
 
 internal class KtModuleProviderImpl(
-    private val mainModules: List<KtModule>,
+    internal val mainModules: List<KtModule>,
 ) : ProjectStructureProvider() {
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFile = element.containingFile.virtualFile
@@ -32,5 +35,11 @@ internal class KtModuleProviderImpl(
         return binaryModules
             .filterIsInstance<KtLibraryModuleImpl>()
             .firstOrNull { it.isBuiltinsContainingStdlib }
+    }
+
+    internal fun allSourceFiles(): List<PsiFileSystemItem> = buildList {
+        val files = mainModules.mapNotNull { (it as? KtSourceModuleImpl)?.sourceRoots }.flatten()
+        addAll(files)
+        addAll(findJvmRootsForJavaFiles(files.filterIsInstance<PsiJavaFile>()))
     }
 }
