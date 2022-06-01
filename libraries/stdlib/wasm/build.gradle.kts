@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import java.io.OutputStream
 
 plugins {
     `maven-publish`
@@ -160,6 +161,13 @@ val runWasmStdLibTestsWithD8 by tasks.registering(Exec::class) {
         .outputFile
         ?.let { File(it) }
     check(compiledFile != null)
+
+    if (System.getenv("TEAMCITY_VERSION") == null) {
+        standardOutput = object : OutputStream() {
+            override fun write(b: Int) = Unit
+        }
+        errorOutput = standardOutput
+    }
 
     workingDir = compiledFile.parentFile
     args = listOf("--experimental-wasm-gc", "--experimental-wasm-eh", "--module", compiledFile.name)
