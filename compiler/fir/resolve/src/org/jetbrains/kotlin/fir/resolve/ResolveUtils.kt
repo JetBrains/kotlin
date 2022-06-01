@@ -378,7 +378,8 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
     if (
         intersectedType.isKindOfNothing &&
         !originalType.isNullableNothing &&
-        !originalType.isNothing
+        !originalType.isNothing &&
+        originalType !is ConeStubType
     ) {
         val reducedTypes = typesFromSmartCast.filterTo(mutableListOf()) { !it.isKindOfNothing }
         val reducedIntersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, reducedTypes)
