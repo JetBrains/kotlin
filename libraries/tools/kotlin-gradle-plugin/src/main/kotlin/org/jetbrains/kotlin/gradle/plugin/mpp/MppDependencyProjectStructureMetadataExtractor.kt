@@ -33,7 +33,7 @@ internal class ProjectMppDependencyProjectStructureMetadataExtractor(
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
         return when {
             dependencyProject.topLevelExtensionOrNull == null -> null
-            dependencyProject.hasKpmModel -> buildProjectStructureMetadata(
+            dependencyProject.hasKpmModel -> buildKpmProjectStructureMetadata(
                 dependencyProject.kpmModules.single { it.moduleIdentifier == moduleIdentifier }
             )
             else -> buildKotlinProjectStructureMetadata(dependencyProject)
