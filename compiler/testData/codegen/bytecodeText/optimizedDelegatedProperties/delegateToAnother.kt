@@ -35,7 +35,7 @@ fun local() {
 // 0 private final( static)? Lkotlin/reflect/KMutableProperty[0-2]; [xyz]m?\$delegate
 // 2 private final( static)? LC; [xyz]m?\$receiver
 // 0 LOCALVARIABLE [xyz]m? Lkotlin/reflect/KMutableProperty[0-2];
-// 12 public( static)? get[XYZ]m?\$delegate
+// 12 private( static)? get[XYZ]m?\$delegate
 
 // JVM_TEMPLATES
 // Not optimized, references created as classes and stored in fields:

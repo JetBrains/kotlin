@@ -42202,6 +42202,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("getExtensionDelegateForDelegatedToAnother.kt")
+                public void testGetExtensionDelegateForDelegatedToAnother() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/getExtensionDelegateForDelegatedToAnother.kt");
+                }
+
+                @Test
                 @TestMetadata("kPropertyForDelegatedProperty.kt")
                 public void testKPropertyForDelegatedProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/kPropertyForDelegatedProperty.kt");

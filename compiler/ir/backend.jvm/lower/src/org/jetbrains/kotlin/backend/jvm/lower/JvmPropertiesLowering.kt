@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.backend.jvm.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -167,7 +169,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS,
             // TODO: technically JVM permits having fields with same name but different type, so we could potentially
             //   generate two properties like that; should this be the getter's return type instead?
-            isStatic = true, returnType = backendContext.irBuiltIns.unitType
+            isStatic = true, returnType = backendContext.irBuiltIns.unitType, visibility = declaration.visibility
         ).apply {
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             annotations = declaration.annotations
@@ -179,13 +181,14 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             suffix: String,
             origin: IrDeclarationOrigin,
             isStatic: Boolean,
-            returnType: IrType
+            returnType: IrType,
+            visibility: DescriptorVisibility
         ) = irFactory.buildFun {
             name = Name.identifier(computeSyntheticMethodName(declaration, suffix))
             modality = Modality.OPEN
-            visibility = declaration.visibility
             this.origin = origin
             this.returnType = returnType
+            this.visibility = visibility
         }.apply {
             if (!isStatic) {
                 dispatchReceiverParameter = declaration.getter?.dispatchReceiverParameter?.let {
@@ -207,7 +210,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                 declaration,
                 JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
-                isStatic = false, returnType = irBuiltIns.anyNType
+                isStatic = false, returnType = irBuiltIns.anyNType, visibility = DescriptorVisibilities.PRIVATE
             )
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
