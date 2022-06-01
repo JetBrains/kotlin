@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-
 
 data class KtModuleProjectStructure(
     val mainModules: List<KtModuleWithFiles>,
@@ -19,6 +21,12 @@ data class KtModuleProjectStructure(
     fun allKtModules(): List<KtModule> = buildList {
         mainModules.mapTo(this) { it.ktModule }
         addAll(binaryModules)
+    }
+
+    fun allSourceFiles(): List<PsiFileSystemItem> = buildList {
+        val files = mainModules.flatMap { it.files }
+        addAll(files)
+        addAll(findJvmRootsForJavaFiles(files.filterIsInstance<PsiJavaFile>()))
     }
 }
 
