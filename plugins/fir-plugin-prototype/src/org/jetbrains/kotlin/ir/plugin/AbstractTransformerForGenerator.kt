@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.fir.backend.IrPluginDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -24,9 +24,9 @@ abstract class AbstractTransformerForGenerator(protected val context: IrPluginCo
     protected val irFactory = context.irFactory
     protected val irBuiltIns = context.irBuiltIns
 
-    abstract fun interestedIn(key: FirPluginKey): Boolean
-    abstract fun generateBodyForFunction(function: IrSimpleFunction, key: FirPluginKey): IrBody?
-    abstract fun generateBodyForConstructor(constructor: IrConstructor, key: FirPluginKey): IrBody?
+    abstract fun interestedIn(key: GeneratedDeclarationKey): Boolean
+    abstract fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey): IrBody?
+    abstract fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody?
 
     final override fun visitElement(element: IrElement) {
         when (element) {
@@ -39,14 +39,14 @@ abstract class AbstractTransformerForGenerator(protected val context: IrPluginCo
 
     final override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         val origin = declaration.origin
-        if (origin !is IrPluginDeclarationOrigin || !interestedIn(origin.pluginKey)) return
+        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) return
         require(declaration.body == null)
         declaration.body = generateBodyForFunction(declaration, origin.pluginKey)
     }
 
     final override fun visitConstructor(declaration: IrConstructor) {
         val origin = declaration.origin
-        if (origin !is IrPluginDeclarationOrigin || !interestedIn(origin.pluginKey)) return
+        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) return
         require(declaration.body == null)
         declaration.body = generateBodyForConstructor(declaration, origin.pluginKey)
     }

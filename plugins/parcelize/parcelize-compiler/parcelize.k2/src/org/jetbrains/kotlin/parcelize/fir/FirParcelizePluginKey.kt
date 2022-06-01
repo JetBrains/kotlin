@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.parcelize.fir
 
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object FirParcelizePluginKey : FirPluginKey() {
+object FirParcelizePluginKey : GeneratedDeclarationKey() {
     override fun toString(): String {
         return "FirParcelize"
     }

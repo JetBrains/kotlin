@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.parcelize.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.backend.IrPluginDeclarationOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.functions
@@ -47,7 +47,7 @@ class ParcelizeFirIrTransformer(
 
         for (function in declaration.functions) {
             val origin = function.origin
-            if (origin !is IrPluginDeclarationOrigin || origin.pluginKey != FirParcelizePluginKey) continue
+            if (origin !is GeneratedByPlugin || origin.pluginKey != FirParcelizePluginKey) continue
             when (function.name.identifier) {
                 ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS.methodName -> {
                     function.generateDescribeContentsBody(parcelableProperties)

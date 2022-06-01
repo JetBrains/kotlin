@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -45,7 +46,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val PREDICATE: DeclarationPredicate = annotated("ExternalClassWithNested".fqn())
     }
 
-    object Key : FirPluginKey() {
+    object Key : GeneratedDeclarationKey() {
         override fun toString(): String {
             return "AllOpenClassGeneratorKey"
         }

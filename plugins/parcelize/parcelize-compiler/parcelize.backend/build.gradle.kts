@@ -15,7 +15,6 @@ dependencies {
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree.impl"))
     compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }

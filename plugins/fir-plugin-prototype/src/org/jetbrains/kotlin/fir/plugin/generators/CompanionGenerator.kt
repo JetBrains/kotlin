@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -71,8 +72,9 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val owner = context?.owner
-        if (owner == null || owner.origin != Key.origin) return emptyList()
+        val owner = context?.owner ?: return emptyList()
+        val ownerKey = (owner.origin as? FirDeclarationOrigin.Plugin)?.key ?: return emptyList()
+        if (ownerKey != Key) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
         val function = buildSimpleFunction {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -118,7 +120,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         }
     }
 
-    object Key : FirPluginKey() {
+    object Key : GeneratedDeclarationKey() {
         override fun toString(): String {
             return "CompanionGeneratorKey"
         }

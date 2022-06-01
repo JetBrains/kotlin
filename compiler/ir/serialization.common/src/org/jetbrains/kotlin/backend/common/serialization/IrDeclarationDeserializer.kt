@@ -771,7 +771,7 @@ class IrDeclarationDeserializer(
     companion object {
         private val allKnownDeclarationOrigins = IrDeclarationOrigin::class.nestedClasses.toList()
         private val declarationOriginIndex =
-            allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
+            allKnownDeclarationOrigins.mapNotNull { it.objectInstance as? IrDeclarationOriginImpl }.associateBy { it.name }
     }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {

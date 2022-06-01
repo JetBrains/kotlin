@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.plugin.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 fun FirDeclarationGenerationExtension.buildMaterializeFunction(
     matchedClassSymbol: FirClassLikeSymbol<*>,
     callableId: CallableId,
-    key: FirPluginKey
+    key: GeneratedDeclarationKey
 ): FirSimpleFunction {
     return buildSimpleFunction {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -61,7 +62,7 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
 }
 
 @OptIn(SymbolInternals::class)
-fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: FirPluginKey): FirConstructor {
+fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
     return buildPrimaryConstructor {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
