@@ -153,9 +153,9 @@ to perform such updates:
 
 We publish `-dev` and `-SNAPSHOT` versions frequently.
 
-For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
+For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
-`maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap") }`
+`maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev") }`
 
 For `-SNAPSHOT` versions that are updated daily, you can use the [list of available versions](https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
