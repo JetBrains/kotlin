@@ -58,8 +58,5 @@ val Project.distsDirectory get() = if (isGradleVersionAtLeast(7, 1)) {
 
 val ResolvedDependencyResult.resolvedDependencies: Iterable<ResolvedDependencyResult>
     get() = selected.getDependenciesForVariant(this.resolvedVariant).filterIsInstance<ResolvedDependencyResult>()
-
-// TODO NOW: Sergey told that no usages of ResolvedComponentResult should be left. There's only one usage, in DependencyGraphResolver,
-// for graphRoot. Is it OK? Can we construct a counter-example?
 val ResolvedComponentResult.resolvedDependencies: Iterable<ResolvedDependencyResult>
     get() = dependencies.filterIsInstance<ResolvedDependencyResult>()
