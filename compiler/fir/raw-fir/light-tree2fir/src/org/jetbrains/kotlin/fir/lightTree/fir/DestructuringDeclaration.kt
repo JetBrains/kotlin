@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
+import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
@@ -24,9 +25,9 @@ data class DestructuringDeclaration(
         val baseVariable = generateTemporaryVariable(
             moduleData,
             source,
-            "destruct",
+            SpecialNames.DESTRUCT,
             initializer,
-            modifier.annotations
+            extractedAnnotations = modifier.annotations
         )
         return generateDestructuringBlock(moduleData, this, baseVariable, tmpVariable = true)
     }

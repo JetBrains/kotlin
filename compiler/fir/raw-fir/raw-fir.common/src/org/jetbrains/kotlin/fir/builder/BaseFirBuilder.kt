@@ -631,7 +631,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val resultVar = generateTemporaryVariable(
             baseModuleData,
             desugaredSource,
-            Name.special("<unary-result>"),
+            SpecialNames.UNARY_RESULT,
             resultInitializer
         )
 
