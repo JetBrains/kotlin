@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
@@ -52,13 +52,15 @@ class AnalysisApiEnvironmentManagerImpl(
     }
 
     override fun initializeProjectStructure() {
-        val ktModules = testServices.ktModuleProvider.getModuleStructure()
+        val ktModuleProjectStructure = testServices.ktModuleProvider.getModuleStructure()
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            ktModules,
+            KtStaticModuleProvider(ktModuleProjectStructure),
+            ktModuleProjectStructure.allKtModules(),
+            ktModuleProjectStructure.allSourceFiles(),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )
