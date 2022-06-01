@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.ReplaceWithSupertypeAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -40,13 +43,15 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         )
     }
 
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         for (file in files) {
             if (ignoreDirectives.any { file.content.contains(it) }) return
         }
 
         val fullTxt = compileWithFullAnalysis(files)
-            .replace("final enum class", "enum class")
 
         val liteTxt = compileWithLightAnalysis(wholeFile, files)
             .replace("@synthetic.kotlin.jvm.GeneratedByJvmOverloads ", "")
@@ -64,6 +69,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         // Fail if this test is not under codegen/box
         assert(!relativePath.startsWith(".."))
 
+        configurationKind = extractConfigurationKind(files)
         val configuration = createConfiguration(
             configurationKind, getTestJdkKind(files), backend, listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
         )
@@ -89,6 +95,26 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private fun compileWithFullAnalysis(files: List<TestFile>): String {
         compile(files)
         return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
+    }
+
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
+        configureIrAnalysisFlag(configuration)
+    }
+
+    // TODO: rewrite the test on the new infrastructure, so that this won't be needed.
+    private fun configureIrAnalysisFlag(configuration: CompilerConfiguration) {
+        val irFlag: Map<AnalysisFlag<*>, Boolean> = mapOf(JvmAnalysisFlags.useIR to backend.isIR)
+        val lvs = configuration.languageVersionSettings
+        if (lvs is CompilerTestLanguageVersionSettings) {
+            configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+                lvs.languageVersion, lvs.apiVersion, lvs.analysisFlags + irFlag, lvs.extraLanguageFeatures,
+            )
+        } else {
+            configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+                LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, irFlag,
+            )
+        }
     }
 
     private class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

@@ -7,6 +7,10 @@
 // Android doesn't have @Repeatable before API level 24, so findAnnotations can't unpack repeatable annotations.
 // IGNORE_BACKEND: ANDROID
 
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
+
 // FILE: A.kt
 @java.lang.annotation.Repeatable(A.Container::class)
 annotation class A(val value: String) {

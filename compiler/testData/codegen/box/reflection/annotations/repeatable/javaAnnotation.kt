@@ -3,6 +3,11 @@
 // JVM_TARGET: 1.8
 // FULL_JDK
 // WITH_REFLECT
+
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
+
 // FILE: box.kt
 
 import kotlin.reflect.full.findAnnotation

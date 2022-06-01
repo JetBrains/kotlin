@@ -2,9 +2,6 @@
 // WITH_COROUTINES
 // SKIP_MANGLE_VERIFICATION
 
-// Light analysis mode test is muted because of some bug related to the old JVM backend. To be unmuted once the test is migrated to JVM IR.
-// IGNORE_LIGHT_ANALYSIS
-
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

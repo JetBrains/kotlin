@@ -9,6 +9,10 @@
 // java.lang.NoSuchMethodError: java.lang.Class.getAnnotationsByType
 // IGNORE_BACKEND: ANDROID
 
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
+
 @JvmRepeatable(As::class)
 annotation class A(val value: String)
 

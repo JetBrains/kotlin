@@ -82,7 +82,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 // There isn't much to be gained from running light analysis tests on them.
                 model(
                     "codegen/box",
-                    targetBackend = TargetBackend.JVM,
+                    targetBackend = TargetBackend.JVM_IR,
                     skipIgnored = true,
                     excludeDirs = listOf(
                         "ranges/stepped",
