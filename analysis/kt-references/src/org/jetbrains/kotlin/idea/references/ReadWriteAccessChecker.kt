@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
@@ -48,17 +48,16 @@ interface ReadWriteAccessChecker {
     }
 
     companion object {
-        fun getInstance(): ReadWriteAccessChecker = ApplicationManager.getApplication().getService(ReadWriteAccessChecker::class.java)
+        fun getInstance(project: Project): ReadWriteAccessChecker = project.getService(ReadWriteAccessChecker::class.java)
     }
 }
 
+// Used in IDE
+@Suppress("unused")
 fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> =
-    ReadWriteAccessChecker.getInstance().readWriteAccessWithFullExpression(this, useResolveForReadWrite)
+    ReadWriteAccessChecker.getInstance(project).readWriteAccessWithFullExpression(this, useResolveForReadWrite)
 
-fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess =
-    object : ReadWriteAccessChecker {
-        override fun readWriteAccessWithFullExpressionByResolve(
-            assignment: KtBinaryExpression
-        ): Pair<ReferenceAccess, KtExpression>? = null
-    }.readWriteAccessWithFullExpression(this, useResolveForReadWrite).first
+fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess {
+    return ReadWriteAccessChecker.getInstance(project).readWriteAccessWithFullExpression(this, useResolveForReadWrite).first
+}
 
