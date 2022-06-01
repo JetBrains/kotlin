@@ -91,3 +91,7 @@ tasks.register("endorsedLibsSources") {
         dependsOn("${library.taskName}NativeSources")
     }
 }
+
+tasks.register("clean") {
+    delete("build")
+}
