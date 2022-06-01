@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
 
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
@@ -66,40 +67,27 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
     private fun compileWithFullAnalysis(files: List<TestFile>): String {
         compile(files)
-        classFileFactory.getClassFiles()
-
-        val classInternalNames = classFileFactory.generationState.bindingContext
-            .getSliceContents(CodegenBinding.ASM_TYPE).map { it.value.internalName to it.key }.toMap()
-
-        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, object : ListAnalysisFilter() {
-            override fun shouldWriteClass(access: Int, name: String): Boolean {
-                val classDescriptor = classInternalNames[name]
-                if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
-                    return false
-                }
-                return super.shouldWriteClass(access, name)
-            }
-
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean {
-                val classDescriptor = classInternalNames[name]
-                if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
-                    return false
-                }
-                return super.shouldWriteInnerClass(name, outerName, innerName)
-            }
-
-            private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
-                return descriptor.visibility == DescriptorVisibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
-            }
-        })
+        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
     }
 
-    private open class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {
-        override fun shouldWriteClass(access: Int, name: String) = when {
-            name.endsWith(MAPPINGS_CLASS_NAME_POSTFIX) && (access and ACC_SYNTHETIC != 0) && (access and ACC_FINAL != 0) -> false
-            name.contains("\$\$inlined") && (access and ACC_FINAL != 0) -> false
-            name.contains("\$sam\$") -> false
-            else -> true
+    private class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {
+        @Suppress("UNCHECKED_CAST")
+        override fun shouldWriteClass(node: ClassNode): Boolean {
+            val metadata = node.visibleAnnotations.singleOrNull { it.desc == "Lkotlin/Metadata;" }
+                ?: error("No kotlin.Metadata generated for class ${node.name}")
+            val args = metadata.values.chunked(2).associate { (x, y) -> x to y }
+            val kind = args["k"] as Int
+            return when (Kind.getById(kind)) {
+                Kind.UNKNOWN -> error(node.name)
+                Kind.CLASS -> {
+                    val d1 = (args["d1"] as List<String>).toTypedArray()
+                    val d2 = (args["d2"] as List<String>).toTypedArray()
+                    val (_, proto) = JvmProtoBufUtil.readClassDataFrom(d1, d2)
+                    Flags.VISIBILITY.get(proto.flags) != ProtoBuf.Visibility.LOCAL
+                }
+                Kind.FILE_FACADE, Kind.MULTIFILE_CLASS, Kind.MULTIFILE_CLASS_PART -> true
+                Kind.SYNTHETIC_CLASS -> false
+            }
         }
 
         override fun shouldWriteMethod(access: Int, name: String, desc: String) = when {
