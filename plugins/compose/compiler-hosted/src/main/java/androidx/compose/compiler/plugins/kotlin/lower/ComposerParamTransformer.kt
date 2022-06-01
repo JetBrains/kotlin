@@ -213,7 +213,8 @@ class ComposerParamTransformer(
                     it.putValueArgument(i, defaultArgumentFor(param))
                 }
             }
-            val realValueParams = valueArgumentsCount
+            val valueParams = valueArgumentsCount
+            val realValueParams = valueParams - ownerFn.contextReceiverParametersCount
             var argIndex = valueArgumentsCount
             it.putValueArgument(
                 argIndex++,
@@ -237,9 +238,9 @@ class ComposerParamTransformer(
             }
 
             // $default[n]
-            for (i in 0 until defaultParamCount(realValueParams)) {
+            for (i in 0 until defaultParamCount(valueParams)) {
                 val start = i * BITS_PER_INT
-                val end = min(start + BITS_PER_INT, realValueParams)
+                val end = min(start + BITS_PER_INT, valueParams)
                 if (argIndex < ownerFn.valueParameters.size) {
                     val bits = argumentsMissing
                         .toBooleanArray()
@@ -355,7 +356,7 @@ class ComposerParamTransformer(
     private fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
-        val extraParams = composeSyntheticParamCount(argCount, hasDefaults = false)
+        val extraParams = composeSyntheticParamCount(argCount)
         val newFnClass = context.function(argCount + extraParams).owner
         val newInvoke = newFnClass.functions.first {
             it.name == OperatorNameConventions.INVOKE
@@ -435,6 +436,7 @@ class ComposerParamTransformer(
                     )
                 )
             }
+            fn.contextReceiverParametersCount = contextReceiverParametersCount
             fn.annotations = annotations.toList()
             fn.metadata = metadata
             fn.body = moveBodyTo(fn)?.copyWithNewTypeParams(this, fn)
@@ -546,7 +548,8 @@ class ComposerParamTransformer(
                 .zip(fn.explicitParameters)
                 .toMap()
 
-            val realParams = fn.valueParameters.size
+            val currentParams = fn.valueParameters.size
+            val realParams = currentParams - fn.contextReceiverParametersCount
 
             // $composer
             val composerParam = fn.addValueParameter {
@@ -568,7 +571,7 @@ class ComposerParamTransformer(
             // $default[n]
             if (oldFn.requiresDefaultParameter()) {
                 val defaults = KtxNameConventions.DEFAULT_PARAMETER.identifier
-                for (i in 0 until defaultParamCount(realParams)) {
+                for (i in 0 until defaultParamCount(currentParams)) {
                     fn.addValueParameter(
                         if (i == 0) defaults else "$defaults$i",
                         context.irBuiltIns.intType,
