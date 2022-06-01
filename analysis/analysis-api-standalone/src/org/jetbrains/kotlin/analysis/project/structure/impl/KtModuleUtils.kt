@@ -154,6 +154,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             this.platform = platform
             this.project = project
             this.moduleName = moduleName
+            addSourceRoots(getPsiFilesFromPaths(project, getSourceFilePaths(compilerConfig)))
         }
     )
 }

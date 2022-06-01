@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
@@ -52,8 +51,8 @@ object StandaloneProjectFactory {
         projectStructureProvider: ProjectStructureProvider,
         modules: List<KtModule>,
         sourceFiles: List<PsiFileSystemItem>,
-        languageVersionSettings: LanguageVersionSettings,
-        jdkHome: Path?,
+        languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
+        jdkHome: Path? = null,
     ) {
         val project = environment.project
 
@@ -96,7 +95,7 @@ object StandaloneProjectFactory {
         javaFileManager.initialize(
             JvmDependenciesIndexImpl(sourceAndLibraryRoots),
             listOf(
-                createPackagePartsProvider(languageVersionSettings, project, libraryRoots)
+                createPackagePartsProvider(project, libraryRoots, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
             SingleJavaFileRootsIndex(emptyList()),
@@ -174,9 +173,9 @@ object StandaloneProjectFactory {
     }
 
     fun createPackagePartsProvider(
-        languageVersionSettings: LanguageVersionSettings,
         project: MockProject,
-        libraryRoots: List<JavaRoot>
+        libraryRoots: List<JavaRoot>,
+        languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
         JvmPackagePartProvider(languageVersionSettings, scope).apply {
             addRoots(libraryRoots, MessageCollector.NONE)
@@ -185,4 +184,7 @@ object StandaloneProjectFactory {
                 .addPackagePartProvider(this)
         }
     }
+
+    private val latestLanguageVersionSettings: LanguageVersionSettings =
+        LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
 }
