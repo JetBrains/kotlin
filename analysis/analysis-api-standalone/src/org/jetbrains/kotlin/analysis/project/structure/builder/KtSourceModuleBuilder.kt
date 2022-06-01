@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.config.ApiVersion
@@ -20,6 +21,15 @@ public class KtSourceModuleBuilder : KtModuleBuilder() {
     public lateinit var moduleName: String
     public var languageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
+    private val sourceRoots: MutableList<PsiFile> = mutableListOf()
+
+    public fun addSourceRoot(file: PsiFile) {
+        sourceRoots.add(file)
+    }
+
+    public fun addSourceRoots(files: Collection<PsiFile>) {
+        sourceRoots.addAll(files)
+    }
 
     override fun build(): KtSourceModule {
         return KtSourceModuleImpl(
@@ -31,6 +41,7 @@ public class KtSourceModuleBuilder : KtModuleBuilder() {
             project,
             moduleName,
             languageVersionSettings,
+            sourceRoots,
         )
     }
 }
