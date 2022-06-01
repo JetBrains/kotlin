@@ -22,3 +22,7 @@ data class OptInDescription(val annotationFqName: FqName, val severity: Severity
         )
     }
 }
+
+@Deprecated("Please use OptInDescription instead", ReplaceWith("OptInDescription"))
+@Suppress("unused")
+typealias Experimentality = OptInDescription
