@@ -777,7 +777,7 @@ class Fir2IrVisitor(
             savedValue to operation
         }
 
-        val isArrayAccess = receiver.name == SpecialNames.ARRAY_NAME
+        val isArrayAccess = receiver.name == SpecialNames.ARRAY
 
         val explicitReceiverExpression = if (isArrayAccess) {
             val arrayAccess = operationReceiver as? FirFunctionCall ?: return null
