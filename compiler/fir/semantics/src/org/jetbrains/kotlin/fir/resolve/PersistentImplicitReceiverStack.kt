@@ -71,16 +71,6 @@ class PersistentImplicitReceiverStack private constructor(
         )
     }
 
-    fun addReceiverLabelAlias(aliasLabel: Name, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
-        val receiversPerLabel = receiversPerLabel.put(aliasLabel, value)
-        return PersistentImplicitReceiverStack(
-            stack,
-            receiversPerLabel,
-            indexesPerSymbol,
-            originalTypes
-        )
-    }
-
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
         if (name == null) return stack.lastOrNull()
         return receiversPerLabel[Name.identifier(name)].lastOrNull()
