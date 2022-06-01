@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -31,8 +32,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -43,10 +44,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
@@ -282,57 +283,73 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean
     return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
 }
 
-fun createResolutionCandidatesForConstructors(
-    lexicalScope: LexicalScope,
-    call: Call,
-    typeWithConstructors: KotlinType,
-    useKnownTypeSubstitutor: Boolean,
+private fun computeConstructorDescriptorsToResolveAndReceiver(
+    constructors: Collection<ConstructorDescriptor>,
+    containingClass: ClassDescriptor,
+    scope: LexicalScope,
+    substitutor: TypeSubstitutor?,
     syntheticScopes: SyntheticScopes
-): List<OldResolutionCandidate<ConstructorDescriptor>> {
-    val classWithConstructors = typeWithConstructors.constructor.declarationDescriptor as ClassDescriptor
-
-    val unwrappedType = typeWithConstructors.unwrap()
-    val knownSubstitutor =
-        if (useKnownTypeSubstitutor)
-            TypeSubstitutor.create(
-                (unwrappedType as? AbbreviatedType)?.abbreviation ?: unwrappedType
-            )
-        else null
-
-    val typeAliasDescriptor =
-        if (unwrappedType is AbbreviatedType)
-            unwrappedType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
-        else
-            null
-
-    val constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
-            ?: classWithConstructors.constructors
-
-    if (constructors.isEmpty()) return emptyList()
-
-    val receiverKind: ExplicitReceiverKind
-    val dispatchReceiver: ReceiverValue?
-
-    if (classWithConstructors.isInner) {
-        val outerClassType = (classWithConstructors.containingDeclaration as? ClassDescriptor)?.defaultType ?: return emptyList()
-        val substitutedOuterClassType = knownSubstitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
-
-        val receiver = lexicalScope.getImplicitReceiversHierarchy().firstOrNull {
+): Pair<Collection<ConstructorDescriptor>, ReceiverValue?>? {
+    val dispatchReceiver: ReceiverValue? = if (containingClass.isInner) {
+        val outerClassType = (containingClass.containingDeclaration as? ClassDescriptor)?.defaultType ?: return null
+        val substitutedOuterClassType = substitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
+        val receiver = scope.getImplicitReceiversHierarchy().firstOrNull {
             KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
-        } ?: return emptyList()
+        } ?: return null
 
-        receiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
-        dispatchReceiver = receiver.value
+        receiver.value
     } else {
-        receiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-        dispatchReceiver = null
+        null
     }
 
     val syntheticConstructors = constructors.flatMap { syntheticScopes.collectSyntheticConstructors(it) }
 
-    return (constructors + syntheticConstructors).map {
-        OldResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
+    return constructors + syntheticConstructors to dispatchReceiver
+
+}
+
+fun resolveConstructorCallWithGivenDescriptors(
+    PSICallResolver: PSICallResolver,
+    context: BasicCallResolutionContext,
+    constructorType: KotlinType,
+    useKnownTypeSubstitutor: Boolean,
+    syntheticScopes: SyntheticScopes,
+    tracingStrategy: TracingStrategy
+): OverloadResolutionResults<ConstructorDescriptor> {
+    val containingClass = constructorType.constructor.declarationDescriptor as ClassDescriptor
+
+    @Suppress("NAME_SHADOWING")
+    val constructorType = constructorType.unwrap()
+    val knownSubstitutor = if (useKnownTypeSubstitutor) {
+        TypeSubstitutor.create((constructorType as? AbbreviatedType)?.abbreviation ?: constructorType)
+    } else null
+    val typeAliasDescriptor = if (constructorType is AbbreviatedType) {
+        constructorType.abbreviation.constructor.declarationDescriptor as? TypeAliasDescriptor
+    } else null
+
+    val (constructors, receiver) = computeConstructorDescriptorsToResolveAndReceiver(
+        constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
+            ?: containingClass.constructors,
+        containingClass,
+        context.scope,
+        knownSubstitutor,
+        syntheticScopes
+    ) ?: (emptyList<ConstructorDescriptor>() to null)
+
+    val resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors<ConstructorDescriptor>(
+        context,
+        constructors,
+        tracingStrategy,
+        knownSubstitutor,
+        receiver?.let { context.transformToReceiverWithSmartCastInfo(it) }
+    )
+
+    if (resolutionResults.isSingleResult) {
+        context.trace.record(BindingContext.RESOLVED_CALL, context.call, resolutionResults.resultingCall)
+        context.trace.record(BindingContext.CALL, context.call.calleeExpression ?: context.call.callElement, context.call)
     }
+
+    return resolutionResults
 }
 
 internal fun PsiElement.reportOnElement() =
