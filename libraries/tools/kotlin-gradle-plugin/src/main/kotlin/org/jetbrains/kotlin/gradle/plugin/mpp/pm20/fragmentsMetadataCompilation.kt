@@ -102,7 +102,7 @@ private fun generateAndExportProjectStructureMetadata(
         }
     }
     GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
-        buildProjectStructureMetadata(module)
+        buildKpmProjectStructureMetadata(module)
     }
 }
 

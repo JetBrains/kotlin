@@ -200,7 +200,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
     )
 }
 
-internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
+internal fun buildKpmProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
     val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
 
     fun <T> expandVariantKeys(map: Map<String, T>) =
