@@ -8,8 +8,9 @@ class InlineExtensionWithTypeParameterTest {
     private inline fun <S : Segment<S>> AtomicRef<S>.foo(
         id: Int,
         startFrom: S
-    ) {
-        startFrom.getSegmentId()
+    ): Int {
+        lazySet(startFrom)
+        return value.getSegmentId()
     }
 
     private inline fun <S : Segment<S>> S.getSegmentId(): Int {
@@ -17,10 +18,11 @@ class InlineExtensionWithTypeParameterTest {
         return cur.id
     }
 
+    val sref = atomic(SemaphoreSegment(0))
+
     fun testInlineExtensionWithTypeParameter() {
-        val s = SemaphoreSegment(0)
-        val sref = atomic(s)
-        sref.foo(0, s)
+        val s = SemaphoreSegment(77)
+        assertEquals(77, sref.foo(0, s))
     }
 }
 

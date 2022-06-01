@@ -45,10 +45,10 @@ class UncheckedCastTest {
 
 fun box(): String {
     val testClass = UncheckedCastTest()
+    testClass.testAtomicValUncheckedCast()
     testClass.testTopLevelValUnchekedCast()
     testClass.testArrayValueUncheckedCast()
     testClass.testArrayValueUncheckedCastInlineFunc()
-    testClass.testAtomicValUncheckedCast()
     testClass.testInlineFunc()
     return "OK"
 }

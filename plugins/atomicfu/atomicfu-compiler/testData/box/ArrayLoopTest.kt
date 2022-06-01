@@ -16,20 +16,17 @@ class ArrayInlineFunctionTest {
 
     private fun action(cur: Box?) = cur?.let { Box(cur.n * 10) }
 
-
     fun testArrayElementUpdate() {
         refArr[0].lazySet(Box(5))
         refArr[0].update { cur -> cur?.let { Box(cur.n * 10) } }
         assertEquals(refArr[0].value!!.n, 50)
     }
 
-
     fun testArrayElementGetAndUpdate() {
         refArr[0].lazySet(Box(5))
         assertEquals(refArr[0].getAndUpdate { cur -> action(cur) }!!.n, 5)
         assertEquals(refArr[0].value!!.n, 50)
     }
-
 
     fun testArrayElementUpdateAndGet() {
         refArr[0].lazySet(Box(5))

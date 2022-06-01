@@ -2,81 +2,128 @@ import kotlinx.atomicfu.*
 import kotlin.test.*
 
 class LoopTest {
-    private val a = atomic(0)
-    private val r = atomic<A>(A("aaaa"))
-    private val rs = atomic<String>("bbbb")
+    val a = atomic(0)
+    val a1 = atomic(1)
+    val b = atomic(true)
+    val l = atomic(5000000000)
+    val r = atomic<A>(A("aaaa"))
+    val rs = atomic<String>("bbbb")
 
-    private class A(val s: String)
+    class A(val s: String)
 
-    private inline fun casLoop(to: Int): Int {
-        a.loop { cur ->
-            if (a.compareAndSet(cur, to)) return a.value
-            return 777
+    fun atomicfuIntLoopTest() {
+        a.loop { value ->
+            if (a.compareAndSet(value, 777)) {
+                assertEquals(777, a.value)
+                return
+            }
         }
     }
 
-    private inline fun casLoopExpression(to: Int): Int = a.loop { cur ->
-        if (a.compareAndSet(cur, to)) return a.value
-        return 777
-    }
-
-    private inline fun AtomicInt.extensionLoop(to: Int): Int {
-        loop { cur ->
-            if (compareAndSet(cur, to)) return value
-            return 777
+    fun atomicfuBooleanLoopTest() {
+        b.loop { value ->
+            assertTrue(value)
+            if (!b.value) return
+            if (b.compareAndSet(value, false)) {
+                return
+            }
         }
     }
 
-    private inline fun AtomicInt.extensionLoopExpression(to: Int): Int = loop { cur ->
-        lazySet(cur + 10)
-        return if (compareAndSet(cur, to)) value else incrementAndGet()
-    }
-
-    private inline fun AtomicInt.extensionLoopMixedReceivers(first: Int, second: Int): Int {
-        loop { cur ->
-            compareAndSet(cur, first)
-            a.compareAndSet(first, second)
-            return value
+    fun atomicfuLongLoopTest() {
+        l.loop { cur ->
+            if (l.compareAndSet(5000000003, 9000000000)) {
+                return
+            } else {
+                l.incrementAndGet()
+            }
         }
     }
 
-    private inline fun AtomicInt.extensionLoopRecursive(to: Int): Int {
-        loop { cur ->
-            compareAndSet(cur, to)
-            a.extensionLoop(5)
-            return value
+    fun atomicfuRefLoopTest() {
+        r.loop { cur ->
+            assertEquals("aaaa", cur.s)
+            if (r.compareAndSet(cur, A("bbbb"))) {
+                return
+            }
         }
     }
 
-    fun testIntExtensionLoops() {
-        assertEquals(5, casLoop(5))
-        assertEquals(6, casLoopExpression(6))
-        assertEquals(66, a.extensionLoop(66))
-        assertEquals(77, a.extensionLoopExpression(777))
-        assertEquals(99, a.extensionLoopMixedReceivers(88, 99))
-        assertEquals(5, a.extensionLoopRecursive(100))
+    inline fun atomicfuLoopTest() {
+        atomicfuIntLoopTest()
+        assertEquals(777, a.value)
+        atomicfuBooleanLoopTest()
+        assertFalse(b.value)
+        atomicfuLongLoopTest()
+        assertEquals(9000000000, l.value)
+        atomicfuRefLoopTest()
+        assertEquals("bbbb", r.value.s)
     }
 
-    private inline fun AtomicRef<A>.casLoop(to: String): String = loop { cur ->
-        if (compareAndSet(cur, A(to))) {
-            val res = value.s
-            return "${res}_AtomicRef<A>"
+    fun atomicfuUpdateTest() {
+        a.value = 0
+        a.update { value ->
+            val newValue = value + 1000
+            if (newValue >= 0) Int.MAX_VALUE else newValue
         }
+        assertEquals(Int.MAX_VALUE, a.value)
+        b.update { true }
+        assertEquals(true, b.value)
+        assertTrue(b.value)
+        l.value = 0L
+        l.update { cur ->
+            val newValue = cur + 1000
+            if (newValue >= 0L) Long.MAX_VALUE else newValue
+        }
+        assertEquals(Long.MAX_VALUE, l.value)
+        r.lazySet(A("aaaa"))
+        r.update { cur ->
+            A("cccc${cur.s}")
+        }
+        assertEquals("ccccaaaa", r.value.s)
     }
 
-    private inline fun AtomicRef<String>.casLoop(to: String): String = loop { cur ->
-        if (compareAndSet(cur, to)) return "${value}_AtomicRef<String>"
+    fun atomicfuUpdateAndGetTest() {
+        val res1 = a.updateAndGet { value ->
+            if (value >= 0) Int.MAX_VALUE else value
+        }
+        assertEquals(Int.MAX_VALUE, res1)
+        assertTrue(b.updateAndGet { true })
+        val res2 = l.updateAndGet { cur ->
+            if (cur >= 0L) Long.MAX_VALUE else cur
+        }
+        assertEquals(Long.MAX_VALUE, res2)
+        r.lazySet(A("aaaa"))
+        val res3 = r.updateAndGet { cur ->
+            A("cccc${cur.s}")
+        }
+        assertEquals("ccccaaaa", res3.s)
     }
 
-    fun testDeclarationWithEqualNames() {
-        check(r.casLoop("kk") == "kk_AtomicRef<A>")
-        check(rs.casLoop("pp") == "pp_AtomicRef<String>")
+    fun atomicfuGetAndUpdateTest() {
+        a.getAndUpdate { value ->
+            if (value >= 0) Int.MAX_VALUE else value
+        }
+        assertEquals(Int.MAX_VALUE, a.value)
+        b.getAndUpdate { true }
+        assertTrue(b.value)
+        l.getAndUpdate { cur ->
+            if (cur >= 0L) Long.MAX_VALUE else cur
+        }
+        assertEquals(Long.MAX_VALUE, l.value)
+        r.lazySet(A("aaaa"))
+        r.getAndUpdate { cur ->
+            A("cccc${cur.s}")
+        }
+        assertEquals("ccccaaaa", r.value.s)
     }
 }
 
 fun box(): String {
     val testClass = LoopTest()
-    testClass.testIntExtensionLoops()
-    testClass.testDeclarationWithEqualNames()
+    testClass.atomicfuLoopTest()
+    testClass.atomicfuUpdateTest()
+    testClass.atomicfuUpdateAndGetTest()
+    testClass.atomicfuGetAndUpdateTest()
     return "OK"
 }

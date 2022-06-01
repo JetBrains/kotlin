@@ -29,14 +29,14 @@ class ArithmeticTest {
     fun testGetValue() {
         val a = IntArithmetic()
         a._x.value = 5
-        check(a._x.value == 5)
+        assertEquals(5, a._x.value)
         var aValue = a._x.value
-        check(aValue == 5)
-        check(a.x == 5)
+        assertEquals(5, aValue)
+        assertEquals(5, a.x)
 
         local.value = 555
         aValue = local.value
-        check(local.value == aValue)
+        assertEquals(aValue, local.value)
     }
 
     fun testAtomicCallPlaces(): Boolean {
@@ -44,76 +44,77 @@ class ArithmeticTest {
         a._x.value = 5
         a._x.compareAndSet(5, 42)
         val res = a._x.compareAndSet(42, 45)
-        check(res)
-        check(a._x.compareAndSet(45, 77))
-        check(!a._x.compareAndSet(95, 77))
+        assertTrue(res)
+        assertTrue(a._x.compareAndSet(45, 77))
+        assertFalse(a._x.compareAndSet(95, 77))
         return a._x.compareAndSet(77, 88)
     }
 
     fun testInt() {
         val a = IntArithmetic()
-        check(a.x == 0)
+        assertEquals(0, a.x)
         val update = 3
-        check(a._x.getAndSet(update) == 0)
-        check(a._x.compareAndSet(update, 8))
+        assertEquals(0, a._x.getAndSet(update))
+        assertTrue(a._x.compareAndSet(update, 8))
         a._x.lazySet(1)
-        check(a.x == 1)
-        check(a._x.getAndSet(2) == 1)
-        check(a.x == 2)
-        check(a._x.getAndIncrement() == 2)
-        check(a.x == 3)
-        check(a._x.getAndDecrement() == 3)
-        check(a.x == 2)
-        check(a._x.getAndAdd(2) == 2)
-        check(a.x == 4)
-        check(a._x.addAndGet(3) == 7)
-        check(a.x == 7)
-        check(a._x.incrementAndGet() == 8)
-        check(a.x == 8)
-        check(a._x.decrementAndGet() == 7)
-        check(a.x == 7)
-        check(a._x.compareAndSet(7, 10))
+        assertEquals(1, a.x)
+        assertEquals(1, a._x.getAndSet(2))
+        assertEquals(2, a.x)
+        assertEquals(2, a._x.getAndIncrement())
+        assertEquals(3, a.x)
+        assertEquals(3, a._x.getAndDecrement())
+        assertEquals(2, a.x)
+        assertEquals(2, a._x.getAndAdd(2))
+        assertEquals(4, a.x)
+        assertEquals(7, a._x.addAndGet(3))
+        assertEquals(7, a.x)
+        assertEquals(8, a._x.incrementAndGet())
+        assertEquals(8, a.x)
+        assertEquals(7, a._x.decrementAndGet())
+        assertEquals(7, a.x)
+        assertTrue(a._x.compareAndSet(7, 10))
     }
 
     fun testLong() {
         val a = LongArithmetic()
-        check(a.z.value == 2424920024888888848)
+        assertEquals(2424920024888888848, a.z.value)
         a.z.lazySet(8424920024888888848)
-        check(a.z.value == 8424920024888888848)
-        check(a.z.getAndSet(8924920024888888848) == 8424920024888888848)
-        check(a.z.value == 8924920024888888848)
-        check(a.z.incrementAndGet() == 8924920024888888849) // fails
-        check(a.z.value == 8924920024888888849)
-        check(a.z.getAndDecrement() == 8924920024888888849)
-        check(a.z.value == 8924920024888888848)
-        check(a.z.getAndAdd(100000000000000000) == 8924920024888888848)
-        check(a.z.value == 9024920024888888848)
-        check(a.z.addAndGet(-9223372036854775807) == -198452011965886959)
-        check(a.z.value == -198452011965886959)
-        check(a.z.incrementAndGet() == -198452011965886958)
-        check(a.z.value == -198452011965886958)
-        check(a.z.decrementAndGet() == -198452011965886959)
-        check(a.z.value == -198452011965886959)
+        assertEquals(8424920024888888848, a.z.value)
+        assertEquals(8424920024888888848, a.z.getAndSet(8924920024888888848))
+        assertEquals(8924920024888888848, a.z.value)
+        assertEquals(8924920024888888849, a.z.incrementAndGet())
+        assertEquals(8924920024888888849, a.z.value)
+        assertEquals(8924920024888888849, a.z.getAndDecrement())
+        assertEquals(8924920024888888848, a.z.value)
+        assertEquals(8924920024888888848, a.z.getAndAdd(100000000000000000))
+        assertEquals(9024920024888888848, a.z.value)
+        assertEquals(-198452011965886959, a.z.addAndGet(-9223372036854775807))
+        assertEquals(-198452011965886959, a.z.value)
+        assertEquals(-198452011965886958, a.z.incrementAndGet())
+        assertEquals(-198452011965886958, a.z.value)
+        assertEquals(-198452011965886959, a.z.decrementAndGet())
+        assertEquals(-198452011965886959, a.z.value)
     }
 
     fun testBoolean() {
         val a = BooleanArithmetic()
-        check(!a.x)
+        assertEquals(false, a._x.value)
+        assertFalse(a.x)
         a._x.lazySet(true)
-        check(a.x)
-        check(a._x.getAndSet(true))
-        check(a._x.compareAndSet(true, false))
-        check(!a.x)
+        assertTrue(a.x)
+        assertTrue(a._x.getAndSet(true))
+        assertTrue(a._x.compareAndSet(true, false))
+        assertFalse(a.x)
     }
 
     fun testReference() {
         val a = ReferenceArithmetic()
         a._x.value = "aaa"
-        check(a._x.value == "aaa")
+        assertEquals("aaa", a._x.value)
         a._x.lazySet("bb")
-        check(a._x.value == "bb")
-        check(a._x.getAndSet("ccc") == "bb")
-        check(a._x.value == "ccc")
+        assertEquals("bb", a._x.value)
+        assertEquals("bb", a._x.getAndSet("ccc"))
+        assertEquals("ccc", a._x.value)
     }
 }
 

@@ -1,27 +1,25 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlinx.atomicfu.compiler.extensions
+package org.jetbrains.kotlinx.atomicfu.compiler.backend
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.backend.common.extensions.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
 
 private const val KOTLIN = "kotlin"
 private const val GET = "get"
@@ -262,6 +260,10 @@ internal fun IrCall.getBackingField(): IrField =
         propertySymbol.owner.backingField ?: error("Property expected to have backing field")
     } ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
+internal fun IrCall.getCorrespondingProperty(): IrProperty =
+    symbol.owner.correspondingPropertySymbol?.owner
+        ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
+
 internal fun IrPluginContext.referencePackageFunction(
     packageName: String,
     name: String,
@@ -298,6 +300,87 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
     }
 }
 
+internal fun IrPluginContext.addProperty(field: IrField, parent: IrDeclarationContainer, isStatic: Boolean): IrProperty =
+    irFactory.buildProperty {
+        name = field.name
+    }.apply {
+        backingField = field
+        this.parent = parent
+        if (!isStatic) {
+            addDefaultGetter(this, field.parent as IrClass)
+        } else {
+            addGetter {
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                returnType = field.type
+            }.apply {
+                dispatchReceiverParameter = null
+                body = factory.createBlockBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                        IrReturnImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            irBuiltIns.nothingType,
+                            symbol,
+                            IrGetFieldImpl(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                symbol = field.symbol,
+                                type = field.type,
+                                receiver = null
+                            )
+                        )
+                    )
+                )
+            }
+        }
+        parent.declarations.add(this)
+    }
+
+internal fun IrPluginContext.addDefaultGetter(property: IrProperty, parentClass: IrDeclarationContainer) {
+    val field = property.backingField!!
+    property.addGetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        returnType = field.type
+    }.apply {
+        dispatchReceiverParameter = (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
+        body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrReturnImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    irBuiltIns.nothingType,
+                    symbol,
+                    IrGetFieldImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        field.symbol,
+                        field.type,
+                        dispatchReceiverParameter?.let {
+                            IrGetValueImpl(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                it.type,
+                                it.symbol
+                            )
+                        }
+                    )
+                )
+            )
+        )
+    }
+}
+
+internal fun IrPluginContext.buildClassInstance(irClass: IrClass, parentClass: IrDeclarationContainer) =
+    irFactory.buildField {
+        this.name = Name.identifier(irClass.name.asString().decapitalizeAsciiOnly())
+        type = irClass.defaultType
+        isFinal = true
+        isStatic = true
+    }.apply {
+        initializer = IrExpressionBodyImpl(
+            IrConstructorCallImpl.fromSymbolOwner(
+                irClass.defaultType,
+                irClass.primaryConstructor!!.symbol
+            )
+        )
+        this.parent = parentClass
+    }
+
 private fun IrSimpleType.getArrayClassFqName(): FqName =
     classifier.signature?.let { signature ->
         signature.getDeclarationNameBySignature().let { name ->
@@ -311,3 +394,4 @@ internal fun IdSignature.getDeclarationNameBySignature(): String? {
     val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()
     return commonSignature?.declarationFqName
 }
+

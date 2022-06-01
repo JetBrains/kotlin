@@ -4,11 +4,11 @@ import kotlin.test.*
 class LockFreeLongCounterTest {
     private inline fun testWith(g: LockFreeLongCounter.() -> Long) {
         val c = LockFreeLongCounter()
-        check(c.g() == 0L)
-        check(c.increment() == 1L)
-        check(c.g() == 1L)
-        check(c.increment() == 2L)
-        check(c.g() == 2L)
+        assertEquals(0L, c.g())
+        assertEquals(1L, c.increment())
+        assertEquals(1L, c.g())
+        assertEquals(2L, c.increment())
+        assertEquals(2L, c.g())
     }
 
     fun testBasic() = testWith { get() }
@@ -18,15 +18,15 @@ class LockFreeLongCounterTest {
     fun testAdd2() {
         val c = LockFreeLongCounter()
         c.add2()
-        check(c.get() == 2L)
+        assertEquals(2L, c.get())
         c.add2()
-        check(c.get() == 4L)
+        assertEquals(4L, c.get())
     }
 
     fun testSetM2() {
         val c = LockFreeLongCounter()
         c.setM2()
-        check(c.get() == -2L)
+        assertEquals(-2L, c.get())
     }
 }
 

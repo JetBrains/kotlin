@@ -2,32 +2,31 @@ import kotlinx.atomicfu.*
 import kotlin.test.*
 
 class LockFreeStackTest {
-
     fun testClear() {
         val s = LockFreeStack<String>()
-        check(s.isEmpty())
+        assertTrue(s.isEmpty())
         s.pushLoop("A")
-        check(!s.isEmpty())
+        assertTrue(!s.isEmpty())
         s.clear()
-        check(s.isEmpty())
+        assertTrue(s.isEmpty())
     }
 
     fun testPushPopLoop() {
         val s = LockFreeStack<String>()
-        check(s.isEmpty())
+        assertTrue(s.isEmpty())
         s.pushLoop("A")
-        check(!s.isEmpty())
-        check(s.popLoop() == "A")
-        check(s.isEmpty())
+        assertTrue(!s.isEmpty())
+        assertEquals("A", s.popLoop())
+        assertTrue(s.isEmpty())
     }
 
     fun testPushPopUpdate() {
         val s = LockFreeStack<String>()
-        check(s.isEmpty())
+        assertTrue(s.isEmpty())
         s.pushUpdate("A")
-        check(!s.isEmpty())
-        check(s.popUpdate() == "A")
-        check(s.isEmpty())
+        assertTrue(!s.isEmpty())
+        assertEquals("A", s.popUpdate())
+        assertTrue(s.isEmpty())
     }
 }
 

@@ -4,15 +4,15 @@ import kotlin.test.*
 class LockFreeQueueTest {
     fun testBasic() {
         val q = LockFreeQueue()
-        check(q.dequeue() == -1)
+        assertEquals(-1, q.dequeue())
         q.enqueue(42)
-        check(q.dequeue() == 42)
-        check(q.dequeue() == -1)
+        assertEquals(42, q.dequeue())
+        assertEquals(-1, q.dequeue())
         q.enqueue(1)
         q.enqueue(2)
-        check(q.dequeue() == 1)
-        check(q.dequeue() == 2)
-        check(q.dequeue() == -1)
+        assertEquals(1, q.dequeue())
+        assertEquals(2, q.dequeue())
+        assertEquals(-1, q.dequeue())
     }
 }
 

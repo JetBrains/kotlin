@@ -1,0 +1,38 @@
+@kotlin.Metadata
+public abstract class InlineExtensionWithTypeParameterTest$Segment {
+    // source: 'InlineExtensionWithTypeParameterTest.kt'
+    private final field id: int
+    public method <init>(p0: int): void
+    public final method getId(): int
+    public abstract inner class InlineExtensionWithTypeParameterTest$Segment
+}
+
+@kotlin.Metadata
+public final class InlineExtensionWithTypeParameterTest$SemaphoreSegment {
+    // source: 'InlineExtensionWithTypeParameterTest.kt'
+    public method <init>(p0: int): void
+    public final inner class InlineExtensionWithTypeParameterTest$SemaphoreSegment
+}
+
+@kotlin.Metadata
+public final class InlineExtensionWithTypeParameterTest {
+    // source: 'InlineExtensionWithTypeParameterTest.kt'
+    public final static @org.jetbrains.annotations.NotNull field sref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field sref: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method foo$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: InlineExtensionWithTypeParameterTest$Segment): int
+    public final method foo$atomicfu(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: int, @org.jetbrains.annotations.NotNull p3: InlineExtensionWithTypeParameterTest$Segment): int
+    private final method getSegmentId(p0: InlineExtensionWithTypeParameterTest$Segment): int
+    public final static @org.jetbrains.annotations.NotNull method getSref$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public final @org.jetbrains.annotations.Nullable method getSref(): java.lang.Object
+    public final method testInlineExtensionWithTypeParameter(): void
+    public abstract inner class InlineExtensionWithTypeParameterTest$Segment
+    public final inner class InlineExtensionWithTypeParameterTest$SemaphoreSegment
+}
+
+@kotlin.Metadata
+public final class InlineExtensionWithTypeParameterTestKt {
+    // source: 'InlineExtensionWithTypeParameterTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
