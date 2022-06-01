@@ -261,16 +261,21 @@ public class CallResolver {
             @NotNull Collection<FunctionDescriptor> functionDescriptors
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-        List<OldResolutionCandidate<FunctionDescriptor>> candidates = CollectionsKt.map(functionDescriptors, descriptor ->
-                OldResolutionCandidate.create(
-                        call,
-                        descriptor,
-                        null,
-                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                        null));
 
-        return computeTasksFromCandidatesAndResolvedCall(
-                callResolutionContext, candidates, TracingStrategyImpl.create(expression, call));
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
+                callResolutionContext,
+                functionDescriptors,
+                TracingStrategyImpl.create(expression, call),
+                null,
+                null
+        );
+
+        if (resolutionResults.isSingleResult()) {
+            context.trace.record(BindingContext.RESOLVED_CALL, call, resolutionResults.getResultingCall());
+            context.trace.record(BindingContext.CALL, call.getCallElement(), call);
+        }
+
+        return resolutionResults;
     }
 
     @NotNull
