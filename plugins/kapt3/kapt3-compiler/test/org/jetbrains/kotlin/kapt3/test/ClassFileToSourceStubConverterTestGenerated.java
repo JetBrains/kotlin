@@ -79,6 +79,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/anonymousDelegate.kt");
     }
 
+    @TestMetadata("anonymousInitializer.kt")
+    public void testAnonymousInitializer() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/anonymousInitializer.kt");
+    }
+
     @TestMetadata("comments.kt")
     public void testComments() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");

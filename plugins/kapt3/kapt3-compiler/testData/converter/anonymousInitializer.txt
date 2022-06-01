@@ -1,0 +1,12 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+
+    public final void f() {
+    }
+}

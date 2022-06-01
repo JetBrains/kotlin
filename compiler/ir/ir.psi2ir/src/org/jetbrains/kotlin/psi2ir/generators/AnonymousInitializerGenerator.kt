@@ -41,10 +41,12 @@ class AnonymousInitializerGenerator(
             val statementGenerator = bodyGenerator.createStatementGenerator()
             val ktBody = ktAnonymousInitializer.body!!
             val irBlockBody = context.irFactory.createBlockBody(ktBody.startOffsetSkippingComments, ktBody.endOffset)
-            if (ktBody is KtBlockExpression) {
-                statementGenerator.generateStatements(ktBody.statements, irBlockBody)
-            } else {
-                irBlockBody.statements.add(statementGenerator.generateStatement(ktBody))
+            if (context.configuration.generateBodies) {
+                if (ktBody is KtBlockExpression) {
+                    statementGenerator.generateStatements(ktBody.statements, irBlockBody)
+                } else {
+                    irBlockBody.statements.add(statementGenerator.generateStatement(ktBody))
+                }
             }
             irAnonymousInitializer.body = irBlockBody
         }
