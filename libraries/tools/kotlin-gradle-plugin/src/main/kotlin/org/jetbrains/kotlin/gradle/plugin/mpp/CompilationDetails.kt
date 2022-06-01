@@ -406,7 +406,7 @@ internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
         DependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = compilationData.fragment
+        get() = /*compilationData.fragment*/ TODO("Conjecture: is not used")
 
     override fun associateWith(other: CompilationDetails<*>) {
         throw UnsupportedOperationException("not supported in the mapped model")
@@ -462,7 +462,7 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
         get() = DependencyFilesHolder.ofVariantCompileDependencies(variant)
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = variant
+        get() = /*variant*/ TODO("Conjecture: is not used")
 
     override val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
         get() = compilation.defaultSourceSet.dependsOn
