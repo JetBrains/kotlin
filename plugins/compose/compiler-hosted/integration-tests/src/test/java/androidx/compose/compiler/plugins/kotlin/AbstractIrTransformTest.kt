@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -383,7 +386,9 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         }
     }
 
-    inner class JvmCompilation : Compilation {
+    inner class JvmCompilation(
+        private val specificFeature: Set<LanguageFeature> = emptySet()
+    ) : Compilation {
         override val enabled: Boolean = true
 
         override fun compile(files: List<KtFile>): IrModuleFragment {
@@ -392,6 +397,8 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             configuration.addJvmClasspathRoots(classPath)
             configuration.put(JVMConfigurationKeys.IR, true)
             configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+            configuration.languageVersionSettings =
+                configuration.languageVersionSettings.setFeatures(specificFeature)
 
             val environment = KotlinCoreEnvironment.createForTests(
                 myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -515,3 +522,11 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         KEEP_INFO_STRING, // truncates everything except for the `info` string
     }
 }
+
+internal fun LanguageVersionSettings.setFeatures(
+    features: Set<LanguageFeature>
+) = LanguageVersionSettingsImpl(
+    languageVersion = languageVersion,
+    apiVersion = apiVersion,
+    specificFeatures = features.associateWith { LanguageFeature.State.ENABLED }
+)
