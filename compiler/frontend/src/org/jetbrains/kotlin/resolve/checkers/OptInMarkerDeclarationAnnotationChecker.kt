@@ -135,3 +135,7 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
         }
     }
 }
+
+@Deprecated("Please use OptInMarkerDeclarationAnnotationChecker instead", ReplaceWith("OptInMarkerDeclarationAnnotationChecker"))
+@Suppress("unused")
+typealias ExperimentalMarkerDeclarationAnnotationChecker = OptInMarkerDeclarationAnnotationChecker
