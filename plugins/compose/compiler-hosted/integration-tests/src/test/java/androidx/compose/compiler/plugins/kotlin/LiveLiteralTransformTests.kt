@@ -20,7 +20,6 @@ import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.junit.Test
@@ -557,7 +556,6 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
 
     private var builtKeys = mutableSetOf<String>()
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun postProcessingStep(
         module: IrModuleFragment,
         context: IrPluginContext
