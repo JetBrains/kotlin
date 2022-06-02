@@ -20,8 +20,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInferenceKt;
 import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode;
@@ -43,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -267,6 +272,7 @@ public class CallResolver {
                 callResolutionContext,
                 functionDescriptors,
                 TracingStrategyImpl.create(expression, call),
+                KotlinCallKind.FUNCTION,
                 null,
                 null
         );
@@ -274,6 +280,41 @@ public class CallResolver {
         if (resolutionResults.isSingleResult()) {
             context.trace.record(BindingContext.RESOLVED_CALL, call, resolutionResults.getResultingCall());
             context.trace.record(BindingContext.CALL, call.getCallElement(), call);
+        }
+
+        return resolutionResults;
+    }
+
+    public OverloadResolutionResults<FunctionDescriptor> resolveSetterCall(
+            @NotNull ExpressionTypingContext context,
+            @NotNull ResolvedCall<?> propertyResolvedCall,
+            @NotNull PropertySetterDescriptor descriptor
+    ) {
+        KtReferenceExpression propertyElement = (KtReferenceExpression)propertyResolvedCall.getCall().getCallElement();
+        KtOperationExpression setterCall = PsiUtilsKt.getParentOfTypes(propertyElement, true, KtOperationExpression.class);
+
+        assert setterCall != null;
+
+        ReceiverParameterDescriptor receiverDescriptor = descriptor.getDispatchReceiverParameter();
+
+        ReceiverValue dispatchReceiver = receiverDescriptor != null ? receiverDescriptor.getValue() : null;
+        Call call = CallMaker.makeCallWithExpressions(propertyElement, null, null, propertyElement, Collections.emptyList(), Call.CallType.DEFAULT);
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
+                context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                new DataFlowInfoForArgumentsImpl(propertyResolvedCall.getDataFlowInfoForArguments().getResultInfo(), call)
+        );
+
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
+                callResolutionContext,
+                Collections.singletonList(descriptor),
+                TracingStrategy.EMPTY,
+                KotlinCallKind.VARIABLE,
+                null,
+                dispatchReceiver != null ? NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, dispatchReceiver) : null
+        );
+
+        if (resolutionResults.isNothing()) {
+            context.trace.report(UNRESOLVED_REFERENCE.on(propertyElement, propertyElement));
         }
 
         return resolutionResults;
@@ -293,6 +334,7 @@ public class CallResolver {
                 callResolutionContext,
                 functionDescriptors,
                 TracingStrategyImpl.create(expression, call),
+                KotlinCallKind.FUNCTION,
                 null,
                 NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, receiver)
         );
@@ -322,6 +364,7 @@ public class CallResolver {
                 callResolutionContext,
                 Collections.singletonList(descriptor),
                 tracingStrategy,
+                KotlinCallKind.FUNCTION,
                 substitutor,
                 null
         );

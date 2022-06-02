@@ -49,16 +49,13 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
-import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
-import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
@@ -999,7 +996,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expressionWithParenthesis, context.trace.getBindingContext());
                 assert resolvedCall != null
                         : "Call is not resolved for property setter: " + PsiUtilsKt.getElementTextWithContext(expressionWithParenthesis);
-                checkPropertySetterCall(context.replaceBindingTrace(trace), setter, resolvedCall, reportOn);
+                components.callResolver.resolveSetterCall(context.replaceBindingTrace(trace), resolvedCall, setter);
             }
         }
 
@@ -1012,45 +1009,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         return result;
-    }
-
-    private void checkPropertySetterCall(
-            @NotNull ExpressionTypingContext context,
-            @NotNull PropertySetterDescriptor descriptor,
-            @NotNull ResolvedCall<?> propertyResolvedCall,
-            @NotNull KtExpression expression
-    ) {
-        Call call = propertyResolvedCall.getCall();
-
-        OldResolutionCandidate<PropertySetterDescriptor> resolutionCandidate = OldResolutionCandidate.create(
-                call, descriptor, propertyResolvedCall.getDispatchReceiver(), propertyResolvedCall.getExplicitReceiverKind(), null
-        );
-
-        ResolvedCallImpl<PropertySetterDescriptor> resolvedCall = ResolvedCallImpl.create(
-                resolutionCandidate,
-                TemporaryBindingTrace.create(context.trace, "Trace for fake property setter resolved call"),
-                TracingStrategy.EMPTY,
-                new DataFlowInfoForArgumentsImpl(propertyResolvedCall.getDataFlowInfoForArguments().getResultInfo(), call)
-        );
-        resolvedCall.markCallAsCompleted();
-
-        if (context.trace.wantsDiagnostics()) {
-            CallCheckerContext callCheckerContext =
-                    createCallCheckerContext(context);
-            for (CallChecker checker : components.callCheckers) {
-                checker.check(resolvedCall, expression, callCheckerContext);
-            }
-        }
-    }
-
-    @NotNull
-    private CallCheckerContext createCallCheckerContext(@NotNull ExpressionTypingContext context) {
-        return new CallCheckerContext(
-                context,
-                components.deprecationResolver,
-                components.moduleDescriptor,
-                components.missingSupertypesResolver
-        );
     }
 
     @Override

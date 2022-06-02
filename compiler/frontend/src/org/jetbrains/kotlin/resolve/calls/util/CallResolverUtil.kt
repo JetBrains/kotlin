@@ -340,6 +340,7 @@ fun resolveConstructorCallWithGivenDescriptors(
         context,
         constructors,
         tracingStrategy,
+        KotlinCallKind.FUNCTION,
         knownSubstitutor,
         receiver?.let { context.transformToReceiverWithSmartCastInfo(it) }
     )

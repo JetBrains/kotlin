@@ -147,19 +147,20 @@ class PSICallResolver(
         context: BasicCallResolutionContext,
         descriptors: Collection<CallableDescriptor>,
         tracingStrategy: TracingStrategy,
+        kind: KotlinCallKind = KotlinCallKind.FUNCTION,
         substitutor: TypeSubstitutor? = null,
-        receiver: ReceiverValueWithSmartCastInfo? = null
+        dispatchReceiver: ReceiverValueWithSmartCastInfo? = null
     ): OverloadResolutionResults<D> {
         val isSpecialFunction = descriptors.any { it.name in SPECIAL_FUNCTION_NAMES }
         val kotlinCall = toKotlinCall(
-            context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, receiver?.receiverValue
+            context, kind, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, dispatchReceiver?.receiverValue
         )
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
         val givenCandidates = descriptors.map {
             GivenCandidate(
                 it,
-                dispatchReceiver = receiver,
+                dispatchReceiver = dispatchReceiver,
                 knownTypeParametersResultingSubstitutor = substitutor
             )
         }
@@ -292,6 +293,10 @@ class PSICallResolver(
         return SingleOverloadResolutionResult(resolvedCall)
     }
 
+    private fun needToReportUnresolvedReferenceForNoneCandidates(call: Call): Boolean =
+        // Don't report unresolved reference on constructor calls since they are processed separately, and aother error is reported
+        call.callElement !is KtConstructorDelegationCall
+
     private fun <D : CallableDescriptor> handleErrorResolutionResult(
         context: BasicCallResolutionContext,
         trace: BindingTrace,
@@ -303,7 +308,9 @@ class PSICallResolver(
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
             kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
 
-            tracingStrategy.unresolvedReference(trace)
+            if (needToReportUnresolvedReferenceForNoneCandidates(context.call)) {
+                tracingStrategy.unresolvedReference(trace)
+            }
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
