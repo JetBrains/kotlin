@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.moduleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
 
-internal class IdeaKpmGranularFragmentDependencyResolver(
-    private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
-) : IdeaKpmDependencyResolver {
+internal class IdeaKpmGranularFragmentDependencyResolver() : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
-        return fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
+        return GradleKpmFragmentGranularMetadataResolver.getForModule(fragment.containingModule)
+            .getMetadataDependenciesForFragment(fragment)
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { resolution -> resolve(fragment, resolution) }
             .toSet()

@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 internal fun IdeaKpmProjectModelBuilder.Companion.default(
     extension: KotlinPm20ProjectExtension
 ) = IdeaKpmProjectModelBuilderImpl(extension).apply {
-    val fragmentMetadataResolverFactory = GradleKpmFragmentGranularMetadataResolverFactory()
-
     registerDependencyResolver(
         resolver = IdeaKpmRefinesDependencyResolver,
         constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained,
@@ -26,21 +23,21 @@ internal fun IdeaKpmProjectModelBuilder.Companion.default(
     )
 
     registerDependencyResolver(
-        resolver = IdeaKpmGranularFragmentDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKpmGranularFragmentDependencyResolver(),
         constraint = IdeaKpmProjectModelBuilder.FragmentConstraint.unconstrained,
         phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.SourceDependencyResolution,
         level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKpmMetadataBinaryDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKpmMetadataBinaryDependencyResolver(),
         constraint = !IdeaKpmProjectModelBuilder.FragmentConstraint.isVariant,
         phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
         level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
     )
 
     registerDependencyResolver(
-        resolver = IdeaKpmOriginalMetadataDependencyResolver(fragmentMetadataResolverFactory),
+        resolver = IdeaKpmOriginalMetadataDependencyResolver(),
         constraint = !IdeaKpmProjectModelBuilder.FragmentConstraint.isVariant,
         phase = IdeaKpmProjectModelBuilder.DependencyResolutionPhase.BinaryDependencyResolution,
         level = IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default

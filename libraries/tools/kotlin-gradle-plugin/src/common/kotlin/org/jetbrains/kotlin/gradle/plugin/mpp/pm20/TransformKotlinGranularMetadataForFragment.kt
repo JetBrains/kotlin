@@ -62,7 +62,7 @@ internal open class TransformKotlinGranularMetadataForFragment
     @get:Internal
     @delegate:Transient // exclude from Gradle instant execution state
     internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by project.provider {
-        transformation.resolutions
+        transformation.getMetadataDependenciesForFragment(fragment)
     }
 
     @get:Internal

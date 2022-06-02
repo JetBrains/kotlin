@@ -9,17 +9,16 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragmentGranularMetadataResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule.Companion.moduleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleDependency
 import org.jetbrains.kotlin.gradle.utils.withTemporaryDirectory
 
-internal class IdeaKpmMetadataBinaryDependencyResolver(
-    private val fragmentGranularMetadataResolverFactory: GradleKpmFragmentGranularMetadataResolverFactory
-) : IdeaKpmDependencyResolver {
+internal class IdeaKpmMetadataBinaryDependencyResolver : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
-        return fragmentGranularMetadataResolverFactory.getOrCreate(fragment).resolutions
+        return GradleKpmFragmentGranularMetadataResolver.getForModule(fragment.containingModule)
+            .getMetadataDependenciesForFragment(fragment)
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { resolution -> resolve(fragment, resolution) }
             .toSet()

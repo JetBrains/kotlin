@@ -7,34 +7,33 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.Companion.asMetadataProvider
+import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.util.*
 
-internal class GradleKpmFragmentGranularMetadataResolver(
-    private val requestingFragment: GradleKpmFragment,
-    private val refinesParentResolvers: Lazy<Iterable<GradleKpmFragmentGranularMetadataResolver>>
-) {
-    val resolutions: Iterable<MetadataDependencyResolution> by lazy {
-        doResolveMetadataDependencies()
-    }
-
+internal class GradleKpmFragmentGranularMetadataResolver(private val ownerModule: GradleKpmModule) {
     private val project: Project
-        get() = requestingFragment.containingModule.project
+        get() = ownerModule.project
 
-    private val parentResultsByModuleIdentifier: Map<KpmModuleIdentifier, List<MetadataDependencyResolution>> by lazy {
-        refinesParentResolvers.value.flatMap { it.resolutions }.groupBy { it.dependency.toSingleKpmModuleIdentifier() }
-    }
+    private val resolutionsCache: MutableMap<GradleKpmFragment, Collection<MetadataDependencyResolution>> = mutableMapOf()
 
     private val moduleResolver = GradleKpmModuleDependencyResolver.getForCurrentBuild(project)
     private val variantResolver = KpmGradleModuleVariantResolver.getForCurrentBuild(project)
     private val fragmentResolver = KpmDefaultFragmentsResolver(variantResolver)
     private val dependencyGraphResolver = GradleKpmDependencyGraphResolver(moduleResolver)
 
-    private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
+    fun getMetadataDependenciesForFragment(requestingFragment: GradleKpmFragment): Iterable<MetadataDependencyResolution> {
+        return resolutionsCache.getOrPut(requestingFragment) {
+            doResolveMetadataDependenciesForFragment(requestingFragment)
+        }
+    }
+
+    private fun doResolveMetadataDependenciesForFragment(requestingFragment: GradleKpmFragment): Collection<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(project, requestingFragment.containingModule)
         val resolvedComponentsByModuleId =
             configurationToResolve.incoming.resolutionResult.allComponents.associateBy { it.toSingleKpmModuleIdentifier() }
@@ -83,7 +82,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
                     val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
                     val visibleFragmentNamesExcludingVisibleByParents =
-                        visibleFragmentNames.minus(fragmentsNamesVisibleByParents(metadataSourceComponent.toSingleKpmModuleIdentifier()))
+                        visibleFragmentNames.minus(requestingFragment.fragmentsNamesVisibleByParents())
 
                     /*
                     We can safely assume that a metadata extractor can be created, because the project structure metadata already
@@ -140,8 +139,8 @@ internal class GradleKpmFragmentGranularMetadataResolver(
         return results
     }
 
-    private fun fragmentsNamesVisibleByParents(kotlinModuleIdentifier: KpmModuleIdentifier): MutableSet<String> {
-        val parentResolutionsForDependency = parentResultsByModuleIdentifier[kotlinModuleIdentifier].orEmpty()
+    private fun GradleKpmFragment.fragmentsNamesVisibleByParents(): MutableSet<String> {
+        val parentResolutionsForDependency = refinesClosure.flatMap { resolutionsCache[it].orEmpty() }
         return parentResolutionsForDependency.filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
     }
@@ -170,5 +169,19 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                 hostSpecificArtifact?.let { hostSpecificFragment.fragmentName to it }
             }
         }.toMap()
+    }
+
+
+    companion object {
+        fun getForModule(module: GradleKpmModule): GradleKpmFragmentGranularMetadataResolver {
+            val project = module.project
+            val extraPropertyName =
+                "org.jetbrains.kotlin.dependencyResolution.fragmentGranularMetadataResolvers.${project.getKotlinPluginVersion()}"
+            val resolversCache = project.getOrPutRootProjectProperty(extraPropertyName) {
+                mutableMapOf<GradleKpmModule, GradleKpmFragmentGranularMetadataResolver>()
+            }
+
+            return resolversCache.getOrPut(module) { GradleKpmFragmentGranularMetadataResolver(module) }
+        }
     }
 }

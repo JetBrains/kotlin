@@ -125,10 +125,9 @@ private fun configureMetadataCompilationsAndCreateRegistry(
     metadataCompilationRegistry: MetadataCompilationRegistry
 ) {
     val project = module.project
-    val metadataResolverFactory = GradleKpmFragmentGranularMetadataResolverFactory()
+    val resolver = GradleKpmFragmentGranularMetadataResolver.getForModule(module)
     module.fragments.all { fragment ->
-        val metadataResolver = metadataResolverFactory.getOrCreate(fragment)
-        createExtractMetadataTask(project, fragment, metadataResolver)
+        createExtractMetadataTask(project, fragment, resolver)
     }
     val compileAllTask = project.registerTask<DefaultTask>(lowerCamelCaseName(module.moduleClassifier, "metadataClasses"))
     module.fragments.all { fragment ->
