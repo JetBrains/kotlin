@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
+import com.intellij.core.CoreJavaFileManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
@@ -43,7 +45,21 @@ object StandaloneProjectFactory {
         val applicationEnvironment =
             KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(applicationDisposable, compilerConfiguration)
 
-        return KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment)
+        return KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment).apply {
+            registerJavaPsiFacade(project)
+        }
+    }
+
+    private fun registerJavaPsiFacade(project: MockProject) {
+        with(project) {
+            registerService(
+                CoreJavaFileManager::class.java,
+                ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
+            )
+
+            registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+            registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+        }
     }
 
     fun registerServicesForProjectEnvironment(
@@ -61,14 +77,8 @@ object StandaloneProjectFactory {
 
         project.registerService(ProjectStructureProvider::class.java, projectStructureProvider)
         initialiseVirtualFileFinderServices(environment, modules, sourceFiles, languageVersionSettings, jdkHome)
-        initialiseAnnotationServices(project)
 
         project.setupHighestLanguageLevel()
-    }
-
-    private fun initialiseAnnotationServices(project: MockProject) {
-        project.registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
-        project.registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
     }
 
     private fun initialiseVirtualFileFinderServices(
