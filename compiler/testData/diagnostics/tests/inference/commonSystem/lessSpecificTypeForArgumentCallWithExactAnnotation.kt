@@ -1,4 +1,3 @@
-// !LANGUAGE: -NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
@@ -12,6 +11,6 @@ fun foo(a: Any) {}
 
 fun test(b: B, c: C) {
     foo(
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>select(b, c)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A")!>select(b, c)<!>
     )
 }

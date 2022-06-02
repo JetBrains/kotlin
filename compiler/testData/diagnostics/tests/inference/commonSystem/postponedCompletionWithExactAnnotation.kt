@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -NewInference
 
 interface ISample
 
@@ -11,13 +10,13 @@ fun <K> elvisExact(x: K?, y: K): @kotlin.internal.Exact K = y
 fun <T : Number> materialize(): T? = TODO()
 
 fun test(nullableSample: ISample, any: Any) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("ISample")!>elvisSimple(
+    <!DEBUG_INFO_EXPRESSION_TYPE("ISample?")!>elvisSimple(
         nullableSample,
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>materialize<!>()
+        materialize()
     )<!>
 
     elvisSimple(
-        <!DEBUG_INFO_EXPRESSION_TYPE("ISample")!>elvisSimple(nullableSample, <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>materialize<!>())<!>,
+        <!DEBUG_INFO_EXPRESSION_TYPE("ISample?")!>elvisSimple(nullableSample, materialize())<!>,
         any
     )
 
