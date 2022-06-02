@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <A1> fun2(f: kotlin.reflect.KFunction1<A1, Unit>, a: A1) {

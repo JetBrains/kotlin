@@ -1,7 +1,6 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+NewInference
 -XXLanguage:-SamConversionForKotlinFunctions
 
 This mode is not recommended for production use,

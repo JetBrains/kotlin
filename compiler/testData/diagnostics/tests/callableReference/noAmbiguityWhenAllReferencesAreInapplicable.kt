@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference
 
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction2

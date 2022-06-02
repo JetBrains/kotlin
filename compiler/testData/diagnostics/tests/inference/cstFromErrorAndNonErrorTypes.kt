@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 fun test() {
     run {

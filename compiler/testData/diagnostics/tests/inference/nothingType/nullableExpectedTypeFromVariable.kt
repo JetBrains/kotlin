@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +NewInference
 // WITH_STDLIB
 
 class Foo<T> {

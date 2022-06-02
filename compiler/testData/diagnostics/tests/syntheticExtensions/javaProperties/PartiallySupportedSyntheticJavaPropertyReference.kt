@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +ReferencesToSyntheticJavaProperties
+// !LANGUAGE: +ReferencesToSyntheticJavaProperties
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: KotlinFile.kt

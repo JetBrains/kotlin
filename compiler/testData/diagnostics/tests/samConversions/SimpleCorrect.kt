@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionPerArgument
+// !LANGUAGE: +SamConversionPerArgument
 // FILE: J.java
 public interface J {
     public void foo1(Runnable r);

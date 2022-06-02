@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // EXPECTED_REACHABLE_NODES: 1329
 // Issue: KT-35904
 

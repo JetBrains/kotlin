@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// !LANGUAGE: +NewInference
 
 interface Rec<in A: Rec<A, B>, B>
 

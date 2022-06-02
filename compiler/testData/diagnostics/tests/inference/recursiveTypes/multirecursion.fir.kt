@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// !LANGUAGE: +NewInference
 
 interface I1<A : I1<A>>
 interface I2<C : I2<C>>

@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 interface B<T : S?, S : Any> {
     val t: T

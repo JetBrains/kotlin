@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1

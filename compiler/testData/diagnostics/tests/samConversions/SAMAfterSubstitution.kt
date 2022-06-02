@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // FILE: J.java
 public interface J<T> {
     public void foo(T r1, T r2);

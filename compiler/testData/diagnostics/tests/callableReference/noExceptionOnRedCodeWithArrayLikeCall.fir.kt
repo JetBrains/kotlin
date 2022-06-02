@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 class DTO {
     val q: Int = 0

@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
-// !LANGUAGE: +NewInference
 
 interface Bound1
 interface Bound2 

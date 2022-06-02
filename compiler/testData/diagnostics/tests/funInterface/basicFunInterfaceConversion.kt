@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
+// !LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Foo {

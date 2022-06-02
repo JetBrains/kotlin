@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 
 // FILE: JavaClass.java
 public class JavaClass {

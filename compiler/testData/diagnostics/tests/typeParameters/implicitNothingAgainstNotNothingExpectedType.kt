@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_EXPRESSION -UNREACHABLE_CODE
-// !LANGUAGE: +NewInference
 
 fun <K> materialize(): K = null as K
 fun <K, T> materializeWithGenericArg(x: T): K = null as K

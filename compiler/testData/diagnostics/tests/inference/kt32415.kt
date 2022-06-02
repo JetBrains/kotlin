@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 
 abstract class TestType<V: Any> {
     open inner class Inner(val item: V)

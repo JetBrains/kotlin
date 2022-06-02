@@ -1,5 +1,4 @@
 //ALLOW_AST_ACCESS
-// !LANGUAGE: +NewInference
 package test
 
 interface Rec<R, out T: Rec<R, T>> {

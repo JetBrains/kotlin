@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -USELESS_ELVIS -UNUSED_EXPRESSION
 
 class X {

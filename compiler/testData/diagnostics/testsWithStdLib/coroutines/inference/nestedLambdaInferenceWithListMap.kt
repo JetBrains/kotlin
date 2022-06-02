@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 
 val configurations4 = listOf(
     3 to mapOf(

@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 
 // See KT-14453 and KT-35703
 val <T : Any> KClass1<T>.primaryConstructor: KFunction1<T>? get() = null!!

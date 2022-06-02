@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// !LANGUAGE: +NewInference
 
 fun <S> select(vararg args: S): S = TODO()
 

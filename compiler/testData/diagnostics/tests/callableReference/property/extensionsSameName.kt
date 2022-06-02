@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun check1(p: kotlin.reflect.KProperty1<*, *>) {}

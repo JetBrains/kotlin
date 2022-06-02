@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !WITH_NEW_IFERENCE
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: packageA.kt

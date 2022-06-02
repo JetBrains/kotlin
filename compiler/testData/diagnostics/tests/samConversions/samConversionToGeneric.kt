@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 // FILE: samConversionToGeneric.kt
 

@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
 // !CHECK_TYPE
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface FirMemberDeclaration : FirDeclaration

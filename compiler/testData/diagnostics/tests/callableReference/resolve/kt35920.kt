@@ -1,5 +1,4 @@
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: JavaClass.java
 public class JavaClass<R> {

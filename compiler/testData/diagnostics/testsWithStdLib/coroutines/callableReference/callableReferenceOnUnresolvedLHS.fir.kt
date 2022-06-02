@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 interface Inv
 class Impl : Inv
