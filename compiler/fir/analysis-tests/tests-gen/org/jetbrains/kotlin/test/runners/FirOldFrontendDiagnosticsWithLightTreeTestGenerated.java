@@ -802,6 +802,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Test
+        @TestMetadata("syntheticSet.kt")
+        public void testSyntheticSet() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/syntheticSet.kt");
+        }
+
+        @Test
         @TestMetadata("tailRecBasic.kt")
         public void testTailRecBasic() throws Exception {
             runTest("compiler/testData/diagnostics/tests/tailRecBasic.kt");
