@@ -15,14 +15,11 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -64,18 +61,6 @@ interface CallResolutionInterceptorExtension {
         resultSubstitutor: NewTypeSubstitutor?,
         diagnostics: Collection<KotlinCallDiagnostic>
     ): CallableDescriptor = candidateDescriptor
-
-    @Suppress("DEPRECATION")
-    @JvmDefault
-    fun interceptCandidates(
-        candidates: Collection<NewResolutionOldInference.MyCandidate>,
-        context: BasicCallResolutionContext,
-        candidateResolver: CandidateResolver,
-        callResolver: CallResolver,
-        name: Name,
-        kind: NewResolutionOldInference.ResolutionKind,
-        tracing: TracingStrategy
-    ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
     @Suppress("DEPRECATION")
     @JvmDefault
