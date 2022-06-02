@@ -119,15 +119,15 @@ internal class LLFirIdePredicateBasedProvider(
             return annotationsOnDeclaration(data).any { it in predicate.annotations }
         }
 
-        override fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAncestorAnnotatedWith(predicate: AncestorAnnotatedWith, data: FirDeclaration): Boolean {
             return annotationsOnOuterDeclarations(data).any { it in predicate.annotations }
         }
 
-        override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirDeclaration): Boolean {
+        override fun visitMetaAnnotatedWith(predicate: MetaAnnotatedWith, data: FirDeclaration): Boolean {
             return metaAnnotationsOnDeclaration(data).any { it in predicate.metaAnnotations }
         }
 
-        override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirDeclaration): Boolean {
+        override fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: FirDeclaration): Boolean {
             return metaAnnotationsOnOuterDeclarations(data).any { it in predicate.metaAnnotations }
         }
     }

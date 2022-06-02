@@ -101,7 +101,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
             return matchWith(data, predicate.annotations)
         }
 
-        override fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAncestorAnnotatedWith(predicate: AncestorAnnotatedWith, data: FirDeclaration): Boolean {
             return matchUnder(data, predicate.annotations)
         }
 
@@ -115,11 +115,11 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
         // ------------------------------------ Meta Annotated ------------------------------------
 
-        override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirDeclaration): Boolean {
+        override fun visitMetaAnnotatedWith(predicate: MetaAnnotatedWith, data: FirDeclaration): Boolean {
             return matchWith(data, predicate.userDefinedAnnotations)
         }
 
-        override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirDeclaration): Boolean {
+        override fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: FirDeclaration): Boolean {
             return matchUnder(data, predicate.userDefinedAnnotations)
         }
 

@@ -100,9 +100,9 @@ class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations) {
  *
  * Matched symbols: [fun A.baz, class Nested, fun Nested.foobar]
  */
-class UnderAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations) {
+class AncestorAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations) {
     override fun <R, D> accept(visitor: DeclarationPredicateVisitor<R, D>, data: D): R {
-        return visitor.visitUnderAnnotatedWith(this, data)
+        return visitor.visitAncestorAnnotatedWith(this, data)
     }
 }
 
@@ -174,15 +174,15 @@ sealed class MetaAnnotated(final override val metaAnnotations: Set<AnnotationFqn
     }
 }
 
-class AnnotatedWithMeta(metaAnnotations: Set<AnnotationFqn>) : MetaAnnotated(metaAnnotations) {
+class MetaAnnotatedWith(metaAnnotations: Set<AnnotationFqn>) : MetaAnnotated(metaAnnotations) {
     override fun <R, D> accept(visitor: DeclarationPredicateVisitor<R, D>, data: D): R {
-        return visitor.visitAnnotatedWithMeta(this, data)
+        return visitor.visitMetaAnnotatedWith(this, data)
     }
 }
 
-class UnderMetaAnnotated(metaAnnotations: Set<AnnotationFqn>) : MetaAnnotated(metaAnnotations) {
+class AncestorMetaAnnotatedWith(metaAnnotations: Set<AnnotationFqn>) : MetaAnnotated(metaAnnotations) {
     override fun <R, D> accept(visitor: DeclarationPredicateVisitor<R, D>, data: D): R {
-        return visitor.visitUnderMetaAnnotated(this, data)
+        return visitor.visitAncestorMetaAnnotatedWith(this, data)
     }
 }
 
@@ -204,31 +204,31 @@ infix fun DeclarationPredicate.or(other: DeclarationPredicate): DeclarationPredi
 infix fun DeclarationPredicate.and(other: DeclarationPredicate): DeclarationPredicate = DeclarationPredicate.And(this, other)
 
 // ------------------- varargs -------------------
-fun under(vararg annotations: AnnotationFqn): DeclarationPredicate = UnderAnnotatedWith(annotations.toSet())
 fun annotated(vararg annotations: AnnotationFqn): DeclarationPredicate = AnnotatedWith(annotations.toSet())
+fun ancestorAnnotated(vararg annotations: AnnotationFqn): DeclarationPredicate = AncestorAnnotatedWith(annotations.toSet())
 fun parentAnnotated(vararg annotations: AnnotationFqn): DeclarationPredicate = ParentAnnotatedWith(annotations.toSet())
 fun hasAnnotated(vararg annotations: AnnotationFqn): DeclarationPredicate = HasAnnotatedWith(annotations.toSet())
 
-fun metaUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
-fun metaAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = AnnotatedWithMeta(metaAnnotations.toSet())
+fun metaAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = MetaAnnotatedWith(metaAnnotations.toSet())
+fun metaAncestorAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = AncestorMetaAnnotatedWith(metaAnnotations.toSet())
 fun parentMetaAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = ParentMetaAnnotatedWith(metaAnnotations.toSet())
 fun hasMetaAnnotated(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = HasMetaAnnotatedWith(metaAnnotations.toSet())
 
-fun annotatedOrUnder(vararg annotations: AnnotationFqn): DeclarationPredicate = annotated(*annotations) or under(*annotations)
+fun annotatedOrUnder(vararg annotations: AnnotationFqn): DeclarationPredicate = annotated(*annotations) or ancestorAnnotated(*annotations)
 fun metaAnnotatedOrUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate =
-    metaAnnotated(*metaAnnotations) or metaUnder(*metaAnnotations)
+    metaAnnotated(*metaAnnotations) or metaAncestorAnnotated(*metaAnnotations)
 
 // ------------------- collections -------------------
-fun under(annotations: Collection<AnnotationFqn>): DeclarationPredicate = UnderAnnotatedWith(annotations.toSet())
 fun annotated(annotations: Collection<AnnotationFqn>): DeclarationPredicate = AnnotatedWith(annotations.toSet())
+fun ancestorAnnotated(annotations: Collection<AnnotationFqn>): DeclarationPredicate = AncestorAnnotatedWith(annotations.toSet())
 fun parentAnnotated(annotations: Collection<AnnotationFqn>): DeclarationPredicate = ParentAnnotatedWith(annotations.toSet())
 fun hasAnnotated(annotations: Collection<AnnotationFqn>): DeclarationPredicate = HasAnnotatedWith(annotations.toSet())
 
-fun metaUnder(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
-fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = AnnotatedWithMeta(metaAnnotations.toSet())
+fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = MetaAnnotatedWith(metaAnnotations.toSet())
+fun metaAncestorAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = AncestorMetaAnnotatedWith(metaAnnotations.toSet())
 fun parentMetaAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = ParentMetaAnnotatedWith(metaAnnotations.toSet())
 fun hasMetaAnnotated(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate = HasMetaAnnotatedWith(metaAnnotations.toSet())
 
-fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): DeclarationPredicate = annotated(annotations) or under(annotations)
+fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): DeclarationPredicate = annotated(annotations) or ancestorAnnotated(annotations)
 fun metaAnnotatedOrUnder(metaAnnotations: Collection<AnnotationFqn>): DeclarationPredicate =
-    metaAnnotated(metaAnnotations) or metaUnder(metaAnnotations)
+    metaAnnotated(metaAnnotations) or metaAncestorAnnotated(metaAnnotations)

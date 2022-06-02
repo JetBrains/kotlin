@@ -24,7 +24,7 @@ abstract class DeclarationPredicateVisitor<R, D> {
         return visitAnnotated(predicate, data)
     }
 
-    open fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: D): R {
+    open fun visitAncestorAnnotatedWith(predicate: AncestorAnnotatedWith, data: D): R {
         return visitAnnotated(predicate, data)
     }
 
@@ -40,11 +40,11 @@ abstract class DeclarationPredicateVisitor<R, D> {
         return visitPredicate(predicate, data)
     }
 
-    open fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: D): R {
+    open fun visitMetaAnnotatedWith(predicate: MetaAnnotatedWith, data: D): R {
         return visitMetaAnnotated(predicate, data)
     }
 
-    open fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: D): R {
+    open fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: D): R {
         return visitMetaAnnotated(predicate, data)
     }
 
