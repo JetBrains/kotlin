@@ -14,16 +14,11 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.CandidateResolver
-import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -40,18 +35,6 @@ class CandidateInterceptor(project: Project) {
         diagnostics: Collection<KotlinCallDiagnostic>
     ): CallableDescriptor = extensions.fold(candidateDescriptor) { it, extension ->
         extension.interceptResolvedCallAtomCandidate(it, completedCallAtom, trace, resultSubstitutor, diagnostics)
-    }
-
-    fun interceptResolvedCandidates(
-        candidates: Collection<NewResolutionOldInference.MyCandidate>,
-        context: BasicCallResolutionContext,
-        candidateResolver: CandidateResolver,
-        callResolver: CallResolver,
-        name: Name,
-        kind: NewResolutionOldInference.ResolutionKind,
-        tracing: TracingStrategy
-    ): Collection<NewResolutionOldInference.MyCandidate> = extensions.fold(candidates) { it, extension ->
-        extension.interceptCandidates(it, context, candidateResolver, callResolver, name, kind, tracing)
     }
 
     fun interceptFunctionCandidates(
