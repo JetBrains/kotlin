@@ -96,7 +96,7 @@ class KotlinResolutionStatelessCallbacksImpl(
         functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
 
     override fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
-        isBuilderInferenceCall(parameter, argument.psiCallArgument.valueArgument, languageVersionSettings)
+        isBuilderInferenceCall(parameter, argument.psiCallArgument.valueArgument)
 
     override fun isApplicableCallForBuilderInference(
         descriptor: CallableDescriptor,
