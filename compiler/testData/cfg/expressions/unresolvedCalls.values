@@ -25,7 +25,7 @@ fun test() {
 ---------------------
 foo              !<v2>: *
 bar              !<v0>: *
-bar()            <v1>: OR{{<: IntArray}, {<: Int}}   NEW: magic[UNRESOLVED_CALL](bar()|!<v0>) -> <v1>
-foo(bar())       <v3>: *                             NEW: magic[UNRESOLVED_CALL](foo(bar())|<v1>, !<v2>) -> <v3>
-{ foo(bar()) }   <v3>: *                             COPY
+bar()            <v1>: *    NEW: magic[UNRESOLVED_CALL](bar()|!<v0>) -> <v1>
+foo(bar())       <v3>: *    NEW: magic[UNRESOLVED_CALL](foo(bar())|<v1>, !<v2>) -> <v3>
+{ foo(bar()) }   <v3>: *    COPY
 =====================
