@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
@@ -58,7 +57,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.sure
 
 class NewResolutionOldInference(
-    private val candidateResolver: CandidateResolver,
     private val towerResolver: TowerResolver,
     private val resolutionResultsHandler: ResolutionResultsHandler,
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
@@ -231,7 +229,6 @@ class NewResolutionOldInference(
                 resolvedCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
                 CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
-            candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
             val diagnostics = listOfNotNull(createPreviousResolveError(resolvedCall.status))
             MyCandidate(diagnostics, resolvedCall) {
@@ -478,7 +475,6 @@ class NewResolutionOldInference(
                 candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
                 CandidateResolveMode.EXIT_ON_FIRST_ERROR
             )
-            candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
             val diagnostics = createDiagnosticsForCandidate(towerCandidate, candidateCall)
             return MyCandidate(diagnostics, candidateCall) {
