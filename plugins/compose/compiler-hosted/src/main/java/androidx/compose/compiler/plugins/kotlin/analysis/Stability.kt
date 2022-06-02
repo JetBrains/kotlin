@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -226,6 +227,16 @@ class StabilityInferencer(val context: IrPluginContext) {
         }
     }
 
+    private fun IrClass.isProtobufType(): Boolean {
+        // Quick exit as all protos are final
+        if (!isFinalClass) return false
+        val directParentClassName =
+            superTypes.lastOrNull { !it.isInterface() }
+                ?.classOrNull?.owner?.fqNameWhenAvailable?.toString()
+        return directParentClassName == "com.google.protobuf.GeneratedMessageLite" ||
+            directParentClassName == "com.google.protobuf.GeneratedMessage"
+    }
+
     fun IrAnnotationContainer.stabilityParamBitmask(): Int? {
         @Suppress("UNCHECKED_CAST")
         return (
@@ -276,6 +287,7 @@ class StabilityInferencer(val context: IrPluginContext) {
         if (declaration.hasStableMarkedDescendant()) return Stability.Stable
         if (declaration.isEnumClass || declaration.isEnumEntry) return Stability.Stable
         if (declaration.defaultType.isPrimitiveType()) return Stability.Stable
+        if (declaration.isProtobufType()) return Stability.Stable
 
         if (declaration.origin == IrDeclarationOrigin.IR_BUILTINS_STUB) {
             error("Builtins Stub: ${declaration.name}")
