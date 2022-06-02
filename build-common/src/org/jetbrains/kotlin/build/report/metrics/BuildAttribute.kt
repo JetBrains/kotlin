@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-enum class BuildAttributeKind : Serializable {
-    REBUILD_REASON;
+enum class BuildAttributeKind(val readableString: String) : Serializable {
+    REBUILD_REASON("Rebuild reason");
 
     companion object {
         const val serialVersionUID = 0L

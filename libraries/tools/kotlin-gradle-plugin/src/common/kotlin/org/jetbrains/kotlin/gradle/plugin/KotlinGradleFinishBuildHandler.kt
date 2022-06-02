@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskBuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
@@ -18,7 +19,7 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import kotlin.math.max
 
-internal class KotlinGradleFinishBuildHandler {
+internal class KotlinGradleFinishBuildHandler : TaskCachesManagement() {
 
     companion object {
         const val SHOULD_REPORT_MEMORY_USAGE_PROPERTY = "kotlin.gradle.test.report.memory.usage"
@@ -34,9 +35,7 @@ internal class KotlinGradleFinishBuildHandler {
     }
 
     fun buildFinished(rootProjectBuildDir: File, rootProjectRootDir: File) {
-        TaskLoggers.clear()
-        TaskExecutionResults.clear()
-
+        cleanTaskExecutionCaches()
         GradleCompilerRunner.clearBuildModulesInfo()
 
         val sessionsDir = GradleCompilerRunner.sessionsDir(rootProjectBuildDir)

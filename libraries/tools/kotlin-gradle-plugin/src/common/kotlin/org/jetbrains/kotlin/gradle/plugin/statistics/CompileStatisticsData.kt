@@ -30,7 +30,8 @@ data class CompileStatisticsData(
     val nonIncrementalAttributes: Set<BuildAttribute>,
     //TODO think about it,time in milliseconds
     val buildTimesMetrics: Map<BuildTime, Long>,
-    val performanceMetrics: Map<BuildPerformanceMetric, Long>
+    val performanceMetrics: Map<BuildPerformanceMetric, Long>,
+    val taskInputs: List<String>
 ) {
     companion object {
         private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}

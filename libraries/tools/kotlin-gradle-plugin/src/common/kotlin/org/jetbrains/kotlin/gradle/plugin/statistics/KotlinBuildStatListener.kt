@@ -9,17 +9,16 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskBuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
-import java.util.*
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -71,9 +70,11 @@ class KotlinBuildStatListener {
             }
 
             val taskExecutionResult = TaskExecutionResults[taskPath]
-            val buildTimesMs = taskExecutionResult?.buildMetrics?.buildTimes?.asMapMs()?.filterValues { value -> value != 0L } ?: emptyMap()
-            val perfData =
-                taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
+            val taskBuildMetrics = TaskBuildMetrics[taskPath]
+            val buildMetrics = taskExecutionResult?.buildMetrics?.addAll(taskBuildMetrics) ?: taskBuildMetrics
+
+            val buildTimesMs = buildMetrics?.buildTimes?.asMapMs()?.filterValues { value -> value != 0L } ?: emptyMap()
+            val perfData = buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
             val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
                 is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
                 is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
@@ -89,28 +90,27 @@ class KotlinBuildStatListener {
                 projectName = projectName,
                 taskName = taskPath,
                 changes = changes,
-                tags = parseTags(taskExecutionResult).map { it.name },
-                nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet(),
+                tags = parseTags(taskExecutionResult?.taskInfo, buildMetrics).map { it.name },
+                nonIncrementalAttributes = buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet(),
                 hostName = hostName,
                 kotlinVersion = kotlinVersion,
                 buildUuid = uuid,
                 finishTime = System.currentTimeMillis(),
-                compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
+                compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList(),
+                taskInputs = buildMetrics?.buildInputs?.asMap()?.map { (key, value) -> "$key:${value.joinToString()}" } ?: emptyList()
             )
         }
 
-        private fun parseTags(taskExecutionResult: TaskExecutionResult?): List<StatTag> {
+        private fun parseTags(taskInfo: TaskExecutionInfo?, buildMetrics: BuildMetrics?): List<StatTag> {
             val tags = ArrayList<StatTag>()
 
-            val nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
+            val nonIncrementalAttributes = buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
 
             if (nonIncrementalAttributes.isEmpty()) {
                 tags.add(StatTag.INCREMENTAL)
             } else {
                 tags.add(StatTag.NON_INCREMENTAL)
             }
-
-            val taskInfo = taskExecutionResult?.taskInfo
 
             taskInfo?.withAbiSnapshot?.ifTrue {
                 tags.add(StatTag.ABI_SNAPSHOT)

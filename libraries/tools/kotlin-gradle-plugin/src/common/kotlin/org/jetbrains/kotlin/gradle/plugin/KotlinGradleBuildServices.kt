@@ -12,15 +12,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildScanStatisticsListener
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import java.io.File
 
-internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBuildServices.Parameters>, AutoCloseable {
+internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBuildServices.Parameters>, AutoCloseable, TaskCachesManagement() {
 
     interface Parameters : BuildServiceParameters {
         var buildDir: File
@@ -42,8 +40,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
         buildHandler.buildFinished(parameters.buildDir, parameters.rootDir)
         log.kotlinDebug(DISPOSE_MESSAGE)
 
-        TaskLoggers.clear()
-        TaskExecutionResults.clear()
+        cleanTaskExecutionCaches()
     }
 
     companion object {

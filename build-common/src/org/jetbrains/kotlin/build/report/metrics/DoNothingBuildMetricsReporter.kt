@@ -29,4 +29,10 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
         )
 
     override fun addMetrics(metrics: BuildMetrics) {}
+
+    override fun addInputFile(path: String) {
+    }
+
+    override fun addInputProperty(name: String, value: Any?) {
+    }
 }

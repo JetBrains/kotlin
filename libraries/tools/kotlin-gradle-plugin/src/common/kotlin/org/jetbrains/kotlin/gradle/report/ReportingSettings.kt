@@ -13,6 +13,7 @@ data class ReportingSettings(
     val buildReportOutputs: List<BuildReportType> = emptyList(),
     val buildReportMode: BuildReportMode = BuildReportMode.NONE,
     val buildReportLabel: String? = null,
+    val includeTaskInputs: Boolean = false,
     val fileReportSettings: FileReportSettings? = null,
     val httpReportSettings: HttpReportSettings? = null
 ) : Serializable {

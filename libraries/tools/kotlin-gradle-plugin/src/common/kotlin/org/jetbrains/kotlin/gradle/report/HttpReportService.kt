@@ -101,7 +101,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                 connection.requestMethod = "POST"
                 connection.doOutput = true
                 connection.outputStream.use {
-                    it.write(Gson().toJson(data).toByteArray())
+                    it.write(Gson().toJson(data).replace("$", ".").toByteArray())
                 }
                 connection.connect()
                 checkResponseAndLog(connection)

@@ -10,15 +10,18 @@ import java.io.Serializable
 data class BuildMetrics(
     val buildTimes: BuildTimes = BuildTimes(),
     val buildPerformanceMetrics: BuildPerformanceMetrics = BuildPerformanceMetrics(),
-    val buildAttributes: BuildAttributes = BuildAttributes()
+    val buildAttributes: BuildAttributes = BuildAttributes(),
+    val buildInputs: BuildInputs = BuildInputs()
 ) : Serializable {
-    fun addAll(other: BuildMetrics) {
-        buildTimes.addAll(other.buildTimes)
-        buildPerformanceMetrics.addAll(other.buildPerformanceMetrics)
-        buildAttributes.addAll(other.buildAttributes)
-    }
+    fun addAll(other: BuildMetrics?) =
+        other?.also {
+            buildTimes.addAll(other.buildTimes)
+            buildPerformanceMetrics.addAll(other.buildPerformanceMetrics)
+            buildAttributes.addAll(other.buildAttributes)
+            buildInputs.addAll(other.buildInputs)
+        }
 
     companion object {
-        const val serialVersionUID = 0L
+        const val serialVersionUID = 1L
     }
 }

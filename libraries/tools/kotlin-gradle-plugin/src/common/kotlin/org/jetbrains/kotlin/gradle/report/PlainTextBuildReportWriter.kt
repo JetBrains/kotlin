@@ -164,7 +164,18 @@ internal class PlainTextBuildReportWriter(
         p.withIndent("Build attributes:") {
             val attributesByKind = allAttributes.entries.groupBy { it.key.kind }.toSortedMap()
             for ((kind, attributesCounts) in attributesByKind) {
-                printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
+                printMap(p, kind.readableString, attributesCounts.associate { (k, v) -> k.readableString to v })
+            }
+        }
+    }
+
+    private fun printBuildInputs(buildInputs: BuildInputs) {
+        val allInputs = buildInputs.asMap()
+        if (allInputs.isEmpty()) return
+
+        p.withIndent("Task inputs:") {
+            allInputs.forEach {
+                p.println("${it.key} : ${it.value.joinToString(prefix = "[", postfix = "]")}")
             }
         }
     }
@@ -225,6 +236,7 @@ internal class PlainTextBuildReportWriter(
 
         if (printMetrics) {
             printMetrics(task.buildMetrics)
+            printBuildInputs(task.buildMetrics.buildInputs)
         }
     }
 }

@@ -41,6 +41,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         metricsOutputFile = metricsOutputFile,
         buildReportMode = buildReportMode,
         buildReportLabel = properties.buildReportLabel,
+        includeTaskInputs = properties.buildReportIncludeTaskInputs,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
         buildReportOutputs = buildReportOutputTypes

@@ -16,6 +16,7 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
     private val myBuildTimes = BuildTimes()
     private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
+    private val myInputs = BuildInputs()
 
     override fun startMeasure(time: BuildTime) {
         if (time in myBuildTimeStartNs) {
@@ -46,12 +47,21 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
         BuildMetrics(
             buildTimes = myBuildTimes,
             buildPerformanceMetrics = myBuildMetrics,
-            buildAttributes = myBuildAttributes
+            buildAttributes = myBuildAttributes,
+            buildInputs = myInputs
         )
 
     override fun addMetrics(metrics: BuildMetrics) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
         myBuildMetrics.addAll(metrics.buildPerformanceMetrics)
+    }
+
+    override fun addInputFile(path: String) {
+        myInputs.add(BuildInputs.fileProperty, path)
+    }
+
+    override fun addInputProperty(name: String, value: Any?) {
+        myInputs.add(name, value)
     }
 }

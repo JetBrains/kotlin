@@ -17,6 +17,9 @@ interface BuildMetricsReporter {
 
     fun getMetrics(): BuildMetrics
     fun addMetrics(metrics: BuildMetrics)
+
+    fun addInputFile(path: String)
+    fun addInputProperty(name: String, value: Any?)
 }
 
 inline fun <T> BuildMetricsReporter.measure(time: BuildTime, fn: () -> T): T {

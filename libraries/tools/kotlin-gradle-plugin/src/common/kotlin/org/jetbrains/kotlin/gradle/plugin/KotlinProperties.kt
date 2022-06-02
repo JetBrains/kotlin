@@ -73,6 +73,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportLabel: String?
         get() = property("kotlin.build.report.label")
 
+    val buildReportIncludeTaskInputs: Boolean
+        get() = booleanProperty("kotlin.build.report.inputs") ?: false
+
     val buildReportFileOutputDir: File?
         get() = property("kotlin.build.report.file.output_dir")?.let { File(it) }
 

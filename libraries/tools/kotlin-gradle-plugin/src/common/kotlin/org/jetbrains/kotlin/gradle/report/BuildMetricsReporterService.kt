@@ -19,6 +19,7 @@ import org.gradle.tooling.events.task.TaskSkippedResult
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskBuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
@@ -42,13 +43,9 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
     private val failureMessages = ConcurrentLinkedQueue<String>()
 
     // Info for tasks only
-    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
     open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter) {
-        taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
-            if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
-        }
         taskPathToTaskClass.put(taskPath, taskClass.name).also {
             if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
@@ -77,8 +74,8 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
             val buildMetrics = BuildMetrics()
             buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, totalTimeMs)
-            taskPathToMetricsReporter[taskPath]?.let {
-                buildMetrics.addAll(it.getMetrics())
+            TaskBuildMetrics[taskPath]?.let {
+                buildMetrics.addAll(it)
             }
             val taskExecutionResult = TaskExecutionResults[taskPath]
             taskExecutionResult?.buildMetrics?.also { buildMetrics.addAll(it) }

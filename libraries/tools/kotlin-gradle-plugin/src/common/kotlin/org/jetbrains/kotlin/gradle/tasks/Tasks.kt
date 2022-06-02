@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskBuildMetrics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
@@ -352,6 +353,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                 else
                     it.report(BooleanMetrics.COMPILATION_STARTED, true)
             }
+
+            if (reportingSettings().includeTaskInputs) {
+                inputs.files.files.forEach { buildMetrics.addInputFile(it.path) }
+                inputs.properties.forEach { buildMetrics.addInputProperty(it.key, it.value) }
+            }
+
             validateCompilerClasspath()
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
@@ -385,6 +392,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         }
 
         buildMetricsReporterService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
+        TaskBuildMetrics[path] = buildMetrics
     }
 
     protected open fun skipCondition(): Boolean = sources.isEmpty

@@ -70,7 +70,24 @@ class BuildReportsIT : KGPBaseTest() {
             assertTrue { report.contains("ABI snapshot size:") }
             //for non-incremental builds
             assertTrue { report.contains("Build attributes:") }
-            assertTrue { report.contains("REBUILD_REASON:") }
+            assertTrue { report.contains("Rebuild reason:") }
+        }
+    }
+
+    @DisplayName("Build metrics contains task's inputs")
+    @GradleTest
+    fun testBuildMetricsWithTaskInputs(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("assemble", "-Pkotlin.build.report.inputs=true") {
+                assertOutputContains("Kotlin build report is written to")
+            }
+            val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
+            val reports = reportFolder.listFiles()
+            assertNotNull(reports)
+            assertEquals(1, reports.size)
+            val report = reports[0].readText()
+
+            assertTrue { report.contains("Task inputs:") }
         }
     }
 
