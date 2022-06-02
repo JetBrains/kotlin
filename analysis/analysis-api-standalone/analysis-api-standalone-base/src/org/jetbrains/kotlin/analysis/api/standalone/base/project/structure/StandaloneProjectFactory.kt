@@ -118,16 +118,19 @@ object StandaloneProjectFactory {
         val result = mutableSetOf<PsiDirectory>()
         for (file in files) {
             val packageParts = file.packageName.takeIf { it.isNotEmpty() }?.split('.') ?: emptyList()
-            val javaDir = packageParts
-                .reversed()
-                .fold(file.parent) { dir, part ->
-                    if (dir?.name == part) {
-                        dir.parent
-                    } else {
-                        error("File package ${file.packageName} does not match file path ${file.virtualFile.path}")
-                    }
+            var javaDir: PsiDirectory? = file.parent
+            for (part in packageParts.reversed()) {
+                if (javaDir?.name == part) {
+                    javaDir = javaDir.parent
+                } else {
+                    // Error(ish): file package does not match file path.
+                    // This could happen if, e.g., src/my/pkg/MyTest.java has package `test.pkg`.
+                    // It is just best practice, not enforced by language spec.
+                    // So, here, we just stop iterating upward the folder structure.
+                    break
                 }
-            result += javaDir as PsiDirectory
+            }
+            javaDir?.let { result += it }
         }
         return result.toList()
     }
