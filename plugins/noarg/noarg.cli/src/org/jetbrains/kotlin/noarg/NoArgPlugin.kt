@@ -18,16 +18,17 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.INVOKE_INITIALIZERS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
+import org.jetbrains.kotlin.noarg.NoArgPluginNames.ANNOTATION_OPTION_NAME
+import org.jetbrains.kotlin.noarg.NoArgPluginNames.INVOKE_INITIALIZERS_OPTION_NAME
+import org.jetbrains.kotlin.noarg.NoArgPluginNames.PLUGIN_ID
+import org.jetbrains.kotlin.noarg.NoArgPluginNames.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
 import org.jetbrains.kotlin.noarg.fir.FirNoArgExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import java.util.concurrent.Executors
 
 object NoArgConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -42,12 +43,8 @@ object NoArgConfigurationKeys {
 
 class NoArgCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = mapOf(
-            "jpa" to listOf("javax.persistence.Entity", "javax.persistence.Embeddable", "javax.persistence.MappedSuperclass")
-        )
-
         val ANNOTATION_OPTION = CliOption(
-            "annotation", "<fqname>", "Annotation qualified names",
+            ANNOTATION_OPTION_NAME, "<fqname>", "Annotation qualified names",
             required = false, allowMultipleOccurrences = true
         )
 
@@ -57,12 +54,10 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
         )
 
         val INVOKE_INITIALIZERS_OPTION = CliOption(
-            "invokeInitializers", "true/false",
+            INVOKE_INITIALIZERS_OPTION_NAME, "true/false",
             "Invoke instance initializers in a no-arg constructor",
             required = false, allowMultipleOccurrences = false
         )
-
-        const val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
     }
 
     override val pluginId = PLUGIN_ID

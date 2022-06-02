@@ -189,11 +189,13 @@ include ":benchmarks",
         ":kotlin-android-extensions-runtime"
 
 include ":kotlin-allopen-compiler-plugin",
-        ":kotlin-allopen-compiler-plugin.cli",
+        ":kotlin-allopen-compiler-plugin.common",
         ":kotlin-allopen-compiler-plugin.k1",
-        ":kotlin-allopen-compiler-plugin.k2"
+        ":kotlin-allopen-compiler-plugin.k2",
+        ":kotlin-allopen-compiler-plugin.cli"
 
 include ":kotlin-noarg-compiler-plugin",
+        ":kotlin-noarg-compiler-plugin.common",
         ":kotlin-noarg-compiler-plugin.k1",
         ":kotlin-noarg-compiler-plugin.k2",
         ":kotlin-noarg-compiler-plugin.backend",
@@ -693,9 +695,10 @@ project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-c
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen" as File
-project(':kotlin-allopen-compiler-plugin.cli').projectDir = "$rootDir/plugins/allopen/allopen.cli" as File
+project(':kotlin-allopen-compiler-plugin.common').projectDir = "$rootDir/plugins/allopen/allopen.common" as File
 project(':kotlin-allopen-compiler-plugin.k1').projectDir = "$rootDir/plugins/allopen/allopen.k1" as File
 project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/allopen/allopen.k2" as File
+project(':kotlin-allopen-compiler-plugin.cli').projectDir = "$rootDir/plugins/allopen/allopen.cli" as File
 
 project(':kotlin-lombok-compiler-plugin').projectDir = "$rootDir/plugins/lombok" as File
 project(':kotlin-lombok-compiler-plugin.cli').projectDir = "$rootDir/plugins/lombok/lombok.cli" as File
@@ -704,6 +707,7 @@ project(':kotlin-lombok-compiler-plugin.k2').projectDir = "$rootDir/plugins/lomb
 project(':kotlin-lombok-compiler-plugin.common').projectDir = "$rootDir/plugins/lombok/lombok.common" as File
 
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg" as File
+project(':kotlin-noarg-compiler-plugin.common').projectDir = "$rootDir/plugins/noarg/noarg.common" as File
 project(':kotlin-noarg-compiler-plugin.k1').projectDir = "$rootDir/plugins/noarg/noarg.k1" as File
 project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg/noarg.k2" as File
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File

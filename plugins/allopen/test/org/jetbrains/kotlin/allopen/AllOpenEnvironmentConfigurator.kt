@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
-                AllOpenCommandLineProcessor.SUPPORTED_PRESETS.flatMap { it.value }
+                AllOpenPluginNames.SUPPORTED_PRESETS.flatMap { it.value }
 
         DeclarationAttributeAltererExtension.registerExtension(
             project,

@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    embedded(project(":kotlin-noarg-compiler-plugin.common"))
     embedded(project(":kotlin-noarg-compiler-plugin.k1"))
     embedded(project(":kotlin-noarg-compiler-plugin.k2"))
     embedded(project(":kotlin-noarg-compiler-plugin.backend"))

@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":kotlin-noarg-compiler-plugin.common"))
     api(project(":kotlin-noarg-compiler-plugin.k1"))
     api(project(":kotlin-noarg-compiler-plugin.k2"))
     api(project(":kotlin-noarg-compiler-plugin.backend"))

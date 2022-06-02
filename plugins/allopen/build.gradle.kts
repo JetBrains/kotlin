@@ -6,11 +6,13 @@ plugins {
 }
 
 dependencies {
+    embedded(project(":kotlin-allopen-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.cli")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.k2")) { isTransitive = false }
 
     testImplementation(project(":kotlin-allopen-compiler-plugin"))
+    testImplementation(project(":kotlin-allopen-compiler-plugin.common"))
     testImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
     testImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testImplementation(project(":kotlin-allopen-compiler-plugin.cli"))

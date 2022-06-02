@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.allopen
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.PRESET
+import org.jetbrains.kotlin.allopen.AllOpenPluginNames.ANNOTATION_OPTION_NAME
+import org.jetbrains.kotlin.allopen.AllOpenPluginNames.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,29 +24,8 @@ object AllOpenConfigurationKeys {
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = mapOf(
-            "spring" to listOf(
-                "org.springframework.stereotype.Component",
-                "org.springframework.transaction.annotation.Transactional",
-                "org.springframework.scheduling.annotation.Async",
-                "org.springframework.cache.annotation.Cacheable",
-                "org.springframework.boot.test.context.SpringBootTest",
-                "org.springframework.validation.annotation.Validated"
-            ),
-            "quarkus" to listOf(
-                "javax.enterprise.context.ApplicationScoped",
-                "javax.enterprise.context.RequestScoped"
-            ),
-            "micronaut" to listOf(
-                "io.micronaut.aop.Around",
-                "io.micronaut.aop.Introduction",
-                "io.micronaut.aop.InterceptorBinding",
-                "io.micronaut.aop.InterceptorBindingDefinitions"
-            )
-        )
-
         val ANNOTATION_OPTION = CliOption(
-            "annotation", "<fqname>", "Annotation qualified names",
+            ANNOTATION_OPTION_NAME, "<fqname>", "Annotation qualified names",
             required = false, allowMultipleOccurrences = true
         )
 
@@ -53,11 +33,9 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
             "preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
             required = false, allowMultipleOccurrences = true
         )
-
-        const val PLUGIN_ID = "org.jetbrains.kotlin.allopen"
     }
 
-    override val pluginId = PLUGIN_ID
+    override val pluginId = AllOpenPluginNames.PLUGIN_ID
     override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {

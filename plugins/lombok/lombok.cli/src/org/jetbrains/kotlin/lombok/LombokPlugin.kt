@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.CONFIG_FILE
+import org.jetbrains.kotlin.lombok.LombokPluginNames.CONFIG_OPTION_NAME
+import org.jetbrains.kotlin.lombok.LombokPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.lombok.k2.FirLombokRegistrar
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import java.io.File
@@ -50,10 +52,8 @@ object LombokConfigurationKeys {
 class LombokCommandLineProcessor : CommandLineProcessor {
 
     companion object {
-        const val PLUGIN_ID = "org.jetbrains.kotlin.lombok"
-
         val CONFIG_FILE_OPTION = CliOption(
-            optionName = "config",
+            optionName = CONFIG_OPTION_NAME,
             valueDescription = "<path>",
             description = "Lombok configuration file location",
             required = false
