@@ -102,7 +102,10 @@ object AbstractTypeMapper {
                 mapType(context, type.original(), mode, sw)
 
             typeConstructor.isScript() ->
-                Type.getObjectType(context.getScriptInternalName(typeConstructor))
+                Type.getObjectType(context.getScriptInternalName(typeConstructor)).let {
+                    sw?.writeClass(it)
+                    it
+                }
 
             else ->
                 throw UnsupportedOperationException("Unknown type $type")
