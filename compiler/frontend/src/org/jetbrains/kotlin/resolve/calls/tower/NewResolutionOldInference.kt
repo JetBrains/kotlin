@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.*
-import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSupport
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
@@ -65,7 +64,6 @@ class NewResolutionOldInference(
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val syntheticScopes: SyntheticScopes,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val builderInferenceSupport: BuilderInferenceSupport,
     private val deprecationResolver: DeprecationResolver,
     private val typeApproximator: TypeApproximator,
     private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
@@ -212,7 +210,6 @@ class NewResolutionOldInference(
         }
 
         val overloadResults = convertToOverloadResults<D>(candidates, tracing, context)
-        builderInferenceSupport.checkBuilderInferenceCalls(context, tracing, overloadResults)
         return overloadResults
     }
 
