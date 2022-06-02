@@ -22,6 +22,7 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("kotlin-android")
+    id("com.google.protobuf")
 }
 
 dependencies {
@@ -49,6 +50,7 @@ dependencies {
     testImplementation(files(toolsJar))
 
     testImplementation(libs.kotlinStdlib)
+    testImplementation(libs.protobufLite)
     testImplementation(libs.guavaAndroid)
     testImplementation(project(":compose:compiler:compiler-hosted"))
     testImplementation(projectOrArtifact(":compose:material:material"))
@@ -88,4 +90,22 @@ androidx {
     publish = Publish.NONE
     inceptionYear = "2019"
     description = "Contains test for the compose compiler plugin"
+}
+
+protobuf {
+    protoc {
+        artifact = libs.protobufCompiler.get()
+    }
+    // Generates the java proto-lite code for the protos in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
 }
