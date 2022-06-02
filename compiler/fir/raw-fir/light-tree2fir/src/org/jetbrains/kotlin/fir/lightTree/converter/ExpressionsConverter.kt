@@ -435,6 +435,7 @@ class ExpressionsConverter(
             when (it.tokenType) {
                 ANNOTATION -> firAnnotationList += declarationsConverter.convertAnnotation(it)
                 ANNOTATION_ENTRY -> firAnnotationList += declarationsConverter.convertAnnotationEntry(it)
+                BLOCK -> firExpression = declarationsConverter.convertBlockExpression(it)
                 else -> if (it.isExpression()) {
                     context.forwardLabelUsagePermission(annotatedExpression, it)
                     firExpression = getAsFirExpression(it)
@@ -442,7 +443,7 @@ class ExpressionsConverter(
             }
         }
 
-        val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer(firExpression?.render() ?: "???"))
+        val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer("???"))
         require(result is FirAnnotationContainer)
         (result.annotations as MutableList<FirAnnotation>) += firAnnotationList
         return result
@@ -1149,6 +1150,13 @@ class ExpressionsConverter(
         body?.forEachChildren {
             when (it.tokenType) {
                 BLOCK -> firBlock = declarationsConverter.convertBlockExpression(it)
+                ANNOTATED_EXPRESSION -> {
+                    if (it.getChildNodeByType(BLOCK) != null) {
+                        firBlock = getAsFirExpression(it)
+                    } else {
+                        firStatement = getAsFirExpression(it)
+                    }
+                }
                 else -> if (it.isExpression()) firStatement = getAsFirExpression(it)
             }
         }

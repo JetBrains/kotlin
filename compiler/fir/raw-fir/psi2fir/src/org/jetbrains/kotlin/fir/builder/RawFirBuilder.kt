@@ -295,8 +295,17 @@ open class RawFirBuilder(
                     accept(this@Visitor, Unit) as FirBlock
                 null ->
                     buildEmptyExpressionBlock()
-                else ->
-                    FirSingleExpressionBlock(convert())
+                else -> {
+                    var firBlock: FirBlock? = null
+                    if (this is KtAnnotatedExpression) {
+                        val lastChild = children.lastOrNull()
+                        if (lastChild is KtBlockExpression) {
+                            firBlock = lastChild.toFirBlock()
+                            extractAnnotationsTo(firBlock.annotations as MutableList<FirAnnotation>)
+                        }
+                    }
+                    firBlock ?: FirSingleExpressionBlock(convert())
+                }
             }
 
         private fun KtDeclarationWithBody.buildFirBody(): Pair<FirBlock?, FirContractDescription?> =
