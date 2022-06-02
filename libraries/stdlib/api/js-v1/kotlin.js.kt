@@ -13,6 +13,10 @@ public val <T : kotlin.Any> kotlin.js.JsClass<T>.kotlin: kotlin.reflect.KClass<T
 
 public inline fun dateLocaleOptions(init: kotlin.js.Date.LocaleOptions.() -> kotlin.Unit): kotlin.js.Date.LocaleOptions
 
+/*∆*/ public inline fun <reified T : kotlin.Any> enumValueOf(name: kotlin.String): T
+
+/*∆*/ public inline fun <reified T : kotlin.Any> enumValues(): kotlin.Array<T>
+
 public external fun eval(expr: kotlin.String): dynamic
 
 public external fun js(code: kotlin.String): dynamic

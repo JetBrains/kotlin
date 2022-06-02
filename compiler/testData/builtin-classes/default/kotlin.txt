@@ -355,6 +355,10 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     /*primary*/ public constructor ExtensionFunctionType()
 }
 
+public abstract class ExternalEnum {
+    /*primary*/ public constructor ExternalEnum()
+}
+
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int

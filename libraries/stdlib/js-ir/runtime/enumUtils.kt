@@ -6,7 +6,7 @@
 package kotlin.js
 
 /**
- * Returns an exernal enum entry with specified name.
+ * Returns an external enum entry with specified name.
  */
 public inline fun <reified T: ExternalEnum> enumValueOf(name: String): T {
     val externalEnum: dynamic = T::class.js

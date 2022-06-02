@@ -12,7 +12,7 @@ package kotlin.js
 @JsPolyfill("""
 if (typeof Object.values === "undefined") {
     Object.values = function(obj) {
-        return Object.keys(obj).map(function (key, _, obj) { return obj[key] })
+        return Object.keys(obj).map(function (key) { return obj[key] })
     };
 }
 """)

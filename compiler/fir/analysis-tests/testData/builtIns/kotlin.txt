@@ -607,6 +607,17 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
+public abstract class ExternalEnum : R|kotlin/Any| {
+    public final operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public final fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    public constructor(): R|kotlin/ExternalEnum|
+
+}
+
 public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|, R|java/io/Serializable| {
     public final companion object Companion : R|kotlin/Any| {
         public final const val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)

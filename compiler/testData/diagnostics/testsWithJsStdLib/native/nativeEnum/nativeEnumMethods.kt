@@ -14,7 +14,7 @@ fun main() {
     enumValues<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Foo<!>>()
     enumValueOf<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Foo<!>>("A")
 
-    // AFTER A BOOTSTRAP THOSE TWO LINES SHOULD BE UNCOMMENTED AND LINES ABOVE SHOULD BE DELETED
+    // TODO: After a bootstraping those two lines should be uncommented and lines above should be deleted
     // BECAUSE kotlin.js STANDARD LIBRARY WAS EXTENDED WITH OVERLOADS OF `enumValues` AND `enumValueOf` METHODS
 
     // enumValues<Foo>()
