@@ -6,7 +6,7 @@
 package kotlin
 
 /**
- * The common base class of all enum classes.
+ * The common base class of all enum classes (except `external` one).
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
