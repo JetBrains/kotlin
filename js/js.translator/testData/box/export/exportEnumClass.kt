@@ -6,11 +6,6 @@
 // MODULE: export_enum_class
 // FILE: lib.kt
 
-external enum class TestFoo {
-    A,
-    B
-}
-
 @JsExport
 enum class Foo(val constructorParameter: String) {
     A("aConstructorParameter"),
@@ -24,7 +19,6 @@ enum class Foo(val constructorParameter: String) {
 
     companion object {
         val baz = "baz"
-        val pep = enumValueOf<TestFoo>("A")
     }
 }
 

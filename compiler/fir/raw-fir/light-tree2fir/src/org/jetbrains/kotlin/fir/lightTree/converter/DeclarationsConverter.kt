@@ -521,9 +521,9 @@ class DeclarationsConverter(
                     delegationSpecifiers?.let { superTypeRefs += it.superTypesRef }
 
                     when {
-                        modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
+                        modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) && superTypeRefs.all { !it.isEnum } -> {
                             delegatedSuperTypeRef = buildResolvedTypeRef {
-                                val superType = if (classSymbol.isExternal) implicitExternalEnumType else implicitEnumType
+                                val superType = if (modifiers.hasExternal()) implicitExternalEnumType else implicitEnumType
                                 type = ConeClassLikeTypeImpl(
                                     superType.type.lookupTag,
                                     arrayOf(selfType.type),

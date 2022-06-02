@@ -159,7 +159,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         if (supertype.isAnyOrNullableAny()) return false
 
         // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
-        if (isEnum && KotlinBuiltIns.isEnum(supertype)) return false
+        if (isEnum && KotlinBuiltIns.isAnyKindOfEnum(supertype)) return false
 
         // Interfaces have only extends lists
         if (isInterface) return forExtendsList

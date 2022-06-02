@@ -943,6 +943,13 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames._enum);
     }
 
+    public static boolean isExternalEnum(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames._externalEnum);
+    }
+
+    public static boolean isAnyKindOfEnum(@NotNull KotlinType type) {
+        return isEnum(type) || isExternalEnum(type);
+    }
     public static boolean isComparable(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FqNames.comparable.toUnsafe());
     }
