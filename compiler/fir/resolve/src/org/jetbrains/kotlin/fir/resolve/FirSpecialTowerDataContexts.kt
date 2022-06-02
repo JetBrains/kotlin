@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 
 class FirSpecialTowerDataContexts {
-    val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
-    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
+    private val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
 
     fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): FirTowerDataContext? {
         return towerDataContextForAnonymousFunctions[symbol]
