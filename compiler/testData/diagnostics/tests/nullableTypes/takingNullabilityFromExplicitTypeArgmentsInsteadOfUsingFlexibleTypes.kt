@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 // It's relevant only for Java constructor calls
 

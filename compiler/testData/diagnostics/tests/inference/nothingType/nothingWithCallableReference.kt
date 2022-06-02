@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <K> select2(x: K, y: K): K = TODO()

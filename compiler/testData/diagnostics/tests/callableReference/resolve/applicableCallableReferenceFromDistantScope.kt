@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun foo(s: String) {}

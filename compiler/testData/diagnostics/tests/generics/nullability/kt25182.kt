@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 abstract class Expr<T>

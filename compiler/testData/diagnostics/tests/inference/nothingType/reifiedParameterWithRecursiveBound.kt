@@ -1,5 +1,4 @@
 // Issue: KT-37621
-// !LANGUAGE: +NewInference
 
 class Inv<T>
 class In<in I>

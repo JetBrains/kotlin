@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun go1(f: () -> String) = f()

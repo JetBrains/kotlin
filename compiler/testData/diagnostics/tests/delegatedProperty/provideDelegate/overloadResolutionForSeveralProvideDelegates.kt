@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty

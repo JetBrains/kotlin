@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !OPT_IN: kotlin.RequiresOptIn
-// !LANGUAGE: +NewInference
 
 import kotlin.experimental.ExperimentalTypeInference
 

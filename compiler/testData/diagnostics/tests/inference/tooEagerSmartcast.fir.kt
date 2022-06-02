@@ -1,6 +1,5 @@
 // SKIP_TXT
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference
 
 interface OutBase<out E>
 interface OutDerived<out F> : OutBase<F>

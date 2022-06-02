@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun takeArray(array: Array<String>) {}

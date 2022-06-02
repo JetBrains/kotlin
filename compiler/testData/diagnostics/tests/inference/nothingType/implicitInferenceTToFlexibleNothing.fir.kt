@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_PARAMETER
-// !LANGUAGE: +NewInference
 // SKIP_TXT
 
 import java.util.*

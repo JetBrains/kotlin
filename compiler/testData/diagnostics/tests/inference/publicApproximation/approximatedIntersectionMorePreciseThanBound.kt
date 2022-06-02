@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +NewInference
 
 interface Bound {
     fun foo() {}

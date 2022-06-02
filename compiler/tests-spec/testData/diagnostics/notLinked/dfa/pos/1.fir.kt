@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 // TODO: https://youtrack.jetbrains.com/issue/KT-49862

@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 // NB new inference doesn't really work with old JVM back-end.
 

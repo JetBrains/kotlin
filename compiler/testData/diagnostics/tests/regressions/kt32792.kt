@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 inline fun <T> tryLambdas(lamb : () -> T) : T{
     return lamb.invoke()

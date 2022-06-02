@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun bar(y: (Int) -> Int) = 1

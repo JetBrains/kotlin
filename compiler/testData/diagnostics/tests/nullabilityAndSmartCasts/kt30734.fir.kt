@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference
 // Issue: KT-30734
 
 class Sample {

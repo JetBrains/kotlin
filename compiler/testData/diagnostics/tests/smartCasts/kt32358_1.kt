@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 class MyChild {
     val nullableString: String? = null

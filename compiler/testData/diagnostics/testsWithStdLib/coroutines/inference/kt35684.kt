@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684

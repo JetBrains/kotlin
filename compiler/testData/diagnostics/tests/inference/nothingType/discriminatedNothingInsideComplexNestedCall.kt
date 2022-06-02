@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun expanded(maxCapacity: Int, newCapacity: Int, buffer: Array<Any?>) {

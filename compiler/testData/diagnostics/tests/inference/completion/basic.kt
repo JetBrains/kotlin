@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 interface Bound

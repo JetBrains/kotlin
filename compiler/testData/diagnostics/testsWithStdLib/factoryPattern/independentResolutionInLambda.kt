@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +OverloadResolutionByLambdaReturnType
+// !LANGUAGE: +OverloadResolutionByLambdaReturnType
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 

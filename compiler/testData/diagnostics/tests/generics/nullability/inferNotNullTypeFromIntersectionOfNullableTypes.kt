@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 
 fun simpleTypeAndNumberType(b: Comparable<*>?) {
     if (b is Byte?) {

@@ -1,5 +1,4 @@
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 package test

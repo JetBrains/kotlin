@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun testWhen(x: Any?) {

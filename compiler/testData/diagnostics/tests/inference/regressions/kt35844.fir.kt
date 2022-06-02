@@ -1,6 +1,5 @@
 // SKIP_TXT
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +NewInference
 
 class A<X>
 

@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +NewInference
 
 fun main() {
     Configuration().commands {
