@@ -1,4 +1,3 @@
-// !LANGUAGE: -NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A

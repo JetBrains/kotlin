@@ -16814,12 +16814,6 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
-                @TestMetadata("kt32189returnTypeWithTypealiasSubtitutionOldInference.kt")
-                public void testKt32189returnTypeWithTypealiasSubtitutionOldInference() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/kt32189returnTypeWithTypealiasSubtitutionOldInference.kt");
-                }
-
-                @Test
                 @TestMetadata("kt6081SubstituteIntoClassCorrectly.kt")
                 public void testKt6081SubstituteIntoClassCorrectly() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/kt6081SubstituteIntoClassCorrectly.kt");
