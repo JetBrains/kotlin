@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -96,9 +97,9 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
-                    collector.report(INFO, "PERF: " + performanceManager.getTargetInfo())
+                    collector.report(LOGGING, "PERF: " + performanceManager.getTargetInfo())
                     for (measurement in performanceManager.getMeasurementResults()) {
-                        collector.report(INFO, "PERF: " + measurement.render(), null)
+                        collector.report(LOGGING, "PERF: " + measurement.render(), null)
                     }
                 }
 
