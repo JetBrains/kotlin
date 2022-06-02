@@ -68,13 +68,12 @@ internal class LLFirProvider(
         symbol.fir.originalForSubstitutionOverride?.symbol?.let {
             return getFirCallableContainerFile(it)
         }
-        if (symbol is FirSyntheticPropertySymbol) {
-            val fir = symbol.fir
-            if (fir is FirSyntheticProperty) {
-                return getFirCallableContainerFile(fir.getter.delegate.symbol)
-            }
+        val fir = symbol.fir
+        return when {
+            symbol is FirBackingFieldSymbol -> getFirCallableContainerFile(symbol.fir.propertySymbol)
+            symbol is FirSyntheticPropertySymbol && fir is FirSyntheticProperty -> getFirCallableContainerFile(fir.getter.delegate.symbol)
+            else -> moduleComponents.cache.getContainerFirFile(symbol.fir)
         }
-        return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")

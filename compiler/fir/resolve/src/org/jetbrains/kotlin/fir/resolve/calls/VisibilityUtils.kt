@@ -31,12 +31,6 @@ fun FirVisibilityChecker.isVisible(
         return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, callInfo, dispatchReceiverValue)
     }
 
-    // We won't resolve into the backing field
-    // in the first place, if it's not accessible.
-    if (declaration is FirBackingField) {
-        return true
-    }
-
     val useSiteFile = callInfo.containingFile
     val containingDeclarations = callInfo.containingDeclarations
     val session = callInfo.session

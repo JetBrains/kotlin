@@ -1,0 +1,91 @@
+KtPropertyGetterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: ACCESSOR
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: value
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtPropertySetterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  parameter: KtValueParameterSymbol(value)
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: ACCESSOR
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(value)
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /p
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  modality: FINAL
+  name: p
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  setter: KtPropertySetterSymbol(<setter>)
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getP
+  javaSetterName: setP
+  setterDeprecationStatus: null
