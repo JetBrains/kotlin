@@ -43,6 +43,7 @@ fun IrType.isNullable(): Boolean =
                 SimpleTypeNullability.NOT_SPECIFIED -> classifier.owner.superTypes.any(IrType::isNullable)
                 SimpleTypeNullability.DEFINITELY_NOT_NULL -> false
             }
+            is IrScriptSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
             else -> error("Unsupported classifier: $classifier")
         }
         is IrDynamicType -> true
