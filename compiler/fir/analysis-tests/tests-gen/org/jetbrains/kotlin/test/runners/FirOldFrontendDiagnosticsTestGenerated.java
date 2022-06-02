@@ -7165,6 +7165,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("smartCastWithLambdaAndCallableReference.kt")
+            public void testSmartCastWithLambdaAndCallableReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataFlow/smartCastWithLambdaAndCallableReference.kt");
+            }
+
+            @Test
             @TestMetadata("WhenSubject.kt")
             public void testWhenSubject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");

@@ -52,7 +52,7 @@ class BodyResolveContext(
     lateinit var file: FirFile
 
     @PrivateForInline
-    var regularTowerDataContexts = FirRegularTowerDataContexts(forMemberDeclarations = FirTowerDataContext())
+    var regularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
     @PrivateForInline
     val specialTowerDataContexts = FirSpecialTowerDataContexts()
@@ -64,9 +64,9 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     var towerDataMode: FirTowerDataMode
-        get() = regularTowerDataContexts.mode
+        get() = regularTowerDataContexts.activeMode
         set(value) {
-            regularTowerDataContexts = regularTowerDataContexts.copy(newMode = value)
+            regularTowerDataContexts = regularTowerDataContexts.replaceTowerDataMode(newMode = value)
         }
 
     val implicitReceiverStack: ImplicitReceiverStack
@@ -95,7 +95,7 @@ class BodyResolveContext(
         get() = containingClassDeclarations.lastOrNull()
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> withNewTowerDataForClass(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
+    inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
         val old = regularTowerDataContexts
         regularTowerDataContexts = newContexts
         return try {
@@ -158,14 +158,14 @@ class BodyResolveContext(
 
     @PrivateForInline
     inline fun <T> withTowerDataMode(mode: FirTowerDataMode, f: () -> T): T {
-        return withTowerModeCleanup {
+        return withTowerDataModeCleanup {
             towerDataMode = mode
             f()
         }
     }
 
     @PrivateForInline
-    inline fun <R> withTowerModeCleanup(l: () -> R): R {
+    inline fun <R> withTowerDataModeCleanup(l: () -> R): R {
         val initialMode = towerDataMode
         return try {
             l()
@@ -176,7 +176,7 @@ class BodyResolveContext(
 
     @PrivateForInline
     fun replaceTowerDataContext(newContext: FirTowerDataContext) {
-        regularTowerDataContexts = regularTowerDataContexts.copy(newContext)
+        regularTowerDataContexts = regularTowerDataContexts.replaceCurrentlyActiveContext(newContext)
     }
 
     @PrivateForInline
@@ -315,23 +315,19 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
-        return withTowerModeCleanup {
-            val newContext = specialTowerDataContexts.getAnonymousFunctionContext(symbol)
-            if (newContext != null) {
-                regularTowerDataContexts = regularTowerDataContexts.copyWithSpecial(newContext)
-            }
-            f()
-        }
+        return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol), f)
     }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withCallableReferenceTowerDataContext(access: FirCallableReferenceAccess, f: () -> T): T {
-        return withTowerModeCleanup {
-            val newContext = specialTowerDataContexts.getCallableReferenceContext(access)
-            if (newContext != null) {
-                regularTowerDataContexts = regularTowerDataContexts.copyWithSpecial(newContext)
-            }
-            f()
+        return withTemporaryRegularContext(specialTowerDataContexts.getCallableReferenceContext(access), f)
+    }
+
+    @PrivateForInline
+    inline fun <T> withTemporaryRegularContext(newContext: FirTowerDataContext?, f: () -> T): T {
+        if (newContext == null) return f()
+        return withTowerDataModeCleanup {
+            withTowerDataContexts(regularTowerDataContexts.replaceAndSetActiveRegularContext(newContext), f)
         }
     }
 
@@ -396,7 +392,7 @@ class BodyResolveContext(
                 withContainerClass(regularClass, f)
             }
         }
-        return withTowerModeCleanup {
+        return withTowerDataModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {
                     FirTowerDataMode.COMPANION_OBJECT
@@ -486,12 +482,11 @@ class BodyResolveContext(
             statics,
             scopeForConstructorHeader,
             scopeForEnumEntries,
-            forSpecial = null,
             primaryConstructorPureParametersScope,
             primaryConstructorAllParametersScope
         )
 
-        return withNewTowerDataForClass(newContexts) {
+        return withTowerDataContexts(newContexts) {
             f()
         }
     }
@@ -521,7 +516,7 @@ class BodyResolveContext(
         val whenSubjectImportingScope = whenSubjectImportingScopes.lastOrNull() ?: return f()
         val newTowerDataContext = towerDataContext.addNonLocalScope(whenSubjectImportingScope)
         val newContexts = FirRegularTowerDataContexts(newTowerDataContext)
-        return withNewTowerDataForClass(newContexts) {
+        return withTowerDataContexts(newContexts) {
             f()
         }
     }
