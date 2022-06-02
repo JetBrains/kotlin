@@ -20177,6 +20177,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
 
+                @Test
+                @TestMetadata("equals.kt")
+                public void testEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/any")
                 @TestDataPath("$PROJECT_ROOT")

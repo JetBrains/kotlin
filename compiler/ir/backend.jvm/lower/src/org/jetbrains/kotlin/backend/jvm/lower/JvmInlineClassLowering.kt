@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
@@ -636,8 +637,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
         val leftNullCheck = left.type.isNullable()
         val rightNullCheck = rightIsUnboxed && right.type.isNullable() // equals-impl has a nullable second argument
-        return if (leftNullCheck || rightNullCheck) {
-            irBlock {
+        if (leftNullCheck || rightNullCheck) {
+            return irBlock {
                 val leftVal = if (left is IrGetValue) left.symbol.owner else irTemporary(left)
                 val rightVal = if (right is IrGetValue) right.symbol.owner else irTemporary(right)
 
@@ -658,8 +659,52 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     +equalsRight
                 }
             }
+        } else if (left.type.isInlineChildOfSealedInlineClass() || left.type.classOrNull?.owner?.modality == Modality.SEALED) {
+            return irBlock {
+                val leftTop =
+                    if (left.type.isInlineChildOfSealedInlineClass()) left.type.findTopSealedInlineSuperClass()
+                    else left.type.classOrNull!!.owner
+
+                val rightVar = if (
+                    right.type.isNoinlineChildOfSealedInlineClass() || right.type.isInlineChildOfSealedInlineClass() ||
+                    right.type.classOrNull?.owner?.modality == Modality.SEALED
+                ) {
+                    val rightTop =
+                        if (right.type.classOrNull?.owner?.modality == Modality.SEALED) right.type.classOrNull!!.owner
+                        else right.type.findTopSealedInlineSuperClass()
+
+                    irTemporary(
+                        coerceInlineClasses(
+                            irImplicitCast(right, context.irBuiltIns.anyNType),
+                            rightTop.defaultType,
+                            context.irBuiltIns.anyNType,
+                        )
+                    )
+                } else {
+                    irTemporary(right)
+                }
+
+                val leftVar: IrVariable
+                val equalsMethod = if (rightIsUnboxed || right.type.isNoinlineChildOfSealedInlineClass()) {
+                    leftVar = irTemporary(
+                        coerceInlineClasses(
+                            left, leftTop.defaultType, context.irBuiltIns.anyNType,
+                        )
+                    )
+                    this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(leftTop, context.irBuiltIns)
+                } else {
+                    leftVar = irTemporary(left)
+                    val equals = leftTop.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                    this@JvmInlineClassLowering.context.inlineClassReplacements.getReplacementFunction(equals)!!
+                }
+
+                +irCall(equalsMethod).apply {
+                    putValueArgument(0, irGet(leftVar))
+                    putValueArgument(1, irGet(rightVar))
+                }
+            }
         } else {
-            equals(left, right)
+            return equals(left, right)
         }
     }
 
@@ -682,9 +727,52 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     .specializeEqualsCall(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!)
                     ?: expression
             }
+            expression.isSpecializedNoinlineChildOfSealedInlineClassEqEq -> {
+                expression.transformChildrenVoid()
+                callEqualsOfTopSealedInlineClass(expression) ?: expression
+            }
             else ->
                 super.visitCall(expression)
         }
+
+    private fun callEqualsOfTopSealedInlineClass(expression: IrCall): IrExpression? {
+        if (expression.getValueArgument(0)?.isNullConst() == true || expression.getValueArgument(1)?.isNullConst() == true)
+            return null
+
+        with(context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)) {
+            val top = expression.getValueArgument(0)!!.type.findTopSealedInlineSuperClass()
+
+            return irBlock {
+                val left = expression.getValueArgument(0)!!
+                val right = expression.getValueArgument(1)!!
+
+                if (right.type.isNoinlineChildOfSealedInlineClass() || right.type.classOrNull?.owner?.modality == Modality.SEALED) {
+                    val equals = this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(
+                        top, context.irBuiltIns
+                    )
+                    val leftVar = irTemporary(
+                        coerceInlineClasses(left, top.defaultType, context.irBuiltIns.anyNType)
+                    )
+                    val rightVal = irTemporary(
+                        coerceInlineClasses(right, top.defaultType, context.irBuiltIns.anyNType)
+                    )
+                    +irCall(equals).also {
+                        it.putValueArgument(0, irGet(leftVar))
+                        it.putValueArgument(1, irGet(rightVal))
+                    }
+                } else {
+                    val equals = this@JvmInlineClassLowering.context.inlineClassReplacements.getReplacementFunction(
+                        top.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                    )!!
+
+                    +irCall(equals).also {
+                        it.putValueArgument(0, left)
+                        it.putValueArgument(1, right)
+                    }
+                }
+            }
+        }
+    }
 
     private val IrCall.isSpecializedInlineClassEqEq: Boolean
         get() {
@@ -699,6 +787,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
             return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
                     context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+        }
+
+    private val IrCall.isSpecializedNoinlineChildOfSealedInlineClassEqEq: Boolean
+        get() {
+            if (symbol != context.irBuiltIns.eqeqSymbol) return false
+
+            return getValueArgument(0)?.type?.isNoinlineChildOfSealedInlineClass() == true
         }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
@@ -882,6 +977,57 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
      */
     private fun rewriteOpenAndAbstractMethodsForSealed(info: SealedInlineClassInfo) {
         for ((methodSymbol, retargets, addToClass) in info.methods) {
+            if (methodSymbol.owner.isEquals(context)) {
+                val function = replacements.getReplacementFunction(methodSymbol.owner)!!
+                val equals = context.inlineClassReplacements.getSpecializedEqualsMethod(info.top, context.irBuiltIns)
+
+                with(context.createIrBuilder(function.symbol)) {
+                    function.body = irBlockBody {
+                        +irReturn(
+                            irWhen(
+                                context.irBuiltIns.booleanType, listOf(
+                                    irBranch(irIs(irGet(function.valueParameters[1]), info.top.defaultType),
+                                             irBlock {
+                                                 val left = irTemporary(
+                                                     coerceInlineClasses(
+                                                         irGet(function.valueParameters[0]),
+                                                         info.top.defaultType,
+                                                         context.irBuiltIns.anyNType,
+                                                     )
+                                                 )
+                                                 val right = irTemporary(
+                                                     coerceInlineClasses(
+                                                         irGet(function.valueParameters[1]),
+                                                         info.top.defaultType,
+                                                         context.irBuiltIns.anyNType,
+                                                     )
+                                                 )
+                                                 +irCall(equals).also {
+                                                     it.putValueArgument(0, irGet(left))
+                                                     it.putValueArgument(1, irGet(right))
+                                                 }
+                                             }
+                                    ),
+                                    irBranch(irTrue(), irFalse())
+                                )
+                            )
+                        )
+                    }
+                }
+
+                // Replace fake override with generated function
+                val fakeOverride = info.top.functions.single {
+                    it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+                            it.name.asString() == "equals-impl" && it.valueParameters.size == 2 &&
+                            it.valueParameters[0].type.classOrNull == info.top.symbol &&
+                            it.valueParameters[1].type == context.irBuiltIns.anyNType
+                }
+                info.top.declarations.remove(fakeOverride)
+                info.top.addMember(function)
+
+                continue
+            }
+
             val replacements = context.inlineClassReplacements
             val original = methodSymbol.owner.attributeOwnerId as IrSimpleFunction
             val function = replacements.getReplacementFunction(original)
@@ -1143,9 +1289,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         val boolAnd = context.ir.symbols.getBinaryOperator(
             OperatorNameConventions.AND, context.irBuiltIns.booleanType, context.irBuiltIns.booleanType
         )
-        val equals = context.ir.symbols.getBinaryOperator(
-            OperatorNameConventions.EQUALS, context.irBuiltIns.anyNType, context.irBuiltIns.anyNType
-        )
 
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(irClass, context.irBuiltIns)
 
@@ -1154,56 +1297,68 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 val left = irTemporary(
                     coerceInlineClasses(
                         irGet(function.valueParameters[0]),
-                        function.valueParameters[0].type,
-                        context.irBuiltIns.anyType
+                        this@JvmInlineClassLowering.context.irBuiltIns.anyNType,
+                        irClass.defaultType
                     )
                 )
+
                 val right = irTemporary(
                     coerceInlineClasses(
                         irGet(function.valueParameters[1]),
-                        function.valueParameters[1].type,
-                        context.irBuiltIns.anyType
+                        this@JvmInlineClassLowering.context.irBuiltIns.anyNType,
+                        irClass.defaultType
                     )
                 )
-                val branches = noinlineSubclasses.map {
-                    irBranch(
+
+                val branches = mutableListOf<IrBranch>()
+
+                for (noinlineSubclass in noinlineSubclasses) {
+                    branches += irBranch(
                         irCallOp(
                             boolAnd, context.irBuiltIns.booleanType,
-                            irIs(irGet(left), it.owner.defaultType),
-                            irIs(irGet(right), it.owner.defaultType),
+                            irIs(irGet(left), noinlineSubclass.owner.defaultType),
+                            irIs(irGet(right), noinlineSubclass.owner.defaultType),
                         ),
-                        irReturn(irCallOp(equals, context.irBuiltIns.booleanType, irGet(left), irGet(right)))
+                        // TODO: Revisit, when we will support user-defined equals.
+                        irReturn(irTrue())
                     )
-                } + inlineSubclasses.map {
+                }
+
+                for (inlineSubclass in inlineSubclasses) {
+                    val unboxedLeft = coerceInlineClasses(
+                        irGet(left),
+                        irClass.defaultType,
+                        this@JvmInlineClassLowering.context.irBuiltIns.anyNType,
+                    )
+                    val unboxedRight = coerceInlineClasses(
+                        irGet(right),
+                        irClass.defaultType,
+                        this@JvmInlineClassLowering.context.irBuiltIns.anyNType,
+                    )
                     val eq = this@JvmInlineClassLowering.context.inlineClassReplacements
-                        .getSpecializedEqualsMethod(it.owner, context.irBuiltIns)
-                    val underlyingType = getInlineClassUnderlyingType(it.owner)
-                    irBranch(
+                        .getSpecializedEqualsMethod(inlineSubclass.owner, context.irBuiltIns)
+                    val underlyingType = getInlineClassUnderlyingType(inlineSubclass.owner)
+                    branches += irBranch(
                         irCallOp(
                             boolAnd, context.irBuiltIns.booleanType,
-                            irIs(irGet(left), underlyingType),
-                            irIs(irGet(right), underlyingType),
+                            irIs(unboxedLeft, underlyingType),
+                            irIs(unboxedRight, underlyingType),
                         ),
                         irReturn(
                             irCall(eq).apply {
                                 putValueArgument(
-                                    0, coerceInlineClasses(
-                                        irImplicitCast(irGet(left), underlyingType),
-                                        underlyingType,
-                                        it.owner.defaultType
-                                    )
+                                    0, irImplicitCast(irGet(left), underlyingType)
                                 )
                                 putValueArgument(
-                                    1, coerceInlineClasses(
-                                        irImplicitCast(irGet(right), underlyingType),
-                                        underlyingType,
-                                        it.owner.defaultType
-                                    )
+                                    1, irImplicitCast(irGet(right), underlyingType)
                                 )
                             }
                         )
                     )
-                } + irBranch(irTrue(), irReturn(irFalse()))
+                }
+
+                branches += irBranch(irTrue(), irReturn(irFalse()))
+
                 +irReturn(irWhen(context.irBuiltIns.booleanType, branches))
             }
         }

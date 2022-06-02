@@ -17862,8 +17862,17 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
                 }
 
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest0(path -> doTestWithTransformer(path, transformer), TargetBackend.WASM, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInMethods() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @TestMetadata("equals.kt")
+                public void testEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/any")

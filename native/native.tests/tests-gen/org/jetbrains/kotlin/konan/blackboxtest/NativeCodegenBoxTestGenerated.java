@@ -22829,9 +22829,20 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Tag("codegen")
                 @UseExtTestCaseGroupProvider()
                 public class Methods {
+                    public Methods() {
+                        register("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                    }
+
                     @Test
                     public void testAllFilesPresentInMethods() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("equals.kt")
+                    public void testEquals() throws Exception {
+                        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                        runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt");
                     }
 
                     @Nested

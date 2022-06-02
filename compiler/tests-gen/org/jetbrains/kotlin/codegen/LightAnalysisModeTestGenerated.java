@@ -21140,8 +21140,17 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Methods extends AbstractLightAnalysisModeTest {
+                @TestMetadata("equals.kt")
+                public void ignoreEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                private void runTest(String testDataFilePath, java.util.function.Function<String, String> transformer) throws Exception {
+                    KotlinTestUtils.runTest(path -> doTestWithTransformer(path, transformer), TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInMethods() throws Exception {

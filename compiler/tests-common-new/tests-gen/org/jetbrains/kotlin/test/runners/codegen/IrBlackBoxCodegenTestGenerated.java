@@ -25701,6 +25701,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed/methods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                 }
 
+                @Test
+                @TestMetadata("equals.kt")
+                public void testEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/methods/equals.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed/methods/any")
                 @TestDataPath("$PROJECT_ROOT")
