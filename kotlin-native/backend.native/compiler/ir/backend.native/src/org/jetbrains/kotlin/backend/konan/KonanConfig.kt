@@ -61,6 +61,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 
+    private val defaultMemoryModel get() =
+        if (target.supportsThreads()) {
+            MemoryModel.EXPERIMENTAL
+        } else {
+            MemoryModel.STRICT
+        }
+
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)) {
             MemoryModel.STRICT -> MemoryModel.STRICT
@@ -75,30 +82,26 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                             "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
                     MemoryModel.STRICT
-                } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
-                    MemoryModel.STRICT
                 } else {
                     MemoryModel.EXPERIMENTAL
                 }
             }
-            null -> {
-                if (target.supportsThreads() && destroyRuntimeMode != DestroyRuntimeMode.LEGACY) {
-                    MemoryModel.EXPERIMENTAL
-                } else {
-                    MemoryModel.STRICT
-                }
+            null -> defaultMemoryModel
+        }.also {
+            if (it == MemoryModel.EXPERIMENTAL && destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
+                configuration.report(CompilerMessageSeverity.ERROR,
+                        "Experimental memory model is incompatible with 'legacy' destroy runtime mode.")
             }
         }
     }
     val destroyRuntimeMode: DestroyRuntimeMode get() = configuration.get(KonanConfigKeys.DESTROY_RUNTIME_MODE)!!
+    private val defaultGC get() = if (target.supportsThreads()) GC.CONCURRENT_MARK_AND_SWEEP else GC.SAME_THREAD_MARK_AND_SWEEP
     val gc: GC by lazy {
         val configGc = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)
         val (gcFallbackReason, realGc) = when {
             configGc == GC.CONCURRENT_MARK_AND_SWEEP && !target.supportsThreads() ->
                 "Concurrent mark and sweep gc is not supported for this target. Fallback to Same thread mark and sweep is done" to GC.SAME_THREAD_MARK_AND_SWEEP
-            configGc == null -> null to GC.CONCURRENT_MARK_AND_SWEEP
+            configGc == null -> null to defaultGC
             else -> null to configGc
         }
         if (gcFallbackReason != null) {
@@ -113,13 +116,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
     val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy { configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) == ObjCExportSuspendFunctionLaunchThreadRestriction.NONE }
+    private val defaultFreezing get() = when (memoryModel) {
+        MemoryModel.EXPERIMENTAL -> Freezing.Disabled
+        else -> Freezing.Full
+    }
     val freezing: Freezing by lazy {
         val freezingMode = configuration.get(BinaryOptions.freezing)
         when {
-            freezingMode == null -> when (memoryModel) {
-                MemoryModel.EXPERIMENTAL -> Freezing.Disabled
-                else -> Freezing.Full
-            }
+            freezingMode == null -> defaultFreezing
             memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Full -> {
                 configuration.report(
                         CompilerMessageSeverity.ERROR,
@@ -205,12 +209,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
     private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
+
+    private val defaultAllocationMode get() = when {
+        memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() -> AllocationMode.MIMALLOC
+        else -> AllocationMode.STD
+    }
+
     val allocationMode by lazy {
         when (configuration.get(KonanConfigKeys.ALLOCATION_MODE)) {
-            null -> when {
-                memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() -> AllocationMode.MIMALLOC
-                else -> AllocationMode.STD
-            }
+            null -> defaultAllocationMode
             AllocationMode.STD -> AllocationMode.STD
             AllocationMode.MIMALLOC -> {
                 if (target.supportsMimallocAllocator()) {
@@ -300,11 +307,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
+    private val defaultPropertyLazyInitialization get() = when (memoryModel) {
+        MemoryModel.EXPERIMENTAL -> true
+        else -> false
+    }
     internal val propertyLazyInitialization: Boolean get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION) ?:
-        when (memoryModel) {
-            MemoryModel.EXPERIMENTAL -> true
-            else -> false
-        }
+            defaultPropertyLazyInitialization
 
     internal val lazyIrForCaches: Boolean get() = configuration.get(KonanConfigKeys.LAZY_IR_FOR_CACHES)!!
 
@@ -324,15 +332,27 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
 
-    internal val cacheSupport = CacheSupport(
-            configuration = configuration,
-            resolvedLibraries = resolvedLibraries,
-            memoryModel = memoryModel,
-            optimizationsEnabled = optimizationsEnabled,
-            propertyLazyInitialization = propertyLazyInitialization,
-            target = target,
-            produce = produce
-    )
+    internal val useDebugInfoInNativeLibs= configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
+
+    internal val cacheSupport = run {
+        val ignoreCacheReason = when {
+            optimizationsEnabled -> "for optimized compilation"
+            memoryModel != defaultMemoryModel -> "with ${memoryModel.name.lowercase()} memory model"
+            propertyLazyInitialization != defaultPropertyLazyInitialization -> "with${if (propertyLazyInitialization) "" else "out"} lazy top levels initialization"
+            useDebugInfoInNativeLibs -> "with native libs debug info"
+            allocationMode != defaultAllocationMode -> "with ${allocationMode.name.lowercase()} allocator"
+            memoryModel == MemoryModel.EXPERIMENTAL && gc != defaultGC -> "with ${gc.name.lowercase()} garbage collector"
+            freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
+            else -> null
+        }
+        CacheSupport(
+                configuration = configuration,
+                resolvedLibraries = resolvedLibraries,
+                ignoreCacheReason = ignoreCacheReason,
+                target = target,
+                produce = produce
+        )
+    }
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries

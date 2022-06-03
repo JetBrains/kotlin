@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 class CacheSupport(
         private val configuration: CompilerConfiguration,
         resolvedLibraries: KotlinLibraryResolveResult,
-        optimizationsEnabled: Boolean,
-        memoryModel: MemoryModel,
-        propertyLazyInitialization: Boolean,
+        ignoreCacheReason: String?,
         target: KonanTarget,
         produce: CompilerOutputKind
 ) {
@@ -55,19 +53,11 @@ class CacheSupport(
 
         val hasCachedLibs = explicitCacheFiles.isNotEmpty() || implicitCacheDirectories.isNotEmpty()
 
-        val ignoreReason = when {
-            optimizationsEnabled -> "for optimized compilation"
-            memoryModel != MemoryModel.EXPERIMENTAL -> "with strict memory model"
-            !propertyLazyInitialization -> "without lazy top levels initialization"
-            configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false -> "with native libs debug info"
-            else -> null
+        if (ignoreCacheReason != null && hasCachedLibs) {
+            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used $ignoreCacheReason")
         }
 
-        if (ignoreReason != null && hasCachedLibs) {
-            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used $ignoreReason")
-        }
-
-        val ignoreCachedLibraries = ignoreReason != null
+        val ignoreCachedLibraries = ignoreCacheReason != null
         CachedLibraries(
                 target = target,
                 allLibraries = allLibraries,

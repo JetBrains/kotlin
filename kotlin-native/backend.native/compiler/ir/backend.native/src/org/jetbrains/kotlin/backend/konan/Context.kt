@@ -454,8 +454,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldContainDebugInfo() = config.debug
     fun shouldContainLocationDebugInfo() = shouldContainDebugInfo() || config.lightDebug
     fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
-    fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() &&
-            config.configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
+    fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() && config.useDebugInfoInNativeLibs
 
     fun shouldOptimize() = config.optimizationsEnabled
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
