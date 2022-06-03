@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 
@@ -67,9 +65,7 @@ class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNa
                 target?.let { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
             }
             is KtReferenceExpression -> {
-                context[BindingContext.REFERENCE_TARGET, this]?.takeIf {
-                    this !is KtNameReferenceExpression || getReferencedNameElementType() != KtTokens.THIS_KEYWORD
-                } ?: getResolvedCall(context)?.resultingDescriptor
+                context[BindingContext.REFERENCE_TARGET, this]
             }
             else -> {
                 null
