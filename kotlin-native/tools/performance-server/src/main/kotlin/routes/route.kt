@@ -195,12 +195,14 @@ internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> CompositeBu
                 compareBy(
                         { if (buildElement(it).first != null) 1 else 0 }, // Old builds have no set build type.
                         { buildElement(it).second.substringBefore(".").toInt() },       // Kotlin version
-                        { buildElement(it).second.substringAfter(".").substringBefore("-").toDouble() },
+                        { buildElement(it).second.substringAfter(".").substringBefore("-").substringBefore("(").toDouble() },
                         {  // Milestones and release candidates.
                             val buildNumber = buildElement(it).second
                             if (skipMilestones && buildElement(it).first == null ) 0
                             else if (buildNumber.substringAfter("-").startsWith("M"))
                                 buildNumber.substringAfter("M").substringBefore("-").toInt()
+                            else if (buildNumber.substringAfter("-").startsWith("Beta"))
+                                buildNumber.substringAfter("Beta").substringBefore("-").toIntOrNull() ?: 1
                             else if (buildNumber.substringAfter("-").startsWith("RC"))
                                 Int.MAX_VALUE / 2
                             else
@@ -460,13 +462,15 @@ fun router() {
                             .then { geoMeansValues ->
                         success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master")
                                 .map { it.first.second to it.second })
-                    }.catch {
+                    }.catch { errorResponse ->
                         println("Error during getting samples")
+                        println(errorResponse)
                         reject()
                     }
                 }
-            }.catch {
+            }.catch { errorResponse ->
                 println("Error during getting builds information")
+                println(errorResponse)
                 reject()
             }
         }
