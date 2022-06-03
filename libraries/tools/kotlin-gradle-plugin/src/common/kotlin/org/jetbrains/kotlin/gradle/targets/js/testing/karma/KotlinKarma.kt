@@ -61,6 +61,7 @@ class KotlinKarma(
     private var configDirectory: File by property {
         defaultConfigDirectory
     }
+    private val isTeamCity by lazy { project.isTeamCity }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
@@ -380,7 +381,7 @@ class KotlinKarma(
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.isTeamCity
+            escapeTCMessagesInLog = isTeamCity
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath

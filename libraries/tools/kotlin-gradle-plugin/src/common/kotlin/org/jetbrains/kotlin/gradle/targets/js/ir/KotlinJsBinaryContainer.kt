@@ -52,6 +52,10 @@ constructor(
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
 
+            target.whenD8Configured {
+                (this as KotlinJsIrSubTarget).produceExecutable()
+            }
+
             return compilation.binaries.executableIrInternal(compilation)
         }
 
@@ -103,6 +107,10 @@ constructor(
             }
 
             target.whenNodejsConfigured {
+                (this as KotlinJsIrSubTarget).produceLibrary()
+            }
+
+            target.whenD8Configured {
                 (this as KotlinJsIrSubTarget).produceLibrary()
             }
 

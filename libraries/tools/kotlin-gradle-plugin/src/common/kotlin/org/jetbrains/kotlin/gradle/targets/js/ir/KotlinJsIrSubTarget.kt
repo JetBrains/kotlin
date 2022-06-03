@@ -102,17 +102,6 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    private fun addLinkOptions(compilation: KotlinJsIrCompilation) {
-        val additionalCompilerOption = additionalCompilerOption ?: return
-        compilation.binaries
-            .withType(JsIrBinary::class.java)
-            .all {
-                it.linkTask.configure { linkTask ->
-                    linkTask.kotlinOptions.freeCompilerArgs += additionalCompilerOption
-                }
-            }
-    }
-
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
         fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
             lowerCamelCaseName(
@@ -120,8 +109,6 @@ abstract class KotlinJsIrSubTarget(
                 AbstractKotlinTargetConfigurator.testTaskNameSuffix
             )
         )
-
-        addLinkOptions(compilation)
 
         val testJs = project.registerTask<KotlinJsTest>(
             testRun.subtargetTestTaskName(),
@@ -177,7 +164,6 @@ abstract class KotlinJsIrSubTarget(
 
     protected abstract fun configureDefaultTestFramework(test: KotlinJsTest)
     protected abstract fun configureTestDependencies(test: KotlinJsTest)
-    protected abstract val additionalCompilerOption: String?
 
     private fun configureMain() {
         target.compilations.all { compilation ->

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -82,6 +83,7 @@ open class KotlinJsReportAggregatingTestRun(
 
         target.whenBrowserConfigured { doConfigureInChildren(this) }
         target.whenNodejsConfigured { doConfigureInChildren(this) }
+        (target as? KotlinWasmSubTargetContainerDsl)?.whenD8Configured { doConfigureInChildren(this) }
     }
 
     override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }

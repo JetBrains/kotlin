@@ -68,3 +68,14 @@ val Project.isTeamCity: Boolean
     } else {
         project.hasProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
     }
+
+internal fun writeWasmUnitTestRunner(compiledFile: File): File {
+    val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
+    testRunnerFile.writeText(
+        """
+        import exports from '${compiledFile.absolutePath}';
+        exports.startUnitTests?.();
+        """.trimIndent()
+    )
+    return testRunnerFile
+}

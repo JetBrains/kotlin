@@ -11,7 +11,6 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.wasm.WasmLoaderKind
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
@@ -362,18 +361,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     generateWat = true,
                 )
 
-                val launcherKind = when (arguments.wasmLauncher) {
-                    "esm" -> WasmLoaderKind.BROWSER
-                    "nodejs" -> WasmLoaderKind.NODE
-                    "d8" -> WasmLoaderKind.D8
-                    "d8NodeCompatible" -> WasmLoaderKind.D8NodeCompatible
-                    else -> throw IllegalArgumentException("Unrecognized flavor for the wasm launcher")
-                }
-
                 writeCompilationResult(
                     result = res,
                     dir = outputFile.parentFile,
-                    loaderKind = launcherKind,
                     fileNameBase = outputFile.nameWithoutExtension
                 )
 

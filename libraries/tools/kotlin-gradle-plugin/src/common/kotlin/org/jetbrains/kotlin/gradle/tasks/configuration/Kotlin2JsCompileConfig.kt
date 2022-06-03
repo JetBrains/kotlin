@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -27,8 +28,9 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             task.incrementalJsKlib = propertiesProvider.incrementalJsKlib ?: true
 
             task.outputFileProperty.value(task.project.provider {
+                val extensionName = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
                 task.kotlinOptions.outputFile?.let(::File)
-                    ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}.js")
+                    ?: task.destinationDirectory.locationOnly.get().asFile.resolve("${compilation.ownModuleName}$extensionName")
             }).disallowChanges()
 
             task.optionalOutputFile.fileProvider(task.outputFileProperty.flatMap { outputFile ->

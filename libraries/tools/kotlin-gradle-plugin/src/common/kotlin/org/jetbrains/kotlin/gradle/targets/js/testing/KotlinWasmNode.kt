@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
-import org.gradle.api.Project
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -13,11 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
+import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 
 internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
+    @Transient
     override val compilation: KotlinJsCompilation = kotlinJsTest.compilation
-    private val project: Project = compilation.target.project
+    private val isTeamCity by lazy { compilation.target.project.isTeamCity }
 
     init {
         kotlinJsTest.outputs.upToDateWhen { false }
@@ -29,7 +30,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val compiledFile = task.inputFileProperty.get().asFile
+        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -37,7 +38,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.isTeamCity
+            escapeTCMessagesInLog = isTeamCity
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
@@ -47,22 +48,17 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
         val args = mutableListOf<String>()
         with(args) {
-            add("--experimental-wasm-typed-funcref")
             add("--experimental-wasm-gc")
             add("--experimental-wasm-eh")
-            add(compiledFile.absolutePath)
+            add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())
         }
-        val dryRunArgs = mutableListOf<String>()
-        dryRunArgs.addAll(args)
-        dryRunArgs.add("--dryRun")
-
         return TCServiceMessagesTestExecutionSpec(
             forkOptions = forkOptions,
             args = args,
             checkExitCode = false,
             clientSettings = clientSettings,
-            dryRunArgs = dryRunArgs
+            dryRunArgs = args + "--dryRun"
         )
     }
 

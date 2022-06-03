@@ -120,66 +120,49 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     return runtime + jsCode
 }
 
-enum class WasmLoaderKind {
-    D8,
-    D8NodeCompatible,
-    NODE,
-    BROWSER,
-}
-
-fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs: String): String {
-    val nodeExitOnD8 =
-        if (kind == WasmLoaderKind.D8NodeCompatible) "if ((typeof process !== 'undefined') && (typeof process.versions.node !== 'undefined')) process.exit(0)\n"
-        else ""
-
-    val instantiation = when (kind) {
-        WasmLoaderKind.D8, WasmLoaderKind.D8NodeCompatible ->
-            """
-                const wasmModule = new WebAssembly.Module(read('$wasmFilePath', 'binary'));
-                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
-            """.trimIndent()
-
-        WasmLoaderKind.NODE ->
-            """
-                const fs = require('fs');
-                var path = require('path');
-                const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
-                const wasmModule = new WebAssembly.Module(wasmBuffer);
-                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
-            """.trimIndent()
-
-        WasmLoaderKind.BROWSER ->
-            """
-                const { instance: wasmInstance } = await WebAssembly.instantiateStreaming(fetch("$wasmFilePath"), { js_code });
-            """.trimIndent()
+fun generateJsWasmLoader(wasmFilePath: String, externalJs: String): String =
+    externalJs + """
+    
+    const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
+    const isD8 = !isNodeJs && (typeof d8 !== 'undefined');
+    const isBrowser = !isNodeJs && !isD8 && (typeof window !== 'undefined');
+    
+    if (!isNodeJs && !isD8 && !isBrowser) {
+      throw "Supported JS engine not detected";
     }
-
-    val init =
-        """
-            
-            const wasmExports = wasmInstance.exports;
-            wasmExports.__init();
-            wasmExports.startUnitTests?.();
-            
-        """.trimIndent()
-
-    val export = when (kind) {
-        WasmLoaderKind.D8, WasmLoaderKind.BROWSER ->
-            "export default wasmExports;\n"
-
-        WasmLoaderKind.NODE ->
-            "module.exports = wasmExports;\n"
-
-        WasmLoaderKind.D8NodeCompatible -> ""
+    
+    let wasmInstance;
+    let require; // Placed here to give access to it from externals (js_code)
+    if (isNodeJs) {
+      const module = await import('node:module');
+      require = module.createRequire(import.meta.url);
+      const fs = require('fs');
+      const path = require('path');
+      const url = require('url');
+      const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+      const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
+      const wasmModule = new WebAssembly.Module(wasmBuffer);
+      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
     }
-
-    return nodeExitOnD8 + externalJs + instantiation + init + export
-}
+    
+    if (isD8) {
+      const wasmBuffer = read('$wasmFilePath', 'binary');
+      const wasmModule = new WebAssembly.Module(wasmBuffer);
+      wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+    }
+    
+    if (isBrowser) {
+      wasmInstance = (await WebAssembly.instantiateStreaming(fetch('$wasmFilePath'), { js_code })).instance;
+    }
+    
+    const wasmExports = wasmInstance.exports;
+    wasmExports.__init();
+    export default wasmExports;
+    """.trimIndent()
 
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    loaderKind: WasmLoaderKind,
     fileNameBase: String = "index",
 ) {
     dir.mkdirs()
@@ -187,6 +170,7 @@ fun writeCompilationResult(
         File(dir, "$fileNameBase.wat").writeText(result.wat)
     }
     File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
-    val jsWithLoader = generateJsWasmLoader(loaderKind, "./$fileNameBase.wasm", result.js)
-    File(dir, "$fileNameBase.js").writeText(jsWithLoader)
+
+    val jsWithLoader = generateJsWasmLoader("./$fileNameBase.wasm", result.js)
+    File(dir, "$fileNameBase.mjs").writeText(jsWithLoader)
 }

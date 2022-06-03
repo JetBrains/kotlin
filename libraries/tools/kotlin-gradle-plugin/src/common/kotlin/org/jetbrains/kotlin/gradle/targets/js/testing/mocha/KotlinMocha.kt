@@ -28,6 +28,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
     private val versions = NodeJsRootPlugin.apply(project.rootProject).versions
+    private val isTeamCity by lazy { project.isTeamCity }
 
     override val settingsState: String
         get() = "mocha"
@@ -59,7 +60,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.isTeamCity
+            escapeTCMessagesInLog = isTeamCity
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(

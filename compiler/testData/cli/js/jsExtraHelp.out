@@ -45,7 +45,6 @@ where advanced options include:
                              Turn on range checks for the array access functions
   -Xwasm-enable-asserts      Turn on asserts
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
-  -Xwasm-launcher=esm|nodejs|d8 Picks flavor for the wasm launcher. Default is ESM.
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xbuiltins-from-sources    Compile builtIns from sources

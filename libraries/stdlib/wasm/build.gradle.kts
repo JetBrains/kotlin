@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import java.io.OutputStream
 
 plugins {
     `maven-publish`
@@ -77,13 +76,7 @@ val commonTestSources by task<Sync> {
 
 kotlin {
     wasm {
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
+        nodejs()
     }
 
     sourceSets {
@@ -144,33 +137,7 @@ val compileTestKotlinWasm by tasks.existing(KotlinCompile::class) {
 }
 
 val compileTestDevelopmentExecutableKotlinWasm = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinWasm") {
-    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks", "-Xwasm-launcher=d8")
-}
-
-val runWasmStdLibTestsWithD8 by tasks.registering(Exec::class) {
-    dependsOn(":js:js.tests:unzipV8")
-    dependsOn(compileTestDevelopmentExecutableKotlinWasm)
-
-    val unzipV8Task = tasks.getByPath(":js:js.tests:unzipV8")
-    val d8Path = File(unzipV8Task.outputs.files.single(), "d8")
-    executable = d8Path.toString()
-
-    val compiledFile = compileTestDevelopmentExecutableKotlinWasm
-        .get()
-        .kotlinOptions
-        .outputFile
-        ?.let { File(it) }
-    check(compiledFile != null)
-
-    if (System.getenv("TEAMCITY_VERSION") == null) {
-        standardOutput = object : OutputStream() {
-            override fun write(b: Int) = Unit
-        }
-        errorOutput = standardOutput
-    }
-
-    workingDir = compiledFile.parentFile
-    args = listOf("--experimental-wasm-gc", "--experimental-wasm-eh", "--module", compiledFile.name)
+    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
 }
 
 val runtimeElements by configurations.creating {}

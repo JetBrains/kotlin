@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
@@ -34,7 +33,4 @@ open class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureTestDependencies(test: KotlinJsTest) {
         test.dependsOn(d8.setupTaskProvider)
     }
-
-    override val additionalCompilerOption: String?
-        get() = "-Xwasm-launcher=d8".takeIf { target.platformType == KotlinPlatformType.wasm }
 }

@@ -43,7 +43,4 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
             test.testFramework = KotlinWasmNode(test)
         }
     }
-
-    override val additionalCompilerOption: String?
-        get() = "-Xwasm-launcher=nodejs".takeIf { target.platformType == KotlinPlatformType.wasm }
 }

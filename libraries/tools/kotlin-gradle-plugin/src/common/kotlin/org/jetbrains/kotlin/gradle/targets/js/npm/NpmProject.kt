@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -27,6 +28,8 @@ val KotlinJsCompilation.npmProject: NpmProject
  */
 open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
+
+    private val extension = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
 
     val name: String by lazy {
         buildNpmProjectName()
@@ -65,7 +68,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         get() = dir.resolve(DIST_FOLDER)
 
     val main: String
-        get() = "$DIST_FOLDER/$name.js"
+        get() = "$DIST_FOLDER/$name$extension"
 
     val externalsDirRoot by lazy {
         project.buildDir.resolve("externals").resolve(name)

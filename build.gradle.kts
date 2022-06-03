@@ -503,10 +503,10 @@ tasks {
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator",
+            //":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }
-        dependsOn(":kotlin-stdlib-wasm:runWasmStdLibTestsWithD8") //Instead of :kotlin-stdlib-wasm:check
     }
 
     register("gradlePluginTest") {

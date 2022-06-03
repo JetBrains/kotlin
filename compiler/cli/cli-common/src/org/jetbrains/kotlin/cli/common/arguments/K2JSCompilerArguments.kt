@@ -249,13 +249,6 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xwasm-debug-info", description = "Add debug info to WebAssembly compiled module")
     var wasmDebug: Boolean by FreezableVar(true)
 
-    @Argument(
-            value = "-Xwasm-launcher",
-            valueDescription = "esm|nodejs|d8",
-            description = "Picks flavor for the wasm launcher. Default is ESM."
-    )
-    var wasmLauncher: String? by NullableStringFreezableVar("esm")
-
     @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for FQ names in KClass")
     var wasmKClassFqn: Boolean by FreezableVar(false)
 

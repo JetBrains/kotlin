@@ -148,7 +148,7 @@ abstract class BasicWasmBoxTest(
             )
 
             val testJsQuiet = """
-                import exports from './index.js';
+                import exports from './index.mjs';
         
                 let actualResult
                 try {
@@ -176,19 +176,19 @@ abstract class BasicWasmBoxTest(
                     val path = dir.absolutePath
                     println(" ------ $name WAT  file://$path/index.wat")
                     println(" ------ $name WASM file://$path/index.wasm")
-                    println(" ------ $name JS   file://$path/index.js")
-                    println(" ------ $name Test file://$path/test.js")
+                    println(" ------ $name JS   file://$path/index.mjs")
+                    println(" ------ $name Test file://$path/test.mjs")
                 }
 
-                writeCompilationResult(res, dir, WasmLoaderKind.D8)
-                File(dir, "test.js").writeText(testJs)
+                writeCompilationResult(res, dir)
+                File(dir, "test.mjs").writeText(testJs)
                 ExternalTool(System.getProperty("javascript.engine.path.V8"))
                     .run(
                         "--experimental-wasm-gc",
                         "--experimental-wasm-eh",
                         *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
                         "--module",
-                        "./test.js",
+                        "./test.mjs",
                         *jsFilesAfter.map { File(it).absolutePath }.toTypedArray(),
                         workingDirectory = dir
                     )
@@ -200,14 +200,14 @@ abstract class BasicWasmBoxTest(
             if (debugMode >= DebugMode.SUPER_DEBUG) {
                 fun writeBrowserTest(name: String, res: WasmCompilerResult) {
                     val dir = File(outputDirBase, name)
-                    writeCompilationResult(res, dir, WasmLoaderKind.BROWSER)
-                    File(dir, "test.js").writeText(testJsVerbose)
+                    writeCompilationResult(res, dir)
+                    File(dir, "test.mjs").writeText(testJsVerbose)
                     File(dir, "index.html").writeText(
                         """
                             <!DOCTYPE html>
                             <html lang="en">
                             <body>
-                            <script src="test.js" type="module"></script>
+                            <script src="test.mjs" type="module"></script>
                             </body>
                             </html>
                         """.trimIndent()
@@ -215,8 +215,8 @@ abstract class BasicWasmBoxTest(
                     val path = dir.absolutePath
                     println(" ------ $name WAT  file://$path/index.wat")
                     println(" ------ $name WASM file://$path/index.wasm")
-                    println(" ------ $name JS   file://$path/index.js")
-                    println(" ------ $name TEST file://$path/test.js")
+                    println(" ------ $name JS   file://$path/index.mjs")
+                    println(" ------ $name TEST file://$path/test.mjs")
                     println(" ------ $name HTML file://$path/index.html")
                 }
 

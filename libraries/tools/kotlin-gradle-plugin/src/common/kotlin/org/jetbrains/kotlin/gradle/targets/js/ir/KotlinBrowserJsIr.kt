@@ -63,9 +63,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
     }
 
-    override val additionalCompilerOption: String?
-        get() = "-Xwasm-launcher=esm".takeIf { target.platformType == KotlinPlatformType.wasm }
-
     override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
         webpackTaskConfigurations.add {
             webpackConfigApplier(body)
