@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyConfigurationForPublishing
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.listProperty
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.lowerCaseDashSeparatedName
 import javax.inject.Inject
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
-    @Inject private val softwareComponentFactory: SoftwareComponentFactory,
     @Inject private val toolingModelBuilderRegistry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
     override fun apply(project: Project) {
@@ -53,38 +53,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         project.pm20Extension.apply {
             modules.create(KotlinGradleModule.MAIN_MODULE_NAME)
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
-            main { makePublic() }
-        }
-    }
-
-    private fun setupPublicationForModule(module: KotlinGradleModule) {
-        val project = module.project
-
-        val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
-        val sourceElements = project.configurations.getByName(sourceElementsConfigurationName(module))
-
-        val componentName = rootPublicationComponentName(module)
-        val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
-            project.components.add(it)
-            it.addVariantsFromConfiguration(metadataElements) { }
-            it.addVariantsFromConfiguration(sourceElements) { }
-        }
-
-        module.ifMadePublic {
-            val metadataDependencyConfiguration = resolvableMetadataConfiguration(module)
-            project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).publications.create(
-                    componentName,
-                    MavenPublication::class.java
-                ) { publication ->
-                    publication.from(rootSoftwareComponent)
-                    publication.versionMapping { versionMapping ->
-                        versionMapping.allVariants {
-                            it.fromResolutionOf(metadataDependencyConfiguration)
-                        }
-                    }
-                }
-            }
+            main { makePublic(Standalone(null)) }
         }
     }
 

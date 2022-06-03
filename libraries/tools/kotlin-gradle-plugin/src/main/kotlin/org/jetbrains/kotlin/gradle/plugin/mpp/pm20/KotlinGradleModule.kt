@@ -54,7 +54,6 @@ open class KotlinGradleModuleInternal(
     private var setPublicHandlers: MutableList<() -> Unit> = mutableListOf()
 
     override fun ifMadePublic(action: () -> Unit) {
-        // FIXME reentrancy?
         if (isPublic) action() else setPublicHandlers.add(action)
     }
 
@@ -68,9 +67,11 @@ open class KotlinGradleModuleInternal(
         setPublicHandlers.forEach { it() }
     }
 
-    companion object {
-        const val MAIN_MODULE_NAME = "main"
-        const val TEST_MODULE_NAME = "test"
+    internal val publicationHolder by lazy {
+        DefaultSingleMavenPublishedModuleHolder(
+            this,
+            defaultPublishedModuleSuffixProvider = { (publicationMode as? Standalone)?.defaultArtifactIdSuffix ?: moduleClassifier }
+        )
     }
 
     override fun toString(): String = "$moduleIdentifier (Gradle)"

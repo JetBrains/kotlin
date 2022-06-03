@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
@@ -19,7 +18,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyConfigurationForPublishing
@@ -103,7 +104,11 @@ open class VariantPublishingConfigurator @Inject constructor(
             project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
     }
 
-    open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
+    open fun platformComponentName(variant: KotlinGradleVariant) = when (variant.containingModule.publicationMode) {
+        Private -> error("software component is prohibited for non-published $variant")
+        is Standalone -> variant.disambiguateName("")
+        is Embedded -> variant.name // Use the same software component for same-named variants in all modules
+    }
 
     open fun inferMavenScope(variant: KotlinGradleVariant, configurationName: String): String? =
         when {
@@ -115,40 +120,58 @@ open class VariantPublishingConfigurator @Inject constructor(
     open fun configurePublishing(
         request: PlatformPublicationToMavenRequest
     ) {
-        val componentName = request.componentName
+        request.fromModule.ifMadePublic {
+            val componentName = request.componentName
 
-        registerPlatformModulePublication(
-            componentName,
-            request.publicationHolder,
-            request.variantPublicationRequests,
-            request.fromModule::ifMadePublic
-        )
+            registerPlatformModulePublication(
+                request.fromModule,
+                componentName,
+                request.publicationHolder,
+                request.variantPublicationRequests
+            )
 
-        val publishFromVariants = request.variantPublicationRequests.mapTo(mutableSetOf()) { it.fromVariant }
+            val publishFromVariants = request.variantPublicationRequests.mapTo(mutableSetOf()) { it.fromVariant }
 
-        // Collecting sources for multiple variants is not yet supported;
-        // TODO make callers provide the source variants?
-        // The MPP plugin doesn't publish the source artifacts as variants; keep that behavior for legacy-mapped variants for now
-        if (
-            publishFromVariants.size == 1 &&
-            publishFromVariants.none { it is LegacyMappedVariant }
-        ) {
-            val singlePublishedVariant = publishFromVariants.single()
-            configureSourceElementsPublishing(componentName, singlePublishedVariant)
+            // Collecting sources for multiple variants is not yet supported;
+            // TODO make callers provide the source variants?
+            // The MPP plugin doesn't publish the source artifacts as variants; keep that behavior for legacy-mapped variants for now
+            if (
+                publishFromVariants.size == 1 &&
+                publishFromVariants.none { it is LegacyMappedVariant }
+            ) {
+                val singlePublishedVariant = publishFromVariants.single()
+                configureSourceElementsPublishing(componentName, singlePublishedVariant, request.publicationHolder)
+            }
+
+            registerPlatformVariantsInRootModule(request)
         }
-
-        registerPlatformVariantsInRootModule(
-            request.publicationHolder,
-            request.fromModule,
-            request.variantPublicationRequests
-        )
     }
 
-    protected open fun configureSourceElementsPublishing(componentName: String, variant: KotlinGradleVariant) {
+    protected open fun configureSourceElementsPublishing(
+        componentName: String,
+        variant: KotlinGradleVariant,
+        publishedModuleHolder: SingleMavenPublishedModuleHolder
+    ) {
         val configurationName = variant.disambiguateName("sourceElements")
+
+        // FIXME create this one not only in ifMadePublic but before that unconditionally?
         val docsVariants = DocumentationVariantConfigurator().createSourcesElementsConfiguration(configurationName, variant)
+
+        val docsVariantForPublishing = copyConfigurationForPublishing(
+            project,
+            docsVariants.name + "-published",
+            docsVariants,
+            overrideCapabilities = {
+                val capability =
+                    ComputedCapability.forPublishedPlatformVariant(variant, publishedModuleHolder)
+                if (capability != null) {
+                    outgoing.capability(capability)
+                }
+            }
+        )
+
         project.components.withType(AdhocComponentWithVariants::class.java).named(componentName).configure { component ->
-            component.addVariantsFromConfiguration(docsVariants) { }
+            component.addVariantsFromConfiguration(docsVariantForPublishing) { }
         }
     }
 
@@ -158,77 +181,110 @@ open class VariantPublishingConfigurator @Inject constructor(
      * Assigns the created Maven publication to the [publishedModuleHolder].
      */
     protected open fun registerPlatformModulePublication(
+        module: KotlinGradleModule,
         componentName: String,
         publishedModuleHolder: SingleMavenPublishedModuleHolder,
-        variantRequests: Iterable<VariantPublicationRequest>,
-        whenShouldRegisterPublication: (() -> Unit) -> Unit
+        variantRequests: Iterable<VariantPublicationRequest>
     ) {
-        val platformComponent = softwareComponentFactory.adhoc(componentName)
-        project.components.add(platformComponent)
+        module.ifMadePublic {
+            val platformComponent =
+                project.components.withType(AdhocComponentWithVariants::class.java).findByName(componentName)
+                    ?: softwareComponentFactory.adhoc(componentName).also { project.components.add(it) }
 
-        variantRequests.forEach { request ->
-            val originalConfiguration = request.publishConfiguration
-            val mavenScopeOrNull = inferMavenScope(request.fromVariant, originalConfiguration.name)
+            variantRequests.forEach { request ->
+                val originalConfiguration = request.publishConfiguration
+                val mavenScopeOrNull = inferMavenScope(request.fromVariant, originalConfiguration.name)
 
-            val publishedConfiguration = copyConfigurationForPublishing(
-                request.fromVariant.project,
-                newName = publishedConfigurationName(originalConfiguration.name) + "-platform",
-                configuration = originalConfiguration,
-                overrideArtifacts = (request as? AdvancedVariantPublicationRequest)
-                    ?.overrideConfigurationArtifactsForPublication
-                    ?.let { override -> { artifacts -> artifacts.addAllLater(override) } },
-                overrideAttributes = (request as? AdvancedVariantPublicationRequest)
-                    ?.overrideConfigurationAttributesForPublication
-                    ?.let { override -> { attributes -> copyAttributes(override, attributes) } }
-            )
-
-            platformComponent.addVariantsFromConfiguration(publishedConfiguration) details@{ variantDetails ->
-                mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
-            }
-        }
-
-        whenShouldRegisterPublication {
-            project.pluginManager.withPlugin("maven-publish") {
-                project.extensions.getByType(PublishingExtension::class.java).apply {
-                    publications.create(componentName, MavenPublication::class.java).apply {
-                        (this as DefaultMavenPublication).isAlias = true
-                        from(platformComponent)
-                        publishedModuleHolder.assignMavenPublication(this)
-                        artifactId = dashSeparatedName(
-                            project.name, publishedModuleHolder.defaultPublishedModuleSuffix
-                        ).toLowerCase(Locale.ENGLISH)
+                val publishedConfiguration = copyConfigurationForPublishing(
+                    request.fromVariant.project,
+                    newName = publishedConfigurationName(originalConfiguration.name) + "-platform",
+                    configuration = originalConfiguration,
+                    overrideArtifacts = (request as? AdvancedVariantPublicationRequest)
+                        ?.overrideConfigurationArtifactsForPublication
+                        ?.let { override -> { artifacts -> artifacts.addAllLater(override) } },
+                    overrideAttributes = (request as? AdvancedVariantPublicationRequest)
+                        ?.overrideConfigurationAttributesForPublication
+                        ?.let { override -> { attributes -> copyAttributes(override, attributes) } },
+                    overrideDependencies = {
+                        addAllLater(project.listProperty {
+                            replaceProjectDependenciesWithPublishedMavenDependencies(
+                                project,
+                                originalConfiguration.allDependencies
+                            )
+                        })
+                    },
+                    overrideCapabilities = {
+                        ComputedCapability.forPublishedPlatformVariant(request.fromVariant, publishedModuleHolder)
+                            ?.let(outgoing::capability)
                     }
+                )
+
+                platformComponent.addVariantsFromConfiguration(publishedConfiguration) details@{ variantDetails ->
+                    mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
+                }
+            }
+
+            project.pluginManager.withPlugin("maven-publish") {
+                val publication = project.extensions.getByType(PublishingExtension::class.java).run {
+                    if (module.publicationMode is Standalone) {
+                        publications.create(componentName, MavenPublication::class.java).apply {
+                            // TODO: remove internal API usage. This prevents Gradle from reporting errors during publication because of multiple
+                            //       Maven publications with different coordinates
+                            (this as DefaultMavenPublication).isAlias = true
+
+                            from(platformComponent)
+                            artifactId = dashSeparatedName(
+                                project.name, publishedModuleHolder.defaultPublishedModuleSuffix
+                            ).toLowerCase(Locale.ENGLISH)
+                        }
+                    } else {
+                        // TODO still create the publication for embedded module's variant if one with this name is absent in the main module?
+                        publications.findByName(componentName) as? MavenPublication
+                    }
+                }
+
+                if (publication != null) {
+                    publishedModuleHolder.assignMavenPublication(publication)
                 }
             }
         }
     }
 
     protected open fun registerPlatformVariantsInRootModule(
-        publishedModuleHolder: SingleMavenPublishedModuleHolder,
-        kotlinModule: KotlinGradleModule,
-        variantRequests: Iterable<VariantPublicationRequest>
+        request: PlatformPublicationToMavenRequest
     ) {
         val platformModuleDependencyProvider = project.provider {
-            val coordinates = publishedModuleHolder.publishedMavenModuleCoordinates
+            val variants = request.variantPublicationRequests.mapTo(mutableSetOf()) { it.fromVariant }
+            val singleVariant = variants.singleOrNull() ?: error("expected single variant: ${variants.joinToString()}") // TODO NOW: test and remove?
+            val coordinates = request.publicationHolder.publishedMavenModuleCoordinates
             (project.dependencies.create("${coordinates.group}:${coordinates.name}:${coordinates.version}") as ModuleDependency).apply {
-                if (kotlinModule.moduleClassifier != null) {
-                    capabilities { it.requireCapability(ComputedCapability.fromModule(kotlinModule)) }
+                capabilities {
+                    val capability = ComputedCapability.forPublishedPlatformVariant(singleVariant, request.publicationHolder)
+                    if (capability != null) {
+                        it.requireCapability(capability)
+                    }
                 }
             }
         }
 
-        val rootSoftwareComponent =
-            project.components
+        val rootSoftwareComponent = when (request.fromModule.publicationMode) {
+            Private -> error("expected to be published")
+            Embedded -> project.components
                 .withType(AdhocComponentWithVariants::class.java)
-                .getByName(rootPublicationComponentName(kotlinModule))
+                .getByName(rootPublicationComponentName(project.pm20Extension.main))
+            is Standalone ->
+                project.components
+                    .withType(AdhocComponentWithVariants::class.java)
+                    .getByName(rootPublicationComponentName(request.fromModule))
+        }
 
-        variantRequests.forEach { variantRequest ->
+        request.variantPublicationRequests.forEach { variantRequest ->
             val configuration = variantRequest.publishConfiguration
             project.configurations.create(publishedConfigurationName(configuration.name)).apply {
                 isCanBeConsumed = false
                 isCanBeResolved = false
 
-                setModuleCapability(this, kotlinModule)
+                setGradlePublishedModuleCapability(this, request.fromModule)
                 dependencies.addLater(platformModuleDependencyProvider)
                 copyAttributes(configuration.attributes, this.attributes)
                 rootSoftwareComponent.addVariantsFromConfiguration(this) { }
@@ -284,3 +340,10 @@ open class DocumentationVariantConfigurator {
         )
     }
 }
+
+internal fun KotlinGradleModule.publicationHolder(): SingleMavenPublishedModuleHolder? =
+    when (this) {
+        is KotlinGradleModuleInternal -> publicationHolder
+        is SingleMavenPublishedModuleHolder -> this
+        else -> null
+    }

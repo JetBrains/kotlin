@@ -30,7 +30,10 @@ abstract class KotlinNativeVariantInternal(
         compileDependenciesConfiguration = compileDependencyConfiguration,
         apiElementsConfiguration = apiElementsConfiguration
     ),
-    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(containingModule, fragmentName) {
+    SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
+        containingModule,
+        { defaultModuleSuffix(containingModule, fragmentName) }
+    ) {
 
     override var enableEndorsedLibraries: Boolean = false
 

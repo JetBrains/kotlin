@@ -51,8 +51,12 @@ abstract class KotlinGradleVariantInternal(
 }
 
 class DefaultSingleMavenPublishedModuleHolder(
-    private var module: KotlinGradleModule, override val defaultPublishedModuleSuffix: String?
+    private var module: KotlinGradleModule, private val defaultPublishedModuleSuffixProvider: () -> String?
 ) : SingleMavenPublishedModuleHolder {
+
+    override val defaultPublishedModuleSuffix: String?
+        get() = defaultPublishedModuleSuffixProvider()
+
     private val project get() = module.project
 
     private var assignedMavenPublication: MavenPublication? = null
@@ -127,7 +131,7 @@ abstract class KotlinGradlePublishedVariantWithRuntime(
     runtimeDependenciesConfiguration = runtimeDependencyConfiguration,
     runtimeElementsConfiguration = runtimeElementsConfiguration
 ), SingleMavenPublishedModuleHolder by DefaultSingleMavenPublishedModuleHolder(
-    containingModule, defaultModuleSuffix(containingModule, fragmentName)
+    containingModule,{ defaultModuleSuffix(containingModule, fragmentName) }
 ) {
     override val gradleVariantNames: Set<String>
         get() = listOf(apiElementsConfiguration.name, runtimeElementsConfiguration.name).flatMapTo(mutableSetOf()) {

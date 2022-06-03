@@ -195,7 +195,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
         target.kotlinComponents.forEach { kotlinComponent ->
             val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
                 mainModule,
-                kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
+                { kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-") }
             )
             val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
                 is KotlinVariant -> kotlinComponent.usages
