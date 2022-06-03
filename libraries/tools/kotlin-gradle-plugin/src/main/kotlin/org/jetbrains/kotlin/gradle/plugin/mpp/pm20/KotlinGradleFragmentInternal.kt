@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
@@ -94,7 +95,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
         get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
-            exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
+            exportConfiguration.allDependencies.withType(ModuleDependency::class.java).map { dependency ->
+                dependency.toModuleDependency(project)
+            }
         }
 
     override val kotlinSourceRoots: SourceDirectorySet =
