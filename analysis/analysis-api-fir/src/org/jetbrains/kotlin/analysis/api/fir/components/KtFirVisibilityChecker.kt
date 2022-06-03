@@ -11,20 +11,17 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class KtFirVisibilityChecker(
@@ -41,13 +38,8 @@ internal class KtFirVisibilityChecker(
         require(candidateSymbol is KtFirSymbol<*>)
         require(useSiteFile is KtFirFileSymbol)
 
-        val nonLocalContainingDeclaration = findContainingNonLocalDeclaration(position)
         val useSiteFirFile = useSiteFile.firSymbol.fir
-        val containers = nonLocalContainingDeclaration
-            ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveSession)
-            ?.collectDesignation()
-            ?.path
-            .orEmpty()
+        val containers = collectContainingDeclarations(position)
 
         val explicitDispatchReceiver = receiverExpression
             ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
@@ -64,13 +56,26 @@ internal class KtFirVisibilityChecker(
         )
     }
 
-    private fun findContainingNonLocalDeclaration(element: PsiElement): KtCallableDeclaration? {
-        return element
-            .parentsOfType<KtCallableDeclaration>()
-            .firstOrNull { it.isNotFromLocalClass }
+    private fun collectContainingDeclarations(position: PsiElement): List<FirDeclaration> {
+        val nonLocalContainer = findContainingNonLocalDeclaration(position)
+        val nonLocalContainerFir = nonLocalContainer?.getOrBuildFirSafe<FirDeclaration>(analysisSession.firResolveSession)
+            ?: return emptyList()
+
+        val designation = nonLocalContainerFir.collectDesignation()
+
+        return designation
+            .toSequence(includeTarget = true) // we include the starting declaration in case it is a class or an object
+            .toList()
     }
 
-    private val KtCallableDeclaration.isNotFromLocalClass
+    private fun findContainingNonLocalDeclaration(element: PsiElement): KtDeclaration? {
+        return element
+            .parentsOfType<KtDeclaration>()
+            .firstOrNull { it.isNotLocal }
+    }
+
+    private val KtDeclaration.isNotLocal
         get() = this is KtNamedFunction && (isTopLevel || containingClassOrObject?.isLocal == false) ||
-                this is KtProperty && (isTopLevel || containingClassOrObject?.isLocal == false)
+                this is KtProperty && (isTopLevel || containingClassOrObject?.isLocal == false) ||
+                this is KtClassOrObject && (isTopLevel() || !isLocal)
 }
