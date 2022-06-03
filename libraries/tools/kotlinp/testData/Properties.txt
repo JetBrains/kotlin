@@ -35,8 +35,8 @@ public final class C : kotlin/Any {
   public final /* delegated */ val withOptimizedDelegate: kotlin/Double
     public final /* non-default */ get
 
-  // field: delegated$delegate:Ljava/lang/Void;
   // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
+  // synthetic method for delegate: getDelegated$delegate(LC;Ljava/lang/Number;)Ljava/lang/Object;
   public final /* delegated */ val <T#0 /* T */ : kotlin/Number> T#0.delegated: kotlin/collections/List<kotlin/Nothing>
     public final /* non-default */ get
 

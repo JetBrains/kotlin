@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class DelegateToSingletonKt {
+    // source: 'delegateToSingleton.kt'
+    public final static @org.jetbrains.annotations.Nullable method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'delegateToSingleton.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
+    private final static @org.jetbrains.annotations.Nullable field s$delegate: Store
+    static method <clinit>(): void
+    private method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getS(): java.lang.String
+    public final method setS(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class Store {
+    // source: 'delegateToSingleton.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Store
+    private final static field map: java.util.Map
+    static method <clinit>(): void
+    private method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+    public final method setValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.Nullable p2: java.lang.String): void
+}

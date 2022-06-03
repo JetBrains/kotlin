@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'delegateToEnumInAClass.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field s$delegate: E
+    static method <clinit>(): void
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class DelegateToEnumInAClassKt {
+    // source: 'delegateToEnumInAClass.kt'
+    private final static @org.jetbrains.annotations.NotNull field c: C
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getC(): C
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: E, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public final enum class E {
+    // source: 'delegateToEnumInAClass.kt'
+    private synthetic final static field $VALUES: E[]
+    public final enum static field NOT_OK: E
+    public final enum static field OK: E
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static method valueOf(p0: java.lang.String): E
+    public static method values(): E[]
+}

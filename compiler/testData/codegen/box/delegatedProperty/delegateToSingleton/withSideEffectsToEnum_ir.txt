@@ -1,0 +1,35 @@
+@kotlin.Metadata
+public final class E$Companion {
+    // source: 'withSideEffectsToEnum.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class E$Companion
+}
+
+@kotlin.Metadata
+public final enum class E {
+    // source: 'withSideEffectsToEnum.kt'
+    private synthetic final static field $VALUES: E[]
+    public final static @org.jetbrains.annotations.NotNull field Companion: E$Companion
+    public final enum static field X: E
+    private synthetic final static method $values(): E[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static method valueOf(p0: java.lang.String): E
+    public static method values(): E[]
+    public final inner class E$Companion
+}
+
+@kotlin.Metadata
+public final class WithSideEffectsToEnumKt {
+    // source: 'withSideEffectsToEnum.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private static field initialized: boolean
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method getInitialized(): boolean
+    private static method getResult$delegate(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+    public final static method setInitialized(p0: boolean): void
+}
