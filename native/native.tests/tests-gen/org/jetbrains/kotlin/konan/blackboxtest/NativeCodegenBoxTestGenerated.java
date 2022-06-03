@@ -12044,6 +12044,180 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class DelegateToConst {
+                @Test
+                public void testAllFilesPresentInDelegateToConst() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("delegateToConst.kt")
+                public void testDelegateToConst() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConst.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToConstProperty.kt")
+                public void testDelegateToConstProperty() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToConstProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToNull.kt")
+                public void testDelegateToNull() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToConst/delegateToNull.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class DelegateToFinalProperty {
+                @Test
+                public void testAllFilesPresentInDelegateToFinalProperty() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("chain.kt")
+                public void testChain() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/chain.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToFinalInstanceProperty.kt")
+                public void testDelegateToFinalInstanceProperty() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalInstanceProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToFinalObjectProperty.kt")
+                public void testDelegateToFinalObjectProperty() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalObjectProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToFinalProperty.kt")
+                public void testDelegateToFinalProperty() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/delegateToFinalProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("finalPropertyInAnotherFile.kt")
+                public void testFinalPropertyInAnotherFile() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/finalPropertyInAnotherFile.kt");
+                }
+
+                @Test
+                @TestMetadata("initializeContainerOfTopLevelProperties.kt")
+                public void testInitializeContainerOfTopLevelProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/initializeContainerOfTopLevelProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("memberExtensionPropertyAndImportFromObject.kt")
+                public void testMemberExtensionPropertyAndImportFromObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/memberExtensionPropertyAndImportFromObject.kt");
+                }
+
+                @Test
+                @TestMetadata("memberExtensionPropertyAndLocalDelegatedProperty.kt")
+                public void testMemberExtensionPropertyAndLocalDelegatedProperty() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty/memberExtensionPropertyAndLocalDelegatedProperty.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class DelegateToSingleton {
+                @Test
+                public void testAllFilesPresentInDelegateToSingleton() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("delegateToEnum.kt")
+                public void testDelegateToEnum() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnum.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToEnumInAClass.kt")
+                public void testDelegateToEnumInAClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToEnumInAClass.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToSingleton.kt")
+                public void testDelegateToSingleton() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/delegateToSingleton.kt");
+                }
+
+                @Test
+                @TestMetadata("noInitializationOfOuterClass.kt")
+                public void testNoInitializationOfOuterClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/noInitializationOfOuterClass.kt");
+                }
+
+                @Test
+                @TestMetadata("withSideEffects.kt")
+                public void testWithSideEffects() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffects.kt");
+                }
+
+                @Test
+                @TestMetadata("withSideEffectsFromFileClass.kt")
+                public void testWithSideEffectsFromFileClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffectsFromFileClass.kt");
+                }
+
+                @Test
+                @TestMetadata("withSideEffectsToEnum.kt")
+                public void testWithSideEffectsToEnum() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton/withSideEffectsToEnum.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class DelegateToThis {
+                @Test
+                public void testAllFilesPresentInDelegateToThis() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("delegateToOuterThis.kt")
+                public void testDelegateToOuterThis() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToOuterThis.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToThis.kt")
+                public void testDelegateToThis() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToThis.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateToThisByExtension.kt")
+                public void testDelegateToThisByExtension() throws Exception {
+                    runTest("compiler/testData/codegen/box/delegatedProperty/delegateToThis/delegateToThisByExtension.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("codegen")

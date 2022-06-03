@@ -105,19 +105,6 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.setter == null } == true &&
                 modality == Modality.FINAL
 
-    private fun IrExpression.inline(oldReceiver: IrValueParameter?, newReceiver: IrValueParameter?): IrExpression = when (this) {
-        is IrGetField ->
-            IrGetFieldImpl(startOffset, endOffset, symbol, type, receiver?.inline(oldReceiver, newReceiver), origin, superQualifierSymbol)
-        is IrGetValue ->
-            IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
-        is IrCall ->
-            IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol).apply {
-                dispatchReceiver = this@inline.dispatchReceiver?.inline(oldReceiver, newReceiver)
-                extensionReceiver = this@inline.extensionReceiver?.inline(oldReceiver, newReceiver)
-            }
-        else -> shallowCopy()
-    }
-
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildren(this, null)
         declaration.transformDeclarationsFlat {
@@ -150,14 +137,14 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             }
         }
         val originalThis = parentAsClass.thisReceiver
-        getter?.apply { body = accessorBody(delegate, backingField ?: receiver?.inline(originalThis, dispatchReceiverParameter)) }
-        setter?.apply { body = accessorBody(delegate, backingField ?: receiver?.inline(originalThis, dispatchReceiverParameter)) }
+        getter?.apply { body = accessorBody(delegate, backingField ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)) }
+        setter?.apply { body = accessorBody(delegate, backingField ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)) }
 
         // The `$delegate` method is generated as instance method here, see MakePropertyDelegateMethodsStaticLowering.
         val delegateMethod = context.createSyntheticMethodForPropertyDelegate(this).apply {
             body = context.createJvmIrBuilder(symbol).run {
                 val boundReceiver = backingField?.let { irGetField(dispatchReceiverParameter?.let(::irGet), it) }
-                    ?: receiver?.inline(originalThis, dispatchReceiverParameter)
+                    ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)
                 irExprBody(with(delegate) {
                     val origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
                     IrPropertyReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, field, getter, setter, origin)
@@ -179,7 +166,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 symbol,
                 parentAsClass.isFacadeClass
             ).apply {
-                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(it.inline(null, null)))
+                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(it.remapReceiver(null, null)))
             }
         }
         return listOfNotNull(this, delegateMethod, receiverBlock)

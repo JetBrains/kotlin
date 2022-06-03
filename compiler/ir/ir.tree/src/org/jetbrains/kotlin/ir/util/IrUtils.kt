@@ -600,6 +600,13 @@ fun IrExpression.shallowCopy(): IrExpression =
 fun IrExpression.shallowCopyOrNull(): IrExpression? =
     when (this) {
         is IrConst<*> -> shallowCopy()
+        is IrGetEnumValue ->
+            IrGetEnumValueImpl(
+                startOffset,
+                endOffset,
+                type,
+                symbol
+            )
         is IrGetObjectValue ->
             IrGetObjectValueImpl(
                 startOffset,
@@ -632,6 +639,19 @@ internal fun <T> IrConst<T>.shallowCopy() = IrConstImpl(
     kind,
     value
 )
+
+fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrValueParameter?): IrExpression = when (this) {
+    is IrGetField ->
+        IrGetFieldImpl(startOffset, endOffset, symbol, type, receiver?.remapReceiver(oldReceiver, newReceiver), origin, superQualifierSymbol)
+    is IrGetValue ->
+        IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
+    is IrCall ->
+        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol).also {
+            it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
+            it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
+        }
+    else -> shallowCopy()
+}
 
 val IrDeclarationParent.isFacadeClass: Boolean
     get() = this is IrClass &&

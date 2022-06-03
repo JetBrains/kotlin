@@ -22,7 +22,7 @@ object Delegate {
 fun box(): String {
     assertEquals(
             listOf("getIsFries", "getIsUpdateable", "setIsFries", "setIsUpdateable"),
-            TestIt::class.java.declaredMethods.map { it.name }.sorted()
+            TestIt::class.java.declaredMethods.map { it.name }.sorted() - "getIsUpdateable\$delegate"
     )
 
     return "OK"
