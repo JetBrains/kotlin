@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -457,6 +458,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldUseDebugInfoFromNativeLibs() = shouldContainAnyDebugInfo() && config.useDebugInfoInNativeLibs
 
     fun shouldOptimize() = config.optimizationsEnabled
+    fun shouldInlineSafepoints() = when {
+        config.target.family.isAppleFamily -> config.target.architecture != Architecture.ARM32 // disable for watchos_arm32 and similar
+        else -> true
+    }
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
@@ -530,11 +535,11 @@ private fun MemberScope.getContributedClassifier(name: String) =
 private fun MemberScope.getContributedFunctions(name: String) =
         this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
-internal class ContextLogger(val context: Context) {
+internal class ContextLogger(val context: LoggingContext) {
     operator fun String.unaryPlus() = context.log { this }
 }
 
-internal fun Context.logMultiple(messageBuilder: ContextLogger.() -> Unit) {
+internal fun LoggingContext.logMultiple(messageBuilder: ContextLogger.() -> Unit) {
     if (!inVerbosePhase) return
     with(ContextLogger(this)) { messageBuilder() }
 }
