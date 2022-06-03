@@ -484,7 +484,12 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         internal fun createRegularKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,
             compileTask: TaskProvider<out KotlinNativeCompile>
-        ) = createKlibArtifact(compilation, compileTask.map { it.outputFile.get() }, null, compileTask)
+        ) = createKlibArtifact(
+            compilation,
+            compileTask.map { it.outputFile.get() },
+            compilation.compilationPurpose.takeIf { it != KotlinGradleModule.MAIN_MODULE_NAME },
+            compileTask
+        )
 
         private fun createKlibArtifact(
             compilation: KotlinNativeCompilationData<*>,
