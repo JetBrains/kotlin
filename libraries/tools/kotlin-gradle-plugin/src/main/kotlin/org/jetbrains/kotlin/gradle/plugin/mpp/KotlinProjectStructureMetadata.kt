@@ -179,9 +179,13 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
                     project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                 }
             }
-            sourceSet.name to sourceSetExportedDependencies.mapNotNullTo(mutableSetOf()) {
-                it.toModuleDependency(project).moduleIdentifier as? MavenModuleIdentifier
-            }
+            val mavenDependencyModuleIds =
+                replaceProjectDependenciesWithPublishedMavenDependencies(project, sourceSetExportedDependencies)
+                    .mapNotNullTo(mutableSetOf()) {
+                        it.toModuleDependency(project).moduleIdentifier as? MavenModuleIdentifier
+                    }
+
+            sourceSet.name to mavenDependencyModuleIds
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { isSharedNativeSourceSet(project, it) }
@@ -219,7 +223,9 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         sourceSetNamesByVariantName = expandVariantKeys(kotlinFragmentsPerKotlinVariant),
         sourceSetsDependsOnRelation = fragmentRefinesRelation,
         sourceSetBinaryLayout = module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
-        sourceSetModuleDependencies = fragmentDependencies, // TODO in next commit: replace values with published modules
+        sourceSetModuleDependencies = fragmentDependencies.mapValues {
+            replaceProjectDependenciesWithPublishedMavenIdentifiers(module.project, it.value)
+        },
         sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
         hostSpecificSourceSets = getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
         isPublishedAsRoot = true
@@ -255,7 +261,9 @@ internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
                     value(NAME_NODE_NAME, sourceSet)
                     multiValue(DEPENDS_ON_NODE_NAME, sourceSetsDependsOnRelation[sourceSet].orEmpty().toList())
                     multiValue(MODULE_DEPENDENCY_NODE_NAME, sourceSetModuleDependencies[sourceSet].orEmpty().map { moduleDependency ->
-                        moduleDependency.group + ":" + moduleDependency.name
+                        moduleDependency.group + ":" +
+                                moduleDependency.name +
+                                moduleDependency.moduleClassifier?.let { ":${it}" }.orEmpty()
                     })
                     sourceSetCInteropMetadataDirectory[sourceSet]?.let { cinteropMetadataDirectory ->
                         value(SOURCE_SET_CINTEROP_METADATA_NODE_NAME, cinteropMetadataDirectory)
@@ -361,7 +369,8 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
         val moduleDependencies = sourceSetNode.multiValues(MODULE_DEPENDENCY_NODE_NAME).mapTo(mutableSetOf()) {
             val dependencyNotationParts = it.split(":")
             val (groupId, moduleId) = dependencyNotationParts
-            MavenModuleIdentifier(groupId, moduleId, null /* TODO in next commits: classifiers */)
+            val classifier = dependencyNotationParts.find { it.startsWith(MODULE_DEPENDENCY_CLASSIFIER_PREFIX) }
+            MavenModuleIdentifier(groupId, moduleId, classifier)
         }
 
         sourceSetNode.valueNamed(SOURCE_SET_CINTEROP_METADATA_NODE_NAME)?.let { cinteropMetadataDirectory ->
@@ -427,5 +436,6 @@ private const val SOURCE_SET_NODE_NAME = "sourceSet"
 private const val SOURCE_SET_CINTEROP_METADATA_NODE_NAME = "sourceSetCInteropMetadataDirectory"
 private const val DEPENDS_ON_NODE_NAME = "dependsOn"
 private const val MODULE_DEPENDENCY_NODE_NAME = "moduleDependency"
+private const val MODULE_DEPENDENCY_CLASSIFIER_PREFIX = "#kpm.classifier="
 private const val BINARY_LAYOUT_NODE_NAME = "binaryLayout"
 private const val HOST_SPECIFIC_NODE_NAME = "hostSpecific"
