@@ -161,6 +161,12 @@ open class FirImplicitAwareBodyResolveTransformer(
         }
     }
 
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirBackingField {
+        return computeCachedTransformationResult(backingField) {
+            super.transformBackingField(backingField, data)
+        }
+    }
+
     private fun <D : FirCallableDeclaration> computeCachedTransformationResult(
         member: D,
         transform: () -> D

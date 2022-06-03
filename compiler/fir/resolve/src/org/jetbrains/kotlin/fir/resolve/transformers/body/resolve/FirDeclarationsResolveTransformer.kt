@@ -978,7 +978,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode,
-    ): FirStatement {
+    ): FirBackingField {
         val propertyType = data.expectedType
         val initializerData = if (backingField.returnTypeRef is FirResolvedTypeRef) {
             withExpectedType(backingField.returnTypeRef)

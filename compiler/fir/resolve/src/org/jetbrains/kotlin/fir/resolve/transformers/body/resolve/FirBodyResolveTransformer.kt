@@ -281,7 +281,7 @@ open class FirBodyResolveTransformer(
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode
-    ): FirStatement {
+    ): FirBackingField {
         return declarationsTransformer.transformBackingField(backingField, data)
     }
 

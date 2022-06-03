@@ -78,4 +78,9 @@ private class LLFirEnsureBasedTransformerForReturnTypeCalculatorImpl(
         property.ensureReturnType()
         return super.transformProperty(property, data)
     }
+
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirBackingField {
+        backingField.ensureReturnType()
+        return super.transformBackingField(backingField, data)
+    }
 }
