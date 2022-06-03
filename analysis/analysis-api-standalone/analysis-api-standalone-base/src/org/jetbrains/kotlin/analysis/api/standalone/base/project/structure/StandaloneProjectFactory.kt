@@ -17,6 +17,7 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -152,8 +153,12 @@ object StandaloneProjectFactory {
         .filterIsInstance<KtBinaryModule>()
         .flatMap { it.getBinaryRoots() }
         .mapNotNull { path ->
-            val jar = environment.environment.jarFileSystem.findFileByPath(path.toAbsolutePath().toString() + JAR_SEPARATOR)
-                ?: return@mapNotNull null
+            val pathString = path.toAbsolutePath().toString()
+            val jar =
+                if (pathString.endsWith(JAR_PROTOCOL))
+                    environment.environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
+                else null
+            if (jar == null) return@mapNotNull null
             JavaRoot(jar, JavaRoot.RootType.BINARY)
         }
 
