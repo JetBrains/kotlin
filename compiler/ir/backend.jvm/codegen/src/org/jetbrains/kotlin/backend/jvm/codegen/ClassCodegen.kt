@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
@@ -125,6 +127,9 @@ class ClassCodegen private constructor(
         if (generated) return
         generated = true
 
+        // Respect the [GenerateClassFilter] installed in the generation state
+        if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
+
         // Generate PermittedSubclasses attribute for sealed class.
         if (state.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
             irClass.modality == Modality.SEALED &&
@@ -193,6 +198,14 @@ class ClassCodegen private constructor(
 
         visitor.done()
         jvmSignatureClashDetector.reportErrors(classOrigin)
+    }
+
+    private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
+        val filter = state.generateDeclaredClassFilter
+        val ktFile = irClass.descriptorOrigin.element as? KtFile
+        val ktClass = irClass.psiElement as? KtClassOrObject
+        return (ktFile != null && !filter.shouldGeneratePackagePart(ktFile))
+                || (ktClass != null && !filter.shouldGenerateClass(ktClass))
     }
 
     private fun generatePermittedSubclasses() {
