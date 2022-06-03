@@ -52,22 +52,22 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     mergeServiceFiles()
 }
 
-publish {
-    setArtifacts(listOf(runtimeJar))
-}
-
-sourcesJar {
+val sourcesJar = sourcesJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
     dependsOn(compilerTask)
     val archiveOperations = serviceOf<ArchiveOperations>()
     from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
 }
 
-javadocJar {
+val javadocJar = javadocJar {
     val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
     dependsOn(compilerTask)
     val archiveOperations = serviceOf<ArchiveOperations>()
     from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
+}
+
+publish {
+    setArtifacts(listOf(runtimeJar, sourcesJar, javadocJar))
 }
 
 projectTest {
