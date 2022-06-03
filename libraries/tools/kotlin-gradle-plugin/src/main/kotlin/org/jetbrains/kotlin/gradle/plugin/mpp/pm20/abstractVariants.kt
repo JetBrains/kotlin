@@ -105,8 +105,11 @@ abstract class KotlinGradleVariantWithRuntimeInternal(
         project.files(listOf({ compilationOutputs.allOutputs }, { runtimeDependencyFiles }))
 }
 
-private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
-    dashSeparatedName(variantName, module.moduleClassifier)
+internal fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
+    dashSeparatedName(
+        variantName.toLowerCase(),
+        (module.publicationMode as? Standalone)?.defaultArtifactIdSuffix ?: module.moduleClassifier
+    )
 
 abstract class KotlinGradlePublishedVariantWithRuntime(
     containingModule: KotlinGradleModule, fragmentName: String,

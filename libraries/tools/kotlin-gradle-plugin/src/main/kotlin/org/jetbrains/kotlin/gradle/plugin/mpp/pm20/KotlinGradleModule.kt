@@ -8,8 +8,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
@@ -46,8 +48,8 @@ open class KotlinGradleModuleInternal(
         }
     }
 
-    override var isPublic: Boolean = false
-        protected set
+    final override var publicationMode: ModulePublicationMode = Private
+        private set
 
     private var setPublicHandlers: MutableList<() -> Unit> = mutableListOf()
 
@@ -56,10 +58,14 @@ open class KotlinGradleModuleInternal(
         if (isPublic) action() else setPublicHandlers.add(action)
     }
 
-    override fun makePublic() {
-        if (isPublic) return
+    override fun makePublic(modulePublicationMode: PublishedModulePublicationMode) {
+        if (publicationMode != Private) {
+            if (publicationMode != modulePublicationMode)
+                throw GradleException("$this is already published with mode $publicationMode, can't publish with $modulePublicationMode")
+            else return
+        }
+        publicationMode = modulePublicationMode
         setPublicHandlers.forEach { it() }
-        isPublic = true
     }
 
     companion object {

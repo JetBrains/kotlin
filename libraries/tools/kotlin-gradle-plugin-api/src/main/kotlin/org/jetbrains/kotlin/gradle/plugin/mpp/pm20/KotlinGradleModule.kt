@@ -27,11 +27,12 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
 
     override val plugins: Set<KpmCompilerPlugin>
 
-    val isPublic: Boolean
+    val isPublic: Boolean get() = publicationMode != Private
+    val publicationMode: ModulePublicationMode
 
     fun ifMadePublic(action: () -> Unit)
 
-    fun makePublic()
+    fun makePublic(modulePublicationMode: PublishedModulePublicationMode = Standalone(checkNotNull(moduleClassifier)))
 
     companion object {
         val KotlinModuleIdentifier.moduleName get() = moduleClassifier ?: MAIN_MODULE_NAME
@@ -71,3 +72,9 @@ interface KotlinGradleModule : KotlinModule, Named, HasKotlinDependencies {
     override val runtimeOnlyConfigurationName: String
         get() = common.runtimeOnlyConfigurationName
 }
+
+sealed class ModulePublicationMode
+sealed class PublishedModulePublicationMode : ModulePublicationMode()
+object Private : ModulePublicationMode()
+object Embedded : PublishedModulePublicationMode()
+data class Standalone(val defaultArtifactIdSuffix: String?) : PublishedModulePublicationMode()
