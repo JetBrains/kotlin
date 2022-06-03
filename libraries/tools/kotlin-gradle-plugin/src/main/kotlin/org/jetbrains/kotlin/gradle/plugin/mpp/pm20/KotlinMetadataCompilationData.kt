@@ -86,7 +86,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         get() { // FIXME deduplicate with ownModuleName
             val baseName = project.archivesName
                 ?: project.name
-            val suffix = if (module.moduleClassifier == null) "" else "_${module.moduleClassifier}"
+            val suffix = "_" + fragment.disambiguateName("")
             return filterModuleName("$baseName$suffix")
         }
 
@@ -159,6 +159,9 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
 
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
+
+    override val compilationPurpose: String
+        get() = fragment.disambiguateName("")
 
     override val isActive: Boolean
         get() = fragment.isNativeShared() && fragment.containingVariants.count() > 1

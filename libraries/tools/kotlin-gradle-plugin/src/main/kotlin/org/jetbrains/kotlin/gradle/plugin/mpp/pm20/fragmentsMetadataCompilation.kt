@@ -79,7 +79,7 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
         project,
         sourceElementsConfigurationName(module),
         sourcesArtifact.get(),
-        "sources",
+        dashSeparatedName(module.moduleClassifier, "sources"),
         ComputedCapability.forProjectDependenciesOnModule(module)
     )
 }
