@@ -1556,9 +1556,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         with(functionGenerationContext) {
             ifThen(not(genInstanceOf(srcArg, dstClass))) {
                 if (dstClass.defaultType.isObjCObjectType()) {
+                    val dstFullClassName = dstClass.fqNameWhenAvailable?.toString() ?: dstClass.name.toString()
                     callDirect(
                             context.ir.symbols.throwTypeCastException.owner,
-                            emptyList(),
+                            listOf(srcArg, context.llvm.staticData.kotlinStringLiteral(dstFullClassName).llvm),
                             Lifetime.GLOBAL,
                             null
                     )

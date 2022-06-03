@@ -32,8 +32,8 @@ fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
 }
 
 @ExportForCppRuntime
-fun ThrowTypeCastException(): Nothing {
-    throw TypeCastException()
+fun ThrowTypeCastException(instance: Any, typeName: String): Nothing {
+    throw TypeCastException("${instance::class} cannot be cast to class $typeName")
 }
 
 @ExportForCppRuntime
