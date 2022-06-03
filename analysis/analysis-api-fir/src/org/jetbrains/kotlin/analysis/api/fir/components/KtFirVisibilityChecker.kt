@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KtFirVisibilityChecker(
     override val analysisSession: KtFirAnalysisSession,
@@ -41,9 +43,12 @@ internal class KtFirVisibilityChecker(
         val useSiteFirFile = useSiteFile.firSymbol.fir
         val containers = collectContainingDeclarations(position)
 
-        val explicitDispatchReceiver = receiverExpression
-            ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
-            ?.let { ExpressionReceiverValue(it) }
+        val dispatchReceiverCanBeExplicit = candidateSymbol is KtCallableSymbol && !candidateSymbol.isExtension
+        val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
+            receiverExpression
+                ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveSession)
+                ?.let { ExpressionReceiverValue(it) }
+        }
 
         val candidateFirSymbol = candidateSymbol.firSymbol.fir as FirMemberDeclaration
 
