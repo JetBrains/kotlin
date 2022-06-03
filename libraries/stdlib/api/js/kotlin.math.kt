@@ -107,6 +107,16 @@ public inline fun atanh(x: kotlin.Double): kotlin.Double
 @kotlin.internal.InlineOnly
 public inline fun atanh(x: kotlin.Float): kotlin.Float
 
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun cbrt(x: kotlin.Double): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun cbrt(x: kotlin.Float): kotlin.Float
+
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
 public inline fun ceil(x: kotlin.Double): kotlin.Double
@@ -323,16 +333,6 @@ public fun kotlin.Double.nextTowards(to: kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.2")
 public fun kotlin.Double.nextUp(): kotlin.Double
-
-@kotlin.SinceKotlin("1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline fun kotlin.Double.cbrt(): kotlin.Double
-
-@kotlin.SinceKotlin("1.7")
-@kotlin.ExperimentalStdlibApi
-@kotlin.internal.InlineOnly
-public inline fun kotlin.Float.cbrt(): kotlin.Float
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
