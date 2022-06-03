@@ -65,7 +65,10 @@ dependencies {
     testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testCompileOnly(jpsBuild())
-    testApi(devKitJps())
+    testApi(devKitJps()) {
+        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
+    }
+    implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
 
     testApi(jpsBuildTest())
     compilerModules.forEach {
