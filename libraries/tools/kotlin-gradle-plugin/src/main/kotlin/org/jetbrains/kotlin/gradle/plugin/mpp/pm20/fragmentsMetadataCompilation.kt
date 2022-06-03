@@ -49,11 +49,11 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     configureMetadataCompilationsAndCreateRegistry(module, metadataCompilationRegistry)
 
     configureMetadataJarTask(module, metadataCompilationRegistry)
-    generateAndExportProjectStructureMetadata(module)
 }
 
 internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val project = module.project
+    generateAndExportProjectStructureMetadata(module)
     project.configurations.create(metadataElementsConfigurationName(module)).apply {
         isCanBeConsumed = false
         module.ifMadePublic {
