@@ -226,4 +226,21 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Validate Gradle plugins inputs")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Always should use only latest Gradle version
+    @GradleTest
+    internal fun validatePluginInputs(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                plugins {
+                    id "validate-external-gradle-plugin"
+                ${it.substringAfter("plugins {")}
+                """.trimIndent()
+            }
+
+            build("validateExternalPlugins")
+        }
+    }
 }

@@ -43,6 +43,12 @@ interface KotlinCompileTool : PatternFilterable, Task {
 
     @get:OutputDirectory
     val destinationDirectory: DirectoryProperty
+
+    @Internal
+    override fun getExcludes(): MutableSet<String>
+
+    @Internal
+    override fun getIncludes(): MutableSet<String>
 }
 
 interface BaseKotlinCompile : KotlinCompileTool {
