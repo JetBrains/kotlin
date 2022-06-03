@@ -200,6 +200,7 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "kotlin.FloatArray" -> "FloatArraySerializer"
         "kotlin.DoubleArray" -> "DoubleArraySerializer"
         "kotlin.BooleanArray" -> "BooleanArraySerializer"
+        "kotlin.time.Duration" -> "DurationSerializer"
         "java.lang.Boolean" -> "BooleanSerializer"
         "java.lang.Byte" -> "ByteSerializer"
         "java.lang.Short" -> "ShortSerializer"
