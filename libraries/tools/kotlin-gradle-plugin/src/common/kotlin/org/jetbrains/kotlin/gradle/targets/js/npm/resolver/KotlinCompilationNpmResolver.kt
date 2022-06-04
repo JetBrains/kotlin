@@ -155,7 +155,10 @@ internal class KotlinCompilationNpmResolver(
 
     @Synchronized
     fun close(): KotlinCompilationNpmResolution? {
-        check(!closed) { "$this already closed" }
+        if (closed) { 
+            logger.error("$this already closed") 
+            return null
+        }
         val resolution = getResolutionOrResolveIfForced()
         closed = true
         return resolution
