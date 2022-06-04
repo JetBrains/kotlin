@@ -10,5 +10,7 @@ fun test(x: String?) {
         @Ann() @Ann2() { Unit } // It should be Block with annotations
 
     if (x != null)
-        @Ann() @Ann2() Unit // It should be SingleExpressionBlock  with annotations
+        <!WRONG_ANNOTATION_TARGET!>@Ann()<!> <!WRONG_ANNOTATION_TARGET!>@Ann2()<!> Unit // Annotations on expression
+
+    <!WRONG_ANNOTATION_TARGET!>@Ann()<!> <!WRONG_ANNOTATION_TARGET!>@Ann2()<!> x
 }

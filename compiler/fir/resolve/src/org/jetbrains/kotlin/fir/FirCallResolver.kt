@@ -362,7 +362,8 @@ class FirCallResolver(
                         qualifiedAccess.explicitReceiver,
                         referencedSymbol,
                         nonFatalDiagnosticFromExpression,
-                    )
+                    ),
+                    annotations = qualifiedAccess.annotations
                 )
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
