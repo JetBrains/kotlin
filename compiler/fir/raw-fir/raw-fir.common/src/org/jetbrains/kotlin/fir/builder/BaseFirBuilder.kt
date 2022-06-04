@@ -529,6 +529,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             argumentList = buildArgumentList {
                                 arguments += entry
                             }
+                            origin = FirFunctionCallOrigin.Operator
                         }
                     }
                     SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
@@ -541,6 +542,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             argumentList = buildArgumentList {
                                 arguments += entry
                             }
+                            origin = FirFunctionCallOrigin.Operator
                         }
                     }
                     else -> error("invalid node type $elementType")
@@ -576,6 +578,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             argumentList = buildArgumentList {
                 arguments += lambdaArgument
             }
+            origin = FirFunctionCallOrigin.Operator
         }
 
         return buildLiteralCall
