@@ -490,11 +490,11 @@ open class RawFirBuilder(
             }
             val status = obtainPropertyComponentStatus(componentVisibility, this, property)
             val backingFieldInitializer = when {
-                this?.hasInitializer() == false -> null
                 mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
                     source = this@toFirBackingField?.initializer?.toFirSourceElement()
                 }
-                else -> this@toFirBackingField?.initializer.toFirExpression("Should have initializer")
+                this?.hasInitializer() != true -> null
+                else -> this@toFirBackingField.initializer?.toFirExpression("Should have initializer")
             }
             val returnType = this?.returnTypeReference.toFirOrImplicitType()
             val source = this?.toFirSourceElement()
