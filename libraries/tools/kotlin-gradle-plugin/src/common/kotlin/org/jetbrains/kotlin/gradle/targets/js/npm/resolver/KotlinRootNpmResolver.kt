@@ -244,10 +244,11 @@ internal class KotlinRootNpmResolver internal constructor(
     /**
      * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
-    internal fun prepareInstallation(logger: Logger): Installation {
+    internal fun prepareInstallation(logger: Logger): Installation? {
         synchronized(projectResolvers) {
-            check(state == State.CONFIGURING) {
-                "Projects must be configuring"
+            if (state != State.CONFIGURING) {
+                logger.error("Projects must be configuring")
+                return null
             }
             state = State.PROJECTS_CLOSED
 
