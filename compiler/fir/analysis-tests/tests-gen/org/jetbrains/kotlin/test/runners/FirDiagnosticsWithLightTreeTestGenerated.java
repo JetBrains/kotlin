@@ -1220,6 +1220,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("customStringLiteralsConventions.kt")
+            public void testCustomStringLiteralsConventions() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/customStringLiteralsConventions.kt");
+            }
+
+            @Test
             @TestMetadata("extensionFunctions.kt")
             public void testExtensionFunctions() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/extensionFunctions.kt");

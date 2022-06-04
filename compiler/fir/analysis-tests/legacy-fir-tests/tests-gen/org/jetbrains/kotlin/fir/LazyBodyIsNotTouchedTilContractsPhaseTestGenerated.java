@@ -1065,6 +1065,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/classInstanceAsReceiver.kt");
         }
 
+        @TestMetadata("customStringLiteralsConventions.kt")
+        public void testCustomStringLiteralsConventions() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/customStringLiteralsConventions.kt");
+        }
+
         @TestMetadata("extensionFunctions.kt")
         public void testExtensionFunctions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/extensionFunctions.kt");
