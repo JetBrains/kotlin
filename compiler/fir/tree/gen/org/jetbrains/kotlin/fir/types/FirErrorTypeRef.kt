@@ -22,6 +22,7 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override val annotations: List<FirAnnotation>
     abstract override val type: ConeKotlinType
     abstract override val delegatedTypeRef: FirTypeRef?
+    abstract override val isFromStubType: Boolean
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorTypeRef(this, data)

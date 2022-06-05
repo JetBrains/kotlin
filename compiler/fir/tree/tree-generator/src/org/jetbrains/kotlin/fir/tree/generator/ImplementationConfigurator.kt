@@ -224,7 +224,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "getter", "setter",
                 withGetter = true
             )
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic, false)")
             useTypes(errorTypeRefImplType)
         }
 
@@ -421,13 +421,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorExpression) {
-            default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))")
+            default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)")
             useTypes(errorTypeRefImplType, coneStubDiagnosticType)
         }
 
         impl(errorFunction) {
             defaultNull("receiverTypeRef", "body", withGetter = true)
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic, false)")
             useTypes(errorTypeRefImplType)
         }
 

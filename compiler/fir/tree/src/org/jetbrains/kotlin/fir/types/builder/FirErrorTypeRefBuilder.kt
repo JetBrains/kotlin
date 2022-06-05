@@ -37,7 +37,7 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
                 source,
                 type,
                 delegatedTypeRef,
-                diagnostic,
+                diagnostic
             )
         } else {
             FirErrorTypeRefImpl(

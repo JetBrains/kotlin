@@ -38,7 +38,11 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
             when (expression.operation) {
                 FirOperation.IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, true, context)
                 FirOperation.NOT_IS -> reporter.reportOn(expression.source, FirErrors.USELESS_IS_CHECK, false, context)
-                FirOperation.AS, FirOperation.SAFE_AS -> reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                FirOperation.AS, FirOperation.SAFE_AS -> {
+                    if ((arg.typeRef as? FirResolvedTypeRef)?.isFromStubType != true) {
+                        reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                    }
+                }
                 else -> throw AssertionError("Should not be here: ${expression.operation}")
             }
         }

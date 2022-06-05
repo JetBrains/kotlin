@@ -28,7 +28,7 @@ internal class FirErrorExpressionImpl(
     override val diagnostic: ConeDiagnostic,
     override var expression: FirExpression?,
 ) : FirErrorExpression() {
-    override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))
+    override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

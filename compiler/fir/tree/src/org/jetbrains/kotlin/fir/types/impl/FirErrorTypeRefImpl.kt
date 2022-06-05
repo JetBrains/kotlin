@@ -19,11 +19,16 @@ internal class FirErrorTypeRefImpl(
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
+    override val isFromStubType: Boolean = false
 ) : FirErrorTypeRef() {
-    constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic) : this(
+    constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic,
+        isFromStubType: Boolean = false
+    ) : this(
         source,
         ConeErrorType(diagnostic),
-        delegatedTypeRef, diagnostic
+        delegatedTypeRef,
+        diagnostic,
+        isFromStubType
     )
 
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
