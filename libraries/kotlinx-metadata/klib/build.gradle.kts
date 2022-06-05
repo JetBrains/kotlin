@@ -33,6 +33,7 @@ dependencies {
     shadows(project(":compiler:serialization"))
     shadows(project(":kotlin-util-klib-metadata"))
     shadows(project(":kotlin-util-klib"))
+    shadows(project(":kotlin-util-io"))
     shadows(protobufLite())
 }
 
