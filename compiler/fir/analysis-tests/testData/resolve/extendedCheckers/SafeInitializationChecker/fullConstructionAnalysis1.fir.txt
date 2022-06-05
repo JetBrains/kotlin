@@ -44,68 +44,16 @@ FILE: fullConstructionAnalysis1.kt
         public open val v: R|kotlin/String| = R|<local>/v|
             public get(): R|kotlin/String|
 
-        public final val present: R|kotlin/Boolean| = !=(this@R|/C|.R|/C.v|, Null(null))
-            public get(): R|kotlin/Boolean|
+        public final val present: R|kotlin/Int| = this@R|/C|.R|/C.v|.R|kotlin/Any.hashCode|()
+            public get(): R|kotlin/Int|
 
     }
-    public final class D : R|A| {
+    public final class D : R|C| {
         public constructor(v: R|kotlin/String|): R|D| {
-            super<R|A|>(R|<local>/v|)
+            super<R|C|>(R|<local>/v|)
         }
 
         public final override val v: R|kotlin/String| = R|<local>/v|
             public get(): R|kotlin/String|
-
-    }
-    public open class Base : R|kotlin/Any| {
-        public constructor(): R|Base| {
-            super<R|kotlin/Any|>()
-        }
-
-        init {
-            this@R|/Base|.R|/Base.f|()
-        }
-
-        public open fun f(): R|kotlin/Unit| {
-        }
-
-    }
-    public final class Derived : R|Base| {
-        public constructor(): R|Derived| {
-            super<R|Base|>()
-        }
-
-        public final val s: R|kotlin/String| = String(Hello)
-            public get(): R|kotlin/String|
-
-        public final override fun f(): R|kotlin/Unit| {
-            this@R|/Derived|.R|/Derived.s|.R|kotlin/Any.hashCode|()
-        }
-
-    }
-    public open class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-            this@R|/A|.R|/A.runLater|(this@R|/A|::R|/A.foo|)
-        }
-
-        public open fun foo(): R|kotlin/Unit| {
-        }
-
-        private final fun runLater(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        }
-
-    }
-    public final class B : R|A| {
-        public constructor(): R|B| {
-            super<R|A|>()
-        }
-
-        public final val b: R|kotlin/String| = String(Hello)
-            public get(): R|kotlin/String|
-
-        public final override fun foo(): R|kotlin/Unit| {
-            this@R|/B|.R|/B.b|.R|kotlin/Any.hashCode|()
-        }
 
     }

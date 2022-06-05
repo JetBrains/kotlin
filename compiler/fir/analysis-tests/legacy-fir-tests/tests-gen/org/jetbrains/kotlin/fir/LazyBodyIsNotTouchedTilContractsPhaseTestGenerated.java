@@ -2276,6 +2276,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysis1.kt");
             }
 
+            @TestMetadata("fullConstructionAnalysis2.kt")
+            public void testFullConstructionAnalysis2() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysis2.kt");
+            }
+
             @TestMetadata("getterAndSetter.kt")
             public void testGetterAndSetter() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/getterAndSetter.kt");

@@ -15,39 +15,8 @@ class CorrectImpl : A() {
 }
 
 // KT-43019
-open class C(open val v: String) {
-    val present = v != null
+open class C(<!REDUNDANT_MODALITY_MODIFIER!>open<!> val v: String) {
+    val present = v.hashCode()
 }
 
-class D(<!ACCESS_TO_UNINITIALIZED_VALUE!>override val v: String<!>) : A(v)
-
-// KT-15642
-open class Base {
-    init { f() }
-    open fun f() { }
-}
-
-class Derived : Base() {
-    <!ACCESS_TO_UNINITIALIZED_VALUE!>val s = "Hello"<!>
-    override fun f() { s.hashCode() }
-}
-
-// KT-13442
-open class A {
-    constructor() {
-        runLater(this::foo)
-    }
-
-    open fun foo() {
-    }
-
-    private fun runLater(f: () -> Unit) {
-    }
-}
-
-class B : A {
-    <!ACCESS_TO_UNINITIALIZED_VALUE!>val b = "Hello"<!>
-    override fun foo() {
-        b.hashCode()
-    }
-}
+class D(<!ACCESS_TO_UNINITIALIZED_VALUE!>override val v: String<!>) : C(v)

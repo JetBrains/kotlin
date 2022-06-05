@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.P
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 typealias Potentials = List<Potential>
 
@@ -25,9 +24,9 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
         fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
             state.analyseDeclaration1(firDeclaration).potentials
 
-        data class This(val firThisReference: FirThisReference) : Root(firThisReference) {
+        data class This(val firClass: FirClass) : Root(firClass) {
             override fun toString(): String {
-                return "this@${(firThisReference.boundSymbol as? FirRegularClassSymbol)?.toLookupTag()}"
+                return "this@${(firClass.symbol)?.toLookupTag()}"
             }
         }
 
@@ -36,6 +35,8 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
                 return "warm(${clazz.symbol.classId.shortClassName}, $outer)"
             }
         }
+
+        data class Super(val firThisReference: FirThisReference, val thisPot: This) : Root(firThisReference)
 
         data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration) {
             override fun toString(): String {
@@ -75,29 +76,38 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     }
 }
 
-fun select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
+inline fun <reified T : FirMemberDeclaration> Checker.StateOfClass.resolveMember(potential: Potential, dec: T): T =
+    if (potential is Root.Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
 
-    fun select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
+fun Checker.StateOfClass.select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
+
+    fun Checker.StateOfClass.select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
         field is FirValueParameter -> emptyEffsAndPots
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 4 -> EffectsAndPotentials(
-            FieldAccess(potential, field),
-            FieldPotential(potential, field)
-        )
+        potential.length < 4 -> {
+            val f = resolveMember(potential, field)
+            EffectsAndPotentials(
+                FieldAccess(potential, f),
+                FieldPotential(potential, f)
+            )
+        }
         else -> EffectsAndPotentials(Promote(potential))
     }
 
     return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + select(pot, field) }
 }
 
-fun call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
+fun Checker.StateOfClass.call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
 
-    fun call(potential: Potential, function: FirFunction): EffectsAndPotentials = when {
+    fun Checker.StateOfClass.call(potential: Potential, function: FirFunction): EffectsAndPotentials = when {
         potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 2 -> EffectsAndPotentials(
-            MethodAccess(potential, function),
-            MethodPotential(potential, function)
-        )
+        potential.length < 2 -> {
+            val f = resolveMember(potential, function)
+            EffectsAndPotentials(
+                MethodAccess(potential, f),
+                MethodPotential(potential, f)
+            )
+        }
         else -> EffectsAndPotentials(Promote(potential))
     }
 
@@ -168,5 +178,6 @@ fun viewChange(potential: Potential, root: Potential): Potential {
             asPotSimpleRule(potential.potential) { pot -> OuterPotential(pot, potential.outerClass) }
         }
         is FunPotential -> TODO()
+        is Root.Super -> TODO()
     }
 }

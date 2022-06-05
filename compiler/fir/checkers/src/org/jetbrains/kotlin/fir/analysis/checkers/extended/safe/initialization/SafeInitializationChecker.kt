@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.cache
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
@@ -18,9 +18,8 @@ object SafeInitialisationChecker : FirRegularClassChecker() {
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
 
-        val errors =
-            if (cache.containsKey(declaration)) cache[declaration]!!.errors
-            else Checker.StateOfClass(declaration, context).checkClass()
+        val state = cache.getOrPut(declaration) { StateOfClass(declaration, context).apply(StateOfClass::checkClass) }
+        val errors = state.errors
 
         for (error in errors) {
             when (error) {

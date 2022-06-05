@@ -31,11 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -215,6 +212,22 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     return overriddenFunctions
 }
 
+fun FirProperty.overriddenProperties(
+    containingClass: FirClassSymbol<*>,
+    context: CheckerContext
+): List<FirPropertySymbol> {
+    val firTypeScope = containingClass.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = true
+    )
+    val overriddenProperties = mutableListOf<FirPropertySymbol>()
+    firTypeScope.processPropertiesByName(symbol.callableId.callableName) { }
+    // processOverriddenPropertiesAndSelf ?
+    firTypeScope.processOverriddenProperties(symbol) {
+        overriddenProperties.add(it)
+        ProcessorAction.NEXT
+    }
 
 
 /**

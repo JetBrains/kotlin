@@ -29,20 +29,23 @@ object ClassAnalyser {
     }
 
     fun StateOfClass.fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
-        caches[firProperty] ?: analyseDeclaration(firProperty)
+        analyseDeclaration(firProperty)
 
     fun StateOfClass.methodTyping(firFunction: FirFunction): EffectsAndPotentials =
-        firFunction.body?.let(::analyser) ?: throw IllegalArgumentException()
+        firFunction.body?.let(::analyser) ?: emptyEffsAndPots
 
-    fun StateOfClass.analyseDeclaration1(firDeclaration: FirDeclaration): EffectsAndPotentials =
-        when (firDeclaration) {
-            is FirRegularClass -> classTyping(firDeclaration)
-//                is FirConstructor -> TODO()
-            is FirSimpleFunction -> methodTyping(firDeclaration)
-            is FirProperty -> fieldTyping(firDeclaration)
-            is FirField -> TODO()
-            else -> emptyEffsAndPots
+    fun StateOfClass.analyseDeclaration1(firDeclaration: FirDeclaration): EffectsAndPotentials {
+        return caches.getOrPut(firDeclaration) {
+            when (firDeclaration) {
+                is FirRegularClass -> classTyping(firDeclaration)
+                //                is FirConstructor -> TODO()
+                is FirSimpleFunction -> methodTyping(firDeclaration)
+                is FirProperty -> fieldTyping(firDeclaration)
+                is FirField -> TODO()
+                else -> emptyEffsAndPots
+            }
         }
+    }
 
     fun StateOfClass.allEffectsAndPotentials(): EffectsAndPotentials =
         firClass.declarations.fold(emptyEffsAndPots) { prev, dec ->
@@ -101,8 +104,11 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         }
         is FirReturnExpression -> analyser(firElement.result)
         is FirThisReceiverExpression -> {
-            val firClass = firElement.calleeReference.boundSymbol?.fir as FirClass
-            resolveThis(firClass, EffectsAndPotentials(Root.This(firElement.calleeReference)), this)
+            val firThisReference = firElement.calleeReference
+            val firClass = firThisReference.boundSymbol?.fir as FirClass
+            if (superClasses.contains(firClass) || firClass === this.firClass)
+                EffectsAndPotentials(thisPot)
+            else resolveThis(firClass, EffectsAndPotentials(Root.This(firClass)), this)
         }
         is FirConstExpression<*> -> emptyEffsAndPots  // ???
         is FirWhenBranch -> firElement.run {
