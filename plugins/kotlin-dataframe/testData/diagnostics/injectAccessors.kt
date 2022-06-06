@@ -2,10 +2,10 @@ import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 
-interface Cars
-
-val DataRow<Cars>.year: Int get() = this["age"] as Int
-val ColumnsContainer<Cars>.year: DataColumn<Int> get() = this["age"] as DataColumn<Int>
+@DataSchema
+interface Cars {
+    val year: Int
+}
 
 fun `Name is evaluated to age`(df: DataFrame<Cars>) {
     val df1 = df.add("age") { 2022 - year }
