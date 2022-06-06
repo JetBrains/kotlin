@@ -1,0 +1,41 @@
+FILE: directAccessVisibility.kt
+    public final val a: R|kotlin/Any|
+        private <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final val b: R|kotlin/Any|
+        private <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final val c: R|kotlin/Any|
+        protected <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final val d: R|kotlin/Any|
+        internal <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final val e: R|kotlin/Any|
+        public <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final fun test(): R|kotlin/Unit| {
+        lval a2: R|kotlin/String| = F|/a|
+        lval b2: R|kotlin/String| = F|/b|
+        lval c2: R|kotlin/String| = <HIDDEN: <local>/field is invisible>#
+        lval d2: R|kotlin/String| = F|/d|
+        lval e2: R|kotlin/String| = F|/e|
+    }
+    internal final val g: R|kotlin/Any|
+        private <explicit backing field>: R|kotlin/String| = String(Test)
+        internal get(): R|kotlin/Any|
+    private final val h: R|kotlin/Any|
+        internal <explicit backing field>: R|kotlin/String| = String(Test)
+        private get(): R|kotlin/Any|
+    private final val i: R|kotlin/Any|
+        private <explicit backing field>: R|kotlin/String| = String(Test)
+        private get(): R|kotlin/Any|
+    internal final val j: R|kotlin/Any|
+        internal <explicit backing field>: R|kotlin/String| = String(Test)
+        internal get(): R|kotlin/Any|
+    public final val k: R|kotlin/Any|
+        private <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|
+    public final val l: R|kotlin/Any|
+        internal <explicit backing field>: R|kotlin/String| = String(Test)
+        public get(): R|kotlin/Any|

@@ -967,6 +967,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val DELEGATE_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
+        val FIELD_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val WRONG_SETTER_RETURN_TYPE by error<KtTypeReference>()
         val WRONG_GETTER_RETURN_TYPE by error<KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")

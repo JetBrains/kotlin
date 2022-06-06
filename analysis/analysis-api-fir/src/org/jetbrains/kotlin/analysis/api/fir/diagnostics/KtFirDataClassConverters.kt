@@ -2676,6 +2676,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.FIELD_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY) { firDiagnostic ->
+        FieldVisibilityInconsistentWithPropertyVisibilityImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.WRONG_SETTER_RETURN_TYPE) { firDiagnostic ->
         WrongSetterReturnTypeImpl(
             firDiagnostic as KtPsiDiagnostic,

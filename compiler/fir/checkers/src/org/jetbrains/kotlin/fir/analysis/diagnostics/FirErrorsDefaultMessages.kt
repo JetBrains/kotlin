@@ -204,6 +204,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NUL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FIELD_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
@@ -1518,6 +1519,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             DELEGATE_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
             "Delegate visibility must be the same or less permissive than property visibility",
+        )
+        map.put(
+            FIELD_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
+            "Backing field visibility must be the same or less permissive than property visibility",
         )
         map.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit")
         map.put(

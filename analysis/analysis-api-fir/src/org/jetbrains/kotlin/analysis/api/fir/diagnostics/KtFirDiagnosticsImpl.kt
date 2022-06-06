@@ -303,7 +303,7 @@ internal class UnresolvedImportImpl(
 
 internal class IncorrectHashQualifiedNameImpl(
     override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.IncorrectHashQualifiedName(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class CreatingAnInstanceOfAbstractClassImpl(
@@ -2270,8 +2270,13 @@ internal class SetterVisibilityInconsistentWithPropertyVisibilityImpl(
 
 internal class DelegateVisibilityInconsistentWithPropertyVisibilityImpl(
     override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
+    override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.DelegateVisibilityInconsistentWithPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner>
+
+internal class FieldVisibilityInconsistentWithPropertyVisibilityImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.FieldVisibilityInconsistentWithPropertyVisibility(), KtAbstractFirDiagnostic<KtModifierListOwner>
 
 internal class WrongSetterReturnTypeImpl(
     override val firDiagnostic: KtPsiDiagnostic,
