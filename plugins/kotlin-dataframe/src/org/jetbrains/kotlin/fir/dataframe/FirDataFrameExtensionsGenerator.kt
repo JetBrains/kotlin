@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
 class FirDataFrameExtensionsGenerator(
     session: FirSession,
@@ -261,6 +262,6 @@ class FirDataFrameExtensionsGenerator(
     object DataFramePlugin : FirPluginKey()
 
     private companion object {
-        val dataSchema = "annotations.DataSchema".fqn()
+        val dataSchema = FqName(DataSchema::class.qualifiedName!!)
     }
 }
