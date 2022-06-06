@@ -160,6 +160,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testProtobufLiteTypesAreStable() = assertStability(
+        """
+            class Foo(val x: androidx.compose.compiler.plugins.StabilityTestProtos.SampleProto)
+        """,
+        "Stable"
+    )
+
+    @Test
     fun testPairIsStableIfItsTypesAre() = assertStability(
         """
             class Foo<T, V>(val x: Pair<T, V>)
