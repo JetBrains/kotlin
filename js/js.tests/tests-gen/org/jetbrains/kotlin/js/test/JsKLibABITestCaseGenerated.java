@@ -99,4 +99,9 @@ public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
     }
+
+    @TestMetadata("typeAliasRHSTypeChange")
+    public void testTypeAliasRHSTypeChange() throws Exception {
+        runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
+    }
 }

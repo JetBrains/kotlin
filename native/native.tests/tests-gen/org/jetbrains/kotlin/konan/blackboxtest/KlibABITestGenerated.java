@@ -107,4 +107,10 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
     }
+
+    @Test
+    @TestMetadata("typeAliasRHSTypeChange")
+    public void testTypeAliasRHSTypeChange() throws Exception {
+        runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
+    }
 }
