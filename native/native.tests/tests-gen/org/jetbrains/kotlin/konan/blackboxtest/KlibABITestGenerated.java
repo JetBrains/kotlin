@@ -79,6 +79,18 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("removeOpenFunction")
+    public void testRemoveOpenFunction() throws Exception {
+        runTest("compiler/testData/klibABI/removeOpenFunction/");
+    }
+
+    @Test
+    @TestMetadata("removeOpenProperty")
+    public void testRemoveOpenProperty() throws Exception {
+        runTest("compiler/testData/klibABI/removeOpenProperty/");
+    }
+
+    @Test
     @TestMetadata("removeProperty")
     public void testRemoveProperty() throws Exception {
         runTest("compiler/testData/klibABI/removeProperty/");
