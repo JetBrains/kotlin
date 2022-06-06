@@ -2601,6 +2601,18 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("fullConstructionAnalysis3.kt")
+                public void testFullConstructionAnalysis3() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysis3.kt");
+                }
+
+                @Test
+                @TestMetadata("fullConstructionAnalysis4.kt")
+                public void testFullConstructionAnalysis4() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysis4.kt");
+                }
+
+                @Test
                 @TestMetadata("getterAndSetter.kt")
                 public void testGetterAndSetter() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/getterAndSetter.kt");

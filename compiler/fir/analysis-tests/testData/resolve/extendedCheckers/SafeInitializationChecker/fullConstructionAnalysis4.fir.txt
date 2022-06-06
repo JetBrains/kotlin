@@ -1,0 +1,27 @@
+FILE: fullConstructionAnalysis4.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+            this@R|/A|.R|/A.runLater|(this@R|/A|::R|/A.foo|)
+        }
+
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        private final fun runLater(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final val b: R|kotlin/String| = String(Hello)
+            public get(): R|kotlin/String|
+
+        public final override fun foo(): R|kotlin/Unit| {
+            this@R|/B|.R|/B.b|.R|kotlin/Any.hashCode|()
+        }
+
+    }

@@ -20,3 +20,5 @@ open class C(<!REDUNDANT_MODALITY_MODIFIER!>open<!> val v: String) {
 }
 
 class D(<!ACCESS_TO_UNINITIALIZED_VALUE!>override val v: String<!>) : C(v)
+
+
