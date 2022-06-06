@@ -67,20 +67,29 @@ class FirDataFrameReceiverInjector(
     }
 
     private fun <T> interpret(functionCall: FirFunctionCall, processor: Interpreter<T>): T {
-        val refinedArguments = functionCall.collectArgumentExpressions()
-        val actualArgsMap = refinedArguments.associateBy { it.name.identifier }
-        val expectedArgsMap = processor.expectedArguments.associateBy { it.name }
+        val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
+        val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
+        val expectedArgsMap = processor.expectedArguments.associateBy { it.name }.toSortedMap()
 
         if (expectedArgsMap.keys != actualArgsMap.keys) {
-            error("""
-                $processor
-                ${expectedArgsMap.keys} != ${actualArgsMap.keys}
-                Expected args: ${expectedArgsMap.values}
-                Actual args: ${actualArgsMap.values}
-            """.trimIndent())
+            val message = buildString {
+                appendLine("ERROR: Different set of arguments")
+                appendLine("Implementation class: $processor")
+                appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
+                appendLine("Make sure all arguments are annotated")
+                val diff = actualArgsMap.keys - expectedArgsMap.keys
+                appendLine("Passed, but not expected: ${diff}")
+                appendLine("add arguments to an interpeter:")
+                appendLine(diff.map { actualArgsMap[it] })
+            }
+            error(message)
         }
-
-        val argumentExpressions = refinedArguments.argumentsExpressions
+        val context = buildString {
+            appendLine("ERROR: Function argument annotations")
+            appendLine("$processor")
+            appendLine("Function: ${functionCall.calleeReference.name.identifier}")
+        }
+        val argumentExpressions = refinedArguments.refinedArguments.map { it.getArgumentExpression(session, context) }
         val arguments = mutableMapOf<String, Any>()
         argumentExpressions.associateTo(arguments) {
             val name = it.parameterName.identifier
@@ -94,7 +103,8 @@ class FirDataFrameReceiverInjector(
                             expression.arguments.map { (it as FirConstExpression<*>).value }
                         }
                         else -> {
-                            val symbol = ((expression as FirFunctionCall).calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
+                            val symbol =
+                                ((expression as FirFunctionCall).calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
                             val argName = Name.identifier("interpreter")
                             val interpreter = symbol.annotations
                                 .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
@@ -148,7 +158,8 @@ class FirDataFrameReceiverInjector(
                             ?: error("Annotate ${it} with @HasSchema")
                     }
 
-                    val arg = (annotation.argumentMapping.mapping[Name.identifier(HasSchema::schemaArg.name)] as FirConstExpression<Int>).value
+                    val arg =
+                        (annotation.argumentMapping.mapping[Name.identifier(HasSchema::schemaArg.name)] as FirConstExpression<Int>).value
                     val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
                     if (schemaTypeArg.type!!.isNullableAny) {
                         PluginDataFrameSchema(mapOf())
@@ -228,16 +239,12 @@ class FirDataFrameReceiverInjector(
                     // SchemaProcessor is loaded when return type of the function is DataFrame
                     // Interpretable is loaded when argument is @Value
                     it.startsWith(DF_ANNOTATIONS_PACKAGE) && it.shortName().identifier !in interpreterAnnotationsNames
+                }?.let { fqName ->
+                    it to fqName
                 }
             }
             val parameterName = Name.identifier("this")
-            val argumentExpression = when (interestingAnnotations.size) {
-                0 -> null
-                1 -> ArgumentExpression(interestingAnnotations[0].shortName(), parameterName, explicitReceiver!!)
-                else -> error("receiver of ${this.calleeReference.name} has several lens annotations, but it's not supported: $interestingAnnotations")
-            }
-
-            refinedArgument += RefinedArgument(parameterName, functionSymbol.annotations, argumentExpression)
+            refinedArgument += RefinedArgument(parameterName, interestingAnnotations.map { it.first }, explicitReceiver!!)
         }
 //        ((explicitReceiver as FirFunctionCall).calleeReference as FirResolvedNamedReference).let {
 //
@@ -258,16 +265,12 @@ class FirDataFrameReceiverInjector(
         (argumentList as FirResolvedArgumentList).mapping.forEach { (expression, parameter) ->
             val interestingAnnotations = parameter.annotations
                 .mapNotNull {
-                    it.fqName(session)?.takeIf { it.startsWith(DF_ANNOTATIONS_PACKAGE) }
+                    it.fqName(session)?.takeIf { it.startsWith(DF_ANNOTATIONS_PACKAGE) }?.let { fqName ->
+                        it to fqName
+                    }
                 }
 
-            val argumentExpression = when (interestingAnnotations.size) {
-                0 -> null
-                1 -> ArgumentExpression(interestingAnnotations[0].shortName(), parameter.name, expression)
-                else -> error("Parameter ${parameter.name} has several lens annotations, but it's not supported: $interestingAnnotations")
-            }
-
-            refinedArgument += RefinedArgument(parameter.name, parameter.annotations, argumentExpression)
+            refinedArgument += RefinedArgument(parameter.name, interestingAnnotations.map { it.first }, expression)
         }
         return Arguments(refinedArgument)
     }
@@ -281,12 +284,19 @@ fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {
 }
 
 class Arguments(val refinedArguments: List<RefinedArgument>): List<RefinedArgument> by refinedArguments {
-    val argumentsExpressions: List<ArgumentExpression> = refinedArguments.mapNotNull { it.argumentExpression }
 }
 
-data class RefinedArgument(val name: Name, val annotations: List<FirAnnotation>, val argumentExpression: ArgumentExpression?) {
+data class RefinedArgument(val name: Name, val interestingAnnotations: List<FirAnnotation>, val expression: FirExpression) {
+    fun getArgumentExpression(session: FirSession, context: String): ArgumentExpression {
+        return when (interestingAnnotations.size) {
+            0 -> error("$context Parameter ${name} has no lens annotations, but it's not supported: $interestingAnnotations")
+            1 -> ArgumentExpression(interestingAnnotations[0].fqName(session)!!.shortName(), name, expression)
+            else -> error("$context \n Parameter ${name} has several lens annotations, but it's not supported: $interestingAnnotations")
+        }
+    }
+
     override fun toString(): String {
-        return "RefinedArgument(name=$name, annotations=[${annotations.joinToString { it.classId!!.asString() }}], argumentExpression=$argumentExpression)"
+        return "RefinedArgument(name=$name, annotations=[${interestingAnnotations.joinToString { it.classId!!.asString() }}], expression=${expression})"
     }
 }
 
