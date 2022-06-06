@@ -16,7 +16,6 @@ enum class FirTowerDataMode {
     COMPANION_OBJECT,
     CONSTRUCTOR_HEADER,
     ENUM_ENTRY,
-    SPECIAL,
 }
 
 class FirRegularTowerDataContexts private constructor(
