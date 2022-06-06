@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
@@ -52,8 +53,9 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         existingNames: List<Name>?,
         symbolProvider: FirSymbolProvider?
     ): FirContainingNamesAwareScope {
+        val origin = klass.origin
         return when {
-            klass.origin.generated -> {
+            origin.generated -> {
                 FirGeneratedClassDeclaredMemberScope.create(
                     useSiteSession,
                     MemberGenerationContext(klass.symbol, declaredMemberScope = null),
@@ -68,11 +70,13 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                     existingNames,
                     symbolProvider
                 )
-                val generatedScope = FirGeneratedClassDeclaredMemberScope.create(
-                    useSiteSession,
-                    MemberGenerationContext(klass.symbol, baseScope),
-                    needNestedClassifierScope = false
-                )
+                val generatedScope = runIf(origin.fromSource || origin.generated) {
+                    FirGeneratedClassDeclaredMemberScope.create(
+                        useSiteSession,
+                        MemberGenerationContext(klass.symbol, baseScope),
+                        needNestedClassifierScope = false
+                    )
+                }
                 if (generatedScope != null) {
                     FirNameAwareCompositeScope(listOf(baseScope, generatedScope))
                 } else {
