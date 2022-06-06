@@ -70,8 +70,6 @@ object Checker {
         val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()
         val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
 
-        val allProperties = firClass.declarations.filterIsInstance<FirProperty>()
-
         val overriddenMembers = overriddenMembers()
 
         private fun overriddenMembers(): Map<FirMemberDeclaration, FirMemberDeclaration> {
@@ -94,6 +92,7 @@ object Checker {
                 .mapNotNull { it.toRegularClassSymbol(context.session)?.fir }
         val declarations = (superClasses + firClass).flatMap { clazz -> clazz.declarations }
 
+        val allProperties = declarations.filterIsInstance<FirProperty>()
 
         val errors = mutableListOf<Error<*>>()
 
@@ -133,7 +132,7 @@ object Checker {
                     }
                 }
                 val effsAndPots = analyseDeclaration(dec)
-                val errors = effsAndPots.effects.flatMap { effectChecking(it) }
+                val errors = effsAndPots.effects.flatMap(::effectChecking)
                 if (dec is FirProperty && dec.initializer != null) {
                     alreadyInitializedVariable.add(dec)
                 }
@@ -160,7 +159,11 @@ object Checker {
                             potentials.viewChange(pot).toEffectsAndPotentials()
                         }
                         is Root.Cold -> EffectsAndPotentials(Promote(pot)) // or exception or empty list
-                        is Root.Super -> TODO()
+                        is Root.Super -> {
+                            val state = cache[pot.firClass] ?: TODO()
+                            val potentials = pot.potentialsOf(state, field)
+                            potentials.viewChange(pot).toEffectsAndPotentials()
+                        }
                         is FunPotential -> throw IllegalArgumentException()
                         else -> {                                                       // P-Acc3
                             val (effects, potentials) = potentialPropagation(pot)
@@ -184,7 +187,9 @@ object Checker {
                         }
                         is Root.Cold -> EffectsAndPotentials(Promote(pot))
                         is Root.Super -> {
-                            TODO()
+                            val state = cache[pot.firClass] ?: TODO()
+                            val potentials = pot.potentialsOf(state, method)
+                            potentials.toEffectsAndPotentials()
                         }
                         is FunPotential -> TODO()
                         else -> {                                                       // P-Inv3
@@ -228,14 +233,13 @@ object Checker {
                 is FieldAccess -> {
                     val (pot, field) = effect
                     when (pot) {
-                        is Root.This -> {                                     // C-Acc1
+                        is Root.This, is Root.Super -> {                                     // C-Acc1
                             if (field.isPropertyInitialized())
                                 emptyList()
                             else listOf(Error.AccessError(effect))
                         }
                         is Root.Warm -> emptyList()                              // C-Acc2
                         is Root.Cold -> listOf(Error.AccessError(effect))           // illegal
-                        is Root.Super -> TODO()
                         is FunPotential -> throw Exception()                  // impossible
                         else ->                                                         // C-Acc3
                             ruleAcc3(potentialPropagation(pot)) { p -> FieldAccess(p, field) }
@@ -258,7 +262,11 @@ object Checker {
                         }
                         is FunPotential -> emptyList() // invoke
                         is Root.Cold -> listOf(Error.InvokeError(effect))              // illegal
-                        is Root.Super -> TODO()
+                        is Root.Super -> {
+                            val state = cache[pot.firClass] ?: TODO()
+                            val effectsOf = pot.effectsOf(state, method)
+                            effectsOf.flatMap(::effectChecking)
+                        }
                         else ->                                                         // C-Inv3
                             ruleAcc3(potentialPropagation(pot)) { p -> MethodAccess(p, method) }
                     }
@@ -287,12 +295,10 @@ object Checker {
                                 }
                             }
                         }
-                        is Root.This -> listOf(Error.PromoteError(effect))
                         is FunPotential -> ruleAcc3(pot.effectsAndPotentials, ::Promote)
-                        is Root.Cold -> listOf(Error.PromoteError(effect))
+                        is Root.Cold, is Root.This, is Root.Super -> listOf(Error.PromoteError(effect))
                         else -> {
                             ruleAcc3(potentialPropagation(pot), ::Promote)   // C-Up2
-
                         }
                     }
                 }

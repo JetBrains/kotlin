@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
@@ -98,12 +99,17 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
             }
         }
         is FirPropertyAccessExpression -> {
-            val firProperty = firElement.calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
-
             val (prefEffs, prefPots) = analyseReceivers(firElement)                        // Φ, Π
 
-            val effsAndPots = select(prefPots, firProperty)
-            prefEffs + effsAndPots                                                              // Φ ∪ Φ', Π'
+            val calleeReference = firElement.calleeReference
+            if (calleeReference is FirSuperReference)
+                EffectsAndPotentials(prefEffs, listOf(Root.Super(calleeReference, firClass)))
+            else {
+                val firProperty = calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
+
+                val effsAndPots = select(prefPots, firProperty)
+                prefEffs + effsAndPots                                                              // Φ ∪ Φ', Π'
+            }
         }
         is FirReturnExpression -> analyser(firElement.result)
         is FirThisReceiverExpression -> {
@@ -137,7 +143,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
 //                    caches[it] = notFinalAssignments[it] ?: throw java.lang.IllegalArgumentException()
 //                    notFinalAssignments.remove(it)
 //                }
-                localInitedProperties.removeIf { initedFirProperties.contains(it) }
+                localInitedProperties.removeIf(initedFirProperties::contains)
             } else
                 localInitedProperties.addAll(initedFirProperties)
 
@@ -149,7 +155,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         }
         is FirVariableAssignment -> {
             val (effs, pots) = analyser(firElement.rValue)
-            errors.addAll(effs.flatMap { effectChecking(it) })
+            errors.addAll(effs.flatMap(::effectChecking))
 
             when (val firDeclaration = firElement.lValue.toResolvedCallableSymbol()?.fir) {
                 is FirProperty -> {

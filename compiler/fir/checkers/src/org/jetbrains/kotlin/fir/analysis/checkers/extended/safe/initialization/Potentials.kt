@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.C
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 
 typealias Potentials = List<Potential>
@@ -36,7 +37,7 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
             }
         }
 
-        data class Super(val firThisReference: FirThisReference, val thisPot: This) : Root(firThisReference)
+        data class Super(val firSuperReference: FirSuperReference, val firClass: FirClass) : Root(firSuperReference)
 
         data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration) {
             override fun toString(): String {
@@ -154,6 +155,7 @@ fun viewChange(potential: Potential, root: Potential): Potential {
     return when (potential) {
         is Root.This -> root                                              // As-Pot-This
         is Root.Cold -> potential                                         // As-Pot-Cold
+        is Root.Super -> potential
         is Root.Warm -> potential.run {
             when { // ???
                 outer is Root.Cold -> potential
@@ -178,6 +180,5 @@ fun viewChange(potential: Potential, root: Potential): Potential {
             asPotSimpleRule(potential.potential) { pot -> OuterPotential(pot, potential.outerClass) }
         }
         is FunPotential -> TODO()
-        is Root.Super -> TODO()
     }
 }

@@ -7,13 +7,13 @@ FILE: fullConstructionAnalysis3.kt
         public open val x: R|kotlin/String| = String(Hello)
             public get(): R|kotlin/String|
 
-        public open fun foo(): R|kotlin/String| {
+        public open fun foo(bool: R|kotlin/Boolean|): R|kotlin/String| {
             ^foo this@R|/E|.R|/E.x|
         }
 
     }
     public abstract interface I : R|kotlin/Any| {
-        public open fun foo(): R|kotlin/String| {
+        public open fun foo(bool: R|kotlin/Boolean|): R|kotlin/String| {
             ^foo String(Hello)
         }
 
@@ -23,19 +23,19 @@ FILE: fullConstructionAnalysis3.kt
             super<R|E|>()
         }
 
-        public final val y: R|kotlin/String| = this@R|/F|.R|/E.foo|()
+        public final val y: R|kotlin/String| = this@R|/F|.R|/F.foo|(Boolean(true))
             public get(): R|kotlin/String|
 
-        public final override val x: R|kotlin/String| = this@R|/F|.R|/E.foo|()
+        public final override val x: R|kotlin/String| = this@R|/F|.R|/F.foo|(Boolean(false))
             public get(): R|kotlin/String|
 
         public final override fun foo(bool: R|kotlin/Boolean|): R|kotlin/String| {
             ^foo when () {
                 R|<local>/bool| ->  {
-                    this@R|/F|.super<R|I|>.R|/I.foo|().<Unresolved name: substring>#(Int(1))
+                    this@R|/F|.super<R|I|>.R|/I.foo|(R|<local>/bool|).R|kotlin/text/substring|(Int(1))
                 }
                 else ->  {
-                    this@R|/F|.super<R|E|>.R|/E.foo|().<Unresolved name: substring>#(Int(1))
+                    this@R|/F|.super<R|E|>.R|/E.foo|(R|<local>/bool|).R|kotlin/text/substring|(Int(1))
                 }
             }
 
