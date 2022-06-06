@@ -15,15 +15,15 @@ annotation class Ann(
 )
 
 @Ann(
-        Nested::class,
-        Inner::class,
-        Interface::class,
-        CONST,
-        Companion.CONST,
-        Nested.CONST,
-        Interface.CONST,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
-        b()
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Nested<!>::class<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Inner<!>::class<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Interface<!>::class<!>,
+        <!UNRESOLVED_REFERENCE!>CONST<!>,
+        <!UNRESOLVED_REFERENCE!>Companion<!>.CONST,
+        <!UNRESOLVED_REFERENCE!>Nested<!>.CONST,
+        <!UNRESOLVED_REFERENCE!>Interface<!>.CONST,
+        <!UNRESOLVED_REFERENCE!>a<!>,
+        <!UNRESOLVED_REFERENCE!>b<!>()
 )
 class A {
 

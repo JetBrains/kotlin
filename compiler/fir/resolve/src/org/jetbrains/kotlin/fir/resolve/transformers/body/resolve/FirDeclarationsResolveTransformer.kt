@@ -685,12 +685,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         dataFlowAnalyzer.enterFunction(constructor)
 
-        constructor.transformTypeParameters(transformer, data)
-            .transformAnnotations(transformer, data)
-            .transformReceiverTypeRef(transformer, data)
-            .transformReturnTypeRef(transformer, data)
-
         context.withConstructor(constructor) {
+            constructor.transformTypeParameters(transformer, data)
+                .transformAnnotations(transformer, data)
+                .transformReceiverTypeRef(transformer, data)
+                .transformReturnTypeRef(transformer, data)
+
             context.forConstructorParameters(constructor, owningClass, components) {
                 constructor.transformValueParameters(transformer, data)
             }

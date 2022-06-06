@@ -478,6 +478,7 @@ class BodyResolveContext(
 
         val newContexts = FirRegularTowerDataContexts(
             forMembersResolution,
+            forClassHeaderAnnotations = base,
             newTowerDataContextForStaticNestedClasses,
             statics,
             scopeForConstructorHeader,
@@ -654,6 +655,16 @@ class BodyResolveContext(
     inline fun <T> forEnumEntry(
         f: () -> T
     ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY, f)
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forAnnotation(
+        f: () -> T
+    ): T {
+        return when (containerIfAny) {
+            is FirRegularClass -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
+            else -> f()
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousInitializer(

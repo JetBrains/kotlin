@@ -11,6 +11,7 @@ import java.util.*
 
 enum class FirTowerDataMode {
     REGULAR,
+    CLASS_HEADER_ANNOTATIONS,
     NESTED_CLASS,
     COMPANION_OBJECT,
     CONSTRUCTOR_HEADER,
@@ -26,6 +27,7 @@ class FirRegularTowerDataContexts private constructor(
 ) {
     constructor(
         regular: FirTowerDataContext,
+        forClassHeaderAnnotations: FirTowerDataContext? = null,
         forNestedClasses: FirTowerDataContext? = null,
         forCompanionObject: FirTowerDataContext? = null,
         forConstructorHeaders: FirTowerDataContext? = null,
@@ -33,7 +35,7 @@ class FirRegularTowerDataContexts private constructor(
         primaryConstructorPureParametersScope: FirLocalScope? = null,
         primaryConstructorAllParametersScope: FirLocalScope? = null,
     ) : this(
-        enumMap(regular, forNestedClasses, forCompanionObject, forConstructorHeaders, forEnumEntries),
+        enumMap(regular, forClassHeaderAnnotations, forNestedClasses, forCompanionObject, forConstructorHeaders, forEnumEntries),
         primaryConstructorPureParametersScope,
         primaryConstructorAllParametersScope,
         FirTowerDataMode.REGULAR
@@ -68,6 +70,7 @@ class FirRegularTowerDataContexts private constructor(
     companion object {
         private fun enumMap(
             regular: FirTowerDataContext,
+            forClassHeaderAnnotations: FirTowerDataContext?,
             forNestedClasses: FirTowerDataContext?,
             forCompanionObject: FirTowerDataContext?,
             forConstructorHeaders: FirTowerDataContext?,
@@ -75,6 +78,7 @@ class FirRegularTowerDataContexts private constructor(
         ): EnumMap<FirTowerDataMode, FirTowerDataContext> {
             val modeMap = EnumMap<FirTowerDataMode, FirTowerDataContext>(FirTowerDataMode::class.java)
             modeMap[FirTowerDataMode.REGULAR] = regular
+            modeMap[FirTowerDataMode.CLASS_HEADER_ANNOTATIONS] = forClassHeaderAnnotations
             modeMap[FirTowerDataMode.NESTED_CLASS] = forNestedClasses
             modeMap[FirTowerDataMode.COMPANION_OBJECT] = forCompanionObject
             modeMap[FirTowerDataMode.CONSTRUCTOR_HEADER] = forConstructorHeaders

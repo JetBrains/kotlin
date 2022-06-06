@@ -1021,15 +1021,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
         if (annotationCall.resolved) return annotationCall
         annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return withFirArrayOfCallTransformer {
-            dataFlowAnalyzer.enterAnnotation(annotationCall)
-            val result = callResolver.resolveAnnotationCall(annotationCall)
-            dataFlowAnalyzer.exitAnnotation(result ?: annotationCall)
-            if (result == null) return annotationCall
-            callCompleter.completeCall(result, noExpectedType)
-            // TODO: FirBlackBoxCodegenTestGenerated.Annotations.testDelegatedPropertySetter, it fails with hard cast
-            (result.argumentList as? FirResolvedArgumentList)?.let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
-            annotationCall
+        return context.forAnnotation {
+            withFirArrayOfCallTransformer {
+                dataFlowAnalyzer.enterAnnotation(annotationCall)
+                val result = callResolver.resolveAnnotationCall(annotationCall)
+                dataFlowAnalyzer.exitAnnotation(result ?: annotationCall)
+                if (result == null) return annotationCall
+                callCompleter.completeCall(result, noExpectedType)
+                // TODO: FirBlackBoxCodegenTestGenerated.Annotations.testDelegatedPropertySetter, it fails with hard cast
+                (result.argumentList as? FirResolvedArgumentList)?.let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+                annotationCall
+            }
         }
     }
 
