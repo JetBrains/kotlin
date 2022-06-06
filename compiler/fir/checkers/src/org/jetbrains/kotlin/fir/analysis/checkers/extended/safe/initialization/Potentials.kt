@@ -24,9 +24,9 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
         fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
             state.analyseDeclaration1(firDeclaration).potentials
 
-        data class This(val firClass: FirClass) : Root(firClass) {
+        data class This(val firThisReference: FirThisReference, val firClass: FirClass) : Root(firThisReference) {
             override fun toString(): String {
-                return "this@${(firClass.symbol)?.toLookupTag()}"
+                return "this@${firClass.symbol.toLookupTag()}"
             }
         }
 

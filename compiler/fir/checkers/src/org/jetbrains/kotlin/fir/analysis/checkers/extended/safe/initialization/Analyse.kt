@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.checkClass
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.effectChecking
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.containingClass
@@ -62,9 +60,6 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         is FirBlock -> firElement.statements.fold(emptyEffsAndPots) { sum, firStatement ->
             sum + analyser(firStatement)
         }
-        is FirTypeOperatorCall -> firElement.arguments.fold(emptyEffsAndPots) { sum, operator ->
-            sum + analyser(operator)
-        }
         is FirFunctionCall -> {
             val (prefEffs, prefPots) = analyseReceivers(firElement)
 
@@ -87,12 +82,20 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
                     null -> emptyEffsAndPots
                 }
 
-            val (effsOfArgs, _) = firElement.arguments.fold(emptyEffsAndPots) { sum, argDec ->
+            val (effsOfArgs, _) = analyser(firElement.argumentList)
+            // TODO: explicit receiver promotion
+            effsAndPotsOfMethod + effsOfArgs + prefEffs
+        }
+        is FirEqualityOperatorCall -> {
+            // TODO: How to find the method to be called. equals may also be unsafe
+            emptyEffsAndPots
+        }
+        is FirArgumentList -> {
+            // TODO: Change EffectsAndPotentials to MutableEffects
+            firElement.arguments.fold(emptyEffsAndPots) { sum, argDec ->
                 val (effs, pots) = analyser(argDec)
                 sum + effs + promote(pots)
-                // TODO: explicit receiver promotion
             }
-            effsAndPotsOfMethod + effsOfArgs + prefEffs
         }
         is FirPropertyAccessExpression -> {
             val firProperty = firElement.calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
@@ -106,9 +109,10 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
         is FirThisReceiverExpression -> {
             val firThisReference = firElement.calleeReference
             val firClass = firThisReference.boundSymbol?.fir as FirClass
+            val effectsAndPotentials = EffectsAndPotentials(Root.This(firThisReference, firClass))
             if (superClasses.contains(firClass) || firClass === this.firClass)
-                EffectsAndPotentials(thisPot)
-            else resolveThis(firClass, EffectsAndPotentials(Root.This(firClass)), this)
+                effectsAndPotentials
+            else resolveThis(firClass, effectsAndPotentials, this)
         }
         is FirConstExpression<*> -> emptyEffsAndPots  // ???
         is FirWhenBranch -> firElement.run {

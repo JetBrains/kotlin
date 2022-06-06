@@ -229,6 +229,8 @@ fun FirProperty.overriddenProperties(
         ProcessorAction.NEXT
     }
 
+    return overriddenProperties
+}
 
 /**
  * Returns the modality of the class

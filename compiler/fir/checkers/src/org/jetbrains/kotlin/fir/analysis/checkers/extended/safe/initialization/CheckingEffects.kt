@@ -56,8 +56,6 @@ object Checker {
 
     @OptIn(SymbolInternals::class)
     data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
-        val thisPot = Root.This(firClass)
-
         fun FirVariable.isPropertyInitialized(): Boolean =
             alreadyInitializedVariable.contains(this) || localInitedProperties.contains(this)
 
