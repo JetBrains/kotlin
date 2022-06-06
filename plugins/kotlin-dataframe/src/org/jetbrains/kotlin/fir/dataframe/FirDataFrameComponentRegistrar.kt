@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.util.*
-import kotlin.collections.ArrayDeque
 
 class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         val ids = List(100) {
-            val name = Name.identifier(UUID.randomUUID().toString())
+            val name = Name.identifier(it.toString())
             ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
         }.toSet()
         val queue = ArrayDeque(ids)
