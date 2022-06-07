@@ -145,10 +145,13 @@ open class KotlinNativeTarget @Inject constructor(
 private val hostManager by lazy { HostManager() }
 
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean {
-    val enabledByHost = hostManager.enabledByHost
-    val allHosts = enabledByHost.keys
-    fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys
-    return konanTargets.flatMapTo(mutableSetOf(), ::canBeBuiltOnHosts) != allHosts
+    /*
+    The set of konanTargets is considered 'host specific', if we can find at least _any_ host target
+    that cannot build a single target provided in the list
+     */
+    return hostManager.enabledByHost.any { (_, enabledTargets) ->
+        konanTargets.none { target -> target in enabledTargets }
+    }
 }
 
 private fun <T> getHostSpecificElements(
