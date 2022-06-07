@@ -9862,6 +9862,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("genericSignatureForSuspendImpl.kt")
+        public void testGenericSignatureForSuspendImpl() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/genericSignatureForSuspendImpl.kt");
+        }
+
+        @Test
         @TestMetadata("handleException.kt")
         public void testHandleException() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/handleException.kt");

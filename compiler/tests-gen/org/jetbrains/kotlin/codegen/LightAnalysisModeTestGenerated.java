@@ -7759,6 +7759,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/generate.kt");
         }
 
+        @TestMetadata("genericSignatureForSuspendImpl.kt")
+        public void testGenericSignatureForSuspendImpl() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/genericSignatureForSuspendImpl.kt");
+        }
+
         @TestMetadata("handleException.kt")
         public void testHandleException() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/handleException.kt");

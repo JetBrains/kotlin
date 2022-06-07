@@ -60,7 +60,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             signature.genericsSignature
                 .takeIf {
                     (irFunction.isInline && irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) ||
-                            !isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                            (!isSynthetic && irFunction.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) ||
+                            (irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION)
                 },
             getThrownExceptions(irFunction)?.toTypedArray()
         )
