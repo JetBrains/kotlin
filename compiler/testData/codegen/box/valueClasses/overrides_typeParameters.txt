@@ -2354,6 +2354,8 @@ public final class Overrides_typeParametersKt {
     inner (anonymous) class Overrides_typeParametersKt$box$xPointLam$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
+    public final static method genericFunctionIC-lld4ICU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static method genericFunctionMFVC-sUp7gFk(@org.jetbrains.annotations.NotNull p0: java.util.List, @org.jetbrains.annotations.NotNull p1: java.util.List): void
 }
 
 @kotlin.Metadata
@@ -2444,6 +2446,22 @@ public interface ReifiedMFVCHolderWithImpls {
 }
 
 @kotlin.Metadata
+public final class SomeInterface$DefaultImpls {
+    // source: 'overrides_typeParameters.kt'
+    public static method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public static method someFunction2-lIoT8es(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public final inner class SomeInterface$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface SomeInterface {
+    // source: 'overrides_typeParameters.kt'
+    public abstract method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
+    public abstract method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public final inner class SomeInterface$DefaultImpls
+}
+
+@kotlin.Metadata
 public interface SomePointInterface {
     // source: 'overrides_typeParameters.kt'
     public abstract method getSomethingGeneric(): java.lang.Object
@@ -2481,6 +2499,10 @@ public final class XPoint {
     public final method getY(): java.lang.Object
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
+    public method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
+    public static method someFunction1-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object): void
+    public method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public static method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object, p7: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl0(): java.lang.Object
@@ -2553,4 +2575,23 @@ public final class XSegment {
     public synthetic final method unbox-impl1(): java.lang.Object
     public synthetic final method unbox-impl2(): java.lang.Object
     public synthetic final method unbox-impl3(): java.lang.Object
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class YPoint {
+    // source: 'overrides_typeParameters.kt'
+    private final field x: java.lang.Object
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic final static method box-impl(p0: java.lang.Object): YPoint
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final method getX(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Object
 }
