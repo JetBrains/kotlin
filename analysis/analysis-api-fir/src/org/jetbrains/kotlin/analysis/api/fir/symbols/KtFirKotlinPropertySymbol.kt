@@ -116,7 +116,7 @@ internal class KtFirKotlinPropertySymbol(
     override val hasGetter: Boolean get() = withValidityAssertion { firSymbol.getterSymbol != null }
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
 
-    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> {
+    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> = withValidityAssertion {
         if (firSymbol.fir.origin != FirDeclarationOrigin.SubstitutionOverride) {
             KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         }

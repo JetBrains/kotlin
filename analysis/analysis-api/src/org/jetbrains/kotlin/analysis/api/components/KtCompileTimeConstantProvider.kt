@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
 public enum class KtConstantEvaluationMode {
@@ -35,5 +36,5 @@ public abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent
 
 public interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtExpression.evaluate(mode: KtConstantEvaluationMode): KtConstantValue? =
-        analysisSession.compileTimeConstantProvider.evaluate(this, mode)
+        withValidityAssertion { analysisSession.compileTimeConstantProvider.evaluate(this, mode) }
 }

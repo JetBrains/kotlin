@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -25,27 +26,39 @@ public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Gets the deprecation status of the given symbol. Returns null if the symbol it not deprecated.
      */
-    public val KtSymbol.deprecationStatus: DeprecationInfo? get() = analysisSession.symbolInfoProvider.getDeprecation(this)
+    public val KtSymbol.deprecationStatus: DeprecationInfo? get() = withValidityAssertion {
+        analysisSession.symbolInfoProvider.getDeprecation(
+            this
+        )
+    }
 
     /**
      * Gets the deprecation status of the given symbol. Returns null if the symbol it not deprecated.
      */
     public fun KtSymbol.getDeprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? =
-        analysisSession.symbolInfoProvider.getDeprecation(this)
+        withValidityAssertion { analysisSession.symbolInfoProvider.getDeprecation(this) }
 
     /**
      * Gets the deprecation status of the getter of this property symbol. Returns null if the getter it not deprecated.
      */
     public val KtPropertySymbol.getterDeprecationStatus: DeprecationInfo?
-        get() = analysisSession.symbolInfoProvider.getGetterDeprecation(this)
+        get() = withValidityAssertion { analysisSession.symbolInfoProvider.getGetterDeprecation(this) }
 
     /**
      * Gets the deprecation status of the setter of this property symbol. Returns null if the setter it not deprecated or the property does
      * not have a setter.
      */
     public val KtPropertySymbol.setterDeprecationStatus: DeprecationInfo?
-        get() = analysisSession.symbolInfoProvider.getSetterDeprecation(this)
+        get() = withValidityAssertion { analysisSession.symbolInfoProvider.getSetterDeprecation(this) }
 
-    public val KtPropertySymbol.javaGetterName: Name get() = analysisSession.symbolInfoProvider.getJavaGetterName(this)
-    public val KtPropertySymbol.javaSetterName: Name? get() = analysisSession.symbolInfoProvider.getJavaSetterName(this)
+    public val KtPropertySymbol.javaGetterName: Name get() = withValidityAssertion {
+        analysisSession.symbolInfoProvider.getJavaGetterName(
+            this
+        )
+    }
+    public val KtPropertySymbol.javaSetterName: Name? get() = withValidityAssertion {
+        analysisSession.symbolInfoProvider.getJavaSetterName(
+            this
+        )
+    }
 }

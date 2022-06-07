@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 
-public interface KtAnalysisSessionMixIn {
+public interface KtAnalysisSessionMixIn : KtLifetimeOwner {
     public val analysisSession: KtAnalysisSession
 }

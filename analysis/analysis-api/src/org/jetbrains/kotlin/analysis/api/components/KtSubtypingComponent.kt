@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 public abstract class KtSubtypingComponent : KtAnalysisSessionComponent() {
@@ -14,11 +15,11 @@ public abstract class KtSubtypingComponent : KtAnalysisSessionComponent() {
 
 public interface KtSubtypingComponentMixIn : KtAnalysisSessionMixIn {
     infix public fun KtType.isEqualTo(other: KtType): Boolean =
-        analysisSession.subtypingComponent.isEqualTo(this, other)
+        withValidityAssertion { analysisSession.subtypingComponent.isEqualTo(this, other) }
 
     infix public fun KtType.isSubTypeOf(superType: KtType): Boolean =
-        analysisSession.subtypingComponent.isSubTypeOf(this, superType)
+        withValidityAssertion { analysisSession.subtypingComponent.isSubTypeOf(this, superType) }
 
     infix public fun KtType.isNotSubTypeOf(superType: KtType): Boolean =
-        !analysisSession.subtypingComponent.isSubTypeOf(this, superType)
+        withValidityAssertion { !analysisSession.subtypingComponent.isSubTypeOf(this, superType) }
 }

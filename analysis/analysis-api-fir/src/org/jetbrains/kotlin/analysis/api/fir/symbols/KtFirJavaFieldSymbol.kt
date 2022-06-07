@@ -52,7 +52,7 @@ internal class KtFirJavaFieldSymbol(
 
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
-    override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> = withValidityAssertion {
         val containingClassId = firSymbol.containingClass()?.classId
             ?: error("Cannot find parent class for java field $callableIdIfNonLocal")
 

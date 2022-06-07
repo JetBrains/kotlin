@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -17,7 +18,8 @@ public abstract class KtExpressionInfoProvider : KtAnalysisSessionComponent() {
 
 public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
-        analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this)
+        withValidityAssertion { analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this) }
 
-    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> = analysisSession.expressionInfoProvider.getWhenMissingCases(this)
+    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> =
+        withValidityAssertion { analysisSession.expressionInfoProvider.getWhenMissingCases(this) }
 }

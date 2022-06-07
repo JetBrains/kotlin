@@ -44,7 +44,7 @@ internal class KtFirTypeParameterSymbol(
     override val variance: Variance get() = withValidityAssertion { firSymbol.variance }
     override val isReified: Boolean get() = withValidityAssertion { firSymbol.isReified }
 
-    override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating symbols for library type parameters is not supported yet")
     }

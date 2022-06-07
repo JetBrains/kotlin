@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtSymbolDeclarationOverridesProvider(), KtFirAnalysisSessionComponent {
 
     override fun <T : KtSymbol> getAllOverriddenSymbols(

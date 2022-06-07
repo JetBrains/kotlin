@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilityUtils.isVisible
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -39,7 +38,7 @@ internal class KtFe10VisibilityChecker(
         useSiteFile: KtFileSymbol,
         position: PsiElement,
         receiverExpression: KtExpression?
-    ): Boolean = withValidityAssertion {
+    ): Boolean {
         if (candidateSymbol.visibility == Visibilities.Public) {
             return true
         }

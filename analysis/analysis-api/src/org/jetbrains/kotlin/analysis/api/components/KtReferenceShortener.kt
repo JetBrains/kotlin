@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultCallableShortenOption
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultClassShortenOption
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
@@ -64,19 +65,28 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption = defaultClassShortenOption,
         callableShortenOption: (KtCallableSymbol) -> ShortenOption = defaultCallableShortenOption
     ): ShortenCommand =
-        analysisSession.referenceShortener.collectShortenings(file, selection, classShortenOption, callableShortenOption)
+        withValidityAssertion {
+            analysisSession.referenceShortener.collectShortenings(
+                file,
+                selection,
+                classShortenOption,
+                callableShortenOption
+            )
+        }
 
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption = defaultClassShortenOption,
         callableShortenOption: (KtCallableSymbol) -> ShortenOption = defaultCallableShortenOption
     ): ShortenCommand =
-        analysisSession.referenceShortener.collectShortenings(
-            element.containingKtFile,
-            element.textRange,
-            classShortenOption,
-            callableShortenOption
-        )
+        withValidityAssertion {
+            analysisSession.referenceShortener.collectShortenings(
+                element.containingKtFile,
+                element.textRange,
+                classShortenOption,
+                callableShortenOption
+            )
+        }
 }
 
 public interface ShortenCommand {

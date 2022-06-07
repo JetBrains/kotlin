@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import kotlin.reflect.KClass
 
 public interface KtDiagnostic : KtLifetimeOwner {
@@ -29,7 +30,7 @@ public class KtNonBoundToPsiErrorDiagnostic(
     override val defaultMessage: String,
     override val token: KtLifetimeToken,
 ) : KtDiagnostic {
-    override val severity: Severity get() = Severity.ERROR
+    override val severity: Severity get() = withValidityAssertion { Severity.ERROR }
 }
 
 public fun KtDiagnostic.getDefaultMessageWithFactoryName(): String =

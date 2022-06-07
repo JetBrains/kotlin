@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 
-public abstract class KtAnalysisSessionComponent : KtLifetimeOwner {
+public abstract class KtAnalysisSessionComponent {
     protected abstract val analysisSession: KtAnalysisSession
+    protected open val token: KtLifetimeToken get() = analysisSession.token
 }
 

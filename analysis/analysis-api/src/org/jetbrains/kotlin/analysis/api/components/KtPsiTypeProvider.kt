@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 
@@ -41,6 +42,6 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
         isAnnotationMethod: Boolean = false,
     ): PsiType? =
-        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod)
+        withValidityAssertion { analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod) }
 
 }

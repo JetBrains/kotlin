@@ -60,9 +60,11 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     /* FirRegularClass visibility is not modified by STATUS only for Unknown, so it can be taken from RAW */
     override val visibility: Visibility
-        get() = when (val possiblyRawVisibility = firSymbol.fir.visibility) {
-            Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
-            else -> possiblyRawVisibility
+        get() = withValidityAssertion {
+            when (val possiblyRawVisibility = firSymbol.fir.visibility) {
+                Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
+                else -> possiblyRawVisibility
+            }
         }
 
     override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token) }
@@ -112,7 +114,7 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
 
 
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString().orEmpty())

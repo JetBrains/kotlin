@@ -25,7 +25,7 @@ class KtFe10ReceiverParameterSymbol(
     override val descriptor: ReceiverParameterDescriptor
         get() = withValidityAssertion { _descriptor }
 
-    override fun createPointer(): KtSymbolPointer<KtSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {
         TODO("Not yet implemented")
     }
 }

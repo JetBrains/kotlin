@@ -55,7 +55,12 @@ internal class KtFe10FunctionalType(
         get() = withValidityAssertion { type.getReturnTypeFromFunctionType().toKtType(analysisContext) }
 
     override val classId: ClassId
-        get() = ClassId(descriptor.functionKind.packageFqName, descriptor.functionKind.numberedClassName(descriptor.arity))
+        get() = withValidityAssertion {
+            ClassId(
+                descriptor.functionKind.packageFqName,
+                descriptor.functionKind.numberedClassName(descriptor.arity)
+            )
+        }
 
     override val classSymbol: KtClassLikeSymbol
         get() = withValidityAssertion { KtFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }

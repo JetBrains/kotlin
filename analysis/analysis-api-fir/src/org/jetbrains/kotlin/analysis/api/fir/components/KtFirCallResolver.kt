@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
-import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
@@ -76,7 +73,7 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? = withValidityAssertion {
+    override fun resolveCall(psi: KtElement): KtCallInfo? {
         val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             listOfNotNull(
                 toKtCallInfo(
@@ -686,8 +683,8 @@ internal class KtFirCallResolver(
     private fun FirVariableSymbol<*>.toKtSignature(): KtVariableLikeSignature<KtVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
-    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = withValidityAssertion {
-        getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> {
+        return getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             collectCallCandidates(
                 psiToResolve,
                 resolveCalleeExpressionOfFunctionCall,

@@ -21,10 +21,10 @@ internal interface KtFe10DescSymbol<T : DeclarationDescriptor> : KtFe10Symbol, K
     val descriptor: T
 
     override val annotationsObject: Annotations
-        get() = descriptor.annotations
+        get() = withValidityAssertion { descriptor.annotations }
 
     val source: SourceElement
-        get() {
+        get() = withValidityAssertion {
             val descriptor = this.descriptor
             if (descriptor is CallableMemberDescriptor && descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 val firstOverridden = descriptor.overriddenDescriptors.firstOrNull()

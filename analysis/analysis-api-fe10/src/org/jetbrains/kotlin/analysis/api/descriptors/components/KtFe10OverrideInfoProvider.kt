@@ -28,7 +28,7 @@ internal class KtFe10OverrideInfoProvider(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean = withValidityAssertion {
+    override fun isVisible(memberSymbol: KtCallableSymbol, classSymbol: KtClassOrObjectSymbol): Boolean  {
         val memberDescriptor = getSymbolDescriptor(memberSymbol) as? DeclarationDescriptorWithVisibility ?: return false
         val classDescriptor = getSymbolDescriptor(classSymbol) ?: return false
         return isVisibleWithAnyReceiver(memberDescriptor, classDescriptor, analysisSession.analysisContext.languageVersionSettings)
@@ -37,17 +37,17 @@ internal class KtFe10OverrideInfoProvider(
     override fun getImplementationStatus(
         memberSymbol: KtCallableSymbol,
         parentClassSymbol: KtClassOrObjectSymbol
-    ): ImplementationStatus? = withValidityAssertion {
+    ): ImplementationStatus?  {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 
-    override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? = withValidityAssertion {
+    override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol?  {
         val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return null
         val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
         return originalCallableDescriptor.toKtCallableSymbol(analysisContext)
     }
 
-    override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? = withValidityAssertion {
+    override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?  {
         val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return null
         val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
         val containingClassDescriptor = originalCallableDescriptor.containingDeclaration as? ClassDescriptor ?: return null

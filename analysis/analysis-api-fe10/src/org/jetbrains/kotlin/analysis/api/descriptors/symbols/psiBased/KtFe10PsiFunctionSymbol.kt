@@ -64,7 +64,7 @@ internal class KtFe10PsiFunctionSymbol(
         get() = withValidityAssertion { false }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = callableIdIfNonLocal in kotlinFunctionInvokeCallableIds
+        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 
     override val valueParameters: List<KtValueParameterSymbol>
         get() = withValidityAssertion { psi.valueParameters.map { KtFe10PsiValueParameterSymbol(it, analysisContext) } }

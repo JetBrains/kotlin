@@ -40,11 +40,11 @@ internal class KtFirEnumEntrySymbol(
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val containingEnumClassIdIfNonLocal: ClassId? get() = callableIdIfNonLocal?.classId
+    override val containingEnumClassIdIfNonLocal: ClassId? get() = withValidityAssertion { callableIdIfNonLocal?.classId }
 
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 
-    override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> {
+    override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return KtFirEnumEntrySymbolPointer(
             firSymbol.containingClass()?.classId ?: error("Containing class should present for enum entry"),

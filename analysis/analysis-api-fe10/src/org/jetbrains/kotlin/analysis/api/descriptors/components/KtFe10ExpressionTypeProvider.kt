@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -28,10 +27,10 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
-import org.jetbrains.kotlin.types.error.ErrorTypeKind
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class KtFe10ExpressionTypeProvider(
@@ -49,7 +48,7 @@ class KtFe10ExpressionTypeProvider(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
+    override fun getKtExpressionType(expression: KtExpression): KtType? {
         // Not sure if it's safe enough. In theory, some annotations on expressions might change its type
         val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return null
         if (unwrapped.getParentOfTypes(false, *NON_EXPRESSION_CONTAINERS) != null) {
@@ -66,7 +65,7 @@ class KtFe10ExpressionTypeProvider(
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference
@@ -134,7 +133,7 @@ class KtFe10ExpressionTypeProvider(
         return analysisContext.builtIns.unitType.toKtType(analysisContext)
     }
 
-    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
+    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {
         val analysisMode = if (declaration.hasDeclaredReturnType()) AnalysisMode.PARTIAL else AnalysisMode.FULL
         val bindingContext = analysisContext.analyze(declaration, analysisMode)
         val functionDescriptor = bindingContext[BindingContext.FUNCTION, declaration]
@@ -155,7 +154,7 @@ class KtFe10ExpressionTypeProvider(
             .toKtType(analysisContext)
     }
 
-    override fun getExpectedType(expression: PsiElement): KtType? = withValidityAssertion {
+    override fun getExpectedType(expression: PsiElement): KtType? {
         val ktExpression = expression.getParentOfType<KtExpression>(false) ?: return null
         val parentExpression = ktExpression.parent
 
@@ -222,7 +221,7 @@ class KtFe10ExpressionTypeProvider(
         }
     }
 
-    override fun isDefinitelyNull(expression: KtExpression): Boolean = withValidityAssertion {
+    override fun isDefinitelyNull(expression: KtExpression): Boolean {
         val unwrapped = expression.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return false
         val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
 
@@ -239,7 +238,7 @@ class KtFe10ExpressionTypeProvider(
         return false
     }
 
-    override fun isDefinitelyNotNull(expression: KtExpression): Boolean = withValidityAssertion {
+    override fun isDefinitelyNotNull(expression: KtExpression): Boolean {
         val ktExpression = expression as? KtExpression ?: return false
         val bindingContext = analysisContext.analyze(ktExpression)
 

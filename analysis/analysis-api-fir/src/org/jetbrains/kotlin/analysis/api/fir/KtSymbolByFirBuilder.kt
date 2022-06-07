@@ -55,13 +55,13 @@ import kotlin.contracts.contract
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
     private val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
+    val token: KtLifetimeToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
     private val extensionReceiverSymbolsCache: BuilderCache<FirCallableSymbol<*>, KtSymbol>,
     private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
-) : KtLifetimeOwner {
+) {
     private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
     val rootSession: FirSession = firResolveSession.useSiteFirSession
 

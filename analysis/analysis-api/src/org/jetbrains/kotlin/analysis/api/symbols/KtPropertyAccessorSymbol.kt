@@ -15,7 +15,7 @@ public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
     KtSymbolWithVisibility,
     KtSymbolWithKind {
 
-    final override val isExtension: Boolean get() = false
+    final override val isExtension: Boolean get() = withValidityAssertion { false }
 
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -25,7 +25,7 @@ public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
     public abstract val isOverride: Boolean
     public abstract val hasBody: Boolean
 
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.ACCESSOR
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.ACCESSOR }
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyAccessorSymbol>
 }

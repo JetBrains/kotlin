@@ -58,7 +58,7 @@ internal class KtFe10DescFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor is JavaCallableMemberDescriptor && DescriptorUtils.isStaticDeclaration(descriptor) }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = callableIdIfNonLocal in kotlinFunctionInvokeCallableIds
+        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 
     override val valueParameters: List<KtValueParameterSymbol>
         get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -137,11 +138,11 @@ public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
      * Render symbol into the representable Kotlin string
      */
     public fun KtDeclarationSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
-        analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, options)
+        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, options) }
 
     /**
      * Render kotlin type into the representable Kotlin type string
      */
     public fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
-        analysisSession.symbolDeclarationRendererProvider.render(this, options)
+        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.render(this, options) }
 }

@@ -58,7 +58,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         append(symbol.returnType.render(KtTypeRendererOptions.SHORT_NAMES))
     }
 
-    private fun getPath(symbol: KtCallableSymbol): String = when (symbol) {
+    @Suppress("unused")
+    private fun KtAnalysisSession.getPath(symbol: KtCallableSymbol): String = when (symbol) {
         is KtSyntheticJavaPropertySymbol -> symbol.callableIdIfNonLocal?.toString()!!
         else -> {
             val ktDeclaration = symbol.psi as KtDeclaration

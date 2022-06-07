@@ -20,8 +20,10 @@ public class KtStarProjectionTypeArgument(override val token: KtLifetimeToken) :
 }
 
 public class KtTypeArgumentWithVariance(
-    override val type: KtType,
+    private val _type: KtType,
     public val variance: Variance,
     override val token: KtLifetimeToken,
-) : KtTypeArgument()
+) : KtTypeArgument() {
+    override val type: KtType get() = withValidityAssertion { _type }
+}
 

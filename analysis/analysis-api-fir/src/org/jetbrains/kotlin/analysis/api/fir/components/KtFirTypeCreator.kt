@@ -29,7 +29,7 @@ internal class KtFirTypeCreator(
     override val token: KtLifetimeToken
 ) : KtTypeCreator(), KtFirAnalysisSessionComponent {
 
-    override fun buildClassType(builder: KtClassTypeBuilder): KtClassType = withValidityAssertion {
+    override fun buildClassType(builder: KtClassTypeBuilder): KtClassType {
         val lookupTag = when (builder) {
             is KtClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
@@ -53,7 +53,7 @@ internal class KtFirTypeCreator(
         return coneType.asKtType() as KtClassType
     }
 
-    override fun buildTypeParameterType(builder: KtTypeParameterTypeBuilder): KtTypeParameterType = withValidityAssertion {
+    override fun buildTypeParameterType(builder: KtTypeParameterTypeBuilder): KtTypeParameterType  {
         val coneType = when (builder) {
             is KtTypeParameterTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol

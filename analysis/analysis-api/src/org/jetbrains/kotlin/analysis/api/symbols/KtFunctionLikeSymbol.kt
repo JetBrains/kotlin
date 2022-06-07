@@ -26,8 +26,8 @@ public abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKin
 }
 
 public abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
-    final override val callableIdIfNonLocal: CallableId? get() = null
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
+    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
 
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -36,7 +36,7 @@ public abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
 }
 
 public abstract class KtSamConstructorSymbol : KtFunctionLikeSymbol(), KtNamedSymbol {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.SAM_CONSTRUCTOR
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.SAM_CONSTRUCTOR }
 
     abstract override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol>
 }
@@ -70,10 +70,10 @@ public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     public abstract val isPrimary: Boolean
     public abstract val containingClassIdIfNonLocal: ClassId?
 
-    final override val callableIdIfNonLocal: CallableId? get() = null
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
-    final override val isExtension: Boolean get() = false
-    final override val receiverType: KtType? get() = null
+    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.CLASS_MEMBER }
+    final override val isExtension: Boolean get() = withValidityAssertion { false }
+    final override val receiverType: KtType? get() = withValidityAssertion { null }
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

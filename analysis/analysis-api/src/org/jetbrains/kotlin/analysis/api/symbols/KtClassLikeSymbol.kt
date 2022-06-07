@@ -40,7 +40,7 @@ public abstract class KtTypeAliasSymbol : KtClassLikeSymbol(),
     KtSymbolWithVisibility,
     KtNamedSymbol {
 
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.TOP_LEVEL }
 
     /**
      * Returns type from right-hand site of type alias
@@ -60,10 +60,10 @@ public sealed class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithMem
 }
 
 public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
-    final override val classKind: KtClassKind get() = KtClassKind.ANONYMOUS_OBJECT
-    final override val classIdIfNonLocal: ClassId? get() = null
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
-    final override val name: Name? get() = null
+    final override val classKind: KtClassKind get() = withValidityAssertion { KtClassKind.ANONYMOUS_OBJECT }
+    final override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { null }
+    final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
+    final override val name: Name? get() = withValidityAssertion { null }
 
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }

@@ -66,7 +66,7 @@ internal class KtFirValueParameterSymbol(
         ktPropertySymbol
     }
 
-    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating pointers for functions parameters from library is not supported yet")
     }

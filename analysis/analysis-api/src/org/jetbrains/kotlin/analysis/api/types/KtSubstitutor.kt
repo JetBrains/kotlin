@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 
 public interface KtSubstitutor : KtLifetimeOwner {
-    public fun substituteOrSelf(type: KtType): KtType = substituteOrNull(type) ?: type
+    public fun substituteOrSelf(type: KtType): KtType = withValidityAssertion { substituteOrNull(type) ?: type }
     public fun substituteOrNull(type: KtType): KtType?
 
     public class Empty(override val token: KtLifetimeToken) : KtSubstitutor {

@@ -25,7 +25,7 @@ internal class KtFe10FileSymbol(
         get() = withValidityAssertion { file }
 
     override val annotationsObject: Annotations
-        get() = analysisContext.resolveSession.getFileAnnotations(file)
+        get() = withValidityAssertion { analysisContext.resolveSession.getFileAnnotations(file) }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { if (file.isCompiled) KtSymbolOrigin.LIBRARY else KtSymbolOrigin.SOURCE }

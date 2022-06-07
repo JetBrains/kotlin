@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * To create analysis session consider using [analyse]
  */
+@Suppress("AnalysisApiMissingLifetimeCheck")
 public abstract class KtAnalysisSession(final override val token: KtLifetimeToken) : KtLifetimeOwner,
     KtSmartCastProviderMixIn,
     KtCallResolverMixIn,

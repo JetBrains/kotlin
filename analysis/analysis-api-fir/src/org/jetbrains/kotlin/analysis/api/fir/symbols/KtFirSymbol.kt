@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -27,7 +28,7 @@ internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, KtLifetime
 
     val firResolveSession: LLFirResolveSession
 
-    override val origin: KtSymbolOrigin get() = firSymbol.fir.ktSymbolOrigin()
+    override val origin: KtSymbolOrigin get() = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 }
 
 internal fun KtFirSymbol<*>.symbolEquals(other: Any?): Boolean {

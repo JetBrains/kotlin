@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,40 +44,50 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
 public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtSymbolWithMembers.getMemberScope(): KtScope =
-        analysisSession.scopeProvider.getMemberScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getMemberScope(this) }
 
     public fun KtSymbolWithMembers.getDeclaredMemberScope(): KtScope =
-        analysisSession.scopeProvider.getDeclaredMemberScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getDeclaredMemberScope(this) }
 
     public fun KtSymbolWithMembers.getDelegatedMemberScope(): KtScope =
-        analysisSession.scopeProvider.getDelegatedMemberScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getDelegatedMemberScope(this) }
 
     public fun KtSymbolWithMembers.getStaticMemberScope(): KtScope =
-        analysisSession.scopeProvider.getStaticMemberScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getStaticMemberScope(this) }
 
     public fun KtFileSymbol.getFileScope(): KtScope =
-        analysisSession.scopeProvider.getFileScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getFileScope(this) }
 
     public fun KtPackageSymbol.getPackageScope(): KtScope =
-        analysisSession.scopeProvider.getPackageScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getPackageScope(this) }
 
     public fun List<KtScope>.asCompositeScope(): KtScope =
-        analysisSession.scopeProvider.getCompositeScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getCompositeScope(this) }
 
     public fun KtType.getTypeScope(): KtScope? =
-        analysisSession.scopeProvider.getTypeScope(this)
+        withValidityAssertion { analysisSession.scopeProvider.getTypeScope(this) }
 
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
-        analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
+        withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
 
     public fun KtFile.getScopeContextForFile(): KtScopeContext =
-        analysisSession.scopeProvider.getScopeContextForPosition(this, this)
+        withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, this) }
 }
 
-public data class KtScopeContext(val scopes: KtScope, val implicitReceivers: List<KtImplicitReceiver>)
+public data class KtScopeContext(
+    private val _scopes: KtScope,
+    private val _implicitReceivers: List<KtImplicitReceiver>,
+    override val token: KtLifetimeToken
+) : KtLifetimeOwner {
+    val implicitReceivers: List<KtImplicitReceiver> get() = withValidityAssertion { _implicitReceivers }
+    val scopes: KtScope get() = withValidityAssertion { _scopes }
+}
 
 public class KtImplicitReceiver(
     override val token: KtLifetimeToken,
-    public val type: KtType,
-    public val ownerSymbol: KtSymbol
-) : KtLifetimeOwner
+    private val _type: KtType,
+    private val _ownerSymbol: KtSymbol
+) : KtLifetimeOwner {
+    public val ownerSymbol: KtSymbol get() = withValidityAssertion { _ownerSymbol }
+    public val type: KtType get() = withValidityAssertion { _type }
+}

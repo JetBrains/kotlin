@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
@@ -31,13 +32,13 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * - `Unit` type for statements;
      */
     public fun KtExpression.getKtType(): KtType? =
-        analysisSession.expressionTypeProvider.getKtExpressionType(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.getKtExpressionType(this) }
 
     /**
      * Returns the return type of the given [KtDeclaration] as [KtType]
      */
     public fun KtDeclaration.getReturnKtType(): KtType =
-        analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this) }
 
     /**
      * Returns the functional type of the given [KtFunction].
@@ -50,14 +51,14 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * such as `SuspendFunction`, `KFunction`, or `KSuspendFunction`, will be constructed.
      */
     public fun KtFunction.getFunctionalType(): KtType =
-        analysisSession.expressionTypeProvider.getFunctionalTypeForKtFunction(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.getFunctionalTypeForKtFunction(this) }
 
     /**
      * Returns the expected [KtType] of this [PsiElement] if it is an expression. The returned value should not be a
      * [org.jetbrains.kotlin.analysis.api.types.KtClassErrorType].
      */
     public fun PsiElement.getExpectedType(): KtType? =
-        analysisSession.expressionTypeProvider.getExpectedType(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.getExpectedType(this) }
 
     /**
      * Returns `true` if this expression is definitely null, based on declared nullability and smart cast types derived from
@@ -82,11 +83,11 @@ public interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
      * [spec](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability) provides an explanation on smart cast stability.
      */
     public fun KtExpression.isDefinitelyNull(): Boolean =
-        analysisSession.expressionTypeProvider.isDefinitelyNull(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.isDefinitelyNull(this) }
 
     /**
      * Returns `true` if this expression is definitely not null. See [isDefinitelyNull] for examples.
      */
     public fun KtExpression.isDefinitelyNotNull(): Boolean =
-        analysisSession.expressionTypeProvider.isDefinitelyNotNull(this)
+        withValidityAssertion { analysisSession.expressionTypeProvider.isDefinitelyNotNull(this) }
 }

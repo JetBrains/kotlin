@@ -41,7 +41,7 @@ internal class KtFirMapBackedSubstitutor(
     builder: KtSymbolByFirBuilder,
     token: KtLifetimeToken
 ) : AbstractKtFirSubstitutor<ConeSubstitutorByMap>(_substitutor, builder, token), KtMapBackedSubstitutor {
-    override fun getAsMap(): Map<KtTypeParameterSymbol, KtType> {
+    override fun getAsMap(): Map<KtTypeParameterSymbol, KtType> = withValidityAssertion {
         val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
         for ((typeParameter, type) in substitutor.substitution) {
             val typeParameterSymbol = builderRef.classifierBuilder.buildTypeParameterSymbolByLookupTag(typeParameter.toLookupTag())

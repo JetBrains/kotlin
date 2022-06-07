@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
@@ -28,44 +32,50 @@ public inline fun KtTypeCreatorMixIn.buildClassType(
     classId: ClassId,
     build: KtClassTypeBuilder.() -> Unit = {}
 ): KtClassType =
-    analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.ByClassId(classId).apply(build))
+    analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.ByClassId(classId, token).apply(build))
 
 public inline fun KtTypeCreatorMixIn.buildClassType(
     symbol: KtClassLikeSymbol,
     build: KtClassTypeBuilder.() -> Unit = {}
 ): KtClassType =
-    analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.BySymbol(symbol).apply(build))
+    analysisSession.typesCreator.buildClassType(KtClassTypeBuilder.BySymbol(symbol, token).apply(build))
 
 public inline fun KtTypeCreatorMixIn.buildTypeParameterType(
     symbol: KtTypeParameterSymbol,
     build: KtTypeParameterTypeBuilder.() -> Unit = {}
 ): KtTypeParameterType =
-    analysisSession.typesCreator.buildTypeParameterType(KtTypeParameterTypeBuilder.BySymbol(symbol).apply(build))
+    analysisSession.typesCreator.buildTypeParameterType(KtTypeParameterTypeBuilder.BySymbol(symbol, token).apply(build))
 
-public sealed class KtTypeBuilder
+public sealed class KtTypeBuilder : KtLifetimeOwner
 
 public sealed class KtClassTypeBuilder : KtTypeBuilder() {
     private val _arguments = mutableListOf<KtTypeArgument>()
 
     public var nullability: KtTypeNullability = KtTypeNullability.NON_NULLABLE
 
-    public val arguments: List<KtTypeArgument> get() = _arguments
+    public val arguments: List<KtTypeArgument> get() = withValidityAssertion { _arguments }
 
     public fun argument(argument: KtTypeArgument) {
+        assertIsValidAndAccessible()
         _arguments += argument
     }
 
-    public fun argument(type: KtType, variance: Variance = Variance.INVARIANT) {
+    public fun argument(type: KtType, variance: Variance = Variance.INVARIANT)  {
+        assertIsValidAndAccessible()
         _arguments += KtTypeArgumentWithVariance(type, variance, type.token)
     }
 
-    public class ByClassId(public val classId: ClassId) : KtClassTypeBuilder()
-    public class BySymbol(public val symbol: KtClassLikeSymbol) : KtClassTypeBuilder()
+    public class ByClassId(public val classId: ClassId, override val token: KtLifetimeToken) : KtClassTypeBuilder()
+    public class BySymbol(private val _symbol: KtClassLikeSymbol, override val token: KtLifetimeToken) : KtClassTypeBuilder() {
+        public val symbol: KtClassLikeSymbol get() = withValidityAssertion { _symbol }
+    }
 }
 
 public sealed class KtTypeParameterTypeBuilder : KtTypeBuilder() {
     public var nullability: KtTypeNullability = KtTypeNullability.NULLABLE
 
-    public class BySymbol(public val symbol: KtTypeParameterSymbol) : KtTypeParameterTypeBuilder()
+    public class BySymbol(private val _symbol: KtTypeParameterSymbol, override val token: KtLifetimeToken) : KtTypeParameterTypeBuilder() {
+        public val symbol: KtTypeParameterSymbol get() = withValidityAssertion { _symbol }
+    }
 }
 

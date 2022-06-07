@@ -52,7 +52,7 @@ internal class KtFirTypeAliasSymbol(
         KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
     }
 
-    override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating symbols for library typealiases is not supported yet")
     }

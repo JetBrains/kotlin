@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
@@ -20,5 +21,5 @@ public interface KtJvmTypeMapperMixIn : KtAnalysisSessionMixIn {
      * @see TypeMappingMode
      */
     public fun KtType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type =
-        analysisSession.jvmTypeMapper.mapTypeToJvmType(this, mode)
+        withValidityAssertion { analysisSession.jvmTypeMapper.mapTypeToJvmType(this, mode) }
 }

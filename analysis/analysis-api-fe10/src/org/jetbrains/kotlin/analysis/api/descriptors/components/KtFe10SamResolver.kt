@@ -25,7 +25,7 @@ internal class KtFe10SamResolver(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol? = withValidityAssertion {
+    override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol?  {
         val descriptor = getSymbolDescriptor(ktClassLikeSymbol)
         if (descriptor is ClassDescriptor && getSingleAbstractMethodOrNull(descriptor) != null) {
             val constructorDescriptor = createSamConstructorFunction(

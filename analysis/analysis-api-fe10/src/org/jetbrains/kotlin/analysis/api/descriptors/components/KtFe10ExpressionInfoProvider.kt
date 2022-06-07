@@ -27,7 +27,7 @@ internal class KtFe10ExpressionInfoProvider(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? = withValidityAssertion {
+    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
         val bindingContext = analysisContext.analyze(returnExpression, AnalysisMode.PARTIAL)
         val targetLabel = returnExpression.getTargetLabel()
             ?: return returnExpression.parentOfType<KtNamedFunction>()
@@ -36,7 +36,7 @@ internal class KtFe10ExpressionInfoProvider(
         return with(analysisSession) { labelTarget.getSymbol() as? KtCallableSymbol }
     }
 
-    override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> = withValidityAssertion {
+    override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>  {
         val bindingContext = analysisContext.analyze(whenExpression)
         return WhenChecker.getMissingCases(whenExpression, bindingContext)
     }

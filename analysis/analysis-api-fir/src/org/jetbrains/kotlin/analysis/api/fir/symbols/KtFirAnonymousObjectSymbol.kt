@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPoin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -32,8 +33,12 @@ internal class KtFirAnonymousObjectSymbol(
     override val superTypes: List<KtType> by cached { firSymbol.superTypesList(builder) }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> =
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
-            ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("Cannot create pointer for KtFirAnonymousObjectSymbol")
+        withValidityAssertion {
+            withValidityAssertion {
+                KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+                    ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("Cannot create pointer for KtFirAnonymousObjectSymbol")
+            }
+        }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)
     override fun hashCode(): Int = symbolHashCode()
