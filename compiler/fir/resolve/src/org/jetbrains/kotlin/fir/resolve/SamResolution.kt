@@ -276,10 +276,10 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
     for (clazz in classes) {
         for (declaration in clazz.declarations) {
             when (declaration) {
-                is FirProperty -> if (declaration.modality == Modality.ABSTRACT) {
+                is FirProperty -> if (declaration.resolvedIsAbstract) {
                     samCandidateNames.add(declaration.name)
                 }
-                is FirSimpleFunction -> if (declaration.modality == Modality.ABSTRACT) {
+                is FirSimpleFunction -> if (declaration.resolvedIsAbstract) {
                     samCandidateNames.add(declaration.name)
                 }
                 else -> {}
@@ -304,7 +304,7 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
         if (metIncorrectMember) break
 
         classUseSiteMemberScope.processPropertiesByName(candidateName) {
-            if ((it as? FirPropertySymbol)?.fir?.modality == Modality.ABSTRACT) {
+            if (it is FirPropertySymbol && it.fir.resolvedIsAbstract) {
                 metIncorrectMember = true
             }
         }
@@ -313,7 +313,7 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 
         classUseSiteMemberScope.processFunctionsByName(candidateName) { functionSymbol ->
             val firFunction = functionSymbol.fir
-            if (firFunction.modality != Modality.ABSTRACT ||
+            if (!firFunction.resolvedIsAbstract ||
                 firFunction.isPublicInObject(checkOnlyName = false)
             ) return@processFunctionsByName
 
@@ -333,8 +333,8 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(): Boolean {
     var wasAbstractFunction = false
     for (declaration in declarations) {
-        if (declaration is FirProperty && declaration.modality == Modality.ABSTRACT) return true
-        if (declaration is FirSimpleFunction && declaration.modality == Modality.ABSTRACT &&
+        if (declaration is FirProperty && declaration.resolvedIsAbstract) return true
+        if (declaration is FirSimpleFunction && declaration.resolvedIsAbstract &&
             !declaration.isPublicInObject(checkOnlyName = true)
         ) {
             if (wasAbstractFunction) return true
@@ -344,6 +344,13 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
 
     return false
 }
+
+/**
+ * Checks if declaration is indeed abstract, ensuring that its status has been completely resolved
+ * beforehand.
+ */
+private val FirCallableDeclaration.resolvedIsAbstract: Boolean
+    get() = symbol.isAbstract
 
 // From the definition of function interfaces in the Java specification (pt. 9.8):
 // "methods that are members of I that do not have the same signature as any public instance method of the class Object"
