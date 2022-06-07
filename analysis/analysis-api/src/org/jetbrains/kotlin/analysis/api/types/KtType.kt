@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.types
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -66,7 +67,7 @@ public abstract class KtCapturedType : KtType {
 public abstract class KtDefinitelyNotNullType : KtType {
     public abstract val original: KtType
 
-    final override val nullability: KtTypeNullability get() = KtTypeNullability.NON_NULLABLE
+    final override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.NON_NULLABLE }
 
     override fun toString(): String = asStringForDebugging()
 }

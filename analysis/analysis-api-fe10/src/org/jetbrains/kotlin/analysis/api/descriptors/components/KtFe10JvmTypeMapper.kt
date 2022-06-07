@@ -24,7 +24,7 @@ internal class KtFe10JvmTypeMapper(
 
     private val typeMapper by lazy { KtFe10JvmTypeMapperContext(analysisContext.resolveSession) }
 
-    override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type = withValidityAssertion {
+    override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type {
         val kotlinType = (type as KtFe10Type).type
         return typeMapper.mapType(kotlinType, mode)
     }

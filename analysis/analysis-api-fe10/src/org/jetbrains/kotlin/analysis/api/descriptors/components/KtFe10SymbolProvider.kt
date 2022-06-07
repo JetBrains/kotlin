@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
-import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -31,11 +30,11 @@ internal class KtFe10SymbolProvider(
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
         get() = KtFe10PackageSymbol(FqName.ROOT, analysisContext)
 
-    override fun getFileSymbol(psi: KtFile): KtFileSymbol = withValidityAssertion {
+    override fun getFileSymbol(psi: KtFile): KtFileSymbol {
         return KtFe10FileSymbol(psi, analysisContext)
     }
 
-    override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol = withValidityAssertion {
+    override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol {
         return when {
             psi.isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")
             psi.isLoopParameter -> KtFe10PsiLoopParameterLocalVariableSymbol(psi, analysisContext)
@@ -43,7 +42,7 @@ internal class KtFe10SymbolProvider(
         }
     }
 
-    override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol = withValidityAssertion {
+    override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol {
         return if (psi.hasBody() && (psi.funKeyword == null || psi.nameIdentifier == null)) {
             getAnonymousFunctionSymbol(psi)
         } else {
@@ -51,31 +50,31 @@ internal class KtFe10SymbolProvider(
         }
     }
 
-    override fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol = withValidityAssertion {
+    override fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol {
         return KtFe10PsiConstructorSymbol(psi, analysisContext)
     }
 
-    override fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol = withValidityAssertion {
+    override fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol {
         return KtFe10PsiTypeParameterSymbol(psi, analysisContext)
     }
 
-    override fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol = withValidityAssertion {
+    override fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol {
         return KtFe10PsiTypeAliasSymbol(psi, analysisContext)
     }
 
-    override fun getEnumEntrySymbol(psi: KtEnumEntry): KtEnumEntrySymbol = withValidityAssertion {
+    override fun getEnumEntrySymbol(psi: KtEnumEntry): KtEnumEntrySymbol {
         return KtFe10PsiEnumEntrySymbol(psi, analysisContext)
     }
 
-    override fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol = withValidityAssertion {
+    override fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol {
         return KtFe10PsiAnonymousFunctionSymbol(psi, analysisContext)
     }
 
-    override fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol = withValidityAssertion {
+    override fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol {
         return KtFe10PsiLiteralAnonymousFunctionSymbol(psi, analysisContext)
     }
 
-    override fun getVariableSymbol(psi: KtProperty): KtVariableSymbol = withValidityAssertion {
+    override fun getVariableSymbol(psi: KtProperty): KtVariableSymbol {
         return if (psi.isLocal) {
             KtFe10PsiLocalVariableSymbol(psi, analysisContext)
         } else {
@@ -83,11 +82,11 @@ internal class KtFe10SymbolProvider(
         }
     }
 
-    override fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol = withValidityAssertion {
+    override fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol {
         return KtFe10PsiAnonymousObjectSymbol(psi.objectDeclaration, analysisContext)
     }
 
-    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol = withValidityAssertion {
+    override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
         return if (psi is KtObjectDeclaration && psi.isObjectLiteral()) {
             KtFe10PsiAnonymousObjectSymbol(psi, analysisContext)
         } else {
@@ -95,7 +94,7 @@ internal class KtFe10SymbolProvider(
         }
     }
 
-    override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol? = withValidityAssertion {
+    override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol? {
         if (psi is KtEnumEntry || psi.nameIdentifier == null) {
             return null
         }
@@ -103,7 +102,7 @@ internal class KtFe10SymbolProvider(
         return KtFe10PsiNamedClassOrObjectSymbol(psi, analysisContext)
     }
 
-    override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol = withValidityAssertion {
+    override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol {
         return if (psi.isGetter) {
             KtFe10PsiPropertyGetterSymbol(psi, analysisContext)
         } else {
@@ -111,16 +110,16 @@ internal class KtFe10SymbolProvider(
         }
     }
 
-    override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol = withValidityAssertion {
+    override fun getClassInitializerSymbol(psi: KtClassInitializer): KtClassInitializerSymbol {
         return KtFe10PsiClassInitializerSymbol(psi, analysisContext)
     }
 
-    override fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? = withValidityAssertion {
+    override fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? {
         val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return null
         return descriptor.toKtClassSymbol(analysisContext)
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol> = withValidityAssertion {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol> {
         val packageViewDescriptor = analysisContext.resolveSession.moduleDescriptor.getPackage(packageFqName)
         return packageViewDescriptor.memberScope.getContributedDescriptors(DescriptorKindFilter.ALL, nameFilter = { it == name })
             .asSequence()

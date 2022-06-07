@@ -63,7 +63,7 @@ internal class KtFirSamConstructorSymbol(
     override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
-    override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> = withValidityAssertion {
         val callableId = firSymbol.callableId
         return KtFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName))
     }

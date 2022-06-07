@@ -21,7 +21,7 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
      * Gets the smart-cast information of the given expression or null if the expression is not smart casted.
      */
     public fun KtExpression.getSmartCastInfo(): KtSmartCastInfo? =
-        analysisSession.smartCastProvider.getSmartCastedInfo(this)
+        withValidityAssertion { analysisSession.smartCastProvider.getSmartCastedInfo(this) }
 
     /**
      * Returns the list of implicit smart-casts which are required for the expression to be called. Includes only implicit
@@ -36,7 +36,7 @@ public interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
      * ```
      */
     public fun KtExpression.getImplicitReceiverSmartCast(): Collection<KtImplicitReceiverSmartCast> =
-        analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this)
+        withValidityAssertion { analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this) }
 }
 
 public data class KtSmartCastInfo(

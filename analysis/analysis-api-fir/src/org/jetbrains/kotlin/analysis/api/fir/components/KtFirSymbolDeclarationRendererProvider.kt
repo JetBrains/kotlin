@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.ensureResolved
 
 internal class KtFirSymbolDeclarationRendererProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtSymbolDeclarationRendererProvider() {
 
     override fun render(type: KtType, options: KtTypeRendererOptions): String {

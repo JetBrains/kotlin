@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 
@@ -15,8 +16,8 @@ public abstract class KtInheritorsProvider : KtAnalysisSessionComponent() {
 
 public interface KtInheritorsProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtNamedClassOrObjectSymbol.getSealedClassInheritors(): List<KtNamedClassOrObjectSymbol> =
-        analysisSession.inheritorsProvider.getInheritorsOfSealedClass(this)
+        withValidityAssertion { analysisSession.inheritorsProvider.getInheritorsOfSealedClass(this) }
 
     public fun KtNamedClassOrObjectSymbol.getEnumEntries(): List<KtEnumEntrySymbol> =
-        analysisSession.inheritorsProvider.getEnumEntries(this)
+        withValidityAssertion { analysisSession.inheritorsProvider.getEnumEntries(this) }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -30,7 +31,7 @@ public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMi
      * @see getDirectlyOverriddenSymbols
      */
     public fun KtCallableSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> =
-        analysisSession.symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this)
+        withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this) }
 
     /**
      * Return a list of symbols which are **directly** overridden by symbol
@@ -42,14 +43,14 @@ public interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMi
      *  @see getAllOverriddenSymbols
      */
     public fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
-        analysisSession.symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this)
+        withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this) }
 
     public fun KtClassOrObjectSymbol.isSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
-        analysisSession.symbolDeclarationOverridesProvider.isSubClassOf(this, superClass)
+        withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.isSubClassOf(this, superClass) }
 
     public fun KtClassOrObjectSymbol.isDirectSubClassOf(superClass: KtClassOrObjectSymbol): Boolean =
-        analysisSession.symbolDeclarationOverridesProvider.isDirectSubClassOf(this, superClass)
+        withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.isDirectSubClassOf(this, superClass) }
 
     public fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
-        analysisSession.symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
+        withValidityAssertion { analysisSession.symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this) }
 }

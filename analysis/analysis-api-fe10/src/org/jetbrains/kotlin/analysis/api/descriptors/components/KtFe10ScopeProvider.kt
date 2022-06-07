@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.*
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10FileScope
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10PackageScope
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeLexical
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeMember
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
@@ -21,16 +24,16 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
-import org.jetbrains.kotlin.analysis.api.scopes.*
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -55,21 +58,21 @@ internal class KtFe10ScopeProvider(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
+    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
         return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, analysisContext)
     }
 
-    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
+    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
         return KtFe10ScopeMember(DeclaredMemberScope(descriptor), analysisContext)
     }
 
-    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
+    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope  {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
@@ -151,21 +154,21 @@ internal class KtFe10ScopeProvider(
 
     }
 
-    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope = withValidityAssertion {
+    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
         return KtFe10ScopeMember(descriptor.staticScope, analysisContext)
     }
 
-    override fun getEmptyScope(): KtScope = withValidityAssertion {
-        KtEmptyScope(token)
+    override fun getEmptyScope(): KtScope {
+        return KtEmptyScope(token)
     }
 
-    override fun getFileScope(fileSymbol: KtFileSymbol): KtScope = withValidityAssertion {
+    override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
         require(fileSymbol is KtFe10FileSymbol)
         return KtFe10FileScope(fileSymbol.psi, analysisContext, token)
     }
 
-    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope = withValidityAssertion {
+    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope {
         require(packageSymbol is KtFe10PackageSymbol)
         val packageFragments = analysisContext.resolveSession.packageFragmentProvider.packageFragments(packageSymbol.fqName)
         val scopeDescription = "Compound scope for package \"${packageSymbol.fqName}\""
@@ -173,28 +176,28 @@ internal class KtFe10ScopeProvider(
         return KtFe10PackageScope(chainedScope, packageSymbol, analysisContext)
     }
 
-    override fun getCompositeScope(subScopes: List<KtScope>): KtScope = withValidityAssertion {
+    override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
         return KtCompositeScope(subScopes, token)
     }
 
-    override fun getTypeScope(type: KtType): KtScope = withValidityAssertion {
+    override fun getTypeScope(type: KtType): KtScope {
         require(type is KtFe10Type)
         return KtFe10ScopeMember(type.type.memberScope, analysisContext)
     }
 
-    override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext = withValidityAssertion {
+    override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext {
         val elementToAnalyze = positionInFakeFile.containingNonLocalDeclaration() ?: originalFile
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
         val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
             val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
-            return KtScopeContext(compositeScope, collectImplicitReceivers(lexicalScope))
+            return KtScopeContext(compositeScope, collectImplicitReceivers(lexicalScope), token)
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
         val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
-        return KtScopeContext(compositeScope, collectImplicitReceivers(fileScope))
+        return KtScopeContext(compositeScope, collectImplicitReceivers(fileScope), token)
     }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KtSymbol): T? {

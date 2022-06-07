@@ -38,7 +38,7 @@ internal class KtFe10DescSyntheticFieldSymbol(
         }
 
     override val annotationsObject: Annotations
-        get() = descriptor.annotations
+        get() = withValidityAssertion { descriptor.annotations }
 
     override val returnType: KtType
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }
