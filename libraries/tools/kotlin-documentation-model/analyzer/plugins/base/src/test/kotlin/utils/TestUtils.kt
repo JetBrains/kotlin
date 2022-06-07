@@ -66,6 +66,7 @@ val DClass.supers
 val Bound.name: String?
     get() = when (this) {
         is Nullable -> inner.name
+        is DefinitelyNonNullable -> inner.name
         is TypeParameter -> name
         is PrimitiveJavaType -> name
         is TypeConstructor -> dri.classNames

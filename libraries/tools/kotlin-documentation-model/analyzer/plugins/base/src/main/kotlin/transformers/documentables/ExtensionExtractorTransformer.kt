@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.toList
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.model.*
@@ -91,6 +90,7 @@ private fun Callable.asPairsWithReceiverDRIs(): Sequence<Pair<DRI, Callable>> =
 // care about it since there is nowhere to put documentation of given extension.
 private fun Callable.findReceiverDRIs(bound: Bound): Sequence<DRI> = when (bound) {
     is Nullable -> findReceiverDRIs(bound.inner)
+    is DefinitelyNonNullable -> findReceiverDRIs(bound.inner)
     is TypeParameter ->
         if (this is DFunction && bound.dri == this.dri)
             generics.find { it.name == bound.name }?.bounds?.asSequence()?.flatMap(::findReceiverDRIs).orEmpty()

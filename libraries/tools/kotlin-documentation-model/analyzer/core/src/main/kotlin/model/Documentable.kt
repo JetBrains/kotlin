@@ -459,6 +459,11 @@ data class UnresolvedBound(
 // The following Projections are not AnnotationTargets; they cannot be annotated.
 data class Nullable(val inner: Bound) : Bound()
 
+/**
+ * It introduces [definitely non-nullable types](https://github.com/Kotlin/KEEP/blob/c72601cf35c1e95a541bb4b230edb474a6d1d1a8/proposals/definitely-non-nullable-types.md)
+ */
+data class DefinitelyNonNullable(val inner: Bound) : Bound()
+
 sealed class Variance<out T : Bound> : Projection() {
     abstract val inner: T
 }

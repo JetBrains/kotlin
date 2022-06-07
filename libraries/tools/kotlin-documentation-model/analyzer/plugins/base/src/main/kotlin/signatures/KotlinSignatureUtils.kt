@@ -39,6 +39,7 @@ object KotlinSignatureUtils : JvmSignatureUtils {
                 is TypeParameter -> dri
                 is TypeConstructor -> dri
                 is Nullable -> inner.driOrNull
+                is DefinitelyNonNullable -> inner.driOrNull
                 is PrimitiveJavaType -> dri
                 is Void -> DriOfUnit
                 is JavaObject -> DriOfAny
@@ -52,6 +53,7 @@ object KotlinSignatureUtils : JvmSignatureUtils {
         is TypeParameter -> listOf(dri)
         is TypeConstructor -> listOf(dri) + projections.flatMap { it.drisOfAllNestedBounds }
         is Nullable -> inner.drisOfAllNestedBounds
+        is DefinitelyNonNullable -> inner.drisOfAllNestedBounds
         is PrimitiveJavaType -> listOf(dri)
         is Void -> listOf(DriOfUnit)
         is JavaObject -> listOf(DriOfAny)
