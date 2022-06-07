@@ -9,12 +9,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
+import org.jetbrains.kotlin.analysis.api.fir.symbols.returnType
 import org.jetbrains.kotlin.analysis.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.isKCallableType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -178,11 +181,17 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return null
     }
 
-    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
+    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirCallableSymbol<*>>> {
         return buildList {
             scopes.forEach { scope ->
                 val importKind = ImportKind.fromScope(scope)
                 scope.getFunctions(name).mapTo(this) { AvailableSymbol(it, importKind) }
+                scope.getProperties(name).mapNotNullTo(this) { property ->
+                    val classType = property.resolvedReturnType.toRegularClassSymbol(firSession) ?: return@mapNotNullTo null
+                    val potentialInvoke = classType.declarationSymbols.firstOrNull { declaration -> declaration.isInvokeFunction() }
+                    if (potentialInvoke?.isInvokeFunction() == true) AvailableSymbol(property, importKind)
+                    else null
+                }
 
                 val classCandidate = scope.findFirstClassifierByName(name)?.fir as? FirClass
                 if (classCandidate != null) {
