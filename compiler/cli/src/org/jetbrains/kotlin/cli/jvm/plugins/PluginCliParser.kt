@@ -57,6 +57,7 @@ object PluginCliParser {
     }
 
     @JvmStatic
+    @Suppress("DEPRECATION")
     fun loadPlugins(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration) {
         val classLoader = URLClassLoader(
             pluginClasspaths

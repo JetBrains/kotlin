@@ -48,6 +48,7 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
     }
 }
 
+@Suppress("DEPRECATION")
 public class ExampleComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val exampleValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_KEY)

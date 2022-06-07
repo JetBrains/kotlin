@@ -167,6 +167,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     }
 }
 
+@Suppress("DEPRECATION")
 class Kapt3ComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         doOpenInternalPackagesIfRequired()

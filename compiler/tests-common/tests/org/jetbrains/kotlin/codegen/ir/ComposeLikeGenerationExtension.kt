@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.codegen.ir
 
 import com.intellij.mock.MockProject

@@ -100,6 +100,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     }
 }
 
+@Suppress("DEPRECATION")
 class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
         fun registerParcelExtensions(project: Project) {
