@@ -234,6 +234,7 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
             addIfNotNull(createFakeImportingScope(newImports))
             addAll(towerDataContext.localScopes)
+            addAll(towerDataContext.implicitReceiverStack.mapNotNull { it.implicitScope })
         }
 
         return result.asReversed()
