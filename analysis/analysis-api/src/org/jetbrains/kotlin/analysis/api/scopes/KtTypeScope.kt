@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.scopes
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 
 
 public interface KtTypeScope : KtScopeLike {
