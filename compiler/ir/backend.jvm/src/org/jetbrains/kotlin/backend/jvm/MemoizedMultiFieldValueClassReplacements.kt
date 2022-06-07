@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -89,20 +89,23 @@ class MemoizedMultiFieldValueClassReplacements(
         .flatMap { it.valueParameters }.mapIndexed { index: Int, template -> template.toParameter(this, index) }
 
     private fun List<ValueParameterTemplate>.grouped(
+        substitutionMap: Map<IrTypeParameterSymbol, IrType>,
         originWhenFlattenedAndNotSpecified: IrDeclarationOrigin? = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER
     ): List<RemappedParameter> = map { parameter ->
         val declarations = parameter.type.takeIf { !it.isNullable() }?.erasedUpperBound?.let { getDeclarations(it) }
             ?: return@map RemappedParameter.RegularMapping(parameter)
         require(!parameter.original.hasDefaultValue()) { "Default parameters values are not supported for multi-field value classes" }
-        RemappedParameter.MultiFieldValueClassMapping(declarations, declarations.leaves.map { leaf ->
-            ValueParameterTemplate(
-                name = "${parameter.name}$${declarations.nodeFullNames[leaf]!!}",
-                type = leaf.type,
-                origin = parameter.origin ?: originWhenFlattenedAndNotSpecified,
-                defaultValue = null,
-                original = parameter.original,
-            )
-        })
+        val localSubstitutionMap = declarations.valueClass.typeParameters.zip((parameter.type as IrSimpleType).arguments)
+            .mapNotNull { (parameter, argument) -> if (argument is IrSimpleType) parameter.symbol to argument.type else null}.toMap()
+        MultiFieldValueClassMapping(declarations, parameter.type.substitute(substitutionMap) as IrSimpleType, declarations.leaves.map { leaf ->
+                ValueParameterTemplate(
+                    name = "${parameter.name}$${declarations.nodeFullNames[leaf]!!}",
+                    type = leaf.type.substitute(localSubstitutionMap),
+                    origin = parameter.origin ?: originWhenFlattenedAndNotSpecified,
+                    defaultValue = null,
+                    original = parameter.original,
+                )
+            })
     }
 
     private fun buildReplacement(
@@ -122,7 +125,7 @@ class MemoizedMultiFieldValueClassReplacements(
     }
 
     private fun makeGroupedValueParametersFrom(
-        function: IrFunction, includeDispatcherReceiver: Boolean
+        function: IrFunction, includeDispatcherReceiver: Boolean, substitutionMap: Map<IrTypeParameterSymbol, IrType>
     ): List<RemappedParameter> {
         val newFlattenedParameters = mutableListOf<RemappedParameter>()
         if (function.dispatchReceiverParameter != null && includeDispatcherReceiver) {
@@ -133,7 +136,7 @@ class MemoizedMultiFieldValueClassReplacements(
                 defaultValue = null,
                 original = function.parentAsClass.thisReceiver!!,
             )
-            newFlattenedParameters.addAll(listOf(template).grouped())
+            newFlattenedParameters.addAll(listOf(template).grouped(substitutionMap))
         }
         val contextReceivers = function.valueParameters.take(function.contextReceiverParametersCount)
             .mapIndexed { index: Int, valueParameter: IrValueParameter ->
@@ -145,7 +148,7 @@ class MemoizedMultiFieldValueClassReplacements(
                     original = valueParameter,
                 )
             }
-            .grouped()
+            .grouped(substitutionMap)
         newFlattenedParameters.addAll(contextReceivers)
         function.extensionReceiverParameter?.let {
             val template = ValueParameterTemplate(
@@ -155,11 +158,11 @@ class MemoizedMultiFieldValueClassReplacements(
                 defaultValue = it.defaultValue,
                 original = it,
             )
-            newFlattenedParameters.addAll(listOf(template).grouped())
+            newFlattenedParameters.addAll(listOf(template).grouped(substitutionMap))
         }
         newFlattenedParameters += function.valueParameters.drop(function.contextReceiverParametersCount).map {
             ValueParameterTemplate(it, origin = null)
-        }.grouped()
+        }.grouped(substitutionMap)
         return newFlattenedParameters
     }
 
@@ -170,6 +173,7 @@ class MemoizedMultiFieldValueClassReplacements(
 
         data class MultiFieldValueClassMapping(
             val declarations: MultiFieldValueClassSpecificDeclarations,
+            val boxedType: IrSimpleType,
             override val valueParameters: List<ValueParameterTemplate>,
         ) : RemappedParameter() {
             init {
@@ -181,41 +185,53 @@ class MemoizedMultiFieldValueClassReplacements(
     }
 
     val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
-    val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
-
+    val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> =
+        object : ConcurrentHashMap<IrFunction, List<RemappedParameter>>() {
+            override fun put(key: IrFunction, value: List<RemappedParameter>): List<RemappedParameter>? {
+                require(key.explicitParametersCount == value.sumOf { it.valueParameters.size }) {
+                    "Illegal structure $value for function ${key.dump()}"
+                }
+                return super.put(key, value)
+            }
+        }
+// todo inline classes pass type arguments correctly
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT, noFakeOverride = true) {
             originalFunctionForStaticReplacement[this] = function
-            val newFlattenedParameters = makeGroupedValueParametersFrom(function, includeDispatcherReceiver = true)
+            typeParameters = listOf()
+            copyTypeParametersFrom(function.parentAsClass)
+            val substitutionMap = function.parentAsClass.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
+            copyTypeParametersFrom(function, parameterMap = (function.parentAsClass.typeParameters zip typeParameters).toMap())
+            val newFlattenedParameters = makeGroupedValueParametersFrom(function, includeDispatcherReceiver = true, substitutionMap)
+            valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
             bindingOldFunctionToParameterTemplateStructure[function] = newFlattenedParameters
             bindingNewFunctionToParameterTemplateStructure[this] = newFlattenedParameters
-            valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
         }
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction = buildReplacement(function, function.origin) {
         originalFunctionForMethodReplacement[this] = function
         dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
-        val newFlattenedParameters = makeGroupedValueParametersFrom(function, includeDispatcherReceiver = false)
+        val newFlattenedParameters = makeGroupedValueParametersFrom(function, includeDispatcherReceiver = false, mapOf())
         val receiver = dispatchReceiverParameter
         val receiverTemplate = if (receiver != null) ValueParameterTemplate(receiver, origin = receiver.origin) else null
         val remappedParameters =
             if (receiverTemplate != null) listOf(RemappedParameter.RegularMapping(receiverTemplate)) + newFlattenedParameters else newFlattenedParameters
+        valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
         bindingOldFunctionToParameterTemplateStructure[function] = remappedParameters
         bindingNewFunctionToParameterTemplateStructure[this] = remappedParameters
-        valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
     }
 
     private fun createConstructorReplacement(@Suppress("UNUSED_PARAMETER") constructor: IrConstructor): IrConstructor {
-        val newFlattenedParameters = makeGroupedValueParametersFrom(constructor, includeDispatcherReceiver = false)
+        val newFlattenedParameters = makeGroupedValueParametersFrom(constructor, includeDispatcherReceiver = false, mapOf())
         bindingOldFunctionToParameterTemplateStructure[constructor] = newFlattenedParameters
         val newConstructor = irFactory.buildConstructor {
             updateFrom(constructor)
             returnType = constructor.returnType
         }.apply {
+            parent = constructor.parent
             copyTypeParametersFrom(constructor)
             valueParameters = makeValueParametersFromTemplate(newFlattenedParameters)
             annotations = constructor.annotations
-            parent = constructor.parent
             originalConstructorForConstructorReplacement[this] = constructor
         }
         bindingNewFunctionToParameterTemplateStructure[newConstructor] = newFlattenedParameters
