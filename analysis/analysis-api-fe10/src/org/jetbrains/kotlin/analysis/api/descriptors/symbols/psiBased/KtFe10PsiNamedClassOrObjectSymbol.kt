@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktMod
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSymbolKind
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.invalidClassKindError
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -26,10 +27,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -72,7 +70,7 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
     override val classKind: KtClassKind
         get() = withValidityAssertion {
             when (psi) {
-                is KtEnumEntry -> KtClassKind.ENUM_ENTRY
+                is KtEnumEntry -> invalidClassKindError(ClassKind.ENUM_ENTRY)
                 is KtObjectDeclaration -> when {
                     psi.isCompanion() -> KtClassKind.COMPANION_OBJECT
                     psi.isObjectLiteral() -> KtClassKind.ANONYMOUS_OBJECT
