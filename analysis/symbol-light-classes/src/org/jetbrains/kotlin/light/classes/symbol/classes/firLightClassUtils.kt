@@ -234,6 +234,7 @@ internal fun FirLightClassBase.createMethods(
                 suppressStatic = suppressStatic
             )
             is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
+            else -> { }
         }
     }
 
