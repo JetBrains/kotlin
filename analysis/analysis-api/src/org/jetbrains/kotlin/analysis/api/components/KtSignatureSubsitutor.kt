@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 
 public abstract class KtSignatureSubsitutor : KtAnalysisSessionComponent() {
     public abstract fun <S : KtCallableSymbol> substitute(
-        signature: KtSignature<S>,
+        signature: KtCallableSignature<S>,
         substitutor: KtSubstitutor
-    ): KtSignature<S>
+    ): KtCallableSignature<S>
 
     public abstract fun <S : KtFunctionLikeSymbol> substitute(
         signature: KtFunctionLikeSignature<S>,
@@ -25,13 +25,13 @@ public abstract class KtSignatureSubsitutor : KtAnalysisSessionComponent() {
         substitutor: KtSubstitutor
     ): KtVariableLikeSignature<S>
 
-    public abstract fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtSignature<S>
+    public abstract fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S>
 
     public abstract fun <S : KtFunctionLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtFunctionLikeSignature<S>
 
     public abstract fun <S : KtVariableLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtVariableLikeSignature<S>
 
-    public abstract fun <S : KtCallableSymbol> asSignature(symbol: S): KtSignature<S>
+    public abstract fun <S : KtCallableSymbol> asSignature(symbol: S): KtCallableSignature<S>
 
     public abstract fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S>
 
@@ -44,7 +44,7 @@ public interface KtSignatureSubsitutorMixIn : KtAnalysisSessionMixIn {
      *
      * @see KtSubstitutor.substituteOrSelf
      */
-    public fun <S : KtCallableSymbol> KtSignature<S>.substitute(substitutor: KtSubstitutor): KtSignature<S> =
+    public fun <S : KtCallableSymbol> KtCallableSignature<S>.substitute(substitutor: KtSubstitutor): KtCallableSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.substitute(this, substitutor) }
 
     /**
@@ -68,7 +68,7 @@ public interface KtSignatureSubsitutorMixIn : KtAnalysisSessionMixIn {
      *
      * @see KtSubstitutor.substituteOrSelf
      */
-    public fun <S : KtCallableSymbol> S.substitute(substitutor: KtSubstitutor): KtSignature<S> =
+    public fun <S : KtCallableSymbol> S.substitute(substitutor: KtSubstitutor): KtCallableSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.substitute(this, substitutor) }
 
     /**
@@ -88,19 +88,19 @@ public interface KtSignatureSubsitutorMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.substitutionProvider.substitute(this, substitutor) }
 
     /**
-     * Creates a new [KtSignature] by given symbol and leave all types intact
+     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
      */
-    public fun <S : KtCallableSymbol> S.asSignature(): KtSignature<S> =
+    public fun <S : KtCallableSymbol> S.asSignature(): KtCallableSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.asSignature(this) }
 
     /**
-     * Creates a new [KtSignature] by given symbol and leave all types intact
+     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
      */
     public fun <S : KtFunctionLikeSymbol> S.asSignature(): KtFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.asSignature(this) }
 
     /**
-     * Creates a new [KtSignature] by given symbol and leave all types intact
+     * Creates a new [KtCallableSignature] by given symbol and leave all types intact
      */
     public fun <S : KtVariableLikeSymbol> S.asSignature(): KtVariableLikeSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.asSignature(this) }

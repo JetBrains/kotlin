@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 abstract class AbstractKtSignatureSubsitutorImpl : KtSignatureSubsitutor() {
     @Suppress("UNCHECKED_CAST")
-    override fun <S : KtCallableSymbol> substitute(signature: KtSignature<S>, substitutor: KtSubstitutor): KtSignature<S> {
+    override fun <S : KtCallableSymbol> substitute(signature: KtCallableSignature<S>, substitutor: KtSubstitutor): KtCallableSignature<S> {
         return when (signature) {
             is KtFunctionLikeSignature -> {
-                substitute(signature as KtFunctionLikeSignature<KtFunctionLikeSymbol>, substitutor) as KtSignature<S>
+                substitute(signature as KtFunctionLikeSignature<KtFunctionLikeSymbol>, substitutor) as KtCallableSignature<S>
             }
             is KtVariableLikeSignature -> {
-                substitute(signature as KtVariableLikeSignature<KtVariableLikeSymbol>, substitutor) as KtSignature<S>
+                substitute(signature as KtVariableLikeSignature<KtVariableLikeSymbol>, substitutor) as KtCallableSignature<S>
             }
         }
     }
@@ -50,7 +50,7 @@ abstract class AbstractKtSignatureSubsitutorImpl : KtSignatureSubsitutor() {
 
 
     @Suppress("UNCHECKED_CAST")
-    override fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtSignature<S> {
+    override fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> {
         return when (symbol) {
             is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
             is KtVariableLikeSymbol -> substitute(symbol, substitutor)
@@ -77,7 +77,7 @@ abstract class AbstractKtSignatureSubsitutorImpl : KtSignatureSubsitutor() {
         )
     }
 
-    override fun <S : KtCallableSymbol> asSignature(symbol: S): KtSignature<S> {
+    override fun <S : KtCallableSymbol> asSignature(symbol: S): KtCallableSignature<S> {
         return when (symbol) {
             is KtFunctionLikeSymbol -> asSignature(symbol)
             is KtVariableLikeSymbol -> asSignature(symbol)

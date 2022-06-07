@@ -369,7 +369,7 @@ internal class KtSymbolByFirBuilder constructor(
             }
         }
 
-        fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KtSignature<KtCallableSymbol> {
+        fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KtCallableSignature<KtCallableSymbol> {
             return when (firSymbol) {
                 is FirPropertyAccessorSymbol ->  with(analysisSession) { buildPropertyAccessorSymbol(firSymbol).asSignature() }
                 is FirFunctionSymbol<*> -> functionLikeBuilder.buildFunctionLikeSignature(firSymbol)

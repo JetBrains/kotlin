@@ -504,7 +504,7 @@ internal class KtFe10CallResolver(
         }
     }
 
-    private fun createSignature(symbol: KtSymbol, resultingDescriptor: CallableDescriptor): KtSignature<*>? {
+    private fun createSignature(symbol: KtSymbol, resultingDescriptor: CallableDescriptor): KtCallableSignature<*>? {
         val returnType = if (resultingDescriptor is ValueParameterDescriptor && resultingDescriptor.isVararg) {
             val arrayType = resultingDescriptor.returnType ?: return null
             val primitiveArrayElementType = KotlinBuiltIns.getPrimitiveArrayElementType(arrayType)

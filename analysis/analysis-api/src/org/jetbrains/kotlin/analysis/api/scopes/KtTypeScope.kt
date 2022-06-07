@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.scopes
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSignature
 
 
 public interface KtTypeScope : KtScopeLike {
@@ -16,7 +16,7 @@ public interface KtTypeScope : KtScopeLike {
     /**
      * Return a sequence of [KtCallableSymbol] which current scope contain if declaration name matches [nameFilter]
      */
-    public fun getCallableSignatures(nameFilter: KtScopeNameFilter = { true }): Sequence<KtSignature<*>>
+    public fun getCallableSignatures(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSignature<*>>
 
     /**
      * Return a sequence of [KtClassifierSymbol] which current scope contain if declaration name matches [nameFilter]
