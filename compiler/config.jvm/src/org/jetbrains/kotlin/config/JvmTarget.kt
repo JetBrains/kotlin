@@ -58,5 +58,14 @@ enum class JvmTarget(
 
         fun supportedValues(): List<JvmTarget> =
             values().asList() - JVM_1_6
+
+        const val SUPPORTED_VERSIONS_DESCRIPTION =
+            "1.8, 9, 10, ..., 18"
+
+        init {
+            check(SUPPORTED_VERSIONS_DESCRIPTION == "1.8, 9, 10, ..., ${values().last().description}") {
+                "Please update the value of the constant JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION."
+            }
+        }
     }
 }

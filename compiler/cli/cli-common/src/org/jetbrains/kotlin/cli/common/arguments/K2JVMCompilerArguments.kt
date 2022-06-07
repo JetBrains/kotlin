@@ -75,7 +75,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.8, 9, 10, ..., 18), default is 1.8"
+        description = "Target version of the generated JVM bytecode (${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}), default is 1.8"
     )
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
@@ -378,7 +378,7 @@ default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise""
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's `-release`. Requires JDK 9 or newer.
-Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 17.
+Supported versions depend on the used JDK; for JDK 17+ supported versions are ${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}.
 Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var jdkRelease: String? by NullableStringFreezableVar(null)
