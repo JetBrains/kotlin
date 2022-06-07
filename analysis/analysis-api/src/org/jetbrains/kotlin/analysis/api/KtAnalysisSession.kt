@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -57,7 +57,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtMemberSymbolProviderMixin,
     KtInheritorsProviderMixIn,
     KtTypeCreatorMixIn,
-    KtAnalysisScopeProviderMixIn {
+    KtAnalysisScopeProviderMixIn,
+    KtSignatureSubsitutorMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -142,6 +143,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     internal val referenceResolveProvider: KtReferenceResolveProvider get() = referenceResolveProviderImpl
     protected abstract val referenceResolveProviderImpl: KtReferenceResolveProvider
+
+    internal val substitutionProvider: KtSignatureSubsitutor get() = substitutionProviderImpl
+    protected abstract val substitutionProviderImpl: KtSignatureSubsitutor
 
     @PublishedApi
     internal val typesCreator: KtTypeCreator
