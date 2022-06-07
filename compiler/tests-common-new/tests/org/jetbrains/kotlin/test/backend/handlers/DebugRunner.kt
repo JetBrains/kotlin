@@ -14,24 +14,17 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
+import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
+import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
+import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
 import java.io.File
 import java.net.URL
-
-open class LoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
 
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
 
     companion object {
-        const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
-        const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
-        const val JVM_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM"
-        const val JVM_IR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM_IR"
-        const val CLASSIC_FRONTEND_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER CLASSIC_FRONTEND"
-        const val FIR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER FIR"
-
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
@@ -39,7 +32,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     private var backend = TargetBackend.JVM
     private var frontend: FrontendKind<*> = FrontendKinds.ClassicFrontend
 
-    abstract fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event)
+    abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 
     override fun launchSeparateJvmProcess(
         javaExe: File,
@@ -81,7 +74,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     // Debug event loop to step through a test program.
     private fun runDebugEventLoop(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
-        val loggedItems = ArrayList<LoggedData>()
+        val loggedItems = ArrayList<SteppingTestLoggedData>()
         var inBoxMethod = false
         vmLoop@
         while (true) {
@@ -164,96 +157,12 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             }
             eventSet.resume()
         }
-        checkResult(wholeFile, loggedItems)
+        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems)
         virtualMachine.resume()
     }
 
-    fun Location.formatAsExpectation(): String {
-        val synthetic = if (method().isSynthetic) " (synthetic)" else ""
-        return "${sourceName()}:${lineNumber()} ${method().name()}$synthetic"
-    }
-
-    fun checkResult(wholeFile: File, loggedItems: List<LoggedData>) {
-        val actual = mutableListOf<String>()
-        val lines = wholeFile.readLines()
-        val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
-
-        val actualLineNumbers = compressSequencesWithoutLinenumber(loggedItems)
-            .filter {
-                // Ignore synthetic code with no line number information unless force step into behavior is requested.
-                forceStepInto || !it.isSynthetic
-            }
-            .map { "// ${it.expectation}" }
-        val actualLineNumbersIterator = actualLineNumbers.iterator()
-
-        val lineIterator = lines.iterator()
-        for (line in lineIterator) {
-            actual.add(line)
-            if (line.startsWith(EXPECTATIONS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
-        }
-
-        var currentBackend = TargetBackend.ANY
-        var currentFrontend = frontend
-        for (line in lineIterator) {
-            if (line.isEmpty()) {
-                actual.add(line)
-                continue
-            }
-            if (line.startsWith(EXPECTATIONS_MARKER)) {
-                actual.add(line)
-                currentBackend = when (line) {
-                    EXPECTATIONS_MARKER -> TargetBackend.ANY
-                    JVM_EXPECTATIONS_MARKER -> TargetBackend.JVM
-                    JVM_IR_EXPECTATIONS_MARKER -> TargetBackend.JVM_IR
-                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> currentBackend
-                    FIR_EXPECTATIONS_MARKER -> currentBackend
-                    else -> error("Expected JVM backend: $line")
-                }
-                currentFrontend = when (line) {
-                    EXPECTATIONS_MARKER -> frontend
-                    JVM_EXPECTATIONS_MARKER -> currentFrontend
-                    JVM_IR_EXPECTATIONS_MARKER -> currentFrontend
-                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> FrontendKinds.ClassicFrontend
-                    FIR_EXPECTATIONS_MARKER -> FrontendKinds.FIR
-                    else -> error("Expected JVM backend: $line")
-                }
-                continue
-            }
-            if ((currentBackend == TargetBackend.ANY || currentBackend == backend) &&
-                currentFrontend == frontend) {
-                if (actualLineNumbersIterator.hasNext()) {
-                    actual.add(actualLineNumbersIterator.next())
-                }
-            } else {
-                actual.add(line)
-            }
-        }
-
-        actualLineNumbersIterator.forEach { actual.add(it) }
-
-        assertEqualsToFile(wholeFile, actual.joinToString("\n"))
-    }
-
-    // Compresses sequences of the same location without line number in the log:
-    // specifically removes locations without linenumber, that would otherwise
-    // print as byte offsets. This avoids overspecifying code generation
-    // strategy in debug tests.
-    fun compressSequencesWithoutLinenumber(loggedItems: List<LoggedData>): List<LoggedData> {
-        if (loggedItems.isEmpty()) return listOf()
-
-        val logIterator = loggedItems.iterator()
-        var currentItem = logIterator.next()
-        val result = mutableListOf(currentItem)
-
-        for (logItem in logIterator) {
-            if (currentItem.line != -1 || currentItem.expectation != logItem.expectation) {
-                result.add(logItem)
-                currentItem = logItem
-            }
-        }
-
-        return result
-    }
+    fun Location.formatAsExpectation() =
+        formatAsSteppingTestExpectation(sourceName(), lineNumber(), method().name(), method().isSynthetic)
 
     fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
@@ -281,11 +190,11 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
 }
 
 class SteppingDebugRunner(testServices: TestServices) : DebugRunner(testServices) {
-    override fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event) {
+    override fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event) {
         assert(event is LocatableEvent)
         val location = (event as LocatableEvent).location()
         loggedItems.add(
-            LoggedData(
+            SteppingTestLoggedData(
                 location.lineNumber(),
                 location.method().isSynthetic,
                 location.formatAsExpectation()
@@ -343,7 +252,7 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
         }
     }
 
-    override fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event) {
+    override fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event) {
         val locatableEvent = event as LocatableEvent
         waitUntil { locatableEvent.thread().isSuspended }
         val location = locatableEvent.location()
@@ -357,7 +266,7 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
             listOf()
         }
         loggedItems.add(
-            LoggedData(
+            SteppingTestLoggedData(
                 location.lineNumber(),
                 false,
                 "${location.formatAsExpectation()}: ${visibleVars.joinToString(", ")}".trim()
