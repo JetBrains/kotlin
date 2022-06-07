@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -52,7 +51,7 @@ public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOw
 /**
  * A signature of a function-like symbol.
  */
-public data class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
+public class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
     private val _symbol: S,
     private val _returnType: KtType,
     private val _receiverType: KtType?,
@@ -72,12 +71,34 @@ public data class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
      */
     public val valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>
         get() = withValidityAssertion { _valueParameters }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KtFunctionLikeSignature<*>
+
+        if (_symbol != other._symbol) return false
+        if (_returnType != other._returnType) return false
+        if (_receiverType != other._receiverType) return false
+        if (_valueParameters != other._valueParameters) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = _symbol.hashCode()
+        result = 31 * result + _returnType.hashCode()
+        result = 31 * result + (_receiverType?.hashCode() ?: 0)
+        result = 31 * result + _valueParameters.hashCode()
+        return result
+    }
 }
 
 /**
  * A signature of a variable-like symbol.
  */
-public data class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
+public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
     private val _symbol: S,
     private val _returnType: KtType,
     private val _receiverType: KtType?,
@@ -116,7 +137,7 @@ public data class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
      *
      * @see org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder.unwrapUseSiteSubstitutionOverride
      */
-    val name: Name
+    public val name: Name
         get() = withValidityAssertion {
             // The case where PSI is null is when calling `invoke()` on a variable with functional type, e.g. `x(1)` below:
             //
@@ -146,5 +167,25 @@ public data class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
         } else {
             implicitAnnotations.singleOrNull()
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KtVariableLikeSignature<*>
+
+        if (_symbol != other._symbol) return false
+        if (_returnType != other._returnType) return false
+        if (_receiverType != other._receiverType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = _symbol.hashCode()
+        result = 31 * result + _returnType.hashCode()
+        result = 31 * result + (_receiverType?.hashCode() ?: 0)
+        return result
     }
 }
