@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -41,20 +40,14 @@ class FirDataFrameReceiverInjector(
     }
 
     @Suppress("UNCHECKED_CAST")
-    @OptIn(SymbolInternals::class)
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        //println(functionCall)
         val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-        print(functionCall)
-////                val vararg = call.argument as? FirVarargArgumentsExpression ?: TODO("interpret functionCall with respect to parameter annotations")
-////                val selectedColumns: List<String> = vararg.arguments.map { (it as? FirConstExpression<String>)?.value ?: TODO("only const vararg can be evaluated at compile time") }
-
         val processor = findSchemaProcessor(functionCall) ?: return emptyList()
 
-        val res = interpret(functionCall, processor)
+        val dataFrameSchema = interpret(functionCall, processor)
 
-        val properties = res.columns.map {
+        val properties = dataFrameSchema.columns.map {
             val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(it.value.type.fqName))).constructType(
                 emptyArray(), false
             )
@@ -110,7 +103,6 @@ class FirDataFrameReceiverInjector(
             val name = it.parameterName.identifier
             val expectedReturnType = expectedArgsMap[name]!!.klass
             @Suppress("UNCHECKED_CAST") val value: Any = when (it.annotationName.identifier) {
-                "Name" -> (it.expression as FirConstExpression<String>).value
                 "Value" -> {
                     when (val expression = it.expression) {
                         is FirConstExpression<*> -> expression.value!!
@@ -145,14 +137,7 @@ class FirDataFrameReceiverInjector(
                         "'$name' should be ${PluginDataFrameSchema::class.qualifiedName!!}, but plugin expect $expectedReturnType"
                     }
 
-                    val annotation: FirAnnotation = it.expression.toResolvedCallableSymbol()!!.resolvedReturnType.toSymbol(session)!!.let {
-                        it.annotations
-                            .firstOrNull { it.fqName(session)!!.shortName().identifier == HasSchema::class.simpleName!! }
-                            ?: error("Annotate ${it} with @HasSchema")
-                    }
-
-                    val arg =
-                        (annotation.argumentMapping.mapping[Name.identifier(HasSchema::schemaArg.name)] as FirConstExpression<Int>).value
+                    val arg = it.expression.getSchema().schemaArg
                     val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
                     if (schemaTypeArg.isStarProjection) {
                         PluginDataFrameSchema(mapOf())
@@ -187,13 +172,15 @@ class FirDataFrameReceiverInjector(
         return constructor.newInstance() as T
     }
 
-    fun FirExpression.findSchema(): ObjectWithSchema? {
-        return typeRef.coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)?.annotations?.firstNotNullOfOrNull {
-            runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
-                val argumentName = Name.identifier(HasSchema::schemaArg.name)
-                @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirConstExpression<Int>).value
-                ObjectWithSchema(schemaArg)
-            }
+    fun FirExpression.getSchema(): ObjectWithSchema {
+        return typeRef.coneTypeSafe<ConeClassLikeType>()!!.toSymbol(session)!!.let {
+            it.annotations.firstNotNullOfOrNull {
+                runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
+                    val argumentName = Name.identifier(HasSchema::schemaArg.name)
+                    @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirConstExpression<Int>).value
+                    ObjectWithSchema(schemaArg)
+                }
+            } ?: error("Annotate ${it} with @HasSchema")
         }
     }
 
