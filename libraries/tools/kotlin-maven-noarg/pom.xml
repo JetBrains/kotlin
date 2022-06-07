@@ -6,8 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.5</maven.version>
-        <noarg.src>${basedir}/../../../plugins/noarg/noarg-cli/src</noarg.src>
-        <noarg.resources>${basedir}/../../../plugins/noarg/noarg-cli/resources</noarg.resources>
+        <noarg.common.src>${basedir}/../../../plugins/noarg/noarg.common/src</noarg.common.src>
+        <noarg.k1.src>${basedir}/../../../plugins/noarg/noarg.k1/src</noarg.k1.src>
+        <noarg.k2.src>${basedir}/../../../plugins/noarg/noarg.k2/src</noarg.k2.src>
+        <noarg.backend.src>${basedir}/../../../plugins/noarg/noarg.backend/src</noarg.backend.src>
+        <noarg.cli.src>${basedir}/../../../plugins/noarg/noarg.cli/src</noarg.cli.src>
+        <noarg.resources>${basedir}/../../../plugins/noarg/noarg.cli/resources</noarg.resources>
         <noarg.maven.plugin.src>${basedir}/src/main/kotlin</noarg.maven.plugin.src>
     </properties>
 
@@ -53,7 +57,11 @@
                         <configuration>
                             <sources>
                                 <source>${noarg.maven.plugin.src}</source>
-                                <source>${noarg.src}</source>
+                                <source>${noarg.common.src}</source>
+                                <source>${noarg.k1.src}</source>
+                                <source>${noarg.k2.src}</source>
+                                <source>${noarg.backend.src}</source>
+                                <source>${noarg.cli.src}</source>
                             </sources>
                         </configuration>
                     </execution>

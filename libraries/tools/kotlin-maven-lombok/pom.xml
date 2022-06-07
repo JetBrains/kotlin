@@ -6,8 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.5</maven.version>
-        <lombok.src>${basedir}/../../../plugins/lombok/lombok-compiler-plugin/src</lombok.src>
-        <lombok.resources>${basedir}/../../../plugins/lombok/lombok-compiler-plugin/resources</lombok.resources>
+        <lombok.common.src>${basedir}/../../../plugins/lombok/lombok.common/src</lombok.common.src>
+        <lombok.k1.src>${basedir}/../../../plugins/lombok/lombok.k1/src</lombok.k1.src>
+        <lombok.k2.src>${basedir}/../../../plugins/lombok/lombok.k2/src</lombok.k2.src>
+        <lombok.cli.src>${basedir}/../../../plugins/lombok/lombok.cli/src</lombok.cli.src>
+        <lombok.resources>${basedir}/../../../plugins/lombok/lombok.cli/resources</lombok.resources>
         <lombok.maven.plugin.src>${basedir}/src/main/kotlin</lombok.maven.plugin.src>
     </properties>
 
@@ -56,7 +59,10 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${lombok.src}</source>
+                                <source>${lombok.common.src}</source>
+                                <source>${lombok.k1.src}</source>
+                                <source>${lombok.k2.src}</source>
+                                <source>${lombok.cli.src}</source>
                                 <source>${lombok.maven.plugin.src}</source>
                             </sources>
                         </configuration>
