@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -94,14 +95,7 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val classKind: KtClassKind
         get() = withValidityAssertion {
-            when (firSymbol.classKind) {
-                ClassKind.INTERFACE -> KtClassKind.INTERFACE
-                ClassKind.ENUM_CLASS -> KtClassKind.ENUM_CLASS
-                ClassKind.ENUM_ENTRY -> KtClassKind.ENUM_ENTRY
-                ClassKind.ANNOTATION_CLASS -> KtClassKind.ANNOTATION_CLASS
-                ClassKind.CLASS -> KtClassKind.CLASS
-                ClassKind.OBJECT -> if (firSymbol.isCompanion) KtClassKind.COMPANION_OBJECT else KtClassKind.OBJECT
-            }
+            firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
         }
 
     override val symbolKind: KtSymbolKind

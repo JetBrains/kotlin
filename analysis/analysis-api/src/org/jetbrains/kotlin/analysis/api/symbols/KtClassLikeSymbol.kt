@@ -91,7 +91,6 @@ public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
 public enum class KtClassKind {
     CLASS,
     ENUM_CLASS,
-    ENUM_ENTRY,
     ANNOTATION_CLASS,
     OBJECT,
     COMPANION_OBJECT,

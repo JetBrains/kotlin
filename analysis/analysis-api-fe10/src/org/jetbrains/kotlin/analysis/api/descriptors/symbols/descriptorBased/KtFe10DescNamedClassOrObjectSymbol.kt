@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescNamedClassOrObjectSymbolSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -16,9 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -55,20 +55,10 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
 
     override val classKind: KtClassKind
         get() = withValidityAssertion {
-            if (descriptor.isCompanionObject) {
-                return KtClassKind.COMPANION_OBJECT
-            } else if (DescriptorUtils.isAnonymousObject(descriptor)) {
+            if (DescriptorUtils.isAnonymousObject(descriptor)) {
                 error("Should be an anonymous object")
             }
-
-            return when (descriptor.kind) {
-                ClassKind.CLASS -> KtClassKind.CLASS
-                ClassKind.INTERFACE -> KtClassKind.INTERFACE
-                ClassKind.ENUM_CLASS -> KtClassKind.ENUM_CLASS
-                ClassKind.ENUM_ENTRY -> KtClassKind.ENUM_ENTRY
-                ClassKind.ANNOTATION_CLASS -> KtClassKind.ANNOTATION_CLASS
-                ClassKind.OBJECT -> KtClassKind.OBJECT
-            }
+            descriptor.kind.toKtClassKind(isCompanionObject = descriptor.isCompanionObject)
         }
 
     override val superTypes: List<KtType>
