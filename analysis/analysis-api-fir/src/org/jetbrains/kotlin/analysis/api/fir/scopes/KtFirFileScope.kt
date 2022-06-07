@@ -32,7 +32,7 @@ internal class KtFirFileScope(
         _callableNames + _classifierNames
     }
 
-    override fun getAllPossibleNames(): Set<Name> = allNamesCached
+    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
     private val _callableNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()
@@ -48,7 +48,7 @@ internal class KtFirFileScope(
         result
     }
 
-    override fun getPossibleCallableNames(): Set<Name> = _callableNames
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { _callableNames }
 
     private val _classifierNames: Set<Name> by cached {
         val result = mutableSetOf<Name>()
@@ -60,7 +60,7 @@ internal class KtFirFileScope(
         result
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = _classifierNames
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion { _classifierNames }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
         sequence {
@@ -94,7 +94,7 @@ internal class KtFirFileScope(
     }
 
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
         emptySequence()

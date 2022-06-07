@@ -77,7 +77,7 @@ internal class KtFirPropertySetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
 
-    override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating pointers for setters from library is not supported yet")
     }

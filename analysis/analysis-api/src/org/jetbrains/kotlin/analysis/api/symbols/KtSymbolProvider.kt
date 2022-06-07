@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionMixIn
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -57,7 +58,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
 
 public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtDeclaration.getSymbol(): KtSymbol =
-        analysisSession.symbolProvider.getSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getSymbol(this) }
 
     /**
      * Creates [KtVariableLikeSymbol] by [KtParameter].
@@ -74,7 +75,7 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
      * Otherwise, returns [KtValueParameterSymbol].
      */
     public fun KtParameter.getParameterSymbol(): KtVariableLikeSymbol =
-        analysisSession.symbolProvider.getParameterSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getParameterSymbol(this) }
 
     /**
      * Creates [KtFunctionLikeSymbol] by [KtNamedFunction]
@@ -83,55 +84,55 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
      * Otherwise, returns [KtFunctionSymbol]
      */
     public fun KtNamedFunction.getFunctionLikeSymbol(): KtFunctionLikeSymbol =
-        analysisSession.symbolProvider.getFunctionLikeSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getFunctionLikeSymbol(this) }
 
     public fun KtConstructor<*>.getConstructorSymbol(): KtConstructorSymbol =
-        analysisSession.symbolProvider.getConstructorSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getConstructorSymbol(this) }
 
     public fun KtTypeParameter.getTypeParameterSymbol(): KtTypeParameterSymbol =
-        analysisSession.symbolProvider.getTypeParameterSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getTypeParameterSymbol(this) }
 
     public fun KtTypeAlias.getTypeAliasSymbol(): KtTypeAliasSymbol =
-        analysisSession.symbolProvider.getTypeAliasSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getTypeAliasSymbol(this) }
 
     public fun KtEnumEntry.getEnumEntrySymbol(): KtEnumEntrySymbol =
-        analysisSession.symbolProvider.getEnumEntrySymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getEnumEntrySymbol(this) }
 
     public fun KtNamedFunction.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol =
-        analysisSession.symbolProvider.getAnonymousFunctionSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getAnonymousFunctionSymbol(this) }
 
     public fun KtFunctionLiteral.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol =
-        analysisSession.symbolProvider.getAnonymousFunctionSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getAnonymousFunctionSymbol(this) }
 
     public fun KtProperty.getVariableSymbol(): KtVariableSymbol =
-        analysisSession.symbolProvider.getVariableSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getVariableSymbol(this) }
 
     public fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol =
-        analysisSession.symbolProvider.getAnonymousObjectSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getAnonymousObjectSymbol(this) }
 
     public fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol =
-        analysisSession.symbolProvider.getClassOrObjectSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbol(this) }
 
     /** Gets the corresponding class or object symbol or null if the given [KtClassOrObject] is an enum entry. */
     public fun KtClassOrObject.getNamedClassOrObjectSymbol(): KtNamedClassOrObjectSymbol? =
-        analysisSession.symbolProvider.getNamedClassOrObjectSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getNamedClassOrObjectSymbol(this) }
 
     public fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol =
-        analysisSession.symbolProvider.getPropertyAccessorSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getPropertyAccessorSymbol(this) }
 
     public fun KtFile.getFileSymbol(): KtFileSymbol =
-        analysisSession.symbolProvider.getFileSymbol(this)
+        withValidityAssertion { analysisSession.symbolProvider.getFileSymbol(this) }
 
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */
     public fun ClassId.getCorrespondingToplevelClassOrObjectSymbol(): KtClassOrObjectSymbol? =
-        analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(this)
+        withValidityAssertion { analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(this) }
 
     public fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> =
-        analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name)
+        withValidityAssertion { analysisSession.symbolProvider.getTopLevelCallableSymbols(this, name) }
 
     @Suppress("PropertyName")
     public val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
-        get() = analysisSession.symbolProvider.ROOT_PACKAGE_SYMBOL
+        get() = withValidityAssertion { analysisSession.symbolProvider.ROOT_PACKAGE_SYMBOL }
 }

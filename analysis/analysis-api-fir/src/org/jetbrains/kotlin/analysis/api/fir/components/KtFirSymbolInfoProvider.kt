@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 internal class KtFirSymbolInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtSymbolInfoProvider(), KtFirAnalysisSessionComponent {
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
         if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol) return null

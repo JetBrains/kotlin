@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 public abstract class KtAnalysisScopeProvider : KtAnalysisSessionComponent() {
     public abstract fun getAnalysisScope(): GlobalSearchScope
@@ -21,7 +22,7 @@ public interface KtAnalysisScopeProviderMixIn : KtAnalysisSessionMixIn {
      * That means [org.jetbrains.kotlin.analysis.api.symbols.KtSymbol] can be built for the declarations from this scope.
      */
     public val analysisScope: GlobalSearchScope
-        get() = analysisSession.analysisScopeProvider.getAnalysisScope()
+        get() = withValidityAssertion { analysisSession.analysisScopeProvider.getAnalysisScope() }
 
 
     /**
@@ -31,5 +32,5 @@ public interface KtAnalysisScopeProviderMixIn : KtAnalysisSessionMixIn {
      * @see analysisScope
      */
     public fun PsiElement.canBeAnalysed(): Boolean =
-        analysisSession.analysisScopeProvider.canBeAnalysed(this)
+        withValidityAssertion { analysisSession.analysisScopeProvider.canBeAnalysed(this) }
 }

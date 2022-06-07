@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -16,10 +17,10 @@ public abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
 
 public interface KtDiagnosticProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
-        analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter)
+        withValidityAssertion { analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter) }
 
     public fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
-        analysisSession.diagnosticProvider.collectDiagnosticsForFile(this, filter)
+        withValidityAssertion { analysisSession.diagnosticProvider.collectDiagnosticsForFile(this, filter) }
 }
 
 public enum class KtDiagnosticCheckerFilter {

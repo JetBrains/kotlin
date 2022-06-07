@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.getReferencedElementType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -37,8 +37,8 @@ internal class KtFirExpressionTypeProvider(
     override val token: KtLifetimeToken,
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
 
-    override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
-        when (val fir = expression.unwrap().getOrBuildFir(firResolveSession)) {
+    override fun getKtExpressionType(expression: KtExpression): KtType? {
+        return when (val fir = expression.unwrap().getOrBuildFir(firResolveSession)) {
             is FirFunctionCall -> {
                 getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
                     ?: fir.typeRef.coneType.asKtType()
@@ -94,14 +94,14 @@ internal class KtFirExpressionTypeProvider(
         return setTargetArgumentParameter.returnTypeRef.coneType.asKtType()
     }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
         val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
-        firDeclaration.returnTypeRef.coneType.asKtType()
+        return firDeclaration.returnTypeRef.coneType.asKtType()
     }
 
-    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType = withValidityAssertion {
+    override fun getFunctionalTypeForKtFunction(declaration: KtFunction): KtType {
         val firFunction = declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
-        firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
+        return firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
     }
 
     override fun getExpectedType(expression: PsiElement): KtType? {
@@ -224,7 +224,7 @@ internal class KtFirExpressionTypeProvider(
     override fun isDefinitelyNotNull(expression: KtExpression): Boolean =
         getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL
 
-    private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability = withValidityAssertion {
+    private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
         fun FirExpression.isNotNullable() = with(analysisSession.useSiteSession.typeContext) {
             !typeRef.coneType.isNullableType()
         }

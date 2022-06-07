@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.typeApproximator
 
 internal class KtFirTypeInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtTypeInfoProvider(), KtFirAnalysisSessionComponent {
 
     override fun isFunctionalInterfaceType(type: KtType): Boolean {

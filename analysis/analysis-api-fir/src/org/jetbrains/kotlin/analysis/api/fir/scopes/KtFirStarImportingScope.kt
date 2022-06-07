@@ -48,7 +48,7 @@ internal class KtFirStarImportingScope(
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     // todo cache?
     @OptIn(ExperimentalStdlibApi::class)

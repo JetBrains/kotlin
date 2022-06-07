@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -18,5 +19,5 @@ public interface KtSamResolverMixIn : KtAnalysisSessionMixIn {
      * Returns [KtSamConstructorSymbol] if the given [KtClassLikeSymbol] is a functional interface type, a.k.a. SAM.
      */
     public fun KtClassLikeSymbol.getSamConstructor(): KtSamConstructorSymbol? =
-        analysisSession.samResolver.getSamConstructor(this)
+        withValidityAssertion { analysisSession.samResolver.getSamConstructor(this) }
 }
