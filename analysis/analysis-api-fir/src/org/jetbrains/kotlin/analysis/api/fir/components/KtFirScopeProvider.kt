@@ -235,7 +235,6 @@ internal class KtFirScopeProvider(
                 analysisSession.targetPlatform
             )
             is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder, token)
-            is FirMemberTypeParameterScope -> KtFirDelegatingScope(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }
     }
