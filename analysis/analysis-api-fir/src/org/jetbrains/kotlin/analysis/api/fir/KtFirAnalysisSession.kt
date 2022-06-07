@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+
 @Suppress("AnalysisApiMissingLifetimeCheck")
 internal class KtFirAnalysisSession
 private constructor(
@@ -35,7 +36,7 @@ private constructor(
     private val mode: AnalysisSessionMode,
 ) : KtAnalysisSession(token) {
 
-    internal val firSymbolBuilder: KtSymbolByFirBuilder = KtSymbolByFirBuilder(firResolveSession, project, token)
+    internal val firSymbolBuilder: KtSymbolByFirBuilder = KtSymbolByFirBuilder(project, this, token)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override val useSiteModule: KtModule get() = firResolveSession.useSiteKtModule
@@ -102,6 +103,8 @@ private constructor(
 
     override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFirReferenceResolveProvider(this)
 
+    override val substitutionProviderImpl: KtSignatureSubsitutor = KtFirSignatureSubsitutor(this)
+
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
@@ -118,7 +121,6 @@ private constructor(
         return KtFirAnalysisSession(
             project,
             contextFirResolveSession,
-            firSymbolBuilder.createReadOnlyCopy(contextFirResolveSession),
             token,
             AnalysisSessionMode.DEPENDENT_COPY
         )

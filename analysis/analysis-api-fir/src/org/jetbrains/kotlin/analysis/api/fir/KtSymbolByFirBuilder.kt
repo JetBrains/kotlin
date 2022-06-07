@@ -12,10 +12,8 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -52,11 +50,12 @@ import kotlin.contracts.contract
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
  */
-internal class KtSymbolByFirBuilder private constructor(
+internal class KtSymbolByFirBuilder constructor(
     private val project: Project,
-    private val firResolveSession: LLFirResolveSession,
+    private val analysisSession: KtFirAnalysisSession,
     val token: KtLifetimeToken,
 ) {
+    private val firResolveSession: LLFirResolveSession = analysisSession.firResolveSession
     private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
     val rootSession: FirSession = firResolveSession.useSiteFirSession
 
@@ -191,7 +190,7 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildFunctionLikeSignature(fir: FirFunctionSymbol<*>): KtFunctionLikeSignature<KtFunctionLikeSymbol> {
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
                 return buildFunctionSignature(fir)
-            return buildFunctionLikeSymbol(fir).toSignature()
+            return with(analysisSession) { buildFunctionLikeSymbol(fir).asSignature() }
         }
 
         fun buildFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KtFirFunctionSymbol {
@@ -282,7 +281,7 @@ internal class KtSymbolByFirBuilder private constructor(
             if (firSymbol is FirPropertySymbol && !firSymbol.isLocal && firSymbol !is FirSyntheticPropertySymbol) {
                 return buildPropertySignature(firSymbol)
             }
-            return buildVariableLikeSymbol(firSymbol).toSignature()
+            return with(analysisSession) { buildVariableLikeSymbol(firSymbol).asSignature() }
         }
 
         fun buildVariableSymbol(firSymbol: FirPropertySymbol): KtVariableSymbol {
@@ -372,7 +371,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
         fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KtSignature<KtCallableSymbol> {
             return when (firSymbol) {
-                is FirPropertyAccessorSymbol -> buildPropertyAccessorSymbol(firSymbol).toSignature()
+                is FirPropertyAccessorSymbol ->  with(analysisSession) { buildPropertyAccessorSymbol(firSymbol).asSignature() }
                 is FirFunctionSymbol<*> -> functionLikeBuilder.buildFunctionLikeSignature(firSymbol)
                 is FirVariableSymbol<*> -> variableLikeBuilder.buildVariableLikeSignature(firSymbol)
                 else -> throwUnexpectedElementError(firSymbol)
