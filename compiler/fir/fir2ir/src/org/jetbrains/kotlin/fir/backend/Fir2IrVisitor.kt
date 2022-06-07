@@ -448,14 +448,23 @@ class Fir2IrVisitor(
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
-        val explicitReceiverExpression = convertToIrReceiverExpression(
-            qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.calleeReference
-        )
-        return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
+        return convertQualifiedAccessExpression(qualifiedAccessExpression)
     }
 
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): IrElement {
-        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+        return convertQualifiedAccessExpression(propertyAccessExpression)
+    }
+
+    private fun convertQualifiedAccessExpression(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        annotationMode: Boolean = false
+    ) : IrExpression {
+        val explicitReceiverExpression = convertToIrReceiverExpression(
+            qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.calleeReference
+        )
+        return callGenerator.convertToIrCall(
+            qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression, annotationMode = annotationMode
+        )
     }
 
     // Note that this mimics psi2ir [StatementGenerator#isThisForClassPhysicallyAvailable].
@@ -621,9 +630,10 @@ class Fir2IrVisitor(
                 val unwrappedExpression = expression.unwrapArgument()
                 if (annotationMode) {
                     when (unwrappedExpression) {
-                        is FirFunctionCall -> convertToIrCall(unwrappedExpression, annotationMode)
-                        is FirArrayOfCall -> convertToArrayOfCall(unwrappedExpression, annotationMode)
+                        is FirFunctionCall -> convertToIrCall(unwrappedExpression, true)
+                        is FirArrayOfCall -> convertToArrayOfCall(unwrappedExpression, true)
                         is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
+                        is FirQualifiedAccessExpression -> convertQualifiedAccessExpression(unwrappedExpression, true)
                         else -> expression.accept(this, null) as IrExpression
                     }
                 } else {

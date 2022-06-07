@@ -480,11 +480,19 @@ class CallAndReferenceGenerator(
                             )
                         }
                     }
-                    is IrFieldSymbol -> IrGetFieldImpl(
-                        startOffset, endOffset, symbol, type,
-                        origin = IrStatementOrigin.GET_PROPERTY.takeIf { calleeReference !is FirDelegateFieldReference },
-                        superQualifierSymbol = dispatchReceiver.superQualifierSymbolForField(symbol)
-                    )
+                    is IrFieldSymbol -> if (annotationMode) {
+                        val resolvedSymbol = calleeReference.resolvedSymbol ?: error("should have resolvedSymbol")
+                        val returnType = (resolvedSymbol as FirCallableSymbol<*>).resolvedReturnTypeRef.toIrType()
+                        val firConstExpression = (resolvedSymbol.fir as FirVariable).initializer as? FirConstExpression<*>
+                            ?: error("should be FirConstExpression")
+                        firConstExpression.toIrConst(returnType)
+                    } else {
+                        IrGetFieldImpl(
+                            startOffset, endOffset, symbol, type,
+                            origin = IrStatementOrigin.GET_PROPERTY.takeIf { calleeReference !is FirDelegateFieldReference },
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbolForField(symbol)
+                        )
+                    }
                     is IrValueSymbol -> {
                         IrGetValueImpl(
                             startOffset, endOffset, type, symbol,

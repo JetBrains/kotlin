@@ -562,6 +562,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("argWithDefaultValueInAnnotationClass.kt")
+            public void testArgWithDefaultValueInAnnotationClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/argWithDefaultValueInAnnotationClass.kt");
+            }
+
+            @Test
             @TestMetadata("arrayInAnnotationArguments.kt")
             public void testArrayInAnnotationArguments() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/arrayInAnnotationArguments.kt");
