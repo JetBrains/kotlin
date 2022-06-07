@@ -37,7 +37,7 @@ class KtCompositeTypeScope(
     }
 
 
-    override fun getCallableSignatures(nameFilter: KtScopeNameFilter): Sequence<KtSignature<*>> = withValidityAssertion {
+    override fun getCallableSignatures(nameFilter: KtScopeNameFilter): Sequence<KtCallableSignature<*>> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getCallableSignatures(nameFilter)) }
         }

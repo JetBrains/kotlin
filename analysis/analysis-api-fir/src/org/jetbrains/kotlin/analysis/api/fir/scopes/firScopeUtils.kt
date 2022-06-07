@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSignature
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -37,7 +37,7 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
 
 internal fun FirScope.getCallableSignatures(callableNames: Collection<Name>, builder: KtSymbolByFirBuilder) = sequence {
     callableNames.forEach { name ->
-        val signatures = mutableListOf<KtSignature<*>>()
+        val signatures = mutableListOf<KtCallableSignature<*>>()
         processFunctionsByName(name) { firSymbol ->
             signatures.add(builder.functionLikeBuilder.buildFunctionLikeSignature(firSymbol))
         }
