@@ -36,7 +36,7 @@ internal class KtFe10InheritorsProvider(
             .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KtNamedClassOrObjectSymbol }
     }
 
-    override fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol> = withValidityAssertion {
+    override fun getEnumEntries(classSymbol: KtNamedClassOrObjectSymbol): List<KtEnumEntrySymbol> {
         val enumDescriptor = getSymbolDescriptor(classSymbol) as? ClassDescriptor ?: return emptyList()
         if (enumDescriptor.kind != ClassKind.ENUM_CLASS) {
             return emptyList()

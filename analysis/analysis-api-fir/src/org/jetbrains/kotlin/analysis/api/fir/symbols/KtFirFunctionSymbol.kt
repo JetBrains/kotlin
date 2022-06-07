@@ -83,7 +83,7 @@ internal class KtFirFunctionSymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> = withValidityAssertion {
         if (firSymbol.fir.origin != FirDeclarationOrigin.SubstitutionOverride) {
             KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         }

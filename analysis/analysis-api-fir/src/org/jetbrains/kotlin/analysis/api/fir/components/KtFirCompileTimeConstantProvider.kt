@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.fir.FirElement
@@ -29,16 +28,16 @@ internal class KtFirCompileTimeConstantProvider(
     override fun evaluate(
         expression: KtExpression,
         mode: KtConstantEvaluationMode,
-    ): KtConstantValue? = withValidityAssertion {
-        evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
+    ): KtConstantValue? {
+        return evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
     }
 
     private fun evaluateFir(
         fir: FirElement?,
         sourcePsi: KtExpression,
         mode: KtConstantEvaluationMode,
-    ): KtConstantValue? = withValidityAssertion {
-        when (fir) {
+    ): KtConstantValue? {
+        return when (fir) {
             is FirPropertyAccessExpression,
             is FirExpression,
             is FirNamedReference -> {

@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.util.bfs
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
     override val builtinTypes: KtBuiltinTypes = KtFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
 
@@ -85,16 +85,16 @@ internal class KtFirTypeProvider(
             ?.asKtType()
     }
 
-    override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
-        when (val fir = ktTypeReference.getOrBuildFir(firResolveSession)) {
+    override fun getKtType(ktTypeReference: KtTypeReference): KtType {
+        return when (val fir = ktTypeReference.getOrBuildFir(firResolveSession)) {
             is FirResolvedTypeRef -> fir.coneType.asKtType()
             is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
             else -> throwUnexpectedFirElementError(fir, ktTypeReference)
         }
     }
 
-    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? = withValidityAssertion {
-        when (val fir = expression.getOrBuildFir(firResolveSession)) {
+    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
+        return when (val fir = expression.getOrBuildFir(firResolveSession)) {
             is FirGetClassCall ->
                 fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
             is FirCallableReferenceAccess ->

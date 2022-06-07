@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
@@ -59,9 +58,9 @@ internal class KtFirSmartcastProvider(
         }
     }
 
-    override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? = withValidityAssertion {
+    override fun getSmartCastedInfo(expression: KtExpression): KtSmartCastInfo? {
         val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
-        getSmartCastedInfo(firSmartCastExpression)
+        return getSmartCastedInfo(firSmartCastExpression)
     }
 
     private fun getSmartCastedInfo(expression: FirExpressionWithSmartcast): KtSmartCastInfo? {
@@ -87,10 +86,10 @@ internal class KtFirSmartcastProvider(
         }
     }
 
-    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> = withValidityAssertion {
+    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KtImplicitReceiverSmartCast> {
         val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(expression) ?: return emptyList()
 
-        listOfNotNull(
+        return listOfNotNull(
             smartCastedImplicitReceiver(firQualifiedExpression, KtImplicitReceiverSmartCastKind.DISPATCH),
             smartCastedImplicitReceiver(firQualifiedExpression, KtImplicitReceiverSmartCastKind.EXTENSION),
         )

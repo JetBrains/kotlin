@@ -65,12 +65,12 @@ internal class KtFirSyntheticJavaPropertySymbol(
             builder.callableBuilder.buildGetterSymbol(firSymbol.getterSymbol!!)
         }
     override val javaGetterSymbol: KtFunctionSymbol
-        get() {
+        get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
             return builder.functionLikeBuilder.buildFunctionSymbol(fir.getter.delegate.symbol)
         }
     override val javaSetterSymbol: KtFunctionSymbol?
-        get() {
+        get() = withValidityAssertion {
             val fir = firSymbol.fir as FirSyntheticProperty
             return fir.setter?.delegate?.let { builder.functionLikeBuilder.buildFunctionSymbol(it.symbol) }
         }
@@ -88,7 +88,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val origin: KtSymbolOrigin get() = withValidityAssertion { KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
-    override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> {
+    override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> = withValidityAssertion {
         val containingClassId = firSymbol.containingClass()?.classId
             ?: error("Cannot find parent class for synthetic java property $callableIdIfNonLocal")
 

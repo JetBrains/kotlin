@@ -18,7 +18,7 @@ internal interface KtFe10PsiSymbol<P : KtElement, D : DeclarationDescriptor> : K
     val descriptor: D?
 
     override val annotationsObject: Annotations
-        get() = descriptor?.annotations ?: Annotations.EMPTY
+        get() = withValidityAssertion { descriptor?.annotations ?: Annotations.EMPTY }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { psi.ktSymbolOrigin }

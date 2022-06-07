@@ -26,12 +26,9 @@ import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+    override val token: KtLifetimeToken
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
-    override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? {
-        assertIsValidAndAccessible()
-
-        if (symbol is KtReceiverParameterSymbol) {
+    override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? { if (symbol is KtReceiverParameterSymbol) {
             return firSymbolBuilder.buildSymbol((symbol as KtFirReceiverParameterSymbol).firSymbol) as KtSymbolWithKind
         }
 

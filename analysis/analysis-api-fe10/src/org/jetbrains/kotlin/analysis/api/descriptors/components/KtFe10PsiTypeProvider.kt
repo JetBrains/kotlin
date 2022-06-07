@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10JvmTypeMapperCo
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
@@ -41,7 +40,7 @@ internal class KtFe10PsiTypeProvider(
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-    ): PsiType? = withValidityAssertion {
+    ): PsiType? {
         val kotlinType = (type as KtFe10Type).type
 
         if (kotlinType.isError || kotlinType.arguments.any { !it.isStarProjection && it.type.isError }) {

@@ -53,13 +53,12 @@ internal class KtFirPsiTypeProvider(
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
-    ): PsiType? = withValidityAssertion {
-        type.coneType.asPsiType(
-            rootModuleSession,
-            mode.toTypeMappingMode(type, isAnnotationMethod),
-            useSitePosition
-        )
-    }
+    ): PsiType? = type.coneType.asPsiType(
+        rootModuleSession,
+        mode.toTypeMappingMode(type, isAnnotationMethod),
+        useSitePosition
+    )
+
 
     private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
         require(type is KtFirType)

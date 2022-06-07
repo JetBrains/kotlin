@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtFlexibleType
@@ -43,7 +44,7 @@ public abstract class KtTypeProvider : KtAnalysisSessionComponent() {
 
 public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
     public val builtinTypes: KtBuiltinTypes
-        get() = analysisSession.typeProvider.builtinTypes
+        get() = withValidityAssertion { analysisSession.typeProvider.builtinTypes }
 
     /**
      * Approximates [KtType] with the a supertype which can be rendered in a source code
@@ -52,12 +53,13 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is [org.jetbrains.kotlin.analysis.api.types.KtDenotableType]`
      */
     public fun KtType.approximateToSuperPublicDenotable(): KtType? =
-        analysisSession.typeProvider.approximateToSuperPublicDenotableType(this)
+        withValidityAssertion { analysisSession.typeProvider.approximateToSuperPublicDenotableType(this) }
 
-    public fun KtType.approximateToSuperPublicDenotableOrSelf(): KtType = approximateToSuperPublicDenotable() ?: this
+    public fun KtType.approximateToSuperPublicDenotableOrSelf(): KtType =
+        withValidityAssertion { approximateToSuperPublicDenotable() ?: this }
 
     public fun KtNamedClassOrObjectSymbol.buildSelfClassType(): KtType =
-        analysisSession.typeProvider.buildSelfClassType(this)
+        withValidityAssertion { analysisSession.typeProvider.buildSelfClassType(this) }
 
     /**
      * Computes the common super type of the given collection of [KtType].
@@ -65,7 +67,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * If the collection is empty, it returns `null`.
      */
     public fun commonSuperType(types: Collection<KtType>): KtType? =
-        analysisSession.typeProvider.commonSuperType(types)
+        withValidityAssertion { analysisSession.typeProvider.commonSuperType(types) }
 
     /**
      * Resolve [KtTypeReference] and return corresponding [KtType] if resolved.
@@ -73,7 +75,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * This may raise an exception if the resolution ends up with an unexpected kind.
      */
     public fun KtTypeReference.getKtType(): KtType =
-        analysisSession.typeProvider.getKtType(this)
+        withValidityAssertion { analysisSession.typeProvider.getKtType(this) }
 
     /**
      * Resolve [KtDoubleColonExpression] and return [KtType] of its receiver.
@@ -81,23 +83,24 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * Return `null` if the resolution fails or the resolved callable reference is not a reflection type.
      */
     public fun KtDoubleColonExpression.getReceiverKtType(): KtType? =
-        analysisSession.typeProvider.getReceiverTypeForDoubleColonExpression(this)
+        withValidityAssertion { analysisSession.typeProvider.getReceiverTypeForDoubleColonExpression(this) }
 
     public fun KtType.withNullability(newNullability: KtTypeNullability): KtType =
-        analysisSession.typeProvider.withNullability(this, newNullability)
+        withValidityAssertion { analysisSession.typeProvider.withNullability(this, newNullability) }
 
-    public fun KtType.upperBoundIfFlexible(): KtType = (this as? KtFlexibleType)?.upperBound ?: this
-    public fun KtType.lowerBoundIfFlexible(): KtType = (this as? KtFlexibleType)?.lowerBound ?: this
+    public fun KtType.upperBoundIfFlexible(): KtType = withValidityAssertion { (this as? KtFlexibleType)?.upperBound ?: this }
+    public fun KtType.lowerBoundIfFlexible(): KtType = withValidityAssertion { (this as? KtFlexibleType)?.lowerBound ?: this }
 
     /** Check whether this type is compatible with that type. If they are compatible, it means they can have a common subtype. */
-    public fun KtType.hasCommonSubTypeWith(that: KtType): Boolean = analysisSession.typeProvider.haveCommonSubtype(this, that)
+    public fun KtType.hasCommonSubTypeWith(that: KtType): Boolean =
+        withValidityAssertion { analysisSession.typeProvider.haveCommonSubtype(this, that) }
 
     /**
      * Gets all the implicit receiver types available at the given position. The type of the outermost receiver appears at the beginning
      * of the returned list.
      */
     public fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> =
-        analysisSession.typeProvider.getImplicitReceiverTypesAtPosition(position)
+        withValidityAssertion { analysisSession.typeProvider.getImplicitReceiverTypesAtPosition(position) }
 
     /**
      * Gets the direct super types of the given type. For example, given `MutableList<String>`, this returns `List<String>` and
@@ -110,7 +113,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * `Collection<CAPTURED out String>`. With approximation set to true, `Collection<out String>` is returned instead.
      */
     public fun KtType.getDirectSuperTypes(shouldApproximate: Boolean = false): List<KtType> =
-        analysisSession.typeProvider.getDirectSuperTypes(this, shouldApproximate)
+        withValidityAssertion { analysisSession.typeProvider.getDirectSuperTypes(this, shouldApproximate) }
 
     /**
      * Gets all the super types of the given type. The returned result is ordered by a BFS traversal of the class hierarchy, without any
@@ -119,7 +122,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
      * @param shouldApproximate see [getDirectSuperTypes]
      */
     public fun KtType.getAllSuperTypes(shouldApproximate: Boolean = false): List<KtType> =
-        analysisSession.typeProvider.getAllSuperTypes(this, shouldApproximate)
+        withValidityAssertion { analysisSession.typeProvider.getAllSuperTypes(this, shouldApproximate) }
 
     /**
      * This function is provided for a few use-cases where it's hard to go without it.
@@ -134,7 +137,7 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("Avoid using this function")
     public fun KtCallableSymbol.getDispatchReceiverType(): KtType? =
-        analysisSession.typeProvider.getDispatchReceiverType(this)
+        withValidityAssertion { analysisSession.typeProvider.getDispatchReceiverType(this) }
 }
 
 @Suppress("PropertyName")

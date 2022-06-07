@@ -41,7 +41,7 @@ internal class KtFirReceiverParameterSymbol(
 
     override val origin: KtSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
-    override fun createPointer(): KtSymbolPointer<KtFirReceiverParameterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtFirReceiverParameterSymbol> = withValidityAssertion {
         TODO("Probably just create a pointer based on the underlying declaration")
     }
 }

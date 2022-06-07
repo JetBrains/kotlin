@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
 public interface KtSymbolsMixIn : KtAnalysisSessionMixIn {
     @Suppress("DEPRECATION")
-    public fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(analysisSession)
+    public fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion { restoreSymbol(analysisSession) }
 }

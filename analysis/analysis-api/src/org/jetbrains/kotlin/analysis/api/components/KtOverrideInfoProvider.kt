@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
@@ -24,14 +25,14 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
 
     /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
     public fun KtCallableSymbol.isVisibleInClass(classSymbol: KtClassOrObjectSymbol): Boolean =
-        analysisSession.overrideInfoProvider.isVisible(this, classSymbol)
+        withValidityAssertion { analysisSession.overrideInfoProvider.isVisible(this, classSymbol) }
 
     /**
      * Gets the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol]. Or null if this symbol is not a
      * member.
      */
     public fun KtCallableSymbol.getImplementationStatus(parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus? =
-        analysisSession.overrideInfoProvider.getImplementationStatus(this, parentClassSymbol)
+        withValidityAssertion { analysisSession.overrideInfoProvider.getImplementationStatus(this, parentClassSymbol) }
 
     /**
      * Gets the original symbol for the given callable symbol. In a class scope, a symbol may be derived from symbols declared in super
@@ -54,11 +55,11 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * after specialization) and delegation.
      */
     public val KtCallableSymbol.originalOverriddenSymbol: KtCallableSymbol?
-        get() = analysisSession.overrideInfoProvider.getOriginalOverriddenSymbol(this)
+        get() = withValidityAssertion { analysisSession.overrideInfoProvider.getOriginalOverriddenSymbol(this) }
 
     /**
      * Gets the class symbol where the given callable symbol is declared. See [originalOverriddenSymbol] for more details.
      */
     public val KtCallableSymbol.originalContainingClassForOverride: KtClassOrObjectSymbol?
-        get() = analysisSession.overrideInfoProvider.getOriginalContainingClassForOverride(this)
+        get() = withValidityAssertion { analysisSession.overrideInfoProvider.getOriginalContainingClassForOverride(this) }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.psi.KtExpression
@@ -25,6 +26,7 @@ public interface KtVisibilityCheckerMixIn : KtAnalysisSessionMixIn {
         useSiteFile: KtFileSymbol,
         receiverExpression: KtExpression? = null,
         position: PsiElement
-    ): Boolean =
+    ): Boolean = withValidityAssertion {
         analysisSession.visibilityChecker.isVisible(candidateSymbol, useSiteFile, position, receiverExpression)
+    }
 }

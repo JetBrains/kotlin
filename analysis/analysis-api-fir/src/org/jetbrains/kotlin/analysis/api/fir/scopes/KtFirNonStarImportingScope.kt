@@ -57,7 +57,7 @@ internal class KtFirNonStarImportingScope(
         emptySequence()
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo(hashSetOf()) { it.callableName }

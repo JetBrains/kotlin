@@ -27,7 +27,7 @@ internal class KtFe10CompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         possibleExplicitReceiver: KtExpression?
-    ): KtExtensionApplicabilityResult = withValidityAssertion {
+    ): KtExtensionApplicabilityResult {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 }

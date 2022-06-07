@@ -65,39 +65,39 @@ internal class KtFe10TypeProvider(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override val builtinTypes: KtBuiltinTypes by cached { KtFe10BuiltinTypes(analysisContext) }
+    override val builtinTypes: KtBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KtFe10BuiltinTypes(analysisContext) }
 
-    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? = withValidityAssertion {
+    override fun approximateToSuperPublicDenotableType(type: KtType): KtType?  {
         require(type is KtFe10Type)
         return typeApproximator.approximateToSuperType(type.type, PublicApproximatorConfiguration)?.toKtType(analysisContext)
     }
 
-    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType = withValidityAssertion {
+    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType  {
         val kotlinType = (getSymbolDescriptor(symbol) as? ClassDescriptor)?.defaultType
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, symbol.nameOrAnonymous.toString())
 
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun commonSuperType(types: Collection<KtType>): KtType = withValidityAssertion {
+    override fun commonSuperType(types: Collection<KtType>): KtType  {
         val kotlinTypes = types.map { (it as KtFe10Type).type }
         return CommonSupertypes.commonSupertype(kotlinTypes).toKtType(analysisContext)
     }
 
-    override fun getKtType(ktTypeReference: KtTypeReference): KtType = withValidityAssertion {
+    override fun getKtType(ktTypeReference: KtTypeReference): KtType  {
         val bindingContext = analysisContext.analyze(ktTypeReference, AnalysisMode.PARTIAL)
         val kotlinType = bindingContext[BindingContext.TYPE, ktTypeReference]
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktTypeReference.text)
         return kotlinType.toKtType(analysisContext)
     }
 
-    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? = withValidityAssertion {
+    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType?  {
         val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
         val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, expression] ?: return null
         return lhs.type.toKtType(analysisContext)
     }
 
-    override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType = withValidityAssertion {
+    override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType  {
         require(type is KtFe10Type)
         return type.type.makeNullableAsSpecified(newNullability == KtTypeNullability.NULLABLE).toKtType(analysisContext)
     }
@@ -125,7 +125,6 @@ internal class KtFe10TypeProvider(
     }
 
     override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
-        assertIsValidAndAccessible()
         require(symbol is KtFe10Symbol)
 
         val descriptor = when (symbol) {

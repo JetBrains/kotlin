@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.psi.KtExpression
@@ -20,20 +23,34 @@ public abstract class KtCompletionCandidateChecker : KtAnalysisSessionComponent(
     ): KtExtensionApplicabilityResult
 }
 
-public sealed class KtExtensionApplicabilityResult {
+
+public sealed class KtExtensionApplicabilityResult : KtLifetimeOwner {
     public abstract val isApplicable: Boolean
     public abstract val substitutor: KtSubstitutor
 
-    public class ApplicableAsExtensionCallable(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
-        override val isApplicable: Boolean get() = true
+    public class ApplicableAsExtensionCallable(
+        private val _substitutor: KtSubstitutor,
+        override val token: KtLifetimeToken
+    ) : KtExtensionApplicabilityResult() {
+        override val substitutor: KtSubstitutor = withValidityAssertion { _substitutor }
+        override val isApplicable: Boolean get() = withValidityAssertion { true }
     }
 
-    public class ApplicableAsFunctionalVariableCall(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
-        override val isApplicable: Boolean get() = true
+    public class ApplicableAsFunctionalVariableCall(
+        private val _substitutor: KtSubstitutor,
+        override val token: KtLifetimeToken
+    ) : KtExtensionApplicabilityResult() {
+        override val substitutor: KtSubstitutor get() = withValidityAssertion { _substitutor }
+        override val isApplicable: Boolean get() = withValidityAssertion { true }
     }
 
-    public class NonApplicable(override val substitutor: KtSubstitutor) : KtExtensionApplicabilityResult() {
-        override val isApplicable: Boolean = false
+
+    public class NonApplicable(
+        private val _substitutor: KtSubstitutor,
+        override val token: KtLifetimeToken
+    ) : KtExtensionApplicabilityResult() {
+        override val substitutor: KtSubstitutor = withValidityAssertion { _substitutor }
+        override val isApplicable: Boolean get() = withValidityAssertion { false }
     }
 }
 
@@ -42,11 +59,12 @@ public interface KtCompletionCandidateCheckerMixIn : KtAnalysisSessionMixIn {
         originalPsiFile: KtFile,
         psiFakeCompletionExpression: KtSimpleNameExpression,
         psiReceiverExpression: KtExpression?,
-    ): KtExtensionApplicabilityResult =
+    ): KtExtensionApplicabilityResult = withValidityAssertion {
         analysisSession.completionCandidateChecker.checkExtensionFitsCandidate(
             this,
             originalPsiFile,
             psiFakeCompletionExpression,
             psiReceiverExpression
         )
+    }
 }
