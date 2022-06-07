@@ -5,34 +5,35 @@
 
 package org.jetbrains.kotlin.parcelize
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
-class ParcelizeComponentRegistrar : ComponentRegistrar {
+class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
     companion object {
-        fun registerParcelizeComponents(project: Project) {
-            ExpressionCodegenExtension.registerExtension(project, ParcelizeCodegenExtension())
-            IrGenerationExtension.registerExtension(project, ParcelizeIrGeneratorExtension())
-            SyntheticResolveExtension.registerExtension(project, ParcelizeResolveExtension())
-            ClassBuilderInterceptorExtension.registerExtension(project, ParcelizeClinitClassBuilderInterceptorExtension())
-            StorageComponentContainerContributor.registerExtension(project, ParcelizeDeclarationCheckerComponentContainerContributor())
+        fun registerParcelizeComponents(extensionStorage: ExtensionStorage) = with(extensionStorage) {
+            ExpressionCodegenExtension.registerExtension(ParcelizeCodegenExtension())
+            IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension())
+            SyntheticResolveExtension.registerExtension(ParcelizeResolveExtension())
+            ClassBuilderInterceptorExtension.registerExtension(ParcelizeClinitClassBuilderInterceptorExtension())
+            StorageComponentContainerContributor.registerExtension(ParcelizeDeclarationCheckerComponentContainerContributor())
+            FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar())
         }
     }
 
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        registerParcelizeComponents(project)
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        registerParcelizeComponents(this)
     }
 
     override val supportsK2: Boolean

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -60,12 +60,11 @@ class SamWithReceiverEnvironmentConfigurator(testServices: TestServices) : Envir
         private val TEST_ANNOTATIONS = listOf("SamWithReceiver")
     }
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        StorageComponentContainerContributor.registerExtension(
-            project,
-            CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS)
-        )
-
-        FirExtensionRegistrarAdapter.registerExtension(project, FirSamWithReceiverExtensionRegistrar(TEST_ANNOTATIONS))
+    override fun ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS))
+        FirExtensionRegistrarAdapter.registerExtension(FirSamWithReceiverExtensionRegistrar(TEST_ANNOTATIONS))
     }
 }

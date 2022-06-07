@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization
 
-import com.intellij.openapi.project.Project
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -58,8 +58,8 @@ internal fun TestConfigurationBuilder.configureForKotlinxSerialization(libraries
                     configuration.addJvmClasspathRoots(librariesPaths)
                 }
 
-                override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-                    SerializationComponentRegistrar.registerExtensions(project)
+                override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+                    SerializationComponentRegistrar.registerExtensions(this)
                 }
             }
         })

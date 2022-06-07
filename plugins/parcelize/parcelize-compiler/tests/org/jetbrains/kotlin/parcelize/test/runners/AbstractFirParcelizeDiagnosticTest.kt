@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
@@ -23,7 +22,7 @@ abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest()
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
         }
 
-        useConfigurators(::ParcelizeEnvironmentConfigurator.bind(true))
+        useConfigurators(::ParcelizeEnvironmentConfigurator)
 
         useAfterAnalysisCheckers(
             ::FirIdenticalChecker,

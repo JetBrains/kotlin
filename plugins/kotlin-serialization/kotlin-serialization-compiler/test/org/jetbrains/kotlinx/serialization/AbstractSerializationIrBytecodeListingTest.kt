@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import java.io.File
@@ -24,7 +25,9 @@ abstract class AbstractSerializationIrBytecodeListingTest : AbstractAsmLikeInstr
     override val backend = TargetBackend.JVM_IR
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        SerializationComponentRegistrar.registerExtensions(environment.project)
+        registerExtensionsForTest(environment.project, environment.configuration) {
+            SerializationComponentRegistrar.registerExtensions(this)
+        }
         environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath!!)))
     }
 }

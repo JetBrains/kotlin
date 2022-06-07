@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 interface ComponentRegistrar {
     companion object {

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.lombok
 
-import com.intellij.openapi.project.Project
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -99,7 +102,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
     }
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        LombokComponentRegistrar.registerComponents(project, configuration)
+    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        LombokComponentRegistrar.registerComponents(this, configuration)
     }
 }

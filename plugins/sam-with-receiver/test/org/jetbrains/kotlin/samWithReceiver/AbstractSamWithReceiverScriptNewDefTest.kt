@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -38,7 +38,9 @@ abstract class AbstractSamWithReceiverScriptNewDefTest : AbstractDiagnosticsTest
         val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
         val res = scriptCompiler.compile("42".toScriptSource("\$init"), ScriptForSamWithReceiversNewDefCompilationConfiguration)
         Assert.assertTrue(res is ResultWithDiagnostics.Success<*>)
-        SamWithReceiverComponentRegistrar().registerProjectComponents(environment.project as MockProject, environment.configuration)
+        registerExtensionsForTest(environment.project, environment.configuration) {
+            with(SamWithReceiverComponentRegistrar()) { registerExtensions(it) }
+        }
     }
 
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {

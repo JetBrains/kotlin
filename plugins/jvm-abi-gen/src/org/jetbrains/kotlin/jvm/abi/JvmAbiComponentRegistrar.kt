@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
 
-class JvmAbiComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val outputPath = configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (configuration.get(JvmAbiConfigurationKeys.LEGACY_ABI_GEN, false)) {
@@ -33,14 +32,14 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
             val extension = JvmAbiAnalysisHandlerExtension(configuration.copy().apply {
                 put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(outputPath))
             })
-            AnalysisHandlerExtension.registerExtension(project, extension)
+            AnalysisHandlerExtension.registerExtension(extension)
         } else {
             // Use the single-pass implementation, using the new ABI flag in the metadata.
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
             val builderExtension = JvmAbiClassBuilderInterceptor()
             val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
-            ClassBuilderInterceptorExtension.registerExtension(project, builderExtension)
-            ClassFileFactoryFinalizerExtension.registerExtension(project, outputExtension)
+            ClassBuilderInterceptorExtension.registerExtension( builderExtension)
+            ClassFileFactoryFinalizerExtension.registerExtension( outputExtension)
         }
     }
 

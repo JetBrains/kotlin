@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -58,9 +59,20 @@ private class EnabledByDirectiveConfiguratorDecorator(
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> = original.provideAdditionalAnalysisFlags(directives, languageVersion)
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         if (directive !in module.directives) return
 
-        original.registerCompilerExtensions(project, module, configuration)
+        original.legacyRegisterCompilerExtensions(project, module, configuration)
+    }
+
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        if (directive !in module.directives) return
+
+        with(original) {
+            this@registerCompilerExtensions.registerCompilerExtensions(module, configuration)
+        }
     }
 }

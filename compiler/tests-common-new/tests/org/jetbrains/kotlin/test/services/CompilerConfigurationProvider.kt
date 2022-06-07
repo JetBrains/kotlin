@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -44,7 +46,14 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
     }
 
     fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        configurators.forEach { it.registerCompilerExtensions(project, module, configuration) }
+        val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+        for (configurator in configurators) {
+            configurator.legacyRegisterCompilerExtensions(project, module, configuration)
+            with(configurator) {
+                extensionStorage.registerCompilerExtensions(module, configuration)
+            }
+        }
+        extensionStorage.registerInProject(project)
     }
 
     open fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {

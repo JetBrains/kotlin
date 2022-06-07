@@ -30,12 +30,15 @@ class TestCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-class TestKotlinPluginRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class TestKotlinPluginRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
         val option = configuration.get(TestPluginKeys.TestOption)!!
 
         collector.report(CompilerMessageSeverity.INFO, "Plugin applied")
         collector.report(CompilerMessageSeverity.INFO, "Option value: $option")
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }

@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-class AtomicfuComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        registerExtensions(project)
+class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        Companion.registerExtensions(this)
     }
 
     override val supportsK2: Boolean
         get() = true
 
     companion object {
-        fun registerExtensions(project: Project) {
-            IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension()) }
+        fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
+            IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())
+        }
     }
 }

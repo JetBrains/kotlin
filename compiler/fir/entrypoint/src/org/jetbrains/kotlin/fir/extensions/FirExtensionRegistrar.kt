@@ -20,10 +20,6 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
         }
 
-        fun registerExtension(project: Project, extension: FirExtensionRegistrar) {
-            FirExtensionRegistrarAdapter.registerExtension(project, extension)
-        }
-
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.samWithReceiver
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -53,17 +52,20 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-class SamWithReceiverComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
         configuration.get(PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isEmpty()) return
 
-        StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(project, FirSamWithReceiverExtensionRegistrar(annotations))
+        StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(annotations))
+        FirExtensionRegistrarAdapter.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }
 
 class CliSamWithReceiverComponentContributor(val annotations: List<String>) : StorageComponentContainerContributor {

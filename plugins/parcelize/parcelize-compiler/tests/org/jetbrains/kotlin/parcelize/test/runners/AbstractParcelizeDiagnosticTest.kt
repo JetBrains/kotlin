@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
@@ -41,7 +40,7 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
-            ::ParcelizeEnvironmentConfigurator.bind(false)
+            ::ParcelizeEnvironmentConfigurator
         )
 
         classicFrontendStep()

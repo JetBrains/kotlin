@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.noarg
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -94,9 +94,12 @@ class NoArgEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
 
     override val directiveContainers: List<DirectivesContainer> = listOf(NoArgDirectives)
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
         NoArgComponentRegistrar.registerNoArgComponents(
-            project,
+            this,
             NOARG_ANNOTATIONS,
             useIr = module.targetBackend?.isIR == true,
             invokeInitializers = NoArgDirectives.INVOKE_INITIALIZERS in module.directives

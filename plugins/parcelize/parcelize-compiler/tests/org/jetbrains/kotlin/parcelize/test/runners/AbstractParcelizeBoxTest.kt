@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
-import org.jetbrains.kotlin.parcelize.test.services.*
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -14,8 +17,10 @@ import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
-import org.jetbrains.kotlin.test.bind
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
@@ -71,7 +76,7 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
         useCustomRuntimeClasspathProviders(::ParcelizeRuntimeClasspathProvider)
 
-        useConfigurators(::ParcelizeEnvironmentConfigurator.bind(targetFrontend == FrontendKinds.FIR))
+        useConfigurators(::ParcelizeEnvironmentConfigurator)
 
         useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider)
 

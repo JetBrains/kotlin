@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.plugin.services
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.plugin.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.ir.plugin.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.model.TestModule
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        FirExtensionRegistrar.registerExtension(project, FirPluginPrototypeExtensionRegistrar())
-        IrGenerationExtension.registerExtension(project, GeneratedDeclarationsIrBodyFiller())
+    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        FirExtensionRegistrarAdapter.registerExtension(FirPluginPrototypeExtensionRegistrar())
+        IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
     }
 }

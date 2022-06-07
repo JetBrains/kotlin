@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.allopen
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.PRESET
 import org.jetbrains.kotlin.allopen.AllOpenPluginNames.ANNOTATION_OPTION_NAME
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 object AllOpenConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
@@ -45,16 +44,16 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-class AllOpenComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
         configuration.get(PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isEmpty()) return
 
-        DeclarationAttributeAltererExtension.registerExtension(project, CliAllOpenDeclarationAttributeAltererExtension(annotations))
-        FirExtensionRegistrar.registerExtension(project, FirAllOpenExtensionRegistrar(annotations))
+        DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
+        FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 
     override val supportsK2: Boolean

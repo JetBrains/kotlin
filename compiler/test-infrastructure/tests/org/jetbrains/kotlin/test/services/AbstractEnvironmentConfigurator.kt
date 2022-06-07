@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -22,7 +23,8 @@ abstract class AbstractEnvironmentConfigurator : ServicesAndDirectivesContainer 
 
     abstract fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives, languageVersion: LanguageVersion): Map<AnalysisFlag<*>, Any?>
 
-    abstract fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration)
+    abstract fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration)
+    abstract fun ExtensionStorage.registerCompilerExtensions( module: TestModule, configuration: CompilerConfiguration)
 }
 
 class EnvironmentConfiguratorsProvider(internal val environmentConfigurators: List<AbstractEnvironmentConfigurator>) : TestService
@@ -56,7 +58,9 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
         return emptyMap()
     }
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {}
+    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {}
+
+    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {

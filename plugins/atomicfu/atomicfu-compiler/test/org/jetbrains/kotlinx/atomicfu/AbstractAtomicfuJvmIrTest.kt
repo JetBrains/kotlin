@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -53,8 +55,8 @@ private fun TestConfigurationBuilder.configureForKotlinxAtomicfu(librariesPaths:
                     configuration.addJvmClasspathRoots(librariesPaths)
                 }
 
-                override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-                    AtomicfuComponentRegistrar.registerExtensions(project)
+                override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+                    AtomicfuComponentRegistrar.registerExtensions(this)
                 }
             }
         })

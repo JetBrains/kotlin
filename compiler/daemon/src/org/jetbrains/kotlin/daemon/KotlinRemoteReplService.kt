@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerId
@@ -207,13 +208,12 @@ inline fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean): Int {
 
 fun CompilerConfiguration.configureScripting(compilerId: CompilerId) {
     val error = try {
-        val componentRegistrars =
-            (this::class.java.classLoader as? URLClassLoader)?.let {
-                ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, it)
-            } ?: ServiceLoaderLite.loadImplementations(
-                ComponentRegistrar::class.java, compilerId.compilerClasspath.map(::File), this::class.java.classLoader
-            )
+        val componentRegistrars = loadRegistrars<ComponentRegistrar>(compilerId)
         addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
+
+        val compilerPluginRegistrars = loadRegistrars<CompilerPluginRegistrar>(compilerId)
+        addAll(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, compilerPluginRegistrars)
+
         null
     } catch (e: NoClassDefFoundError) {
         e
@@ -226,4 +226,12 @@ fun CompilerConfiguration.configureScripting(compilerId: CompilerId) {
             error
         )
     }
+}
+
+private inline fun <reified T : Any> CompilerConfiguration.loadRegistrars(compilerId: CompilerId): List<T> {
+    return (this::class.java.classLoader as? URLClassLoader)?.let {
+        ServiceLoaderLite.loadImplementations(T::class.java, it)
+    } ?: ServiceLoaderLite.loadImplementations(
+        T::class.java, compilerId.compilerClasspath.map(::File), this::class.java.classLoader
+    )
 }

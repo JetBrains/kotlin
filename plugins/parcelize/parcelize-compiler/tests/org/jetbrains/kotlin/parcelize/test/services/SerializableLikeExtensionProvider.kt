@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class SerializableLikeExtensionProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         SyntheticResolveExtension.registerExtension(project, SerializableLike())
     }
 

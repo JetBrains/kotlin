@@ -5,25 +5,24 @@
 
 package org.jetbrains.kotlin.allopen
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
         val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
                 AllOpenPluginNames.SUPPORTED_PRESETS.flatMap { it.value }
 
-        DeclarationAttributeAltererExtension.registerExtension(
-            project,
-            CliAllOpenDeclarationAttributeAltererExtension(annotations)
-        )
-
-        FirExtensionRegistrar.registerExtension(project, FirAllOpenExtensionRegistrar(annotations))
+        DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
+        FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 }

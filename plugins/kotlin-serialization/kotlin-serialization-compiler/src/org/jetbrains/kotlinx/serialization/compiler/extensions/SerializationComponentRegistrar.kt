@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -24,28 +22,31 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
 
-class SerializationComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        registerExtensions(project)
+class SerializationComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        Companion.registerExtensions(this)
     }
 
+    override val supportsK2: Boolean
+        get() = false
+
     companion object {
-        fun registerExtensions(project: Project) {
+        fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
             // This method is never called in the IDE, therefore this extension is not available there.
             // Since IDE does not perform any serialization of descriptors, metadata written to the 'serializationDescriptorSerializer'
             // is never deleted, effectively causing memory leaks.
             // So we create SerializationDescriptorSerializerPlugin only outside of IDE.
             val serializationDescriptorSerializer = SerializationDescriptorSerializerPlugin()
-            DescriptorSerializerPlugin.registerExtension(project, serializationDescriptorSerializer)
+            DescriptorSerializerPlugin.registerExtension(serializationDescriptorSerializer)
             registerProtoExtensions()
 
-            SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension(serializationDescriptorSerializer))
+            SyntheticResolveExtension.registerExtension(SerializationResolveExtension(serializationDescriptorSerializer))
 
-            ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension(serializationDescriptorSerializer))
-            JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension(serializationDescriptorSerializer))
-            IrGenerationExtension.registerExtension(project, SerializationLoweringExtension(serializationDescriptorSerializer))
+            ExpressionCodegenExtension.registerExtension(SerializationCodegenExtension(serializationDescriptorSerializer))
+            JsSyntheticTranslateExtension.registerExtension(SerializationJsExtension(serializationDescriptorSerializer))
+            IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer))
 
-            StorageComponentContainerContributor.registerExtension(project, SerializationPluginComponentContainerContributor())
+            StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
         }
 
         private fun registerProtoExtensions() {
