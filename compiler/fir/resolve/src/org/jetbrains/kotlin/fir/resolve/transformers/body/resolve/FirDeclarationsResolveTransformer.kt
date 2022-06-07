@@ -330,7 +330,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
 
         // Resolve call for provideDelegate, without completion
-        provideDelegateCall.transformSingle(this, ResolutionMode.ContextIndependent)
+        provideDelegateCall.transformSingle(this, ResolutionMode.ContextDependent)
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
