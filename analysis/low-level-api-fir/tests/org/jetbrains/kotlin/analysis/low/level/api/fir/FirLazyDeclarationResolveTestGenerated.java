@@ -55,6 +55,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     }
 
     @Test
+    @TestMetadata("lambdaAsSAMInterface.kt")
+    public void testLambdaAsSAMInterface() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/lambdaAsSAMInterface.kt");
+    }
+
+    @Test
     @TestMetadata("parameterOfNonLocalSetter.kt")
     public void testParameterOfNonLocalSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfNonLocalSetter.kt");
