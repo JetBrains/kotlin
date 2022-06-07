@@ -40,12 +40,15 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -221,6 +224,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
 
+        // ----
+
         val environmentForJS =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
         val projectJs = environmentForJS.project
@@ -342,14 +347,38 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (arguments.irProduceKlibFile) {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
             }
+            val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+            val icData = configurationJs.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
+            val moduleFragment = generateIrForKlibSerialization(
+                projectJs,
+                moduleSourceFiles,
+                configurationJs,
+                sourceModule.jsFrontEndResult.jsAnalysisResult,
+                sortDependencies(sourceModule.descriptors),
+                icData,
+                expectDescriptorToSymbol,
+                IrFactoryImpl,
+                verifySignatures = true
+            ) {
+                sourceModule.getModuleDescriptor(it)
+            }
+
+            val metadataSerializer =
+                KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
 
             generateKLib(
                 sourceModule,
-                irFactory = IrFactoryImpl,
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
                 jsOutputName = arguments.irPerModuleOutputName,
-            )
+                icData = icData,
+                expectDescriptorToSymbol = expectDescriptorToSymbol,
+                moduleFragment = moduleFragment
+            ) { file ->
+                metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            }
         }
 
         if (arguments.irProduceJs) {

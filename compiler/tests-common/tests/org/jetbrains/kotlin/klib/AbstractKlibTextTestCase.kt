@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.serialization.metadata.makeSerializedKlibMetadata
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -171,7 +172,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         ).toByteArray()
 
 
-        val serializedMetadata = metadataSerializer.serializedMetadata(
+        val serializedMetadata = makeSerializedKlibMetadata(
             compiledKotlinFiles.groupBy { it.irData.fqName }
                 .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
             header
