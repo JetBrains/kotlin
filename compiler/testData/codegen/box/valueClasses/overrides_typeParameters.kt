@@ -12,8 +12,23 @@ interface AbstractPoint<T> {
     val y: T
 }
 
+interface SomeInterface<X> {
+    fun <T, R: X> someFunction1(x: X, t: T, r: R) = Unit
+    fun <T, R: X> someFunction2(x: XPoint<X>, t: XPoint<T>, r: XPoint<R>) = Unit
+    
+}
+
 @JvmInline
-value class XPoint<X>(override val x: X, override val y: X): AbstractPoint<X>
+value class XPoint<X>(override val x: X, override val y: X): AbstractPoint<X>, SomeInterface<X> {
+    override fun <T, R: X> someFunction1(x: X, t: T, r: R) = Unit
+    override fun <T, R: X> someFunction2(x: XPoint<X>, t: XPoint<T>, r: XPoint<R>) = Unit
+}
+
+@JvmInline
+value class YPoint<X>(val x: X)
+
+fun <S: List<Int>> genericFunctionMFVC(v: XPoint<S>) {}
+fun <S: List<Int>> genericFunctionIC(v: YPoint<S>) {}
 
 interface GenericMFVCHolder<T> {
     var p: T

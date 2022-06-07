@@ -718,6 +718,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 is MultiFieldValueClassMapping -> {
                                     val count = bridgeRemappedParameter.declarations.fields.size
                                     val boxCall = irCall(bridgeRemappedParameter.declarations.boxMethod).apply {
+                                        bridgeRemappedParameter.boxedType.arguments.forEachIndexed { index, argument ->
+                                            putTypeArgument(index, argument.typeOrNull)
+                                        }
                                         for (i in 0 until count) {
                                             putValueArgument(i, irGet(bridgeExplicitParameters[bridgeIndex++]))
                                         }

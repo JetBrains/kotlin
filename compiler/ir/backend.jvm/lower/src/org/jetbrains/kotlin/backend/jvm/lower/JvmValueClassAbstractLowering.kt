@@ -43,7 +43,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
         }
 
         val replacement = replacements.getReplacementFunction(function)
-        
+
         if (replacement == null) {
             if (function is IrConstructor) {
                 val constructorReplacement = replacements.getReplacementRegularClassConstructor(function)

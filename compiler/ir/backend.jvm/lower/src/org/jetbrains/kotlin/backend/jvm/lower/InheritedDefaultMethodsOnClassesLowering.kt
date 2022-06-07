@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -135,6 +136,9 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                                 when (val remappedParameter = structure[i]) {
                                     is MultiFieldValueClassMapping ->
                                         putValueArgument(i, irCall(remappedParameter.declarations.boxMethod).apply {
+                                            remappedParameter.boxedType.arguments.forEachIndexed { index, argument ->
+                                                putTypeArgument(index, argument.typeOrNull)
+                                            }
                                             val boxArgumentsCount = remappedParameter.valueParameters.size
                                             for (boxArgumentIndex in 0 until boxArgumentsCount) {
                                                 putValueArgument(boxArgumentIndex, irGet(sourceFullValueParameterList[flattenedIndex++]))
