@@ -102,7 +102,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             // This is a potential problem for bridge generation, where we have to ensure that the overridden
             // symbols are always up to date. Right now they might not be since we lower each file independently
             // and since deserialized declarations are not mangled at all.
-            if (function is IrSimpleFunction) {
+            if (function is IrSimpleFunction && function.parent.safeAs<IrClass>()?.isChildOfSealedInlineClass() != true) {
                 function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
             }
             return null
