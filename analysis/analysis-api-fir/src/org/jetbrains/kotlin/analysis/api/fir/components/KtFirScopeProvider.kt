@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
@@ -19,16 +19,15 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirSession
@@ -168,7 +167,8 @@ internal class KtFirScopeProvider(
         return KtCompositeScope(subScopes, token)
     }
 
-    override fun getTypeScope(type: KtType): KtScope? {
+    @OptIn(KtAnalysisApiInternals::class)
+    override fun getTypeScope(type: KtType): KtTypeScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         val firSession = firResolveSession.useSiteFirSession
         val firTypeScope = type.coneType.scope(
@@ -176,16 +176,14 @@ internal class KtFirScopeProvider(
             scopeSession,
             FakeOverrideTypeCalculator.Forced
         ) ?: return null
-        return getCompositeScope(
+        return KtCompositeTypeScope(
             listOf(
-                convertToKtScope(firTypeScope),
-                firTypeScope.getSyntheticPropertiesScope(firSession)
-            )
+                convertToKtTypeScope(firTypeScope),
+                convertToKtTypeScope(FirSyntheticPropertiesScope(firSession, firTypeScope))
+            ),
+            token
         )
     }
-
-    private fun FirTypeScope.getSyntheticPropertiesScope(firSession: FirSession): KtScope =
-        convertToKtScope(FirSyntheticPropertiesScope(firSession, this))
 
     override fun getScopeContextForPosition(
         originalFile: KtFile,
@@ -235,6 +233,13 @@ internal class KtFirScopeProvider(
                 analysisSession.targetPlatform
             )
             is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder, token)
+            else -> TODO(firScope::class.toString())
+        }
+    }
+
+    private fun convertToKtTypeScope(firScope: FirScope): KtTypeScope {
+        return when (firScope) {
+            is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }
     }
