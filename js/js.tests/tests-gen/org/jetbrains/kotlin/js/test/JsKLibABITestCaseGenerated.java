@@ -75,6 +75,16 @@ public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
         runTest("compiler/testData/klibABI/removeFunction/");
     }
 
+    @TestMetadata("removeInlinedFunction")
+    public void testRemoveInlinedFunction() throws Exception {
+        runTest("compiler/testData/klibABI/removeInlinedFunction/");
+    }
+
+    @TestMetadata("removeInlinedProperty")
+    public void testRemoveInlinedProperty() throws Exception {
+        runTest("compiler/testData/klibABI/removeInlinedProperty/");
+    }
+
     @TestMetadata("removeOpenFunction")
     public void testRemoveOpenFunction() throws Exception {
         runTest("compiler/testData/klibABI/removeOpenFunction/");
