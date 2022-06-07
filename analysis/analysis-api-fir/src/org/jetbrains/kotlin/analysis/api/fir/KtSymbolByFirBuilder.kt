@@ -56,14 +56,14 @@ internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
     private val firResolveSession: LLFirResolveSession,
     val token: KtLifetimeToken,
-    val withReadOnlyCaching: Boolean,
-    private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
-    private val extensionReceiverSymbolsCache: BuilderCache<FirCallableSymbol<*>, KtSymbol>,
-    private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
-    private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
 ) {
     private val firProvider get() = firResolveSession.useSiteFirSession.symbolProvider
     val rootSession: FirSession = firResolveSession.useSiteFirSession
+
+    private val symbolsCache = BuilderCache<FirBasedSymbol<*>, KtSymbol>()
+    private val extensionReceiverSymbolsCache = BuilderCache<FirCallableSymbol<*>, KtSymbol>()
+    private val filesCache = BuilderCache<FirFileSymbol, KtFileSymbol>()
+    private val backingFieldCache =  BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>()
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
@@ -71,35 +71,6 @@ internal class KtSymbolByFirBuilder private constructor(
     val callableBuilder = CallableSymbolBuilder()
     val anonymousInitializerBuilder = AnonymousInitializerBuilder()
     val typeBuilder = TypeBuilder()
-
-    constructor(
-        firResolveSession: LLFirResolveSession,
-        project: Project,
-        token: KtLifetimeToken
-    ) : this(
-        project = project,
-        token = token,
-        firResolveSession = firResolveSession,
-        withReadOnlyCaching = false,
-        symbolsCache = BuilderCache(),
-        extensionReceiverSymbolsCache = BuilderCache(),
-        backingFieldCache = BuilderCache(),
-        filesCache = BuilderCache(),
-    )
-
-    fun createReadOnlyCopy(newFirResolveSession: LLFirResolveSession): KtSymbolByFirBuilder {
-        check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
-        return KtSymbolByFirBuilder(
-            project,
-            token = token,
-            firResolveSession = newFirResolveSession,
-            withReadOnlyCaching = true,
-            symbolsCache = symbolsCache.createReadOnlyCopy(),
-            extensionReceiverSymbolsCache = extensionReceiverSymbolsCache.createReadOnlyCopy(),
-            filesCache = filesCache.createReadOnlyCopy(),
-            backingFieldCache = backingFieldCache.createReadOnlyCopy(),
-        )
-    }
 
     fun buildSymbol(fir: FirDeclaration): KtSymbol =
         buildSymbol(fir.symbol)
@@ -618,19 +589,11 @@ internal class KtSymbolByFirBuilder private constructor(
 
 private class BuilderCache<From, To : Any> private constructor(
     private val cache: ConcurrentMap<From, To>,
-    private val isReadOnly: Boolean
 ) {
-    constructor() : this(ContainerUtil.createConcurrentSoftMap(), isReadOnly = false)
-
-    fun createReadOnlyCopy(): BuilderCache<From, To> {
-        check(!isReadOnly) { "Cannot create readOnly BuilderCache from a readonly one" }
-        return BuilderCache(cache, isReadOnly = true)
-    }
+    constructor() : this(ContainerUtil.createConcurrentSoftMap())
 
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
-        val value = if (isReadOnly) {
-            cache[key] ?: calculation()
-        } else cache.getOrPut(key, calculation)
+        val value = cache.getOrPut(key, calculation)
         return value as? S
             ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value as KtSymbol)}")
     }
