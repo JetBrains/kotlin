@@ -147,7 +147,7 @@ public class KtGenericTypeQualifier(
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
  */
-public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtSignature<S>>(
+public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtCallableSignature<S>>(
     private val _signature: C,
     private val _dispatchReceiver: KtReceiverValue?,
     private val _extensionReceiver: KtReceiverValue?,
@@ -171,7 +171,7 @@ public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtSignat
     public val extensionReceiver: KtReceiverValue? get() = withValidityAssertion { _extensionReceiver }
 }
 
-public val <S : KtCallableSymbol, C : KtSignature<S>> KtPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
+public val <S : KtCallableSymbol, C : KtCallableSignature<S>> KtPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
 
 /**
  * A synthetic call to assert an expression is not null. For example
@@ -191,11 +191,11 @@ public class KtCheckNotNullCall(
 /**
  * A call to a function, or a simple/compound access to a property.
  */
-public sealed class KtCallableMemberCall<S : KtCallableSymbol, C : KtSignature<S>> : KtCall() {
+public sealed class KtCallableMemberCall<S : KtCallableSymbol, C : KtCallableSignature<S>> : KtCall() {
     public abstract val partiallyAppliedSymbol: KtPartiallyAppliedSymbol<S, C>
 }
 
-public val <S : KtCallableSymbol, C : KtSignature<S>> KtCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
+public val <S : KtCallableSymbol, C : KtCallableSignature<S>> KtCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
 
 public sealed class KtFunctionCall<S : KtFunctionLikeSymbol>(
     private val _argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,

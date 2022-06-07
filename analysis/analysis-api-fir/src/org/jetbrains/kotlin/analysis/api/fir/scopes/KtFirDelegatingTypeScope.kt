@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSignature
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +36,7 @@ internal open class KtFirDelegatingTypeScope(
         firScope.getClassifierNames()
     }
 
-    override fun getCallableSignatures(nameFilter: KtScopeNameFilter): Sequence<KtSignature<*>> = withValidityAssertion {
+    override fun getCallableSignatures(nameFilter: KtScopeNameFilter): Sequence<KtCallableSignature<*>> = withValidityAssertion {
         firScope.getCallableSignatures(getPossibleCallableNames().filter(nameFilter), builder)
     }
 

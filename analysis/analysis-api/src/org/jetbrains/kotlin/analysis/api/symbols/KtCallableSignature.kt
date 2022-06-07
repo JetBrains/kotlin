@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * }
  * ```
  *
- * Equality of [KtSignature] is derived from its content.
+ * Equality of [KtCallableSignature] is derived from its content.
  */
-public sealed class KtSignature<out S : KtCallableSymbol> : KtLifetimeOwner {
+public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOwner {
     /**
      * The original symbol for this signature.
      */
@@ -57,7 +57,7 @@ public data class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
     private val _returnType: KtType,
     private val _receiverType: KtType?,
     private val _valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtSignature<S>() {
+) : KtCallableSignature<S>() {
     override val token: KtLifetimeToken
         get() = _symbol.token
     override val symbol: S
@@ -81,7 +81,7 @@ public data class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
     private val _symbol: S,
     private val _returnType: KtType,
     private val _receiverType: KtType?,
-) : KtSignature<S>() {
+) : KtCallableSignature<S>() {
     override val token: KtLifetimeToken
         get() = _symbol.token
     override val symbol: S

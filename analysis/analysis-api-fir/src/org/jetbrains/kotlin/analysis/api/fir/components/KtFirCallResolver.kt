@@ -303,7 +303,7 @@ internal class KtFirCallResolver(
             dispatchReceiver: FirExpression,
             extensionReceiver: FirExpression,
             explicitReceiverKind: ExplicitReceiverKind
-        ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtSignature<KtCallableSymbol>> {
+        ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtCallableSignature<KtCallableSymbol>> {
             isImplicitInvoke = true
             val explicitReceiverPsi = when (psi) {
                 is KtQualifiedExpression -> (psi.selectorExpression as KtCallExpression).calleeExpression
@@ -688,7 +688,7 @@ internal class KtFirCallResolver(
     }
 
     @OptIn(SymbolInternals::class)
-    private fun FirCallableSymbol<*>.toKtSignature(): KtSignature<KtCallableSymbol> =
+    private fun FirCallableSymbol<*>.toKtSignature(): KtCallableSignature<KtCallableSymbol> =
         firSymbolBuilder.callableBuilder.buildCallableSignature(this)
 
     @OptIn(SymbolInternals::class)
