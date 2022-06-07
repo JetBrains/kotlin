@@ -76,4 +76,3 @@ public interface KtScope : KtLifetimeOwner {
     }
 }
 
-public typealias KtScopeNameFilter = (Name) -> Boolean
