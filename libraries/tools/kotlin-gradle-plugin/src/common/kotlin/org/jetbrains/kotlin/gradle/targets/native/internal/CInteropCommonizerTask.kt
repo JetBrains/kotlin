@@ -38,7 +38,7 @@ internal open class CInteropCommonizerTask
     internal data class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
         @get:Input val konanTarget: KonanTarget,
-        @get:Internal val sourceSets: Provider<Set<KotlinSourceSet>>,
+        @Transient @get:Internal val sourceSets: Provider<Set<KotlinSourceSet>>,
 
         @get:Classpath
         val libraryFile: Provider<File>

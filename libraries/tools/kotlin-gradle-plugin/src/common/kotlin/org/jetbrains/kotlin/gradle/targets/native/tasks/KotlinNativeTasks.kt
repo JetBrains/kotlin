@@ -1122,7 +1122,9 @@ internal class CacheBuilder(
 @CacheableTask
 open class CInteropProcess
 @Inject constructor(
-    @get:Internal val settings: DefaultCInteropSettings,
+    @Transient
+    @Internal
+    val settings: DefaultCInteropSettings,
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations
 ) : DefaultTask() {
@@ -1130,27 +1132,30 @@ open class CInteropProcess
     @Internal // Taken into account in the outputFileProvider property
     lateinit var destinationDir: Provider<File>
 
-    val konanTarget: KonanTarget
-        @Input get() = settings.compilation.konanTarget
+    @get:Input
+    val konanTarget: KonanTarget = settings.compilation.konanTarget
 
-    val interopName: String
-        @Input get() = settings.name
+    @get:Input
+    val konanVersion: CompilerVersion = project.konanVersion
 
-    val baseKlibName: String
-        @Input get() {
-            val compilationPrefix = settings.compilation.let {
-                if (it.isMainCompilationData()) project.name else it.compilationPurpose
-            }
-            return "$compilationPrefix-cinterop-$interopName"
+    @get:Input
+    val interopName: String = settings.name
+
+    @get:Input
+    val baseKlibName: String = run {
+        val compilationPrefix = settings.compilation.let {
+            if (it.isMainCompilationData()) project.name else it.compilationPurpose
         }
+        "$compilationPrefix-cinterop-$interopName"
+    }
 
-    val outputFileName: String
-        @Internal get() = with(CompilerOutputKind.LIBRARY) {
-            "$baseKlibName${suffix(konanTarget)}"
-        }
+    @get:Internal
+    val outputFileName: String = with(CompilerOutputKind.LIBRARY) {
+        "$baseKlibName${suffix(konanTarget)}"
+    }
 
-    val moduleName: String
-        @Input get() = project.klibModuleName(baseKlibName)
+    @get:Input
+    val moduleName: String = project.klibModuleName(baseKlibName)
 
     @get:Internal
     val outputFile: File
@@ -1166,38 +1171,36 @@ open class CInteropProcess
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val defFile: File
-        get() = settings.defFileProperty.get()
+    val defFile: File = settings.defFileProperty.get()
 
-    val packageName: String?
-        @Optional @Input get() = settings.packageName
+    @get:Optional
+    @get:Input
+    val packageName: String? = settings.packageName
 
-    val compilerOpts: List<String>
-        @Input get() = settings.compilerOpts
+    @get:Input
+    val compilerOpts: List<String> = settings.compilerOpts
 
-    val linkerOpts: List<String>
-        @Input get() = settings.linkerOpts
-
-    @get:IgnoreEmptyDirectories
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val headers: FileCollection
-        get() = settings.headers
-
-    val allHeadersDirs: Set<File>
-        @Input get() = settings.includeDirs.allHeadersDirs.files
-
-    val headerFilterDirs: Set<File>
-        @Input get() = settings.includeDirs.headerFilterDirs.files
+    @get:Input
+    val linkerOpts: List<String> = settings.linkerOpts
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: FileCollection
-        get() = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+    val headers: FileCollection = settings.headers
 
-    val extraOpts: List<String>
-        @Input get() = settings.extraOpts
+    @get:Input
+    val allHeadersDirs: Set<File> = settings.includeDirs.allHeadersDirs.files
+
+    @get:Input
+    val headerFilterDirs: Set<File> = settings.includeDirs.headerFilterDirs.files
+
+    @get:IgnoreEmptyDirectories
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val libraries: FileCollection = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+
+    @get:Input
+    val extraOpts: List<String> = settings.extraOpts
 
     private val isInIdeaSync = project.isInIdeaSync
 
@@ -1228,7 +1231,7 @@ open class CInteropProcess
             addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
-            if (project.konanVersion.isAtLeast(1, 4, 0)) {
+            if (konanVersion.isAtLeast(1, 4, 0)) {
                 addArg("-Xmodule-name", moduleName)
             }
 
