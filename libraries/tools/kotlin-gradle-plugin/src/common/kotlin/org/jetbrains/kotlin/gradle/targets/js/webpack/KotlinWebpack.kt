@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
@@ -18,11 +19,15 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -35,7 +40,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinWebpack
+abstract class KotlinWebpack
 @Inject
 constructor(
     @Internal
@@ -60,6 +65,13 @@ constructor(
     @get:Inject
     open val execHandleFactory: ExecHandleFactory
         get() = injected
+
+    @get:Internal
+    internal abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
+
+    @get:Internal
+    val metrics: Property<BuildMetricsReporter> = project.objects
+        .property(BuildMetricsReporterImpl())
 
     @Suppress("unused")
     @get:Input
@@ -302,6 +314,18 @@ constructor(
                     progressReporterPathFilter = rootPackageDir.absolutePath
                 )
             ).execute(services)
+
+            val buildMetrics = metrics.get()
+            destinationDirectory.walkTopDown()
+                .filter { it.isFile }
+                .filter { it.extension == "js" }
+                .map { it.length() }
+                .sum()
+                .let {
+                    buildMetrics.addMetric(BuildPerformanceMetric.BUNDLE_SIZE, it)
+                }
+
+            buildMetricsReporterService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
         }
     }
 

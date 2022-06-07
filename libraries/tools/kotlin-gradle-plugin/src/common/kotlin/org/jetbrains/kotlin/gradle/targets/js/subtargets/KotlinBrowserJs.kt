@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.executeTaskBaseName
@@ -235,6 +236,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     task.description = "build webpack ${type.name.toLowerCase()} bundle"
                     task._destinationDirectory = distribution.directory
+
+                    BuildMetricsReporterService.registerIfAbsent(project)?.let {
+                        task.buildMetricsReporterService.value(it)
+                    }
 
                     task.commonConfigure(
                         compilation = compilation,
