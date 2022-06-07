@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
@@ -21,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassSpecificDeclarations.ImplementationAgnostic
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassSpecificDeclarations.VirtualProperty
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassTree.InternalNode
+import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassTree.Leaf
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.ir.IrElement
@@ -37,9 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -58,39 +54,39 @@ val jvmMultiFieldValueClassPhase = makeIrFilePhase(
 private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
 
     private open inner class ValueDeclarationsRemapper {
-        private val symbol2getter = mutableMapOf<IrValueSymbol, ExpressionGenerator<Unit>>()
-        private val symbol2setters = mutableMapOf<IrValueSymbol, List<ExpressionSupplier<Unit>?>>()
-        private val knownExpressions = mutableMapOf<IrExpression, ImplementationAgnostic<Unit>>()
+        private val symbol2getter = mutableMapOf<IrValueSymbol, ExpressionGenerator>()
+        private val symbol2setters = mutableMapOf<IrValueSymbol, List<ExpressionSupplier?>>()
+        private val knownExpressions = mutableMapOf<IrExpression, ImplementationAgnostic>()
 
         fun remapSymbol(original: IrValueSymbol, replacement: IrValueDeclaration) {
             symbol2getter[original] = { irGet(replacement) }
-            symbol2setters[original] = if (replacement.isAssignable) listOf { _, value -> irSet(replacement, value) } else listOf(null)
+            symbol2setters[original] = if (replacement.isAssignable) listOf { value -> irSet(replacement, value) } else listOf(null)
         }
 
         fun remapSymbol(
             original: IrValueSymbol,
-            unboxed: List<VirtualProperty<Unit>>,
+            unboxed: List<VirtualProperty>,
             declarations: MultiFieldValueClassSpecificDeclarations
         ): Unit =
-            remapSymbol(original, declarations.ImplementationAgnostic(unboxed))
+            remapSymbol(original, declarations.ImplementationAgnostic(original.owner.type as IrSimpleType, unboxed))
 
-        fun remapSymbol(original: IrValueSymbol, unboxed: ImplementationAgnostic<Unit>) {
+        fun remapSymbol(original: IrValueSymbol, unboxed: ImplementationAgnostic) {
             symbol2getter[original] = {
-                unboxed.boxedExpression(this, Unit).also { irExpression -> knownExpressions[irExpression] = unboxed }
+                unboxed.boxedExpression(this).also { irExpression -> knownExpressions[irExpression] = unboxed }
             }
             symbol2setters[original] = unboxed.virtualFields.map { it.assigner }
         }
 
         fun IrBuilderWithScope.getter(original: IrValueSymbol): IrExpression? =
-            symbol2getter[original]?.invoke(this, Unit)
+            symbol2getter[original]?.invoke(this)
 
-        fun setter(original: IrValueSymbol): List<ExpressionSupplier<Unit>?>? = symbol2setters[original]
+        fun setter(original: IrValueSymbol): List<ExpressionSupplier?>? = symbol2setters[original]
 
-        fun implementationAgnostic(expression: IrExpression): ImplementationAgnostic<Unit>? = knownExpressions[expression]
+        fun implementationAgnostic(expression: IrExpression): ImplementationAgnostic? = knownExpressions[expression]
 
         fun IrBuilderWithScope.subfield(expression: IrExpression, name: Name): IrExpression? =
             implementationAgnostic(expression)?.get(name)?.let { (expressionGenerator, representation) ->
-                val res = expressionGenerator(this, Unit)
+                val res = expressionGenerator(this)
                 representation?.let { knownExpressions[res] = it }
                 res
             }
@@ -98,7 +94,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         /**
          * Register value declaration instead of singular expressions when possible
          */
-        fun registerExpression(getter: IrExpression, representation: ImplementationAgnostic<Unit>) {
+        fun registerExpression(getter: IrExpression, representation: ImplementationAgnostic) {
             knownExpressions[getter] = representation
         }
     }
@@ -108,7 +104,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     private val regularClassMFVCPropertyMainGetters: MutableMap<IrClass, MutableMap<Name, IrSimpleFunction>> = mutableMapOf()
     private val regularClassMFVCPropertyNextGetters: MutableMap<IrSimpleFunction, Map<Name, IrSimpleFunction>> = mutableMapOf()
     private val regularClassMFVCPropertyFieldsMapping: MutableMap<IrField, List<IrField>> = mutableMapOf()
-    private val regularClassMFVCPropertyNodes: MutableMap<IrSimpleFunction, MultiFieldValueClassTree<Unit, Unit>> = mutableMapOf()
+    private val regularClassMFVCPropertyNodes: MutableMap<IrSimpleFunction, MultiFieldValueClassTree> = mutableMapOf()
     private val regularClassMFVCPropertyAllPrimitiveGetters: MutableSet<IrSimpleFunction> = mutableSetOf()
 
     override val replacements
@@ -148,7 +144,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
         val oldFieldToInitializers: MutableMap<IrField, IrAnonymousInitializer> = mutableMapOf()
         // we need to preserve order of initializations
-        // todo test it
         val newFields: List<List<IrField>> = fieldsToReplace.map { oldField ->
             val declarations = replacements.getDeclarations(oldField.type.erasedUpperBound)!!
             val newFields = declarations.fields.map { sourceField ->
@@ -163,15 +158,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 }
             }
             regularClassMFVCPropertyFieldsMapping[oldField] = newFields
-            val virtualFields: List<VirtualProperty<IrValueDeclaration>> = newFields.map { newField ->
-                VirtualProperty(
-                    type = newField.type,
-                    makeGetter = { receiver: IrValueDeclaration -> irGetField(irGet(receiver), newField) },
-                    assigner = { receiver: IrValueDeclaration, value: IrExpression -> irSetField(irGet(receiver), newField, value) },
-                    symbol = null,
-                )
-            }
-            val implementationAgnostic = declarations.ImplementationAgnostic(virtualFields)
+            val nodes2getters = declarations.makeNodes2FieldExpressions(newFields)
 
             val property = oldField.correspondingPropertySymbol?.owner
             val mainGetter = property?.getter
@@ -181,7 +168,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 if (!property.isDelegated && mainGetter.isDefaultGetter(oldField)) {
                     mainGetter.origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
                     regularClassMFVCPropertyMainGetters.getOrPut(declaration) { mutableMapOf() }[oldField.name] = mainGetter
-                    val nodesToGetters = implementationAgnostic.nodeToExpressionGetters.mapValues { (node, exprGen) ->
+                    val nodesToGetters = nodes2getters.mapValues { (node, exprGen) ->
                         if (node == declarations.loweringRepresentation) mainGetter else {
                             context.irFactory.buildProperty {
                                 val nameAsString = "${oldField.name.asString()}$${declarations.nodeFullNames[node]!!.asString()}"
@@ -195,8 +182,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                                     origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
                                 }.apply {
                                     createDispatchReceiverParameter()
+                                    val function = this
                                     body = with(context.createIrBuilder(this.symbol)) {
-                                        irExprBody(exprGen(this, dispatchReceiverParameter!!))
+                                        irExprBody(exprGen(this, function))
                                     }
                                 }
                             }.getter!!.also {
@@ -206,7 +194,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     }
                     regularClassMFVCPropertyNodes.putAll(nodesToGetters.map { (node, getter) -> getter to node })
                     for ((node, getter) in nodesToGetters) {
-                        if (node is InternalNode<Unit, Unit>) {
+                        if (node is InternalNode) {
                             regularClassMFVCPropertyNextGetters[getter] = node.fields.associate { it.name to nodesToGetters[it.node]!! }
                         }
                     }
@@ -225,9 +213,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                             val representation = newFields.zip(gettersAndSetters) { newField, (getter, setter) ->
                                 VirtualProperty(newField.type, getter, setter, null)
                             }
-                            val fieldRepresentation = declarations.ImplementationAgnostic(representation)
+                            val fieldRepresentation = declarations.ImplementationAgnostic(oldField.type as IrSimpleType, representation)
                             val boxed = fieldRepresentation.boxedExpression(
-                                context.createIrBuilder((currentScope!!.irElement as IrSymbolOwner).symbol), Unit
+                                context.createIrBuilder((currentScope!!.irElement as IrSymbolOwner).symbol)
                             )
                             valueDeclarationsRemapper.registerExpression(boxed, fieldRepresentation)
                             return boxed
@@ -330,18 +318,35 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             name = mangledName
             returnType = source.returnType
         }.apply {
-            val overriddenReplaced = replacement.overriddenSymbols.firstOrNull {
-                replacements.bindingNewFunctionToParameterTemplateStructure[it.owner] != null
-            }?.owner
-            if (source.parentAsClass.isMultiFieldValueClass && overriddenReplaced != null) {
-                copyParameterDeclarationsFrom(overriddenReplaced)
-                dispatchReceiverParameter = source.dispatchReceiverParameter!!.copyTo(this)
-                val replacementStructure = replacement.overriddenSymbols.firstNotNullOf {
-                    replacements.bindingNewFunctionToParameterTemplateStructure[it.owner]
-                }.toMutableList().apply {
-                    set(0, RegularMapping(ValueParameterTemplate(dispatchReceiverParameter!!, dispatchReceiverParameter!!.origin)))
+            val anyOverriddenReplaced = replacement.overriddenSymbols.any {
+                it.owner in replacements.bindingNewFunctionToParameterTemplateStructure
+            }
+            if (source.parentAsClass.isMultiFieldValueClass && anyOverriddenReplaced) {
+                copyTypeParametersFrom(source) // without static type parameters
+                val substitutionMap = makeTypeParameterSubstitutionMap(source, this)
+                dispatchReceiverParameter = source.dispatchReceiverParameter!!.let { // source!!!
+                    it.copyTo(this, type = it.type.substitute(substitutionMap))
                 }
-                replacements.bindingNewFunctionToParameterTemplateStructure[this] = replacementStructure
+                require(replacement.dispatchReceiverParameter == null) {
+                    """
+                        Ambiguous receivers:
+                        ${source.dispatchReceiverParameter!!.render()}
+                        ${replacement.dispatchReceiverParameter!!.render()}
+                        """.trimIndent()
+                }
+                require(replacement.extensionReceiverParameter == null) {
+                    "Static replacement must have no extension receiver but ${replacement.extensionReceiverParameter!!.render()} found"
+                }
+                val replacementStructure = replacements.bindingNewFunctionToParameterTemplateStructure[replacement]!!
+                val offset = replacementStructure[0].valueParameters.size
+                valueParameters = replacement.valueParameters.drop(offset).map {
+                    it.copyTo(this, type = it.type.substitute(substitutionMap), index = it.index - offset)
+                }
+                val bridgeStructure =
+                    replacementStructure.toMutableList().apply {
+                        set(0, RegularMapping(ValueParameterTemplate(dispatchReceiverParameter!!, dispatchReceiverParameter!!.origin)))
+                    }
+                replacements.bindingNewFunctionToParameterTemplateStructure[this] = bridgeStructure
             } else {
                 copyParameterDeclarationsFrom(source)
             }
@@ -358,9 +363,9 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         allScopes.push(createScope(source))
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             val sourceExplicitParameters = source.explicitParameters
+            val targetExplicitParameters = target.explicitParameters
             irExprBody(irCall(target).apply {
-                passTypeArgumentsFrom(source)
-                val targetExplicitParameters = target.explicitParameters
+                passTypeArgumentsWithOffsets(target, source) { source.typeParameters[it].defaultType }
                 val sourceStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[source]
                 val targetStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[target]
                 val errorMessage = {
@@ -415,15 +420,17 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                                         )
                                     }
                                 }
-                                is RegularMapping, null ->
-                                    putArgument(
-                                        targetExplicitParameters[flattenedTargetIndex++],
-                                        irCall(remappedSourceParameter.declarations.boxMethod).apply {
-                                            sourceExplicitParameters
-                                                .slice(flattenedSourceIndex until flattenedSourceIndex + remappedSourceParameter.valueParameters.size)
-                                                .forEachIndexed { index, boxParameter -> putValueArgument(index, irGet(boxParameter)) }
-                                                .also { flattenedSourceIndex += remappedSourceParameter.valueParameters.size }
-                                        })
+                                is RegularMapping, null -> putArgument(
+                                    targetExplicitParameters[flattenedTargetIndex++],
+                                    irCall(remappedSourceParameter.declarations.boxMethod).apply {
+                                        remappedSourceParameter.boxedType.arguments.forEachIndexed { index, argument ->
+                                            putTypeArgument(index, argument.typeOrNull)
+                                        }
+                                        sourceExplicitParameters
+                                            .slice(flattenedSourceIndex until flattenedSourceIndex + remappedSourceParameter.valueParameters.size)
+                                            .forEachIndexed { index, boxParameter -> putValueArgument(index, irGet(boxParameter)) }
+                                            .also { flattenedSourceIndex += remappedSourceParameter.valueParameters.size }
+                                    })
                             }
                         }
                         is RegularMapping, null -> when (remappedTargetParameter) {
@@ -449,6 +456,34 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             })
         }
         allScopes.pop()
+    }
+
+    private fun IrFunctionAccessExpression.passTypeArgumentsWithOffsets(
+        target: IrFunction, source: IrFunction, forCommonTypeParameters: (targetIndex: Int) -> IrType
+    ) {
+        val passedTypeParametersSize = minOf(target.typeParameters.size, source.typeParameters.size)
+        val targetOffset = target.typeParameters.size - passedTypeParametersSize
+        val sourceOffset = source.typeParameters.size - passedTypeParametersSize
+        if (sourceOffset > 0) {
+            // static fun calls method
+            val dispatchReceiverType = source.parentAsClass.defaultType
+            require(dispatchReceiverType.let {
+                it.isMultiFieldValueClassType() && !it.isNullable() && it.erasedUpperBound.typeParameters.size == sourceOffset
+            }) { "Unexpected dispatcher receiver type: ${dispatchReceiverType.render()}" }
+        }
+        if (targetOffset > 0) {
+            // method calls static fun
+            val dispatchReceiverType = source.parentAsClass.defaultType
+            require(dispatchReceiverType.let {
+                it.isMultiFieldValueClassType() && !it.isNullable() && it.erasedUpperBound.typeParameters.size == targetOffset
+            }) { "Unexpected dispatcher receiver type: ${dispatchReceiverType.render()}" }
+            dispatchReceiverType.erasedUpperBound.typeParameters.forEachIndexed { index, typeParameter ->
+                putTypeArgument(index, typeParameter.defaultType)
+            }
+        }
+        for (i in 0 until passedTypeParametersSize) {
+            putTypeArgument(i + targetOffset, forCommonTypeParameters(i + sourceOffset))
+        }
     }
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
@@ -495,7 +530,6 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     fun MultiFieldValueClassSpecificDeclarations.buildBoxFunction() {
         boxMethod.body = with(context.createIrBuilder(boxMethod.symbol)) {
             irExprBody(irCall(primaryConstructor.symbol).apply {
-                passTypeArgumentsFrom(boxMethod)
                 for (i in leaves.indices) {
                     putValueArgument(i, irGet(boxMethod.valueParameters[i]))
                 }
@@ -568,6 +602,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     if (newReceiver is IrCall) {
                         val nextFunction = regularClassMFVCPropertyNextGetters[newReceiver.symbol.owner]?.get(name)
                         if (nextFunction != null) {
+                            require(nextFunction.typeParameters.isEmpty()) { "Subgetter with type parameters: ${nextFunction.render()}" }
                             return irCall(nextFunction).apply {
                                 this.dispatchReceiver = newReceiver.dispatchReceiver
                             }
@@ -596,8 +631,11 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     require(leftClass == rightClass) { "Equals for different classes: $leftClass and $rightClass called" }
                     return context.createIrBuilder(expression.symbol).run {
                         irCall(leftImplementation.regularDeclarations.specializedEqualsMethod).apply {
+                            (leftImplementation.type.arguments + rightImplementation.type.arguments).forEachIndexed { index, argument ->
+                                putTypeArgument(index, argument.typeOrNull)
+                            }
                             val arguments =
-                                (leftImplementation.virtualFields + rightImplementation.virtualFields).map { it.makeGetter(this@run, Unit) }
+                                (leftImplementation.virtualFields + rightImplementation.virtualFields).map { it.makeGetter(this@run) }
                             arguments.forEachIndexed { index, argument -> putValueArgument(index, argument) }
                         }
                     }
@@ -625,6 +663,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                             val nonNullLeftArgumentVariable =
                                 irTemporary(irImplicitCast(irGet(leftValue), leftArgument.type.makeNotNull()))
                             +irCall(context.irBuiltIns.eqeqSymbol).apply {
+                                copyTypeArgumentsFrom(expression)
                                 putValueArgument(0, irGet(nonNullLeftArgumentVariable))
                                 putValueArgument(1, rightArgument)
                             }
@@ -639,7 +678,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     private fun makeLeavesGetters(currentGetter: IrSimpleFunction): List<IrSimpleFunction>? =
         when (val node = regularClassMFVCPropertyNodes[currentGetter]) {
             null -> null
-            is MultiFieldValueClassTree.Leaf<Unit> -> listOf(currentGetter)
+            is Leaf -> listOf(currentGetter)
             is InternalNode -> node.fields.flatMap { makeLeavesGetters(regularClassMFVCPropertyNextGetters[currentGetter]!![it.name]!!)!! }
         }
 
@@ -655,7 +694,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         val newArguments: List<IrExpression?> =
             makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure.map { it.valueParameters })
         +irCall(replacement.symbol).apply {
-            copyTypeArgumentsFrom(original)
+            passTypeArgumentsWithOffsets(replacement, originalFunction) { original.getTypeArgument(it)!! }
             for ((parameter, argument) in replacement.explicitParameters zip newArguments) {
                 if (argument == null) continue
                 putArgument(replacement, parameter, argument.transform(this@JvmMultiFieldValueClassLowering, null))
@@ -671,6 +710,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     val toString = argument.type.erasedUpperBound.functions.single {
                         it.name.asString() == "toString" && it.valueParameters.isEmpty()
                     }
+                    require(toString.typeParameters.isEmpty()) { "Bad toString: ${toString.render()}" }
                     irCall(toString).apply {
                         dispatchReceiver = argument
                     }
@@ -760,6 +800,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     ?: return super.visitGetField(expression)
                 with(context.createIrBuilder(expression.symbol)) {
                     irCall(getter).apply {
+                        require(getter.typeParameters.isEmpty()) { "Getter with type parameters: ${getter.render()}" }
                         dispatchReceiver = expression.receiver!!.transform(this@JvmMultiFieldValueClassLowering, null)
                     }
                 }
@@ -807,7 +848,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 }
             )
             for ((setter, subValue) in setters zip subValues) {
-                setter?.invoke(this, Unit, subValue)?.let { +it }
+                setter?.invoke(this, subValue)?.let { +it }
             }
         }
     }
@@ -835,14 +876,14 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     }
 
     private fun List<IrVariable>.toGettersAndSetters() = map { variable ->
-        Pair<ExpressionGenerator<Unit>, ExpressionSupplier<Unit>>(
+        Pair<ExpressionGenerator, ExpressionSupplier>(
             { irGet(variable) },
-            { _, value: IrExpression -> irSet(variable, value) }
+            { value: IrExpression -> irSet(variable, value) }
         )
     }
 
     private fun List<IrField>.toGettersAndSetters(receiver: IrValueParameter, transformReceiver: Boolean = false) = map { field ->
-        Pair<ExpressionGenerator<Unit>, ExpressionSupplier<Unit>>(
+        Pair<ExpressionGenerator, ExpressionSupplier>(
             {
                 val initialGetReceiver = irGet(receiver)
                 val resultReceiver =
@@ -850,7 +891,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     else initialGetReceiver
                 irGetField(resultReceiver, field)
             },
-            { _, value: IrExpression ->
+            { value: IrExpression ->
                 val initialGetReceiver = irGet(receiver)
                 val resultReceiver =
                     if (transformReceiver) initialGetReceiver.transform(this@JvmMultiFieldValueClassLowering, null)
@@ -882,7 +923,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
     }
 
     fun IrBlockBuilder.flattenExpressionTo(
-        expression: IrExpression, variables: List<Pair<ExpressionGenerator<Unit>, ExpressionSupplier<Unit>>>
+        expression: IrExpression, variables: List<Pair<ExpressionGenerator, ExpressionSupplier>>
     ) {
         val declarations = replacements.getDeclarations(expression.type.erasedUpperBound) ?: run {
             val constructor = (expression as? IrConstructorCall)?.symbol?.owner ?: return@run null
@@ -891,7 +932,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
 
         if (expression.type.isNullable() || declarations == null) {
             require(variables.size == 1)
-            +variables.single().second(this, Unit, expression.transform(this@JvmMultiFieldValueClassLowering, null))
+            +variables.single().second(this, expression.transform(this@JvmMultiFieldValueClassLowering, null))
             return
         }
         require(variables.size == declarations.leaves.size)
@@ -907,22 +948,23 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 for ((treeField, argument) in root.fields zip oldArguments) {
                     val size = when (treeField.node) {
                         is InternalNode -> replacements.getDeclarations(treeField.node.irClass)!!.leaves.size
-                        is MultiFieldValueClassTree.Leaf -> 1
+                        is Leaf -> 1
                     }
                     val subVariables = variables.slice(curOffset until (curOffset + size)).also { curOffset += size }
                     argument?.let { flattenExpressionTo(it, subVariables) }
                 }
                 +irCall(declarations.primaryConstructorImpl).apply {
-                    variables.forEachIndexed { index, variable -> putValueArgument(index, variable.first(this@flattenExpressionTo, Unit)) }
+                    copyTypeArgumentsFrom(expression)
+                    variables.forEachIndexed { index, variable -> putValueArgument(index, variable.first(this@flattenExpressionTo)) }
                 }
                 return
             }
         }
         val transformedExpression = expression.transform(this@JvmMultiFieldValueClassLowering, null)
-        valueDeclarationsRemapper.implementationAgnostic(transformedExpression)?.virtualFields?.map { it.makeGetter(this, Unit) }?.let {
+        valueDeclarationsRemapper.implementationAgnostic(transformedExpression)?.virtualFields?.map { it.makeGetter(this) }?.let {
             require(variables.size == it.size)
             for ((variable, subExpression) in variables zip it) {
-                +variable.second(this, Unit, subExpression)
+                +variable.second(this, subExpression)
             }
             return
         }
@@ -936,7 +978,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     transformedExpression.getValueArgument(it)
                 }) {
                     if (argument != null) {
-                        +variable.second(this, Unit, argument)
+                        +variable.second(this, argument)
                     }
                 }
                 return
@@ -946,7 +988,8 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             val receiver = irTemporary(transformedExpression.dispatchReceiver)
             require(getters.size == variables.size) { "Number of getters must be equal to number of variables" }
             for ((variable, getter) in variables zip getters) {
-                +variable.second(this, Unit, irCall(getter).apply { dispatchReceiver = irGet(receiver) })
+                require(getter.typeParameters.isEmpty()) { "Getter with type parameters: ${getter.render()}" }
+                +variable.second(this, irCall(getter).apply { dispatchReceiver = irGet(receiver) })
             }
             return
         }
@@ -960,7 +1003,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         }
         val boxed = irTemporary(transformedExpression)
         for ((variable, unboxMethod) in variables zip declarations.unboxMethods) {
-            +variable.second(this, Unit, irCall(unboxMethod).apply { dispatchReceiver = irGet(boxed) })
+            +variable.second(this, irCall(unboxMethod).apply { dispatchReceiver = irGet(boxed) })
         }
     }
 
