@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -180,9 +181,9 @@ internal class KtFe10ScopeProvider(
         return KtCompositeScope(subScopes, token)
     }
 
-    override fun getTypeScope(type: KtType): KtScope {
+    override fun getTypeScope(type: KtType): KtTypeScope {
         require(type is KtFe10Type)
-        return KtFe10ScopeMember(type.type.memberScope, analysisContext)
+        TODO()
     }
 
     override fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext {
