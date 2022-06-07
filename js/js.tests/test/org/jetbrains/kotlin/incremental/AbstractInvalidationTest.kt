@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.name.FqName
@@ -294,7 +297,36 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             AnalyzerWithCompilerReport(configuration)
         )
 
-        generateKLib(sourceModule, IrFactoryImpl, outputKlibFile.canonicalPath, nopack = false, jsOutputName = moduleName)
+        val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+        val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val moduleFragment = generateIrForKlibSerialization(
+            environment.project,
+            moduleSourceFiles,
+            configuration,
+            sourceModule.jsFrontEndResult.jsAnalysisResult,
+            sortDependencies(sourceModule.descriptors),
+            icData,
+            expectDescriptorToSymbol,
+            IrFactoryImpl,
+            verifySignatures = true
+        ) {
+            sourceModule.getModuleDescriptor(it)
+        }
+        val metadataSerializer =
+            KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
+        generateKLib(
+            sourceModule,
+            outputKlibFile.canonicalPath,
+            nopack = false,
+            jsOutputName = moduleName,
+            icData = icData,
+            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            moduleFragment = moduleFragment
+        ) { file ->
+            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+        }
     }
 
     private fun initializeWorkingDir(projectInfo: ProjectInfo, testDir: File, sourceDir: File, buildDir: File) {

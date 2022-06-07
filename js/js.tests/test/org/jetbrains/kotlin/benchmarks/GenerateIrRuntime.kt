@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
@@ -492,13 +493,12 @@ class GenerateIrRuntime {
         perFile: Boolean = false
     ): String {
         val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
+        val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, false)
         serializeModuleIntoKlib(
             moduleName,
-            project,
             configuration,
             IrMessageLogger.None,
-            bindingContext,
-            files,
+            files.map(::KtPsiSourceFile),
             tmpKlibDir,
             emptyList(),
             moduleFragment,
@@ -508,7 +508,9 @@ class GenerateIrRuntime {
             perFile,
             abiVersion = KotlinAbiVersion.CURRENT,
             jsOutputName = null
-        )
+        ) { file ->
+            metadataSerializer.serializeScope(file, bindingContext, moduleFragment.descriptor)
+        }
 
         return tmpKlibDir
     }

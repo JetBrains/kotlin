@@ -253,22 +253,7 @@ abstract class KlibMetadataSerializer(
         fragmentNames: List<String>,
         emptyPackages: List<String>
     ): KlibMetadataProtoBuf.Header {
-        val header = KlibMetadataProtoBuf.Header.newBuilder()
-
-        header.moduleName = moduleDescriptor.name.asString()
-
-        if (languageVersionSettings.isPreRelease()) {
-            header.flags = 1
-        }
-
-        fragmentNames.forEach {
-            header.addPackageFragmentName(it)
-        }
-        emptyPackages.forEach {
-            header.addEmptyPackage(it)
-        }
-
-        return header.build()
+        return serializeKlibHeader(languageVersionSettings, moduleDescriptor, fragmentNames, emptyPackages)
     }
 
     // For platform libraries we get HUGE files.
@@ -276,6 +261,30 @@ abstract class KlibMetadataSerializer(
     // So we split them into chunks.
     abstract protected val TOP_LEVEL_DECLARATION_COUNT_PER_FILE: Int?
     abstract protected val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE: Int?
+}
+
+fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleDescriptor: ModuleDescriptor,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+): KlibMetadataProtoBuf.Header {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+
+    header.moduleName = moduleDescriptor.name.asString()
+
+    if (languageVersionSettings.isPreRelease()) {
+        header.flags = 1
+    }
+
+    fragmentNames.forEach {
+        header.addPackageFragmentName(it)
+    }
+    emptyPackages.forEach {
+        header.addEmptyPackage(it)
+    }
+
+    return header.build()
 }
 
 fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
