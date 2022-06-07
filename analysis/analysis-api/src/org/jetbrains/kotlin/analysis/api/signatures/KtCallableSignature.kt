@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.signatures
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.name.CallableId
 
 /**
  * A signature for a callable symbol. Comparing to a `KtCallableSymbol`, a signature can carry use-site type information. For example
@@ -35,6 +37,8 @@ public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOw
      * The use-site-substituted extension receiver type.
      */
     public abstract val receiverType: KtType?
+
+    public open val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { symbol.callableIdIfNonLocal }
 
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int
