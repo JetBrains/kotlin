@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
-import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxInlineWasmTest
-import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenBoxWasmTest
-import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractIrCodegenWasmJsInteropWasmTest
-import org.jetbrains.kotlin.js.testOld.wasm.semantics.AbstractJsTranslatorWasmTest
+import org.jetbrains.kotlin.js.testOld.wasm.semantics.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrJsTextTest
 
@@ -33,8 +30,11 @@ fun main(args: Array<String>) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsTranslatorWasmTest> {
                 model("box/main", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-                model("box/kotlin.test/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
                 model("box/native/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
+            }
+
+            testClass<AbstractJsTranslatorUnitWasmTest> {
+                model("box/kotlin.test/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
             }
 
             testClass<AbstractDceTest> {

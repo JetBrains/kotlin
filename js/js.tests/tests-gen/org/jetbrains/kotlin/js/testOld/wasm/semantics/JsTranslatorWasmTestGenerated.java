@@ -73,64 +73,6 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
         }
     }
 
-    @TestMetadata("js/js.translator/testData/box/kotlin.test")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Kotlin_test extends AbstractJsTranslatorWasmTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInKotlin_test() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
-        }
-
-        @TestMetadata("beforeAfter.kt")
-        public void testBeforeAfter() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/beforeAfter.kt");
-        }
-
-        @TestMetadata("ignore.kt")
-        public void testIgnore() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/ignore.kt");
-        }
-
-        @TestMetadata("illegalParameters.kt")
-        public void testIllegalParameters() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/illegalParameters.kt");
-        }
-
-        @TestMetadata("incremental.kt")
-        public void testIncremental() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/incremental.kt");
-        }
-
-        @TestMetadata("inherited.kt")
-        public void testInherited() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/inherited.kt");
-        }
-
-        @TestMetadata("mpp.kt")
-        public void testMpp() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/mpp.kt");
-        }
-
-        @TestMetadata("nested.kt")
-        public void testNested() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/nested.kt");
-        }
-
-        @TestMetadata("returnTestResult.kt")
-        public void testReturnTestResult() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/returnTestResult.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("js/js.translator/testData/box/kotlin.test/simple.kt");
-        }
-    }
-
     @TestMetadata("js/js.translator/testData/box/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

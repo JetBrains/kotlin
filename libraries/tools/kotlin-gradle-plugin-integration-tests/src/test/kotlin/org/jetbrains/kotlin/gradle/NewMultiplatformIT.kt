@@ -1951,7 +1951,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertFileExists(jsOutput + "redefined-js-module-name.js")
 
             val wasmOutput = outputPrefix + "redefined-wasm-module-name/kotlin/"
-            assertFileExists(wasmOutput + "redefined-wasm-module-name.js")
+            assertFileExists(wasmOutput + "redefined-wasm-module-name.mjs")
             assertFileExists(wasmOutput + "redefined-wasm-module-name.wasm")
         }
     }

@@ -26,3 +26,9 @@ abstract class AbstractJsTranslatorWasmTest : BasicWasmBoxTest(
     TEST_DATA_DIR_PATH + "box/",
     "js.translator/wasmBox"
 )
+
+abstract class AbstractJsTranslatorUnitWasmTest : BasicWasmBoxTest(
+    TEST_DATA_DIR_PATH + "box/",
+    "js.translator/wasmBox",
+    startUnitTests = true
+)

@@ -10,7 +10,7 @@ repositories {
 kotlin {
     wasm {
         moduleName = "redefined-wasm-module-name"
-        browser {
+        d8 {
         }
         binaries.executable()
     }

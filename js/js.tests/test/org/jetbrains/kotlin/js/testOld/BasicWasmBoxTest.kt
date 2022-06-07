@@ -39,7 +39,8 @@ import java.io.File
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH
+    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
+    private val startUnitTests: Boolean = false
 ) : KotlinTestWithEnvironment() {
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
@@ -147,12 +148,14 @@ abstract class BasicWasmBoxTest(
                 generateWat = generateWat,
             )
 
+            val startUnitTests = if (startUnitTests) "exports.startUnitTests?.();\n" else ""
+
             val testJsQuiet = """
                 import exports from './index.mjs';
         
                 let actualResult
                 try {
-                    actualResult = exports.box();
+                    ${startUnitTests}actualResult = exports.box();
                 } catch(e) {
                     console.log('Failed with exception!')
                     console.log('Message: ' + e.message)
