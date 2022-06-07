@@ -66,10 +66,29 @@ class FirDataFrameReceiverInjector(
         return listOf(ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false))
     }
 
-    private fun <T> interpret(functionCall: FirFunctionCall, processor: Interpreter<T>): T {
+    private fun <T> interpret(functionCall: FirFunctionCall, processor: Interpreter<T>, additionalArguments: Map<String, Any> = emptyMap()): T {
+        fun loadInterpreter(call: FirFunctionCall): Interpreter<*>? {
+            val symbol =
+                (call.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
+            val argName = Name.identifier("interpreter")
+            return symbol.annotations
+                .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
+                ?.let { annotation ->
+                    (annotation.findArgumentByName(argName) as FirGetClassCall).classId.load<Interpreter<*>>()
+                }
+
+        }
         val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
         val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
-        val expectedArgsMap = processor.expectedArguments.associateBy { it.name }.toSortedMap()
+        val expectedArgsMap = processor.expectedArguments.associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
+
+        val context = buildString {
+            appendLine("ERROR: Function argument annotations")
+            appendLine("$processor")
+            val parametersString = functionCall.argumentMapping?.map { it.value }?.joinToString { "${it.name}: ${it.returnTypeRef.coneType}" }
+            appendLine("Function: ${functionCall.calleeReference.name.identifier}($parametersString)")
+        }
+        val argumentExpressions = refinedArguments.refinedArguments.map { it.getArgumentExpression(session, context) }
 
         if (expectedArgsMap.keys != actualArgsMap.keys) {
             val message = buildString {
@@ -84,13 +103,9 @@ class FirDataFrameReceiverInjector(
             }
             error(message)
         }
-        val context = buildString {
-            appendLine("ERROR: Function argument annotations")
-            appendLine("$processor")
-            appendLine("Function: ${functionCall.calleeReference.name.identifier}")
-        }
-        val argumentExpressions = refinedArguments.refinedArguments.map { it.getArgumentExpression(session, context) }
+
         val arguments = mutableMapOf<String, Any>()
+        arguments += additionalArguments
         argumentExpressions.associateTo(arguments) {
             val name = it.parameterName.identifier
             val expectedReturnType = expectedArgsMap[name]!!.klass
@@ -103,19 +118,10 @@ class FirDataFrameReceiverInjector(
                             expression.arguments.map { (it as FirConstExpression<*>).value }
                         }
                         else -> {
-                            val symbol =
-                                ((expression as FirFunctionCall).calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
-                            val argName = Name.identifier("interpreter")
-                            val interpreter = symbol.annotations
-                                .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
-                                ?.let { annotation ->
-                                    (annotation.findArgumentByName(argName) as FirGetClassCall).classId.load<Interpreter<*>>()
-                                }
-
-                            interpreter
-                                ?: TODO("receiver ${symbol.name} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
-
-                            interpret(expression, interpreter) ?: error("allow interpreters to return null values")
+                            val call = expression as FirFunctionCall
+                            val interpreter = loadInterpreter(call)
+                                ?: TODO("receiver ${call.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
+                            interpret(expression, interpreter, emptyMap()) ?: error("allow interpreters to return null values")
                         }
                     }
                 }
@@ -124,28 +130,15 @@ class FirDataFrameReceiverInjector(
                     TypeApproximation(returnType.classId?.asFqNameString()!!, returnType.isNullable)
                 }
                 "Dsl" -> {
-                    TODO("Rework DSL operations")
-//                    ((it.expression as FirLambdaArgumentExpression).expression as FirAnonymousFunctionExpression)
-//                        .anonymousFunction.body!!
-//                        .statements.filterIsInstance<FirFunctionCall>()
-//                        .fold(AnalysisResult.New(emptyList())) { acc, call ->
-//                            val schemaProcessor = findSchemaProcessor(call) ?: return@fold AnalysisResult.New(emptyList())
-//                            @Suppress("NAME_SHADOWING") val arguments = call.collectArgumentExpressions()
-//                            val map = arguments.associate {
-//                                val value = when (it.annotationName.identifier) {
-//                                    "Name" -> (it.expression as FirConstExpression<String>).value
-//                                    "ReturnType" -> {
-//                                        val returnType =
-//                                            (it.expression as FirAnonymousFunctionExpression).typeRef.coneType.returnType(session)
-//
-//                                        returnType.classId?.asFqNameString()!!
-//                                    }
-//                                    else -> error(it.annotationName.identifier)
-//                                }
-//                                it.parameterName.identifier to value
-//                            }
-//                            schemaProcessor.interpret(map) as AnalysisResult.New + acc
-//                        }
+                    { receiver: Any ->
+                        ((it.expression as FirLambdaArgumentExpression).expression as FirAnonymousFunctionExpression)
+                            .anonymousFunction.body!!
+                            .statements.filterIsInstance<FirFunctionCall>()
+                            .forEach { call ->
+                                val schemaProcessor = loadInterpreter(call) ?: return@forEach
+                                interpret(call, schemaProcessor, mapOf("receiver" to receiver))
+                            }
+                    }
                 }
                 "Schema" -> {
                     assert(expectedReturnType.toString() == PluginDataFrameSchema::class.qualifiedName!!) {
@@ -161,7 +154,7 @@ class FirDataFrameReceiverInjector(
                     val arg =
                         (annotation.argumentMapping.mapping[Name.identifier(HasSchema::schemaArg.name)] as FirConstExpression<Int>).value
                     val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
-                    if (schemaTypeArg.type!!.isNullableAny) {
+                    if (schemaTypeArg.isStarProjection) {
                         PluginDataFrameSchema(mapOf())
                     } else {
                         val declarationSymbols =
@@ -283,8 +276,7 @@ fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {
     return firResolvedNamedReference.resolvedSymbol as FirNamedFunctionSymbol
 }
 
-class Arguments(val refinedArguments: List<RefinedArgument>): List<RefinedArgument> by refinedArguments {
-}
+class Arguments(val refinedArguments: List<RefinedArgument>) : List<RefinedArgument> by refinedArguments
 
 data class RefinedArgument(val name: Name, val interestingAnnotations: List<FirAnnotation>, val expression: FirExpression) {
     fun getArgumentExpression(session: FirSession, context: String): ArgumentExpression {
