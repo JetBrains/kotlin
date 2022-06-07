@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
@@ -36,25 +37,11 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         languageVersionSettings: LanguageVersionSettings,
-    ): FirSession {
-        val moduleDataProvider = dependencyListForCliModule.moduleDataProvider
-        return createLibrarySession(
-            mainModuleName,
-            sessionProvider,
-            moduleDataProvider,
-            languageVersionSettings,
-            null,
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
-                listOf(
-                    FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    FirDependenciesSymbolProviderImpl(session),
-                ) + resolveJsLibraries(module, testServices, configuration).map {
-                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, it)
-                }
-            })
-    }
+    ): FirSession = FirSessionFactory.createJsLibrarySession(
+        mainModuleName,
+        getAllJsDependenciesPaths(module, testServices),
+        configuration, sessionProvider, dependencyListForCliModule.moduleDataProvider, languageVersionSettings
+    )
 
     fun createModuleBasedSession(
         moduleData: FirModuleData,
