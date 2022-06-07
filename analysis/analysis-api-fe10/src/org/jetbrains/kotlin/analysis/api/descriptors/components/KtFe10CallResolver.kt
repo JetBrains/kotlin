@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1

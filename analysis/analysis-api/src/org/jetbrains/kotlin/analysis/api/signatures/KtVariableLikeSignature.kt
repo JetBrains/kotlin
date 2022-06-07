@@ -1,99 +1,22 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.symbols
+package org.jetbrains.kotlin.analysis.api.signatures
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-/**
- * A signature for a callable symbol. Comparing to a `KtCallableSymbol`, a signature can carry use-site type information. For example
- * ```
- * fun test(l: List<String>) {
- *   l.get(1) // The symbol `get` has type `(Int) -> T` where is the type parameter declared in `List`. On the other hand, a KtSignature
- *            // carries instantiated type information `(Int) -> String`.
- * }
- * ```
- *
- * Equality of [KtCallableSignature] is derived from its content.
- */
-public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOwner {
-    /**
-     * The original symbol for this signature.
-     */
-    public abstract val symbol: S
-
-    /**
-     * The use-site-substituted return type.
-     */
-    public abstract val returnType: KtType
-
-    /**
-     * The use-site-substituted extension receiver type.
-     */
-    public abstract val receiverType: KtType?
-
-    abstract override fun equals(other: Any?): Boolean
-    abstract override fun hashCode(): Int
-}
-
-/**
- * A signature of a function-like symbol.
- */
-public class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
-    private val _symbol: S,
-    private val _returnType: KtType,
-    private val _receiverType: KtType?,
-    private val _valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtCallableSignature<S>() {
-    override val token: KtLifetimeToken
-        get() = _symbol.token
-    override val symbol: S
-        get() = withValidityAssertion { _symbol }
-    override val returnType: KtType
-        get() = withValidityAssertion { _returnType }
-    override val receiverType: KtType?
-        get() = withValidityAssertion { _receiverType }
-
-    /**
-     * The use-site-substituted value parameters.
-     */
-    public val valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>
-        get() = withValidityAssertion { _valueParameters }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as KtFunctionLikeSignature<*>
-
-        if (_symbol != other._symbol) return false
-        if (_returnType != other._returnType) return false
-        if (_receiverType != other._receiverType) return false
-        if (_valueParameters != other._valueParameters) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = _symbol.hashCode()
-        result = 31 * result + _returnType.hashCode()
-        result = 31 * result + (_receiverType?.hashCode() ?: 0)
-        result = 31 * result + _valueParameters.hashCode()
-        return result
-    }
-}
 
 /**
  * A signature of a variable-like symbol.

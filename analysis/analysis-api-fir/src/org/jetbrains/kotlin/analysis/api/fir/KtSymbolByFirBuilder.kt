@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
