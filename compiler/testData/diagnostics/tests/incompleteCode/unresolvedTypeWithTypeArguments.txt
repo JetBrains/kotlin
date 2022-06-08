@@ -1,0 +1,10 @@
+package
+
+public abstract class MyClass {
+    public constructor MyClass()
+    private final fun callTryConvertConstant(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun </*0*/ P1> foo(): (P1) -> [Error type: Unresolved type for Unknown<String>]<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
