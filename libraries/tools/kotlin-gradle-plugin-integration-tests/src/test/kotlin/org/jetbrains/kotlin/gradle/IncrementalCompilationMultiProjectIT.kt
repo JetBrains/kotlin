@@ -675,7 +675,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             build("assemble") {
-                assertOutputContains("Non-incremental compilation will be performed: CACHE_CORRUPTION")
+                assertOutputContains("Non-incremental compilation will be performed: INCREMENTAL_COMPILATION_FAILED")
             }
 
             val lookupFile = projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/file-to-id.tab")
