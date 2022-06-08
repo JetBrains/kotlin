@@ -129,7 +129,7 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Delete>
             configureTask = {
                 group = "interop"
                 description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
-                delete(commonizeNativeDistributionTask.map { it.getRootOutputDirectory() })
+                delete(commonizeNativeDistributionTask.map { it.rootOutputDirectory })
             }
         )
     }

@@ -81,7 +81,7 @@ private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget
 }
 
 private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(target: SharedCommonizerTarget): FileCollection {
-    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(getRootOutputDirectory(), target)
+    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
     return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
 }
 

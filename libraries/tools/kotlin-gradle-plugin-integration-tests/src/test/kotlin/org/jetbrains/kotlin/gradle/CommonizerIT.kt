@@ -39,7 +39,7 @@ class CommonizerIT : BaseGradleIT() {
             }
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksUpToDate(":commonizeNativeDistribution")
                 assertNativeDistributionCommonizationCacheHit()
                 assertContains("Native Distribution Commonization: All available targets are commonized already")
                 assertContains("Native Distribution Commonization: Lock acquired")
@@ -552,6 +552,7 @@ class CommonizerIT : BaseGradleIT() {
             build(":assemble", options = testSourceSetsDependingOnMainParameterOption) {
                 assertTestSourceSetsDependingOnMainParameter()
                 assertSuccessful()
+                assertTasksUpToDate(":commonizeNativeDistribution")
                 assertContains("Native Distribution Commonization: Cache hit")
                 assertTasksUpToDate(":commonizeCInterop")
             }
