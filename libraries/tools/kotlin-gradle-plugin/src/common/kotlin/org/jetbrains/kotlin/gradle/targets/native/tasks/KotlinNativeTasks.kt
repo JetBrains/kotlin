@@ -875,13 +875,15 @@ internal class CacheBuilder(
         val runnerSettings: KotlinNativeCompilerRunner.Settings,
         val konanCacheKind: NativeCacheKind,
         val libraries: FileCollection,
-        val rootCacheDirectory: File,
+        rootCacheDirectoryProvider: () -> File,
         val gradleUserHomeDir: File,
         val binary: NativeBinary,
         val konanTarget: KonanTarget,
         val kotlinOptions: KotlinCommonToolOptions,
         val externalDependenciesArgs: List<String>
     ) {
+        val rootCacheDirectory by lazy(rootCacheDirectoryProvider)
+
         companion object {
             operator fun invoke(
                 project: Project,
@@ -895,7 +897,7 @@ internal class CacheBuilder(
                     runnerSettings = KotlinNativeCompilerRunner.Settings(project),
                     konanCacheKind = konanCacheKind,
                     libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
-                    rootCacheDirectory = getRootCacheDirectory(File(project.konanHome), konanTarget, binary.debuggable, konanCacheKind),
+                    rootCacheDirectoryProvider = { getRootCacheDirectory(File(project.konanHome), konanTarget, binary.debuggable, konanCacheKind) },
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
                     binary, konanTarget, kotlinOptions, externalDependenciesArgs
                 )
@@ -1105,7 +1107,7 @@ internal class CacheBuilder(
 
     companion object {
         internal fun getRootCacheDirectory(konanHome: File, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): File {
-            require(cacheKind != NativeCacheKind.NONE) { "Usupported cache kind: ${NativeCacheKind.NONE}" }
+            require(cacheKind != NativeCacheKind.NONE) { "Unsupported cache kind: ${NativeCacheKind.NONE}" }
             val optionsAwareCacheName = "$target${if (debuggable) "-g" else ""}$cacheKind"
             return konanHome.resolve("klib/cache/$optionsAwareCacheName")
         }
