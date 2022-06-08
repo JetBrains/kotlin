@@ -13363,6 +13363,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("unresolvedTypeWithTypeArguments.kt")
+            public void testUnresolvedTypeWithTypeArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/incompleteCode/unresolvedTypeWithTypeArguments.kt");
+            }
+
+            @Test
             @TestMetadata("variableDeclarationInSelector.kt")
             public void testVariableDeclarationInSelector() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/incompleteCode/variableDeclarationInSelector.kt");
