@@ -9,16 +9,13 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
+import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
 import java.io.File
 
 data class SteppingTestLoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
 
 private const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
 private const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
-private const val JVM_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM"
-private const val JVM_IR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM_IR"
-private const val CLASSIC_FRONTEND_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER CLASSIC_FRONTEND"
-private const val FIR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER FIR"
 
 fun checkSteppingTestResult(
     frontendKind: FrontendKind<*>,
@@ -38,14 +35,19 @@ fun checkSteppingTestResult(
         .map { "// ${it.expectation}" }
     val actualLineNumbersIterator = actualLineNumbers.iterator()
 
-    val lineIterator = lines.iterator()
+    val lineIterator = lines.listIterator()
     for (line in lineIterator) {
+        if (line.startsWith(EXPECTATIONS_MARKER)) {
+            // Rewind the iterator to the first '// EXPECTATIONS' line
+            if (lineIterator.hasPrevious()) lineIterator.previous()
+            break
+        }
         actual.add(line)
-        if (line.startsWith(EXPECTATIONS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
+        if (line.startsWith(FORCE_STEP_INTO_MARKER)) break
     }
 
-    var currentBackend = TargetBackend.ANY
-    var currentFrontend = frontendKind
+    var currentBackends = setOf(TargetBackend.ANY)
+    var currentFrontends = setOf(frontendKind)
     for (line in lineIterator) {
         if (line.isEmpty()) {
             actual.add(line)
@@ -53,26 +55,19 @@ fun checkSteppingTestResult(
         }
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             actual.add(line)
-            currentBackend = when (line) {
-                EXPECTATIONS_MARKER -> TargetBackend.ANY
-                JVM_EXPECTATIONS_MARKER -> TargetBackend.JVM
-                JVM_IR_EXPECTATIONS_MARKER -> TargetBackend.JVM_IR
-                CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> currentBackend
-                FIR_EXPECTATIONS_MARKER -> currentBackend
-                else -> error("Expected JVM backend: $line")
-            }
-            currentFrontend = when (line) {
-                EXPECTATIONS_MARKER -> frontendKind
-                JVM_EXPECTATIONS_MARKER -> currentFrontend
-                JVM_IR_EXPECTATIONS_MARKER -> currentFrontend
-                CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> FrontendKinds.ClassicFrontend
-                FIR_EXPECTATIONS_MARKER -> FrontendKinds.FIR
-                else -> error("Expected JVM backend: $line")
-            }
+            val backendsAndFrontends = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
+            currentBackends = backendsAndFrontends
+                .mapNotNullTo(mutableSetOf()) { valueOfOrNull<TargetBackend>(it) }
+                .takeIf { it.isNotEmpty() }
+                ?: setOf(TargetBackend.ANY)
+            currentFrontends = backendsAndFrontends
+                .mapNotNullTo(mutableSetOf(), FrontendKinds::fromString)
+                .takeIf { it.isNotEmpty() }
+                ?: setOf(frontendKind)
             continue
         }
-        if ((currentBackend == TargetBackend.ANY || currentBackend == targetBackend) &&
-            currentFrontend == frontendKind
+        if ((currentBackends.contains(TargetBackend.ANY) || currentBackends.contains(targetBackend)) &&
+            currentFrontends.contains(frontendKind)
         ) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
