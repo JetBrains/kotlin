@@ -57,6 +57,7 @@ class KtFe10AnalysisSession(
     override val analysisScopeProviderImpl: KtAnalysisScopeProvider = KtAnalysisScopeProviderImpl(this, token)
     override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFe10ReferenceResolveProvider(this)
     override val substitutionProviderImpl: KtSignatureSubsitutor = KtFe10SignatureSubsitutor(this)
+    override val scopeSubstitutionImpl: KtScopeSubstitution = KtFe10ScopeSubstitution(this)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         withValidityAssertion {
