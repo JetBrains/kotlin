@@ -3,7 +3,7 @@
 #import <Foundation/NSUUID.h>
 
 @interface MyClass1 : NSObject
-@end;
+@end
 
 @interface MyClass2 : NSObject
-@end;
+@end

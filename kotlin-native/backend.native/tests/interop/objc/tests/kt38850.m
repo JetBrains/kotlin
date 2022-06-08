@@ -6,4 +6,4 @@
     result.name = @"black";
     return result;
 }
-@end;
+@end

@@ -8,5 +8,5 @@
 @property (nonatomic, readonly) NSObject *copyValue;
 @property (nonatomic, readonly) NSObject *mutableCopyValue;
 
-@end;
+@end
 

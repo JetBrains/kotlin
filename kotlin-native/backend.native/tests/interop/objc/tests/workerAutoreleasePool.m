@@ -1,7 +1,7 @@
 #import "workerAutoreleasePool.h"
 
 @implementation CreateAutoreleaseDeallocated
-@end;
+@end
 
 @implementation CreateAutorelease {
     CreateAutoreleaseDeallocated* deallocated;
@@ -17,4 +17,4 @@
 -(void)dealloc {
     deallocated.value = YES;
 }
-@end;
+@end

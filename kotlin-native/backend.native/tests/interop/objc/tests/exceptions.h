@@ -2,8 +2,8 @@
 
 @protocol ExceptionThrower
 -(void)throwException;
-@end;
+@end
 
 @interface ExceptionThrowerManager : NSObject
 +(void)throwExceptionWith:(id<ExceptionThrower>)thrower;
-@end;
+@end

@@ -2,4 +2,4 @@
 
 @interface TestAllocNoRetain : NSObject
 @property BOOL ok;
-@end;
+@end

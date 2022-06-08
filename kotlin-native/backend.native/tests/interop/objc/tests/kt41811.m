@@ -13,12 +13,12 @@ BOOL deallocRetainReleaseDeallocated = NO;
     assert(!deallocRetainReleaseDeallocated);
     deallocRetainReleaseDeallocated = YES;
 }
-@end;
+@end
 
 DeallocRetainRelease* globalDeallocRetainRelease = nil;
 
 @implementation ObjCWeakReference
-@end;
+@end
 
 id <WeakReference> weakDeallocLoadWeak = nil;
 BOOL deallocLoadWeakDeallocated = NO;
@@ -36,4 +36,4 @@ BOOL deallocLoadWeakDeallocated = NO;
     assert(!deallocLoadWeakDeallocated);
     deallocLoadWeakDeallocated = YES;
 }
-@end;
+@end

@@ -86,7 +86,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 // when they are either frozen or if they are called on the worker that created them.
 
 @interface NSArray (NSArrayToKotlin)
-@end;
+@end
 
 @implementation NSArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -98,10 +98,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
     return;
   objc_release(self);
 }
-@end;
+@end
 
 @interface NSMutableArray (NSMutableArrayToKotlin)
-@end;
+@end
 
 @implementation NSMutableArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -113,11 +113,11 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
     return;
   objc_release(self);
 }
-@end;
+@end
 
 
 @interface NSSet (NSSetToKotlin)
-@end;
+@end
 
 @implementation NSSet (NSSetToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -130,10 +130,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   objc_release(self);
 }
 
-@end;
+@end
 
 @interface NSDictionary (NSDictionaryToKotlin)
-@end;
+@end
 
 @implementation NSDictionary (NSDictionaryToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -146,10 +146,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   objc_release(self);
 }
 
-@end;
+@end
 
 @interface KIteratorAsNSEnumerator : NSEnumerator
-@end;
+@end
 
 @implementation KIteratorAsNSEnumerator {
   KRefSharedHolder iteratorHolder;
@@ -176,10 +176,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
     return nullptr;
   }
 }
-@end;
+@end
 
 @interface KListAsNSArray : NSArray
-@end;
+@end
 
 @implementation KListAsNSArray {
   KRefSharedHolder listHolder;
@@ -212,10 +212,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   return Kotlin_Collection_getSize(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
-@end;
+@end
 
 @interface KMutableListAsNSMutableArray : NSMutableArray
-@end;
+@end
 
 @implementation KMutableListAsNSMutableArray {
   KRefSharedHolder listHolder;
@@ -278,10 +278,10 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   Kotlin_MutableList_setObject(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
-@end;
+@end
 
 @interface KSetAsNSSet : NSSet
-@end;
+@end
 
 static inline id KSet_getElement(KRef set, id object) {
   if (object == NSNull.null) {
@@ -338,10 +338,10 @@ static inline id KSet_getElement(KRef set, id object) {
   ObjHolder holder;
   return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
-@end;
+@end
 
 @interface KotlinMutableSet : NSMutableSet
-@end;
+@end
 
 @implementation KotlinMutableSet {
   KRefSharedHolder setHolder;
@@ -440,10 +440,10 @@ static inline id KSet_getElement(KRef set, id object) {
   ObjHolder holder;
   Kotlin_MutableCollection_removeObject(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(object, holder.slot()));
 }
-@end;
+@end
 
 @interface KMapAsNSDictionary : NSDictionary
-@end;
+@end
 
 static inline id KMap_get(KRef map, id aKey) {
   ObjHolder keyHolder, valueHolder;
@@ -497,10 +497,10 @@ static inline id KMap_get(KRef map, id aKey) {
   return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
 
-@end;
+@end
 
 @interface KotlinMutableDictionary : NSMutableDictionary
-@end;
+@end
 
 @implementation KotlinMutableDictionary {
   KRefSharedHolder mapHolder;
@@ -593,10 +593,10 @@ static inline id KMap_get(KRef map, id aKey) {
   Kotlin_MutableMap_remove(mapHolder.ref<ErrorPolicy::kTerminate>(), kotlinKey);
 }
 
-@end;
+@end
 
 @interface NSEnumerator (NSEnumeratorAsAssociatedObject)
-@end;
+@end
 
 @implementation NSEnumerator (NSEnumeratorAsAssociatedObject)
 -(void)releaseAsAssociatedObject:(ReleaseMode)mode {
@@ -604,7 +604,7 @@ static inline id KMap_get(KRef map, id aKey) {
     return;
   objc_release(self);
 }
-@end;
+@end
 
 // Referenced from the generated code:
 

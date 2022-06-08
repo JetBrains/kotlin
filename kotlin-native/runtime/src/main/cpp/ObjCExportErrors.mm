@@ -139,13 +139,13 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
 }
 
 @interface NSError (NSErrorKotlinException)
-@end;
+@end
 
 @implementation NSError (NSErrorKotlinException)
 -(id)kotlinException {
   auto userInfo = self.userInfo;
   return userInfo == nullptr ? nullptr : userInfo[@"KotlinException"];
 }
-@end;
+@end
 
 #endif

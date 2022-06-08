@@ -7,4 +7,4 @@
 -(int)callFoo {
     return [self foo];
 }
-@end;
+@end

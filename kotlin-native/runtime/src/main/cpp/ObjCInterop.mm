@@ -61,7 +61,7 @@ struct KotlinObjCClassData {
 @protocol HasKotlinObjCClassData
 @required
 -(void*)_kotlinObjCClassData;
-@end;
+@end
 
 static inline struct KotlinObjCClassData* GetKotlinClassData(id objOrClass) {
   void* ptr = [(id<HasKotlinObjCClassData>)objOrClass _kotlinObjCClassData];

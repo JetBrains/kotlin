@@ -4,4 +4,4 @@
 @property int value;
 - (int)instanceMethod;
 + (int)classMethod:(int)first :(int)second;
-@end;
+@end

@@ -16,7 +16,7 @@
 
 @interface KotlinBase : NSObject <NSCopying>
 +(instancetype)createRetainedWrapper:(ObjHeader*)obj;
-@end;
+@end
 
 enum class ReleaseMode {
     kRelease,

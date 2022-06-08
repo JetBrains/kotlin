@@ -2,16 +2,16 @@
 
 @interface MultipleInheritanceClashBase : NSObject
 @property (nonnull) MultipleInheritanceClashBase* delegate;
-@end;
+@end
 
 @protocol MultipleInheritanceClash
 @optional
 @property (nullable) id<MultipleInheritanceClash> delegate;
-@end;
+@end
 
 @interface MultipleInheritanceClash1 : MultipleInheritanceClashBase <MultipleInheritanceClash>
-@end;
+@end
 
 @interface MultipleInheritanceClash2 : MultipleInheritanceClashBase <MultipleInheritanceClash>
 @property MultipleInheritanceClashBase* delegate;
-@end;
+@end

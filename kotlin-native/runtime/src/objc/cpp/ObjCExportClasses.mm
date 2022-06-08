@@ -28,7 +28,7 @@
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
 -(BOOL)_tryRetain;
-@end;
+@end
 
 static void injectToRuntime();
 
@@ -167,10 +167,10 @@ static void injectToRuntime();
   return [self retain];
 }
 
-@end;
+@end
 
 @interface NSObject (NSObjectToKotlin)
-@end;
+@end
 
 @implementation NSObject (NSObjectToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
@@ -182,16 +182,16 @@ static void injectToRuntime();
     return;
   objc_release(self);
 }
-@end;
+@end
 
 @interface NSString (NSStringToKotlin)
-@end;
+@end
 
 @implementation NSString (NSStringToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, self);
 }
-@end;
+@end
 
 extern "C" {
 
@@ -209,7 +209,7 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 }
 
 @interface NSNumber (NSNumberToKotlin)
-@end;
+@end
 
 @implementation NSNumber (NSNumberToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
@@ -232,17 +232,17 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
     default:  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
   }
 }
-@end;
+@end
 
 @interface NSDecimalNumber (NSDecimalNumberToKotlin)
-@end;
+@end
 
 @implementation NSDecimalNumber (NSDecimalNumberToKotlin)
 // Overrides [NSNumber toKotlin:] implementation.
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
-@end;
+@end
 
 static void injectToRuntimeImpl() {
   // If the code below fails, then it is most likely caused by KT-42254.

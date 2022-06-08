@@ -4,10 +4,10 @@
 -(void)dealloc {
     self.deallocListener.deallocated = YES;
 }
-@end;
+@end
 
 @implementation DeallocListener
 -(BOOL)deallocExecutorIsNil {
     return self.deallocExecutor == nil;
 }
-@end;
+@end

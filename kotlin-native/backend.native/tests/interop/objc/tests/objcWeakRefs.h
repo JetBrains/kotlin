@@ -4,10 +4,10 @@
 
 @interface DeallocExecutor : NSObject
 @property DeallocListener* deallocListener;
-@end;
+@end
 
 @interface DeallocListener : NSObject
 @property (weak) DeallocExecutor* deallocExecutor;
 @property BOOL deallocated;
 -(BOOL)deallocExecutorIsNil;
-@end;
+@end

@@ -7,7 +7,7 @@
 @protocol Printer;
 
 @protocol Empty
-@end;
+@end
 
 @protocol Forward;
 @class Forward;
@@ -20,16 +20,16 @@ typedef NSString NSStringTypedef;
 @interface Foo : NSObject <Empty>
 @property NSStringTypedef* name;
 -(void)helloWithPrinter:(id <Printer>)printer;
-@end;
+@end
 
 @interface Foo (FooExtensions)
 -(void)hello;
-@end;
+@end
 
 @protocol Printer
 @required
 -(void)print:(const char*)string;
-@end;
+@end
 
 @protocol MutablePair
 @required
@@ -39,7 +39,7 @@ typedef NSString NSStringTypedef;
 -(void)update:(int)index add:(int)delta;
 -(void)update:(int)index sub:(int)delta;
 
-@end;
+@end
 
 void replacePairElements(id <MutablePair> pair, int first, int second);
 
@@ -70,7 +70,7 @@ typedef NS_ENUM(int32_t, ForwardDeclaredEnum) {
 @protocol ObjectFactory
 @required
 -(id)create;
-@end;
+@end
 
 id createObjectWithFactory(id<ObjectFactory> factory) {
   return [factory create];
@@ -82,15 +82,15 @@ id createObjectWithFactory(id<ObjectFactory> factory) {
 -(void)consume:(id) __attribute__((ns_consumed)) obj;
 -(void)consumeSelf __attribute__((ns_consumes_self));
 -(void (^)(void))returnRetainedBlock:(void (^)(void))block __attribute__((ns_returns_retained));
-@end;
+@end
 
 extern BOOL unexpectedDeallocation;
 
 @interface MustNotBeDeallocated : NSObject
-@end;
+@end
 
 @interface CustomRetainMethodsImpl : MustNotBeDeallocated <CustomRetainMethods>
-@end;
+@end
 
 static MustNotBeDeallocated* retainedObj;
 static void (^retainedBlock)(void);

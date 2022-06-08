@@ -23,7 +23,7 @@
     return v;
 }
 
-@end;
+@end
 
 @implementation AggregateTestSubject
 
@@ -78,4 +78,4 @@
     return (simd_quatf){ {1, 4, 9, 25} };
 }
 
-@end;
+@end

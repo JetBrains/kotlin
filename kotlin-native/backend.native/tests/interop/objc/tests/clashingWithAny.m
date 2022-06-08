@@ -24,7 +24,7 @@
 -(BOOL)equals:(id _Nullable)other {
     return YES;
 }
-@end;
+@end
 
 @implementation TestClashingWithAny2
 -(NSString*)description {
@@ -43,7 +43,7 @@
 
 -(void)equals:(int)p {
 }
-@end;
+@end
 
 @implementation TestClashingWithAny3
 -(NSString*)description {
@@ -65,4 +65,4 @@
 -(BOOL)equals {
     return YES;
 }
-@end;
+@end

@@ -20,4 +20,4 @@
     return [[self alloc] initCustom];
 }
 
-@end;
+@end

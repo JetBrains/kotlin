@@ -4,4 +4,4 @@
 +(void)throwExceptionWith:(id<ExceptionThrower>)thrower {
     [thrower throwException];
 }
-@end;
+@end

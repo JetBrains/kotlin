@@ -558,7 +558,7 @@ internal class ObjCCategoryStubBuilder(
         val description = "${category.clazz.name} (${category.name})"
         val meta = StubContainerMeta(
                 "// @interface $description",
-                "// @end; // $description"
+                "// @end // $description"
         )
         val container = SimpleStubContainer(
                 meta = meta,

@@ -1,10 +1,10 @@
 #import "multipleInheritanceClash.h"
 
 @implementation MultipleInheritanceClashBase
-@end;
+@end
 
 @implementation MultipleInheritanceClash1
-@end;
+@end
 
 @implementation MultipleInheritanceClash2
-@end;
+@end
