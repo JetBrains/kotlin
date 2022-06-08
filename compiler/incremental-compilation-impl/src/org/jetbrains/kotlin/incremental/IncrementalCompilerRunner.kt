@@ -129,41 +129,32 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            // Compute intermediate compilation mode
+            val tmpCompilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+
+            val abiSnapshot = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot) {
+                AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+            } else null
+
+            // Compute final compilation mode depending on whether the ABI snapshot exists
+            val compilationMode = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot && abiSnapshot == null) {
+                CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+            } else {
+                tmpCompilationMode
+            }
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
                     if (withAbiSnapshot) {
-                        val abiSnapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
-                        if (abiSnapshot != null) {
-                            compileIncrementally(
-                                args,
-                                caches,
-                                allSourceFiles,
-                                compilationMode,
-                                messageCollector,
-                                withAbiSnapshot,
-                                abiSnapshot,
-                                classpathAbiSnapshot
-                            )
-                        } else {
-                            rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
-                        }
-                    } else {
                         compileIncrementally(
-                            args,
-                            caches,
-                            allSourceFiles,
-                            compilationMode,
-                            messageCollector,
-                            withAbiSnapshot
+                            args, caches, allSourceFiles, compilationMode, messageCollector,
+                            withAbiSnapshot, abiSnapshot!!, classpathAbiSnapshot
                         )
+                    } else {
+                        compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
                     }
                 }
-                is CompilationMode.Rebuild -> {
-                    rebuild(compilationMode.reason)
-                }
+                is CompilationMode.Rebuild -> rebuild(compilationMode.reason)
             }
 
             if (exitCode == ExitCode.OK) {
