@@ -173,7 +173,7 @@ private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = 
     strategy = ToolingSingleFileKlibResolveStrategy
 ).commonizerTarget?.let(::parseCommonizerTarget)
 
-private val File.parentsClosure: Set<File> get() = this.linearClosure { parentFile }
+private val File.parentsClosure: Set<File> get() = this.linearClosure { it.parentFile }
 
 private const val dollar = "\$"
 
