@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isEquals
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
@@ -78,7 +77,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 buildSpecializedEqualsMethod(declaration)
             }
             rewriteConstructorForSealedInlineClassChild(declaration, declaration.sealedInlineClassParent(), constructor)
-            removeMethods(declaration)
+            removeMethodsFromSealedInlineClassChildren(declaration)
         }
 
         if (declaration.modality == Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
@@ -247,7 +246,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     // Since we cannot create objects of sealed inline class children, we remove virtual methods from the classfile.
-    private fun removeMethods(irClass: IrClass) {
+    private fun removeMethodsFromSealedInlineClassChildren(irClass: IrClass) {
         irClass.declarations.removeIf {
             it is IrSimpleFunction &&
                     (it.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ||
@@ -343,9 +342,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     override fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        if (function.modality == Modality.ABSTRACT) return emptyList()
+        if (function.modality == Modality.ABSTRACT && function.parentAsClass.isSealedInlineClassOrItsChild()) {
+            return emptyList()
+        }
 
-        if (function.parentAsClass.let { it.isChildOfSealedInlineClass() || it.modality == Modality.SEALED } && function.isFakeOverride) {
+        if (function.parentAsClass.isSealedInlineClassOrItsChild() && function.isFakeOverride) {
             return listOf(function)
         }
 
