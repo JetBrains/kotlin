@@ -22,8 +22,7 @@ object WasmV128 : WasmType("v128", -0x5)
 object WasmI8 : WasmType("i8", -0x6)
 object WasmI16 : WasmType("i16", -0x7)
 object WasmFuncRef : WasmType("funcref", -0x10)
-object WasmExternRef : WasmType("externref", -0x11)
-object WasmAnyRef : WasmType("anyref", -0x12)
+object WasmAnyRef : WasmType("anyref", -0x11)
 object WasmEqRef : WasmType("eqref", -0x13)
 
 data class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x14)
@@ -45,8 +44,7 @@ sealed class WasmHeapType {
 
     sealed class Simple(val name: String, val code: Byte) : WasmHeapType() {
         object Func : Simple("func", -0x10)
-        object Extern : Simple("extern", -0x11)
-        object Any : Simple("any", -0x12)
+        object Any : Simple("any", -0x11)
         object Eq : Simple("eq", -0x13)
 
         @Suppress("unused")
@@ -73,6 +71,5 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmEqRef -> WasmHeapType.Simple.Eq
         is WasmAnyRef -> WasmHeapType.Simple.Any
         is WasmFuncRef -> WasmHeapType.Simple.Func
-        is WasmExternRef -> WasmHeapType.Simple.Extern
         else -> error("Unknown heap type for type $this")
     }

@@ -468,7 +468,6 @@ class WasmBinaryToIR(val b: MyByteReader) {
         WasmI16,
         WasmFuncRef,
         WasmAnyRef,
-        WasmExternRef,
         WasmEqRef
     ).associateBy { it.code }
 
@@ -491,7 +490,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return when (code.toInt()) {
             0x70 -> WasmFuncRef
-            0x6F -> WasmExternRef
+            0x6F -> WasmAnyRef
             else -> error("Unsupported heap type ${code.toString(16)}")
         }
     }
