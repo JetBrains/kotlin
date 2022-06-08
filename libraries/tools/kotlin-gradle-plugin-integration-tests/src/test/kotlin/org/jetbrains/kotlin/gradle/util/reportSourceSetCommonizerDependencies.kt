@@ -92,12 +92,20 @@ data class SourceSetCommonizerDependencies(
 
         if (unmatchedDependencies.isNotEmpty() || unmatchedMatchers.isNotEmpty()) {
             fail(buildString {
+                fun appendLineIndented(value: Any?) = appendLine(value.toString().prependIndent("    "))
+
                 appendLine("$sourceSetName: Set of commonizer dependencies does not match given 'fileMatchers'")
                 if (unmatchedDependencies.isNotEmpty()) {
-                    appendLine("Unmatched dependencies: $unmatchedDependencies")
+                    appendLine("Unmatched dependencies:")
+                    unmatchedDependencies.forEach { dependency ->
+                        appendLineIndented(dependency)
+                    }
                 }
                 if (unmatchedMatchers.isNotEmpty()) {
-                    appendLine("Unmatched fileMatchers: $unmatchedMatchers")
+                    appendLine("Unmatched fileMatchers:")
+                    unmatchedMatchers.forEach { matcher ->
+                        appendLineIndented(matcher)
+                    }
                 }
             })
         }
