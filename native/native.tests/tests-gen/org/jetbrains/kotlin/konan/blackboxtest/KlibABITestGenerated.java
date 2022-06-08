@@ -79,6 +79,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("removeInlinedClass")
+    public void testRemoveInlinedClass() throws Exception {
+        runTest("compiler/testData/klibABI/removeInlinedClass/");
+    }
+
+    @Test
     @TestMetadata("removeInlinedFunction")
     public void testRemoveInlinedFunction() throws Exception {
         runTest("compiler/testData/klibABI/removeInlinedFunction/");
