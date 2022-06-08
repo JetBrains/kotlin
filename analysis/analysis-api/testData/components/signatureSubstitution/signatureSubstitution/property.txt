@@ -1,0 +1,9 @@
+KtDeclaration: KtProperty
+Symbol:
+val <T, S> kotlin.collections.Map<T, S>.value: kotlin.collections.List<S>
+
+Signature before substitution:
+kotlin.collections.Map<T, S>.value: kotlin.collections.List<S>
+
+Signature after substitution:
+kotlin.collections.Map<kotlin.collections.List<S>, kotlin.Long>.value: kotlin.collections.List<kotlin.Long>

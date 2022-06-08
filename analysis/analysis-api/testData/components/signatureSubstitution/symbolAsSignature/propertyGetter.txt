@@ -1,0 +1,6 @@
+KtDeclaration: KtPropertyAccessor
+Symbol:
+get()
+
+Signature:
+(): kotlin.Int

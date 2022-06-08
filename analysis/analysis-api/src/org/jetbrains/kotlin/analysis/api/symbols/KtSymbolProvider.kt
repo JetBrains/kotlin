@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisSessionMixIn
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -136,3 +137,14 @@ public interface KtSymbolProviderMixIn : KtAnalysisSessionMixIn {
     public val ROOT_PACKAGE_SYMBOL: KtPackageSymbol
         get() = withValidityAssertion { analysisSession.symbolProvider.ROOT_PACKAGE_SYMBOL }
 }
+
+context(KtAnalysisSession)
+public inline fun <reified S : KtSymbol> KtDeclaration.getSymbolOfType(): S =
+    withValidityAssertion { getSymbol() } as S
+
+context(KtAnalysisSession)
+public inline fun <reified S : KtSymbol> KtDeclaration.getSymbolOfTypeSafe(): S? =
+    withValidityAssertion { getSymbol() } as? S
+
+
+
