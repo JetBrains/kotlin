@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 internal class UnlinkedDeclarationsProcessor(
     private val builtIns: IrBuiltIns,
@@ -74,9 +75,15 @@ internal class UnlinkedDeclarationsProcessor(
         return IrMessageLogger.Location("$module @ $fileName", lineNumber, columnNumber)
     }
 
-    private fun IrDeclaration.reportUnlinkedSymbolsWarning(kind: String, fqn: FqName) {
-        reportWarning("$kind declaration ${fqn.asString()} contains unlinked symbols", location())
-    }
+    private fun IrDeclaration.reportUnlinkedSymbolsWarning(kind: String, fqn: FqName, localName: Name? = null) =
+        reportWarning(
+            buildString {
+                append(kind).append(" declaration ")
+                if (localName != null) append(localName.asString()).append(" at ")
+                append(fqn.asString()).append(" contains unlinked symbols")
+            },
+            location()
+        )
 
     private fun reportWarning(message: String, location: IrMessageLogger.Location?) {
         messageLogger.report(IrMessageLogger.Severity.WARNING, message, location)
@@ -128,9 +135,10 @@ internal class UnlinkedDeclarationsProcessor(
 
         override fun visitVariable(declaration: IrVariable): IrStatement {
             if (declaration.type.isUnlinked()) {
-                val fqn = declaration.parent.fqNameForIrSerialization.child(declaration.name)
+                val fqn = declaration.parent.fqNameForIrSerialization
+                val localName = declaration.name
                 val kind = if (declaration.isVar) "var" else "val"
-                declaration.reportUnlinkedSymbolsWarning(kind, fqn)
+                declaration.reportUnlinkedSymbolsWarning(kind, fqn, localName)
 
                 declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                 declaration.initializer = null
