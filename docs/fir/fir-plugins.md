@@ -84,7 +84,7 @@ class Derived : Base() { // supertype Base not resolved yet
 
 All extensions to FIR compiler are inheritors of [FirExtension](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/FirExtension.kt). It has only one  method, which can be overridden in custom extensions (`registerPredicates`) which was explained before.
 
-For registering FIR extension you need to implement and register just one extension point named [FirExtensionRegistrar](https://github.com/JetBrains/kotlin/blob/mastercompiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar.kt?tab=source&line=24). It has one method to implement (`configurePlugin`) in which you need register all your FIR extensions, using special DSL syntax:
+For registering FIR extension you need to implement and register just one extension point named [FirExtensionRegistrar](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar.kt?tab=source&line=24). It has one method to implement (`configurePlugin`) in which you need register all your FIR extensions, using special DSL syntax:
 
 ```kotlin
 class MySuperFirRegistrar : FirExtensionRegistrar() {
@@ -113,7 +113,7 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
 }
 ```
 
-[FirSupertypeGenerationExtension](https://github.com/JetBrains/kotlin/blob/mastercompiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirSupertypeGenerationExtension.kt) is an extension which allows you to add additional super types to classes and interfaces. This extension is called at `SUPERTYPES` stage right after types of some class (`classLikeDeclaration`) are resolved (`resolvedSupertypes`) but not written to class itself yet. Note that you can not modify explicitly declared classes, only add new one.
+[FirSupertypeGenerationExtension](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirSupertypeGenerationExtension.kt) is an extension which allows you to add additional super types to classes and interfaces. This extension is called at `SUPERTYPES` stage right after types of some class (`classLikeDeclaration`) are resolved (`resolvedSupertypes`) but not written to class itself yet. Note that you can not modify explicitly declared classes, only add new one.
 
 For example, if `computeAdditionalSupertypes` returned some `[C, D]` list for class `Base : A, B`, then class `Base` will have four supertypes: `Base : A, B, C, D`.
 
@@ -139,7 +139,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 }
 ```
 
-[FirStatusTransformerExtension](https://github.com/JetBrains/kotlin/blob/mastercompiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirStatusTransformerExtension.kt) allows you to transform declaration status (visibility, modality, modifiers) for any non-local declaration. This extension called during `STATUS` phase right before inference of actual status from overrides. In `transformStatus` you may return new status with, for example, changed default modality. `transformStatus` will be called only if `needTransformStatus` returns `true` for specific declaration.
+[FirStatusTransformerExtension](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirStatusTransformerExtension.kt) allows you to transform declaration status (visibility, modality, modifiers) for any non-local declaration. This extension called during `STATUS` phase right before inference of actual status from overrides. In `transformStatus` you may return new status with, for example, changed default modality. `transformStatus` will be called only if `needTransformStatus` returns `true` for specific declaration.
 
 **Example:**
 ```kotlin
@@ -197,7 +197,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 }
 ```
 
-[FirDeclarationGenerationExtension](https://github.com/JetBrains/kotlin/blob/mastercompiler/fir/providers/src/org/jetbrains/kotlin/fir/extensions/FirDeclarationGenerationExtension.kt) is an extension for generating new declarations (classes, functions, properties). Unlike `SyntheticResolveExtension`, which generated all members and nested classes for specific class at once, `FirDeclarationGenerationExtension` have provider-like API: compiler came to extensions with some specific classId or callableId and plugin generates declaration(s) with this ID if it is needed.
+[FirDeclarationGenerationExtension](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/providers/src/org/jetbrains/kotlin/fir/extensions/FirDeclarationGenerationExtension.kt) is an extension for generating new declarations (classes, functions, properties). Unlike `SyntheticResolveExtension`, which generated all members and nested classes for specific class at once, `FirDeclarationGenerationExtension` have provider-like API: compiler came to extensions with some specific classId or callableId and plugin generates declaration(s) with this ID if it is needed.
 
 **Contracts and usage:**
 - `generate...` functions will be called only if `get...Names/get...Ids` already returned corresponding ID.
@@ -242,4 +242,4 @@ The whole FIR plugin API is designed in a way which provides IDE supports for pl
 # Examples
 
 - [fir-plugin-prototype](https://github.com/JetBrains/kotlin/tree/master/plugins/fir-plugin-prototype) sandbox plugin which tests all existing extension points
-- [fir-parcelize](https://github.com/JetBrains/kotlin/tree/master/plugins/parcelize/parcelize-compiler/parcelize-fir/src/org/jetbrains/kotlin/parcelize/fir) FIR implementation of Parcelize plugin
+- [fir-parcelize](https://github.com/JetBrains/kotlin/tree/master/plugins/parcelize/parcelize-compiler/parcelize.k2/src/org/jetbrains/kotlin/parcelize/fir) FIR implementation of Parcelize plugin
