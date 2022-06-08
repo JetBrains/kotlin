@@ -2428,12 +2428,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             projection.done(TYPE_PROJECTION);
             if (!at(COMMA)) break;
             advance(); // COMMA
-            if (at(GT) || at(GTEQ)) {
+            if (at(GT)) {
                 break;
             }
         }
-
-        myBuilder.disableJoiningComplexTokens();
 
         boolean atGT = at(GT);
         if (!atGT) {
@@ -2442,9 +2440,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else {
             advance(); // GT
         }
-
-        myBuilder.restoreJoiningComplexTokensState();
-
         myBuilder.restoreNewlinesState();
         return atGT;
     }
