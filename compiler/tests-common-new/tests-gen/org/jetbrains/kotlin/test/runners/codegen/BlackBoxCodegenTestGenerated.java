@@ -21204,6 +21204,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt47823.kt")
+        public void testKt47823() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt47823.kt");
+        }
+
+        @Test
         @TestMetadata("kt48993.kt")
         public void testKt48993() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt48993.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

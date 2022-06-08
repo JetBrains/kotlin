@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isStrictSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -180,6 +181,11 @@ private class RangeLoopTransformer(
 
         val loopHeader = headerProcessor.extractHeader(iteratorVariable)
             ?: return super.visitBlock(expression.apply { specializeIteratorIfPossible(this) }) // The iterable in the header is not supported.
+
+        if (loopHeader.loopInitStatements.any { (it as? IrVariable)?.type?.isNothing() == true }) {
+            return super.visitBlock(expression)
+        }
+
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
         val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
