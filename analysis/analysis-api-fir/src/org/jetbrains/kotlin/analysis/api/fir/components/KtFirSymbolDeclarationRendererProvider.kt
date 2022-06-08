@@ -29,6 +29,23 @@ internal class KtFirSymbolDeclarationRendererProvider(
         return ConeTypeIdeRenderer(analysisSession.firResolveSession.useSiteFirSession, options).renderType(type.coneType)
     }
 
+    override fun render(signature: KtCallableSignature<*>, options: KtDeclarationRendererOptions): String = prettyPrint {
+        signature.receiverType?.let {
+            append(render(it, options.typeRendererOptions))
+            append('.')
+        }
+        signature.symbol.callableIdIfNonLocal?.callableName?.asString()?.let { append(it) }
+        if (signature is KtFunctionLikeSignature<*>) {
+            printCollection(signature.valueParameters, ", ", "(", ")") { parameter ->
+                append(parameter.name.asString())
+                append(": ")
+                append(render(parameter.returnType, options.typeRendererOptions))
+            }
+        }
+        append(": ")
+        append(render(signature.returnType, options.typeRendererOptions))
+    }
+
     override fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String {
         require(symbol is KtFirSymbol<*>)
         symbol.firSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
