@@ -71,7 +71,53 @@ abstract class IncrementalCompilerRunner<
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
     ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION_DAEMON) {
-        compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
+        try {
+            compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
+        } finally {
+            reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+                reporter.addMetric(
+                    BuildPerformanceMetric.SNAPSHOT_SIZE,
+                    buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
+                )
+                if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
+                    cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
+                        reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun rebuild(
+        reason: BuildAttribute,
+        allSourceFiles: List<File>,
+        args: Args,
+        messageCollector: MessageCollector,
+        providedChangedFiles: ChangedFiles?,
+        projectDir: File? = null,
+        classpathAbiSnapshot: Map<String, AbiSnapshot>
+    ): ExitCode {
+        reporter.report { "Non-incremental compilation will be performed: $reason" }
+        reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
+            cleanOutputsAndLocalStateOnRebuild(args)
+        }
+        val caches = createCacheManager(args, projectDir)
+        try {
+            if (providedChangedFiles == null) {
+                caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            }
+            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
+            return compileIncrementally(
+                args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector, withAbiSnapshot,
+                classpathAbiSnapshot = classpathAbiSnapshot
+            ).also {
+                if (it == ExitCode.OK) {
+                    performWorkAfterSuccessfulCompilation(caches)
+                }
+            }
+        } finally {
+            caches.close(true)
+        }
     }
 
     private fun compileImpl(
@@ -82,13 +128,11 @@ abstract class IncrementalCompilerRunner<
         projectDir: File? = null
     ): ExitCode {
         var caches = createCacheManager(args, projectDir)
+        var rebuildReason = BuildAttribute.INTERNAL_ERROR
 
-        if (withAbiSnapshot) {
-            reporter.report { "Incremental compilation with ABI snapshot enabled" }
-        }
-        //TODO if abi-snapshot is corrupted unable to rebuild. Should roll back to withSnapshot = false?
         val classpathAbiSnapshot =
             if (withAbiSnapshot) {
+                reporter.report { "Incremental compilation with ABI snapshot enabled" }
                 reporter.measure(BuildTime.SET_UP_ABI_SNAPSHOTS) {
                     setupJarDependencies(args, withAbiSnapshot, reporter)
                 }
@@ -96,27 +140,7 @@ abstract class IncrementalCompilerRunner<
                 emptyMap()
             }
 
-        fun rebuild(reason: BuildAttribute): ExitCode {
-            reporter.report { "Non-incremental compilation will be performed: $reason" }
-            caches.close(false)
-            // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
-            reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
-                cleanOutputsAndLocalStateOnRebuild(args)
-            }
-            caches = createCacheManager(args, projectDir)
-            if (providedChangedFiles == null) {
-                caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-            }
-            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-            return compileIncrementally(
-                args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector, withAbiSnapshot,
-                classpathAbiSnapshot = classpathAbiSnapshot
-            )
-        }
-
-        // If compilation has crashed or we failed to close caches we have to clear them
-        var cachesMayBeCorrupted = true
-        return try {
+        try {
             val changedFiles = when (providedChangedFiles) {
                 is ChangedFiles.Dependencies -> {
                     val changedSources = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
@@ -129,75 +153,51 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            var compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            val abiSnapshot = if (compilationMode is CompilationMode.Incremental && withAbiSnapshot) {
+                AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+            } else {
+                if (withAbiSnapshot) {
+                    compilationMode = CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+                }
+                null
+            }
 
-            val exitCode = when (compilationMode) {
+            when (compilationMode) {
                 is CompilationMode.Incremental -> {
-                    if (withAbiSnapshot) {
-                        val abiSnapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
-                        if (abiSnapshot != null) {
+                    try {
+                        val exitCode = if (withAbiSnapshot) {
                             compileIncrementally(
-                                args,
-                                caches,
-                                allSourceFiles,
-                                compilationMode,
-                                messageCollector,
-                                withAbiSnapshot,
-                                abiSnapshot,
-                                classpathAbiSnapshot
+                                args, caches, allSourceFiles, compilationMode, messageCollector,
+                                withAbiSnapshot, abiSnapshot!!, classpathAbiSnapshot
                             )
                         } else {
-                            rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+                            compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
                         }
-                    } else {
-                        compileIncrementally(
-                            args,
-                            caches,
-                            allSourceFiles,
-                            compilationMode,
-                            messageCollector,
-                            withAbiSnapshot
-                        )
+                        if (exitCode == ExitCode.OK) {
+                            performWorkAfterSuccessfulCompilation(caches)
+                        }
+                        return exitCode
+                    } catch (e: Throwable) {
+                        reporter.report {
+                            "Incremental compilation failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+                        }
+                        rebuildReason = BuildAttribute.INCREMENTAL_COMPILATION_FAILED
                     }
                 }
-                is CompilationMode.Rebuild -> {
-                    rebuild(compilationMode.reason)
-                }
+                is CompilationMode.Rebuild -> rebuildReason = compilationMode.reason
             }
-
-            if (exitCode == ExitCode.OK) {
-                performWorkAfterSuccessfulCompilation(caches)
-            }
-
-            if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
-            // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
-            // but now JsKlib compiler reports invalid exit code.
-            cachesMayBeCorrupted = false
-
-            reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                reporter.addMetric(
-                    BuildPerformanceMetric.SNAPSHOT_SIZE,
-                    buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
-                )
-                if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
-                    cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
-                        reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, it)
-                    }
-                }
-            }
-            return exitCode
-        } catch (e: Exception) { // todo: catch only cache corruption
-            // todo: warn?
-            reporter.report { "Possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION).also {
-                cachesMayBeCorrupted = false
+        } catch (e: Exception) {
+            reporter.report {
+                "Incremental compilation analysis failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
             }
         } finally {
-            if (cachesMayBeCorrupted) {
+            if (!caches.close()) {
+                reporter.report { "Unable to close IC caches. Cleaning internal state" }
                 cleanOutputsAndLocalStateOnRebuild(args)
             }
         }
+        return rebuild(rebuildReason, allSourceFiles, args, messageCollector, providedChangedFiles, projectDir, classpathAbiSnapshot)
     }
 
     /**
@@ -411,7 +411,10 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(
+                listOf(caches.platformCache),
+                reporter
+            )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
