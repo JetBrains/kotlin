@@ -8,4 +8,4 @@
         [array addObject:self.obj];
     }
 }
-@end;
+@end

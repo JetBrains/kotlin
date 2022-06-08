@@ -5,4 +5,4 @@
 @property BOOL custom;
 
 +(instancetype _Nonnull)createCustom;
-@end;
+@end

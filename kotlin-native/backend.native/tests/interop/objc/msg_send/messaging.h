@@ -8,7 +8,7 @@
 + (double)doubleFn;
 + (simd_float4)simdFn;
 
-@end;
+@end
 
 typedef struct {
     float f;
@@ -65,4 +65,4 @@ typedef struct {
 + (GeterogeneousSmall)geterogeneousSmallFn;
 
 
-@end;
+@end

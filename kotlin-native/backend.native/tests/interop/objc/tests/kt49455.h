@@ -3,7 +3,7 @@
 // https://youtrack.jetbrains.com/issue/KT-49455
 
 @interface KT49455 : NSObject
-@end;
+@end
 
 __attribute__((external_source_symbol(language="Swift", defined_in="sample",generated_declaration)))
 @interface KT49455 (KT49455Ext)

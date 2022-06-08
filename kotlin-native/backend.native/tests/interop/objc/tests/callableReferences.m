@@ -8,4 +8,4 @@
 + (int)classMethod:(int)first :(int)second {
     return first + second;
 }
-@end;
+@end

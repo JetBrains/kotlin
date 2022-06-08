@@ -2,4 +2,4 @@
 
 @interface TestConstructorReturnsNull : NSObject
 - (instancetype)init;
-@end;
+@end

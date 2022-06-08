@@ -29,4 +29,4 @@ BOOL customStringDeallocated = NO;
 - (void)dealloc {
     customStringDeallocated = YES;
 }
-@end;
+@end

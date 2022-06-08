@@ -38,7 +38,7 @@
     abort();
 }
 
-@end;
+@end
 
 @implementation TestVarargsSubclass
 -(instancetype _Nonnull)initWithFormat:(NSString*)format args:(void*)args {
@@ -48,4 +48,4 @@
 +(NSString* _Nonnull)stringWithFormat:(NSString*)format args:(void*)args {
     abort();
 }
-@end;
+@end

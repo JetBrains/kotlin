@@ -3,7 +3,7 @@
 @protocol BlockProvider
 @required
 -(int (^)(int)) block;
-@end;
+@end
 
 int callProvidedBlock(id<BlockProvider> blockProvider, int argument) {
   return [blockProvider block](argument);
@@ -12,7 +12,7 @@ int callProvidedBlock(id<BlockProvider> blockProvider, int argument) {
 @protocol BlockConsumer
 @required
 -(int)callBlock:(int (^)(int))block argument:(int)argument;
-@end;
+@end
 
 int callPlusOneBlock(id<BlockConsumer> blockConsumer, int argument) {
   return [blockConsumer callBlock:^int(int p) { return p + 1; } argument:argument];
@@ -24,4 +24,4 @@ int callPlusOneBlock(id<BlockConsumer> blockConsumer, int argument) {
 
 @property (class) void (^nullBlock)(void);
 @property (class) void (^notNullBlock)(void);
-@end;
+@end

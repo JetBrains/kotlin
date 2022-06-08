@@ -8,4 +8,4 @@
 +(instancetype)createWithValue:(int)value {
     return [[self alloc] initWithValue:value];
 }
-@end;
+@end

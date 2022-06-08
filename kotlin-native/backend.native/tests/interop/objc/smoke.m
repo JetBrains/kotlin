@@ -4,14 +4,14 @@
 
 @interface CPrinter : NSObject <Printer>
 -(void)print:(const char*)string;
-@end;
+@end
 
 @implementation CPrinter
 -(void)print:(const char*)string {
     printf("%s\n", string);
     fflush(stdout);
 }
-@end;
+@end
 
 @implementation Foo
 
@@ -33,7 +33,7 @@
     printf("Deallocated\n");
 }
 
-@end;
+@end
 
 @implementation Foo (FooExtensions)
 
@@ -41,7 +41,7 @@
     CPrinter* printer = [[CPrinter alloc] init];
     [self helloWithPrinter:printer];
 }
-@end;
+@end
 
 void replacePairElements(id <MutablePair> pair, int first, int second) {
     [pair update:0 add:(first - pair.first)];
@@ -75,7 +75,7 @@ BOOL unexpectedDeallocation = NO;
 -(void)dealloc {
   unexpectedDeallocation = YES;
 }
-@end;
+@end
 
 static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
 
@@ -94,4 +94,4 @@ static CustomRetainMethodsImpl* retainedCustomRetainMethodsImpl;
 -(void (^)(void))returnRetainedBlock:(void (^)(void))block __attribute__((ns_returns_retained)) {
     return block;
 }
-@end;
+@end

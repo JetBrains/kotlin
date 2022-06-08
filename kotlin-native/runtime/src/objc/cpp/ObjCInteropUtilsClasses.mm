@@ -17,7 +17,7 @@
 @interface KotlinObjectHolder : NSObject
 -(id)initWithRef:(KRef)ref;
 -(KRef)ref;
-@end;
+@end
 
 @implementation KotlinObjectHolder {
   KRefSharedHolder refHolder;
@@ -39,7 +39,7 @@
   [super dealloc];
 }
 
-@end;
+@end
 
 static id Kotlin_Interop_createKotlinObjectHolder(KRef any) {
   if (any == nullptr) {
@@ -59,7 +59,7 @@ static KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
 
 // Used as an associated object for ObjCWeakReferenceImpl.
 @interface KotlinObjCWeakReference : NSObject
-@end;
+@end
 
 // libobjc:
 extern "C" {
@@ -81,7 +81,7 @@ void objc_release(id obj);
   objc_release(self);
 }
 
-@end;
+@end
 
 extern "C" OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj);
 

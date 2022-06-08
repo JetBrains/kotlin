@@ -3,22 +3,22 @@
 extern BOOL deallocRetainReleaseDeallocated;
 
 @interface DeallocRetainRelease : NSObject
-@end;
+@end
 
 extern DeallocRetainRelease* globalDeallocRetainRelease;
 
 @protocol WeakReference
 @required
 @property (weak) id referent;
-@end;
+@end
 
 @interface ObjCWeakReference : NSObject <WeakReference>
 @property (weak) id referent;
-@end;
+@end
 
 extern id <WeakReference> weakDeallocLoadWeak;
 extern BOOL deallocLoadWeakDeallocated;
 
 @interface DeallocLoadWeak : NSObject
 -(void)checkWeak;
-@end;
+@end

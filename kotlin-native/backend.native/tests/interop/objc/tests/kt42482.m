@@ -13,7 +13,7 @@ id kt42482Global = nil;
 -(void)dealloc {
     kt42482Deallocated = YES;
 }
-@end;
+@end
 
 int fortyTwoSwizzledImp(id self, SEL _cmd) {
     return 43;

@@ -50,7 +50,7 @@ object StubRenderer {
                     +renderProtocolHeader()
                     +"@required"
                     renderMembers(this, shouldExportKDoc)
-                    +"@end;"
+                    +"@end"
                 }
                 is ObjCInterface -> {
                     attributes.forEach {
@@ -58,7 +58,7 @@ object StubRenderer {
                     }
                     +renderInterfaceHeader()
                     renderMembers(this, shouldExportKDoc)
-                    +"@end;"
+                    +"@end"
                 }
                 is ObjCMethod -> {
                     +renderMethod(this)

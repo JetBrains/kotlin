@@ -3,7 +3,7 @@
 @interface CustomString : NSString
 - (instancetype)initWithValue:(int)value;
 @property int value;
-@end;
+@end
 
 CustomString* _Nonnull createCustomString(int value) {
     return [[CustomString alloc] initWithValue:value];

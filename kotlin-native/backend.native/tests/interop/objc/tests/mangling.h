@@ -18,8 +18,8 @@ struct MyStruct myStruct = {11, 12, 13, 14};
 
 @protocol Proto
 @property int Companion;  // clash on implementing
-@end;
+@end
 
 @interface FooMangled : NSObject<Proto>
 //- (void) CompanionS;  // mangleSimple does not support this: it may clash after mangling
-@end;
+@end
