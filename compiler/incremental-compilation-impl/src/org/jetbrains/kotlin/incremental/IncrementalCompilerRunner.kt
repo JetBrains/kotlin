@@ -114,8 +114,6 @@ abstract class IncrementalCompilerRunner<
             )
         }
 
-        // If compilation has crashed or we failed to close caches we have to clear them
-        var cachesMayBeCorrupted = true
         return try {
             val changedFiles = when (providedChangedFiles) {
                 is ChangedFiles.Dependencies -> {
@@ -129,41 +127,38 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            // Compute intermediate compilation mode
+            val tmpCompilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+
+            val abiSnapshot = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot) {
+                AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+            } else null
+
+            // Compute final compilation mode depending on whether the ABI snapshot exists
+            val compilationMode = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot && abiSnapshot == null) {
+                CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+            } else {
+                tmpCompilationMode
+            }
 
             val exitCode = when (compilationMode) {
-                is CompilationMode.Incremental -> {
+                is CompilationMode.Incremental -> try {
                     if (withAbiSnapshot) {
-                        val abiSnapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
-                        if (abiSnapshot != null) {
-                            compileIncrementally(
-                                args,
-                                caches,
-                                allSourceFiles,
-                                compilationMode,
-                                messageCollector,
-                                withAbiSnapshot,
-                                abiSnapshot,
-                                classpathAbiSnapshot
-                            )
-                        } else {
-                            rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
-                        }
-                    } else {
                         compileIncrementally(
-                            args,
-                            caches,
-                            allSourceFiles,
-                            compilationMode,
-                            messageCollector,
-                            withAbiSnapshot
+                            args, caches, allSourceFiles, compilationMode, messageCollector,
+                            withAbiSnapshot, abiSnapshot!!, classpathAbiSnapshot
                         )
+                    } else {
+                        compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
                     }
+                } catch (e: Throwable) {
+                    // TODO: Warn about this exception
+                    reporter.report {
+                        "Incremental compilation failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+                    }
+                    rebuild(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
                 }
-                is CompilationMode.Rebuild -> {
-                    rebuild(compilationMode.reason)
-                }
+                is CompilationMode.Rebuild -> rebuild(compilationMode.reason)
             }
 
             if (exitCode == ExitCode.OK) {
@@ -173,7 +168,6 @@ abstract class IncrementalCompilerRunner<
             if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
             // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
             // but now JsKlib compiler reports invalid exit code.
-            cachesMayBeCorrupted = false
 
             reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
                 reporter.addMetric(
@@ -186,17 +180,12 @@ abstract class IncrementalCompilerRunner<
                     }
                 }
             }
-            return exitCode
-        } catch (e: Exception) { // todo: catch only cache corruption
-            // todo: warn?
-            reporter.report { "Possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION).also {
-                cachesMayBeCorrupted = false
-            }
-        } finally {
-            if (cachesMayBeCorrupted) {
-                cleanOutputsAndLocalStateOnRebuild(args)
-            }
+
+            exitCode
+        } catch (e: Throwable) {
+            // If compilation has crashed or we failed to close caches we have to clear them
+            cleanOutputsAndLocalStateOnRebuild(args)
+            throw e
         }
     }
 
