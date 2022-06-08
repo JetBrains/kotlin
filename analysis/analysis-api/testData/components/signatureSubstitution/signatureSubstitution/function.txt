@@ -1,0 +1,9 @@
+KtDeclaration: KtNamedFunction
+Symbol:
+fun <T, S> foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
+
+Signature before substitution:
+foo(x: kotlin.collections.List<T>, y: kotlin.collections.Map<T, kotlin.collections.List<S>>, k: kotlin.String): T
+
+Signature after substitution:
+foo(x: kotlin.collections.List<kotlin.collections.List<S>>, y: kotlin.collections.Map<kotlin.collections.List<S>, kotlin.collections.List<kotlin.Long>>, k: kotlin.String): kotlin.collections.List<S>

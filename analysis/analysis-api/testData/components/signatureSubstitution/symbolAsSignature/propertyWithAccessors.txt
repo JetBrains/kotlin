@@ -1,0 +1,6 @@
+KtDeclaration: KtProperty
+Symbol:
+var foo: kotlin.Int
+
+Signature:
+foo: kotlin.Int

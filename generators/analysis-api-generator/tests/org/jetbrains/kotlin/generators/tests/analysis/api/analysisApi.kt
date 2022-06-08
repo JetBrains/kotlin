@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
@@ -248,6 +251,22 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             test(AbstractHasCommonSubtypeTest::class) {
                 model("haveCommonSubtype")
+            }
+        }
+    }
+
+    component("signatureSubstitution") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test(AbstractAnalysisApiSymbolAsSignatureTest::class) {
+                model("symbolAsSignature")
+            }
+
+            test(AbstractAnalysisApiSymbolSubstitutionTest::class) {
+                model("symbolSubstitution")
+            }
+
+            test(AbstractAnalysisApiSignatureSubstitutionTest::class) {
+                model("signatureSubstitution")
             }
         }
     }

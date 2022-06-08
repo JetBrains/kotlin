@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -127,6 +128,9 @@ public enum class RendererModifier(public val includeByDefault: Boolean) {
 
 public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
     public abstract fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String
+
+    public abstract fun render(signature: KtCallableSignature<*>, options: KtDeclarationRendererOptions): String
+
     public abstract fun render(type: KtType, options: KtTypeRendererOptions): String
 }
 
@@ -139,6 +143,9 @@ public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtDeclarationSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
         withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, options) }
+
+    public fun KtCallableSignature<*>.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
+        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.render(this, options) }
 
     /**
      * Render kotlin type into the representable Kotlin type string
