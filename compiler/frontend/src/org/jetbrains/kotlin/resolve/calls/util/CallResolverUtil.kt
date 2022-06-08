@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtToken
@@ -26,11 +24,8 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.ComposedSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -46,102 +41,13 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.error.ErrorScopeKind
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
-import org.jetbrains.kotlin.utils.SmartList
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
     SHAPE_FUNCTION_ARGUMENTS
-}
-
-
-fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
-    assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
-    return getParameterArgumentsOfCallableType(type).any { typeProjection ->
-        typeProjection.type.contains { TypeUtils.isDontCarePlaceholder(it) }
-                || ErrorUtils.containsUninferredTypeVariable(typeProjection.type)
-    }
-}
-
-fun hasUnknownReturnType(type: KotlinType): Boolean {
-    assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
-    return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
-}
-
-fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
-    assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
-    val newArguments = Lists.newArrayList<TypeProjection>()
-    newArguments.addAll(getParameterArgumentsOfCallableType(type))
-    newArguments.add(TypeProjectionImpl(Variance.INVARIANT, given))
-    return replaceTypeArguments(type, newArguments)
-}
-
-fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
-
-private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
-    KotlinTypeFactory.simpleType(type.attributes, type.constructor, newArguments, type.isMarkedNullable)
-
-private fun getParameterArgumentsOfCallableType(type: KotlinType) =
-    type.arguments.dropLast(1)
-
-fun getReturnTypeForCallable(type: KotlinType) =
-    type.arguments.last().type
-
-private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
-    val returnType = returnType ?: return false
-    val nestedTypeVariables = constraintSystem.getNestedTypeVariables(returnType)
-    return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
-}
-
-fun CallableDescriptor.hasInferredReturnType(constraintSystem: ConstraintSystem): Boolean {
-    if (hasReturnTypeDependentOnUninferredParams(constraintSystem)) return false
-
-    // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
-    if (constraintSystem.status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) return false
-    return true
-}
-
-private fun filterOutTypeParameters(upperBounds: List<KotlinType>, candidateDescriptor: CallableDescriptor): List<KotlinType> {
-    if (upperBounds.size < 2) return upperBounds
-    val result = upperBounds.filterNot {
-        val declarationDescriptor = it.constructor.declarationDescriptor
-        declarationDescriptor is TypeParameterDescriptor && declarationDescriptor.containingDeclaration == candidateDescriptor
-    }
-    if (result.isEmpty()) return upperBounds
-    return result
-}
-
-fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
-    var receiverType = receiverParameterDescriptor.type
-    for (typeParameter in descriptor.typeParameters) {
-        if (typeParameter.typeConstructor == receiverType.constructor) {
-            val properUpperBounds = filterOutTypeParameters(typeParameter.upperBounds, descriptor)
-            receiverType = TypeIntersector.intersectUpperBounds(typeParameter, properUpperBounds)
-        }
-    }
-    val fakeTypeArguments = SmartList<TypeProjection>()
-    for (typeProjection in receiverType.arguments) {
-        fakeTypeArguments.add(TypeProjectionImpl(typeProjection.projectionKind, DONT_CARE))
-    }
-
-    val oldReceiverTypeConstructor = receiverType.constructor
-    val receiverTypeConstructor = if (oldReceiverTypeConstructor is IntersectionTypeConstructor) {
-        oldReceiverTypeConstructor.transformComponents { supertype ->
-            val fakeArguments = supertype.arguments.map { TypeProjectionImpl(it.projectionKind, DONT_CARE) }
-            supertype.replace(fakeArguments)
-        } ?: oldReceiverTypeConstructor
-    } else {
-        oldReceiverTypeConstructor
-    }
-
-    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        receiverType.attributes, receiverTypeConstructor, fakeTypeArguments,
-        receiverType.isMarkedNullable, ErrorUtils.createErrorScope(ErrorScopeKind.ERASED_RECEIVER_TYPE_SCOPE, throwExceptions = true)
-    )
 }
 
 fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
@@ -186,11 +92,6 @@ fun isInvokeCallOnVariable(call: Call): Boolean {
     //calleeExpressionAsDispatchReceiver for invoke is always ExpressionReceiver, see CallForImplicitInvoke
     val expression = (dispatchReceiver as ExpressionReceiver).expression
     return expression is KtSimpleNameExpression
-}
-
-fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
-    if (call.callType !== Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false
-    return call.explicitReceiver != null && call.dispatchReceiver != null
 }
 
 fun getSuperCallExpression(call: Call): KtSuperExpression? {

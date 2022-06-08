@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -58,11 +57,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
     @Override
     @NotNull
     MutableDataFlowInfoForArguments getDataFlowInfoForArguments();
-
-    @Nullable
-    ConstraintSystem getConstraintSystem();
-
-    void setConstraintSystem(@NotNull ConstraintSystem constraintSystem);
 
     void setSubstitutor(@NotNull TypeSubstitutor substitutor);
 

@@ -40,10 +40,6 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -59,10 +55,8 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT;
 import static org.jetbrains.kotlin.resolve.BindingContext.CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
@@ -523,37 +517,6 @@ public class ControlStructureTypingUtils {
             ) {
                 trace.record(RESOLVED_CALL, call, resolvedCall);
             }
-
-            @Override
-            public void typeInferenceFailed(
-                    @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data
-            ) {
-                ConstraintSystem constraintSystem = data.constraintSystem;
-                ConstraintSystemStatus status = constraintSystem.getStatus();
-                assert !status.isSuccessful() : "Report error only for not successful constraint system";
-
-                if (status.hasErrorInConstrainingTypes() || status.hasUnknownParameters()) {
-                    return;
-                }
-                KtExpression expression = (KtExpression) call.getCallElement();
-                if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
-                        || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
-                    if (noTypeCheckingErrorsInExpression(expression, context.trace, data.expectedType)) {
-                        KtExpression calleeExpression = call.getCalleeExpression();
-                        if (calleeExpression instanceof KtWhenExpression || calleeExpression instanceof KtIfExpression) {
-                            if (status.hasConflictingConstraints() || status.hasTypeInferenceIncorporationError()) {
-                                // TODO provide comprehensible error report for hasConflictingConstraints() case (if possible)
-                                context.trace.report(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT.on(expression));
-                            }
-                        }
-                    }
-                    return;
-                }
-                KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtNamedDeclaration.class);
-                logError("Expression: " + (parentDeclaration != null ? parentDeclaration.getText() : expression.getText()) +
-                         "\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
-            }
-
             private boolean noTypeCheckingErrorsInExpression(
                     KtExpression expression,
                     @NotNull BindingTrace trace,
@@ -690,13 +653,6 @@ public class ControlStructureTypingUtils {
         @Override
         public void invisibleMember(
                 @NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor
-        ) {
-            logError();
-        }
-
-        @Override
-        public void typeInferenceFailed(
-                @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData
         ) {
             logError();
         }

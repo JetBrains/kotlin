@@ -16,26 +16,18 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -48,8 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -57,16 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.sure
 
 class NewResolutionOldInference(
-    private val towerResolver: TowerResolver,
-    private val resolutionResultsHandler: ResolutionResultsHandler,
-    private val dynamicCallableDescriptors: DynamicCallableDescriptors,
-    private val syntheticScopes: SyntheticScopes,
-    private val languageVersionSettings: LanguageVersionSettings,
     private val deprecationResolver: DeprecationResolver,
-    private val typeApproximator: TypeApproximator,
-    private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
-    private val callResolver: CallResolver,
-    private val candidateInterceptor: CandidateInterceptor
 ) {
     sealed class ResolutionKind {
         abstract internal fun createTowerProcessor(
@@ -150,258 +131,6 @@ class NewResolutionOldInference(
         }
     }
 
-    fun <D : CallableDescriptor> runResolution(
-        context: BasicCallResolutionContext,
-        name: Name,
-        kind: ResolutionKind,
-        tracing: TracingStrategy
-    ): OverloadResolutionResultsImpl<D> {
-        val explicitReceiver = context.call.explicitReceiver
-        val detailedReceiver = if (explicitReceiver is QualifierReceiver?) {
-            explicitReceiver
-        } else {
-            context.transformToReceiverWithSmartCastInfo(explicitReceiver as ReceiverValue)
-        }
-
-        val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(
-            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, implicitsResolutionFilter, callResolver, candidateInterceptor
-        )
-
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        val isBinaryRemOperator = isBinaryRemOperator(context.call)
-        val nameToResolve = if (isBinaryRemOperator && !shouldUseOperatorRem)
-            OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!!
-        else
-            name
-
-        val processor = kind.createTowerProcessor(this, nameToResolve, tracing, scopeTower, detailedReceiver, context)
-
-        if (context.collectAllCandidates) {
-            return allCandidatesResult(towerResolver.collectAllCandidates(scopeTower, processor, nameToResolve))
-        }
-
-        var candidates =
-            towerResolver.runResolve(scopeTower, processor, useOrder = kind != ResolutionKind.CallableReference, name = nameToResolve)
-
-        // Temporary hack to resolve 'rem' as 'mod' if the first is do not present
-        val emptyOrInapplicableCandidates = candidates.isEmpty() ||
-                candidates.all { it.resultingApplicability.isInapplicable }
-        if (isBinaryRemOperator && shouldUseOperatorRem && emptyOrInapplicableCandidates) {
-            val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]
-            val processorForDeprecatedName =
-                kind.createTowerProcessor(this, deprecatedName!!, tracing, scopeTower, detailedReceiver, context)
-            candidates = towerResolver.runResolve(
-                scopeTower,
-                processorForDeprecatedName,
-                useOrder = kind != ResolutionKind.CallableReference,
-                name = deprecatedName
-            )
-        }
-
-        if (candidates.isEmpty()) {
-            if (reportAdditionalDiagnosticIfNoCandidates(context, nameToResolve, kind, scopeTower, detailedReceiver)) {
-                return OverloadResolutionResultsImpl.nameNotFound()
-            }
-        }
-
-        val overloadResults = convertToOverloadResults<D>(candidates, tracing, context)
-        return overloadResults
-    }
-
-    fun <D : CallableDescriptor> runResolutionForGivenCandidates(
-        basicCallContext: BasicCallResolutionContext,
-        tracing: TracingStrategy,
-        candidates: Collection<OldResolutionCandidate<D>>
-    ): OverloadResolutionResultsImpl<D> {
-        val resolvedCandidates = candidates.map { candidate ->
-            val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
-            val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
-
-            if (deprecationResolver.isHiddenInResolution(
-                    candidate.descriptor, basicCallContext.call, basicCallContext.trace.bindingContext, basicCallContext.isSuperCall
-                )
-            ) {
-                return@map MyCandidate(listOf(HiddenDescriptor), resolvedCall)
-            }
-
-            val callCandidateResolutionContext = CallCandidateResolutionContext.create(
-                resolvedCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
-                CandidateResolveMode.EXIT_ON_FIRST_ERROR
-            )
-
-            val diagnostics = listOfNotNull(createPreviousResolveError(resolvedCall.status))
-            MyCandidate(diagnostics, resolvedCall) {
-                resolvedCall.performRemainingTasks()
-                listOfNotNull(createPreviousResolveError(resolvedCall.status))
-            }
-        }
-        if (basicCallContext.collectAllCandidates) {
-            val allCandidates = towerResolver.runWithEmptyTowerData(
-                KnownResultProcessor(resolvedCandidates),
-                TowerResolver.AllCandidatesCollector(), useOrder = false
-            )
-            return allCandidatesResult(allCandidates)
-        }
-
-        val processedCandidates = towerResolver.runWithEmptyTowerData(
-            KnownResultProcessor(resolvedCandidates),
-            TowerResolver.SuccessfulResultCollector(), useOrder = true
-        )
-
-        return convertToOverloadResults(processedCandidates, tracing, basicCallContext)
-    }
-
-    private fun <D : CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate>) =
-        OverloadResolutionResultsImpl.nameNotFound<D>().apply {
-            this.allCandidates = allCandidates.map {
-                @Suppress("UNCHECKED_CAST")
-                it.resolvedCall as MutableResolvedCall<D>
-            }
-        }
-
-    private fun <D : CallableDescriptor> convertToOverloadResults(
-        candidates: Collection<MyCandidate>,
-        tracing: TracingStrategy,
-        basicCallContext: BasicCallResolutionContext
-    ): OverloadResolutionResultsImpl<D> {
-        val resolvedCalls = candidates.map {
-            val (diagnostics, resolvedCall) = it
-            if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
-                // todo hacks
-                tracing.bindReference(resolvedCall.variableCall.trace, resolvedCall.variableCall)
-                tracing.bindResolvedCall(resolvedCall.variableCall.trace, resolvedCall)
-
-                resolvedCall.variableCall.trace.addOwnDataTo(resolvedCall.functionCall.trace)
-
-                resolvedCall.functionCall.tracingStrategy.bindReference(resolvedCall.functionCall.trace, resolvedCall.functionCall)
-                //                resolvedCall.hackInvokeTracing.bindResolvedCall(resolvedCall.functionCall.trace, resolvedCall)
-            } else {
-                tracing.bindReference(resolvedCall.trace, resolvedCall)
-                tracing.bindResolvedCall(resolvedCall.trace, resolvedCall)
-            }
-
-            if (resolvedCall.status.possibleTransformToSuccess()) {
-                for (error in diagnostics) {
-                    when (error) {
-                        is UnsupportedInnerClassCall -> resolvedCall.trace.report(
-                            Errors.UNSUPPORTED.on(
-                                resolvedCall.call.callElement,
-                                error.message
-                            )
-                        )
-
-                        is NestedClassViaInstanceReference -> tracing.nestedClassAccessViaInstanceReference(
-                            resolvedCall.trace,
-                            error.classDescriptor,
-                            resolvedCall.explicitReceiverKind
-                        )
-
-                        is ErrorDescriptorDiagnostic -> {
-                            // todo
-                            //  return@map null
-                        }
-
-                        is ResolvedUsingDeprecatedVisibility -> {
-                            reportResolvedUsingDeprecatedVisibility(
-                                resolvedCall.call, resolvedCall.candidateDescriptor,
-                                resolvedCall.resultingDescriptor, error, resolvedCall.trace
-                            )
-                        }
-                    }
-                }
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            resolvedCall as MutableResolvedCall<D>
-        }
-
-        return resolutionResultsHandler.computeResultAndReportErrors(basicCallContext, tracing, resolvedCalls, languageVersionSettings)
-    }
-
-    // true if we found something
-    private fun reportAdditionalDiagnosticIfNoCandidates(
-        context: BasicCallResolutionContext,
-        name: Name,
-        kind: ResolutionKind,
-        scopeTower: ImplicitScopeTower,
-        detailedReceiver: DetailedReceiver?
-    ): Boolean {
-        val reference = context.call.calleeExpression as? KtReferenceExpression ?: return false
-
-        val errorCandidates = when (kind) {
-            ResolutionKind.Function -> collectErrorCandidatesForFunction(scopeTower, name, detailedReceiver)
-            ResolutionKind.Variable -> collectErrorCandidatesForVariable(scopeTower, name, detailedReceiver)
-            else -> emptyList()
-        }
-
-        val candidate = errorCandidates.firstOrNull() as? ErrorCandidate.Classifier ?: return false
-
-        context.trace.record(BindingContext.REFERENCE_TARGET, reference, candidate.descriptor)
-        context.trace.report(Errors.RESOLUTION_TO_CLASSIFIER.on(reference, candidate.descriptor, candidate.kind, candidate.errorMessage))
-
-        return true
-    }
-
-    public class ImplicitScopeTowerImpl(
-        val resolutionContext: BasicCallResolutionContext,
-        override val dynamicScope: MemberScope,
-        override val syntheticScopes: SyntheticScopes,
-        override val location: LookupLocation,
-        override val typeApproximator: TypeApproximator,
-        override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
-        val callResolver: CallResolver,
-        val candidateInterceptor: CandidateInterceptor
-    ) : ImplicitScopeTower {
-        private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
-
-        override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? =
-            scope.implicitReceiver?.value?.let {
-                cache.getOrPut(it) { resolutionContext.transformToReceiverWithSmartCastInfo(it) }
-            }
-
-        override fun getContextReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo> =
-            scope.contextReceiversGroup.map { cache.getOrPut(it.value) { resolutionContext.transformToReceiverWithSmartCastInfo(it.value) } }
-
-        override fun getNameForGivenImportAlias(name: Name): Name? =
-            (resolutionContext.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)
-
-        override val lexicalScope: LexicalScope get() = resolutionContext.scope
-
-        override val isDebuggerContext: Boolean get() = resolutionContext.isDebuggerContext
-
-        override val isNewInferenceEnabled: Boolean
-            get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-
-        override val areContextReceiversEnabled: Boolean
-            get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
-
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = resolutionContext.languageVersionSettings
-
-        override fun interceptFunctionCandidates(
-            resolutionScope: ResolutionScope,
-            name: Name,
-            initialResults: Collection<FunctionDescriptor>,
-            location: LookupLocation,
-            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-            extensionReceiver: ReceiverValueWithSmartCastInfo?
-        ): Collection<FunctionDescriptor> {
-            return candidateInterceptor.interceptFunctionCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
-        }
-
-        override fun interceptVariableCandidates(
-            resolutionScope: ResolutionScope,
-            name: Name,
-            initialResults: Collection<VariableDescriptor>,
-            location: LookupLocation,
-            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-            extensionReceiver: ReceiverValueWithSmartCastInfo?
-        ): Collection<VariableDescriptor> {
-            return candidateInterceptor.interceptVariableCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
-        }
-    }
-
     class MyCandidate(
         // Diagnostics that are already computed
         // if resultingApplicability is successful they must be the same as `diagnostics`,
@@ -470,11 +199,6 @@ class NewResolutionOldInference(
             ) {
                 return MyCandidate(listOf(HiddenDescriptor), candidateCall)
             }
-
-            val callCandidateResolutionContext = CallCandidateResolutionContext.create(
-                candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
-                CandidateResolveMode.EXIT_ON_FIRST_ERROR
-            )
 
             val diagnostics = createDiagnosticsForCandidate(towerCandidate, candidateCall)
             return MyCandidate(diagnostics, candidateCall) {

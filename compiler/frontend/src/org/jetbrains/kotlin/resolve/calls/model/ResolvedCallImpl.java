@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
@@ -79,7 +77,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private DelegatingBindingTrace trace;
     private TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
-    private ConstraintSystem constraintSystem = null;
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
     private KotlinType smartCastDispatchReceiverType = null;
@@ -256,18 +253,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     }
 
     @Override
-    public void setConstraintSystem(@NotNull ConstraintSystem constraintSystem) {
-        this.constraintSystem = constraintSystem;
-    }
-
-    @Nullable
-    @Override
-    public ConstraintSystem getConstraintSystem() {
-        assertNotCompleted("ConstraintSystem");
-        return constraintSystem;
-    }
-
-    @Override
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
         assert !valueArguments.containsKey(valueParameter) : valueParameter + " -> " + valueArgument;
         valueArguments.put(valueParameter, valueArgument);
@@ -366,10 +351,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     public boolean hasInferredReturnType() {
-        if (!completed) {
-            hasInferredReturnType = constraintSystem == null ||
-                                    CallResolverUtilKt.hasInferredReturnType(candidateDescriptor, constraintSystem);
-        }
         assert hasInferredReturnType != null : "The property 'hasInferredReturnType' was not set when the call was completed.";
         return hasInferredReturnType;
     }
@@ -380,7 +361,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             hasInferredReturnType();
         }
         trace = null;
-        constraintSystem = null;
         tracing = null;
         completed = true;
         remainingTasks = null;
