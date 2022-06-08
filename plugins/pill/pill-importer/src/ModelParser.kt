@@ -302,7 +302,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             parseString("module-name"),
             parseString("api-version"),
             parseString("language-version"),
-            parseString("jvm-target"),
+            parseString("jvm-target").takeUnless { it == "1.6" },
             extraArguments,
             pluginClasspath
         )
