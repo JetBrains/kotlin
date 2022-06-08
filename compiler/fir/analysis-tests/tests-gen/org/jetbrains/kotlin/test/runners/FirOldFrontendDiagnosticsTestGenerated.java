@@ -31154,6 +31154,28 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/syntax")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Syntax {
+            @Test
+            public void testAllFilesPresentInSyntax() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntax"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("complicatedLTGT.kt")
+            public void testComplicatedLTGT() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/syntax/complicatedLTGT.kt");
+            }
+
+            @Test
+            @TestMetadata("complicatedLTGTE.kt")
+            public void testComplicatedLTGTE() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/syntax/complicatedLTGTE.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/syntheticExtensions")
         @TestDataPath("$PROJECT_ROOT")
         public class SyntheticExtensions {
