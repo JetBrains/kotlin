@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -179,6 +180,10 @@ class ClassGenerator(
                 Modality.OPEN
             ).also { clazz ->
                 clazz.parent = irPackageFragment
+                clazz.thisReceiver = buildValueParameter(clazz) {
+                    name = Name.identifier("\$this")
+                    type = IrSimpleTypeImpl(clazz.symbol, false, emptyList(), emptyList())
+                }
             }
         }
 
