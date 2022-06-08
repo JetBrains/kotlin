@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
@@ -23,9 +22,12 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass(): Boolean =
-    this is ClassDescriptor && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME) &&
+fun DeclarationDescriptor.isInlineClass(): Boolean {
+    val isJvmBackend = this.module.platform?.singleOrNull()?.oldFashionedDescription?.startsWith("JVM") == true
+
+    return this is ClassDescriptor && (!isJvmBackend || annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) &&
             this.valueClassRepresentation is InlineClassRepresentation
+}
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
     this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
