@@ -30,7 +30,7 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:25 box
 // test.kt:16 box
 // test.kt:17 box
@@ -45,3 +45,5 @@ fun box(): String {
 // test.kt:8 box
 // test.kt:13 box
 // test.kt:30 box
+
+// EXPECTATIONS JS_IR

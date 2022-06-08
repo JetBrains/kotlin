@@ -84,7 +84,7 @@ class O<T>(i: T) {
 // are there in the class file fro JVM, but there is no guarantee that there is an instruction to
 // step on and sometimes there is no step on the end brace.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:4 box
 // test.kt:19 <init>
 // test.kt:4 box
@@ -100,20 +100,20 @@ class O<T>(i: T) {
 // test.kt:8 box
 // EXPECTATIONS JVM_IR
 // test.kt:28 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:29 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:30 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:8 box
 // test.kt:9 box
 // EXPECTATIONS JVM_IR
 // test.kt:33 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:34 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:35 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:9 box
 // test.kt:10 box
 // test.kt:37 <init>
@@ -122,7 +122,7 @@ class O<T>(i: T) {
 // test.kt:40 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:37 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:10 box
 // test.kt:11 box
 // test.kt:42 <init>
@@ -131,45 +131,45 @@ class O<T>(i: T) {
 // test.kt:45 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:42 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:11 box
 // test.kt:12 box
 // EXPECTATIONS JVM
 // test.kt:49 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:48 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:52 <init>
 // test.kt:53 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:54 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:49 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:50 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:12 box
 // test.kt:13 box
 // test.kt:57 <init>
 // test.kt:61 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:62 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:58 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:59 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:13 box
 // test.kt:14 box
 // test.kt:65 <init>
 // test.kt:69 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:70 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:66 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:67 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:14 box
 // test.kt:15 box
 // test.kt:72 <init>
@@ -181,6 +181,41 @@ class O<T>(i: T) {
 // test.kt:73 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:74 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:16 box
 // test.kt:17 box
+
+// EXPECTATIONS JS_IR
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:20 C
+// test.kt:6 box
+// test.kt:22 D_init_$Init$
+// test.kt:7 box
+// test.kt:25 E_init_$Init$
+// test.kt:8 box
+// test.kt:28 F_init_$Init$
+// test.kt:29 F_init_$Init$
+// test.kt:9 box
+// test.kt:33 G_init_$Init$
+// test.kt:34 G_init_$Init$
+// test.kt:10 box
+// test.kt:39 J
+// test.kt:11 box
+// test.kt:42 K
+// test.kt:44 K
+// test.kt:12 box
+// test.kt:48 L_init_$Init$
+// test.kt:53 L
+// test.kt:49 L_init_$Init$
+// test.kt:13 box
+// test.kt:57 M_init_$Init$
+// test.kt:61 M_init_$Init$_0
+// test.kt:58 M_init_$Init$
+// test.kt:14 box
+// test.kt:65 N_init_$Init$
+// test.kt:69 N_init_$Init$_0
+// test.kt:66 N_init_$Init$
+// test.kt:15 box
+// test.kt:16 box
+// test.kt:73 O_init_$Init$

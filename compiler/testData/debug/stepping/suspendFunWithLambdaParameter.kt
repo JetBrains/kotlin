@@ -10,10 +10,19 @@ suspend fun box() {
     }
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:8 box
 // test.kt:4 foo
 // test.kt:9 invoke
 // test.kt:4 foo
 // test.kt:8 box
 // test.kt:11 box
+
+// EXPECTATIONS JS_IR
+// test.kt:8 $boxCOROUTINE$0.doResume_5yljmg_k$
+// test.kt:4 foo
+// test.kt:4 foo
+// test.kt:9 box$lambda
+// test.kt:9 box$lambda
+// test.kt:4 foo
+// test.kt:7 box

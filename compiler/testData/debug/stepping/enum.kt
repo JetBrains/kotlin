@@ -34,12 +34,12 @@ fun box() {
 // for the evaluation of the arguments constructor and for the constructor call,
 // but not for the allocation of the object.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:22 box
 // EXPECTATIONS JVM_IR
 // test.kt:4 <clinit>
 // test.kt:5 <clinit>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:7 foo
 // test.kt:9 foo
 // test.kt:22 box
@@ -47,7 +47,19 @@ fun box() {
 // test.kt:15 <clinit>
 // EXPECTATIONS JVM_IR
 // test.kt:16 <clinit>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:17 <clinit>
 // test.kt:16 <clinit>
 // test.kt:24 box
+
+// EXPECTATIONS JS_IR
+// test.kt:22 box
+// test.kt:11 E
+// test.kt:11 E
+// test.kt:22 box
+// test.kt:9 E.foo_26di_k$
+// test.kt:9 E.foo_26di_k$
+// test.kt:15 E2_initEntries
+// test.kt:14 E2
+// test.kt:17 E2_initEntries
+// test.kt:14 E2

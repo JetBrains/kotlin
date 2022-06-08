@@ -11,7 +11,7 @@ fun foo(n :Int ) : Int {
     return foo(n-1) * n
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:8 foo
@@ -24,3 +24,18 @@ fun foo(n :Int ) : Int {
 // test.kt:11 foo
 // test.kt:4 box
 // test.kt:5 box
+
+// EXPECTATIONS JS_IR
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:9 foo
+// test.kt:11 foo
+// test.kt:11 foo
+// test.kt:11 foo
+// test.kt:11 foo

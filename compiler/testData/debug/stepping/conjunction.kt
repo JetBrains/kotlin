@@ -18,7 +18,7 @@ fun getC() = false
 
 fun getD() = true
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:3 box
 // test.kt:13 getA
 // test.kt:3 box
@@ -31,3 +31,6 @@ fun getD() = true
 // test.kt:9 box
 // test.kt:3 box
 // test.kt:11 box
+
+// EXPECTATIONS JS_IR
+// test.kt:3 box

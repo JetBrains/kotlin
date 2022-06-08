@@ -26,7 +26,7 @@ fun box() {
 // the line number for the actual assignment makes more sense as
 // that is the actual evaluation order.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:4 box
 // test.kt:5 box
 // test.kt:6 box
@@ -45,3 +45,14 @@ fun box() {
 // test.kt:16 box
 // test.kt:15 box
 // test.kt:18 box
+
+// EXPECTATIONS JS_IR
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:6 box
+// test.kt:7 box
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:12 box
+// test.kt:13 box
+// test.kt:15 box

@@ -15,7 +15,7 @@ inline fun f(block: () -> Unit) {
     block()
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:15 box
@@ -33,3 +33,9 @@ inline fun f(block: () -> Unit) {
 // test.kt:15 box
 // test.kt:16 box
 // test.kt:12 box
+
+// EXPECTATIONS JS_IR
+// test.kt:3 box
+// test.kt:5 box
+// test.kt:7 box
+// test.kt:10 box

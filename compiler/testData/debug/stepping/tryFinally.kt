@@ -39,7 +39,7 @@ fun box() {
 // JVM_IR behavior is consistent with what happens for the
 // try-finally where the value is discarded which seems good.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:29 box
 // test.kt:4 foo
 // test.kt:5 foo
@@ -53,7 +53,7 @@ fun box() {
 // test.kt:26 mightThrow2
 // EXPECTATIONS JVM
 // test.kt:11 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:13 foo
 // test.kt:14 foo
 // test.kt:10 foo
@@ -74,3 +74,18 @@ fun box() {
 // test.kt:10 foo
 // EXPECTATIONS JVM_IR
 // test.kt:13 foo
+
+// EXPECTATIONS JS_IR
+// test.kt:29 box
+// test.kt:5 foo
+// test.kt:21 mightThrow
+// test.kt:11 foo
+// test.kt:25 mightThrow2
+// test.kt:10 foo
+// test.kt:30 box
+// test.kt:31 box
+// test.kt:5 foo
+// test.kt:21 mightThrow
+// test.kt:11 foo
+// test.kt:25 mightThrow2
+// test.kt:25 mightThrow2

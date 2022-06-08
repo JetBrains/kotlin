@@ -14,7 +14,7 @@ fun box() {
 
 // IR backend has additional steps on the way _out_ of the init block.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:12 box
 // test.kt:6 makeFace
 // test.kt:6 <init>
@@ -22,3 +22,8 @@ fun box() {
 // test.kt:9 makeFace
 // test.kt:12 box
 // test.kt:13 box
+
+// EXPECTATIONS JS_IR
+// test.kt:12 box
+// test.kt:9 makeFace
+// test.kt:9 makeFace

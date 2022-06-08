@@ -20,7 +20,6 @@ fun testExpressionBody(nullable: String?) =
             // Some comment
             nullable.length == 2
 
-// EXPECTATIONS
 // EXPECTATIONS JVM
 // test.kt:6 box
 // test.kt:15 test
@@ -66,3 +65,17 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:9 box
 
 // test.kt:10 box
+
+// EXPECTATIONS JS_IR
+// test.kt:6 box
+// test.kt:13 test
+// test.kt:13 test
+// test.kt:7 box
+// test.kt:13 test
+// test.kt:13 test
+// test.kt:8 box
+// test.kt:21 testExpressionBody
+// test.kt:21 testExpressionBody
+// test.kt:9 box
+// test.kt:21 testExpressionBody
+// test.kt:21 testExpressionBody

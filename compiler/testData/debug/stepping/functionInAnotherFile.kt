@@ -20,7 +20,7 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:13 box
 // foo.kt:4 foo
 // foo.kt:7 foo
@@ -33,3 +33,16 @@ fun bar(x: Int) =
 // foo.kt:7 foo
 // test.kt:13 box
 // test.kt:14 box
+
+// EXPECTATIONS JS_IR
+// test.kt:13 box
+// foo.kt:4 foo
+// foo.kt:7 foo
+// test.kt:17 bar
+// test.kt:18 bar
+// foo.kt:4 foo
+// foo.kt:5 foo
+// foo.kt:5 foo
+// test.kt:21 bar
+// test.kt:21 bar
+// foo.kt:7 foo

@@ -12,7 +12,7 @@ inline fun lookAtMe(f: (String) -> Unit) {
     f(a)
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:5 box
 // test.kt:11 box
 // test.kt:12 box
@@ -21,3 +21,5 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:12 box
 // test.kt:13 box
 // test.kt:8 box
+
+// EXPECTATIONS JS_IR

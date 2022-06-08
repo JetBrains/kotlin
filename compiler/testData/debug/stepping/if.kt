@@ -14,7 +14,7 @@ inline fun getB(): Int {
     return 1
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:5 box
 // test.kt:14 box
 // test.kt:6 box
@@ -23,3 +23,5 @@ inline fun getB(): Int {
 // test.kt:8 box
 // test.kt:14 box
 // test.kt:8 box
+
+// EXPECTATIONS JS_IR

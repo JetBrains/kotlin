@@ -7,7 +7,7 @@ fun box() {
 // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 inline fun foo() = {
 }
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:4 box
 // test1.kt:8 box
 // test1.kt:9 box
@@ -15,5 +15,10 @@ inline fun foo() = {
 // test.kt:4 box
 // test1.kt:9 invoke
 // test.kt:4 box
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:5 box
+
+// EXPECTATIONS JS_IR
+// test.kt:4 box
+// test1.kt:6 box$lambda
+// test1.kt:6 box$lambda

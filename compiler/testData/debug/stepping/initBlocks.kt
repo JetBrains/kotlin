@@ -54,7 +54,7 @@ fun box() {
 // JVM_IR has an extra step back to the line of the class
 // declaration for the return in the constructor.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:48 box
 // test.kt:3 <init>
 // test.kt:6 <init>
@@ -64,7 +64,7 @@ fun box() {
 // test.kt:8 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:3 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:48 box
 // test.kt:49 box
 // test.kt:11 <init>
@@ -76,7 +76,7 @@ fun box() {
 // test.kt:18 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:11 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:49 box
 // test.kt:50 box
 // test.kt:21 <init>
@@ -91,7 +91,7 @@ fun box() {
 // test.kt:30 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:21 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:50 box
 // test.kt:51 box
 // test.kt:33 <init>
@@ -103,6 +103,26 @@ fun box() {
 // test.kt:42 <init>
 // EXPECTATIONS JVM_IR
 // test.kt:33 <init>
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:51 box
 // test.kt:52 box
+
+// EXPECTATIONS JS_IR
+// test.kt:48 box
+// test.kt:7 Foo
+// test.kt:45 x
+// test.kt:45 x
+// test.kt:49 box
+// test.kt:13 Bar
+// test.kt:17 Bar
+// test.kt:50 box
+// test.kt:23 Boo
+// test.kt:26 Boo
+// test.kt:45 x
+// test.kt:45 x
+// test.kt:29 Boo
+// test.kt:51 box
+// test.kt:34 Zoo
+// test.kt:36 Zoo
+// test.kt:39 Zoo
+// test.kt:42 Zoo

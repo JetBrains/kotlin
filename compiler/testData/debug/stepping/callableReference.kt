@@ -10,7 +10,7 @@ fun f(block: () -> Unit) {
     block()
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:10 f
@@ -19,3 +19,10 @@ fun f(block: () -> Unit) {
 // test.kt:10 f
 // test.kt:11 f
 // test.kt:7 box
+
+// EXPECTATIONS JS_IR
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:10 f
+// test.kt:5

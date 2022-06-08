@@ -33,17 +33,17 @@ fun box() {
 // of each of the conditions, but goes directly to the right body.
 // JVM_IR stepping behavior here is the same as for `whenMultiLineSubject.kt`.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:26 box
 // test.kt:4 foo
 // EXPECTATIONS JVM
 // test.kt:5 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:6 foo
 // test.kt:13 foo
 // EXPECTATIONS JVM
 // test.kt:14 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:15 foo
 // test.kt:13 foo
 // test.kt:22 foo
@@ -53,13 +53,13 @@ fun box() {
 // EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:7 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:8 foo
 // test.kt:13 foo
 // EXPECTATIONS JVM
 // test.kt:14 foo
 // test.kt:16 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:17 foo
 // test.kt:13 foo
 // test.kt:22 foo
@@ -69,15 +69,29 @@ fun box() {
 // EXPECTATIONS JVM
 // test.kt:5 foo
 // test.kt:7 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:10 foo
 // test.kt:13 foo
 // EXPECTATIONS JVM
 // test.kt:14 foo
 // test.kt:16 foo
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:19 foo
 // test.kt:13 foo
 // test.kt:22 foo
 // test.kt:28 box
 // test.kt:29 box
+
+// EXPECTATIONS JS_IR
+// test.kt:26 box
+// test.kt:15 foo
+// test.kt:22 foo
+// test.kt:22 foo
+// test.kt:27 box
+// test.kt:17 foo
+// test.kt:22 foo
+// test.kt:22 foo
+// test.kt:28 box
+// test.kt:19 foo
+// test.kt:22 foo
+// test.kt:22 foo

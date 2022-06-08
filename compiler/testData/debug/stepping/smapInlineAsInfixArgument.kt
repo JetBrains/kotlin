@@ -18,7 +18,7 @@ fun fail() : String {
     return "fail"
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:6 box
 // test.kt:14 box
 // test.kt:7 box
@@ -34,3 +34,18 @@ fun fail() : String {
 // test.kt:3 execute
 // test.kt:9 box
 // test.kt:11 box
+
+// EXPECTATIONS JS_IR
+// test.kt:6 box
+// test.kt:18 fail
+// test.kt:18 fail
+// test.kt:6 box
+// test.kt:3 execute
+// test.kt:3 execute
+// test.kt:9 box
+// test.kt:18 fail
+// test.kt:18 fail
+// test.kt:14 box
+// test.kt:9 box
+// test.kt:3 execute
+// test.kt:3 execute
