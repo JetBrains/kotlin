@@ -105,6 +105,8 @@ private constructor(
 
     override val substitutionProviderImpl: KtSignatureSubsitutor = KtFirSignatureSubsitutor(this)
 
+    override val scopeSubstitutionImpl: KtScopeSubstitution = KtFirScopeSubstitution(this)
+
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
