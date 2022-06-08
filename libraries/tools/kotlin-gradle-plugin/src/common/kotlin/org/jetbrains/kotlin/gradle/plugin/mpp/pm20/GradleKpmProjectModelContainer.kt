@@ -11,10 +11,13 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop.GradleKpmCinteropModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop.GradleKpmCinteropModuleFactory
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
 internal interface GradleKpmProjectModelContainer {
     val modules: NamedDomainObjectContainer<GradleKpmModule>
+    val cinteropModules: NamedDomainObjectContainer<GradleKpmCinteropModule>
     val metadataCompilationRegistryByModuleId: MutableMap<KpmModuleIdentifier, MetadataCompilationRegistry>
     val rootPublication: MavenPublication?
 }
@@ -40,19 +43,16 @@ internal val Project.metadataCompilationRegistryByModuleId: MutableMap<KpmModule
 
 internal class GradleKpmDefaultProjectModelContainer(
     override val modules: NamedDomainObjectContainer<GradleKpmModule>,
+    override val cinteropModules: NamedDomainObjectContainer<GradleKpmCinteropModule>,
     override val metadataCompilationRegistryByModuleId: MutableMap<KpmModuleIdentifier, MetadataCompilationRegistry>,
 ) : GradleKpmProjectModelContainer {
     override var rootPublication: MavenPublication? = null
 
     companion object {
-        fun create(project: Project): GradleKpmDefaultProjectModelContainer {
-            return GradleKpmDefaultProjectModelContainer(createKpmModulesContainer(project), mutableMapOf())
-        }
-
-        private fun createKpmModulesContainer(project: Project): NamedDomainObjectContainer<GradleKpmModule> =
-            project.objects.domainObjectContainer(
-                GradleKpmModule::class.java,
-                GradleKpmModuleFactory(project)
-            )
+        fun create(project: Project) = GradleKpmDefaultProjectModelContainer(
+            project.objects.domainObjectContainer(GradleKpmModule::class.java, GradleKpmModuleFactory(project)),
+            project.objects.domainObjectContainer(GradleKpmCinteropModule::class.java, GradleKpmCinteropModuleFactory(project)),
+            mutableMapOf()
+        )
     }
 }

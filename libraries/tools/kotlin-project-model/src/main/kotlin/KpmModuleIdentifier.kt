@@ -31,3 +31,10 @@ data class KpmMavenModuleIdentifier(
 ) : KpmModuleIdentifier(moduleClassifier) {
     override fun toString(): String = "$group:$name" + moduleClassifier?.let { " / $it" }.orEmpty()
 }
+
+data class KpmCinteropModuleIdentifier(
+    val projectId: String,
+    val name: String
+) : KpmModuleIdentifier(name + "Cinterop") {
+    override fun toString(): String = "$name cinterop for '$projectId'"
+}
