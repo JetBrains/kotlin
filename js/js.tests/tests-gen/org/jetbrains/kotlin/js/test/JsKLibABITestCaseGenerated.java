@@ -50,6 +50,11 @@ public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
         runTest("compiler/testData/klibABI/removeAbstractPropertyFromInterface/");
     }
 
+    @TestMetadata("removeClassAsConstructorCall")
+    public void testRemoveClassAsConstructorCall() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
+    }
+
     @TestMetadata("removeClassAsParameterType")
     public void testRemoveClassAsParameterType() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsParameterType/");
@@ -68,6 +73,11 @@ public class JsKLibABITestCaseGenerated extends AbstractJsKLibABITestCase {
     @TestMetadata("removeClassAsTypeArgument")
     public void testRemoveClassAsTypeArgument() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsTypeArgument/");
+    }
+
+    @TestMetadata("removeClassAsVariableType")
+    public void testRemoveClassAsVariableType() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsVariableType/");
     }
 
     @TestMetadata("removeFunction")

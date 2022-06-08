@@ -49,6 +49,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("removeClassAsConstructorCall")
+    public void testRemoveClassAsConstructorCall() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
+    }
+
+    @Test
     @TestMetadata("removeClassAsParameterType")
     public void testRemoveClassAsParameterType() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsParameterType/");
@@ -70,6 +76,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @TestMetadata("removeClassAsTypeArgument")
     public void testRemoveClassAsTypeArgument() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsTypeArgument/");
+    }
+
+    @Test
+    @TestMetadata("removeClassAsVariableType")
+    public void testRemoveClassAsVariableType() throws Exception {
+        runTest("compiler/testData/klibABI/removeClassAsVariableType/");
     }
 
     @Test
