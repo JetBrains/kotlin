@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     kotlin("plugin.serialization")
+    id("de.undercouch.download")
 }
 
 dependencies {

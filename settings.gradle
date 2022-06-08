@@ -16,6 +16,10 @@ pluginManagement {
             maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         }
     }
+    
+    plugins {
+        id "de.undercouch.download" version "5.1.0"
+    }
 }
 
 buildscript {

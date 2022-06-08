@@ -7,6 +7,7 @@ plugins {
 publish()
 sourcesJar()
 javadocJar()
+configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
     implementation(kotlinStdlib())

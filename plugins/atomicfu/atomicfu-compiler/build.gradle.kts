@@ -7,7 +7,6 @@ description = "Atomicfu Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("de.undercouch.download")
 }
 
 val antLauncherJar by configurations.creating
