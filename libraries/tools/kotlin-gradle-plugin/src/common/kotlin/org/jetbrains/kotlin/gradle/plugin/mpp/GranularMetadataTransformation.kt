@@ -162,7 +162,10 @@ internal class GranularMetadataTransformation(
         while (resolvedDependencyQueue.isNotEmpty()) {
             val (resolvedDependency: ResolvedComponentResult, parent: ResolvedComponentResult?) = resolvedDependencyQueue.poll()
 
-            visitedDependencies.add(resolvedDependency)
+            if (!visitedDependencies.add(resolvedDependency)) {
+                /* Already processed this dependency */
+                continue
+            }
 
             val dependencyResult = processDependency(
                 resolvedDependency,
