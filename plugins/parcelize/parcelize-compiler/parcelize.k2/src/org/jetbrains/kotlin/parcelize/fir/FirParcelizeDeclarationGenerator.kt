@@ -179,7 +179,7 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
     }
 
     private val key: GeneratedDeclarationKey
-        get() = FirParcelizePluginKey
+        get() = ParcelizePluginKey
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)
