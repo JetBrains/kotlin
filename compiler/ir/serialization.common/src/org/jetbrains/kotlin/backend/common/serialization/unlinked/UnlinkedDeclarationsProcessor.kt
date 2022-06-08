@@ -126,6 +126,20 @@ internal class UnlinkedDeclarationsProcessor(
             return declaration
         }
 
+        override fun visitVariable(declaration: IrVariable): IrStatement {
+            if (declaration.type.isUnlinked()) {
+                val fqn = declaration.parent.fqNameForIrSerialization.child(declaration.name)
+                val kind = if (declaration.isVar) "var" else "val"
+                declaration.reportUnlinkedSymbolsWarning(kind, fqn)
+
+                declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
+                declaration.initializer = null
+            } else {
+                declaration.transformChildrenVoid()
+            }
+            return declaration
+        }
+
         /**
          * Replaces an [IrProperty] or [IrSimpleFunction] that is abstract fake override in non-abstract class
          * by the corresponding non-abstract IR element.
