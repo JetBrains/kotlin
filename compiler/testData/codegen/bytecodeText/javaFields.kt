@@ -20,4 +20,4 @@ fun test1(j: Kotlin2) = j.f
 // 1 GETFIELD Java2.f : I
 
 // @TestKt.class:
-// 1 GETFIELD Kotlin2.f : I
+// 1 GETFIELD Java2.f : I

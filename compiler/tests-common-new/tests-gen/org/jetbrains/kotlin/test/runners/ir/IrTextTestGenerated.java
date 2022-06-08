@@ -1119,6 +1119,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("ambiguousFieldAccess.kt")
+        public void testAmbiguousFieldAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/ambiguousFieldAccess.kt");
+        }
+
+        @Test
         @TestMetadata("argumentMappedWithError.kt")
         public void testArgumentMappedWithError() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/argumentMappedWithError.kt");

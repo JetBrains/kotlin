@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isMethodOfAny
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
@@ -256,6 +253,28 @@ class CallAndReferenceGenerator(
         return null
     }
 
+    // Note: I don't like using super qualifier symbols to determine field receivers in bytecode properly.
+    // Would be much better to use super qualifiers only in case when it's used explicitly.
+    // However, FE 1.0 does it, and currently we have no better way to provide these receivers.
+    // See KT-49507 and KT-48954 as good examples for cases we try to handle here
+    private fun FirExpression.superQualifierSymbolForField(fieldSymbol: IrFieldSymbol): IrClassSymbol? {
+        if (this !is FirQualifiedAccess) return null
+        if (calleeReference is FirSuperReference) return superQualifierSymbol()
+        if (fieldSymbol.owner.correspondingPropertySymbol != null) return null
+        val originalContainingClass = fieldSymbol.owner.parentClassOrNull ?: return null
+        val ownContainingClass = typeRef.toIrType().classifierOrNull?.owner as? IrClass ?: return null
+        // For static field, we shouldn't unwrap fake override in any case
+        if (fieldSymbol.owner.isStatic) return ownContainingClass.symbol
+        // This means own containing class exposes original containing class, which is possible only in Java (Kotlin forbids it)
+        // In this case we take own containing class as qualifier symbol to avoid visibility problems (see testKt48954 as an example)
+        // Otherwise we should take original containing class to avoid possible clash with Kotlin backing field
+        if (ownContainingClass.visibility.compareTo(
+                originalContainingClass.visibility
+            ).let { it == null || it > 0 }
+        ) return ownContainingClass.symbol
+        return originalContainingClass.symbol
+    }
+
     private fun FirExpression.superQualifierSymbol(): IrClassSymbol? {
         if (this !is FirQualifiedAccess) {
             return null
@@ -462,7 +481,7 @@ class CallAndReferenceGenerator(
                     is IrFieldSymbol -> IrGetFieldImpl(
                         startOffset, endOffset, symbol, type,
                         origin = IrStatementOrigin.GET_PROPERTY.takeIf { calleeReference !is FirDelegateFieldReference },
-                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
+                        superQualifierSymbol = dispatchReceiver.superQualifierSymbolForField(symbol)
                     )
                     is IrValueSymbol -> {
                         IrGetValueImpl(

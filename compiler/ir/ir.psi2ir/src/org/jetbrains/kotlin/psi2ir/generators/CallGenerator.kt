@@ -193,6 +193,21 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         }
     }
 
+    private fun PropertyDescriptor.containingClassForField(): ClassDescriptor? {
+        val ownContainingClass = containingDeclaration as? ClassDescriptor ?: return null
+        // For static field, we shouldn't unwrap fake override in any case
+        if (dispatchReceiverParameter == null) return ownContainingClass
+        val originalContainingClass = resolveFakeOverride().containingDeclaration as? ClassDescriptor ?: return ownContainingClass
+        // This means own containing class exposes original containing class, which is possible only in Java (Kotlin forbids it)
+        // In this case we take own containing class as qualifier symbol to avoid visibility problems (see testKt48954 as an example)
+        // Otherwise we should take original containing class to avoid possible clash with Kotlin backing field
+        if (ownContainingClass.visibility.compareTo(
+                originalContainingClass.visibility
+            ).let { it == null || it > 0 }
+        ) return ownContainingClass
+        return originalContainingClass
+    }
+
     private fun generatePropertyGetterCall(
         descriptor: PropertyDescriptor,
         startOffset: Int,
@@ -203,10 +218,11 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         val irType = descriptor.type.toIrType()
 
         return if (getMethodDescriptor == null) {
-            val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
-                if (it is ScriptDescriptor) null // otherwise it creates a reference to script as class; TODO: check if correct
-                else context.symbolTable.referenceClass(it)
-            }
+            val superQualifierSymbol =
+                (call.superQualifier ?: descriptor.containingClassForField())?.let {
+                    if (it is ScriptDescriptor) null // otherwise it creates a reference to script as class; TODO: check if correct
+                    else context.symbolTable.referenceClass(it)
+                }
             val fieldSymbol =
                 context.symbolTable.referenceField(context.extensions.remapDebuggerFieldPropertyDescriptor(descriptor.resolveFakeOverride().original))
             call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->

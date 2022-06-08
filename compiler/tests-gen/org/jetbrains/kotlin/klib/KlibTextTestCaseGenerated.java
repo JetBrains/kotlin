@@ -862,6 +862,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("ambiguousFieldAccess.kt")
+        public void testAmbiguousFieldAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/ambiguousFieldAccess.kt");
+        }
+
         @TestMetadata("argumentMappedWithError.kt")
         public void testArgumentMappedWithError() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/argumentMappedWithError.kt");
