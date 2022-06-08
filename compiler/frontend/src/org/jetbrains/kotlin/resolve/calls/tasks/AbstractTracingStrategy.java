@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -33,15 +31,11 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
@@ -50,9 +44,6 @@ import java.util.HashSet;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
-import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemUtilsKt.filterConstraintsOut;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
-import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
 public abstract class AbstractTracingStrategy implements TracingStrategy {
     protected final KtExpression reference;
@@ -232,71 +223,5 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     @Override
     public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {
         trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor));
-    }
-
-    @Override
-    public void typeInferenceFailed(@NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data) {
-        Diagnostic diagnostic = typeInferenceFailedDiagnostic(context, data, reference, call);
-        if (diagnostic != null) {
-            context.trace.report(diagnostic);
-        }
-    }
-
-    @Nullable
-    public static Diagnostic typeInferenceFailedDiagnostic(
-            @NotNull ResolutionContext<?> context,
-            @NotNull InferenceErrorData data,
-            @NotNull KtExpression reference,
-            @NotNull Call call
-    ) {
-        ConstraintSystem constraintSystem = data.constraintSystem;
-        ConstraintSystemStatus status = constraintSystem.getStatus();
-        assert !status.isSuccessful() : "Report error only for not successful constraint system";
-
-        if (status.hasErrorInConstrainingTypes()) {
-            // Do not report type inference errors if there is one in the arguments
-            // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
-            return null;
-        }
-        if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
-            KotlinType declaredReturnType = data.descriptor.getReturnType();
-            if (declaredReturnType == null) return null;
-
-            ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(constraintSystem, EXPECTED_TYPE_POSITION);
-            KotlinType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
-                    declaredReturnType, Variance.OUT_VARIANCE);
-            assert substitutedReturnType != null; //todo
-
-            assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
-            if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(
-                    context, call.getCallElement(), data.expectedType, substitutedReturnType)) {
-                return TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType);
-            }
-        }
-        else if (status.hasCannotCaptureTypesError()) {
-            return TYPE_INFERENCE_CANNOT_CAPTURE_TYPES.on(reference, data);
-        }
-        else if (status.hasViolatedUpperBound()) {
-            return TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data);
-        }
-        else if (status.hasParameterConstraintError()) {
-            return TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR.on(reference, data);
-        }
-        else if (status.hasConflictingConstraints()) {
-            return TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data);
-        }
-        else if (status.hasTypeInferenceIncorporationError()) {
-            return TYPE_INFERENCE_INCORPORATION_ERROR.on(reference);
-        }
-        else if (status.hasTypeParameterWithUnsatisfiedOnlyInputTypesError()) {
-            //todo
-            return TYPE_INFERENCE_ONLY_INPUT_TYPES.getErrorFactory().on(reference, data.descriptor.getTypeParameters().get(0));
-        }
-        else {
-            assert status.hasUnknownParameters();
-            return TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data);
-        }
-
-        return null;
     }
 }

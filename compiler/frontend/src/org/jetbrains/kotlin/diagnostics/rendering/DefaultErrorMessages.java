@@ -959,21 +959,16 @@ public class DefaultErrorMessages {
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 
-        MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "Type inference failed: {0}", TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER);
-        MAP.put(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES, "Type inference failed: {0}", TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER);
-        MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
         MAP.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING);
         MAP.put(INFERRED_INTO_DECLARED_UPPER_BOUNDS, "Type parameter for a type argument {0} can''t be inferred into declared upper bounds. " +
                                                      "Please provide any use-site type information. It will become an error in future releases.", STRING);
         MAP.put(COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE, "Builder inference lambda contains inapplicable calls so {0} can''t be inferred. It could be resolved only with unrestricted builder inference. Please use -Xunrestricted-builder-inference compiler flag to enable it.", STRING);
 
-        MAP.put(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, "Type inference failed: {0}", TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER);
         MAP.put(TYPE_INFERENCE_INCORPORATION_ERROR, "Type inference failed. Please try to specify type arguments explicitly.");
         MAP.put(TYPE_INFERENCE_ONLY_INPUT_TYPES, "Type inference failed. The value of the type parameter {0} should be mentioned in input types " +
                                                  "(argument types, receiver type or expected type). Try to specify it explicitly.", NAME);
         MAP.put(INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION, "Type argument for a type parameter {0} can''t be inferred because it has incompatible upper bounds: {1} ({2}{3})", TO_STRING, RENDER_COLLECTION_OF_TYPES, TO_STRING, TO_STRING);
         MAP.put(INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, "Type argument for a type parameter {0} has possible incompatible upper bounds: {1} ({2}{3})", TO_STRING, RENDER_COLLECTION_OF_TYPES, TO_STRING, TO_STRING);
-        MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG, "Please use spread operator to pass an array as vararg. It will be an error in 1.5.");
         MAP.put(TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE, "Postponed type variable (type variable of the builder inference) can't be used in the receiver type. Use a member function instead of extension one or specify type arguments of a function which uses the builder inference, explicitly.");

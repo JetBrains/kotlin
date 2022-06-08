@@ -891,14 +891,10 @@ public interface Errors {
 
     DiagnosticFactory0<KtParameter> CANNOT_INFER_PARAMETER_TYPE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> INFERRED_INTO_DECLARED_UPPER_BOUNDS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> TYPE_INFERENCE_INCORPORATION_ERROR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactoryForDeprecation1<PsiElement, TypeParameterDescriptor> TYPE_INFERENCE_ONLY_INPUT_TYPES =
@@ -907,7 +903,6 @@ public interface Errors {
             DiagnosticFactoryForDeprecation4.create(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection);
     DiagnosticFactory4<PsiElement, String, Collection<KotlinType>, String, String> INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION =
             DiagnosticFactory4.create(WARNING);
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE = DiagnosticFactory0.create(ERROR);
@@ -1329,9 +1324,7 @@ public interface Errors {
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
             UNUSED_LAMBDA_EXPRESSION, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS, UNNECESSARY_LATEINIT, REDUNDANT_ELSE_IN_WHEN);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
-            TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS,
-            TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR,
-            TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH,
+            TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH,
             NEW_INFERENCE_ERROR, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER);
     ImmutableSet<? extends DiagnosticFactory<?>> MUST_BE_INITIALIZED_DIAGNOSTICS = ImmutableSet.of(
             MUST_BE_INITIALIZED, MUST_BE_INITIALIZED_OR_BE_ABSTRACT

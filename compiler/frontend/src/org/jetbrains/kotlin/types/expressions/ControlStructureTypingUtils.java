@@ -21,29 +21,21 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -59,10 +51,8 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT;
 import static org.jetbrains.kotlin.resolve.BindingContext.CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
@@ -94,18 +84,15 @@ public class ControlStructureTypingUtils {
     }
 
     private final CallResolver callResolver;
-    private final DataFlowAnalyzer dataFlowAnalyzer;
     private final ModuleDescriptor moduleDescriptor;
     private final StorageManager storageManager;
 
     public ControlStructureTypingUtils(
             @NotNull CallResolver callResolver,
-            @NotNull DataFlowAnalyzer dataFlowAnalyzer,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull StorageManager storageManager
     ) {
         this.callResolver = callResolver;
-        this.dataFlowAnalyzer = dataFlowAnalyzer;
         this.moduleDescriptor = moduleDescriptor;
         this.storageManager = storageManager;
     }
@@ -159,8 +146,8 @@ public class ControlStructureTypingUtils {
             @NotNull ExpressionTypingContext context,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
-        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType, context.languageVersionSettings);
+        TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName());
+        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenDescriptors(
                 context, call, Collections.singletonList(function), tracing, knownTypeParameterSubstitutor, dataFlowInfoForArguments, null
         );
@@ -171,8 +158,7 @@ public class ControlStructureTypingUtils {
     private static @Nullable TypeSubstitutor createKnownTypeParameterSubstitutorForSpecialCall(
             @NotNull ResolveConstruct construct,
             @NotNull SimpleFunctionDescriptorImpl function,
-            @NotNull KotlinType expectedType,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull KotlinType expectedType
     ) {
         if (construct == ResolveConstruct.ELVIS
             || TypeUtils.noExpectedType(expectedType)
@@ -401,117 +387,10 @@ public class ControlStructureTypingUtils {
     }
 
     @NotNull
-    private TracingStrategy createTracingForSpecialConstruction(
+    private static TracingStrategy createTracingForSpecialConstruction(
             @NotNull Call call,
-            @NotNull String constructionName,
-            @NotNull ExpressionTypingContext context
+            @NotNull String constructionName
     ) {
-        class CheckTypeContext {
-            public BindingTrace trace;
-            public KotlinType expectedType;
-
-            CheckTypeContext(@NotNull BindingTrace trace, @NotNull KotlinType expectedType) {
-                this.trace = trace;
-                this.expectedType = expectedType;
-            }
-
-            CheckTypeContext makeTypeNullable() {
-                if (TypeUtils.noExpectedType(expectedType)) return this;
-                return new CheckTypeContext(trace, TypeUtils.makeNullable(expectedType));
-            }
-        }
-
-        KtVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new KtVisitor<Boolean, CheckTypeContext>() {
-            private boolean checkExpressionType(@NotNull KtExpression expression, CheckTypeContext c) {
-                KotlinTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
-                if (typeInfo == null) return false;
-
-                Ref<Boolean> hasError = Ref.create();
-                dataFlowAnalyzer.checkType(
-                        typeInfo.getType(),
-                        expression,
-                        context
-                                .replaceExpectedType(c.expectedType)
-                                .replaceDataFlowInfo(typeInfo.getDataFlowInfo())
-                                .replaceBindingTrace(c.trace),
-                        hasError,
-                        true
-                );
-                return hasError.get();
-            }
-
-            private boolean checkExpressionTypeRecursively(@Nullable KtExpression expression, CheckTypeContext c) {
-                if (expression == null) return false;
-                return expression.accept(this, c);
-            }
-
-            private boolean checkSubExpressions(
-                    KtExpression firstSub, KtExpression secondSub, KtExpression expression,
-                    CheckTypeContext firstContext, CheckTypeContext secondContext, CheckTypeContext context
-            ) {
-                boolean errorWasReported = checkExpressionTypeRecursively(firstSub, firstContext);
-                errorWasReported |= checkExpressionTypeRecursively(secondSub, secondContext);
-                return errorWasReported || checkExpressionType(expression, context);
-            }
-
-            @Override
-            public Boolean visitWhenExpression(@NotNull KtWhenExpression whenExpression, CheckTypeContext c) {
-                boolean errorWasReported = false;
-                for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
-                    KtExpression entryExpression = whenEntry.getExpression();
-                    if (entryExpression != null) {
-                        errorWasReported |= checkExpressionTypeRecursively(entryExpression, c);
-                    }
-                }
-                errorWasReported |= checkExpressionType(whenExpression, c);
-                return errorWasReported;
-            }
-
-            @Override
-            public Boolean visitIfExpression(@NotNull KtIfExpression ifExpression, CheckTypeContext c) {
-                KtExpression thenBranch = ifExpression.getThen();
-                KtExpression elseBranch = ifExpression.getElse();
-                if (thenBranch == null || elseBranch == null) {
-                    return checkExpressionType(ifExpression, c);
-                }
-                return checkSubExpressions(thenBranch, elseBranch, ifExpression, c, c, c);
-            }
-
-            @Override
-            public Boolean visitBlockExpression(@NotNull KtBlockExpression expression, CheckTypeContext c) {
-                if (expression.getStatements().isEmpty()) {
-                    return checkExpressionType(expression, c);
-                }
-                KtExpression lastStatement = KtPsiUtil.getLastStatementInABlock(expression);
-                if (lastStatement != null) {
-                    return checkExpressionTypeRecursively(lastStatement, c);
-                }
-                return false;
-            }
-
-            @Override
-            public Boolean visitPostfixExpression(@NotNull KtPostfixExpression expression, CheckTypeContext c) {
-                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.EXCLEXCL) {
-                    return checkExpressionTypeRecursively(expression.getBaseExpression(), c.makeTypeNullable());
-                }
-                return super.visitPostfixExpression(expression, c);
-            }
-
-            @Override
-            public Boolean visitBinaryExpression(@NotNull KtBinaryExpression expression, CheckTypeContext c) {
-                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.ELVIS) {
-
-                    return checkSubExpressions(expression.getLeft(), expression.getRight(), expression, c.makeTypeNullable(), c, c);
-                }
-                return super.visitBinaryExpression(expression, c);
-            }
-
-            @Override
-            public Boolean visitExpression(@NotNull KtExpression expression, CheckTypeContext c) {
-                return checkExpressionType(expression, c);
-            }
-        };
-
         return new ThrowingOnErrorTracingStrategy("resolve " + constructionName + " as a call") {
             @Override
             public <D extends CallableDescriptor> void bindReference(
@@ -530,44 +409,6 @@ public class ControlStructureTypingUtils {
                     @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
             ) {
                 trace.record(RESOLVED_CALL, call, resolvedCall);
-            }
-
-            @Override
-            public void typeInferenceFailed(
-                    @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data
-            ) {
-                ConstraintSystem constraintSystem = data.constraintSystem;
-                ConstraintSystemStatus status = constraintSystem.getStatus();
-                assert !status.isSuccessful() : "Report error only for not successful constraint system";
-
-                if (status.hasErrorInConstrainingTypes() || status.hasUnknownParameters()) {
-                    return;
-                }
-                KtExpression expression = (KtExpression) call.getCallElement();
-                if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
-                        || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
-                    if (noTypeCheckingErrorsInExpression(expression, context.trace, data.expectedType)) {
-                        KtExpression calleeExpression = call.getCalleeExpression();
-                        if (calleeExpression instanceof KtWhenExpression || calleeExpression instanceof KtIfExpression) {
-                            if (status.hasConflictingConstraints() || status.hasTypeInferenceIncorporationError()) {
-                                // TODO provide comprehensible error report for hasConflictingConstraints() case (if possible)
-                                context.trace.report(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT.on(expression));
-                            }
-                        }
-                    }
-                    return;
-                }
-                KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtNamedDeclaration.class);
-                logError("Expression: " + (parentDeclaration != null ? parentDeclaration.getText() : expression.getText()) +
-                         "\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
-            }
-
-            private boolean noTypeCheckingErrorsInExpression(
-                    KtExpression expression,
-                    @NotNull BindingTrace trace,
-                    @NotNull KotlinType expectedType
-            ) {
-                return Boolean.TRUE != expression.accept(checkTypeVisitor, new CheckTypeContext(trace, expectedType));
             }
         };
     }
@@ -698,13 +539,6 @@ public class ControlStructureTypingUtils {
         @Override
         public void invisibleMember(
                 @NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor
-        ) {
-            logError();
-        }
-
-        @Override
-        public void typeInferenceFailed(
-                @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData
         ) {
             logError();
         }

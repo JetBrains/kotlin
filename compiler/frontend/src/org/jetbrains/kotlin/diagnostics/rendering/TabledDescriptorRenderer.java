@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 
@@ -51,12 +50,9 @@ public class TabledDescriptorRenderer {
         public static class FunctionArgumentsRow implements TableRow {
             public final KotlinType receiverType;
             public final List<KotlinType> argumentTypes;
-            public final Predicate<ConstraintPosition> isErrorPosition;
-
-            public FunctionArgumentsRow(KotlinType receiverType, List<KotlinType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition) {
+            public FunctionArgumentsRow(KotlinType receiverType, List<KotlinType> argumentTypes) {
                 this.receiverType = receiverType;
                 this.argumentTypes = argumentTypes;
-                this.isErrorPosition = isErrorPosition;
             }
         }
 
@@ -64,17 +60,6 @@ public class TabledDescriptorRenderer {
 
         public TableRenderer descriptor(CallableDescriptor descriptor) {
             rows.add(new DescriptorRow(descriptor));
-            return this;
-        }
-
-        public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType, @NotNull List<KotlinType> argumentTypes) {
-            return functionArgumentTypeList(receiverType, argumentTypes, position -> false);
-        }
-
-        public TableRenderer functionArgumentTypeList(@Nullable KotlinType receiverType,
-                @NotNull List<KotlinType> argumentTypes,
-                @NotNull Predicate<ConstraintPosition> isErrorPosition) {
-            rows.add(new FunctionArgumentsRow(receiverType, argumentTypes, isErrorPosition));
             return this;
         }
 

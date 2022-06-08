@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.util.reportOnElement
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -131,10 +130,6 @@ class TracingStrategyForImplicitConstructorDelegationCall(
 
     override fun wrongNumberOfTypeArguments(trace: BindingTrace, expectedTypeArgumentCount: Int, descriptor: CallableDescriptor) {
         unexpectedError("wrongNumberOfTypeArguments")
-    }
-
-    override fun typeInferenceFailed(context: ResolutionContext<*>, data: InferenceErrorData) {
-        unexpectedError("typeInferenceFailed")
     }
 
     private fun unexpectedError(type: String) {
