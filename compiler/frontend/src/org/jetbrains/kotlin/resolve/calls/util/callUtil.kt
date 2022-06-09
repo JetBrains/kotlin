@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
@@ -320,12 +319,6 @@ fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubs
         return isEmpty
     }
 }
-
-fun <D : CallableDescriptor> ResolvedCallImpl<D>.shouldBeSubstituteWithStubTypes() =
-    typeArguments.any { argument -> argument.value.contains { it is StubTypeForBuilderInference } }
-            || dispatchReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
-            || extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
-            || valueArguments.any { argument -> argument.key.type.contains { it is StubTypeForBuilderInference } }
 
 fun KotlinCall.extractCallableReferenceExpression(): KtCallableReferenceExpression? =
     psiKotlinCall.psiCall.extractCallableReferenceExpression()

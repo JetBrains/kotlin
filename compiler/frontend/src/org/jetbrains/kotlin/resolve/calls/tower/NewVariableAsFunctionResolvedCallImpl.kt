@@ -31,6 +31,7 @@ class NewVariableAsFunctionResolvedCallImpl(
     override val languageVersionSettings = functionCall.languageVersionSettings
     override val diagnostics: Collection<KotlinCallDiagnostic> = functionCall.diagnostics
 
+    override fun getValueArguments() = functionCall.valueArguments
     override fun getStatus() = functionCall.status
     override fun getCandidateDescriptor() = functionCall.candidateDescriptor
     override fun getResultingDescriptor() = functionCall.resultingDescriptor

@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -105,54 +104,33 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
 
         @Suppress("UNCHECKED_CAST")
         return replacedFunctionCall.copy(
-            resolvedCall = VariableAsFunctionResolvedCallImpl(
-                replacedFunctionCall.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
-                variableCall.asMutableResolvedCall(bindingContext)
+            resolvedCall = NewVariableAsFunctionResolvedCallImpl(
+                variableCall as NewAbstractResolvedCall<VariableDescriptor>,
+                replacedFunctionCall.resolvedCall as NewAbstractResolvedCall<FunctionDescriptor>
             )
         )
     }
     val function = candidateDescriptor as? FunctionDescriptor ?: return null
     if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
-    val newCandidateDescriptor =
-        when (function) {
-            is FunctionImportedFromObject ->
-                getOrCreateJvmSuspendFunctionView(function.callableFromObject, bindingContext).asImportedFromObject()
-            is SimpleFunctionDescriptor ->
-                getOrCreateJvmSuspendFunctionView(function, bindingContext)
-            else ->
-                throw AssertionError("Unexpected suspend function descriptor: $function")
-        }
-
-    val newCall = ResolvedCallImpl(
-        call,
-        newCandidateDescriptor,
-        dispatchReceiver, extensionReceiver, explicitReceiverKind,
-        null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for unwrapped suspension function"),
-        TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
-    )
-
-    this.valueArguments.forEach {
-        newCall.recordValueArgument(newCandidateDescriptor.valueParameters[it.key.index], it.value)
+    val newCandidateDescriptor = when (function) {
+        is FunctionImportedFromObject ->
+            getOrCreateJvmSuspendFunctionView(function.callableFromObject, bindingContext).asImportedFromObject()
+        is SimpleFunctionDescriptor ->
+            getOrCreateJvmSuspendFunctionView(function, bindingContext)
+        else ->
+            throw AssertionError("Unexpected suspend function descriptor: $function")
     }
 
     val psiFactory = KtPsiFactory(project, markGenerated = false)
     val arguments = psiFactory.createCallArguments("(this)").arguments.single()
+    val newResolvedCall = (this as NewAbstractResolvedCall<*>).copyResolvedCall(
+        newCandidateDescriptor,
+        additionalValueArguments = mapOf(newCandidateDescriptor.valueParameters.last() to ExpressionValueArgument(arguments)),
+    )
     val thisExpression = arguments.getArgumentExpression()!!
-    newCall.recordValueArgument(
-        newCandidateDescriptor.valueParameters.last(),
-        ExpressionValueArgument(arguments)
-    )
 
-    val newTypeArguments = newCandidateDescriptor.typeParameters.associateWith {
-        typeArguments[candidateDescriptor.typeParameters[it.index]]!!.asTypeProjection()
-    }
-
-    newCall.setSubstitutor(
-        TypeConstructorSubstitution.createByParametersMap(newTypeArguments).buildSubstitutor()
-    )
-
-    return ResolvedCallWithRealDescriptor(newCall, thisExpression)
+    return ResolvedCallWithRealDescriptor(newResolvedCall, thisExpression)
 }
 
 fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(state: GenerationState): ResolvedCallWithRealDescriptor? =
@@ -160,24 +138,6 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(state: Generatio
         state.project,
         state.bindingContext
     )
-
-private fun ResolvedCall<VariableDescriptor>.asMutableResolvedCall(bindingContext: BindingContext): MutableResolvedCall<VariableDescriptor> {
-    return when (this) {
-        is ResolvedCallImpl<*> -> this as MutableResolvedCall<VariableDescriptor>
-        is NewResolvedCallImpl<*> -> (this as NewResolvedCallImpl<VariableDescriptor>).asDummyOldResolvedCall(bindingContext)
-        else -> throw IllegalStateException("No mutable resolved call for $this")
-    }
-}
-
-private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindingContext: BindingContext): ResolvedCallImpl<VariableDescriptor> {
-    return ResolvedCallImpl(
-        call,
-        candidateDescriptor,
-        dispatchReceiver, extensionReceiver, explicitReceiverKind,
-        null, DelegatingBindingTrace(bindingContext, "Trace for old call"),
-        TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
-    )
-}
 
 enum class SuspensionPointKind { NEVER, NOT_INLINE, ALWAYS }
 

@@ -12,13 +12,8 @@ import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -172,15 +167,5 @@ private fun <D : FunctionDescriptor> ResolvedCall<D>.replaceAssertWithAssertInne
     val newCandidateDescriptor = resultingDescriptor.createCustomCopy {
         setName(Name.identifier(ALWAYS_ENABLED_ASSERT_FUNCTION_NAME))
     }
-    val newResolvedCall = ResolvedCallImpl(
-        call,
-        newCandidateDescriptor,
-        dispatchReceiver, extensionReceiver, explicitReceiverKind,
-        null, DelegatingBindingTrace(BindingTraceContext().bindingContext, "Temporary trace for assertInner"),
-        TracingStrategy.EMPTY, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY)
-    )
-    valueArguments.forEach {
-        newResolvedCall.recordValueArgument(newCandidateDescriptor.valueParameters[it.key.index], it.value)
-    }
-    return newResolvedCall
+    return (this as NewAbstractResolvedCall<D>).copyResolvedCall(newCandidateDescriptor)
 }

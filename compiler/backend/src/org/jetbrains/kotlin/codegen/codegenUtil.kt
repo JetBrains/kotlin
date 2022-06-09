@@ -33,9 +33,15 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.util.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -45,6 +51,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -407,7 +414,7 @@ fun ExpressionCodegen.generateCallSingleArgument(call: ResolvedCall<out Callable
 
 fun ClassDescriptor.isPossiblyUninitializedSingleton() =
     DescriptorUtils.isEnumEntry(this) ||
-            DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
+            DescriptorUtils.isCompanionObject(this) && isJvmInterface(this.containingDeclaration)
 
 inline fun FrameMap.evaluateOnce(
     value: StackValue,
@@ -729,4 +736,41 @@ fun String.encodedUTF8Size(): Int {
         }
     }
     return result
+}
+
+fun <D : CallableDescriptor> NewAbstractResolvedCall<D>.copyResolvedCall(
+    newCandidateDescriptor: CallableDescriptor,
+    additionalValueArguments: Map<ValueParameterDescriptor, ExpressionValueArgument>? = null
+): NewAbstractResolvedCall<D> {
+    val resolvedCallAtom = with(resolvedCallAtom as ResolvedCallAtom) {
+        MutableResolvedCallAtom(
+            atom, newCandidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument,
+            extensionReceiverArgumentCandidates,
+            (this as? MutableResolvedCallAtom)?.reflectionCandidateType,
+            (this as? MutableResolvedCallAtom)?.candidate
+        ).also { newResolvedCallAtom ->
+            newResolvedCallAtom.typeArgumentMappingByOriginal = typeArgumentMappingByOriginal
+            newResolvedCallAtom.argumentMappingByOriginal = argumentMappingByOriginal
+            newResolvedCallAtom.freshVariablesSubstitutor = freshVariablesSubstitutor
+            newResolvedCallAtom.knownParametersSubstitutor = knownParametersSubstitutor
+        }
+    }
+    val newResolvedCall = NewResolvedCallImpl<D>(
+        resolvedCallAtom, substitutor = null, diagnostics, typeApproximator, languageVersionSettings
+    )
+    val arguments = valueArguments.mapKeys { newCandidateDescriptor.valueParameters[it.key.index] }
+
+    val typeVariableMap = freshSubstitutor?.freshVariables?.associate {
+        it.freshTypeConstructor as TypeConstructor to typeArguments[it.originalTypeParameter]!!.unwrap()
+    }
+
+    if (typeVariableMap != null) {
+        newResolvedCall.setResultingSubstitutor(NewTypeSubstitutorByConstructorMap(typeVariableMap))
+    }
+
+    newResolvedCall.updateValueArguments(
+        newValueArguments = if (additionalValueArguments != null) arguments + additionalValueArguments else arguments
+    )
+
+    return newResolvedCall
 }
