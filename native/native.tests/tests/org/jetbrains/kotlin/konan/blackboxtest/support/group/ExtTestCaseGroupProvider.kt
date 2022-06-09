@@ -464,19 +464,23 @@ private class ExtTestDataFile(
         val allFileLevelAnnotationsSorted = allFileLevelAnnotations.sorted()
 
         // Finally, make sure that every test file contains all the necessary file-level annotations.
-        if (allFileLevelAnnotationsSorted.isNotEmpty()) {
+        if (testDataFileSettings.optInsForSourceCode.isNotEmpty()) {
             filesToTransform.forEach { handler ->
                 handler.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtFile(file: KtFile) {
                         val oldFileAnnotationList = file.fileAnnotationList
 
                         val newFileAnnotationList = handler.psiFactory.createFile(buildString {
-                            allFileLevelAnnotationsSorted.forEach(::appendLine)
+                            testDataFileSettings.optInsForSourceCode.forEach {
+                                appendLine(getAnnotationText(it))
+                            }
                         }).fileAnnotationList!!
 
                         if (oldFileAnnotationList != null) {
-                            // Replace old annotations list by the new one.
-                            oldFileAnnotationList.replace(newFileAnnotationList).ensureSurroundedByWhiteSpace()
+                            // Add new annotations to the old ones.
+                            newFileAnnotationList.annotationEntries.forEach {
+                                oldFileAnnotationList.add(it).ensureSurroundedByWhiteSpace()
+                            }
                         } else {
                             // Insert the annotations list immediately before package directive.
                             file.addBefore(newFileAnnotationList, file.packageDirective).ensureSurroundedByWhiteSpace()
