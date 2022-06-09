@@ -24,13 +24,23 @@ using string_view = std::experimental::string_view;
 
 // Prefer to use getter functions below. These constants are exposed to simplify the job of the inliner.
 
-// These are defined by setRuntimeConstGlobals in IrToBitcode.kt
-extern "C" const int32_t KonanNeedDebugInfo;
+/**
+ * There are two ways, how compiler can define variables for runtime usage. This one, and the other one with details in source file.
+ *
+ * This is one is variables defined by setRuntimeConstGlobals in IrToBitcode.kt. They are eligible for runtime optimizations,
+ * and fixed at the point of compiling caches. So use this way for variables, which are heavily used on performance-critical passes or
+ * will significantly increase code size, if not eliminated.
+ *
+ * Don't forget to adjust cache disabling rules and add value to CompilerGenerated.cpp for tests, when adding a new variable.
+ */
+extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const char* const Kotlin_runtimeLogs;
+extern "C" const int32_t Kotlin_gcSchedulerType;
+extern "C" const int32_t Kotlin_freezingEnabled;
+extern "C" const int32_t Kotlin_freezingChecksEnabled;
+
 class SourceInfo;
-using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*result*/, int /*result_size*/);
-extern "C" const Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function;
 
 namespace kotlin {
 namespace compiler {
@@ -62,36 +72,36 @@ enum class GCSchedulerType {
     kAggressive = 3,
 };
 
-DestroyRuntimeMode destroyRuntimeMode() noexcept;
 
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
-    return KonanNeedDebugInfo != 0;
+    return Kotlin_needDebugInfo != 0;
 }
 
 ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
 
-WorkerExceptionHandling workerExceptionHandling() noexcept;
-
 ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
     return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
 }
 
-bool freezingEnabled() noexcept;
-bool freezingChecksEnabled() noexcept;
-bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
-
-
-ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int result_size) {
-    if (Kotlin_getSourceInfo_Function == nullptr) {
-        return 0;
-    } else {
-        return Kotlin_getSourceInfo_Function(addr, result, result_size);
-    }
+ALWAYS_INLINE inline bool freezingEnabled() noexcept {
+    return Kotlin_freezingEnabled != 0;
 }
 
-compiler::GCSchedulerType getGCSchedulerType() noexcept;
+ALWAYS_INLINE inline bool freezingChecksEnabled() noexcept {
+    return Kotlin_freezingChecksEnabled != 0;
+}
+
+ALWAYS_INLINE inline GCSchedulerType getGCSchedulerType() noexcept {
+    return static_cast<compiler::GCSchedulerType>(Kotlin_gcSchedulerType);
+}
+
+
+WorkerExceptionHandling workerExceptionHandling() noexcept;
+DestroyRuntimeMode destroyRuntimeMode() noexcept;
+bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
+int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

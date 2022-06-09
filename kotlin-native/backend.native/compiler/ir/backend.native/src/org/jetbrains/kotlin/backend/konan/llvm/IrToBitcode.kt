@@ -2733,12 +2733,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (!context.producedLlvmModuleContainsStdlib)
             return
 
-        setRuntimeConstGlobal("KonanNeedDebugInfo", Int32(if (context.shouldContainDebugInfo()) 1 else 0))
+        setRuntimeConstGlobal("Kotlin_needDebugInfo", Int32(if (context.shouldContainDebugInfo()) 1 else 0))
         setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", Int32(context.config.runtimeAssertsMode.value))
         val runtimeLogs = context.config.runtimeLogs?.let {
             context.llvm.staticData.cStringLiteral(it)
         } ?: NullPointer(int8Type)
         setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
+        setRuntimeConstGlobal("Kotlin_freezingEnabled", Int32(if (context.config.freezing.enableFreezeAtRuntime) 1 else 0))
+        setRuntimeConstGlobal("Kotlin_freezingChecksEnabled", Int32(if (context.config.freezing.enableFreezeChecks) 1 else 0))
+        setRuntimeConstGlobal("Kotlin_gcSchedulerType", Int32(context.config.gcSchedulerType.value))
     }
 
     // Globals set this way cannot be const, but are overridable when producing final executable.
@@ -2774,10 +2777,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
         overrideRuntimeGlobal("Kotlin_workerExceptionHandling", Int32(context.config.workerExceptionHandling.value))
-        overrideRuntimeGlobal("Kotlin_freezingEnabled", Int32(if (context.config.freezing.enableFreezeAtRuntime) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_freezingChecksEnabled", Int32(if (context.config.freezing.enableFreezeChecks) 1 else 0))
         overrideRuntimeGlobal("Kotlin_suspendFunctionsFromAnyThreadFromObjC", Int32(if (context.config.suspendFunctionsFromAnyThreadFromObjC) 1 else 0))
-        overrideRuntimeGlobal("Kotlin_gcSchedulerType", Int32(context.config.gcSchedulerType.value))
         val getSourceInfoFunctionName = when (context.config.sourceInfoType) {
             SourceInfoType.NOOP -> null
             SourceInfoType.LIBBACKTRACE -> "Kotlin_getSourceInfo_libbacktrace"

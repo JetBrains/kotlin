@@ -138,11 +138,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ?: SourceInfoType.CORESYMBOLICATION.takeIf { debug && target.supportsCoreSymbolication() }
                 ?: SourceInfoType.NOOP
 
+    val defaultGCSchedulerType get() = when {
+        !target.supportsThreads() -> GCSchedulerType.ON_SAFE_POINTS
+        else -> GCSchedulerType.WITH_TIMER
+    }
+
     val gcSchedulerType: GCSchedulerType by lazy {
-        configuration.get(BinaryOptions.gcSchedulerType) ?: when {
-            !target.supportsThreads() -> GCSchedulerType.ON_SAFE_POINTS
-            else -> GCSchedulerType.WITH_TIMER
-        }
+        configuration.get(BinaryOptions.gcSchedulerType) ?: defaultGCSchedulerType
     }
 
     val needVerifyIr: Boolean
@@ -338,11 +340,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         val ignoreCacheReason = when {
             optimizationsEnabled -> "for optimized compilation"
             memoryModel != defaultMemoryModel -> "with ${memoryModel.name.lowercase()} memory model"
-            propertyLazyInitialization != defaultPropertyLazyInitialization -> "with${if (propertyLazyInitialization) "" else "out"} lazy top levels initialization"
+            propertyLazyInitialization != defaultPropertyLazyInitialization -> {
+                "with${if (propertyLazyInitialization) "" else "out"} lazy top levels initialization"
+            }
             useDebugInfoInNativeLibs -> "with native libs debug info"
             allocationMode != defaultAllocationMode -> "with ${allocationMode.name.lowercase()} allocator"
             memoryModel == MemoryModel.EXPERIMENTAL && gc != defaultGC -> "with ${gc.name.lowercase()} garbage collector"
+            memoryModel == MemoryModel.EXPERIMENTAL && gcSchedulerType != defaultGCSchedulerType -> {
+                "with ${gcSchedulerType.name.lowercase()} garbage collector scheduler"
+            }
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
+            runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
             else -> null
         }
         CacheSupport(
