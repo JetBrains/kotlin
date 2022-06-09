@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInferenceKt;
 import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.tasks.*;
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference;
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -117,9 +115,7 @@ public class CallResolver {
         assert calleeExpression instanceof KtSimpleNameExpression;
         KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) calleeExpression;
         Name referencedName = nameExpression.getReferencedNameAsName();
-        return computeTasksAndResolveCall(
-                context, referencedName, nameExpression,
-                NewResolutionOldInference.ResolutionKind.Variable.INSTANCE);
+        return computeTasksAndResolveCall(context, referencedName, nameExpression, KotlinCallKind.VARIABLE);
     }
 
     @NotNull
@@ -128,8 +124,8 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context
     ) {
         return computeTasksAndResolveCall(
-                context, nameExpression.getReferencedNameAsName(), nameExpression,
-                NewResolutionOldInference.ResolutionKind.CallableReference.INSTANCE);
+                context, nameExpression.getReferencedNameAsName(), nameExpression, KotlinCallKind.CALLABLE_REFERENCE
+        );
     }
 
     @NotNull
@@ -140,9 +136,7 @@ public class CallResolver {
             @NotNull Name name
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-        return computeTasksAndResolveCall(
-                callResolutionContext, name, functionReference,
-                NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+        return computeTasksAndResolveCall(callResolutionContext, name, functionReference, KotlinCallKind.FUNCTION);
     }
 
     @NotNull
@@ -153,7 +147,7 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-        return computeTasksAndResolveCall(callResolutionContext, name, tracing, NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+        return computeTasksAndResolveCall(callResolutionContext, name, tracing, KotlinCallKind.FUNCTION);
     }
 
     @NotNull
@@ -161,9 +155,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull TracingStrategy tracing
     ) {
-        return computeTasksAndResolveCall(
-                context, OperatorNameConventions.INVOKE, tracing,
-                NewResolutionOldInference.ResolutionKind.Invoke.INSTANCE);
+        return computeTasksAndResolveCall(context, OperatorNameConventions.INVOKE, tracing, KotlinCallKind.INVOKE);
     }
 
     // this declaration is used by compiler plugins
@@ -173,7 +165,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
-            @NotNull NewResolutionOldInference.ResolutionKind kind
+            @NotNull KotlinCallKind kind
     ) {
         TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
         return computeTasksAndResolveCall(context, name, tracing, kind);
@@ -186,7 +178,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
-            @NotNull NewResolutionOldInference.ResolutionKind kind
+            @NotNull KotlinCallKind kind
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
             ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name);
@@ -247,7 +239,7 @@ public class CallResolver {
                 TracingStrategy.EMPTY,
                 KotlinCallKind.VARIABLE,
                 null,
-                dispatchReceiver != null ? NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, dispatchReceiver) : null
+                dispatchReceiver != null ? CallResolverUtilKt.transformToReceiverWithSmartCastInfo(context, dispatchReceiver) : null
         );
     }
 
@@ -261,7 +253,7 @@ public class CallResolver {
     ) {
         TracingStrategy tracingStrategy = TracingStrategyImpl.create(expression, call);
         ReceiverValueWithSmartCastInfo dispatchReceiverValue =
-                NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, receiver);
+                CallResolverUtilKt.transformToReceiverWithSmartCastInfo(context, receiver);
         return resolveCallWithGivenDescriptors(
                 context, call, functionDescriptors, tracingStrategy, null, null, dispatchReceiverValue
         );
@@ -326,17 +318,13 @@ public class CallResolver {
         if (callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD) {
             Name name = callType == Call.CallType.ARRAY_GET_METHOD ? OperatorNameConventions.GET : OperatorNameConventions.SET;
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
-            return computeTasksAndResolveCall(
-                    context, name, arrayAccessExpression,
-                    NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+            return computeTasksAndResolveCall(context, name, arrayAccessExpression, KotlinCallKind.FUNCTION);
         }
 
         KtExpression calleeExpression = context.call.getCalleeExpression();
         if (calleeExpression instanceof KtSimpleNameExpression) {
             KtSimpleNameExpression expression = (KtSimpleNameExpression) calleeExpression;
-            return computeTasksAndResolveCall(
-                    context, expression.getReferencedNameAsName(), expression,
-                    NewResolutionOldInference.ResolutionKind.Function.INSTANCE);
+            return computeTasksAndResolveCall(context, expression.getReferencedNameAsName(), expression, KotlinCallKind.FUNCTION);
         }
         else if (calleeExpression instanceof KtConstructorCalleeExpression) {
             return (OverloadResolutionResults) resolveConstructorCall(context, (KtConstructorCalleeExpression) calleeExpression);
@@ -557,7 +545,7 @@ public class CallResolver {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
 
-        NewResolutionOldInference.ResolutionKind resolutionKind = resolutionTask.resolutionKind;
+        KotlinCallKind resolutionKind = resolutionTask.resolutionKind;
 
         assert resolutionTask.name != null;
         BindingContextUtilsKt.recordScope(context.trace, context.scope, context.call.getCalleeExpression());
@@ -575,12 +563,9 @@ public class CallResolver {
         @Nullable
         final Name name;
         @NotNull
-        final NewResolutionOldInference.ResolutionKind resolutionKind;
+        final KotlinCallKind resolutionKind;
 
-        private ResolutionTask(
-                @NotNull NewResolutionOldInference.ResolutionKind kind,
-                @Nullable Name name
-        ) {
+        private ResolutionTask(@NotNull KotlinCallKind kind, @Nullable Name name) {
             this.name = name;
             resolutionKind = kind;
         }

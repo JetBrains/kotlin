@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandida
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
@@ -86,23 +89,14 @@ class PSICallResolver(
 
     private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
 
-    val defaultResolutionKinds = setOf(
-        NewResolutionOldInference.ResolutionKind.Function,
-        NewResolutionOldInference.ResolutionKind.Variable,
-        NewResolutionOldInference.ResolutionKind.Invoke,
-        NewResolutionOldInference.ResolutionKind.CallableReference
-    )
-
     fun <D : CallableDescriptor> runResolutionAndInference(
         context: BasicCallResolutionContext,
         name: Name,
-        resolutionKind: NewResolutionOldInference.ResolutionKind,
+        kotlinCallKind: KotlinCallKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
-
-        val kotlinCallKind = resolutionKind.toKotlinCallKind()
         val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
@@ -578,15 +572,6 @@ class PSICallResolver(
             ).prepareReceiverRegardingCaptureTypes()
         }
     }
-
-    private fun NewResolutionOldInference.ResolutionKind.toKotlinCallKind(): KotlinCallKind =
-        when (this) {
-            is NewResolutionOldInference.ResolutionKind.Function -> KotlinCallKind.FUNCTION
-            is NewResolutionOldInference.ResolutionKind.Variable -> KotlinCallKind.VARIABLE
-            is NewResolutionOldInference.ResolutionKind.Invoke -> KotlinCallKind.INVOKE
-            is NewResolutionOldInference.ResolutionKind.CallableReference -> KotlinCallKind.CALLABLE_REFERENCE
-            is NewResolutionOldInference.ResolutionKind.GivenCandidates -> KotlinCallKind.UNSUPPORTED
-        }
 
     private fun toKotlinCall(
         context: BasicCallResolutionContext,
