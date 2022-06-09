@@ -34,9 +34,6 @@ object AnalysisFlags {
     val explicitApiMode by AnalysisFlag.Delegates.ApiModeDisabledByDefault
 
     @JvmStatic
-    val constraintSystemForOverloadResolution by AnalysisFlag.Delegates.ConstraintSystemForOverloadResolution
-
-    @JvmStatic
     val ideMode by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

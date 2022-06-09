@@ -78,7 +78,6 @@ import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperK
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

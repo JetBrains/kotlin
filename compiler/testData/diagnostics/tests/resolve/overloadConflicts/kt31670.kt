@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION: CONSTRAINT_SYSTEM_FOR_NEW_INFERENCE
 
 open class A<T>(val value: T)
 class B<T>(value: T) : A<T>(value)
