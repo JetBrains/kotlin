@@ -157,7 +157,7 @@ internal interface ContextUtils : RuntimeAware {
     val llvmTargetData: LLVMTargetDataRef
         get() = runtime.targetData
 
-    val staticData: StaticData
+    val staticData: KotlinStaticData
         get() = context.llvm.staticData
 
     /**
@@ -427,7 +427,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) : Runti
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()
 
-    val staticData = StaticData(context)
+    val staticData = KotlinStaticData(context)
 
     private val target = context.config.target
 
