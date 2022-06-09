@@ -17260,6 +17260,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("extensionWithRedundantProjection.kt")
+        public void testExtensionWithRedundantProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/extensionWithRedundantProjection.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrideInAnonymousObject.kt")
         public void testFakeOverrideInAnonymousObject() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideInAnonymousObject.kt");

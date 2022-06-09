@@ -11647,6 +11647,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/fakeOverride/diamondFunction.kt");
         }
 
+        @TestMetadata("extensionWithRedundantProjection.kt")
+        public void testExtensionWithRedundantProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/extensionWithRedundantProjection.kt");
+        }
+
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/function.kt");

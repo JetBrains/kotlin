@@ -14144,6 +14144,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("extensionWithRedundantProjection.kt")
+            public void testExtensionWithRedundantProjection() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/extensionWithRedundantProjection.kt");
+            }
+
+            @Test
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
