@@ -88,7 +88,7 @@ object FirKotlinToJvmBytecodeCompiler {
 
         projectConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)?.let { pluginComponentRegistrars ->
             val notSupportedPlugins = pluginComponentRegistrars.filter {
-                !it.supportsK2 || it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME
+                !it.supportsK2 && it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME
             }
             if (notSupportedPlugins.isNotEmpty()) {
                 messageCollector.report(
