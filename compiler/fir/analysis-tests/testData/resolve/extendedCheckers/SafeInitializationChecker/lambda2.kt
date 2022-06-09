@@ -3,7 +3,7 @@ class A {
     val s: String
     <!ACCESS_TO_UNINITIALIZED_VALUE!>val a: String =
         run {
-            this@CCC.s = ""
+            this@A.s = ""
             a
         }<!>
 

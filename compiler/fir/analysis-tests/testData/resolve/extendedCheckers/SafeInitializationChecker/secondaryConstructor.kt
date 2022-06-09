@@ -9,7 +9,7 @@ class A {
         xx = foo()
     }
 
-    fun foo() = x
+    fun foo() = xx
 }
 
 

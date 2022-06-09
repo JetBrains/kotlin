@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 class A {
     <!ACCESS_TO_UNINITIALIZED_VALUE!>var a = foo()<!>
 
