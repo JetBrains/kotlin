@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer.Companion.MiniFlow.Companion.join
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
  *  queries after the traversal is done.
  **/
 internal class FirLocalVariableAssignmentAnalyzer(
-    private val assignedLocalVariablesByFunction: Map<FirFunction, AssignedLocalVariables>
+    private val assignedLocalVariablesByFunction: Map<FirFunctionSymbol<*>, AssignedLocalVariables>
 ) {
     /**
      * Stack storing concurrent lambda arguments for the current visited anonymous function. For example
@@ -70,7 +71,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         // always null and hence there is no need to check it. In addition, since multiple lambda can be passed, we accumulate the
         // effects by appending to `ephemeralConcurrentlyAssignedLocalVariables`.  After the function call is resolved,
         // `exitAnonymousFunction` will be invoked at some point to properly set up the `persistentConcurrentlyAssignedLocalVariables`.
-        assignedLocalVariablesByFunction[anonymousFunction]?.insideLocalFunction?.let {
+        assignedLocalVariablesByFunction[anonymousFunction.symbol]?.insideLocalFunction?.let {
             ephemeralConcurrentlyAssignedLocalVariables.addAll(it)
         }
     }
@@ -81,30 +82,32 @@ internal class FirLocalVariableAssignmentAnalyzer(
     }
 
     fun enterLocalFunction(function: FirFunction) {
-        val eventOccurrencesRange: EventOccurrencesRange? = (function as? FirAnonymousFunction)?.invocationKind
-        // carry on concurrently modified variables from the current scope
         val concurrentlyAssignedLocalVariables = concurrentlyAssignedLocalVariablesStack.last().toMutableSet()
         concurrentlyAssignedLocalVariablesStack.add(concurrentlyAssignedLocalVariables)
+
         val concurrentLambdasInCurrentCall = concurrentLambdaArgsStack.lastOrNull()
         if (concurrentLambdasInCurrentCall != null && function in concurrentLambdasInCurrentCall) {
-            concurrentLambdasInCurrentCall.filter { it != function }.forEach { otherLambda ->
-                assignedLocalVariablesByFunction[otherLambda]?.insideLocalFunction?.let {
-                    concurrentlyAssignedLocalVariables += it
+            for (otherLambda in concurrentLambdasInCurrentCall) {
+                // As mentioned in the comment above, we don't know whether other lambda arguments passed to the same call will be
+                // called before or after this lambda, so their assignments might have executed. Unless they're not called at all.
+                if (otherLambda != function && otherLambda.invocationKind != EventOccurrencesRange.ZERO) {
+                    assignedLocalVariablesByFunction[otherLambda.symbol]?.insideLocalFunction?.let {
+                        concurrentlyAssignedLocalVariables += it
+                    }
                 }
             }
         }
-        when (eventOccurrencesRange) {
+
+        when ((function as? FirAnonymousFunction)?.invocationKind) {
             EventOccurrencesRange.AT_LEAST_ONCE,
-            EventOccurrencesRange.MORE_THAN_ONCE -> assignedLocalVariablesByFunction[function]?.insideLocalFunction?.let {
-                concurrentlyAssignedLocalVariables += it
-            }
-            // Add both inside and outside since this local function may be invoked multiple times concurrently.
-            EventOccurrencesRange.UNKNOWN, null -> assignedLocalVariablesByFunction[function]?.all?.let {
-                concurrentlyAssignedLocalVariables += it
-            }
-            else -> {
-                // no additional stuff to do for other cases
-            }
+            EventOccurrencesRange.MORE_THAN_ONCE ->
+                // The function may be called repeatedly so the assignments may have already executed before we enter it again.
+                assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let { concurrentlyAssignedLocalVariables += it }
+            EventOccurrencesRange.UNKNOWN, null ->
+                // The function may not only be called repeatedly, but also stored and called later, so assignments done outside
+                // its scope after the definition might also have executed.
+                assignedLocalVariablesByFunction[function.symbol]?.all?.let { concurrentlyAssignedLocalVariables += it }
+            else -> {} // The function is called at most once so its assignments have not executed yet.
         }
     }
 
@@ -112,12 +115,13 @@ internal class FirLocalVariableAssignmentAnalyzer(
         val eventOccurrencesRange: EventOccurrencesRange? = (function as? FirAnonymousFunction)?.invocationKind
         concurrentlyAssignedLocalVariablesStack.removeLast()
         when (eventOccurrencesRange) {
-            EventOccurrencesRange.UNKNOWN, null -> assignedLocalVariablesByFunction[function]?.insideLocalFunction?.let {
-                concurrentlyAssignedLocalVariablesStack.last() += it
-            }
-            else -> {
-                // no additional stuff to do for other cases
-            }
+            EventOccurrencesRange.UNKNOWN, null ->
+                // The function may be stored and then called later, so any access to the variables it touches
+                // is no longer smartcastable ever.
+                assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let {
+                    concurrentlyAssignedLocalVariablesStack.last() += it
+                }
+            else -> {} // The function is only called inline; this is handled by CFG construction by visiting the function body.
         }
     }
 
@@ -217,7 +221,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
         /**
          * Computes a mini CFG and returns the map tracking assigned local variables at each potentially concurrent local/lambda function.
          */
-        private fun computeAssignedLocalVariables(firFunction: FirFunction): Map<FirFunction, AssignedLocalVariables> {
+        private fun computeAssignedLocalVariables(firFunction: FirFunction): Map<FirFunctionSymbol<*>, AssignedLocalVariables> {
             val startFlow = MiniFlow.start()
             val data = MiniCfgBuilder.MiniCfgData(startFlow)
             MiniCfgBuilder().visitElement(firFunction, data)
@@ -265,7 +269,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 functionFork.assignedLocalVariables.retainAll(data.variableDeclarations.flatMap { it.values })
                 // Create another fork for the normal execution
                 val normalExecution = currentFlow.fork()
-                data.localFunctionToAssignedLocalVariables[function] =
+                data.localFunctionToAssignedLocalVariables[function.symbol] =
                     AssignedLocalVariables(normalExecution.assignedLocalVariables, functionFork.assignedLocalVariables)
                 data.flow = normalExecution
             }
@@ -292,11 +296,11 @@ internal class FirLocalVariableAssignmentAnalyzer(
             }
 
             override fun visitReturnExpression(returnExpression: FirReturnExpression, data: MiniCfgData) {
+                super.visitReturnExpression(returnExpression, data)
                 // TODO: consider to also handle `throw`, which would require keeping track of all `try`, `catch` and `finally` constructs.
                 data.flow = null
             }
 
-            @OptIn(ExperimentalStdlibApi::class)
             override fun visitFunctionCall(functionCall: FirFunctionCall, data: MiniCfgData) {
                 val visitor = this
                 with(functionCall) {
@@ -316,18 +320,21 @@ internal class FirLocalVariableAssignmentAnalyzer(
             }
 
             override fun visitProperty(property: FirProperty, data: MiniCfgData) {
+                super.visitProperty(property, data)
                 if (property.isLocal) {
                     data.variableDeclarations.last()[property.name] = property
                 }
             }
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
+                super.visitVariableAssignment(variableAssignment, data)
                 val flow = data.flow ?: return
                 val name = (variableAssignment.lValue as? FirNamedReference)?.name ?: return
                 flow.recordAssignment(name, data)
             }
 
             override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: MiniCfgData) {
+                super.visitAssignmentOperatorStatement(assignmentOperatorStatement, data)
                 val flow = data.flow ?: return
                 val lhs = assignmentOperatorStatement.leftArgument as? FirQualifiedAccessExpression ?: return
                 if (lhs.explicitReceiver != null) return
@@ -350,7 +357,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
 
             class MiniCfgData(var flow: MiniFlow?) {
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
-                val localFunctionToAssignedLocalVariables: MutableMap<FirFunction, AssignedLocalVariables> = mutableMapOf()
+                val localFunctionToAssignedLocalVariables: MutableMap<FirFunctionSymbol<*>, AssignedLocalVariables> = mutableMapOf()
                 fun resolveLocalVariable(name: Name): FirProperty? {
                     return variableDeclarations.asReversed().firstNotNullOfOrNull { it[name] }
                 }
