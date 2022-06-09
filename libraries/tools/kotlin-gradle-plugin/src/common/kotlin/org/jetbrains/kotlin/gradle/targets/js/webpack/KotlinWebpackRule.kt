@@ -10,6 +10,7 @@ import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -17,8 +18,6 @@ import java.io.StringWriter
 
 @Suppress("LeakingThis")
 abstract class KotlinWebpackRule(private val name: String) : Named {
-    override fun getName(): String = name
-
     @get:Input
     abstract val enabled: Property<Boolean>
 
@@ -54,10 +53,11 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
     internal abstract fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency>
 
     /**
-     * Provides a list of loader sequence to apply to the rule.
+     * Provides a loaders sequence to apply to the rule.
      */
     protected abstract fun loaders(): List<Loader>
 
+    @get:Internal
     internal val active: Boolean get() = enabled.get() && validate()
     internal fun Appendable.appendToWebpackConfig() {
         appendLine(
@@ -86,8 +86,10 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
             """.trimIndent()
         )
 
-        val excluded = exclude.get().joinToString(separator = ",", prefix = "[", postfix = "]")
-        val included = include.get().joinToString(separator = ",", prefix = "[", postfix = "]")
+        val excluded = exclude.get().takeIf(List<*>::isNotEmpty)
+            ?.joinToString(separator = ",", prefix = "[", postfix = "]") ?: "undefined"
+        val included = include.get().takeIf(List<*>::isNotEmpty)
+            ?.joinToString(separator = ",", prefix = "[", postfix = "]") ?: "undefined"
         appendLine(
             """
             config.module.rules.push({
@@ -109,6 +111,11 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
     protected fun json(obj: Any) = StringWriter().also {
         GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
     }.toString()
+
+    @Internal
+    override fun getName(): String = name
+    override fun equals(other: Any?): Boolean = other is KotlinWebpackRule && getName() == other.getName()
+    override fun hashCode(): Int = getName().hashCode()
 
     data class Loader(
         /**
