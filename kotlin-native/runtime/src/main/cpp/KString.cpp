@@ -134,6 +134,24 @@ void DisposeCString(char* cstring) {
     if (cstring) std_support::free(cstring);
 }
 
+ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
+    const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
+    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+    size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
+    size_t arraySize = headerSize + count * sizeof(char16_t);
+
+    ArrayHeader* header = (ArrayHeader*)std_support::calloc(arraySize, 1);
+    header->obj()->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
+    header->count_ = count;
+    utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, CharArrayAddressOfElementAt(header, 0));
+
+    return header->obj();
+}
+
+void FreePermanentStringForTests(ArrayHeader* header) {
+    std_support::free(header);
+}
+
 // String.kt
 OBJ_GETTER(Kotlin_String_replace, KString thiz, KChar oldChar, KChar newChar) {
   auto count = thiz->count_;

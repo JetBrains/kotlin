@@ -38,8 +38,8 @@ internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> 
     internal val fullName: String?
         get() {
             val relativeName = getRelativeName(typeInfo, false) ?: return null
-            val packageName = getPackageName(typeInfo, false)!!
-            return if (packageName.isEmpty()) relativeName else "$packageName.$relativeName"
+            val packageName: String? = getPackageName(typeInfo, false)
+            return if (packageName?.isEmpty() ?: true) relativeName else "$packageName.$relativeName"
         }
 
     internal fun findAssociatedObjectImpl(key: KClassImpl<*>): Any? =

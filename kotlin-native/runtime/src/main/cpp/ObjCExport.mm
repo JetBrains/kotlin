@@ -16,8 +16,8 @@
 
 #import "Types.h"
 #import "Memory.h"
-#include "Natives.h"
 #include "ObjCInterop.h"
+#include "KString.h"
 
 #if KONAN_OBJC_INTEROP
 
@@ -43,6 +43,7 @@
 #import "Runtime.h"
 #import "Mutex.hpp"
 #import "Exceptions.h"
+#import "Natives.h"
 #include "std_support/CStdlib.hpp"
 #include "std_support/Map.hpp"
 #include "std_support/String.hpp"
@@ -727,6 +728,7 @@ static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_su
 }
 
 static const TypeInfo* createTypeInfo(
+  const char* className,
   const TypeInfo* superType,
   const std_support::vector<const TypeInfo*>& superInterfaces,
   const std_support::vector<VTableElement>& vtable,
@@ -785,7 +787,7 @@ static const TypeInfo* createTypeInfo(
   }
 
   result->packageName_ = nullptr;
-  result->relativeName_ = nullptr; // TODO: add some info.
+  result->relativeName_ = CreatePermanentStringFromCString(className);
   result->writableInfo_ = (WritableTypeInfo*)std_support::calloc(1, sizeof(WritableTypeInfo));
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];
@@ -994,7 +996,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   // TODO: consider forbidding the class being abstract.
 
-  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, interfaceVTables,
+  const TypeInfo* result = createTypeInfo(class_getName(clazz), superType, addedInterfaces, vtable, interfaceVTables,
                                           superITable, superITableSize, itableEqualsSuper, fieldsInfo);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
