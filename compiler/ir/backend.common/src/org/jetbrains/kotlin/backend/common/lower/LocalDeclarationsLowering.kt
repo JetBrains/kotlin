@@ -70,7 +70,7 @@ class LocalDeclarationsLowering(
     val context: CommonBackendContext,
     val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
-    val suggestUniqueNames: Boolean = true, // When `true` appends a `-#index` suffix to lifted declaration names
+    val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null
 ) :
@@ -594,7 +594,7 @@ class LocalDeclarationsLowering(
             localFunctions[declaration]?.let {
                 val baseName = if (declaration.name.isSpecial) "lambda" else declarationName
                 if (it.index >= 0)
-                    return if (suggestUniqueNames) "$baseName-${it.index}" else baseName
+                    return if (suggestUniqueNames) "$baseName\$${it.index}" else baseName
             }
 
             return declarationName

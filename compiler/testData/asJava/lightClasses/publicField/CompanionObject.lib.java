@@ -6,7 +6,7 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
 
-  private static final java.lang.String foo$lambda-0();//  foo$lambda-0()
+  private static final java.lang.String foo$lambda$0();//  foo$lambda$0()
 
   public  C();//  .ctor()
 

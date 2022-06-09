@@ -22,7 +22,7 @@ public final class MemberExtensionPropertyAndLocalDelegatedPropertyKt {
     // source: 'memberExtensionPropertyAndLocalDelegatedProperty.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     static method <clinit>(): void
-    private final static method box$lambda-1$lambda-0(p0: Delegate): java.lang.String
+    private final static method box$lambda$1$lambda$0(p0: Delegate): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 

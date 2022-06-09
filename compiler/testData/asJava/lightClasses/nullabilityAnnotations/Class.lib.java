@@ -76,17 +76,17 @@ public final class Class /* Class*/ {
   @org.jetbrains.annotations.Nullable()
   public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNotNullVarWithGetSet(java.lang.String)
 
-  private static final java.lang.String notNullVal$lambda-2();//  notNullVal$lambda-2()
+  private static final java.lang.String notNullVal$lambda$2();//  notNullVal$lambda$2()
 
-  private static final java.lang.String notNullVar$lambda-3();//  notNullVar$lambda-3()
+  private static final java.lang.String notNullVar$lambda$3();//  notNullVar$lambda$3()
 
-  private static final java.lang.String nullableVal$lambda-0();//  nullableVal$lambda-0()
+  private static final java.lang.String nullableVal$lambda$0();//  nullableVal$lambda$0()
 
-  private static final java.lang.String nullableVar$lambda-1();//  nullableVar$lambda-1()
+  private static final java.lang.String nullableVar$lambda$1();//  nullableVar$lambda$1()
 
-  private static final java.lang.String privateN$lambda-5();//  privateN$lambda-5()
+  private static final java.lang.String privateN$lambda$5();//  privateN$lambda$5()
 
-  private static final java.lang.String privateNN$lambda-4();//  privateNN$lambda-4()
+  private static final java.lang.String privateNN$lambda$4();//  privateNN$lambda$4()
 
   public  Class();//  .ctor()
 

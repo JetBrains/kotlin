@@ -30,7 +30,7 @@ public class Test {
     inner (anonymous) class Test$a$1
     inner (anonymous) class Test$b$1
     public method <init>(): void
-    private final static method b$lambda-0(): void
+    private final static method b$lambda$0(): void
     public method b(): void
     public @org.jetbrains.annotations.NotNull method getA(): java.lang.Runnable
 }

@@ -5,7 +5,7 @@ public final class LocalFunctionsKt : java/lang/Object {
 
     private final static void foo$a2()
 
-    private final static void foo$a2-0(int a) {
+    private final static void foo$a2$0(int a) {
         Local variables:
             0 a: I
     }
