@@ -3,8 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-/* Associate compilations are not yet supported by the IDE. KT-34102 */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
+@file:Suppress("FunctionName")
 
 package org.jetbrains.kotlin.gradle
 
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import kotlin.test.*
 
 class JvmAndAndroidIntermediateSourceSetTest {
@@ -81,7 +80,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
     @Test
     fun `KotlinProjectStructureMetadata jvmAndAndroidMain exists in jvm variants`() {
         project.evaluate()
-        val metadata = assertNotNull(buildKotlinProjectStructureMetadata(project))
+        val metadata = kotlin.kotlinProjectStructureMetadata
         assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["jvmApiElements"].orEmpty())
         assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["jvmRuntimeElements"].orEmpty())
     }
@@ -89,7 +88,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
     @Test
     fun `KotlinProjectStructureMetadata jvmAndAndroidMain exists in android variants`() {
         project.evaluate()
-        val metadata = assertNotNull(buildKotlinProjectStructureMetadata(project))
+        val metadata = kotlin.kotlinProjectStructureMetadata
         assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["debugApiElements"].orEmpty())
         assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["debugRuntimeElements"].orEmpty())
         assertTrue("jvmAndAndroidMain" in metadata.sourceSetNamesByVariantName["releaseApiElements"].orEmpty())

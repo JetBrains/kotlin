@@ -126,7 +126,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
-        exportProjectStructureMetadataForOtherBuilds(project)
+        exportProjectStructureMetadataForOtherBuilds(kotlinMultiplatformExtension)
 
         SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
             if (isConfigurationCacheAvailable(project.gradle)) {
@@ -148,10 +148,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
-        project: Project
+        extension: KotlinMultiplatformExtension
     ) {
-        GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
-            checkNotNull(buildKotlinProjectStructureMetadata(project))
+        GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
+            extension.kotlinProjectStructureMetadata
         }
     }
 

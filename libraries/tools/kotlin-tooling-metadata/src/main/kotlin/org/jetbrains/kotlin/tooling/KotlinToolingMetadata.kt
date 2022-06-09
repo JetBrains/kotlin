@@ -72,5 +72,3 @@ data class KotlinToolingMetadata(
         const val currentSchemaVersion: String = "1.1.0"
     }
 }
-
-

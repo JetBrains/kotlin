@@ -496,7 +496,7 @@ internal fun Project.createGenerateProjectStructureMetadataTask(module: GradleKp
 
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
-        task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
+        task.lazyKotlinProjectStructureMetadata = lazy { project.multiplatformExtension.kotlinProjectStructureMetadata }
     }
 
 internal interface ResolvedMetadataFilesProvider {
