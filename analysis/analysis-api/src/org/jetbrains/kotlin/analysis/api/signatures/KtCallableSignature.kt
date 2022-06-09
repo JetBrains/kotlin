@@ -38,6 +38,9 @@ public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOw
      */
     public abstract val receiverType: KtType?
 
+    /**
+     * A [CallableId] of a substituted symbol
+     */
     public open val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { symbol.callableIdIfNonLocal }
 
     abstract override fun equals(other: Any?): Boolean

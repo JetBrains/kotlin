@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
@@ -36,6 +37,7 @@ internal class KtFirGenericSubstitutor(
     token: KtLifetimeToken
 ) : AbstractKtFirSubstitutor<ConeSubstitutor>(_substitutor, builder, token)
 
+@OptIn(KtAnalysisApiInternals::class)
 internal class KtFirMapBackedSubstitutor(
     _substitutor: ConeSubstitutorByMap,
     builder: KtSymbolByFirBuilder,

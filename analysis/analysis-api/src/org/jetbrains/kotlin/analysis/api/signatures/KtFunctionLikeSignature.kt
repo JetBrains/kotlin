@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 /**
- * A signature of a function-like symbol.
+ * A signature of a function-like symbol. This includes functions, getters, setters, lambdas, etc.
  */
 public class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
     private val _symbol: S,
