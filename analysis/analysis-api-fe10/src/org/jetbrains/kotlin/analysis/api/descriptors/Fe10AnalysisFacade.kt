@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -33,7 +31,6 @@ interface Fe10AnalysisFacade {
     fun getDeprecationResolver(element: KtElement): DeprecationResolver
     fun getCallResolver(element: KtElement): CallResolver
     fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer
-    fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>>
     fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner
 
     fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
@@ -56,7 +53,6 @@ class Fe10AnalysisContext(
     val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
     val callResolver: CallResolver = getCallResolver(contextElement)
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer = getKotlinToResolvedCallTransformer(contextElement)
-    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>> = getOverloadingConflictResolver(contextElement)
     val kotlinTypeRefiner: KotlinTypeRefiner = getKotlinTypeRefiner(contextElement)
 
     val builtIns: KotlinBuiltIns

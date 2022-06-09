@@ -215,8 +215,7 @@ internal class KtFe10CallResolver(
             ).replaceCollectAllCandidates(true)
 
             val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)
-            val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
-                ?: error("allCandidates is null even when collectAllCandidates = true")
+            val candidates = result.allCandidates ?: error("allCandidates is null even when collectAllCandidates = true")
 
             candidates.flatMap { candidate ->
                 // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.

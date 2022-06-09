@@ -19,17 +19,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
-import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.createOverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.util.CancellationChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
@@ -49,10 +43,6 @@ class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
 
     override fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer {
         return handler.kotlinToResolvedCallTransformer ?: error("Resolution is not performed")
-    }
-
-    override fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>> {
-        return handler.overloadingConflictResolver ?: error("Resolution is not performed")
     }
 
     override fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner {
@@ -88,9 +78,6 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
     var kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer? = null
         private set
 
-    var overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>? = null
-        private set
-
     var kotlinTypeRefiner: KotlinTypeRefiner? = null
         private set
 
@@ -108,18 +95,6 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
         kotlinToResolvedCallTransformer = componentProvider.get()
         kotlinTypeRefiner = componentProvider.get()
 
-        val builtIns = resolveSession!!.moduleDescriptor.builtIns
-        val typeSpecificityComparator = componentProvider.get<TypeSpecificityComparator>()
-        val platformOverloadsSpecificityComparator = componentProvider.get<PlatformOverloadsSpecificityComparator>()
-        val cancellationChecker = componentProvider.get<CancellationChecker>()
-        overloadingConflictResolver = createOverloadingConflictResolver(
-            builtIns,
-            module,
-            typeSpecificityComparator,
-            platformOverloadsSpecificityComparator,
-            cancellationChecker,
-            kotlinTypeRefiner!!
-        )
         return super.doAnalysis(project, module, projectContext, files, bindingTrace, componentProvider)
     }
 }
