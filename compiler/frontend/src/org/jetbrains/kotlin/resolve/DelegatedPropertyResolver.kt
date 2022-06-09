@@ -90,7 +90,7 @@ class DelegatedPropertyResolver(
             else propertyHeaderScope
 
         val byExpressionType = resolveDelegateExpression(
-            delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo, inferenceSession
+            delegateExpression, variableDescriptor, initializerScope, trace, outerDataFlowInfo, inferenceSession
         )
 
         resolveProvideDelegateMethod(
@@ -490,15 +490,12 @@ class DelegatedPropertyResolver(
 
     fun resolveDelegateExpression(
         delegateExpression: KtExpression,
-        property: KtProperty,
         variableDescriptor: VariableDescriptorWithAccessors,
         scopeForDelegate: LexicalScope,
         trace: BindingTrace,
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession
     ): KotlinType {
-        val propertyExpectedType = if (property.typeReference != null) variableDescriptor.type else NO_EXPECTED_TYPE
-
         resolveWithNewInference(
             delegateExpression,
             variableDescriptor,

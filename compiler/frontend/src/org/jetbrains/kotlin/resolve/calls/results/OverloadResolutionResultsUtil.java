@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.*;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -34,9 +33,9 @@ public class OverloadResolutionResultsUtil {
     @NotNull
     @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(OverloadResolutionResults<D> results1, OverloadResolutionResults<D> results2) {
-        Collection<MutableResolvedCall<D>> resultingCalls = Lists.newArrayList();
-        resultingCalls.addAll((Collection<MutableResolvedCall<D>>) results1.getResultingCalls());
-        resultingCalls.addAll((Collection<MutableResolvedCall<D>>) results2.getResultingCalls());
+        Collection<ResolvedCall<D>> resultingCalls = Lists.newArrayList();
+        resultingCalls.addAll(results1.getResultingCalls());
+        resultingCalls.addAll(results2.getResultingCalls());
         return OverloadResolutionResultsImpl.ambiguity(resultingCalls);
     }
 
@@ -69,8 +68,6 @@ public class OverloadResolutionResultsUtil {
                 if (!ResolvedCallUtilKt.hasInferredReturnType(newResolvedCall)) {
                     return null;
                 }
-            } else if (!((MutableResolvedCall<D>) resultingCall).hasInferredReturnType()) {
-                return null;
             }
         }
         return results.isSingleResult() ? results.getResultingCall() : null;

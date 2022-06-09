@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.NAME_NOT_FOUND
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory

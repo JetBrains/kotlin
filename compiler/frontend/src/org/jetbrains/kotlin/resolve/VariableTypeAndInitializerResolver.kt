@@ -160,7 +160,7 @@ class VariableTypeAndInitializerResolver(
     ) = wrappedTypeFactory.createRecursionIntolerantDeferredType(trace) {
         val delegateExpression = property.delegateExpression!!
         val type = delegatedPropertyResolver.resolveDelegateExpression(
-            delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo, inferenceSession
+            delegateExpression, variableDescriptor, scopeForInitializer, trace, dataFlowInfo, inferenceSession
         )
 
         val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(

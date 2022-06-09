@@ -136,7 +136,7 @@ class NewResolutionOldInference(
         // if resultingApplicability is successful they must be the same as `diagnostics`,
         // otherwise they might be a bit different but result remains unsuccessful
         val eagerDiagnostics: List<KotlinCallDiagnostic>,
-        val resolvedCall: MutableResolvedCall<*>,
+        val resolvedCall: ResolvedCall<*>,
         finalDiagnosticsComputation: (() -> List<KotlinCallDiagnostic>)? = null
     ) : Candidate {
         val diagnostics: List<KotlinCallDiagnostic> by lazy(LazyThreadSafetyMode.NONE) {
@@ -144,7 +144,7 @@ class NewResolutionOldInference(
         }
 
         operator fun component1() = diagnostics
-        operator fun component2() = resolvedCall
+        operator fun component2(): ResolvedCall<*> = TODO()
 
         override val resultingApplicability: CandidateApplicability by lazy(LazyThreadSafetyMode.NONE) {
             getResultApplicability(diagnostics)
@@ -240,14 +240,13 @@ class NewResolutionOldInference(
                 basicCallContext.trace.bindingContext
             )
             // used for smartCasts, see: DataFlowValueFactory.getIdForSimpleNameExpression
-            functionContext.tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall)
             // todo hacks
             val functionCall = CallTransformer.CallForImplicitInvoke(
                 basicCallContext.call.explicitReceiver?.takeIf { useExplicitReceiver },
                 variableReceiver, basicCallContext.call, true
             )
             val tracingForInvoke = TracingStrategyForInvoke(calleeExpression, functionCall, variableReceiver.type)
-            val basicCallResolutionContext = basicCallContext.replaceBindingTrace(variable.resolvedCall.trace)
+            val basicCallResolutionContext = basicCallContext
                 .replaceCall(functionCall)
                 .replaceContextDependency(ContextDependency.DEPENDENT) // todo
 
