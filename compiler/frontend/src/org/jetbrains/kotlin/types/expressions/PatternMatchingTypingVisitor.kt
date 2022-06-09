@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isEmptyIntersectionTypeCompatible
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -700,7 +701,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         reportErrorOn: KtElement
     ): Boolean {
         // TODO : Take smart casts into account?
-        if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
+        if (isEmptyIntersectionTypeCompatible(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType))
             return false
         }
