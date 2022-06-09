@@ -1,0 +1,1 @@
+fun <A, B, C> A.fo<caret>oo(x: List<B>): C
