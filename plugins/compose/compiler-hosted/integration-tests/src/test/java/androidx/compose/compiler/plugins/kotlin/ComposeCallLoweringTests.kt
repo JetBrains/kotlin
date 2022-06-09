@@ -35,10 +35,10 @@ import kotlin.reflect.KClass
     minSdk = 23,
     maxSdk = 23
 )
-@Ignore("b/173733968")
 class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineGroups(): Unit = ensureSetup {
         compose(
             """
@@ -62,6 +62,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testReturnInsideKey(): Unit = ensureSetup {
         compose(
             """
@@ -82,6 +83,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testMoveFromIssue(): Unit = ensureSetup {
         compose(
             """
@@ -94,6 +96,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testSimpleInlining(): Unit = ensureSetup {
         compose(
             """
@@ -112,6 +115,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testVarargCall(): Unit = ensureSetup {
         compose(
             """
@@ -141,6 +145,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testVarargs(): Unit = ensureSetup {
         codegen(
             """
@@ -162,6 +167,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testComposableLambdaCall(): Unit = ensureSetup {
         codegen(
             """
@@ -176,6 +182,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testProperties(): Unit = ensureSetup {
         codegen(
             """
@@ -205,6 +212,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testUnboundSymbolIssue(): Unit = ensureSetup {
         codegenNoImports(
             """
@@ -259,6 +267,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testPropertyValues(): Unit = ensureSetup {
         compose(
             """
@@ -291,6 +300,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testComposableLambdaCallWithGenerics(): Unit = ensureSetup {
         codegen(
             """
@@ -321,6 +331,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testMethodInvocations(): Unit = ensureSetup {
         codegen(
             """
@@ -339,6 +350,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testReceiverLambdaInvocation(): Unit = ensureSetup {
         codegen(
             """
@@ -352,6 +364,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testReceiverLambda2(): Unit = ensureSetup {
         codegen(
             """
@@ -373,6 +386,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineChildren(): Unit = ensureSetup {
         codegen(
             """
@@ -392,6 +406,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testNoComposerImport(): Unit = ensureSetup {
         codegenNoImports(
             """
@@ -416,6 +431,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineNoinline(): Unit = ensureSetup {
         codegen(
             """
@@ -439,6 +455,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlinedComposable(): Unit = ensureSetup {
         codegen(
             """
@@ -458,6 +475,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testGenericParameterOrderIssue(): Unit = ensureSetup {
         codegen(
             """
@@ -476,6 +494,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testArgumentOrderIssue(): Unit = ensureSetup {
         codegen(
             """
@@ -498,6 +517,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObjectName(): Unit = ensureSetup {
         codegen(
             """
@@ -515,6 +535,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testStuffThatIWantTo(): Unit = ensureSetup {
         codegen(
             """
@@ -533,6 +554,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
@@ -552,6 +574,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testSimpleClassResolution(): Unit = ensureSetup {
         compose(
             """
@@ -568,6 +591,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
@@ -585,6 +609,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
@@ -604,6 +629,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservable(): Unit = ensureSetup {
         compose(
             """
@@ -632,6 +658,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
@@ -664,6 +691,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableGenericFunction(): Unit = ensureSetup {
         compose(
             """
@@ -689,6 +717,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableExtension(): Unit = ensureSetup {
         compose(
             """
@@ -716,6 +745,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObserverableExpressionBody(): Unit = ensureSetup {
         compose(
             """
@@ -745,6 +775,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableInlineWrapper(): Unit = ensureSetup {
         compose(
             """
@@ -784,6 +815,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableDefaultParameter(): Unit = ensureSetup {
         compose(
             """
@@ -811,6 +843,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObservableEarlyReturn(): Unit = ensureSetup {
         compose(
             """
@@ -850,6 +883,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGSimpleTextView(): Unit = ensureSetup {
         compose(
             """
@@ -865,6 +899,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGLocallyScopedFunction(): Unit = ensureSetup {
         compose(
             """
@@ -886,6 +921,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGLocallyScopedExtensionFunction(): Unit = ensureSetup {
         compose(
             """
@@ -907,6 +943,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
@@ -935,6 +972,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGLocallyScopedInvokeOperator(): Unit = ensureSetup {
         compose(
             """
@@ -957,6 +995,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testTrivialExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
@@ -969,6 +1008,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testTrivialInvokeExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
@@ -981,6 +1021,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNSimpleTextView(): Unit = ensureSetup {
         compose(
             """
@@ -996,6 +1037,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInliningTemp2(): Unit = ensureSetup {
         compose(
             """
@@ -1012,6 +1054,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInliningTemp3(): Unit = ensureSetup {
         compose(
             """
@@ -1028,6 +1071,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInliningTemp4(): Unit = ensureSetup {
         compose(
             """
@@ -1044,6 +1088,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose(
             """
@@ -1062,6 +1107,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInline_Composable_Identity(): Unit = ensureSetup {
         compose(
             """
@@ -1075,6 +1121,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
         compose(
             """
@@ -1100,6 +1147,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNInlining(): Unit = ensureSetup {
         compose(
             """
@@ -1117,6 +1165,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineClassesAsComposableParameters(): Unit = ensureSetup {
         codegen(
             """
@@ -1134,6 +1183,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineClassesAsDefaultParameters(): Unit = ensureSetup {
         compose(
             """
@@ -1153,6 +1203,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testRangeForLoop(): Unit = ensureSetup {
         codegen(
             """
@@ -1168,6 +1219,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testReturnValue(): Unit = ensureSetup {
         compose(
             """
@@ -1234,6 +1286,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testReorderedArgsReturnValue(): Unit = ensureSetup {
         compose(
             """
@@ -1255,6 +1308,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testTrivialReturnValue(): Unit = ensureSetup {
         compose(
             """
@@ -1279,6 +1333,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testForDevelopment(): Unit = ensureSetup {
         codegen(
             """
@@ -1298,6 +1353,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInliningTemp(): Unit = ensureSetup {
         compose(
             """
@@ -1319,6 +1375,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGUpdatedComposition(): Unit = ensureSetup {
         var value = "Hello, world!"
 
@@ -1340,6 +1397,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNUpdatedComposition(): Unit = ensureSetup {
         var value = "Hello, world!"
 
@@ -1361,6 +1419,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGViewGroup(): Unit = ensureSetup {
         val tvId = 258
         val llId = 260
@@ -1394,6 +1453,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNFunctionComponent(): Unit = ensureSetup {
         var text = "Hello, world!"
         val tvId = 123
@@ -1423,6 +1483,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCompositionLocalConsumedFromDefaultParameter(): Unit = ensureSetup {
         val initialText = "no text"
         val helloWorld = "Hello World!"
@@ -1466,6 +1527,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNViewGroup(): Unit = ensureSetup {
         val tvId = 258
         val llId = 260
@@ -1499,6 +1561,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
@@ -1578,6 +1641,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testInlineClassMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
@@ -1664,6 +1728,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testStringParameterMemoization(): Unit = ensureSetup {
         val tvId = 258
         val tagId = (3 shl 24) or "composed_set".hashCode()
@@ -1711,6 +1776,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNSimpleCall(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
@@ -1739,6 +1805,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGNCallWithChildren(): Unit = ensureSetup {
         val tvId = 258
         var text = "Hello, world!"
@@ -1772,6 +1839,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGComposableFunctionInvocationOneParameter(): Unit = ensureSetup {
         val tvId = 91
         var phone = "(123) 456-7890"
@@ -1798,6 +1866,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCGComposableFunctionInvocationTwoParameters(): Unit = ensureSetup {
         val tvId = 111
         val rsId = 112
@@ -1857,6 +1926,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testImplicitReceiverPassing1(): Unit = ensureSetup {
         compose(
             """
@@ -1879,6 +1949,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testImplicitReceiverPassing2(): Unit = ensureSetup {
         compose(
             """
@@ -1905,6 +1976,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testEffects1(): Unit = ensureSetup {
         compose(
             """
@@ -1935,6 +2007,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testEffects2(): Unit = ensureSetup {
         compose(
             """
@@ -2051,6 +2124,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testVariableCalls1(): Unit = ensureSetup {
         compose(
             """
@@ -2069,6 +2143,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testVariableCalls2(): Unit = ensureSetup {
         compose(
             """
@@ -2091,6 +2166,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testVariableCalls3(): Unit = ensureSetup {
         compose(
             """
@@ -2119,6 +2195,7 @@ fun <T> B(foo: T, bar: String) { }
 
     // b/123721921
     @Test
+    @Ignore("b/173733968")
     fun testDefaultParameters1(): Unit = ensureSetup {
         compose(
             """
@@ -2138,6 +2215,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testDefaultParameters2(): Unit = ensureSetup {
         compose(
             """
@@ -2158,6 +2236,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testMovement(): Unit = ensureSetup {
         val tvId = 50
         val btnIdAdd = 100
@@ -2244,6 +2323,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testObserveKtxWithInline(): Unit = ensureSetup {
         compose(
             """
@@ -2281,6 +2361,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testKeyTag(): Unit = ensureSetup {
         compose(
             """
@@ -2330,6 +2411,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testNonComposeParameters(): Unit = ensureSetup {
         compose(
             """
@@ -2511,6 +2593,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testStableParameters_Lambdas(): Unit = ensureSetup {
         val output = ArrayList<String>()
         compose(
@@ -2591,6 +2674,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testRecomposeScope(): Unit = ensureSetup {
         compose(
             """
@@ -2643,6 +2727,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testRecomposeScope_ReceiverScope(): Unit = ensureSetup {
         compose(
             """
@@ -2677,6 +2762,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testCompose_InlineReceiver(): Unit = ensureSetup {
         compose(
             """
@@ -2698,6 +2784,7 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    @Ignore("b/173733968")
     fun testRecomposeScope_Method(): Unit = ensureSetup {
         compose(
             """
