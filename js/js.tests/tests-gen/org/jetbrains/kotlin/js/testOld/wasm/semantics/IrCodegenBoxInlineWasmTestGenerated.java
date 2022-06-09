@@ -305,6 +305,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt9877_2.kt");
         }
 
+        @TestMetadata("nestedTypeRemapping.kt")
+        public void testNestedTypeRemapping() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/nestedTypeRemapping.kt");
+        }
+
         @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
         public void testObjectInLambdaCapturesAnotherObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");

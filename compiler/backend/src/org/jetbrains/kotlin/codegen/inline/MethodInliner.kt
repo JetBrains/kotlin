@@ -189,6 +189,7 @@ class MethodInliner(
                     val transformResult = transformer.doTransform(nodeRemapper)
                     result.merge(transformResult)
                     result.addChangedType(oldClassName, newClassName)
+                    currentTypeMapping.putAll(result.getChangedTypes())
 
                     if (inliningContext.isInliningLambda &&
                         inliningContext.lambdaInfo !is DefaultLambda && //never delete default lambda classes
