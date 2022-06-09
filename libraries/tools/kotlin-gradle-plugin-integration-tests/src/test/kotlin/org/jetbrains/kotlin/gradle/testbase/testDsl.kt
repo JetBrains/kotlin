@@ -74,7 +74,13 @@ fun KGPBaseTest.project(
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
 
-    testProject.test()
+    @Suppress("RedundantRunCatching")
+    runCatching {
+        testProject.test()
+    }.onFailure {
+        // A convenient place to place a breakpoint to be able to inspect project output files
+        throw it
+    }
     return testProject
 }
 
@@ -411,6 +417,7 @@ internal fun Path.addPluginManagementToSettings() {
                 it
             }
         }
+
         Files.exists(settingsGradleKts) -> settingsGradleKts.modify {
             if (!it.contains("pluginManagement {")) {
                 """
@@ -422,6 +429,7 @@ internal fun Path.addPluginManagementToSettings() {
                 it
             }
         }
+
         else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
     }
 
@@ -519,6 +527,7 @@ internal fun Path.enableCacheRedirector() {
                     """.trimIndent()
                 )
             }
+
             "build.gradle.kts" -> {
                 it.appendText(
                     """

@@ -32,17 +32,6 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
         test.convention("/\\.css\$/")
     }
 
-    override fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency> {
-        return mutableListOf<RequiredKotlinJsDependency>().apply {
-            add(versions.cssLoader)
-            when (mode.get()) {
-                EXTRACT -> add(versions.miniCssExtractPlugin)
-                INLINE -> add(versions.styleLoader)
-                IMPORT -> add(versions.toStringLoader)
-            }
-        }
-    }
-
     override fun validate(): Boolean {
         if (mode.get() !in arrayOf(EXTRACT, INLINE, IMPORT)) {
             error(
@@ -57,10 +46,21 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
         return true
     }
 
-    override fun buildLoaders(): List<Loader> = when (mode.get()) {
+    override fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency> {
+        return mutableListOf<RequiredKotlinJsDependency>().apply {
+            add(versions.cssLoader)
+            when (mode.get()) {
+                EXTRACT -> add(versions.miniCssExtractPlugin)
+                INLINE -> add(versions.styleLoader)
+                IMPORT -> add(versions.toStringLoader)
+            }
+        }
+    }
+
+    override fun loaders(): List<Loader> = when (mode.get()) {
         EXTRACT -> listOf(
             Loader(
-                value = "MiniCssExtractPlugin.loader",
+                loader = "MiniCssExtractPlugin.loader",
                 prerequisites = listOf(
                     "const MiniCssExtractPlugin = require('mini-css-extract-plugin');",
                     "config.plugins.push(new MiniCssExtractPlugin())"
@@ -68,10 +68,10 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
             ),
         )
 
-        INLINE -> listOf(Loader(value = "'style-loader'"))
-        IMPORT -> listOf(Loader(value = "'to-string-loader'"))
+        INLINE -> listOf(Loader(loader = "'style-loader'"))
+        IMPORT -> listOf(Loader(loader = "'to-string-loader'"))
         else -> listOf()
-    }
+    } + Loader(loader = "'css-loader'")
 }
 
 object KotlinWebpackCssMode {

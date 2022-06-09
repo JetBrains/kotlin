@@ -22,6 +22,9 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
     @get:Input
     abstract val enabled: Property<Boolean>
 
+    /**
+     * Raw rule `test` field value. Needs to be wrapped in quotes when using string notation.
+     */
     @get:Input
     abstract val test: Property<String>
 
@@ -32,25 +35,38 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
     abstract val exclude: ListProperty<String>
 
     @get:Input
-    protected open val webpackDescription: String get() = this::class.simpleName ?: "KotlinWebpackRule"
+    protected open val description: String
+        get() = this::class.simpleName?.removeSuffix("_Decorated") ?: "KotlinWebpackRule"
 
     init {
         enabled.convention(false)
     }
 
-    protected abstract fun buildLoaders(): List<Loader>
+    /**
+     * Validates the rule state just before it getting applied.
+     * Returning false will skip the rule silently. To terminate the build instead, throw an error.
+     */
     internal abstract fun validate(): Boolean
+
+    /**
+     * Provides a list of required npm dependencies for the rule to function.
+     */
     internal abstract fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency>
+
+    /**
+     * Provides a list of loader sequence to apply to the rule.
+     */
+    protected abstract fun loaders(): List<Loader>
 
     internal val active: Boolean get() = enabled.get() && validate()
     internal fun Appendable.appendToWebpackConfig() {
         appendLine(
             """
-            // $webpackDescription
+            // $description
             ;(function(config) {
             """.trimIndent()
         )
-        val loaders = buildLoaders()
+        val loaders = loaders()
         loaders.flatMap(Loader::prerequisites).forEach(::appendLine)
         val use = loaders.joinToString(
             separator = ",",
@@ -59,7 +75,7 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
         ) {
             """
             {
-                loader: ${it.value},
+                loader: ${it.loader},
                 options: ${json(it.options)}
             }
             """.trimIndent()
@@ -95,8 +111,17 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
     }.toString()
 
     data class Loader(
-        val value: String,
+        /**
+         * Raw `loader` field value. Needs to be wrapped in quotes if using string notation.
+         */
+        val loader: String,
+        /**
+         * Loader options map if any. Will be converted to json object via Gson.
+         */
         val options: Map<String, Any?> = mapOf(),
+        /**
+         * Any prerequisite code to be added before building the loader object.
+         */
         val prerequisites: List<String> = listOf(),
     )
 }

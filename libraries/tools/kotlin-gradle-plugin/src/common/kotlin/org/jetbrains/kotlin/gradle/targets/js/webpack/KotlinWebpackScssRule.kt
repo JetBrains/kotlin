@@ -19,7 +19,7 @@ abstract class KotlinWebpackScssRule @Inject constructor(name: String) : KotlinW
         return super.dependencies(versions) + versions.sass + versions.sassLoader
     }
 
-    override fun buildLoaders(): List<Loader> {
-        return super.buildLoaders() + Loader(value = "'sass-loader'")
+    override fun loaders(): List<Loader> {
+        return super.loaders() + Loader(loader = "'sass-loader'")
     }
 }
