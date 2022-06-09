@@ -189,18 +189,6 @@ private class ExtTestDataFile(
                     }
                     else -> super.visitKtFile(file)
                 }
-
-                override fun visitCallExpression(expression: KtCallExpression) = when {
-                    isStandaloneTest -> Unit
-                    expression.getChildOfType<KtNameReferenceExpression>()?.getReferencedNameAsName() == TYPE_OF_NAME -> {
-                        // Found a call of `typeOf()` function. It means that this is most likely a reflection-oriented test
-                        // that might compare the obtained name of a type against some string literal (ex: "foo.Bar<A>"),
-                        // which is obviously not patched during package names patching step because this step is not so smart.
-                        // So, let's avoid patching package names for this test and let's run it in standalone mode.
-                        isStandaloneTest = true
-                    }
-                    else -> super.visitCallExpression(expression)
-                }
             })
         }
 
