@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
@@ -53,8 +51,6 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -653,18 +649,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     ) {
         if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
-        val resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
         val unresolvedCallsOnElements = ArrayList<PsiElement>()
-
-        for ((call, resolvedCall) in resolvedCallsEntries) {
-            val element = call.callElement
-
-            if (!configuredLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-                if (!(resolvedCall as MutableResolvedCall<*>).isCompleted) {
-                    unresolvedCallsOnElements.add(element)
-                }
-            }
-        }
 
         if (unresolvedCallsOnElements.isNotEmpty()) {
             TestCase.fail(
@@ -677,43 +662,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
         checkResolvedCallsInDiagnostics(bindingContext, configuredLanguageVersionSettings)
-    }
-
-    private fun checkResolvedCallsInDiagnostics(
-        bindingContext: BindingContext,
-        configuredLanguageVersionSettings: LanguageVersionSettings
-    ) {
-        val diagnosticsStoringResolvedCalls1 = setOf(
-            OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY
-        )
-        val diagnosticsStoringResolvedCalls2 = setOf(
-            COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
-        )
-
-        for (diagnostic in bindingContext.diagnostics) {
-            when (diagnostic.factory) {
-                in diagnosticsStoringResolvedCalls1 -> assertResolvedCallsAreCompleted(
-                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).a, configuredLanguageVersionSettings
-                )
-                in diagnosticsStoringResolvedCalls2 -> assertResolvedCallsAreCompleted(
-                    diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls2).b, configuredLanguageVersionSettings
-                )
-            }
-        }
-    }
-
-    private fun assertResolvedCallsAreCompleted(
-        diagnostic: Diagnostic,
-        resolvedCalls: Collection<ResolvedCall<*>>,
-        configuredLanguageVersionSettings: LanguageVersionSettings
-    ) {
-        val element = diagnostic.psiElement
-        val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
-        if (configuredLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
-
-        assertTrue("Resolved calls stored in ${diagnostic.factory.name}\nfor '${element.text}'$lineAndColumn are not completed",
-                   resolvedCalls.all { (it as MutableResolvedCall<*>).isCompleted })
     }
 
     companion object {

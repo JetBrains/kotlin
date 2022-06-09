@@ -80,9 +80,10 @@ fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter:
     return arguments.any(fun(argument: KtExpression?): Boolean {
         if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, statementFilter)) return false
 
-        when (val resolvedCall = argument.getResolvedCall(bindingContext)) {
-            is MutableResolvedCall<*> -> if (!resolvedCall.hasInferredReturnType()) return false
-            is NewResolvedCallImpl<*> -> if (resolvedCall.resultingDescriptor.returnType?.isError == true) return false
+        val resolvedCall = argument.getResolvedCall(bindingContext)
+
+        if (resolvedCall is NewResolvedCallImpl<*> && resolvedCall.resultingDescriptor.returnType?.isError == true) {
+            return false
         }
 
         val expressionType = bindingContext.getType(argument)
