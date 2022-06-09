@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.cli.js.analysis.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
