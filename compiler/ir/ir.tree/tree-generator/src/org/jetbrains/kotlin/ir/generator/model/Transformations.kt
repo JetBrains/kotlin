@@ -223,9 +223,15 @@ private fun addWalkableChildren(elements: List<Element>) {
 
         element.fields.filter { it.isChild }.associateByTo(walkableChildren) { it.name }
 
-        element.walkableChildren = walkableChildren.values.toList()
+        element.walkableChildren = reorderIfNecessary(walkableChildren.values.toList(), element.childrenOrderOverride)
     }
 }
+
+private fun reorderIfNecessary(fields: List<Field>, order: List<String>?): List<Field> =
+    if (order == null) fields else fields.sortedBy {
+        val position = order.indexOf(it.name)
+        if (position < 0) order.size else position
+    }
 
 private fun iterateElementsParentFirst(elements: List<Element>) = sequence {
     val pending = elements.sortedBy { it.elementParents.size }.toMutableSet()
