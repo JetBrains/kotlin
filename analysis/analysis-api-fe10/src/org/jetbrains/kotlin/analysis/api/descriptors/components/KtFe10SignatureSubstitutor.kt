@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubsitutorImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubstitutorImpl
 
-internal class KtFe10SignatureSubsitutor(
+internal class KtFe10SignatureSubstitutor(
     override val analysisSession: KtFe10AnalysisSession
-) : AbstractKtSignatureSubsitutorImpl(), Fe10KtAnalysisSessionComponent
+) : AbstractKtSignatureSubstitutorImpl(), Fe10KtAnalysisSessionComponent
