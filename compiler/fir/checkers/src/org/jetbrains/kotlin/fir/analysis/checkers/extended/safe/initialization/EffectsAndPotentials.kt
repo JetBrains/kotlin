@@ -46,7 +46,11 @@ data class EffectsAndPotentials(
     }
 
     companion object {
+        @JvmName("PotentialsToEffectsAndPotentials")
         fun Potentials.toEffectsAndPotentials() = EffectsAndPotentials(potentials = this)
+
+        @JvmName("EffectsToEffectsAndPotentials")
+        fun Effects.toEffectsAndPotentials() = EffectsAndPotentials(this)
     }
 }
 

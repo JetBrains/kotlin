@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object ClassAnalyser {
 
@@ -37,34 +37,91 @@ object ClassAnalyser {
         return caches.getOrPut(firDeclaration) {
             when (firDeclaration) {
                 is FirRegularClass -> classTyping(firDeclaration)
-                //                is FirConstructor -> TODO()
+                //                is FirConstructor(a: FirElement) {
+                //                TODO()}
                 is FirSimpleFunction -> methodTyping(firDeclaration)
                 is FirProperty -> fieldTyping(firDeclaration)
-                is FirField -> TODO()
+                is FirField -> {
+                    TODO()
+                }
                 else -> emptyEffsAndPots
             }
         }
     }
 
-    fun StateOfClass.allEffectsAndPotentials(): EffectsAndPotentials =
-        firClass.declarations.fold(emptyEffsAndPots) { prev, dec ->
-            val effsAndPots = analyseDeclaration1(dec)
-            prev + effsAndPots
-        }
 }
 
-fun FirClass.findDec(firDeclaration: FirDeclaration?): Boolean = declarations.contains(firDeclaration)
+object Analyser {
 
-@OptIn(SymbolInternals::class)
-fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
-    when (firElement) {
-        is FirBlock -> firElement.statements.fold(emptyEffsAndPots) { sum, firStatement ->
-            sum + analyser(firStatement)
+    class ExpressionVisitor(private val stateOfClass: StateOfClass) : FirVisitor<EffectsAndPotentials, Nothing?>() {
+        override fun visitElement(element: FirElement, data: Nothing?): EffectsAndPotentials = emptyEffsAndPots
+
+        private fun FirElement.accept(): EffectsAndPotentials = accept(this@ExpressionVisitor, null)
+
+        private fun analyseArgumentList(argumentList: FirArgumentList): EffectsAndPotentials =
+            argumentList.arguments.fold(emptyEffsAndPots) { sum, argDec ->
+                val (effs, pots) = argDec.accept()
+                sum + effs + promote(pots)
+            }
+
+        private fun analyseQualifiedAccess(firQualifiedAccess: FirQualifiedAccess): EffectsAndPotentials = firQualifiedAccess.run {
+            setOfNotNull(
+                explicitReceiver, dispatchReceiver, extensionReceiver
+            ).fold(emptyEffsAndPots) { sum, receiver ->
+                val recEffsAndPots = receiver.accept().let {
+                    if (receiver != extensionReceiver) it
+                    else (promote(it.potentials) + it.effects).toEffectsAndPotentials()
+                }
+                sum + recEffsAndPots
+            }
         }
-        is FirFunctionCall -> {
-            val (prefEffs, prefPots) = analyseReceivers(firElement)
 
-            val dec = firElement.calleeReference.toResolvedCallableSymbol()?.fir
+        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): EffectsAndPotentials {
+            return emptyEffsAndPots
+        }
+
+        override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitQualifiedAccessExpression(
+            qualifiedAccessExpression: FirQualifiedAccessExpression,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            TODO()
+        }
+
+        @OptIn(SymbolInternals::class)
+        override fun visitPropertyAccessExpression(
+            propertyAccessExpression: FirPropertyAccessExpression,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            val (prefEffs, prefPots) = visitQualifiedAccess(propertyAccessExpression, null)                        // Φ, Π
+
+            val calleeReference = propertyAccessExpression.calleeReference
+            return if (calleeReference is FirSuperReference)
+                EffectsAndPotentials(prefEffs, listOf(Root.Super(calleeReference, stateOfClass.firClass)))
+            else {
+                val firProperty = calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
+
+                val effsAndPots = stateOfClass.select(prefPots, firProperty)
+                prefEffs + effsAndPots                                                              // Φ ∪ Φ', Π'
+            }
+        }
+
+        @OptIn(SymbolInternals::class)
+        override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): EffectsAndPotentials {
+            val (prefEffs, prefPots) = visitQualifiedAccess(functionCall, null)
+
+            val dec = functionCall.calleeReference.toResolvedCallableSymbol()?.fir
 
             val effsAndPotsOfMethod =
                 when (dec) {
@@ -72,8 +129,8 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
                     is FirConstructor ->
                         dec.getClassFromConstructor()?.let { init(prefPots, it) } ?: TODO()
                     is FirErrorFunction -> TODO()
-                    is FirPropertyAccessor -> select(prefPots, dec.propertySymbol?.fir!!)
-                    is FirSimpleFunction -> call(prefPots, dec)
+                    is FirPropertyAccessor -> stateOfClass.select(prefPots, dec.propertySymbol?.fir!!)
+                    is FirSimpleFunction -> stateOfClass.call(prefPots, dec)
                     is FirBackingField -> TODO()
                     is FirEnumEntry -> TODO()
                     is FirErrorProperty -> TODO()
@@ -83,99 +140,165 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials =
                     null -> emptyEffsAndPots
                 }
 
-            val (effsOfArgs, _) = analyser(firElement.argumentList)
+            val (effsOfArgs, _) = functionCall.argumentList.accept()
             // TODO: explicit receiver promotion
-            effsAndPotsOfMethod + effsOfArgs + prefEffs
+            return effsAndPotsOfMethod + effsOfArgs + prefEffs
         }
-        is FirEqualityOperatorCall -> {
-            // TODO: How to find the method to be called. equals may also be unsafe
-            emptyEffsAndPots
-        }
-        is FirArgumentList -> {
-            // TODO: Change EffectsAndPotentials to MutableEffects
-            firElement.arguments.fold(emptyEffsAndPots) { sum, argDec ->
-                val (effs, pots) = analyser(argDec)
-                sum + effs + promote(pots)
-            }
-        }
-        is FirPropertyAccessExpression -> {
-            val (prefEffs, prefPots) = analyseReceivers(firElement)                        // Φ, Π
 
-            val calleeReference = firElement.calleeReference
-            if (calleeReference is FirSuperReference)
-                EffectsAndPotentials(prefEffs, listOf(Root.Super(calleeReference, firClass)))
-            else {
-                val firProperty = calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
-
-                val effsAndPots = select(prefPots, firProperty)
-                prefEffs + effsAndPots                                                              // Φ ∪ Φ', Π'
-            }
+        override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: Nothing?): EffectsAndPotentials {
+            TODO()
         }
-        is FirReturnExpression -> analyser(firElement.result)
-        is FirThisReceiverExpression -> {
-            val firThisReference = firElement.calleeReference
+
+        override fun visitCallableReferenceAccess(
+            callableReferenceAccess: FirCallableReferenceAccess,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            TODO()
+        }
+
+        @OptIn(SymbolInternals::class)
+        override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): EffectsAndPotentials {
+            val firThisReference = thisReceiverExpression.calleeReference
             val firClass = firThisReference.boundSymbol?.fir as FirClass
             val effectsAndPotentials = EffectsAndPotentials(Root.This(firThisReference, firClass))
-            if (superClasses.contains(firClass) || firClass === this.firClass)
-                effectsAndPotentials
-            else resolveThis(firClass, effectsAndPotentials, this)
+            return if (stateOfClass.superClasses.contains(firClass) || firClass === stateOfClass.firClass)
+                effectsAndPotentials else resolveThis(firClass, effectsAndPotentials, stateOfClass)
         }
-        is FirConstExpression<*> -> emptyEffsAndPots  // ???
-        is FirWhenBranch -> firElement.run {
-            val localSize = localInitedProperties.size
-            val effsAndPots = analyser(condition).effects + analyser(result)
 
-            var i = 0
-            localInitedProperties.removeIf { i++ >= localSize }
+        override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): EffectsAndPotentials {
+            return whenExpression.run {
+                val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + branch.accept() }
+                val sub = (subject ?: subjectVariable)?.accept() ?: emptyEffsAndPots
 
-            effsAndPots
+                val (initedFirProperties, isPrimeInitialization) = stateOfClass.initializationOrder.getOrElse(whenExpression) { return sub + effsAndPots }
 
-        }
-        is FirWhenExpression -> firElement.run {
-            val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + analyser(branch) }
-            val sub = (subject ?: subjectVariable)?.let(::analyser) ?: emptyEffsAndPots
-
-            val (initedFirProperties, isPrimeInitialization) = initializationOrder.getOrElse(firElement) { return sub + effsAndPots }
-
-            if (isPrimeInitialization) {
-                alreadyInitializedVariable.addAll(initedFirProperties)
+                if (isPrimeInitialization) {
+                    stateOfClass.alreadyInitializedVariable.addAll(initedFirProperties)
 //                initedFirProperties.forEach {
 //                    caches[it] = notFinalAssignments[it] ?: throw java.lang.IllegalArgumentException()
 //                    notFinalAssignments.remove(it)
 //                }
-                localInitedProperties.removeIf(initedFirProperties::contains)
-            } else
-                localInitedProperties.addAll(initedFirProperties)
+                    stateOfClass.localInitedProperties.removeIf(initedFirProperties::contains)
+                } else
+                    stateOfClass.localInitedProperties.addAll(initedFirProperties)
 
-            notFinalAssignments.keys.removeIf {
-                !(localInitedProperties.contains(it) || alreadyInitializedVariable.contains(it))
+                stateOfClass.notFinalAssignments.keys.removeIf {
+                    !(stateOfClass.localInitedProperties.contains(it) || stateOfClass.alreadyInitializedVariable.contains(it))
+                }
+
+                sub + effsAndPots
             }
-
-            sub + effsAndPots
         }
-        is FirVariableAssignment -> {
-            val (effs, pots) = analyser(firElement.rValue)
-            errors.addAll(effs.flatMap(::effectChecking))
 
-            when (val firDeclaration = firElement.lValue.toResolvedCallableSymbol()?.fir) {
+        override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Nothing?): EffectsAndPotentials {
+            return whenBranch.run {
+                val localSize = stateOfClass.localInitedProperties.size
+                val effsAndPots = condition.accept().effects + result.accept()
+
+                var i = 0
+                stateOfClass.localInitedProperties.removeIf { i++ >= localSize }
+
+                effsAndPots
+            }
+        }
+
+        override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitStringConcatenationCall(
+            stringConcatenationCall: FirStringConcatenationCall,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitTryExpression(tryExpression: FirTryExpression, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitClassReferenceExpression(
+            classReferenceExpression: FirClassReferenceExpression,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): EffectsAndPotentials {
+            TODO()
+        }
+
+        @OptIn(SymbolInternals::class)
+        override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?): EffectsAndPotentials {
+            val (effs, pots) = variableAssignment.rValue.accept()
+            stateOfClass.errors.addAll(effs.flatMap(stateOfClass::effectChecking))
+
+            when (val firDeclaration = variableAssignment.lValue.toResolvedCallableSymbol()?.fir) {
                 is FirProperty -> {
-                    val prevEffsAndPots = notFinalAssignments.getOrDefault(firDeclaration, emptyEffsAndPots)
+                    val prevEffsAndPots = stateOfClass.notFinalAssignments.getOrDefault(firDeclaration, emptyEffsAndPots)
 
-                    localInitedProperties.add(firDeclaration)
+                    stateOfClass.localInitedProperties.add(firDeclaration)
 
                     val effsAndPots = prevEffsAndPots + pots
-                    notFinalAssignments[firDeclaration] = effsAndPots //
-                    caches[firDeclaration] = effsAndPots
+                    stateOfClass.notFinalAssignments[firDeclaration] = effsAndPots //
+                    stateOfClass.caches[firDeclaration] = effsAndPots
                 }
                 is FirVariable -> {}
                 else -> throw IllegalArgumentException()
             }
-            emptyEffsAndPots
+            return emptyEffsAndPots
         }
-        is FirElseIfTrueCondition -> emptyEffsAndPots
-        is FirNoReceiverExpression -> emptyEffsAndPots
-        else -> throw IllegalArgumentException()
+
+        override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Nothing?): EffectsAndPotentials {
+            val effsAndPots = returnExpression.result.accept()
+            return effsAndPots
+        }
+
+        override fun visitBlock(block: FirBlock, data: Nothing?): EffectsAndPotentials =
+            block.statements.fold(emptyEffsAndPots) { sum, firStatement -> sum + firStatement.accept() }
+
+        override fun visitDelegatedConstructorCall(
+            delegatedConstructorCall: FirDelegatedConstructorCall,
+            data: Nothing?
+        ): EffectsAndPotentials {
+            TODO()
+        }
+
+        override fun visitCall(call: FirCall, data: Nothing?): EffectsAndPotentials =
+            call.argumentList.accept()
+
+        override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: Nothing?): EffectsAndPotentials =
+            analyseQualifiedAccess(qualifiedAccess)
+
+        override fun visitArgumentList(argumentList: FirArgumentList, data: Nothing?): EffectsAndPotentials =
+            analyseArgumentList(argumentList)
     }
+}
+
+fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials {
+    val visitor = Analyser.ExpressionVisitor(this)
+    return firElement.accept(visitor, null)
+}
 
 @OptIn(LookupTagInternals::class)
 private fun FirConstructor.getClassFromConstructor() =
@@ -199,10 +322,3 @@ fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
     return effsAndPots
 }
 
-private fun StateOfClass.analyseReceivers(firQualifiedAccess: FirQualifiedAccess): EffectsAndPotentials = firQualifiedAccess.run {
-    setOfNotNull(
-        explicitReceiver,
-        dispatchReceiver,
-        extensionReceiver
-    ).fold(emptyEffsAndPots) { effsAndPots, receiver -> effsAndPots + analyser(receiver) }
-}
