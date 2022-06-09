@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -508,7 +509,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 
     val (_, expectedFunctionType) = context.bodyResolveComponents.samResolver.getSamInfoForPossibleSamType(candidateExpectedType)
         ?: return null
-    return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType)) {
+    return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType, context.returnTypeCalculator)) {
         usesSAM = true
         expectedFunctionType
     }
@@ -518,6 +519,7 @@ fun FirExpression.isFunctional(
     session: FirSession,
     scopeSession: ScopeSession,
     expectedFunctionType: ConeKotlinType?,
+    returnTypeCalculator: ReturnTypeCalculator,
 ): Boolean {
     when (unwrapArgument()) {
         is FirAnonymousFunctionExpression, is FirCallableReferenceAccess -> return true
@@ -544,7 +546,7 @@ fun FirExpression.isFunctional(
                                 errorTypesEqualToAnything = false,
                                 stubTypesEqualToAnything = true
                             ),
-                            invokeSymbol.fir.returnTypeRef.coneType,
+                            returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).type,
                             expectedReturnType,
                             isFromNullabilityConstraint = false
                         )

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -481,7 +482,7 @@ internal class AdapterGenerator(
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
         val expectedFunctionType = getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
-        return argument.isFunctional(session, scopeSession, expectedFunctionType)
+        return argument.isFunctional(session, scopeSession, expectedFunctionType, ReturnTypeCalculatorForFullBodyResolve)
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {

@@ -26715,6 +26715,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("implicitReturnType.kt")
+            public void testImplicitReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/implicitReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("javaMemberAgainstExtension.kt")
             public void testJavaMemberAgainstExtension() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/javaMemberAgainstExtension.kt");
