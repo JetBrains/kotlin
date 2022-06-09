@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -20,6 +21,9 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val outputPath = configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH)
         if (configuration.get(JvmAbiConfigurationKeys.LEGACY_ABI_GEN, false)) {
+            require(!configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                "Legacy jvm-abi-gen does not support K2 compiler."
+            }
             // Use the two-pass implementation
             require(!outputPath.endsWith(".jar")) {
                 "Legacy jvm-abi-gen does not support jar output."
@@ -38,4 +42,7 @@ class JvmAbiComponentRegistrar : ComponentRegistrar {
             ClassFileFactoryFinalizerExtension.registerExtension(project, outputExtension)
         }
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }
