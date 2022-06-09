@@ -1,4 +1,5 @@
 // KT-49200
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: first/KtNodeTypes.java
 
 package first;
@@ -22,7 +23,7 @@ import second.SomeEnum.*
 
 fun test(arg: String): Boolean {
     return when (arg) {
-        SOME -> true
+        <!DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY!>SOME<!> -> true
         else -> false
     }
 }

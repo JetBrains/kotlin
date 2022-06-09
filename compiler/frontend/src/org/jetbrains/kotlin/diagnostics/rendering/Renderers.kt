@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.IDEAPlatforms
@@ -70,6 +71,9 @@ object Renderers {
 
     @JvmField
     val NAME = Renderer<Named> { it.name.asString() }
+
+    @JvmField
+    val FQ_NAME = Renderer<MemberDescriptor> { it.fqNameSafe.asString() }
 
     @JvmField
     val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->

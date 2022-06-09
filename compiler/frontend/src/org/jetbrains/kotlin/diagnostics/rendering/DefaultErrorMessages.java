@@ -73,6 +73,7 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(DEPRECATED_ACCESS_BY_SHORT_NAME, "Access to this type by short name is deprecated, and soon is going to be removed. Please, add explicit qualifier or import", NAME);
         MAP.put(DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY, "Ambiguous access to companion''s property ''{0}'' in enum is deprecated. Please, add explicit Companion qualifier to the class name", NAME);
+        MAP.put(DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY, "Ambiguous access to property ''{0}'' is deprecated because similar enum entry ''{1}'' is available. Please add explicit named import or use fully qualified name", FQ_NAME, FQ_NAME);
 
         MAP.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", Renderers.SHORT_NAMES_IN_TYPES);
 

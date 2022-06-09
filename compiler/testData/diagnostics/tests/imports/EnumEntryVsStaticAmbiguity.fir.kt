@@ -1,4 +1,5 @@
 // KT-49200
+// !RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: first/KtNodeTypes.java
 
 package first;

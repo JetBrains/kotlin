@@ -147,6 +147,8 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, PropertyDescriptor> DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory2<PsiElement, PropertyDescriptor, ClassDescriptor> DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY = DiagnosticFactory2.create(WARNING);
+
     DiagnosticFactory1<PsiElement, ConstructorDescriptor> PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL = DiagnosticFactory1.create(ERROR);
 
     // Exposed visibility group

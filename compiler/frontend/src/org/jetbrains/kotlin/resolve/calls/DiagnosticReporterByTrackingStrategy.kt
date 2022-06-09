@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -106,6 +107,14 @@ class DiagnosticReporterByTrackingStrategy(
             }
             CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
+            }
+            EnumEntryAmbiguityWarning::class.java -> {
+                val propertyDescriptor = (diagnostic as EnumEntryAmbiguityWarning).property
+                val enumEntryDescriptor = diagnostic.enumEntry
+                val enumCompanionDescriptor = (enumEntryDescriptor.containingDeclaration as? ClassDescriptor)?.companionObjectDescriptor
+                if (enumCompanionDescriptor == null || propertyDescriptor.containingDeclaration != enumCompanionDescriptor) {
+                    trace.report(DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY.on(psiKotlinCall.psiCall.callElement, propertyDescriptor, enumEntryDescriptor))
+                }
             }
             CompatibilityWarning::class.java -> {
                 val callElement = psiKotlinCall.psiCall.callElement
