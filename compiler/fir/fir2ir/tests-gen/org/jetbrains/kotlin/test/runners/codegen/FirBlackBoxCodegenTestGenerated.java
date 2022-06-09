@@ -13670,6 +13670,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt52702.kt")
+        public void testKt52702() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt52702.kt");
+        }
+
+        @Test
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/kt6382.kt");
