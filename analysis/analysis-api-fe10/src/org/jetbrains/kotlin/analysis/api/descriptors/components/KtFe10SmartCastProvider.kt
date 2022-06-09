@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
-import org.jetbrains.kotlin.types.TypeIntersector
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
 internal class KtFe10SmartCastProvider(
     override val analysisSession: KtFe10AnalysisSession
@@ -46,7 +47,7 @@ internal class KtFe10SmartCastProvider(
 
     private fun ExplicitSmartCasts.getKtType(): KtType? {
         if (this is MultipleSmartCasts) {
-            return TypeIntersector.intersectTypes(map.values)?.toKtType(analysisContext)
+            return intersectWrappedTypes(map.values).toKtType(analysisContext)
         }
         return defaultType?.toKtType(analysisContext)
     }

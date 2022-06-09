@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -153,7 +154,7 @@ internal class KtFe10TypeProvider(
             return bConstructor.supertypes.all { areTypesCompatible(a, it) }
         }
 
-        val intersectionType = TypeIntersector.intersectTypes(listOf(a, b)) ?: return false
+        val intersectionType = intersectWrappedTypes(listOf(a, b))
         val intersectionTypeConstructor = intersectionType.constructor
 
         if (intersectionTypeConstructor is IntersectionTypeConstructor) {
