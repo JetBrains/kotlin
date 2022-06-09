@@ -155,9 +155,9 @@ private class ExtTestDataFile(
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         makeObjectsMutable()
         patchPackageNames(isStandaloneTest)
-        val fileLevelAnnotations = patchFileLevelAnnotations()
+        patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
-        generateTestLauncher(isStandaloneTest, entryPointFunctionFQN, fileLevelAnnotations)
+        generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
 
         return doCreateTestCase(isStandaloneTest, sharedModules)
     }
@@ -405,54 +405,13 @@ private class ExtTestDataFile(
     }
 
     /**
-     * 1. Collect all file-level annotations that should be added to the launcher. See [generateTestLauncher].
-     * 2. Make sure that the OptIns specified in test directives (see [ExtTestDataFileSettings.optInsForSourceCode]) are represented
-     *    as file-level annotations in every individual test file.
+     * Make sure that the OptIns specified in test directives (see [ExtTestDataFileSettings.optInsForSourceCode]) are represented
+     * as file-level annotations in every individual test file.
      */
-    private fun patchFileLevelAnnotations(): List<String> = with(structure) {
-        val allFileLevelAnnotations = hashSetOf<String>()
-
+    private fun patchFileLevelAnnotations() = with(structure) {
         fun getAnnotationText(fullyQualifiedName: String) = "@file:${OPT_IN_ANNOTATION_NAME.asString()}($fullyQualifiedName::class)"
 
-        // Every OptIn specified in test directive should be represented as a file-level annotation.
-        testDataFileSettings.optInsForSourceCode.mapTo(allFileLevelAnnotations, ::getAnnotationText)
-
-        // Now, collect file-level annotations already present in test files.
-        filesToTransform.forEach { handler ->
-            handler.accept(object : KtTreeVisitorVoid() {
-                override fun visitKtFile(file: KtFile) {
-                    val importDirectives: Map<String, String> by lazy {
-                        file.importDirectives.mapNotNull { importDirective ->
-                            val importedFqName = importDirective.importedFqName ?: return@mapNotNull null
-                            val name = importDirective.alias?.name ?: importedFqName.shortName().asString()
-                            name to importedFqName.asString()
-                        }.toMap()
-                    }
-
-                    file.annotationEntries.mapNotNullTo(allFileLevelAnnotations) { annotationEntry ->
-                        val constructorCallee = annotationEntry.getChildOfType<KtConstructorCalleeExpression>()
-                        val constructorType = constructorCallee?.typeReference?.getChildOfType<KtUserType>()
-                        val constructorTypeName = constructorType?.collectNames()?.singleOrNull()
-
-                        if (constructorTypeName != OPT_IN_ANNOTATION_NAME) return@mapNotNullTo null
-
-                        val valueArgument = annotationEntry.valueArguments.singleOrNull()
-                        val classLiteral = valueArgument?.getArgumentExpression() as? KtClassLiteralExpression
-
-                        if (classLiteral?.getChildOfType<KtDotQualifiedExpression>() != null)
-                            annotationEntry.text
-                        else
-                            classLiteral?.getChildOfType<KtNameReferenceExpression>()?.getReferencedName()
-                                ?.let(importDirectives::get)
-                                ?.let { fullyQualifiedName -> getAnnotationText(fullyQualifiedName) }
-                    }
-                }
-            })
-        }
-
-        val allFileLevelAnnotationsSorted = allFileLevelAnnotations.sorted()
-
-        // Finally, make sure that every test file contains all the necessary file-level annotations.
+        // Make sure that every test file contains all the necessary file-level annotations.
         if (testDataFileSettings.optInsForSourceCode.isNotEmpty()) {
             filesToTransform.forEach { handler ->
                 handler.accept(object : KtTreeVisitorVoid() {
@@ -468,8 +427,6 @@ private class ExtTestDataFile(
                 })
             }
         }
-
-        return allFileLevelAnnotationsSorted
     }
 
     private fun KtFile.addAnnotations(fileAnnotationList: KtFileAnnotationList) {
@@ -514,13 +471,8 @@ private class ExtTestDataFile(
     }
 
     /** Adds a wrapper to run it as Kotlin test. */
-    private fun generateTestLauncher(isStandaloneTest: Boolean, entryPointFunctionFQN: String, fileLevelAnnotations: List<String>) {
+    private fun generateTestLauncher(isStandaloneTest: Boolean, entryPointFunctionFQN: String) {
         val fileText = buildString {
-            if (fileLevelAnnotations.isNotEmpty()) {
-                fileLevelAnnotations.forEach(this::appendLine)
-                appendLine()
-            }
-
             if (!isStandaloneTest) {
                 append("package ").appendLine(testDataFileSettings.nominalPackageName)
                 appendLine()
