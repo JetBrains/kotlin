@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -47,7 +50,7 @@ constructor(
     @Transient
     override val compilation: KotlinJsCompilation,
     objects: ObjectFactory
-) : DefaultTask(), RequiresNpmDependencies {
+) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl {
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -61,6 +64,9 @@ constructor(
     @get:Inject
     open val fileResolver: FileResolver
         get() = injected
+
+    override val rules: KotlinWebpackRulesContainer =
+        project.objects.webpackRulesContainer()
 
     @get:Inject
     open val execHandleFactory: ExecHandleFactory
@@ -204,9 +210,6 @@ constructor(
     @Input
     var sourceMaps: Boolean = true
 
-    @Nested
-    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport()
-
     @Input
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
@@ -219,7 +222,9 @@ constructor(
     var generateConfigOnly: Boolean = false
 
     @Nested
-    val synthConfig = KotlinWebpackConfig()
+    val synthConfig = KotlinWebpackConfig(
+        rules = project.objects.webpackRulesContainer(),
+    )
 
     @Input
     val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
@@ -249,7 +254,7 @@ constructor(
         outputFileName = outputFileName,
         configDirectory = configDirectory,
         bundleAnalyzerReportDir = if (!forNpmDependencies && report) reportDir else null,
-        cssSupport = cssSupport,
+        rules = rules,
         devServer = devServer,
         devtool = devtool,
         sourceMaps = sourceMaps,

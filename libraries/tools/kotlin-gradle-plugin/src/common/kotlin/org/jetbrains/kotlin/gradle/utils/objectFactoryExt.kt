@@ -10,3 +10,6 @@ import org.gradle.api.model.ObjectFactory
 
 internal inline fun <reified T : Named> ObjectFactory.named(name: String): T =
     named(T::class.java, name)
+
+internal inline fun <reified T : Named> ObjectFactory.newInstance(vararg args: Any?): T =
+    newInstance(T::class.java, *args)
