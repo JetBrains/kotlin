@@ -151,6 +151,11 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val scopeSubstitution: KtScopeSubstitution get() = scopeSubstitutionImpl
     protected abstract val scopeSubstitutionImpl: KtScopeSubstitution
 
+    @KtAnalysisApiInternals
+    public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl
+    protected abstract val substitutorFactoryImpl: KtSubstitutorFactory
+
+
     @PublishedApi
     internal val typesCreator: KtTypeCreator
         get() = typesCreatorImpl

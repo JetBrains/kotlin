@@ -1,0 +1,9 @@
+KtDeclaration: KtNamedFunction
+Symbol:
+fun <A, B, C> A.fooo(x: kotlin.collections.List<B>): C
+
+Substitutor:
+A -> kotlin.Int, B -> kotlin.Long, C -> kotlin.collections.List<kotlin.String>
+
+Signature after substitution:
+kotlin.Int.fooo(x: kotlin.collections.List<kotlin.Long>): kotlin.collections.List<kotlin.String>
