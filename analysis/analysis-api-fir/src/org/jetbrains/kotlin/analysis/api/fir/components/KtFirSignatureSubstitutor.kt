@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubsitutorImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubstitutorImpl
 
-internal class KtFirSignatureSubsitutor(
+internal class KtFirSignatureSubstitutor(
     override val analysisSession: KtFirAnalysisSession
-) : AbstractKtSignatureSubsitutorImpl(), KtFirAnalysisSessionComponent
+) : AbstractKtSignatureSubstitutorImpl(), KtFirAnalysisSessionComponent
