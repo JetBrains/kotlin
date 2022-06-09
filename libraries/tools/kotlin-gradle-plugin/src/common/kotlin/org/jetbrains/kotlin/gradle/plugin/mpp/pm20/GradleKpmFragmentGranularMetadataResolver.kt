@@ -58,7 +58,9 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
         while (fragmentResolutionQueue.isNotEmpty()) {
             val dependencyNode = fragmentResolutionQueue.removeFirst()
-            visited.add(dependencyNode)
+            if (!visited.add(dependencyNode)) {
+                continue
+            }
 
             val dependencyModule = dependencyNode.module
 
