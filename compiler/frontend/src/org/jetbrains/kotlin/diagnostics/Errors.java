@@ -344,6 +344,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_IN_WHERE_CLAUSE = DiagnosticFactory0.create(WARNING);
+
     // Const
     DiagnosticFactory0<PsiElement> CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITH_GETTER = DiagnosticFactory0.create(ERROR);
