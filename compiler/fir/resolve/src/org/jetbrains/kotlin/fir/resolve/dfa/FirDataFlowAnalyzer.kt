@@ -1054,7 +1054,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
         val lambdaArgs = functionCall.arguments.mapNotNull { (it as? FirAnonymousFunctionExpression)?.anonymousFunction }
         if (lambdaArgs.size > 1) {
-            getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.enterFunctionCallWithMultipleLambdaArgs(lambdaArgs)
+            getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.exitFunctionCallWithMultipleLambdaArgs()
         }
         if (ignoreFunctionCalls) {
             graphBuilder.exitIgnoredCall(functionCall)

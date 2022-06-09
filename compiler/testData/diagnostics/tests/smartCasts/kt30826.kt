@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Issue: KT-30826
 
 interface I1
