@@ -28,6 +28,7 @@ class Element(
     val allParents: List<ClassOrElementRef>
         get() = elementParents + otherParents
     var isLeaf = false
+    val childrenOrderOverride: List<String>? = config.childrenOrderOverride
     var walkableChildren: List<Field> = emptyList()
     val transformableChildren get() = walkableChildren.filter { it.transformable }
 

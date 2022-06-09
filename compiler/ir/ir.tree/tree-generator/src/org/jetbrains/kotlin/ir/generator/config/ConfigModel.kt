@@ -32,6 +32,7 @@ class ElementConfig(
     var transform = false
     var transformByChildren = false
     var transformerReturnType: ElementConfig? = null
+    var childrenOrderOverride: List<String>? = null
 
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 

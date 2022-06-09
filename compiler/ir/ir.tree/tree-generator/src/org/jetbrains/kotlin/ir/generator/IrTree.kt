@@ -911,6 +911,7 @@ object IrTree : AbstractTreeBuilder() {
     val whileLoop: ElementConfig by element(Expression) {
         visitorParent = loop
         visitorParam = "loop"
+        childrenOrderOverride = listOf("condition", "body")
 
         parent(loop)
     }

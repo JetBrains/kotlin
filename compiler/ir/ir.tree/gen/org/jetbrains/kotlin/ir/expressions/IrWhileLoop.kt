@@ -20,12 +20,12 @@ abstract class IrWhileLoop : IrLoop() {
         visitor.visitWhileLoop(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        body?.accept(visitor, data)
         condition.accept(visitor, data)
+        body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        body = body?.transform(transformer, data)
         condition = condition.transform(transformer, data)
+        body = body?.transform(transformer, data)
     }
 }
