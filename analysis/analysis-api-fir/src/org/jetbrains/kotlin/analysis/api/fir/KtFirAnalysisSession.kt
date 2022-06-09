@@ -103,7 +103,7 @@ private constructor(
 
     override val referenceResolveProviderImpl: KtReferenceResolveProvider = KtFirReferenceResolveProvider(this)
 
-    override val substitutionProviderImpl: KtSignatureSubsitutor = KtFirSignatureSubsitutor(this)
+    override val signatureSubstitutorImpl: KtSignatureSubstitutor = KtFirSignatureSubstitutor(this)
 
     override val scopeSubstitutionImpl: KtScopeSubstitution = KtFirScopeSubstitution(this)
 
