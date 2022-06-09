@@ -144,7 +144,7 @@ abstract class IncrementalCompilerRunner<
             }
 
             val exitCode = when (compilationMode) {
-                is CompilationMode.Incremental -> {
+                is CompilationMode.Incremental -> try {
                     if (withAbiSnapshot) {
                         compileIncrementally(
                             args, caches, allSourceFiles, compilationMode, messageCollector,
@@ -153,6 +153,12 @@ abstract class IncrementalCompilerRunner<
                     } else {
                         compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
                     }
+                } catch (e: Throwable) {
+                    // TODO: Warn about this exception
+                    reporter.report {
+                        "Incremental compilation failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+                    }
+                    rebuild(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
                 }
                 is CompilationMode.Rebuild -> rebuild(compilationMode.reason)
             }
@@ -177,13 +183,8 @@ abstract class IncrementalCompilerRunner<
                     }
                 }
             }
-            return exitCode
-        } catch (e: Exception) { // todo: catch only cache corruption
-            // todo: warn?
-            reporter.report { "Possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION).also {
-                cachesMayBeCorrupted = false
-            }
+
+            exitCode
         } finally {
             if (cachesMayBeCorrupted) {
                 cleanOutputsAndLocalStateOnRebuild(args)
