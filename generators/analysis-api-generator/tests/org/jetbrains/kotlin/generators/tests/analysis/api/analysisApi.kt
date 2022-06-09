@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importOptimizer.AbstractAnalysisApiImportOptimizerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
@@ -266,6 +267,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
             test(AbstractAnalysisApiSignatureSubstitutionTest::class) {
                 model("signatureSubstitution")
+            }
+
+            test(AbstractAnalysisApiSignatureContractsTest::class) {
+                model("signatureContracts")
             }
         }
     }
