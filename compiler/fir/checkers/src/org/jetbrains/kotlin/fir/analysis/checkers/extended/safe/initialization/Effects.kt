@@ -5,117 +5,36 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 typealias Effects = List<Effect>
 
-typealias Effect = _Effect<*>
-
-sealed class _Effect<P : Potential>(val potential: P) {
-
-    operator fun component1() = potential
-
-    override fun hashCode(): Int {
-        return potential.hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is _Effect<*>) return false
-
-        if (potential != other.potential) return false
-
-        return true
-    }
-
-    @Suppress("EqualsOrHashCode")
-    class Promote(potential: Potential) : _Effect<Potential>(potential) {
+sealed class Effect(open val potential: Potential) {
+    data class Promote(override val potential: Potential) : Effect(potential) {
         override fun toString(): String {
             return "$potential↑"
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Promote) return false
-            if (!super.equals(other)) return false
-            return true
-        }
     }
 
-    class FieldAccess(potential: Potential, val field: FirVariable) : _Effect<Potential>(potential) {
-        operator fun component2() = field
-
+    data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential) {
         override fun toString(): String {
             return "$potential.${field.symbol.callableId.callableName}!"
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is FieldAccess) return false
-            if (!super.equals(other)) return false
-
-            if (field != other.field) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + field.hashCode()
-            return result
-        }
-
     }
 
-    class MethodAccess(potential: Potential, var method: FirFunction) : _Effect<Potential>(potential) {
-        operator fun component2() = method
-
+    data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential) {
         override fun toString(): String {
             return "$potential.${method.symbol.callableId.callableName}◊"
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is MethodAccess) return false
-            if (!super.equals(other)) return false
-
-            if (method != other.method) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + method.hashCode()
-            return result
-        }
     }
 
-    class Init(potential: Root.Warm, val clazz: FirClass) : _Effect<Root.Warm>(potential) {
-        operator fun component2() = clazz
-
+    data class Init(override val potential: Root.Warm, val clazz: FirClass) : Effect(potential) {
         override fun toString(): String {
             return "$potential.init(${clazz.symbol.classId.shortClassName})"
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Init) return false
-            if (!super.equals(other)) return false
-
-            if (clazz != other.clazz) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + clazz.hashCode()
-            return result
         }
     }
 }

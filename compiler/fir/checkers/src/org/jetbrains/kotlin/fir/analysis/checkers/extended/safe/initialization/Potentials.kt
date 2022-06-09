@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration1
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -131,9 +131,7 @@ fun promote(potentials: Potentials): Effects = potentials.map(::Promote)
 fun init(
     potentials: Potentials,
     clazz: FirClass,
-//    fieldsPots: List<Potentials>
 ): EffectsAndPotentials {
-//    val propagateEffects = fieldsPots.flatMap(::promote)
     val prefixPotentials = potentials.map { pot -> Root.Warm(clazz, pot) }
     val initEffects = prefixPotentials.map { warm -> Init(warm, clazz) }
 

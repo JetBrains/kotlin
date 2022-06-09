@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization._Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -228,7 +228,6 @@ object Checker {
         fun effectChecking(effect: Effect): Errors {
             if (effectsInProcess.contains(effect)) return emptyList()
             effectsInProcess.add(effect)
-            val lastEffect = effectsInProcess.lastIndex
             val errors = when (effect) {
                 is FieldAccess -> {
                     val (pot, field) = effect
@@ -305,7 +304,7 @@ object Checker {
             }
             for (error in errors) error.trace.add(effect)
 
-            effectsInProcess.removeAt(lastEffect)
+            effectsInProcess.removeLast()
 
             return errors
         }
