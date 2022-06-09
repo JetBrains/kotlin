@@ -13,7 +13,8 @@ kotlin {
     target {
         browser {
             webpackTask {
-                cssSupport.enabled = true
+                cssSupport.enabled.set(true)
+                scssSupport.enabled.set(true)
             }
             testTask {
                 useKarma {

@@ -19,6 +19,8 @@ val npmPackages = listOf(
     NpmPackage("source-map-support"),
     NpmPackage("css-loader"),
     NpmPackage("style-loader"),
+    NpmPackage("sass-loader"),
+    NpmPackage("sass"),
     NpmPackage("to-string-loader"),
     NpmPackage("mini-css-extract-plugin"),
     NpmPackage("mocha"),

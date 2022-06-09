@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.injected
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -204,8 +205,11 @@ constructor(
     @Input
     var sourceMaps: Boolean = true
 
-    @Nested
-    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport()
+    @get:Nested
+    abstract val cssSupport: KotlinWebpackCssRule
+
+    @get:Nested
+    abstract val scssSupport: KotlinWebpackCssRule
 
     @Input
     @Optional
@@ -219,7 +223,10 @@ constructor(
     var generateConfigOnly: Boolean = false
 
     @Nested
-    val synthConfig = KotlinWebpackConfig()
+    val synthConfig = KotlinWebpackConfig(
+        cssSupport = project.objects.newInstance(),
+        scssSupport = project.objects.newInstance(),
+    )
 
     @Input
     val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
@@ -250,6 +257,7 @@ constructor(
         configDirectory = configDirectory,
         bundleAnalyzerReportDir = if (!forNpmDependencies && report) reportDir else null,
         cssSupport = cssSupport,
+        scssSupport = scssSupport,
         devServer = devServer,
         devtool = devtool,
         sourceMaps = sourceMaps,

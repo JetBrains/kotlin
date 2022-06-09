@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -40,8 +41,7 @@ class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
     private val services: () -> ServiceRegistry,
     private val basePath: String
-) :
-    KotlinJsTestFramework {
+) : KotlinJsTestFramework {
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
@@ -80,7 +80,9 @@ class KotlinKarma(
         export = false,
         progressReporter = true,
         progressReporterPathFilter = nodeRootPackageDir.absolutePath,
-        webpackMajorVersion = webpackMajorVersion
+        webpackMajorVersion = webpackMajorVersion,
+        cssSupport = project.objects.newInstance(),
+        scssSupport = project.objects.newInstance(),
     )
 
     init {
