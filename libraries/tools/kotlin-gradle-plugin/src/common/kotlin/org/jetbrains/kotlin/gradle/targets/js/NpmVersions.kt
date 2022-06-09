@@ -25,6 +25,8 @@ class NpmVersions : Serializable {
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.21")
     val cssLoader = NpmPackageVersion("css-loader", "6.7.1")
     val styleLoader = NpmPackageVersion("style-loader", "3.3.1")
+    val sassLoader = NpmPackageVersion("sass-loader", "13.0.0")
+    val sass = NpmPackageVersion("sass", "1.52.3")
     val toStringLoader = NpmPackageVersion("to-string-loader", "1.2.0")
     val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "2.6.1")
     val mocha = NpmPackageVersion("mocha", "10.0.0")

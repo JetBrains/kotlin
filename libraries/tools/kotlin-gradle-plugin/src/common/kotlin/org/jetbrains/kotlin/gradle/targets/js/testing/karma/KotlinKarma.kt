@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -40,11 +41,11 @@ class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
     private val services: () -> ServiceRegistry,
     private val basePath: String
-) :
-    KotlinJsTestFramework {
+) : KotlinJsTestFramework {
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
+
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
@@ -80,7 +81,8 @@ class KotlinKarma(
         export = false,
         progressReporter = true,
         progressReporterPathFilter = nodeRootPackageDir.absolutePath,
-        webpackMajorVersion = webpackMajorVersion
+        webpackMajorVersion = webpackMajorVersion,
+        rules = project.objects.webpackRulesContainer(),
     )
 
     init {
