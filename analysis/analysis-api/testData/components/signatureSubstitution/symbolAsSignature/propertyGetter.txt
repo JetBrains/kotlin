@@ -3,4 +3,9 @@ Symbol:
 get()
 
 Signature:
-(): kotlin.Int
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = <getter>(): kotlin.Int
+  valueParameters = []
+  callableIdIfNonLocal = null

@@ -36,10 +36,6 @@ internal class KtFe10SymbolDeclarationRendererProvider(
         return ""
     }
 
-    override fun render(signature: KtCallableSignature<*>, options: KtDeclarationRendererOptions): String {
-        TODO("Not yet implemented")
-    }
-
     override fun render(type: KtType, options: KtTypeRendererOptions): String {
         require(type is KtFe10Type)
         return prettyPrint { KtFe10TypeRenderer(options).render(type.type, this) }

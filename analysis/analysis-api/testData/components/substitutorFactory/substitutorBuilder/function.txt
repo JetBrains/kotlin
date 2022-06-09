@@ -3,7 +3,19 @@ Symbol:
 fun <A, B, C> A.fooo(x: kotlin.collections.List<B>): C
 
 Substitutor:
-A -> kotlin.Int, B -> kotlin.Long, C -> kotlin.collections.List<kotlin.String>
+<map substitutor: {A = kotlin/Int, B = kotlin/Long, C = kotlin/collections/List<kotlin/String>}>
 
 Signature after substitution:
-kotlin.Int.fooo(x: kotlin.collections.List<kotlin.Long>): kotlin.collections.List<kotlin.String>
+KtFunctionLikeSignature:
+  receiverType = kotlin.Int
+  returnType = kotlin.collections.List<kotlin.String>
+  symbol = /fooo(<extension receiver>: A, x: kotlin.collections.List<B>): C
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = x
+      receiverType = null
+      returnType = kotlin.collections.List<kotlin.Long>
+      symbol = x: kotlin.collections.List<B>
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = /fooo

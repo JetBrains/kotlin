@@ -3,4 +3,16 @@ Symbol:
 set(value: kotlin.Int)
 
 Signature:
-(value: kotlin.Int): kotlin.Unit
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Unit
+  symbol = <setter>(value: kotlin.Int): kotlin.Unit
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = value
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = value: kotlin.Int
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = null
