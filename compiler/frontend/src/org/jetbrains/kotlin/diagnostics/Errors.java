@@ -11,7 +11,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.rendering.DeclarationWithDiagnosticComponents;
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
 import org.jetbrains.kotlin.resolve.calls.util.BuilderLambdaLabelingInfo;
@@ -43,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.config.LanguageFeature.ReportTypeVarianceConflictOnQualifierArguments;
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.ACTUAL_DECLARATION_NAME;
 import static org.jetbrains.kotlin.diagnostics.ClassicPositioningStrategies.INCOMPATIBLE_DECLARATION;
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
@@ -343,6 +340,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, String> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_IN_WHERE_CLAUSE_WARNING = DiagnosticFactory0.create(WARNING);
 
     // Const
     DiagnosticFactory0<PsiElement> CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT = DiagnosticFactory0.create(ERROR);
