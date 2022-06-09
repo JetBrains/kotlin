@@ -537,6 +537,15 @@ class DeclarationsChecker(
             checkSupertypesForConsistency(typeParameterDescriptor, typeParameter)
             checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter, typeParameterListOwner)
         }
+
+        val prohibitAnnotations = this.languageVersionSettings.supportsFeature(LanguageFeature.ForbidTypeParameterAnnotationsInWhereClauses)
+        if (!prohibitAnnotations) return
+
+        for (constraint in constraints) {
+            constraint.annotationEntries.forEach {
+                trace.report(ANNOTATION_IN_WHERE_CLAUSE.on(it))
+            }
+        }
     }
 
     private fun checkConstructorInInterface(klass: KtClass) {
