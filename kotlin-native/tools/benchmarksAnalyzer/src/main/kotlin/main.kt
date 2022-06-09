@@ -175,9 +175,8 @@ fun main(args: Array<String>) {
     // Get unstable benchmarks.
     val unstableBenchmarks = if (!flatReport) DBServerConnector.getUnstableBenchmarks() else null
 
-    unstableBenchmarks ?:
-        if (!flatReport)
-            println("Failed to get access to server and get unstable benchmarks list!")
+    if (!flatReport && unstableBenchmarks == null)
+        println("Failed to get access to server and get unstable benchmarks list!")
 
     // Read contents of file.
     val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))
