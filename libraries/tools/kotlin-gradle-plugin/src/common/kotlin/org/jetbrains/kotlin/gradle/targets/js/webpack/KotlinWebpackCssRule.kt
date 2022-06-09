@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.EXTRACT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPORT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
+import javax.inject.Inject
 
 @Deprecated(
     message = "Renamed to KotlinWebpackCssRule", replaceWith = ReplaceWith(
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLIN
 typealias KotlinWebpackCssSupport = KotlinWebpackCssRule
 
 @Suppress("LeakingThis")
-abstract class KotlinWebpackCssRule : KotlinWebpackRule() {
+abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWebpackRule(name) {
     @get:Input
     abstract val mode: Property<String>
 

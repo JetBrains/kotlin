@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
+import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -15,6 +17,7 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -48,9 +51,7 @@ data class KotlinWebpackConfig(
     @Input
     var experiments: MutableSet<String> = mutableSetOf(),
     @Nested
-    val cssSupport: KotlinWebpackCssRule,
-    @Nested
-    val scssSupport: KotlinWebpackCssRule,
+    override val rules: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>,
     @Input
     @Optional
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
@@ -69,7 +70,7 @@ data class KotlinWebpackConfig(
     var resolveFromModulesFirst: Boolean = false,
     @Input
     val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
-) {
+) : WebpackRulesDsl {
     @get:Input
     @get:Optional
     val entryInput: String?
@@ -94,8 +95,6 @@ data class KotlinWebpackConfig(
     @get:Optional
     val reportEvaluatedConfigFileInput: String?
         get() = reportEvaluatedConfigFile?.absoluteFile?.normalize()?.absolutePath
-
-    private val rules = listOf(cssSupport, scssSupport)
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {

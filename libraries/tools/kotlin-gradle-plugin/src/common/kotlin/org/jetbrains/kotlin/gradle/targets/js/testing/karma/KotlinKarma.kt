@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -45,6 +45,7 @@ class KotlinKarma(
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
+
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
@@ -81,8 +82,7 @@ class KotlinKarma(
         progressReporter = true,
         progressReporterPathFilter = nodeRootPackageDir.absolutePath,
         webpackMajorVersion = webpackMajorVersion,
-        cssSupport = project.objects.newInstance(),
-        scssSupport = project.objects.newInstance(),
+        rules = project.objects.webpackRulesContainer(),
     )
 
     init {

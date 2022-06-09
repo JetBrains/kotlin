@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -36,7 +39,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -48,7 +50,7 @@ constructor(
     @Transient
     override val compilation: KotlinJsCompilation,
     objects: ObjectFactory
-) : DefaultTask(), RequiresNpmDependencies {
+) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl {
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -62,6 +64,9 @@ constructor(
     @get:Inject
     open val fileResolver: FileResolver
         get() = injected
+
+    override val rules: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule> =
+        project.objects.webpackRulesContainer()
 
     @get:Inject
     open val execHandleFactory: ExecHandleFactory
@@ -205,12 +210,6 @@ constructor(
     @Input
     var sourceMaps: Boolean = true
 
-    @get:Nested
-    abstract val cssSupport: KotlinWebpackCssRule
-
-    @get:Nested
-    abstract val scssSupport: KotlinWebpackCssRule
-
     @Input
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
@@ -224,8 +223,7 @@ constructor(
 
     @Nested
     val synthConfig = KotlinWebpackConfig(
-        cssSupport = project.objects.newInstance(),
-        scssSupport = project.objects.newInstance(),
+        rules = project.objects.webpackRulesContainer(),
     )
 
     @Input
@@ -256,8 +254,7 @@ constructor(
         outputFileName = outputFileName,
         configDirectory = configDirectory,
         bundleAnalyzerReportDir = if (!forNpmDependencies && report) reportDir else null,
-        cssSupport = cssSupport,
-        scssSupport = scssSupport,
+        rules = rules,
         devServer = devServer,
         devtool = devtool,
         sourceMaps = sourceMaps,

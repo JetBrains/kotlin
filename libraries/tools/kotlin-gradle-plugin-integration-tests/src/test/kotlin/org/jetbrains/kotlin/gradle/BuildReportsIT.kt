@@ -92,7 +92,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("")
+    @DisplayName("smoke")
     @GradleTest
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

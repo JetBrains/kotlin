@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -15,7 +16,9 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.StringWriter
 
 @Suppress("LeakingThis")
-abstract class KotlinWebpackRule {
+abstract class KotlinWebpackRule(private val name: String) : Named {
+    override fun getName(): String = name
+
     @get:Input
     abstract val enabled: Property<Boolean>
 
@@ -39,7 +42,7 @@ abstract class KotlinWebpackRule {
     internal abstract fun validate(): Boolean
     internal abstract fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency>
 
-    internal val active: Boolean get() = enabled.getOrElse(false) && validate()
+    internal val active: Boolean get() = enabled.get() && validate()
     internal fun Appendable.appendToWebpackConfig() {
         appendLine(
             """

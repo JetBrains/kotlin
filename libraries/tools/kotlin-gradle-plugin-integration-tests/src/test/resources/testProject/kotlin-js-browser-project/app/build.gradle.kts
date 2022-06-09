@@ -13,15 +13,19 @@ kotlin {
     target {
         browser {
             webpackTask {
-                cssSupport.enabled.set(true)
-                scssSupport.enabled.set(true)
+                cssSupport {
+                    enabled.set(true)
+                }
+                scssSupport {
+                    enabled.set(true)
+                }
             }
             testTask {
                 useKarma {
                     useChromeHeadless()
                 }
                 enabled = false // Task is disabled because it requires browser to be installed. That may be a problem on CI.
-                                // Disabled but configured task allows us to check at least a part of configuration cache correctness.
+                // Disabled but configured task allows us to check at least a part of configuration cache correctness.
             }
         }
         binaries.executable()

@@ -12,8 +12,12 @@ kotlin {
     js(IR) {
         browser {
             commonWebpackConfig {
-                cssSupport.enabled.set(true)
-                scssSupport.enabled.set(true)
+                cssSupport {
+                    enabled.set(true)
+                }
+                scssSupport {
+                    enabled.set(true)
+                }
             }
         }
     }

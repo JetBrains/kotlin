@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import javax.inject.Inject
 
 @Suppress("LeakingThis")
-abstract class KotlinWebpackScssRule : KotlinWebpackCssRule() {
+abstract class KotlinWebpackScssRule @Inject constructor(name: String) : KotlinWebpackCssRule(name) {
     init {
         test.convention("/\\.(scss|sass)\$/")
     }
