@@ -12935,6 +12935,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("EnumEntryVsStaticAmbiguity.kt")
+            public void testEnumEntryVsStaticAmbiguity() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/EnumEntryVsStaticAmbiguity.kt");
+            }
+
+            @Test
             @TestMetadata("ExplicitImportsAmbiguity.kt")
             public void testExplicitImportsAmbiguity() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
