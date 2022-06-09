@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperK
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -1147,7 +1148,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         boolean isBuilderInferenceContext = context.inferenceSession instanceof BuilderInferenceSession;
 
-        if (leftType != null && rightType != null && !TypeIntersector.isIntersectionEmpty(leftType, rightType) && isBuilderInferenceContext) {
+        if (
+                leftType != null &&
+                rightType != null &&
+                !TypeUtilsKt.isEmptyIntersectionTypeCompatible(leftType, rightType) &&
+                isBuilderInferenceContext
+        ) {
             context.trace.record(MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE, expression);
         }
 

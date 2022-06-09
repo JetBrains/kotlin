@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checkEnumsForCompatibility
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker.checkSenselessComparisonWithNull
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isEmptyIntersectionTypeCompatible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object EqualityCallChecker : CallChecker {
@@ -90,7 +90,7 @@ object EqualityCallChecker : CallChecker {
         val leftType = context.trace.getType(left) ?: return
         val rightType = context.trace.getType(right) ?: return
 
-        if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
+        if (isEmptyIntersectionTypeCompatible(leftType, rightType)) {
             val isProperEqualityChecksEnabled =
                 context.languageVersionSettings.supportsFeature(LanguageFeature.ProperEqualityChecksInBuilderInferenceCalls)
             val shouldReportWarnings = !isProperEqualityChecksEnabled

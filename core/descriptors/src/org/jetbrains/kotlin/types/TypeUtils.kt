@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
+import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -395,3 +397,8 @@ fun isUnresolvedType(type: KotlinType): Boolean {
     }
     return type is ErrorType && type.kind.isUnresolved
 }
+
+fun isEmptyIntersectionTypeCompatible(vararg types: KotlinTypeMarker): Boolean =
+    EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(
+        SimpleClassicTypeSystemContext, types.toList(), compatibilityModeEnabled = true
+    )?.kind == EmptyIntersectionTypeKind.COMPATIBLE
