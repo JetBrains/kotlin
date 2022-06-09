@@ -58,7 +58,7 @@ object PluginCliParser {
 
     @JvmStatic
     fun loadPlugins(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration) {
-        val classLoader = URLClassLoader(
+        val classLoader = DependencyShadingPluginClassLoader(
             pluginClasspaths
                 ?.map { File(it).toURI().toURL() }
                 ?.toTypedArray()
