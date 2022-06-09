@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution
 
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -26,18 +27,16 @@ abstract class AbstractAnalysisApiSymbolSubstitutionTest : AbstractAnalysisApiSi
             val substitutor = with(SubstitutionParser) { parseSubstitutors(module, ktFile) }.single()
 
             val signature = symbol.substitute(substitutor)
-            val renderedSymbol = symbol.render()
-            val renderedSignature = signature.render()
             prettyPrint {
                 appendLine("KtDeclaration: ${declaration::class.simpleName}")
 
                 appendLine("Symbol:")
-                appendLine(renderedSymbol)
+                appendLine(symbol.render())
 
                 appendLine()
 
                 appendLine("Signature:")
-                appendLine(renderedSignature)
+                appendLine(stringRepresentation(signature))
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

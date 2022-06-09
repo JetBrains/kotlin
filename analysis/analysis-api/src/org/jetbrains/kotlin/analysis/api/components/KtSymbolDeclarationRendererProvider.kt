@@ -129,8 +129,6 @@ public enum class RendererModifier(public val includeByDefault: Boolean) {
 public abstract class KtSymbolDeclarationRendererProvider : KtAnalysisSessionComponent() {
     public abstract fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String
 
-    public abstract fun render(signature: KtCallableSignature<*>, options: KtDeclarationRendererOptions): String
-
     public abstract fun render(type: KtType, options: KtTypeRendererOptions): String
 }
 
@@ -143,9 +141,6 @@ public interface KtSymbolDeclarationRendererMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtDeclarationSymbol.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
         withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.renderDeclaration(this, options) }
-
-    public fun KtCallableSignature<*>.render(options: KtDeclarationRendererOptions = KtDeclarationRendererOptions.DEFAULT): String =
-        withValidityAssertion { analysisSession.symbolDeclarationRendererProvider.render(this, options) }
 
     /**
      * Render kotlin type into the representable Kotlin type string

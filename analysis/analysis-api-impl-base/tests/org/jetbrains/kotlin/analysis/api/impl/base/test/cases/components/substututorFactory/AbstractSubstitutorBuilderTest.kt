@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -49,17 +50,12 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiSingleFileTes
                 appendLine()
 
                 appendLine("Substitutor:")
-                appendLine(
-                    (substitutor as KtMapBackedSubstitutor)
-                        .getAsMap()
-                        .entries
-                        .joinToString { (k, v) -> "${k.name} -> ${v.render()}" }
-                )
+                appendLine(stringRepresentation(substitutor))
 
                 appendLine()
 
                 appendLine("Signature after substitution:")
-                appendLine(signatureAfterSubstitution.render())
+                appendLine(stringRepresentation(signatureAfterSubstitution))
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution
 
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -36,12 +37,12 @@ abstract class AbstractAnalysisApiSignatureSubstitutionTest : AbstractAnalysisAp
                 appendLine()
 
                 appendLine("Signature before substitution:")
-                appendLine(signatureBeforeSubstitution.render())
+                appendLine(stringRepresentation(signatureBeforeSubstitution))
 
                 appendLine()
 
                 appendLine("Signature after substitution:")
-                appendLine(signatureAfterSubstitution.render())
+                appendLine(stringRepresentation(signatureAfterSubstitution))
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

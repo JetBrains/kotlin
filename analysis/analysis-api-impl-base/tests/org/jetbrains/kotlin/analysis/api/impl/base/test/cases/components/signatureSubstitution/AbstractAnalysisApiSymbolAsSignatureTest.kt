@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution
 
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.getSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
@@ -23,7 +24,7 @@ abstract class AbstractAnalysisApiSymbolAsSignatureTest : AbstractAnalysisApiSin
             val symbol = declaration.getSymbolOfType<KtCallableSymbol>()
             val signature = symbol.asSignature()
             val renderedSymbol = symbol.render()
-            val renderedSignature = signature.render()
+            val renderedSignature = stringRepresentation(signature)
             prettyPrint {
                 appendLine("KtDeclaration: ${declaration::class.simpleName}")
 
