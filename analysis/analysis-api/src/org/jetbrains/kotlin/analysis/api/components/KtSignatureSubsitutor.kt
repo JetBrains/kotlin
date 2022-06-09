@@ -79,7 +79,7 @@ public interface KtSignatureSubsitutorMixIn : KtAnalysisSessionMixIn {
      *
      * @see KtSubstitutor.substituteOrSelf
      */
-    public fun <S : KtFunctionSymbol> S.substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> =
+    public fun <S : KtFunctionLikeSymbol> S.substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.substitutionProvider.substitute(this, substitutor) }
 
     /**
