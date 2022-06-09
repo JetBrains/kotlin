@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
-import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
@@ -73,10 +72,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractResolvedConstructorDelegationCallsTests> {
                 model("resolveConstructorDelegationCalls")
-            }
-
-            testClass<AbstractConstraintSystemTest> {
-                model("constraintSystem", extension = "constraints")
             }
 
             testClass<AbstractParsingTest> {
