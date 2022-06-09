@@ -343,12 +343,6 @@ fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubs
     }
 }
 
-fun <D : CallableDescriptor> ResolvedCallImpl<D>.shouldBeSubstituteWithStubTypes() =
-    typeArguments.any { argument -> argument.value.contains { it is StubTypeForBuilderInference } }
-            || dispatchReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
-            || extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
-            || valueArguments.any { argument -> argument.key.type.contains { it is StubTypeForBuilderInference } }
-
 fun KotlinCall.extractCallableReferenceExpression(): KtCallableReferenceExpression? =
     psiKotlinCall.psiCall.extractCallableReferenceExpression()
 

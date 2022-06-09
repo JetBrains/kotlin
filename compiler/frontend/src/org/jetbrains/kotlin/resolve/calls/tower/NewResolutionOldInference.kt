@@ -166,46 +166,7 @@ class NewResolutionOldInference(
             towerCandidate: CandidateWithBoundDispatchReceiver,
             explicitReceiverKind: ExplicitReceiverKind,
             extensionReceiver: ReceiverValueWithSmartCastInfo?
-        ): MyCandidate {
-
-            val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
-            val candidateCall = ResolvedCallImpl(
-                basicCallContext.call, towerCandidate.descriptor,
-                towerCandidate.dispatchReceiver?.receiverValue, extensionReceiver?.receiverValue,
-                explicitReceiverKind, null, candidateTrace, tracing,
-                basicCallContext.dataFlowInfoForArguments // todo may be we should create new mutable info for arguments
-            )
-
-            /**
-             * See https://jetbrains.quip.com/qcTDAFcgFLEM
-             *
-             * For now we have only 2 functions with dynamic receivers: iterator() and unsafeCast()
-             * Both this function are marked via @kotlin.internal.DynamicExtension.
-             */
-            if (extensionReceiver != null) {
-                val parameterIsDynamic = towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()
-                val argumentIsDynamic = extensionReceiver.receiverValue.type.isDynamic()
-
-                if (parameterIsDynamic != argumentIsDynamic ||
-                    (parameterIsDynamic && !towerCandidate.descriptor.hasDynamicExtensionAnnotation())
-                ) {
-                    return MyCandidate(listOf(HiddenExtensionRelatedToDynamicTypes), candidateCall)
-                }
-            }
-
-            if (deprecationResolver.isHiddenInResolution(
-                    towerCandidate.descriptor, basicCallContext.call, basicCallContext.trace.bindingContext, basicCallContext.isSuperCall
-                )
-            ) {
-                return MyCandidate(listOf(HiddenDescriptor), candidateCall)
-            }
-
-            val diagnostics = createDiagnosticsForCandidate(towerCandidate, candidateCall)
-            return MyCandidate(diagnostics, candidateCall) {
-                candidateCall.performRemainingTasks()
-                createDiagnosticsForCandidate(towerCandidate, candidateCall)
-            }
-        }
+        ): MyCandidate = TODO() // to be removed
 
         /**
          * The function is called only inside [NoExplicitReceiverScopeTowerProcessor] with [TowerData.BothTowerLevelAndContextReceiversGroup].
@@ -220,16 +181,6 @@ class NewResolutionOldInference(
         override fun createErrorCandidate(): MyCandidate {
             throw IllegalStateException("Not supported creating error candidate for the old type inference candidate factory")
         }
-
-        private fun createDiagnosticsForCandidate(
-            towerCandidate: CandidateWithBoundDispatchReceiver,
-            candidateCall: ResolvedCallImpl<CallableDescriptor>
-        ): List<ResolutionDiagnostic> =
-            mutableListOf<ResolutionDiagnostic>().apply {
-                addAll(towerCandidate.diagnostics)
-                addAll(checkInfixAndOperator(basicCallContext.call, towerCandidate.descriptor))
-                addIfNotNull(createPreviousResolveError(candidateCall.status))
-            }
 
         private fun checkInfixAndOperator(call: Call, descriptor: CallableDescriptor): List<ResolutionDiagnostic> {
             if (descriptor !is FunctionDescriptor || ErrorUtils.isError(descriptor)) return emptyList()
@@ -251,19 +202,7 @@ class NewResolutionOldInference(
         override fun transformCandidate(
             variable: MyCandidate,
             invoke: MyCandidate
-        ): MyCandidate {
-            @Suppress("UNCHECKED_CAST") val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
-                invoke.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
-                variable.resolvedCall as MutableResolvedCall<VariableDescriptor>
-            )
-            assert(variable.resultingApplicability.isSuccess) {
-                "Variable call must be success: $variable"
-            }
-
-            return MyCandidate(variable.eagerDiagnostics + invoke.eagerDiagnostics, resolvedCallImpl) {
-                variable.diagnostics + invoke.diagnostics
-            }
-        }
+        ): MyCandidate = TODO() // to be removed
 
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<MyCandidate> {
             val newCall = CallTransformer.stripCallArguments(functionContext.basicCallContext.call).let {

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.NAME_NOT_FOUND
@@ -266,9 +265,7 @@ class CallExpressionResolver(
             if (notNothing && (qualifier == null || qualifier !is PackageQualifier)) {
 
                 // mark property call as unsuccessful to avoid exceptions
-                callExpression.getResolvedCall(temporaryForVariable.trace.bindingContext).let {
-                    (it as? ResolvedCallImpl)?.addStatus(ResolutionStatus.OTHER_ERROR)
-                }
+                callExpression.getResolvedCall(temporaryForVariable.trace.bindingContext)
 
                 temporaryForVariable.commit()
                 context.trace.report(
