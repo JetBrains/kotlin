@@ -152,6 +152,7 @@ private class ExtTestDataFile(
         val args = mutableListOf<String>()
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
+        args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
         return TestCompilerArgs(args)
     }
@@ -280,6 +281,12 @@ private class ExtTestDataFile(
                         // Insert the package directive immediately after file-level annotations.
                         file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByWhiteSpace()
                     }
+
+                    // Add @ReflectionPackageName annotation to make the compiler use original package name in the reflective information.
+                    val annotationText =
+                        "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
+                    val fileAnnotationList = handler.psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                    file.addAnnotations(fileAnnotationList)
 
                     visitKtElement(file, file.collectAccessibleDeclarationNames())
                 }
@@ -468,29 +475,32 @@ private class ExtTestDataFile(
             filesToTransform.forEach { handler ->
                 handler.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtFile(file: KtFile) {
-                        val oldFileAnnotationList = file.fileAnnotationList
-
                         val newFileAnnotationList = handler.psiFactory.createFile(buildString {
                             testDataFileSettings.optInsForSourceCode.forEach {
                                 appendLine(getAnnotationText(it))
                             }
                         }).fileAnnotationList!!
 
-                        if (oldFileAnnotationList != null) {
-                            // Add new annotations to the old ones.
-                            newFileAnnotationList.annotationEntries.forEach {
-                                oldFileAnnotationList.add(it).ensureSurroundedByWhiteSpace()
-                            }
-                        } else {
-                            // Insert the annotations list immediately before package directive.
-                            file.addBefore(newFileAnnotationList, file.packageDirective).ensureSurroundedByWhiteSpace()
-                        }
+                        file.addAnnotations(newFileAnnotationList)
                     }
                 })
             }
         }
 
         return allFileLevelAnnotationsSorted
+    }
+
+    private fun KtFile.addAnnotations(fileAnnotationList: KtFileAnnotationList) {
+        val oldFileAnnotationList = this.fileAnnotationList
+        if (oldFileAnnotationList != null) {
+            // Add new annotations to the old ones.
+            fileAnnotationList.annotationEntries.forEach {
+                oldFileAnnotationList.add(it).ensureSurroundedByWhiteSpace()
+            }
+        } else {
+            // Insert the annotations list immediately before package directive.
+            this.addBefore(fileAnnotationList, packageDirective).ensureSurroundedByWhiteSpace()
+        }
     }
 
     /** Finds the fully-qualified name of the entry point function (aka `fun box(): String`). */

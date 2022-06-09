@@ -31,3 +31,28 @@ internal const val LAUNCHER_MODULE_NAME = "__launcher__" // Used only in KLIB te
 internal const val STATIC_CACHE_DIR_NAME = "__static_cache__"
 
 internal fun prettyHash(hash: Int): String = hash.toUInt().toString(16).padStart(8, '0')
+
+/**
+ * Returns the expression to be parsed by Kotlin as string literal with given contents,
+ * i.e. transforms `foo$bar` to `"foo\$bar"`.
+ */
+internal fun String.quoteAsKotlinStringLiteral(): String = buildString {
+    append('"')
+
+    this@quoteAsKotlinStringLiteral.forEach { c ->
+        when (c) {
+            in charactersAllowedInKotlinStringLiterals -> append(c)
+            '$' -> append("\\$")
+            else -> append("\\u" + "%04X".format(c.code))
+        }
+    }
+
+    append('"')
+}
+
+private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Char>().apply {
+    addAll('a' .. 'z')
+    addAll('A' .. 'Z')
+    addAll('0' .. '9')
+    addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'))
+}
