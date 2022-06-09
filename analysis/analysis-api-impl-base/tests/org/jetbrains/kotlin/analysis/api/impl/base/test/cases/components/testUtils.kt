@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
@@ -78,6 +79,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         is KtType -> render()
         is Enum<*> -> name
         is Name -> asString()
+        is CallableId -> toString()
         else -> buildString {
             val clazz = this@with::class
             val className = clazz.simpleName!!
