@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
@@ -28,15 +29,20 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.resolve.scopes.receivers.SuperCallReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -44,6 +50,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
+import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -339,4 +346,71 @@ internal fun createTypeForFunctionPlaceholder(
         functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, contextReceiverTypes, newArgumentTypes, null, DONT_CARE,
         suspendFunction = expectedType.isSuspendFunctionType
     )
+}
+
+
+fun transformToReceiverWithSmartCastInfo(
+    containingDescriptor: DeclarationDescriptor,
+    bindingContext: BindingContext,
+    dataFlowInfo: DataFlowInfo,
+    receiver: ReceiverValue,
+    languageVersionSettings: LanguageVersionSettings,
+    dataFlowValueFactory: DataFlowValueFactory
+): ReceiverValueWithSmartCastInfo {
+    val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiver, bindingContext, containingDescriptor)
+    return ReceiverValueWithSmartCastInfo(
+        receiver,
+        dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings).compactIfPossible(),
+        dataFlowValue.isStable
+    )
+}
+
+fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) = transformToReceiverWithSmartCastInfo(
+    scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver, languageVersionSettings, dataFlowValueFactory
+)
+
+internal fun Call.isCallWithSuperReceiver(): Boolean = explicitReceiver is SuperCallReceiverValue
+
+internal fun reportResolvedUsingDeprecatedVisibility(
+    call: Call,
+    candidateDescriptor: CallableDescriptor,
+    resultingDescriptor: CallableDescriptor,
+    diagnostic: ResolvedUsingDeprecatedVisibility,
+    trace: BindingTrace
+) {
+    trace.record(
+        BindingContext.DEPRECATED_SHORT_NAME_ACCESS,
+        call.calleeExpression
+    )
+
+    val descriptorToLookup: DeclarationDescriptor = when (candidateDescriptor) {
+        is ClassConstructorDescriptor -> candidateDescriptor.containingDeclaration
+        is FakeCallableDescriptorForObject -> candidateDescriptor.classDescriptor
+        is SyntheticMemberDescriptor<*> -> candidateDescriptor.baseDescriptorForSynthetic
+        is PropertyDescriptor, is FunctionDescriptor -> candidateDescriptor
+        else -> error(
+            "Unexpected candidate descriptor of resolved call with " +
+                    "ResolvedUsingDeprecatedVisibility-diagnostic: $candidateDescriptor\n" +
+                    "Call context: ${call.callElement.parent?.text}"
+        )
+    }
+
+    // If this descriptor was resolved from HierarchicalScope, then there can be another, non-deprecated path
+    // in parents of base scope
+    val sourceScope = diagnostic.baseSourceScope
+    val canBeResolvedWithoutDeprecation = if (sourceScope is HierarchicalScope) {
+        descriptorToLookup.canBeResolvedWithoutDeprecation(
+            sourceScope,
+            diagnostic.lookupLocation
+        )
+    } else {
+        // Normally, that should be unreachable, but instead of asserting that, we will report diagnostic
+        false
+    }
+
+    if (!canBeResolvedWithoutDeprecation) {
+        trace.report(
+            Errors.DEPRECATED_ACCESS_BY_SHORT_NAME.on(call.callElement, resultingDescriptor)
+        )
+    }
 }
