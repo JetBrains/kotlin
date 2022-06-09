@@ -102,13 +102,13 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         substitutor: KtSubstitutor,
         testServices: TestServices
     ) {
-        testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substituteOrSelf), signature.receiverType)
-        testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substituteOrSelf), signature.returnType)
+        testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substitute), signature.receiverType)
+        testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
 
         testServices.assertions.assertEquals(symbol.valueParameters.size, signature.valueParameters.size)
 
         for ((unsubstituted, substituted) in symbol.valueParameters.zip(signature.valueParameters)) {
-            testServices.assertions.assertEquals(substituted.returnType, unsubstituted.returnType.let(substitutor::substituteOrSelf))
+            testServices.assertions.assertEquals(substituted.returnType, unsubstituted.returnType.let(substitutor::substitute))
         }
     }
 
@@ -118,8 +118,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiSi
         substitutor: KtSubstitutor,
         testServices: TestServices
     ) {
-        testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substituteOrSelf), signature.receiverType)
-        testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substituteOrSelf), signature.returnType)
+        testServices.assertions.assertEquals(symbol.receiverType?.let(substitutor::substitute), signature.receiverType)
+        testServices.assertions.assertEquals(symbol.returnType.let(substitutor::substitute), signature.returnType)
     }
 
     private fun <L> MutableList<List<L>>.combinations(list: List<L>, state: PersistentList<L>, size: Int) {

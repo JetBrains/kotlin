@@ -45,39 +45,39 @@ public interface KtSignatureSubstitutorMixIn : KtAnalysisSessionMixIn {
     /**
      * Applies a [substitutor] to the given signature and return a new signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtCallableSymbol> KtCallableSignature<S>.substitute(substitutor: KtSubstitutor): KtCallableSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
-     * Applies a [substitutor]  to the given signature and return a new signature with substituted types.
+     * Applies a [substitutor] to the given signature and return a new signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtFunctionLikeSymbol> KtFunctionLikeSignature<S>.substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
-     * Applies a [substitutor]  to the given signature and return a new signature with substituted types.
+     * Applies a [substitutor] to the given signature and return a new signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtVariableLikeSymbol> KtVariableLikeSignature<S>.substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
-     * Applies a [substitutor] to the given symbols and return a signature with substituted types.
+     * Applies a [substitutor] to the given symbol and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtCallableSymbol> S.substitute(substitutor: KtSubstitutor): KtCallableSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
 
     /**
-     * Applies a [substitutor] to the given symbols and return a signature with substituted types.
+     * Applies a [substitutor] to the given symbol and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtFunctionLikeSymbol> S.substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }
@@ -85,7 +85,7 @@ public interface KtSignatureSubstitutorMixIn : KtAnalysisSessionMixIn {
     /**
      * Applies a [substitutor] to the given symbols and return a signature with substituted types.
      *
-     * @see KtSubstitutor.substituteOrSelf
+     * @see KtSubstitutor.substitute
      */
     public fun <S : KtVariableLikeSymbol> S.substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S> =
         withValidityAssertion { analysisSession.signatureSubstitutor.substitute(this, substitutor) }

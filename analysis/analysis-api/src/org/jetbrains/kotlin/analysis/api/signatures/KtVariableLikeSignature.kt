@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
 /**
- * A signature of a variable-like symbol.
+ * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
 public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
     private val _symbol: S,

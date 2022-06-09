@@ -22,6 +22,9 @@ public abstract class KtSubstitutorFactory : KtAnalysisSessionComponent() {
     public abstract fun buildSubstitutor(builder: KtSubstitutorBuilder): KtSubstitutor
 }
 
+/**
+ * Creates new [KtSubstitutor] using substitutions specified inside [build] lambda
+ */
 @OptIn(ExperimentalContracts::class, KtAnalysisApiInternals::class)
 public inline fun KtAnalysisSession.buildSubstitutor(
     build: KtSubstitutorBuilder.() -> Unit
@@ -39,11 +42,20 @@ public class KtSubstitutorBuilder
 
     public val mappings: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { _mapping }
 
+    /**
+     * Adds a new [typeParameter] -> [type] substitution to the substitutor which is being built.
+     * If there already was a substitution with a [typeParameter], replaces corresponding substitution with a new one.
+     */
     public fun substitution(typeParameter: KtTypeParameterSymbol, type: KtType) {
         assertIsValidAndAccessible()
         _mapping[typeParameter] = type
     }
 
+    /**
+     * Adds a new substitutions to the substitutor which is being built.
+     * If there already was a substitution with a [KtTypeParameterSymbol] which is present in a [substitutions],
+     * replaces corresponding substitution with a new one.
+     */
     public fun substitutions(substitutions: Map<KtTypeParameterSymbol, KtType>) {
         assertIsValidAndAccessible()
         _mapping += substitutions

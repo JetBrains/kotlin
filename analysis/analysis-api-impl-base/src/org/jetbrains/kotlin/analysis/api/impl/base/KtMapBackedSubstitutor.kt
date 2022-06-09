@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
+/**
+ * A [KtSubstitutor] which substitution logic can be represented as a [Map] from a [KtTypeParameterSymbol] to corresponding [KtType]
+ * This is an implementation details and Analysis API clients should not depend on the fact if some [KtSubstitutor] is [KtMapBackedSubstitutor] or not.
+ */
+@KtAnalysisApiInternals
 interface KtMapBackedSubstitutor : KtSubstitutor {
+    /**
+     * Substitution rules in a form of a `Map<KtTypeParameterSymbol, KtType>`
+     */
     fun getAsMap(): Map<KtTypeParameterSymbol, KtType>
 }

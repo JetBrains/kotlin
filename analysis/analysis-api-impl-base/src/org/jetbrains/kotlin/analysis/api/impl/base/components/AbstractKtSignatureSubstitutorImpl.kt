@@ -33,8 +33,8 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         if (substitutor is KtSubstitutor.Empty) return signature
         return KtVariableLikeSignature(
             signature.symbol,
-            substitutor.substituteOrSelf(signature.returnType),
-            signature.receiverType?.let { substitutor.substituteOrSelf(it) },
+            substitutor.substitute(signature.returnType),
+            signature.receiverType?.let { substitutor.substitute(it) },
         )
     }
 
@@ -45,8 +45,8 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         if (substitutor is KtSubstitutor.Empty) return signature
         return KtFunctionLikeSignature(
             signature.symbol,
-            substitutor.substituteOrSelf(signature.returnType),
-            signature.receiverType?.let { substitutor.substituteOrSelf(it) },
+            substitutor.substitute(signature.returnType),
+            signature.receiverType?.let { substitutor.substitute(it) },
             signature.valueParameters.map { substitute(it, substitutor) }
         )
     }
@@ -65,8 +65,8 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         if (substitutor is KtSubstitutor.Empty) return asSignature(symbol)
         return KtFunctionLikeSignature(
             symbol,
-            substitutor.substituteOrSelf(symbol.returnType),
-            symbol.receiverType?.let { substitutor.substituteOrSelf(it) },
+            substitutor.substitute(symbol.returnType),
+            symbol.receiverType?.let { substitutor.substitute(it) },
             symbol.valueParameters.map { substitute(it, substitutor) }
         )
     }
@@ -75,8 +75,8 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
         if (substitutor is KtSubstitutor.Empty) return asSignature(symbol)
         return KtVariableLikeSignature(
             symbol,
-            substitutor.substituteOrSelf(symbol.returnType),
-            symbol.receiverType?.let { substitutor.substituteOrSelf(it) },
+            substitutor.substitute(symbol.returnType),
+            symbol.receiverType?.let { substitutor.substitute(it) },
         )
     }
 
