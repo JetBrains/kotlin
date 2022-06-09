@@ -26444,21 +26444,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("kt31670_compat.kt")
-                public void testKt31670_compat() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31670_compat.kt");
-                }
-
-                @Test
                 @TestMetadata("kt31758.kt")
                 public void testKt31758() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758.kt");
-                }
-
-                @Test
-                @TestMetadata("kt31758_compat.kt")
-                public void testKt31758_compat() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758_compat.kt");
                 }
 
                 @Test
@@ -26483,12 +26471,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("overloadResolutionOnNullableContravariantParameter.kt")
                 public void testOverloadResolutionOnNullableContravariantParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/overloadResolutionOnNullableContravariantParameter.kt");
-                }
-
-                @Test
-                @TestMetadata("overloadResolutionOnNullableContravariantParameter_compat.kt")
-                public void testOverloadResolutionOnNullableContravariantParameter_compat() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/overloadResolutionOnNullableContravariantParameter_compat.kt");
                 }
 
                 @Test
