@@ -7,31 +7,50 @@
 
 package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPositionImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.safeSubstitute
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
-fun CallableDescriptor.fuzzyExtensionReceiverType() = extensionReceiverParameter?.type?.toFuzzyType(typeParameters)
+fun CallableDescriptor.fuzzyExtensionReceiverType(languageVersionSettings: LanguageVersionSettings): FuzzyType? =
+    extensionReceiverParameter?.type?.toFuzzyType(typeParameters, languageVersionSettings)
 
 fun FuzzyType.nullability() = type.nullability()
 
-fun KotlinType.toFuzzyType(freeParameters: Collection<TypeParameterDescriptor>) = FuzzyType(this, freeParameters)
+fun KotlinType.toFuzzyType(
+    freeParameters: Collection<TypeParameterDescriptor>,
+    languageVersionSettings: LanguageVersionSettings
+): FuzzyType = FuzzyType(this, freeParameters, languageVersionSettings)
 
 class FuzzyType(
     val type: KotlinType,
-    freeParameters: Collection<TypeParameterDescriptor>
+    freeParameters: Collection<TypeParameterDescriptor>,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     val freeParameters: Set<TypeParameterDescriptor>
 
+    private val constraintInjector: ConstraintInjector
+
     init {
+        val builtIns = type.builtIns
+        val typeApproximator = TypeApproximator(builtIns, languageVersionSettings)
+        val constraintIncorporator = ConstraintIncorporator(
+            typeApproximator,
+            TrivialConstraintTypeInferenceOracle.create(SimpleClassicTypeSystemContext),
+            ClassicConstraintSystemUtilContext(KotlinTypeRefiner.Default, builtIns)
+        )
+        constraintInjector = ConstraintInjector(constraintIncorporator, typeApproximator, languageVersionSettings)
+
         if (freeParameters.isNotEmpty()) {
             // we allow to pass type parameters from another function with the same original in freeParameters
             val usedTypeParameters = HashSet<TypeParameterDescriptor>().apply { addUsedTypeParameters(type) }
@@ -79,9 +98,11 @@ class FuzzyType(
     fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor? = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
     @Suppress("unused") // Used in intellij-community
-    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSubtypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor? =
+        checkIsSubtypeOf(otherType.toFuzzyType(emptyList(), languageVersionSettings))
 
-    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSuperTypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor? =
+        checkIsSuperTypeOf(otherType.toFuzzyType(emptyList(), languageVersionSettings))
 
     private enum class MatchKind {
         IS_SUBTYPE,
@@ -104,40 +125,50 @@ class FuzzyType(
             return if (type.checkInheritance(otherType.type)) TypeSubstitutor.EMPTY else null
         }
 
-        val builder = ConstraintSystemBuilderImpl()
-        val typeVariableSubstitutor = builder.registerTypeVariables(CallHandle.NONE, freeParameters + otherType.freeParameters)
+        val constraintSystem = SimpleConstraintSystemImpl(
+            constraintInjector, type.builtIns, KotlinTypeRefiner.Default, languageVersionSettings
+        )
+        val builder = constraintSystem.csBuilder
+        val typeVariableSubstitutor = constraintSystem.registerTypeVariables(freeParameters + otherType.freeParameters)
 
-        val typeInSystem = typeVariableSubstitutor.substitute(type, Variance.INVARIANT)
-        val otherTypeInSystem = typeVariableSubstitutor.substitute(otherType.type, Variance.INVARIANT)
+        val typeInSystem = typeVariableSubstitutor.safeSubstitute(type)
+        val otherTypeInSystem = typeVariableSubstitutor.safeSubstitute(otherType.type)
 
         when (matchKind) {
             MatchKind.IS_SUBTYPE ->
-                builder.addSubtypeConstraint(typeInSystem, otherTypeInSystem, ConstraintPositionKind.RECEIVER_POSITION.position())
+                builder.addSubtypeConstraint(typeInSystem, otherTypeInSystem, KnownTypeParameterConstraintPositionImpl(type))
             MatchKind.IS_SUPERTYPE ->
-                builder.addSubtypeConstraint(otherTypeInSystem, typeInSystem, ConstraintPositionKind.RECEIVER_POSITION.position())
+                builder.addSubtypeConstraint(otherTypeInSystem, typeInSystem, KnownTypeParameterConstraintPositionImpl(type))
         }
 
-        builder.fixVariables()
+        with(constraintSystem) {
+            system.asConstraintSystemCompleterContext()
+            fixAllTypeVariables()
+        }
 
-        val constraintSystem = builder.build()
-
-        if (constraintSystem.status.hasContradiction()) return null
+        if (constraintSystem.hasContradiction()) return null
 
         // currently ConstraintSystem return successful status in case there are problems with nullability
         // that's why we have to check subtyping manually
-        val substitutor = constraintSystem.resultingSubstitutor
-        val substitutedType = substitutor.substitute(type, Variance.INVARIANT) ?: return null
+        val substitutor = NewTypeSubstitutorByConstructorMap(
+            (constraintSystem.system.buildCurrentSubstitutor() as NewTypeSubstitutorByConstructorMap).map.mapKeys { (typeVariable, _) ->
+                (typeVariable as TypeVariableTypeConstructor).originalTypeParameter!!.typeConstructor
+            }
+        )
+
+        val substitutedType = substitutor.substituteArgumentProjection(type.asTypeProjection())?.type ?: return null
         if (substitutedType.isError) return TypeSubstitutor.EMPTY
-        val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT) ?: return null
+        val otherSubstitutedType = substitutor.substituteArgumentProjection(otherType.type.asTypeProjection())?.type ?: return null
         if (otherSubstitutedType.isError) return TypeSubstitutor.EMPTY
         if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
 
-        val substitutorToKeepCapturedTypes = object : DelegatedTypeSubstitution(substitutor.substitution) {
+        val substitution = TypeConstructorSubstitution.createByConstructorsMap(substitutor.map.mapValues { it.value.asTypeProjection() })
+        val substitutorToKeepCapturedTypes = object : DelegatedTypeSubstitution(substitution) {
             override fun approximateCapturedTypes() = false
         }.buildSubstitutor()
 
-        val substitutionMap: Map<TypeConstructor, TypeProjection> = constraintSystem.typeVariables
-            .map { it.originalTypeParameter }
+        val substitutionMap: Map<TypeConstructor, TypeProjection> = constraintSystem.system.allTypeVariables.values
+            .map { (it as TypeVariableFromCallableDescriptor).originalTypeParameter }
             .associateBy(
                 keySelector = { it.typeConstructor },
                 valueTransform = {

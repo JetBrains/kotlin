@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
@@ -37,11 +38,17 @@ class SimpleConstraintSystemImpl(
     kotlinTypeRefiner: KotlinTypeRefiner,
     languageVersionSettings: LanguageVersionSettings
 ) : SimpleConstraintSystem {
-    val system = NewConstraintSystemImpl(
+    val system = ConstraintSystemImpl(
         constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner), languageVersionSettings
     )
     val csBuilder: ConstraintSystemBuilder =
         system.getBuilder()
+
+    private val resultTypeResolver = ResultTypeResolver(
+        constraintInjector.typeApproximator,
+        constraintInjector.constraintIncorporator.trivialConstraintTypeInferenceOracle,
+        languageVersionSettings
+    )
 
     override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutorMarker {
 
@@ -60,6 +67,20 @@ class SimpleConstraintSystemImpl(
             }
         }
         return substitutor
+    }
+
+    fun fixAllTypeVariables() {
+        fun pickNextVariable() = system.notFixedTypeVariables.values.first()
+        fun hasNotFixedVariable() = system.notFixedTypeVariables.isNotEmpty()
+
+        while (hasNotFixedVariable()) {
+            val variableWithConstraints = pickNextVariable()
+            val resultType = resultTypeResolver.findResultType(
+                system, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            )
+            val typeVariable = variableWithConstraints.typeVariable
+            system.fixVariable(typeVariable, resultType, FixVariableConstraintPositionImpl(typeVariable, null))
+        }
     }
 
     override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {

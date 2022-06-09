@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -48,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.psi.KtPsiUtil.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
+import static org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt.createTypeForFunctionPlaceholder;
 import static org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -100,7 +100,7 @@ public class ArgumentTypeResolver {
             @NotNull KotlinType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
-            KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
+            KotlinType functionType = createTypeForFunctionPlaceholder(actualType, expectedType);
             return kotlinTypeChecker.isSubtypeOf(functionType, expectedType);
         }
         return kotlinTypeChecker.isSubtypeOf(actualType, expectedType);

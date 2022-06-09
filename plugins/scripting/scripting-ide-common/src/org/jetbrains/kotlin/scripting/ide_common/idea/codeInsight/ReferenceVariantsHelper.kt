@@ -350,10 +350,15 @@ class ReferenceVariantsHelper(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
     ) {
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
         val memberFilter = kindFilter exclude DescriptorKindExclude.NonExtensions
         for (dispatchReceiverType in dispatchReceiverTypes) {
             for (member in dispatchReceiverType.memberScope.getDescriptorsFiltered(memberFilter, nameFilter)) {
-                addAll((member as CallableDescriptor).substituteExtensionIfCallable(extensionReceiverTypes, callType))
+                addAll(
+                    (member as CallableDescriptor).substituteExtensionIfCallable(
+                        extensionReceiverTypes, callType, languageVersionSettings
+                    )
+                )
             }
         }
     }
@@ -416,10 +421,12 @@ class ReferenceVariantsHelper(
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
         if (receiverTypes.isEmpty()) return
 
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+
         fun process(extensionOrSyntheticMember: CallableDescriptor) {
             if (kindFilter.accepts(extensionOrSyntheticMember) && nameFilter(extensionOrSyntheticMember.name)) {
                 if (extensionOrSyntheticMember.isExtension) {
-                    addAll(extensionOrSyntheticMember.substituteExtensionIfCallable(receiverTypes, callType))
+                    addAll(extensionOrSyntheticMember.substituteExtensionIfCallable(receiverTypes, callType, languageVersionSettings))
                 } else {
                     add(extensionOrSyntheticMember)
                 }

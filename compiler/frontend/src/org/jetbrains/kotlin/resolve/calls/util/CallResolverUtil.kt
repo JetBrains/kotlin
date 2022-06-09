@@ -312,3 +312,31 @@ fun checkForConstructorCallOnFunctionalType(
         context.trace.report(factory.on(context.call.getValueArgumentListOrElement()))
     }
 }
+
+internal fun createTypeForFunctionPlaceholder(
+    functionPlaceholder: KotlinType,
+    expectedType: KotlinType
+): KotlinType {
+    if (!functionPlaceholder.isFunctionPlaceholder) return functionPlaceholder
+
+    val functionPlaceholderTypeConstructor = functionPlaceholder.constructor as FunctionPlaceholderTypeConstructor
+
+    val isExtension = expectedType.isBuiltinExtensionFunctionalType
+    val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments) {
+        val typeParamSize = expectedType.constructor.parameters.size
+        // the first parameter is receiver (if present), the last one is return type,
+        // the remaining are function arguments
+        val functionArgumentsSize = if (isExtension) typeParamSize - 2 else typeParamSize - 1
+        val result = arrayListOf<KotlinType>()
+        repeat((1..functionArgumentsSize).count()) { result.add(DONT_CARE) }
+        result
+    } else {
+        functionPlaceholderTypeConstructor.argumentTypes
+    }
+    val receiverType = if (isExtension) DONT_CARE else null
+    val contextReceiverTypes = (0 until expectedType.contextFunctionTypeParamsCount()).map { DONT_CARE }
+    return createFunctionType(
+        functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, contextReceiverTypes, newArgumentTypes, null, DONT_CARE,
+        suspendFunction = expectedType.isSuspendFunctionType
+    )
+}
