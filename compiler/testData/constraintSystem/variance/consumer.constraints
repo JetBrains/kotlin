@@ -1,3 +1,0 @@
-VARIABLES T
-
-Consumer<A> <: Consumer<T>
