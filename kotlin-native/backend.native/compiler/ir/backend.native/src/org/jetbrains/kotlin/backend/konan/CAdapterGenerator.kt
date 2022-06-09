@@ -982,12 +982,15 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |};
         |
         |static void DisposeStablePointerImpl(${prefix}_KNativePtr ptr) {
+        |  Kotlin_initRuntimeIfNeeded();
+        |  ScopedRunnableState stateGuard;
         |  DisposeStablePointer(ptr);
         |}
         |static void DisposeStringImpl(const char* ptr) {
         |  DisposeCString((char*)ptr);
         |}
         |static ${prefix}_KBoolean IsInstanceImpl(${prefix}_KNativePtr ref, const ${prefix}_KType* type) {
+        |  Kotlin_initRuntimeIfNeeded();
         |  ScopedRunnableState stateGuard;
         |  KObjHolder holder;
         |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);

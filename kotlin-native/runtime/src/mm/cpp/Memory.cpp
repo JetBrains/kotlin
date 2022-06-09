@@ -263,19 +263,27 @@ extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** fram
 }
 
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    memory->GetThreadData()->tls().AddRecord(key, size);
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().AddRecord(key, size);
 }
 
 extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
-    memory->GetThreadData()->tls().Commit();
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().Commit();
 }
 
 extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
-    memory->GetThreadData()->tls().Clear();
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().Clear();
 }
 
 extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->tls().Lookup(key, index);
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->tls().Lookup(key, index);
 }
 
 extern "C" RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
@@ -295,6 +303,7 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
     threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
@@ -436,7 +445,9 @@ extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    memory->GetThreadData()->gc().ScheduleAndWaitFullGCWithFinalizers();
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
 extern "C" bool TryAddHeapRef(const ObjHeader* object) {
@@ -467,6 +478,7 @@ extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
         return nullptr;
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
     return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
 }
 
@@ -478,13 +490,18 @@ extern "C" RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState
     if (!pointer)
         return;
 
+    auto* threadData = memoryState->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(memoryState->GetThreadData(), node);
+    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);
+
+    AssertThreadState(ThreadState::kRunnable);
 
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
@@ -496,6 +513,7 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
         RETURN_OBJ(nullptr);
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
     // Make sure `object` stays in the rootset: put it on the stack before removing it from `StableRefRegistry`.
