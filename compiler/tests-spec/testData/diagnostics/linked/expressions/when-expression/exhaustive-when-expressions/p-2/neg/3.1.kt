@@ -48,6 +48,6 @@ fun case_5(value_1: Boolean): String {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
-    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
-    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false<!> -> ""
+    <!CONFUSING_BRANCH_CONDITION_ERROR!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
+    <!CONFUSING_BRANCH_CONDITION_ERROR!>true && false && ((true || false)) || true && !!!false<!> -> ""
 }

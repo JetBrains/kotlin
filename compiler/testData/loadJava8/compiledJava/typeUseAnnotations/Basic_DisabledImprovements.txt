@@ -21,7 +21,7 @@ public open class Basic_DisabledImprovements</*0*/ T : @org.jetbrains.annotation
         public abstract fun f1(/*0*/ p0: test.Basic_DisabledImprovements.G<@org.jetbrains.annotations.NotNull kotlin.String!>!): kotlin.Unit
         public abstract fun </*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any!, /*1*/ K : test.Basic_DisabledImprovements.G<kotlin.Array<(out) @org.jetbrains.annotations.NotNull kotlin.String!>!>!> f10(/*0*/ p0: T!): kotlin.Unit
         public abstract fun f2(): test.Basic_DisabledImprovements.G2<@org.jetbrains.annotations.Nullable kotlin.String!, @org.jetbrains.annotations.NotNull kotlin.Int!>!
-        public abstract fun </*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any!> f3(/*0*/ @org.jetbrains.annotations.NotNull p0: @org.jetbrains.annotations.NotNull T): kotlin.Unit
+        public abstract fun </*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any!> f3(/*0*/ @org.jetbrains.annotations.NotNull p0: @org.jetbrains.annotations.NotNull T & Any): kotlin.Unit
         public abstract fun f4(/*0*/ p0: test.Basic_DisabledImprovements.G<(@org.jetbrains.annotations.Nullable kotlin.Array<@org.jetbrains.annotations.NotNull kotlin.String!>..@org.jetbrains.annotations.Nullable kotlin.Array<out @org.jetbrains.annotations.NotNull kotlin.String!>?)>!): kotlin.Unit
         public abstract fun f5(/*0*/ p0: test.Basic_DisabledImprovements.G<*>!): kotlin.Unit
         public abstract fun f6(/*0*/ p0: test.Basic_DisabledImprovements.G<out @org.jetbrains.annotations.Nullable kotlin.Any!>!): kotlin.Unit

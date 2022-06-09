@@ -22,7 +22,7 @@ public open class SmartFMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : kotl
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public open fun plus(/*0*/ @org.jetbrains.annotations.NotNull key: K, /*1*/ value: V!): SmartFMap<K!, V!>!
+    public open fun plus(/*0*/ @org.jetbrains.annotations.NotNull key: K & Any, /*1*/ value: V!): SmartFMap<K!, V!>!
     public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K!, V!>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
