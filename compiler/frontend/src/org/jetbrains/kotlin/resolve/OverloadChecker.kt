@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
@@ -30,7 +35,12 @@ object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
         false
 }
 
-class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
+class OverloadChecker(
+    private val specificityComparator: TypeSpecificityComparator,
+    private val constraintInjector: ConstraintInjector,
+    private val kotlinTypeRefiner: KotlinTypeRefiner,
+    private val languageVersionSettings: LanguageVersionSettings
+) {
     /**
      * Does not check names.
      */
@@ -60,12 +70,24 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         val aSignature = FlatSignature.createFromCallableDescriptor(a)
         val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aIsNotLessSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
-        val bIsNotLessSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val builtIns = a.builtIns
+
+        val aIsNotLessSpecificThanB = isSignatureNotLessSpecific(aSignature, bSignature, builtIns)
+        val bIsNotLessSpecificThanA = isSignatureNotLessSpecific(bSignature, aSignature, builtIns)
 
         return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
+    }
+
+    fun isSignatureNotLessSpecific(
+        aSignature: FlatSignature<CallableDescriptor>,
+        bSignature: FlatSignature<CallableDescriptor>,
+        builtIns: KotlinBuiltIns
+    ): Boolean {
+        val constraintSystemToCheckSpecificity =
+            SimpleConstraintSystemImpl(constraintInjector, builtIns, kotlinTypeRefiner, languageVersionSettings)
+        return constraintSystemToCheckSpecificity.isSignatureNotLessSpecific(
+            aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator
+        )
     }
 
     private enum class DeclarationCategory {

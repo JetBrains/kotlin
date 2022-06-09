@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.types.model.requireOrDescribe
 import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
-open class OverloadingConflictResolver<C : Any>(
+open class OverloadingConflictResolver<C : ResolutionCandidate>(
     private val builtIns: KotlinBuiltIns,
     private val module: ModuleDescriptor,
     private val specificityComparator: TypeSpecificityComparator,

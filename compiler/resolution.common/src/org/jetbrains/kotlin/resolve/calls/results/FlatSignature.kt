@@ -51,9 +51,6 @@ interface SimpleConstraintSystem {
     fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker)
     fun hasContradiction(): Boolean
 
-    // todo hack for migration
-    val captureFromArgument get() = false
-
     val context: TypeSystemInferenceExtensionContext
 }
 
@@ -103,7 +100,7 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
              * so we capture types from receiver and value parameters.
              */
             val specificCapturedType = AbstractTypeChecker.prepareType(context, specificType)
-                .let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
+                .let { context.captureFromExpression(it) ?: it }
             addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
         }
     }

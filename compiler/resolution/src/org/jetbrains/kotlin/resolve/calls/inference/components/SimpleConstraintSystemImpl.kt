@@ -71,7 +71,6 @@ class SimpleConstraintSystemImpl(
     }
 
     override fun hasContradiction() = csBuilder.hasContradiction
-    override val captureFromArgument get() = true
 
     override val context: TypeSystemInferenceExtensionContext
         get() = system

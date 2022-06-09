@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverloadChecker;
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private ModuleDescriptor module;
     private FunctionDescriptorResolver functionDescriptorResolver;
-    private final OverloadChecker overloadChecker = new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE);
+    private OverloadChecker overloadChecker;
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -49,12 +48,14 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
         ComponentProvider container = JvmResolveUtil.createContainer(getEnvironment());
         module = DslKt.getService(container, ModuleDescriptor.class);
         functionDescriptorResolver = DslKt.getService(container, FunctionDescriptorResolver.class);
+        overloadChecker = DslKt.getService(container, OverloadChecker.class);
     }
 
     @Override
     protected void tearDown() throws Exception {
         module = null;
         functionDescriptorResolver = null;
+        overloadChecker = null;
         super.tearDown();
     }
 
