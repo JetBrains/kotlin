@@ -114,8 +114,6 @@ abstract class IncrementalCompilerRunner<
             )
         }
 
-        // If compilation has crashed or we failed to close caches we have to clear them
-        var cachesMayBeCorrupted = true
         return try {
             val changedFiles = when (providedChangedFiles) {
                 is ChangedFiles.Dependencies -> {
@@ -170,7 +168,6 @@ abstract class IncrementalCompilerRunner<
             if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
             // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
             // but now JsKlib compiler reports invalid exit code.
-            cachesMayBeCorrupted = false
 
             reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
                 reporter.addMetric(
@@ -185,10 +182,10 @@ abstract class IncrementalCompilerRunner<
             }
 
             exitCode
-        } finally {
-            if (cachesMayBeCorrupted) {
-                cleanOutputsAndLocalStateOnRebuild(args)
-            }
+        } catch (e: Throwable) {
+            // If compilation has crashed or we failed to close caches we have to clear them
+            cleanOutputsAndLocalStateOnRebuild(args)
+            throw e
         }
     }
 
