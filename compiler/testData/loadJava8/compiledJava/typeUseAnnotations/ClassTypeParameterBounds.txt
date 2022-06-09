@@ -22,15 +22,15 @@ public open class ClassTypeParameterBounds {
     public/*package*/ interface G3</*0*/ _A : kotlin.Any!, /*1*/ B : kotlin.Any!> where B : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I1 {
     }
 
-    public/*package*/ open inner class G4</*0*/ _A : @org.jetbrains.annotations.NotNull B, /*1*/ B : kotlin.Any!> {
-        public/*package*/ constructor G4</*0*/ _A : @org.jetbrains.annotations.NotNull B, /*1*/ B : kotlin.Any!>()
+    public/*package*/ open inner class G4</*0*/ _A : @org.jetbrains.annotations.NotNull B & Any, /*1*/ B : kotlin.Any!> {
+        public/*package*/ constructor G4</*0*/ _A : @org.jetbrains.annotations.NotNull B & Any, /*1*/ B : kotlin.Any!>()
     }
 
     public/*package*/ interface G5</*0*/ _A : kotlin.Any!, /*1*/ B : @org.jetbrains.annotations.Nullable _A?> {
     }
 
-    public/*package*/ open inner class G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
-        public/*package*/ constructor G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
+    public/*package*/ open inner class G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E & Any, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
+        public/*package*/ constructor G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E & Any, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
     }
 
     public/*package*/ interface G7</*0*/ _A : kotlin.Any!> where _A : test.ClassTypeParameterBounds.I2<@org.jetbrains.annotations.NotNull kotlin.Int>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<kotlin.String!> {

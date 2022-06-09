@@ -16,9 +16,3 @@ fun case_1(value_1: Boolean?): String = when (value_1) {
     null -> ""
 }
 
-// TESTCASE NUMBER: 2
-fun case_2(value_1: Boolean?): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
-    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false && !!!true<!> -> ""
-    <!CONFUSING_BRANCH_CONDITION_WARNING!>true && false && ((true || false)) || true && !!!false<!> -> ""
-    null -> ""
-}

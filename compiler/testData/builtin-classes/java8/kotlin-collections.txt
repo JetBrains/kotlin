@@ -224,14 +224,14 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.collections.Map<K, V> {
     public abstract fun clear(): kotlin.Unit
     public open fun compute(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V?, out V?>): V?
     public open fun computeIfAbsent(/*0*/ p0: K, /*1*/ p1: java.util.function.Function<in K, out V>): V
-    public open fun computeIfPresent(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V, out V?>): V?
+    public open fun computeIfPresent(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V & Any, out V?>): V?
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K): V?
     @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K, /*1*/ defaultValue: V): V
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public open fun merge(/*0*/ p0: K, /*1*/ p1: V, /*2*/ p2: java.util.function.BiFunction<in V, in V, out V?>): V?
+    public open fun merge(/*0*/ p0: K, /*1*/ p1: V & Any, /*2*/ p2: java.util.function.BiFunction<in V & Any, in V & Any, out V?>): V?
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
     public abstract fun putAll(/*0*/ from: kotlin.collections.Map<out K, V>): kotlin.Unit
     public open fun putIfAbsent(/*0*/ p0: K, /*1*/ p1: V): V?

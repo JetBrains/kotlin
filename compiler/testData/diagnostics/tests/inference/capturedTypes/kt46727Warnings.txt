@@ -55,7 +55,7 @@ public open class Foo2</*0*/ T : kotlin.Any!> {
 
 public open class Foo3</*0*/ T : kotlin.Any!> {
     public constructor Foo3</*0*/ T : kotlin.Any!>()
-    @org.jetbrains.annotations.NotNull public final var value: T
+    @org.jetbrains.annotations.NotNull public final var value: T & Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

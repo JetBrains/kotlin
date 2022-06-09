@@ -56,8 +56,8 @@ fun g6(): Unit = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }<!>
 fun foo1(x: String?) {
     "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
     w@while (true) {
-        x ?: <!INVALID_IF_AS_EXPRESSION_WARNING!>if<!> (true) break
-        x ?: <!NO_ELSE_IN_WHEN_WARNING!>when<!> { true -> break@w }
+        x ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) break
+        x ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> break@w }
     }
 }
 

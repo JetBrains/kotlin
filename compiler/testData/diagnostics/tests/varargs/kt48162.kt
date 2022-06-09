@@ -12,9 +12,9 @@ class Foo<T> {
 
 fun use(arg: Array<String>, s: Collection<String>, x: Foo<String>) {
     arr(<!NON_VARARG_SPREAD_ERROR!>*<!>arg)
-    arr(<!NON_VARARG_SPREAD_WARNING!>*<!>s.toArray())
+    arr(<!NON_VARARG_SPREAD_ERROR!>*<!>s.toArray())
     arr(<!NON_VARARG_SPREAD_ERROR!>*<!>s.toArray2())
-    arr(<!NON_VARARG_SPREAD_WARNING!>*<!>toArray3(s))
+    arr(<!NON_VARARG_SPREAD_ERROR!>*<!>toArray3(s))
     arr(<!NON_VARARG_SPREAD_ERROR!>*<!>x + x)
     arr(<!NON_VARARG_SPREAD_ERROR!>*<!>(x + x))
 }

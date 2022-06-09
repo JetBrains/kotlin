@@ -45,8 +45,8 @@ class MetricPolicyTest {
         assertEquals("1.2.3", COMPONENT_VERSION.anonymize("1.2.3-unknown suffix"))
 
         assertEquals("123.234.345-dev", COMPONENT_VERSION.anonymize("123.234.345-dev-12345"))
-        assertEquals("1.7.255-snapshot", COMPONENT_VERSION.anonymize("1.7.255-SNAPSHOT"))
+        assertEquals("1.8.255-snapshot", COMPONENT_VERSION.anonymize("1.8.255-SNAPSHOT"))
 
-        assertEquals("1.7.255-beta", COMPONENT_VERSION.anonymize("1.7.255-beta"))
+        assertEquals("1.8.255-beta", COMPONENT_VERSION.anonymize("1.8.255-beta"))
     }
 }

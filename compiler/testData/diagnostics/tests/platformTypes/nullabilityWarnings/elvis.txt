@@ -15,6 +15,6 @@ public open class J {
     @org.jetbrains.annotations.NotNull public final var staticNN: J
     public open fun </*0*/ T : kotlin.Any!> getAny(): T!
     @org.jetbrains.annotations.Nullable public open fun </*0*/ T : kotlin.Any!> getNAny(): T?
-    @org.jetbrains.annotations.NotNull public open fun </*0*/ T : kotlin.Any!> getNNAny(): T
+    @org.jetbrains.annotations.NotNull public open fun </*0*/ T : kotlin.Any!> getNNAny(): T & Any
 }
 

@@ -3,14 +3,14 @@ import java.util.*
 fun use(v: Optional<String>) {
     v.get()
         // SUCCESS
-        // ORIGINAL:    fun get(): T defined in java.util.Optional
+        // ORIGINAL:    fun get(): T & Any defined in java.util.Optional
         // SUBSTITUTED: fun get(): String defined in java.util.Optional
 }
 
 fun use2(v: Optional<String?>) {
     v.get()
         // SUCCESS
-        // ORIGINAL:    fun get(): T defined in java.util.Optional
+        // ORIGINAL:    fun get(): T & Any defined in java.util.Optional
         // SUBSTITUTED: fun get(): String defined in java.util.Optional
 }
 
