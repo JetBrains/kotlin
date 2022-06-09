@@ -227,9 +227,6 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
 
     override fun hasContradiction(): Boolean = system.hasContradiction
 
-    override val captureFromArgument: Boolean
-        get() = true
-
     override val context: TypeSystemInferenceExtensionContext
         get() = system
 

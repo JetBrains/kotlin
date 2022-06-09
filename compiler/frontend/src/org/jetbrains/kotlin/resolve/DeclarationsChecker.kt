@@ -56,13 +56,13 @@ internal class DeclarationsCheckerBuilder(
     private val annotationChecker: AnnotationChecker,
     private val identifierChecker: IdentifierChecker,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val typeSpecificityComparator: TypeSpecificityComparator,
     private val diagnosticSuppressor: PlatformDiagnosticSuppressor,
-    private val upperBoundChecker: UpperBoundChecker
+    private val upperBoundChecker: UpperBoundChecker,
+    private val overloadChecker: OverloadChecker
 ) {
     fun withTrace(trace: BindingTrace) = DeclarationsChecker(
-        descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace, languageVersionSettings,
-        typeSpecificityComparator, diagnosticSuppressor, upperBoundChecker
+        descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace,
+        languageVersionSettings, diagnosticSuppressor, upperBoundChecker, overloadChecker
     )
 }
 
@@ -73,16 +73,16 @@ class DeclarationsChecker(
     private val identifierChecker: IdentifierChecker,
     private val trace: BindingTrace,
     private val languageVersionSettings: LanguageVersionSettings,
-    typeSpecificityComparator: TypeSpecificityComparator,
     private val diagnosticSuppressor: PlatformDiagnosticSuppressor,
-    private val upperBoundChecker: UpperBoundChecker
+    private val upperBoundChecker: UpperBoundChecker,
+    overloadChecker: OverloadChecker
 ) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
     private val exposedChecker = ExposedVisibilityChecker(languageVersionSettings, trace)
 
-    private val shadowedExtensionChecker = ShadowedExtensionChecker(typeSpecificityComparator, trace)
+    private val shadowedExtensionChecker = ShadowedExtensionChecker(trace, overloadChecker)
 
     fun process(bodiesResolveContext: BodiesResolveContext) {
         for (file in bodiesResolveContext.files) {

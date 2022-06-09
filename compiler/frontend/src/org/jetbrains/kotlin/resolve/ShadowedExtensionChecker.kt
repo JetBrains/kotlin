@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityComparator, val trace: DiagnosticSink) {
+class ShadowedExtensionChecker(val trace: DiagnosticSink, val overloadChecker: OverloadChecker) {
     fun checkDeclaration(declaration: KtDeclaration, descriptor: DeclarationDescriptor) {
         if (declaration.name == null) return
         if (descriptor !is CallableMemberDescriptor) return
@@ -104,7 +104,7 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
 
         val extensionSignature = FlatSignature.createForPossiblyShadowedExtension(extension)
         val memberSignature = FlatSignature.createFromCallableDescriptor(member)
-        return isSignatureNotLessSpecific(extensionSignature, memberSignature)
+        return overloadChecker.isSignatureNotLessSpecific(extensionSignature, memberSignature, extension.builtIns)
     }
 
     private fun getInvokeOperatorShadowingExtensionFunction(
@@ -113,17 +113,6 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
     ): FunctionDescriptor? =
         member.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
             .firstOrNull { it.isPublic() && it.isOperator && isExtensionFunctionShadowedByMemberFunction(extension, it) }
-
-    private fun isSignatureNotLessSpecific(
-        extensionSignature: FlatSignature<FunctionDescriptor>,
-        memberSignature: FlatSignature<FunctionDescriptor>
-    ): Boolean =
-        ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(
-            extensionSignature,
-            memberSignature,
-            OverloadabilitySpecificityCallbacks,
-            typeSpecificityComparator
-        )
 
     private fun checkShadowedExtensionProperty(declaration: KtDeclaration, extensionProperty: PropertyDescriptor, trace: DiagnosticSink) {
         val memberScope = extensionProperty.extensionReceiverParameter?.type?.memberScope ?: return

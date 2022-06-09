@@ -6,9 +6,9 @@ interface Container<PARAM: Any>
 
 interface ContainerType<PARAM: Any, CONT: Container<PARAM>>
 
-fun <R: Any> doGet(ep: ContainerType<*, *>): String = TODO()
+<!CONFLICTING_OVERLOADS!>fun <R: Any> doGet(ep: ContainerType<*, *>): String<!> = TODO()
 
-@JvmName("name")
-fun <R: Any, PARAM: Any, CONT: Container<PARAM>> doGet(ep: ContainerType<PARAM, CONT>): String = TODO()
+<!CONFLICTING_OVERLOADS!>@JvmName("name")
+fun <R: Any, PARAM: Any, CONT: Container<PARAM>> doGet(ep: ContainerType<PARAM, CONT>): String<!> = TODO()
 
 fun main() {}

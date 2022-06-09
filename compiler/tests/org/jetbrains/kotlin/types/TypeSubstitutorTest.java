@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -36,6 +38,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.inference.components.ClassicConstraintSystemUtilContext;
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator;
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector;
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle;
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
@@ -45,12 +51,17 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
@@ -88,8 +99,22 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         ClassifierDescriptor contextClass =
                 ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
+
+        LanguageVersionSettings languageVersionSettings =
+                CommonConfigurationKeysKt.getLanguageVersionSettings(getEnvironment().getConfiguration());
+        TypeApproximator typeApproximator = new TypeApproximator(module.getBuiltIns(), languageVersionSettings);
+        KotlinTypeRefiner refiner = KotlinTypeRefiner.Default.INSTANCE;
+        ConstraintIncorporator constraintIncorporator = new ConstraintIncorporator(
+                typeApproximator,
+                TrivialConstraintTypeInferenceOracle.Companion.create(SimpleClassicTypeSystemContext.INSTANCE),
+                new ClassicConstraintSystemUtilContext(refiner, module.getBuiltIns())
+        );
+        ConstraintInjector injector = new ConstraintInjector(constraintIncorporator, typeApproximator, languageVersionSettings);
+
         LocalRedeclarationChecker redeclarationChecker =
-                new ThrowingLocalRedeclarationChecker(new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE));
+                new ThrowingLocalRedeclarationChecker(
+                        new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE, injector, refiner, languageVersionSettings)
+                );
         LexicalScope typeParameters = new LexicalScopeImpl(
                 topLevelScope, module, false, null, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
                 redeclarationChecker,
