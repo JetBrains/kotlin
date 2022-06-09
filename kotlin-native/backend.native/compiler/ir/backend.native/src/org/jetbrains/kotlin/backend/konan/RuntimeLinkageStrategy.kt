@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.LLVMModuleCreateWithNameInContext
 import llvm.LLVMModuleRef
 import llvm.LLVMStripModuleDebugInfo
-import org.jetbrains.kotlin.backend.konan.llvm.getName
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmContext
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
-import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 
 /**
  * To avoid combinatorial explosion, we split runtime into several LLVM modules.
@@ -83,6 +82,8 @@ internal sealed class RuntimeLinkageStrategy {
                     LLVMStripModuleDebugInfo(parsedModule)
                 }
                 parsedModule
+            }?.let {
+              it + context.generateRuntimeConstantsModule()
             }
             return when {
                 runtimeLlvmModules == null -> return None

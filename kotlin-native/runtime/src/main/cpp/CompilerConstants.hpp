@@ -27,7 +27,7 @@ using string_view = std::experimental::string_view;
 /**
  * There are two ways, how compiler can define variables for runtime usage. This one, and the other one with details in source file.
  *
- * This is one is variables defined by setRuntimeConstGlobals in IrToBitcode.kt. They are eligible for runtime optimizations,
+ * This is one is variables defined by generateRuntimeConstantsModule in IrToBitcode.kt. They are eligible for runtime optimizations,
  * and fixed at the point of compiling caches. So use this way for variables, which are heavily used on performance-critical passes or
  * will significantly increase code size, if not eliminated.
  *

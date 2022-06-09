@@ -439,7 +439,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             codegen.objCDataGenerator?.finishModule()
 
             context.coverage.writeRegionInfo()
-            setRuntimeConstGlobals()
             overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
@@ -2721,29 +2720,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
     }
 
-    // Globals set this way will be const, but can only be built into runtime-containing module. Which
-    // means they are set at stdlib-cache compilation time.
-    private fun setRuntimeConstGlobal(name: String, value: ConstValue) {
-        val global = context.llvm.staticData.placeGlobal(name, value)
-        global.setConstant(true)
-        global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
-    }
-
-    private fun setRuntimeConstGlobals() {
-        if (!context.producedLlvmModuleContainsStdlib)
-            return
-
-        setRuntimeConstGlobal("Kotlin_needDebugInfo", Int32(if (context.shouldContainDebugInfo()) 1 else 0))
-        setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", Int32(context.config.runtimeAssertsMode.value))
-        val runtimeLogs = context.config.runtimeLogs?.let {
-            context.llvm.staticData.cStringLiteral(it)
-        } ?: NullPointer(int8Type)
-        setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
-        setRuntimeConstGlobal("Kotlin_freezingEnabled", Int32(if (context.config.freezing.enableFreezeAtRuntime) 1 else 0))
-        setRuntimeConstGlobal("Kotlin_freezingChecksEnabled", Int32(if (context.config.freezing.enableFreezeChecks) 1 else 0))
-        setRuntimeConstGlobal("Kotlin_gcSchedulerType", Int32(context.config.gcSchedulerType.value))
-    }
-
     // Globals set this way cannot be const, but are overridable when producing final executable.
     private fun overrideRuntimeGlobal(name: String, value: ConstValue) {
         // TODO: A similar mechanism is used in `ObjCExportCodeGenerator`. Consider merging them.
@@ -2963,4 +2939,28 @@ internal class LocationInfo(val scope: DIScopeOpaqueRef,
     init {
         assert(line != 0)
     }
+}
+
+internal fun Context.generateRuntimeConstantsModule() : LLVMModuleRef {
+    val llvmModule = LLVMModuleCreateWithNameInContext("constants", llvmContext)!!
+    LLVMSetDataLayout(llvmModule, llvm.runtime.dataLayout)
+    val static = StaticData(llvmModule)
+
+    fun setRuntimeConstGlobal(name: String, value: ConstValue) {
+        val global = static.placeGlobal(name, value)
+        global.setConstant(true)
+        global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    }
+
+    setRuntimeConstGlobal("Kotlin_needDebugInfo", Int32(if (shouldContainDebugInfo()) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", Int32(config.runtimeAssertsMode.value))
+    val runtimeLogs = config.runtimeLogs?.let {
+        static.cStringLiteral(it)
+    } ?: NullPointer(int8Type)
+    setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
+    setRuntimeConstGlobal("Kotlin_freezingEnabled", Int32(if (config.freezing.enableFreezeAtRuntime) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_freezingChecksEnabled", Int32(if (config.freezing.enableFreezeChecks) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_gcSchedulerType", Int32(config.gcSchedulerType.value))
+
+    return llvmModule
 }
