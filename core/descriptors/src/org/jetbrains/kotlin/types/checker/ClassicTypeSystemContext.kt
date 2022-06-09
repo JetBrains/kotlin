@@ -392,12 +392,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return org.jetbrains.kotlin.types.checker.intersectTypes(types as List<UnwrappedType>)
+        return org.jetbrains.kotlin.types.intersectTypes(types as List<UnwrappedType>)
     }
 
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return org.jetbrains.kotlin.types.checker.intersectTypes(types as List<SimpleType>)
+        return org.jetbrains.kotlin.types.intersectTypes(types as List<SimpleType>)
     }
 
     override fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker? {

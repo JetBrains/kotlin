@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
-import org.jetbrains.kotlin.types.checker.IntersectionTypeKt;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
@@ -506,8 +505,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        KotlinType result = IntersectionTypeKt.intersectWrappedTypes(typesToIntersect);
-//        assertNotNull("Intersection is null for " + typesToIntersect, result);
+        KotlinType result = TypeIntersectorKt.intersectWrappedTypes(typesToIntersect);
         assertEquals(makeType(expected), result);
     }
 

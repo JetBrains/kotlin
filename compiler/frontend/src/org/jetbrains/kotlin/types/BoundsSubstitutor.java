@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.types.checker.IntersectionTypeKt;
 import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.Collections;
@@ -58,7 +57,7 @@ public class BoundsSubstitutor {
 
         // todo assert: no loops
         for (TypeParameterDescriptor descriptor : topologicallySortTypeParameters(typeParameters)) {
-            KotlinType upperBoundsAsType = IntersectionTypeKt.intersectWrappedTypes(descriptor.getUpperBounds());
+            KotlinType upperBoundsAsType = TypeIntersectorKt.intersectWrappedTypes(descriptor.getUpperBounds());
             KotlinType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substitutedUpperBoundsAsType));
         }

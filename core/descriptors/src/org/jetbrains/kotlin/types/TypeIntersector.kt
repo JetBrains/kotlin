@@ -1,30 +1,20 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.types.checker
+package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.NewCapturedType
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.NullabilityChecker
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import java.util.*
 import kotlin.collections.LinkedHashSet
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
-
 
 fun intersectTypes(types: List<SimpleType>) = intersectTypes(types as List<UnwrappedType>) as SimpleType
 
@@ -77,14 +67,15 @@ object TypeIntersector {
         val inputTypes = ArrayList<SimpleType>()
         for (type in types) {
             if (type.constructor is IntersectionTypeConstructor) {
-                inputTypes.addAll(type.constructor.supertypes.map {
-                    it.upperIfFlexible().let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
+                inputTypes.addAll(type.constructor.supertypes.map { supertype ->
+                    supertype.upperIfFlexible().let { if (type.isMarkedNullable) it.makeNullableAsSpecified(true) else it }
                 })
             } else {
                 inputTypes.add(type)
             }
         }
         val resultNullability = inputTypes.fold(ResultNullability.START, ResultNullability::combine)
+
         /**
          * resultNullability. Value description:
          * ACCEPT_NULL means that all types marked nullable
@@ -157,6 +148,7 @@ object TypeIntersector {
         ACCEPT_NULL {
             override fun combine(nextType: UnwrappedType) = nextType.resultNullability
         },
+
         // example: type parameter without not-null supertype
         UNKNOWN {
             override fun combine(nextType: UnwrappedType) =

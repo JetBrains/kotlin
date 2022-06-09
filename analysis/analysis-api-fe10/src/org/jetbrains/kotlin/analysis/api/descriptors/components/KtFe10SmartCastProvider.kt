@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
-import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.types.intersectWrappedTypes
 
 internal class KtFe10SmartCastProvider(
     override val analysisSession: KtFe10AnalysisSession
