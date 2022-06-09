@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.P
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 object ClassAnalyser {
 
@@ -48,12 +50,38 @@ object ClassAnalyser {
             }
         }
     }
-
 }
 
 object Analyser {
 
-    class ExpressionVisitor(private val stateOfClass: StateOfClass) : FirVisitor<EffectsAndPotentials, Nothing?>() {
+    object ReferenceVisitor : FirDefaultVisitor<EffectsAndPotentials, Pair<StateOfClass, Potentials>>() {
+        override fun visitElement(element: FirElement, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials = emptyEffsAndPots
+
+        override fun visitSuperReference(superReference: FirSuperReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials =
+            EffectsAndPotentials(Root.Super(superReference, data.first.firClass))
+
+        @OptIn(SymbolInternals::class)
+        override fun visitThisReference(thisReference: FirThisReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials =
+            (thisReference.boundSymbol as? FirClassSymbol<*>)?.let { EffectsAndPotentials(Root.This(thisReference, it.fir)) }
+                ?: emptyEffsAndPots
+
+        @OptIn(SymbolInternals::class)
+        override fun visitResolvedNamedReference(
+            resolvedNamedReference: FirResolvedNamedReference,
+            data: Pair<StateOfClass, Potentials>
+        ): EffectsAndPotentials {
+            val (stateOfClass, prefPots) = data
+            return when (val symbol = resolvedNamedReference.resolvedSymbol) {
+                is FirVariableSymbol<*> -> stateOfClass.select(prefPots, symbol.fir)
+                is FirConstructorSymbol -> symbol.getClassFromConstructor()?.let { init(prefPots, it) } ?: emptyEffsAndPots
+                is FirAnonymousFunctionSymbol -> TODO()
+                is FirFunctionSymbol<*> -> stateOfClass.call(prefPots, symbol.fir)
+                else -> emptyEffsAndPots
+            }
+        }
+    }
+
+    class ExpressionVisitor(private val stateOfClass: StateOfClass) : FirDefaultVisitor<EffectsAndPotentials, Nothing?>() {
         override fun visitElement(element: FirElement, data: Nothing?): EffectsAndPotentials = emptyEffsAndPots
 
         private fun FirElement.accept(): EffectsAndPotentials = accept(this@ExpressionVisitor, null)
@@ -80,69 +108,21 @@ object Analyser {
             TODO()
         }
 
-        override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): EffectsAndPotentials {
-            return emptyEffsAndPots
-        }
-
-        override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?): EffectsAndPotentials {
-            TODO()
-        }
-
-        override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): EffectsAndPotentials {
-            TODO()
-        }
-
         override fun visitQualifiedAccessExpression(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Nothing?
         ): EffectsAndPotentials {
-            TODO()
+            val (prefEffs, prefPots) = visitQualifiedAccess(qualifiedAccessExpression, null)                        // Φ, Π
+            val effsAndPots = qualifiedAccessExpression.calleeReference.accept(ReferenceVisitor, stateOfClass to prefPots)
+            return effsAndPots + prefEffs
         }
 
-        @OptIn(SymbolInternals::class)
-        override fun visitPropertyAccessExpression(
-            propertyAccessExpression: FirPropertyAccessExpression,
-            data: Nothing?
-        ): EffectsAndPotentials {
-            val (prefEffs, prefPots) = visitQualifiedAccess(propertyAccessExpression, null)                        // Φ, Π
-
-            val calleeReference = propertyAccessExpression.calleeReference
-            return if (calleeReference is FirSuperReference)
-                EffectsAndPotentials(prefEffs, listOf(Root.Super(calleeReference, stateOfClass.firClass)))
-            else {
-                val firProperty = calleeReference.toResolvedCallableSymbol()?.fir as FirVariable
-
-                val effsAndPots = stateOfClass.select(prefPots, firProperty)
-                prefEffs + effsAndPots                                                              // Φ ∪ Φ', Π'
-            }
-        }
-
-        @OptIn(SymbolInternals::class)
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): EffectsAndPotentials {
-            val (prefEffs, prefPots) = visitQualifiedAccess(functionCall, null)
-
-            val dec = functionCall.calleeReference.toResolvedCallableSymbol()?.fir
-
-            val effsAndPotsOfMethod =
-                when (dec) {
-                    is FirAnonymousFunction -> TODO()
-                    is FirConstructor ->
-                        dec.getClassFromConstructor()?.let { init(prefPots, it) } ?: TODO()
-                    is FirErrorFunction -> TODO()
-                    is FirPropertyAccessor -> stateOfClass.select(prefPots, dec.propertySymbol?.fir!!)
-                    is FirSimpleFunction -> stateOfClass.call(prefPots, dec)
-                    is FirBackingField -> TODO()
-                    is FirEnumEntry -> TODO()
-                    is FirErrorProperty -> TODO()
-                    is FirField -> TODO()
-                    is FirProperty -> TODO()
-                    is FirValueParameter -> TODO()
-                    null -> emptyEffsAndPots
-                }
+            val effsAndPotsOfMethod = visitQualifiedAccessExpression(functionCall, null)
 
             val (effsOfArgs, _) = functionCall.argumentList.accept()
             // TODO: explicit receiver promotion
-            return effsAndPotsOfMethod + effsOfArgs + prefEffs
+            return effsAndPotsOfMethod + effsOfArgs
         }
 
         override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: Nothing?): EffectsAndPotentials {
@@ -160,7 +140,7 @@ object Analyser {
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): EffectsAndPotentials {
             val firThisReference = thisReceiverExpression.calleeReference
             val firClass = firThisReference.boundSymbol?.fir as FirClass
-            val effectsAndPotentials = EffectsAndPotentials(Root.This(firThisReference, firClass))
+            val effectsAndPotentials = firThisReference.accept(ReferenceVisitor, stateOfClass to emptyList())
             return if (stateOfClass.superClasses.contains(firClass) || firClass === stateOfClass.firClass)
                 effectsAndPotentials else resolveThis(firClass, effectsAndPotentials, stateOfClass)
         }
@@ -202,13 +182,8 @@ object Analyser {
             }
         }
 
-        override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Nothing?): EffectsAndPotentials {
-            TODO()
-        }
-
-        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Nothing?): EffectsAndPotentials {
-            TODO()
-        }
+        override fun visitLoop(loop: FirLoop, data: Nothing?): EffectsAndPotentials =
+            loop.run { condition.accept() + block.accept() }
 
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): EffectsAndPotentials {
             TODO()
@@ -301,7 +276,7 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials {
 }
 
 @OptIn(LookupTagInternals::class)
-private fun FirConstructor.getClassFromConstructor() =
+private fun FirConstructorSymbol.getClassFromConstructor() =
     containingClass()?.toFirRegularClass(moduleData.session)
 
 fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
