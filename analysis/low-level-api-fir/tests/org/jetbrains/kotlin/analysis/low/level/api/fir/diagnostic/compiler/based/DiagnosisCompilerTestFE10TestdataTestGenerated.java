@@ -28559,6 +28559,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("implicitReceiverAcrossFunctions.kt")
+            public void testImplicitReceiverAcrossFunctions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/implicitReceiverAcrossFunctions.kt");
+            }
+
+            @Test
             @TestMetadata("implicitThisOnRefInLambdaInSmartcast.kt")
             public void testImplicitThisOnRefInLambdaInSmartcast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/implicitThisOnRefInLambdaInSmartcast.kt");

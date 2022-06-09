@@ -269,6 +269,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (graphBuilder.isTopLevel()) {
             context.reset()
         }
+        logicSystem.updateAllReceivers(graph.enterNode.computeIncomingFlow().first)
         return FirControlFlowGraphReferenceImpl(graph, DataFlowInfo(variableStorage, flowOnNodes))
     }
 
@@ -282,7 +283,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (postponedLambdaEnterNode, functionEnterNode) = graphBuilder.enterAnonymousFunction(anonymousFunction)
         // TODO: questionable
         postponedLambdaEnterNode?.mergeIncomingFlow()
-        functionEnterNode.mergeIncomingFlow()
+        functionEnterNode.mergeIncomingFlow(shouldForkFlow = true)
         logicSystem.updateAllReceivers(functionEnterNode.flow)
     }
 
@@ -294,6 +295,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: questionable
         postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()
+        logicSystem.updateAllReceivers(graph.enterNode.computeIncomingFlow().first)
         return FirControlFlowGraphReferenceImpl(graph)
     }
 
@@ -1512,16 +1514,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
 
-    private fun <T : CFGNode<*>> T.mergeIncomingFlow(
-        // This flag should be set true if we're changing flow branches from one to another (e.g. in when, try->catch)
-        updateReceivers: Boolean = false,
-        shouldForkFlow: Boolean = false
-    ): T = this.also { node ->
+    private fun <T : CFGNode<*>> T.computeIncomingFlow(): Pair<FLOW, Int> {
         val previousFlows = mutableListOf<FLOW>()
         var deadForwardCount = 0
         for (previousNode in previousNodes) {
-            val incomingEdgeKind = node.incomingEdges.getValue(previousNode).kind
-            if (node.isDead) {
+            val incomingEdgeKind = incomingEdges.getValue(previousNode).kind
+            if (isDead) {
                 if (!incomingEdgeKind.isBack) {
                     previousFlows += previousNode.flow
                 }
@@ -1532,9 +1530,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 deadForwardCount++
             }
         }
-        var flow = logicSystem.joinFlow(previousFlows)
-        // deadForwardCount should be added due to cases like merge after 'if (...) return else ...'
-        if (updateReceivers || previousFlows.size + deadForwardCount > 1) {
+        return logicSystem.joinFlow(previousFlows) to (previousFlows.size + deadForwardCount)
+    }
+
+    private fun <T : CFGNode<*>> T.mergeIncomingFlow(
+        // This flag should be set true if we're changing flow branches from one to another (e.g. in when, try->catch)
+        updateReceivers: Boolean = false,
+        shouldForkFlow: Boolean = false
+    ): T = this.also { node ->
+        var (flow, incomingEdges) = computeIncomingFlow()
+        if (updateReceivers || incomingEdges > 1) {
             logicSystem.updateAllReceivers(flow)
         }
         if (shouldForkFlow) {
