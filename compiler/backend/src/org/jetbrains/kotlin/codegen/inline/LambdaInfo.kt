@@ -140,12 +140,11 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
         val withFakeVariable =
             MethodNode(originNode.access, originNode.name, originNode.desc, originNode.signature, originNode.exceptions?.toTypedArray())
         val fakeVarIndex = originNode.maxLocals
+        withFakeVariable.instructions.add(LdcInsnNode(0))
+        withFakeVariable.instructions.add(VarInsnNode(Opcodes.ISTORE, fakeVarIndex))
+        val startLabel = LabelNode().also { withFakeVariable.instructions.add(it) }
         originNode.accept(withFakeVariable)
-        val startLabel =
-            withFakeVariable.instructions.first as? LabelNode ?: LabelNode().apply { withFakeVariable.instructions.insert(this) }
         val endLabel = withFakeVariable.instructions.last as? LabelNode ?: LabelNode().apply { withFakeVariable.instructions.add(this) }
-        withFakeVariable.instructions.insert(startLabel, VarInsnNode(Opcodes.ISTORE, fakeVarIndex))
-        withFakeVariable.instructions.insert(startLabel, LdcInsnNode(0))
 
         withFakeVariable.localVariables.add(
             LocalVariableNode(
