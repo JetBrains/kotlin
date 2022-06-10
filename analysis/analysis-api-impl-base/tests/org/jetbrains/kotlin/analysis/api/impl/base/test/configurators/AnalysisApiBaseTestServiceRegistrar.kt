@@ -40,7 +40,6 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
             registerService(KtDefaultLifetimeTokenProvider::class.java, KtReadActionConfinementDefaultLifetimeTokenProvider::class.java)
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
-            registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
             registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
