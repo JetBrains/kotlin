@@ -50,12 +50,15 @@ fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
     manifestProperties[KLIB_PROPERTY_UNIQUE_NAME] = manifest.uniqueName
 
     // note: versions can't be added here
+    // Make sure all the lists are sorted for reproducible output
 
-    addOptionalProperty(KLIB_PROPERTY_DEPENDS, manifest.dependencies.isNotEmpty()) { manifest.dependencies.joinToString(separator = " ") }
+    addOptionalProperty(KLIB_PROPERTY_DEPENDS, manifest.dependencies.isNotEmpty()) {
+        manifest.dependencies.sorted().joinToString(separator = " ")
+    }
     addOptionalProperty(KLIB_PROPERTY_INTEROP, manifest.isInterop) { "true" }
     addOptionalProperty(KLIB_PROPERTY_PACKAGE, manifest.packageFqName != null) { manifest.packageFqName!! }
     addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, manifest.exportForwardDeclarations.isNotEmpty() || manifest.isInterop) {
-        manifest.exportForwardDeclarations.joinToString(" ")
+        manifest.exportForwardDeclarations.sorted().joinToString(" ")
     }
 
     addOptionalProperty(KLIB_PROPERTY_NATIVE_TARGETS, manifest.nativeTargets.isNotEmpty()) {
