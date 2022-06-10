@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.AbstractSub
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -131,6 +132,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
         ) {
             model("annotationsOnFiles")
+        }
+    }
+
+    group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
+        test(AbstractAnalysisApiSubstitutorsTest::class) {
+            model("typeSubstitution")
         }
     }
 }
