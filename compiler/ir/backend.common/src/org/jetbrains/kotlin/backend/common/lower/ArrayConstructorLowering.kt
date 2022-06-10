@@ -86,9 +86,7 @@ private class ArrayConstructorTransformer(
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, irGet(tempIndex))
-                        val inlined = generator
-                            .inline(parent, listOf(tempIndex))
-                            .patchDeclarationParents(scope.getLocalDeclarationParent())
+                        val inlined = generator.inline(parent, listOf(tempIndex))
                         putValueArgument(1, inlined)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
