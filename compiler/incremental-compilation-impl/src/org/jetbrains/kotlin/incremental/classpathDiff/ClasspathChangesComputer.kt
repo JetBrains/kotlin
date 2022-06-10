@@ -281,7 +281,7 @@ object ClasspathChangesComputer {
         val unmatchedLookupSymbols = dirtyData.dirtyLookupSymbols.toMutableSet().also {
             it.removeAll(changes.lookupSymbols.toSet())
         }
-        val unmatchedFqNames = (dirtyData.dirtyClassesFqNames + dirtyData.dirtyClassesFqNamesForceRecompile).toMutableSet().also {
+        val unmatchedFqNames = (dirtyData.dirtyClassesFqNames).toMutableSet().also {
             it.removeAll(changes.fqNames.toSet())
         }
 
