@@ -153,7 +153,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
 
             moduleBindings[testModule] = result.bindingContext
-            checkAllResolvedCallsAreCompleted(ktFiles, result.bindingContext, languageVersionSettings)
+            checkAllResolvedCallsAreCompleted(ktFiles)
         }
 
         // We want to always create a test data file (txt) if it was missing,
@@ -237,7 +237,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             )
         }
 
-        checkDiagnostics(actualText.cleanupInferenceDiagnostics(), testDataFile)
+        checkDiagnostics(actualText.toString(), testDataFile)
 
         assertTrue("Diagnostics mismatch. See the output above", ok)
 
@@ -255,24 +255,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
     }
 
-    private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
-
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
         return testDataFile
     }
 
     protected open fun getExpectedDescriptorFile(testDataFile: File, files: List<TestFile>): File {
         val originalTestFileText = testDataFile.readText()
-
-        val postfix = when {
+        val postfix = if (
             InTextDirectivesUtils.isDirectiveDefined(originalTestFileText, "// JAVAC_EXPECTED_FILE") &&
-                    environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC) -> ".javac.txt"
-
-            InTextDirectivesUtils.isDirectiveDefined(originalTestFileText, "// NI_EXPECTED_FILE") &&
-                    files.any { it.newInferenceEnabled } && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI -> ".ni.txt"
-
-            else -> ".txt"
-        }
+            environment.configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)
+        ) ".javac.txt" else ".txt"
 
         return File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + postfix)
     }
@@ -645,11 +637,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             setDependencies(this, builtIns.builtInsModule)
         }
 
-    private fun checkAllResolvedCallsAreCompleted(
-        ktFiles: List<KtFile>,
-        bindingContext: BindingContext,
-        configuredLanguageVersionSettings: LanguageVersionSettings
-    ) {
+    private fun checkAllResolvedCallsAreCompleted(ktFiles: List<KtFile>) {
         if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
         val unresolvedCallsOnElements = ArrayList<PsiElement>()
@@ -663,8 +651,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                         }
             )
         }
-
-        checkResolvedCallsInDiagnostics(bindingContext, configuredLanguageVersionSettings)
     }
 
     companion object {

@@ -1,4 +1,3 @@
-// NI_EXPECTED_FILE
 
 class Outer {
     fun function() = 42

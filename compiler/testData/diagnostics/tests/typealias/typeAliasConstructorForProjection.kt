@@ -1,4 +1,3 @@
-// NI_EXPECTED_FILE
 
 class C<T>
 

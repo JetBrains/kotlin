@@ -1,7 +1,7 @@
 package
 
-public val r1: Ref<in kotlin.Int>
-public val r1a: Ref<in kotlin.Int>
+public val r1: LateInitNumRef<kotlin.Int>
+public val r1a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
 public val r2: LateInitNumRef<kotlin.Int>
 public val r2a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
 public val r3: LateInitNumRef<kotlin.Int>

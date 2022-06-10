@@ -17,7 +17,6 @@ class CheckerDebugInfoReporter(
     private val dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
     private val markDynamicCalls: Boolean,
     private val debugAnnotations: MutableList<ActualDiagnostic>,
-    private val withNewInference: Boolean,
     private val platform: String?
 ) : DebugInfoUtil.DebugInfoReporter() {
     override fun reportElementWithErrorType(expression: KtReferenceExpression) {
@@ -56,10 +55,6 @@ class CheckerDebugInfoReporter(
         element: KtElement,
         factory: DebugInfoDiagnosticFactory0
     ) {
-        debugAnnotations.add(
-            ActualDiagnostic(
-                DebugInfoDiagnostic(element, factory), platform, withNewInference
-            )
-        )
+        debugAnnotations.add(ActualDiagnostic(DebugInfoDiagnostic(element, factory), platform))
     }
 }

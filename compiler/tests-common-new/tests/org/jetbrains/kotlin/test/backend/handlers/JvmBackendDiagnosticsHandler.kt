@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.KtDefaultJvmErrorMessages
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
-import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
 import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -59,14 +58,12 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
         val testFileToKtFileMap = getKtFiles(module)
         val ktFileToTestFileMap = testFileToKtFileMap.entries.associate { it.value to it.key }
         val generationState = info.classFileFactory.generationState
-        val configuration = reporter.createConfiguration(module)
-        val withNewInferenceModeEnabled = testServices.withNewInferenceModeEnabled()
-
         val diagnostics = generationState.collectedExtraJvmDiagnostics.all()
+
         for (diagnostic in diagnostics) {
             val ktFile = diagnostic.psiFile as? KtFile ?: continue
             val testFile = ktFileToTestFileMap[ktFile] ?: continue
-            reporter.reportDiagnostic(diagnostic, module, testFile, configuration, withNewInferenceModeEnabled)
+            reporter.reportDiagnostic(diagnostic, module, testFile)
         }
     }
 

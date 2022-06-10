@@ -27,41 +27,18 @@ class ClassicDiagnosticReporter(private val testServices: TestServices) {
     fun createConfiguration(module: TestModule): DiagnosticsRenderingConfiguration {
         return DiagnosticsRenderingConfiguration(
             platform = null,
-            withNewInference = module.languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
             languageVersionSettings = module.languageVersionSettings,
             skipDebugInfoDiagnostics = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
                 .getBoolean(JVMConfigurationKeys.IR)
         )
     }
 
-    fun reportDiagnostic(
-        diagnostic: Diagnostic,
-        module: TestModule,
-        file: TestFile,
-        configuration: DiagnosticsRenderingConfiguration,
-        withNewInferenceModeEnabled: Boolean
-    ) {
-        globalMetadataInfoHandler.addMetadataInfosForFile(
-            file,
-            diagnostic.toMetaInfo(
-                module,
-                file,
-                configuration.withNewInference,
-                withNewInferenceModeEnabled
-            )
-        )
+    fun reportDiagnostic(diagnostic: Diagnostic, module: TestModule, file: TestFile) {
+        globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnostic.toMetaInfo(module, file))
     }
 
-    private fun Diagnostic.toMetaInfo(
-        module: TestModule,
-        file: TestFile,
-        newInferenceEnabled: Boolean,
-        withNewInferenceModeEnabled: Boolean
-    ): List<DiagnosticCodeMetaInfo> = textRanges.map { range ->
+    private fun Diagnostic.toMetaInfo(module: TestModule, file: TestFile): List<DiagnosticCodeMetaInfo> = textRanges.map { range ->
         val metaInfo = DiagnosticCodeMetaInfo(range, ClassicMetaInfoUtils.renderDiagnosticNoArgs, this)
-        if (withNewInferenceModeEnabled) {
-            metaInfo.attributes += if (newInferenceEnabled) OldNewInferenceMetaInfoProcessor.NI else OldNewInferenceMetaInfoProcessor.OI
-        }
         if (file !in module.files) {
             val targetPlatform = module.targetPlatform
             metaInfo.attributes += when {
@@ -80,25 +57,3 @@ class ClassicDiagnosticReporter(private val testServices: TestServices) {
     }
 }
 
-class OldNewInferenceMetaInfoProcessor(testServices: TestServices) : AbstractTwoAttributesMetaInfoProcessor(testServices) {
-    companion object {
-        const val OI = "OI"
-        const val NI = "NI"
-    }
-
-    override val firstAttribute: String get() = NI
-    override val secondAttribute: String get() = OI
-
-    override fun processorEnabled(module: TestModule): Boolean {
-        return DiagnosticsDirectives.WITH_NEW_INFERENCE in module.directives
-    }
-
-    override fun firstAttributeEnabled(module: TestModule): Boolean {
-        return module.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-    }
-}
-
-
-fun TestServices.withNewInferenceModeEnabled(): Boolean {
-    return DiagnosticsDirectives.WITH_NEW_INFERENCE in moduleStructure.allDirectives
-}

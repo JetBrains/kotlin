@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.ConstraintSystemForOverloadResolutionMode
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer

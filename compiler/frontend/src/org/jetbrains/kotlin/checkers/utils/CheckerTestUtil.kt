@@ -50,15 +50,11 @@ import java.util.regex.Pattern
 
 data class DiagnosticsRenderingConfiguration(
     val platform: String?,
-    val withNewInference: Boolean,
     val languageVersionSettings: LanguageVersionSettings?,
     val skipDebugInfoDiagnostics: Boolean = false,
 )
 
 object CheckerTestUtil {
-    const val NEW_INFERENCE_PREFIX = "NI"
-    const val OLD_INFERENCE_PREFIX = "OI"
-
     private const val IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE"
     private const val INDIVIDUAL_DIAGNOSTIC = """(\w+;)?(\w+:)?(\w+)(\{[\w;]+})?(?:\(((?:".*?")(?:,\s*".*?")*)\))?"""
 
@@ -123,12 +119,12 @@ object CheckerTestUtil {
 
         bindingContext.diagnostics.forEach { diagnostic ->
             if (PsiTreeUtil.isAncestor(root, diagnostic.psiElement, false)) {
-                diagnostics.add(ActualDiagnostic(diagnostic, configuration.platform, configuration.withNewInference))
+                diagnostics.add(ActualDiagnostic(diagnostic, configuration.platform))
             }
         }
 
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            diagnostics.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), configuration.platform, configuration.withNewInference))
+            diagnostics.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), configuration.platform))
         }
 
         if (!configuration.skipDebugInfoDiagnostics) {
@@ -168,7 +164,6 @@ object CheckerTestUtil {
                 dynamicCallDescriptors,
                 markDynamicCalls,
                 debugAnnotations,
-                configuration.withNewInference,
                 configuration.platform
             )
         )
@@ -247,7 +242,7 @@ object CheckerTestUtil {
                 configuration.languageVersionSettings,
                 moduleDescriptor
             )
-            debugAnnotations.add(ActualDiagnostic(diagnostic, configuration.platform, configuration.withNewInference))
+            debugAnnotations.add(ActualDiagnostic(diagnostic, configuration.platform))
         }
     }
 
@@ -336,7 +331,6 @@ object CheckerTestUtil {
             var actualDiagnosticEntry = actualDiagnostics.entries.firstOrNull { entry ->
                 val actualDiagnostic = entry.value
                 expectedDiagnostic.description == actualDiagnostic.description
-                        && expectedDiagnostic.inferenceCompatibility.isCompatible(actualDiagnostic.inferenceCompatibility)
                         && expectedDiagnostic.parameters == actualDiagnostic.parameters
             }
 
@@ -344,7 +338,6 @@ object CheckerTestUtil {
                 actualDiagnosticEntry = actualDiagnostics.entries.firstOrNull { entry ->
                     val actualDiagnostic = entry.value
                     expectedDiagnostic.description == actualDiagnostic.description
-                            && expectedDiagnostic.inferenceCompatibility.isCompatible(actualDiagnostic.inferenceCompatibility)
                 }
             }
 
@@ -361,7 +354,6 @@ object CheckerTestUtil {
 
             actualDiagnostics.remove(actualDiagnostic)
             diagnosticNames.add(actualDiagnostic.name)
-            actualDiagnostic.enhanceInferenceCompatibility(expectedDiagnostic.inferenceCompatibility)
 
             diagnosticToInput[actualDiagnostic] = expectedDiagnostic
         }
@@ -476,7 +468,6 @@ object CheckerTestUtil {
             emptyMap(),
             { it.text },
             emptyList(),
-            false,
             false
         )
 
@@ -486,7 +477,6 @@ object CheckerTestUtil {
         diagnosticToExpectedDiagnostic: Map<AbstractTestDiagnostic, TextDiagnostic>,
         getFileText: (PsiFile) -> String,
         uncheckedDiagnostics: Collection<PositionalTextDiagnostic>,
-        withNewInferenceDirective: Boolean,
         renderDiagnosticMessages: Boolean
     ): StringBuffer {
         val text = getFileText(psiFile)
@@ -503,7 +493,7 @@ object CheckerTestUtil {
         val iterator = diagnosticDescriptors.listIterator()
         var currentDescriptor: AbstractDiagnosticDescriptor? = iterator.next()
 
-        for (i in 0 until text.length) {
+        for (i in text.indices) {
             val c = text[i]
             while (!opened.isEmpty() && i == opened.peek().end) {
                 closeDiagnosticString(result)
@@ -514,7 +504,6 @@ object CheckerTestUtil {
                     result,
                     currentDescriptor,
                     diagnosticToExpectedDiagnostic,
-                    withNewInferenceDirective,
                     renderDiagnosticMessages
                 )
 
@@ -534,7 +523,6 @@ object CheckerTestUtil {
                 result,
                 currentDescriptor,
                 diagnosticToExpectedDiagnostic,
-                withNewInferenceDirective,
                 renderDiagnosticMessages
             )
 
@@ -556,7 +544,6 @@ object CheckerTestUtil {
         result: StringBuffer,
         currentDescriptor: AbstractDiagnosticDescriptor,
         diagnosticToExpectedDiagnostic: Map<AbstractTestDiagnostic, TextDiagnostic>,
-        withNewInferenceDirective: Boolean,
         renderDiagnosticMessages: Boolean
     ): Boolean {
         var isSkip = true
@@ -576,7 +563,7 @@ object CheckerTestUtil {
                             renderDiagnosticMessages || expectedDiagnostic?.parameters != null
 
                         diagnosticsAsText.add(
-                            actualTextDiagnostic.asString(withNewInferenceDirective, shouldRenderParameters)
+                            actualTextDiagnostic.asString(shouldRenderParameters)
                         )
                     }
                 }
@@ -630,14 +617,7 @@ object CheckerTestUtil {
 
         return diagnosticsGroupedByRanges.keySet().map { range ->
             val abstractDiagnostics = diagnosticsGroupedByRanges.get(range)
-            val needSortingByName =
-                abstractDiagnostics.any { diagnostic -> diagnostic.inferenceCompatibility != TextDiagnostic.InferenceCompatibility.ALL }
-
-            if (needSortingByName) {
-                abstractDiagnostics.sortBy { it.name }
-            } else {
-                abstractDiagnostics.sortBy { it }
-            }
+            abstractDiagnostics.sortBy { it.name }
 
             ActualDiagnosticDescriptor(range.startOffset, range.endOffset, abstractDiagnostics)
         }.toMutableList()
@@ -668,7 +648,7 @@ object CheckerTestUtil {
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, expressionType, bindingContext, moduleDescriptor)
         val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings!!)
 
-        if (!types.isNullOrEmpty())
+        if (types.isNotEmpty())
             return Pair(result, types)
 
         val smartCast = bindingContext[BindingContext.SMARTCAST, expression]

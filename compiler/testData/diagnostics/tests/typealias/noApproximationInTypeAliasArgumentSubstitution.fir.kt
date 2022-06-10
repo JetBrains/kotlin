@@ -1,4 +1,3 @@
-// NI_EXPECTED_FILE
 
 typealias Array2D<T> = Array<Array<T>>
 

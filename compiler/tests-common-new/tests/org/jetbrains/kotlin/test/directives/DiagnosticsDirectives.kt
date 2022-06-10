@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ConstantValuesHandler
 
 object DiagnosticsDirectives : SimpleDirectivesContainer() {
-    val WITH_NEW_INFERENCE by directive(
-        description = "Enables rendering different diagnostics for old and new inference"
-    )
-
     val DIAGNOSTICS by stringDirective(
         description = """
             Enables or disables rendering of specific diagnostics. 
@@ -34,10 +30,6 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val SKIP_TXT by directive(
         description = "Disables handler which dumps declarations to testName.txt"
-    )
-
-    val NI_EXPECTED_FILE by directive(
-        description = "Create separate .ni.txt file for declarations dump with new inference enabled"
     )
 
     val SKIP_JAVAC by directive(

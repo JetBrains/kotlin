@@ -40,7 +40,6 @@ class DynamicCallsDumpHandler(testServices: TestServices) : ClassicFrontendAnaly
                     dynamicCallDescriptors,
                     markDynamicCalls = true,
                     debugAnnotations = mutableListOf(),
-                    withNewInference = info.languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
                     platform = null
                 )
             )

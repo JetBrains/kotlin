@@ -44,7 +44,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
                 bindingContext, psiFile,
                 false,
                 mutableListOf(),
-                DiagnosticsRenderingConfiguration(null, false, languageVersionSettings),
+                DiagnosticsRenderingConfiguration(null, languageVersionSettings),
                 dataFlowValueFactory,
                 emptyModule
             )
@@ -58,7 +58,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
             psiFile,
             false,
             mutableListOf(),
-            DiagnosticsRenderingConfiguration(null, false, languageVersionSettings),
+            DiagnosticsRenderingConfiguration(null, languageVersionSettings),
             dataFlowValueFactory,
             emptyModule
         )

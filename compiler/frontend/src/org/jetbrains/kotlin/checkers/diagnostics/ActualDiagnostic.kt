@@ -9,13 +9,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 
-class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val platform: String?, withNewInference: Boolean) :
-    AbstractTestDiagnostic {
-    override var inferenceCompatibility = if (withNewInference)
-        TextDiagnostic.InferenceCompatibility.NEW
-    else
-        TextDiagnostic.InferenceCompatibility.OLD
-
+class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val platform: String?) : AbstractTestDiagnostic {
     override val name: String
         get() = diagnostic.factory.name
 
@@ -34,30 +28,20 @@ class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val plat
         }
     }
 
-    override fun enhanceInferenceCompatibility(inferenceCompatibility: TextDiagnostic.InferenceCompatibility) {
-        this.inferenceCompatibility = inferenceCompatibility
-    }
-
     override fun equals(other: Any?): Boolean {
         if (other !is ActualDiagnostic) return false
 
         // '==' on diagnostics is intentional here
-        return other.diagnostic === diagnostic &&
-                (if (other.platform == null) platform == null else other.platform == platform) &&
-                other.inferenceCompatibility == inferenceCompatibility
+        return other.diagnostic === diagnostic && (if (other.platform == null) platform == null else other.platform == platform)
     }
 
     override fun hashCode(): Int {
         var result = System.identityHashCode(diagnostic)
         result = 31 * result + (platform?.hashCode() ?: 0)
-        result = 31 * result + inferenceCompatibility.hashCode()
         return result
     }
 
     override fun toString(): String {
-        val inferenceAbbreviation = inferenceCompatibility.abbreviation
-        return (if (inferenceAbbreviation != null) inferenceAbbreviation + ";" else "") +
-                (if (platform != null) "$platform:" else "") +
-                diagnostic.toString()
+        return (if (platform != null) "$platform:" else "") + diagnostic.toString()
     }
 }

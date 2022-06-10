@@ -2,7 +2,7 @@ package
 
 public fun </*0*/ S : Base> intersect(/*0*/ vararg elements: S /*kotlin.Array<out S>*/): S
 public fun </*0*/ S> intersectNoBound(/*0*/ vararg elements: S /*kotlin.Array<out S>*/): S
-public fun some(/*0*/ a: One, /*1*/ b: Two, /*2*/ c: Three): Base
+public fun some(/*0*/ a: One, /*1*/ b: Two, /*2*/ c: Three): kotlin.Any
 public fun test(/*0*/ arg: Base, /*1*/ arg2: Base): kotlin.Unit
 
 public interface Base {

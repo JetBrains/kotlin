@@ -1,8 +1,8 @@
 package
 
 public val test1: Test<kotlin.Int, kotlin.String> /* = Hr<kotlin.Int, kotlin.String, Foo<kotlin.Int>, Bar<kotlin.String>> */
-public val test2: [ERROR : Type for Test(1, 2)]
-public val test3: [ERROR : Type for Bas(1, 1)]
+public val test2: Test<kotlin.Int, kotlin.Int> /* = Hr<kotlin.Int, kotlin.Int, Foo<kotlin.Int>, Bar<kotlin.Int>> */
+public val test3: Bas<kotlin.Int> /* = Hr<kotlin.Int, kotlin.Int, Foo<kotlin.Int>, Bar<kotlin.Int>> */
 
 public final class Bar</*0*/ B : kotlin.CharSequence> {
     public constructor Bar</*0*/ B : kotlin.CharSequence>()

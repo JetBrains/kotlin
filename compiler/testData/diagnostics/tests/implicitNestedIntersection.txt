@@ -1,7 +1,7 @@
 package
 
-public fun foo2(): In<{A & B}>
-public fun foo8(): In<{A & B & C & D & E & F & G & H}>
+public fun foo2(): In<kotlin.Nothing>
+public fun foo8(): In<kotlin.Nothing>
 public fun </*0*/ T> select(/*0*/ x: T, /*1*/ y: T): T
 public fun </*0*/ S> select8(/*0*/ a: S, /*1*/ b: S, /*2*/ c: S, /*3*/ d: S, /*4*/ e: S, /*5*/ f: S, /*6*/ g: S, /*7*/ h: S): S
 

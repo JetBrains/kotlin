@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// NI_EXPECTED_FILE
 
 val test1 = { when (true) { true -> 1; else -> "" } }
 

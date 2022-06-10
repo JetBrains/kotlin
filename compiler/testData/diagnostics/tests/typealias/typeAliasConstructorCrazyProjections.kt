@@ -1,4 +1,3 @@
-// NI_EXPECTED_FILE
 
 class Bound<X, Y : X>(val x: X, val y: Y)
 typealias B<X, Y> = Bound<X, Y>

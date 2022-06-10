@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -CONFLICTING_JVM_DECLARATIONS
-// NI_EXPECTED_FILE
 
 fun foo(i: Int) = "$i"
 fun foo(s: String) = s

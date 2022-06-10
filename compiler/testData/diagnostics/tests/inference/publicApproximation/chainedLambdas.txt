@@ -1,7 +1,7 @@
 package
 
-public fun chained1(/*0*/ arg: First): First
-public fun chained2(/*0*/ arg: First): First
+public fun chained1(/*0*/ arg: First): kotlin.Any
+public fun chained2(/*0*/ arg: First): kotlin.Any
 public fun test(/*0*/ arg: First): kotlin.Unit
 
 public interface First {

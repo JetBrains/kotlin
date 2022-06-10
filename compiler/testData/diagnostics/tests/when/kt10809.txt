@@ -1,9 +1,9 @@
 package
 
 public fun </*0*/ T> listOf(/*0*/ vararg items: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
-public fun test1(/*0*/ o: kotlin.Any): ???
+public fun test1(/*0*/ o: kotlin.Any): Data?
 public fun test1x(/*0*/ o: kotlin.Any): Data?
-public fun test2(): ???
+public fun test2(): Data
 public fun test2x(): Data
 public fun test2y(): kotlin.Any
 public fun test2z(): kotlin.Any

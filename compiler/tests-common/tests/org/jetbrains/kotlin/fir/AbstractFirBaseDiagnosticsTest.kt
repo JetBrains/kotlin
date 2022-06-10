@@ -338,7 +338,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 diagnosticToExpectedDiagnostic,
                 { file -> file.text },
                 uncheckedDiagnostics,
-                false,
                 false
             )
         )
@@ -351,10 +350,10 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     private fun Iterable<KtDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
         filterIsInstance<Diagnostic>().mapTo(result) {
-            ActualDiagnostic(it, null, true)
+            ActualDiagnostic(it, null)
         }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))
+            result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null))
         }
         return result
     }

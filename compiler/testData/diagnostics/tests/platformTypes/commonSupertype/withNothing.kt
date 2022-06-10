@@ -2,7 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 // SKIP_JAVAC
-// NI_EXPECTED_FILE
 // FILE: p/J.java
 
 package p;

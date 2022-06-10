@@ -1,4 +1,3 @@
-// NI_EXPECTED_FILE
 class Outer {
     class Nested<T>
 }

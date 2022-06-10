@@ -56,7 +56,6 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         }
 
         val diagnosticsPerFile = allDiagnostics.groupBy { it.psiFile }
-        val withNewInferenceModeEnabled = testServices.withNewInferenceModeEnabled()
         val configuration = reporter.createConfiguration(module)
 
         for ((file, ktFile) in info.ktFiles) {
@@ -64,12 +63,12 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             for (diagnostic in diagnostics) {
                 if (!diagnostic.isValid) continue
                 if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name, diagnostic.severity)) continue
-                reporter.reportDiagnostic(diagnostic, module, file, configuration, withNewInferenceModeEnabled)
+                reporter.reportDiagnostic(diagnostic, module, file)
             }
             for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(ktFile)) {
-                reporter.reportDiagnostic(SyntaxErrorDiagnostic(errorElement), module, file, configuration, withNewInferenceModeEnabled)
+                reporter.reportDiagnostic(SyntaxErrorDiagnostic(errorElement), module, file)
             }
-            processDebugInfoDiagnostics(configuration, module, file, ktFile, info, withNewInferenceModeEnabled)
+            processDebugInfoDiagnostics(configuration, module, file, ktFile, info)
         }
     }
 
@@ -99,8 +98,7 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         module: TestModule,
         file: TestFile,
         ktFile: KtFile,
-        info: ClassicFrontendOutputArtifact,
-        withNewInferenceModeEnabled: Boolean
+        info: ClassicFrontendOutputArtifact
     ) {
         val diagnosedRanges = globalMetadataInfoHandler.getExistingMetaInfosForFile(file)
             .groupBy(
@@ -125,7 +123,7 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
             if (onlyExplicitlyDefined && !debugAnnotation.diagnostic.textRanges.any { it.startOffset..it.endOffset in diagnosedRanges }) {
                 continue
             }
-            reporter.reportDiagnostic(debugAnnotation.diagnostic, module, file, configuration, withNewInferenceModeEnabled)
+            reporter.reportDiagnostic(debugAnnotation.diagnostic, module, file)
         }
     }
 
