@@ -256,7 +256,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("signatureSubstitution") {
-        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
             test(AbstractAnalysisApiSymbolAsSignatureTest::class) {
                 model("symbolAsSignature")
             }
@@ -276,7 +276,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("substitutorFactory") {
-        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
             test(AbstractSubstitutorBuilderTest::class) {
                 model("substitutorBuilder")
             }
