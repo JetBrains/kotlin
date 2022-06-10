@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 
@@ -41,7 +42,7 @@ open class TypeTranslatorImpl(
         }
 
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
-        CommonSupertypes.commonSupertype(types)
+        commonSuperType(types.toList())
 
     override fun isTypeAliasAccessibleHere(typeAliasDescriptor: TypeAliasDescriptor): Boolean {
         if (!DescriptorVisibilities.isPrivate(typeAliasDescriptor.visibility)) return true

@@ -210,7 +210,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
         val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
         val leftNNType = intersectTypes(listOf(leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any))
-        return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
+        return commonSuperType(listOf(rightType, leftNNType))
     }
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {

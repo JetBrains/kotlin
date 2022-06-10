@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolutionContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.resolve.calls.CommonSuperTypeUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 import org.jetbrains.kotlin.types.checker.IntersectionTypeKt;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
 import java.io.File;
@@ -514,11 +517,11 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private void assertCommonSupertype(String expected, String... types) {
-        Collection<KotlinType> subtypes = new ArrayList<>();
+        List<KotlinType> subtypes = new ArrayList<>();
         for (String type : types) {
             subtypes.add(makeType(type));
         }
-        KotlinType result = CommonSupertypes.commonSupertype(subtypes);
+        KotlinType result = CommonSuperTypeUtilsKt.commonSuperType(subtypes);
         assertEquals(result + " != " + expected, makeType(expected), result);
     }
 

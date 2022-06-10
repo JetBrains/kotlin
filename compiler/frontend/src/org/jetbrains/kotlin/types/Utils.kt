@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 /**
  * This is temporary hack for type intersector.
