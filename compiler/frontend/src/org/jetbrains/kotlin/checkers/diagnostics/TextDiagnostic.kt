@@ -20,28 +20,13 @@ import java.util.regex.Pattern
 class TextDiagnostic(
     override val name: String,
     override val platform: String?,
-    val parameters: List<String>?,
-    inference: InferenceCompatibility?
+    val parameters: List<String>?
 ) : AbstractTestDiagnostic {
-    override var inferenceCompatibility = inference ?: InferenceCompatibility.ALL
-
     val description: String
         get() = (if (platform != null) "$platform:" else "") + name
 
-    enum class InferenceCompatibility constructor(internal var abbreviation: String?) {
-        NEW(CheckerTestUtil.NEW_INFERENCE_PREFIX), OLD(CheckerTestUtil.OLD_INFERENCE_PREFIX), ALL(null);
-
-        fun isCompatible(other: InferenceCompatibility): Boolean {
-            return this == other || this == ALL || other == ALL
-        }
-    }
-
     override fun compareTo(other: AbstractTestDiagnostic): Int {
         return name.compareTo(other.name)
-    }
-
-    override fun enhanceInferenceCompatibility(inferenceCompatibility: InferenceCompatibility) {
-        this.inferenceCompatibility = inferenceCompatibility
     }
 
     override fun equals(other: Any?): Boolean {
@@ -53,24 +38,18 @@ class TextDiagnostic(
         if (name != that!!.name) return false
         if (if (platform != null) platform != that.platform else that.platform != null) return false
         if (if (parameters != null) parameters != that.parameters else that.parameters != null) return false
-        return inferenceCompatibility == that.inferenceCompatibility
-
+        return true
     }
 
     override fun hashCode(): Int {
         var result = name.hashCode()
         result = 31 * result + (platform?.hashCode() ?: 0)
         result = 31 * result + (parameters?.hashCode() ?: 0)
-        result = 31 * result + inferenceCompatibility.hashCode()
         return result
     }
 
-    fun asString(withNewInference: Boolean = true, renderParameters: Boolean = true): String {
+    fun asString(renderParameters: Boolean = true): String {
         val result = StringBuilder()
-        if (withNewInference && inferenceCompatibility.abbreviation != null) {
-            result.append(inferenceCompatibility.abbreviation)
-            result.append(";")
-        }
         if (platform != null) {
             result.append(platform)
             result.append(":")
@@ -97,33 +76,13 @@ class TextDiagnostic(
             if (!matcher.find())
                 throw IllegalArgumentException("Could not parse diagnostic: $text")
 
-            val inference = computeInferenceCompatibility(
-                extractDataBefore(
-                    matcher.group(1),
-                    ";"
-                )
-            )
             val platform =
                 extractDataBefore(matcher.group(2), ":")
 
             val name = matcher.group(3)
-            val parameters = matcher.group(5) ?: return TextDiagnostic(
-                name,
-                platform,
-                null,
-                inference
-            )
+            val parameters = matcher.group(5) ?: return TextDiagnostic(name, platform, null)
 
-            return TextDiagnostic(
-                name,
-                platform,
-                parameters.trim('"').split(Regex("""",\s*"""")),
-                inference
-            )
-        }
-
-        private fun computeInferenceCompatibility(abbreviation: String?): InferenceCompatibility {
-            return if (abbreviation == null) InferenceCompatibility.ALL else InferenceCompatibility.values().single { inference -> abbreviation == inference.abbreviation }
+            return TextDiagnostic(name, platform, parameters.trim('"').split(Regex("""",\s*"""")),)
         }
 
         private fun extractDataBefore(prefix: String?, anchor: String): String? {
@@ -152,19 +111,9 @@ class TextDiagnostic(
             if (renderer is AbstractDiagnosticWithParametersRenderer) {
                 val renderParameters = renderer.renderParameters(diagnostic)
                 val parameters = ContainerUtil.map(renderParameters, { it.toString() })
-                return TextDiagnostic(
-                    diagnosticName,
-                    actualDiagnostic.platform,
-                    parameters,
-                    actualDiagnostic.inferenceCompatibility
-                )
+                return TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters)
             }
-            return TextDiagnostic(
-                diagnosticName,
-                actualDiagnostic.platform,
-                null,
-                actualDiagnostic.inferenceCompatibility
-            )
+            return TextDiagnostic(diagnosticName, actualDiagnostic.platform, null)
         }
     }
 }

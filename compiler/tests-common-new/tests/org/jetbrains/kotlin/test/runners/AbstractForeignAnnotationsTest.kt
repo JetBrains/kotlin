@@ -119,7 +119,6 @@ abstract class AbstractOldFrontendForeignAnnotationsTestBase(kind: ForeignAnnota
             frontend = FrontendKinds.ClassicFrontend
         }
 
-        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         classicFrontendStep()
         classicFrontendHandlersStep {
             useHandlers(

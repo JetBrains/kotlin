@@ -10,9 +10,5 @@ interface AbstractTestDiagnostic : Comparable<AbstractTestDiagnostic> {
 
     val platform: String?
 
-    val inferenceCompatibility: TextDiagnostic.InferenceCompatibility
-
-    fun enhanceInferenceCompatibility(inferenceCompatibility: TextDiagnostic.InferenceCompatibility)
-
     override fun compareTo(other: AbstractTestDiagnostic): Int
 }

@@ -1,5 +1,3 @@
-// NI_EXPECTED_FILE
-
 // FILE: a.kt
 package a
     val foo = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>

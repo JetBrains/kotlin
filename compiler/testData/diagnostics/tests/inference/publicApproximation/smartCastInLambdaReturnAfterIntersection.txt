@@ -1,7 +1,7 @@
 package
 
 public fun </*0*/ S : Base> intersectNullable(/*0*/ vararg elements: S /*kotlin.Array<out S>*/): S?
-public fun smartCastAfterIntersection(/*0*/ a: One, /*1*/ b: Two): Base?
+public fun smartCastAfterIntersection(/*0*/ a: One, /*1*/ b: Two): kotlin.Any
 public fun test(/*0*/ one: One, /*1*/ two: Two): kotlin.Unit
 
 public interface Base {

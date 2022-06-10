@@ -157,8 +157,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
         val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = mutableListOf()
-        val withNewInferenceDirective: Boolean
-        val newInferenceEnabled: Boolean
         val renderDiagnosticMessages: Boolean
         val renderDiagnosticsFullText: Boolean
 
@@ -169,9 +167,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
-            this.withNewInferenceDirective = WITH_NEW_INFERENCE_DIRECTIVE in directives
-            this.newInferenceEnabled =
-                customLanguageVersionSettings?.supportsFeature(LanguageFeature.NewInference) ?: shouldUseNewInferenceForTests()
             if (fileName.endsWith(".java")) {
                 // TODO: check there are no syntax errors in .java sources
                 this.createKtFile = lazyOf(null)
@@ -225,11 +220,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return result
         }
 
-        private fun shouldUseNewInferenceForTests(): Boolean {
-            if (System.getProperty("kotlin.ni") == "true") return true
-            return LanguageVersionSettingsImpl.DEFAULT.supportsFeature(LanguageFeature.NewInference)
-        }
-
         fun getActualText(
             bindingContext: BindingContext,
             implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
@@ -254,7 +244,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 computeJvmSignatureDiagnostics(bindingContext)
 
             val ok = booleanArrayOf(true)
-            val withNewInference = newInferenceEnabled && withNewInferenceDirective && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI
             val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
                 bindingContext,
                 implementingModulesBindings,
@@ -263,7 +252,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 dynamicCallDescriptors,
                 DiagnosticsRenderingConfiguration(
                     platform = null,
-                    withNewInference,
                     languageVersionSettings,
                     // When using JVM IR, binding context is empty at the end of compilation, so debug info markers can't be computed.
                     environment.configuration.getBoolean(JVMConfigurationKeys.IR),
@@ -291,17 +279,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             actualDiagnostics.addAll(filteredDiagnostics)
 
             val uncheckedDiagnostics = mutableListOf<PositionalTextDiagnostic>()
-            val inferenceCompatibilityOfTest = asInferenceCompatibility(withNewInference)
-            val invertedInferenceCompatibilityOfTest = asInferenceCompatibility(!withNewInference)
 
             val diagnosticToExpectedDiagnostic =
                 CheckerTestUtil.diagnosticsDiff(diagnosedRanges, filteredDiagnostics, object : DiagnosticDiffCallbacks {
                     override fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
-                            updateUncheckedDiagnostics(diagnostic, expectedStart, expectedEnd)
-                            return
-                        }
-
                         val message = "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
                             ktFile,
                             TextRange(expectedStart, expectedEnd)
@@ -324,24 +305,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     }
 
                     override fun unexpectedDiagnostic(diagnostic: TextDiagnostic, actualStart: Int, actualEnd: Int) {
-                        if (withNewInferenceDirective && diagnostic.inferenceCompatibility != inferenceCompatibilityOfTest) {
-                            updateUncheckedDiagnostics(diagnostic, actualStart, actualEnd)
-                            return
-                        }
-
-                        val message = "Unexpected ${diagnostic.description}${
-                            PsiDiagnosticUtils.atLocation(
-                                ktFile,
-                                TextRange(actualStart, actualEnd)
-                            )
-                        }"
+                        val message = "Unexpected ${diagnostic.description}" +
+                                PsiDiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))
                         System.err.println(message)
                         ok[0] = false
-                    }
-
-                    fun updateUncheckedDiagnostics(diagnostic: TextDiagnostic, start: Int, end: Int) {
-                        diagnostic.enhanceInferenceCompatibility(invertedInferenceCompatibilityOfTest)
-                        uncheckedDiagnostics.add(PositionalTextDiagnostic(diagnostic, start, end))
                     }
                 })
 
@@ -352,7 +319,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     diagnosticToExpectedDiagnostic,
                     { file -> file.text },
                     uncheckedDiagnostics,
-                    withNewInferenceDirective,
                     renderDiagnosticMessages
                 )
             )
@@ -360,13 +326,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             stripExtras(actualText)
 
             return ok[0]
-        }
-
-        private fun asInferenceCompatibility(isNewInference: Boolean): TextDiagnostic.InferenceCompatibility {
-            return if (isNewInference)
-                TextDiagnostic.InferenceCompatibility.NEW
-            else
-                TextDiagnostic.InferenceCompatibility.OLD
         }
 
         private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {
@@ -378,7 +337,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     bindingContext.diagnostics,
                 ) ?: continue
 
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null) })
             }
             return jvmSignatureDiagnostics
         }
@@ -415,11 +374,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val CHECK_LAZY_LOG_DEFAULT = "true" == System.getProperty("check.lazy.logs", "false")
 
         val MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS"
-
-        val WITH_NEW_INFERENCE_DIRECTIVE = "WITH_NEW_INFERENCE"
-
-        // Change it to "true" to load diagnostics for old inference to test new inference (ignore diagnostics with <NI; prefix)
-        val USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI = false
 
         val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
 

@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// NI_EXPECTED_FILE
 
 interface Ref<T> {
     var x: T

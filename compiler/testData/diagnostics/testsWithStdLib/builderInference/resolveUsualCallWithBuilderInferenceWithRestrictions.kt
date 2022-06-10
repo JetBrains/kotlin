@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ALLOW_KOTLIN_PACKAGE
-// !WITH_NEW_INFERENCE
 // FILE: annotation.kt
 
 package kotlin
@@ -24,7 +24,7 @@ val member = build {
     add(42)
 }
 
-val memberWithoutAnn = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>wrongBuild<!> {
+val memberWithoutAnn = wrongBuild {
     add(42)
 }
 

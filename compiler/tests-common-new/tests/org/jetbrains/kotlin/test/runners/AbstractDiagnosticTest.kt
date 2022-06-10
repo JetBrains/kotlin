@@ -65,7 +65,6 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             ::ScriptingEnvironmentConfigurator
         )
 
-        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,

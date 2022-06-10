@@ -1,5 +1,3 @@
-// NI_EXPECTED_FILE
-
 // FILE: a.kt
 package a
     val foo = bar()

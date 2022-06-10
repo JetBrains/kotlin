@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -46,7 +45,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
 
         useConfigurators(::CommonEnvironmentConfigurator)
 
-        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,

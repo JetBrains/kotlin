@@ -1,6 +1,6 @@
 package
 
-public fun foobar(/*0*/ a: A, /*1*/ b: B): In<*>
+public fun foobar(/*0*/ a: A, /*1*/ b: B): In<kotlin.Nothing>
 public fun </*0*/ T> select(/*0*/ x: T, /*1*/ y: T): T
 
 public final class A : In<A> {

@@ -51,15 +51,10 @@ class DeclarationsDumpHandler(
         val resultDump = dumper.generateResultingDump()
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val allDirectives = testServices.moduleStructure.allDirectives
-        val prefix = when {
-            DiagnosticsDirectives.NI_EXPECTED_FILE in allDirectives &&
-                    testServices.moduleStructure.modules.any { it.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) } -> ".ni"
-
+        val prefix = if (
             JvmEnvironmentConfigurationDirectives.USE_JAVAC in allDirectives
-                    && DiagnosticsDirectives.JAVAC_EXPECTED_FILE in allDirectives -> ".javac"
-
-            else -> ""
-        }
+            && DiagnosticsDirectives.JAVAC_EXPECTED_FILE in allDirectives
+        ) ".javac" else ""
         val expectedFileName = "${testDataFile.nameWithoutExtension}$prefix.txt"
         val expectedFile = testDataFile.parentFile.resolve(expectedFileName)
         assertions.assertEqualsToFile(expectedFile, resultDump)

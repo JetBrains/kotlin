@@ -26,28 +26,21 @@ const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 const val ENABLE_JVM_PREVIEW = "ENABLE_JVM_PREVIEW"
 
 data class CompilerTestLanguageVersionSettings(
-        private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
-        override val apiVersion: ApiVersion,
-        override val languageVersion: LanguageVersion,
-        val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
+    private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
+    override val apiVersion: ApiVersion,
+    override val languageVersion: LanguageVersion,
+    val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
-    val extraLanguageFeatures = specificFeaturesForTests() + initialLanguageFeatures
-    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), extraLanguageFeatures)
+    private val extraLanguageFeatures = initialLanguageFeatures
+    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), initialLanguageFeatures)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
-            extraLanguageFeatures[feature] ?: delegate.getFeatureSupport(feature)
+        extraLanguageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
     override fun isPreRelease(): Boolean = false
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
-}
-
-private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
-    return if (System.getProperty("kotlin.ni") == "true")
-        mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
-    else
-        emptyMap()
 }
 
 fun parseLanguageVersionSettingsOrDefault(directiveMap: Directives): CompilerTestLanguageVersionSettings =
@@ -115,11 +108,11 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
     val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(
-                "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
-                "found: '$directives'\n" +
-                "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
-                "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
-                "and language feature names are names of enum entries in LanguageFeature enum class"
+            "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
+                    "found: '$directives'\n" +
+                    "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
+                    "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
+                    "and language feature names are names of enum entries in LanguageFeature enum class"
         )
     }
 
@@ -133,14 +126,13 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
         }
         val name = matcher.group(2)
         val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
-                "Language feature not found, please check spelling: $name\n" +
-                "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
+            "Language feature not found, please check spelling: $name\n" +
+                    "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
         )
         if (values.put(feature, mode) != null) {
             Assert.fail("Duplicate entry for the language feature: $name")
         }
-    }
-    while (matcher.find())
+    } while (matcher.find())
 
     return values
 }

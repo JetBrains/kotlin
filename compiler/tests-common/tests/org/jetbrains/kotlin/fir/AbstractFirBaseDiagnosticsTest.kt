@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -332,7 +331,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 diagnosticToExpectedDiagnostic,
                 { file -> file.text },
                 uncheckedDiagnostics,
-                false,
                 false
             )
         )
@@ -345,10 +343,10 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     private fun Iterable<KtDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
         filterIsInstance<Diagnostic>().mapTo(result) {
-            ActualDiagnostic(it, null, true)
+            ActualDiagnostic(it, null)
         }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))
+            result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null))
         }
         return result
     }

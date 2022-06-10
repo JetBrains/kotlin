@@ -1,5 +1,4 @@
 // See KT-8277
-// NI_EXPECTED_FILE
 
 val v = { true } <!USELESS_ELVIS!>?: ( { true } <!USELESS_ELVIS!>?:null!!<!> )<!>
 
