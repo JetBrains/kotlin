@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.BoundsSubstitutor;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
@@ -39,35 +40,30 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testSimpleSubstitution() throws Exception {
+    public void testSimpleSubstitution() {
         doTest("fun <T> f(l: List<T>): T",
                "fun <T> f(l: kotlin.collections.List<kotlin.Any?>): kotlin.Any?");
     }
 
-    public void testParameterInBound() throws Exception {
+    public void testParameterInBound() {
         doTest("fun <T, R : List<T>> f(l: List<R>): R",
                "fun <T, R : kotlin.collections.List<kotlin.Any?>> f(l: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>>): kotlin.collections.List<kotlin.Any?>");
     }
 
-    public void testWithWhere() throws Exception {
+    public void testWithWhere() {
         doTest("fun <T> f(l: List<T>): T where T : Any",
                "fun <T : kotlin.Any> f(l: kotlin.collections.List<kotlin.Any>): kotlin.Any");
     }
 
-    public void testWithWhereTwoBounds() throws Exception {
+    public void testWithWhereTwoBounds() {
         doTest("fun <T, R> f(l: List<R>): R where T : List<R>, R : Any",
                "fun <T : kotlin.collections.List<kotlin.Any>, R : kotlin.Any> f(l: kotlin.collections.List<kotlin.Any>): kotlin.Any");
     }
 
-    public void testWithWhereTwoBoundsReversed() throws Exception {
+    public void testWithWhereTwoBoundsReversed() {
         doTest("fun <T, R> f(l: List<R>): R where T : Any, R : List<T>",
                "fun <T : kotlin.Any, R : kotlin.collections.List<kotlin.Any>> f(l: kotlin.collections.List<kotlin.collections.List<kotlin.Any>>): kotlin.collections.List<kotlin.Any>");
     }
-
-    //public void testWithWhereTwoBoundsLoop() throws Exception {
-    //    doTest("fun <T, R> f(l: List<R>): R where T : R, R : T",
-    //           "");
-    //}
 
     private void doTest(String text, String expected) {
         KtFile ktFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("fun.kt", text);
