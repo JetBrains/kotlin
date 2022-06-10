@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.mapType
-import org.jetbrains.kotlin.types.CommonSupertypes
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
@@ -26,7 +26,7 @@ object StaticTypeMapperForOldBackend : KotlinTypeMapperBase() {
 
     private val staticTypeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
-            return CommonSupertypes.commonSupertype(types)
+            return commonSuperType(types.toList())
         }
 
         override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): Type? {

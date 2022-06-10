@@ -108,32 +108,7 @@ fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeCons
         it.constructor == typeConstructor
     }, { SupertypesPolicy.LowerIfFlexible })
 
-fun UnwrappedType.anySuperTypeConstructor(predicate: (TypeConstructor) -> Boolean) =
-    createClassicTypeCheckerState(isErrorTypeEqualsToAnything = false).anySupertype(lowerIfFlexible(), {
-        require(it is SimpleType)
-        predicate(it.constructor)
-    }, { SupertypesPolicy.LowerIfFlexible })
-
 /**
  * ClassType means that type constructor for this type is type for real class or interface
  */
 val SimpleType.isClassType: Boolean get() = constructor.declarationDescriptor is ClassDescriptor
-
-/**
- * SingleClassifierType is one of the following types:
- *  - classType
- *  - type for type parameter
- *  - captured type
- *
- * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
- */
-val SimpleType.isSingleClassifierType: Boolean
-    get() = !isError &&
-            constructor.declarationDescriptor !is TypeAliasDescriptor &&
-            (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType)
-
-val SimpleType.isIntersectionType: Boolean
-    get() = constructor is IntersectionTypeConstructor
-
-val SimpleType.isIntegerLiteralType: Boolean
-    get() = constructor is IntegerLiteralTypeConstructor

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.calls.CommonSuperTypeUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.SuspendFunctionTypeUtilKt;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
@@ -547,7 +550,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return result.clearType();
         }
         else {
-            return result.replaceType(CommonSupertypes.commonSupertype(types));
+            return result.replaceType(CommonSuperTypeUtilsKt.commonSuperType(types));
         }
     }
 

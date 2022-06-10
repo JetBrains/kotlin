@@ -379,6 +379,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return containsInternal(this, predicate)
     }
 
+    override fun KotlinTypeMarker.typeDepth(): Int = when (this) {
+        is SimpleTypeMarker -> typeDepth()
+        is FlexibleTypeMarker -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
+        else -> asSimpleType()?.typeDepth() ?: error("Type should be simple or flexible: $this")
+    }
+
     override fun SimpleTypeMarker.typeDepth(): Int {
         require(this is SimpleType, this::errorMessage)
         if (this is TypeUtils.SpecialType) return 0

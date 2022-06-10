@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils.isBoxedLocalCapturedInCl
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
@@ -104,7 +105,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
-            return CommonSupertypes.commonSupertype(types)
+            return commonSuperType(types.toList())
         }
 
         override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): Type? {

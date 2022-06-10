@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
+import org.jetbrains.kotlin.resolve.calls.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
@@ -481,11 +481,7 @@ class ClassTranslator private constructor(
         for (type in supertypes) {
             supertypeConstructors += type.constructor
         }
-        val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(
-            descriptor.defaultType,
-            mutableMapOf<TypeConstructor, Set<SimpleType>>(),
-            mutableSetOf<TypeConstructor>()
-        )
+        val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(descriptor.defaultType, mutableMapOf(), mutableSetOf())
         val supertypesRefs = mutableListOf<JsExpression>()
         for (typeConstructor in sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {

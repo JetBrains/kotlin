@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.mapType
-import org.jetbrains.kotlin.types.CommonSupertypes
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 internal object KaptTypeMapper {
     private val configuration = object : TypeMappingConfiguration<Type> {
-        override fun commonSupertype(types: Collection<KotlinType>): KotlinType =
-            CommonSupertypes.commonSupertype(types)
+        override fun commonSupertype(types: Collection<KotlinType>): KotlinType = commonSuperType(types.toList())
 
         override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): Type? = null
 
