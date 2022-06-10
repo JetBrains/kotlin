@@ -597,6 +597,11 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesAddImplements/");
         }
 
+        @TestMetadata("sealedClassesAddIndirectInheritor")
+        public void testSealedClassesAddIndirectInheritor() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesAddIndirectInheritor/");
+        }
+
         @TestMetadata("sealedClassesAddInheritor")
         public void testSealedClassesAddInheritor() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesAddInheritor/");
@@ -612,9 +617,14 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesRemoveInheritor/");
         }
 
-        @TestMetadata("sealedClassesUseSwitch")
-        public void testSealedClassesUseSwitch() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesUseSwitch/");
+        @TestMetadata("sealedClassesWhenExpression")
+        public void testSealedClassesWhenExpression() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesWhenExpression/");
+        }
+
+        @TestMetadata("sealedClassesWithExpectActual")
+        public void testSealedClassesWithExpectActual() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesWithExpectActual/");
         }
 
         @TestMetadata("secondaryConstructorInlined")
