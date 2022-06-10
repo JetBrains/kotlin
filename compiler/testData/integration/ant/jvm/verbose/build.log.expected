@@ -7,7 +7,6 @@ build:
   [kotlinc] logging: exception on loading scripting plugin: java.lang.ClassNotFoundException: org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
   [kotlinc] logging: using JVM IR backend
   [kotlinc] logging: configuring the compilation environment
-  [kotlinc] logging: configure scripting: Added template org.jetbrains.kotlin.mainKts.MainKtsScript from [[CompilerLib]/kotlin-main-kts.jar, [CompilerLib]/kotlin-reflect.jar, [CompilerLib]/kotlin-script-runtime.jar, [CompilerLib]/kotlin-stdlib.jar]
 
 BUILD SUCCESSFUL
 Total time: [time]

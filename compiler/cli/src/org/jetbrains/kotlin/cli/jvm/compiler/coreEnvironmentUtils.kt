@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -19,9 +21,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import java.io.File
@@ -43,6 +47,8 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
 
     val virtualFileCreator = PreprocessedFileCreator(project)
 
+    var pluginsConfigured = false
+
     for ((sourceRootPath, isCommon) in this) {
         val sourceRoot = File(sourceRootPath)
         val vFile = localFileSystem.findFileByPath(sourceRoot.normalize().path)
@@ -59,9 +65,15 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
             continue
         }
 
-        if (!vFile.isDirectory && vFile.extension != KotlinFileType.EXTENSION && vFile.fileType != KotlinFileType.INSTANCE) {
-            configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
-            continue
+        if (!vFile.isDirectory && vFile.extension != KotlinFileType.EXTENSION) {
+            if (!pluginsConfigured) {
+                vFile.registerPluginsSuppliedExtensionsIfNeeded(project)
+                pluginsConfigured = true
+            }
+            if (vFile.fileType != KotlinFileType.INSTANCE) {
+                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
+                continue
+            }
         }
 
         for (file in sourceRoot.walkTopDown()) {
@@ -69,9 +81,26 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
 
             val virtualFile = localFileSystem.findFileByPath(file.absoluteFile.normalize().path)?.let(virtualFileCreator::create)
             if (virtualFile != null && processedFiles.add(virtualFile)) {
+                if (!pluginsConfigured) {
+                    virtualFile.registerPluginsSuppliedExtensionsIfNeeded(project)
+                    pluginsConfigured = true
+                }
                 body(virtualFile, isCommon)
             }
         }
+    }
+}
+
+fun VirtualFile.registerPluginsSuppliedExtensionsIfNeeded(project: Project) {
+    if (
+        extension == null ||
+        extension == KotlinFileType.EXTENSION ||
+        extension == JavaFileType.INSTANCE.defaultExtension ||
+        extension == JavaClassFileType.INSTANCE.defaultExtension ||
+        fileType == KotlinFileType.INSTANCE
+    ) return
+    for (extension in CompilerConfigurationExtension.getInstances(project)) {
+        extension.updateFileRegistry()
     }
 }
 

@@ -39,6 +39,7 @@ class ScriptDefinitionsFromClasspathDiscoverySource(
 
 private const val MANIFEST_RESOURCE_NAME = "/META-INF/MANIFEST.MF"
 
+@Suppress("unused") // TODO: remove if really unused
 fun discoverScriptTemplatesInClassLoader(
     classLoader: ClassLoader,
     hostConfiguration: ScriptingHostConfiguration,
