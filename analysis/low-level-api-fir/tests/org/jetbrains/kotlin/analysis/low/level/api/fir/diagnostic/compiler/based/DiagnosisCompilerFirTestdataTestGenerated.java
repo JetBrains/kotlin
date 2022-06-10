@@ -6277,6 +6277,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 }
 
                 @Test
+                @TestMetadata("delegateAccessLazyInitialized.kt")
+                public void testDelegateAccessLazyInitialized() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessLazyInitialized.kt");
+                }
+
+                @Test
                 @TestMetadata("delegateAccessPlusAssign.kt")
                 public void testDelegateAccessPlusAssign() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessPlusAssign.kt");
@@ -6328,6 +6334,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 @TestMetadata("delegateAccessWithInvoke.kt")
                 public void testDelegateAccessWithInvoke() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithInvoke.kt");
+                }
+
+                @Test
+                @TestMetadata("delegateAccessWithLocals.kt")
+                public void testDelegateAccessWithLocals() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/delegateAccess/delegateAccessWithLocals.kt");
                 }
 
                 @Test
