@@ -19,7 +19,6 @@ interface DebugInfoDiagnosticFactory {
         expression: KtExpression,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
-        languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ): Diagnostic
 }

@@ -30,7 +30,6 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
         expression: KtExpression,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
-        languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ) = when (privateName) {
         EXPRESSION_TYPE.privateName -> {
@@ -38,7 +37,6 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
                 expression,
                 bindingContext,
                 dataFlowValueFactory,
-                languageVersionSettings,
                 moduleDescriptor
             )
 

@@ -402,18 +402,17 @@ public class DataFlowAnalyzer {
             @NotNull ResolutionContext c
     ) {
         DataFlowValue dataFlowValue = c.dataFlowValueFactory.createDataFlowValue(expression, type, c);
-        return getAllPossibleTypes(type, c, dataFlowValue, c.languageVersionSettings);
+        return getAllPossibleTypes(type, c, dataFlowValue);
     }
 
     @NotNull
     public static Collection<KotlinType> getAllPossibleTypes(
             @NotNull KotlinType type,
             @NotNull ResolutionContext c,
-            @NotNull DataFlowValue dataFlowValue,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull DataFlowValue dataFlowValue
     ) {
         Collection<KotlinType> possibleTypes = Sets.newHashSet(type);
-        possibleTypes.addAll(c.dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings));
+        possibleTypes.addAll(c.dataFlowInfo.getStableTypes(dataFlowValue));
         return possibleTypes;
     }
 

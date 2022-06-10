@@ -31,10 +31,7 @@ object DslScopeViolationCallChecker : CallChecker {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) return
         val callImplicitReceivers = resolvedCall.getImplicitReceivers()
 
-        val originalReceivers = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            callImplicitReceivers.map { it.original }
-        else
-            callImplicitReceivers
+        val originalReceivers = callImplicitReceivers.map { it.original }
 
         for (callImplicitReceiver in originalReceivers) {
             checkCallImplicitReceiver(callImplicitReceiver, resolvedCall, reportOn, context)
@@ -47,12 +44,11 @@ object DslScopeViolationCallChecker : CallChecker {
         reportOn: PsiElement,
         context: CallCheckerContext
     ) {
-        val isNewInferenceEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         val receiversUntilOneFromTheCall =
             context.scope.parentsWithSelf
                 .filterIsInstance<LexicalScope>()
                 .flatMap { listOfNotNull(it.implicitReceiver) + it.contextReceiversGroup }
-                .map { if (isNewInferenceEnabled) it.value.original else it.value }
+                .map { it.value.original }
                 .takeWhile { it != callImplicitReceiver }.toList()
 
         if (receiversUntilOneFromTheCall.isEmpty()) return

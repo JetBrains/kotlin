@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  */
 object NamedFunAsExpressionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
         for (argument in resolvedCall.valueArguments.values.filterIsInstance(ExpressionValueArgument::class.java)) {
             val expression = KtPsiUtil.deparenthesize(argument.valueArgument?.getArgumentExpression()) as? KtNamedFunction ?: continue
             if (!expression.isFunctionalExpression()) {

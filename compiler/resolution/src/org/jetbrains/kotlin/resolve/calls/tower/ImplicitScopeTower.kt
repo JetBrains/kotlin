@@ -51,8 +51,6 @@ interface ImplicitScopeTower {
 
     val isDebuggerContext: Boolean
 
-    val isNewInferenceEnabled: Boolean
-
     val areContextReceiversEnabled: Boolean
 
     val languageVersionSettings: LanguageVersionSettings

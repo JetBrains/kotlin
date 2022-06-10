@@ -21,7 +21,6 @@ fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
     bindingContext: BindingContext,
     containingDeclarationOrModule: DeclarationDescriptor,
     dataFlowInfo: DataFlowInfo,
-    languageVersionSettings: LanguageVersionSettings,
     dataFlowValueFactory: DataFlowValueFactory
 ): List<KotlinType> {
     val variants = getSmartCastVariants(
@@ -29,7 +28,6 @@ fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
         bindingContext,
         containingDeclarationOrModule,
         dataFlowInfo,
-        languageVersionSettings,
         dataFlowValueFactory
     )
     return variants.filter { type ->

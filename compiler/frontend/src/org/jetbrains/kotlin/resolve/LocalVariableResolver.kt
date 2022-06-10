@@ -128,10 +128,7 @@ class LocalVariableResolver(
                     // We cannot say here anything new about initializerDataFlowValue
                     // except it has the same value as variableDataFlowValue
                     typeInfo = typeInfo.replaceDataFlowInfo(
-                        dataFlowInfo.assign(
-                            variableDataFlowValue, initializerDataFlowValue,
-                            languageVersionSettings
-                        )
+                        dataFlowInfo.assign(variableDataFlowValue, initializerDataFlowValue)
                     )
                 }
             }

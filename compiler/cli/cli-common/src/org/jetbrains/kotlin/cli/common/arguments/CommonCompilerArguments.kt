@@ -124,9 +124,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var intellijPluginRoot: String? by NullableStringFreezableVar(null)
 
-    @Argument(
-        value = "-Xnew-inference",
-        description = "Enable new experimental generic type inference algorithm"
+    @IDEAPluginsCompatibilityAPI(
+        IDEAPlatforms._213,
+        IDEAPlatforms._221,
+        IDEAPlatforms._222,
+        message = "This flag is no more in use, new inference is now always ON"
     )
     var newInference: Boolean by FreezableVar(false)
 
@@ -467,12 +469,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
             }
 
-            if (newInference) {
-                put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
-            }
+            put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+            put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
 
             if (contextReceivers) {
                 put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
@@ -530,8 +529,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
 
-        var standaloneSamConversionFeaturePassedExplicitly = false
-        var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
@@ -541,26 +538,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (state == LanguageFeature.State.DISABLED && feature.sinceVersion?.isUnsupported == true) {
                 disabledFeaturesFromUnsupportedVersions += feature
             }
-
-            when (feature) {
-                LanguageFeature.SamConversionPerArgument ->
-                    standaloneSamConversionFeaturePassedExplicitly = true
-
-                LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType ->
-                    functionReferenceWithDefaultValueFeaturePassedExplicitly = true
-
-                else -> {}
-            }
-        }
-
-        if (this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
-            if (!standaloneSamConversionFeaturePassedExplicitly)
-                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-
-            if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
-                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-
-            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

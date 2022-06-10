@@ -139,10 +139,9 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         val ktSubject = whenExpression.subjectExpression ?: return null
 
         val dataFlow = dataFlowValueFactory.createDataFlowValue(
-                ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule)
-        val languageVersionSettings = context().config.configuration.languageVersionSettings
-        val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow, languageVersionSettings) +
-                            setOf(subjectType)
+            ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule
+        )
+        val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow) + setOf(subjectType)
         val subject = expressionToMatch ?: return null
         var subjectSupplier = { subject }
 

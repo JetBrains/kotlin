@@ -216,9 +216,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         subject.initDataFlowValue(contextAfterSubject, components.builtIns)
 
-        val possibleTypesForSubject =
-            subject.typeInfo?.dataFlowInfo?.getStableTypes(subject.dataFlowValue, components.languageVersionSettings)
-                ?: emptySet()
+        val possibleTypesForSubject = subject.typeInfo?.dataFlowInfo?.getStableTypes(subject.dataFlowValue) ?: emptySet()
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subject.type, possibleTypesForSubject)
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subject)
@@ -388,7 +386,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 if (whenResultValue != null && entryType != null) {
                     val entryValue =
                         facade.components.dataFlowValueFactory.createDataFlowValue(entryExpression, entryType, contextAfterSubject)
-                    entryTypeInfo.dataFlowInfo.assign(whenResultValue, entryValue, components.languageVersionSettings)
+                    entryTypeInfo.dataFlowInfo.assign(whenResultValue, entryValue)
                 } else {
                     entryTypeInfo.dataFlowInfo
                 }
@@ -587,10 +585,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         checkTypeCompatibility(newContext, type, subject.type, expression)
         val expressionDataFlowValue = facade.components.dataFlowValueFactory.createDataFlowValue(expression, type, newContext)
 
-        val subjectStableTypes =
-            listOf(subject.type) + context.dataFlowInfo.getStableTypes(subject.dataFlowValue, components.languageVersionSettings)
-        val expressionStableTypes =
-            listOf(type) + newContext.dataFlowInfo.getStableTypes(expressionDataFlowValue, components.languageVersionSettings)
+        val subjectStableTypes = listOf(subject.type) + context.dataFlowInfo.getStableTypes(subject.dataFlowValue)
+        val expressionStableTypes = listOf(type) + newContext.dataFlowInfo.getStableTypes(expressionDataFlowValue)
         PrimitiveNumericComparisonCallChecker.inferPrimitiveNumericComparisonType(
             context.trace,
             subjectStableTypes,
@@ -671,8 +667,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     ) {
         if (subjectType.containsError() || targetType.containsError()) return
 
-        val possibleTypes =
-            DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue, context.languageVersionSettings)
+        val possibleTypes = DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue)
 
         if (typesAreCompatible && !targetType.isError) {
             val nonTrivialTypes = possibleTypes.filterNot { it.isAnyOrNullableAny() }

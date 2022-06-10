@@ -129,7 +129,7 @@ open class JvmGeneratorExtensionsImpl(
         override fun stripEnhancedNullability(kotlinType: KotlinType): KotlinType =
             if (kotlinType.hasEnhancedNullability())
                 kotlinType.replaceAnnotations(
-                    FilteredAnnotations(kotlinType.annotations, true) {
+                    FilteredAnnotations(kotlinType.annotations) {
                         it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
                     }
                 )

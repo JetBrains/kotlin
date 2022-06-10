@@ -72,8 +72,7 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
         val receiverTypes = listOf(receiverValue.type) + context.dataFlowInfo.getStableTypes(
             context.dataFlowValueFactory.createDataFlowValue(
                 receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor
-            ),
-            context.languageVersionSettings
+            )
         )
 
         if (receiverTypes.none {

@@ -49,7 +49,7 @@ interface DataFlowInfo {
      * are NOT included. So it's quite possible to get an empty set here.
      * Also, type order in the result set MAKES SENSE so keep it stable and do not change without reason
      */
-    fun getCollectedTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings): Set<KotlinType>
+    fun getCollectedTypes(key: DataFlowValue): Set<KotlinType>
 
     /**
      * Returns possible types for the given value if it's stable.
@@ -59,7 +59,7 @@ interface DataFlowInfo {
      * are NOT included. So it's quite possible to get an empty set here.
      * Also, type order in the result set MAKES SENSE so keep it stable and do not change without reason
      */
-    fun getStableTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings): Set<KotlinType>
+    fun getStableTypes(key: DataFlowValue): Set<KotlinType>
 
     /**
      * Call this function to clear all data flow information about
@@ -70,7 +70,7 @@ interface DataFlowInfo {
     /**
      * Call this function when b is assigned to a
      */
-    fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
+    fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo
 
     /**
      * Call this function when it's known than a == b.

@@ -164,8 +164,8 @@ class KotlinResolutionCallbacksImpl(
             } else {
                 createSimplePSICallArgument(
                     trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                    CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
-                    dataFlowValueFactory, outerCallContext.call
+                    CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY,
+                    typeInfo, dataFlowValueFactory, outerCallContext.call
                 )
             }
         }

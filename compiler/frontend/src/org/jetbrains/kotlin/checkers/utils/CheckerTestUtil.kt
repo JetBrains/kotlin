@@ -239,7 +239,6 @@ object CheckerTestUtil {
                 expression,
                 bindingContext,
                 dataFlowValueFactory,
-                configuration.languageVersionSettings,
                 moduleDescriptor
             )
             debugAnnotations.add(ActualDiagnostic(diagnostic, configuration.platform))
@@ -627,7 +626,6 @@ object CheckerTestUtil {
         expression: PsiElement,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
-        languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ): Pair<KotlinType?, Set<KotlinType>?> {
         if (expression is KtCallableDeclaration) {
@@ -646,7 +644,7 @@ object CheckerTestUtil {
             return Pair(expressionType, null)
 
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, expressionType, bindingContext, moduleDescriptor)
-        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings!!)
+        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue)
 
         if (types.isNotEmpty())
             return Pair(result, types)

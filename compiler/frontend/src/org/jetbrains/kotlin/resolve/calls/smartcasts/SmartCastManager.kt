@@ -46,11 +46,10 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         bindingContext: BindingContext,
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
-        languageVersionSettings: LanguageVersionSettings,
         dataFlowValueFactory: DataFlowValueFactory
     ): List<KotlinType> {
         val variants = getSmartCastVariantsExcludingReceiver(
-            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, languageVersionSettings, dataFlowValueFactory
+            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, dataFlowValueFactory
         )
         val result = ArrayList<KotlinType>(variants.size + 1)
         result.add(receiverToCast.type)
@@ -70,7 +69,6 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
             context.scope.ownerDescriptor,
             context.dataFlowInfo,
             receiverToCast,
-            context.languageVersionSettings,
             context.dataFlowValueFactory
         )
     }
@@ -83,11 +81,10 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
         receiverToCast: ReceiverValue,
-        languageVersionSettings: LanguageVersionSettings,
         dataFlowValueFactory: DataFlowValueFactory
     ): Collection<KotlinType> {
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext, containingDeclarationOrModule)
-        return dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
+        return dataFlowInfo.getCollectedTypes(dataFlowValue)
     }
 
     fun getSmartCastReceiverResult(
@@ -131,17 +128,14 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         additionalPredicate: ((KotlinType) -> Boolean)? = null
     ): SmartCastResult? {
         val calleeExpression = call?.calleeExpression
-        val expectedTypes = if (c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            expectedType.expandIntersectionTypeIfNecessary()
-        else
-            listOf(expectedType)
+        val expectedTypes = expectedType.expandIntersectionTypeIfNecessary()
 
         val builderInferenceSubstitutor = (c.inferenceSession as? BuilderInferenceSession)?.getNotFixedToInferredTypesSubstitutor()
-        val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings).let { types ->
+        val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue).let { types ->
             if (builderInferenceSubstitutor != null) types.map { builderInferenceSubstitutor.safeSubstitute(it.unwrap()) } else types
         }.toMutableList()
 
-        if (collectedTypes.isNotEmpty() && c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+        if (collectedTypes.isNotEmpty()) {
             // Sometime expected type may be inferred to be an intersection of all of the smart-cast types
             val typeToIntersect = collectedTypes + dataFlowValue.type
             collectedTypes.addIfNotNull(intersectWrappedTypes(typeToIntersect))

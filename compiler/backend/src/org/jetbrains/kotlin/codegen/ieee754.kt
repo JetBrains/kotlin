@@ -42,7 +42,7 @@ fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
 ): TypeAndNullability? {
     val ktType = expression.getKotlinTypeWithPossibleSmartCastToFP(
         // NB. Using DataFlowValueFactoryImpl is a hack, but it is ok for 'legacy'
-        bindingContext, descriptor, languageVersionSettings, DataFlowValueFactoryImpl(languageVersionSettings)
+        bindingContext, descriptor, DataFlowValueFactoryImpl(languageVersionSettings)
     )
 
     if (ktType != null) {

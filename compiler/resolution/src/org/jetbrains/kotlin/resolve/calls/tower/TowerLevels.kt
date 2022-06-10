@@ -64,16 +64,6 @@ internal abstract class AbstractScopeTowerLevel(
                 diagnostics.add(LowPriorityDescriptorDiagnostic)
             }
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
-
-            val shouldSkipVisibilityCheck = scopeTower.isNewInferenceEnabled
-            if (!shouldSkipVisibilityCheck) {
-                DescriptorVisibilityUtils.findInvisibleMember(
-                    getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
-                    descriptor,
-                    scopeTower.lexicalScope.ownerDescriptor,
-                    scopeTower.languageVersionSettings
-                )?.let { diagnostics.add(VisibilityError(it)) }
-            }
         }
         return CandidateWithBoundDispatchReceiver(dispatchReceiver, descriptor, diagnostics)
     }
@@ -88,7 +78,6 @@ internal class MemberScopeTowerLevel(
 ) : AbstractScopeTowerLevel(scopeTower) {
 
     private val syntheticScopes = scopeTower.syntheticScopes
-    private val isNewInferenceEnabled = scopeTower.isNewInferenceEnabled
     private val typeApproximator = scopeTower.typeApproximator
 
     private fun collectMembers(
@@ -146,8 +135,6 @@ internal class MemberScopeTowerLevel(
      * And we should chose get(Int): String.
      */
     private fun CallableDescriptor.approximateCapturedTypes(approximator: TypeApproximator): CallableDescriptor {
-        if (!isNewInferenceEnabled) return this
-
         val wrappedSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType): TypeProjection? = null
             override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = when (position) {

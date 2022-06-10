@@ -198,19 +198,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val expressionType = context.bindingContext.getType(binaryExpression)!!
         if (binaryExpression !is KtBinaryExpression || binaryExpression.operationToken != KtTokens.ELVIS) return expressionType
 
-        val inferredType = getResolvedCall(binaryExpression)!!.resultingDescriptor.returnType!!
-
-        // OI has a rather complex bug with constraint system for special call for '?:' that breaks IR-based back-ends.
-        // In NI this bug is fixed.
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return inferredType
-
-        if (!inferredType.isError) return inferredType
-
-        // Infer type for elvis manually. Take into account possibly nested elvises.
-        val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
-        val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
-        val leftNNType = intersectTypes(listOf(leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any))
-        return commonSuperType(listOf(rightType, leftNNType))
+        return getResolvedCall(binaryExpression)!!.resultingDescriptor.returnType!!
     }
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {

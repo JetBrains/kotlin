@@ -193,8 +193,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (resultType != null) {
             DataFlowValue innerValue = components.dataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
             DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(expression, resultType, context);
-            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue,
-                                                                                components.languageVersionSettings));
+            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue));
         }
         return result;
     }
@@ -797,8 +796,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     result = receiverType;
                     // Also record data flow information for x++ value (= x)
                     DataFlowValue returnValue = components.dataFlowValueFactory.createDataFlowValue(expression, receiverType, contextWithExpectedType);
-                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue,
-                                                                                              components.languageVersionSettings));
+                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue));
                 }
             }
         }
@@ -856,9 +854,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
                                                                                    components.languageVersionSettings));
         }
-        KotlinType resultingType = components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-                                   ? resolvedCall.getResultingDescriptor().getReturnType()
-                                   : TypeUtils.makeNotNullable(baseType);
+        KotlinType resultingType = resolvedCall.getResultingDescriptor().getReturnType();
         if (context.contextDependency == DEPENDENT) {
             return baseTypeInfo.replaceType(resultingType);
         }
@@ -1293,11 +1289,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(expression, type, context);
             dataFlowInfo =
-                    dataFlowInfo.assign(resultValue, leftValue, components.languageVersionSettings)
+                    dataFlowInfo.assign(resultValue, leftValue)
                     .disequate(resultValue, nullValue, components.languageVersionSettings);
             if (!jumpInRight) {
                 DataFlowValue rightValue = components.dataFlowValueFactory.createDataFlowValue(right, rightType, context);
-                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue, components.languageVersionSettings);
+                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue);
                 dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
         }
@@ -1728,15 +1724,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingInternals facade
     ) {
         KotlinTypeInfo accumulatedTypeInfo = null;
-        boolean forceResolve = !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
 
         // The accumulated data flow info of all index expressions is saved on the last index
         if (!indices.isEmpty()) {
-            accumulatedTypeInfo = getTypeInfo(indices.get(indices.size() - 1), facade, context, forceResolve);
+            accumulatedTypeInfo = getTypeInfo(indices.get(indices.size() - 1), facade, context, false);
         }
 
         if (!isGet && rightHandSide != null) {
-            accumulatedTypeInfo = getTypeInfo(rightHandSide, facade, context, forceResolve);
+            accumulatedTypeInfo = getTypeInfo(rightHandSide, facade, context, false);
         }
 
         return accumulatedTypeInfo != null ? accumulatedTypeInfo : arrayTypeInfo;

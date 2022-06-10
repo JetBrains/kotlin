@@ -50,14 +50,7 @@ interface Annotations : Iterable<AnnotationDescriptor> {
     }
 }
 
-class FilteredAnnotations(
-    private val delegate: Annotations,
-    private val isDefinitelyNewInference: Boolean,
-    private val fqNameFilter: (FqName) -> Boolean
-) : Annotations {
-
-    constructor(delegate: Annotations, fqNameFilter: (FqName) -> Boolean) : this(delegate, false, fqNameFilter)
-
+class FilteredAnnotations(private val delegate: Annotations, private val fqNameFilter: (FqName) -> Boolean) : Annotations {
     override fun hasAnnotation(fqName: FqName) =
         if (fqNameFilter(fqName)) delegate.hasAnnotation(fqName)
         else false
@@ -68,11 +61,7 @@ class FilteredAnnotations(
 
     override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
-    override fun isEmpty(): Boolean {
-        val condition = delegate.any(this::shouldBeReturned)
-        // fixing KT-32189 && KT-32138 for the new inference only
-        return if (isDefinitelyNewInference) !condition else condition
-    }
+    override fun isEmpty(): Boolean = !delegate.any(this::shouldBeReturned)
 
     private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean =
         annotation.fqName.let { fqName ->

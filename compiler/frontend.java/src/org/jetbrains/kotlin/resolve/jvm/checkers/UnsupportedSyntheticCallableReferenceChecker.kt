@@ -37,10 +37,7 @@ class UnsupportedSyntheticCallableReferenceChecker : CallChecker {
         if (callableReferenceExpression.unwrapParenthesesLabelsAndAnnotationsDeeply() is KtPropertyDelegate) return
 
         if (resolvedCall.resultingDescriptor is SyntheticJavaPropertyDescriptor) {
-            val diagnostic = if (
-                context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
-                context.languageVersionSettings.supportsFeature(LanguageFeature.ReferencesToSyntheticJavaProperties)
-            ) {
+            val diagnostic = if (context.languageVersionSettings.supportsFeature(LanguageFeature.ReferencesToSyntheticJavaProperties)) {
                 CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY.on(reportOn)
             } else {
                 UNSUPPORTED.on(reportOn, "reference to the synthetic extension property for a Java get/set method")
