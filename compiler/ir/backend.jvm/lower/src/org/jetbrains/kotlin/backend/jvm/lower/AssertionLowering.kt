@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal val assertionPhase = makeIrFilePhase(
@@ -105,9 +104,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
             val generator = lambdaArgument?.asInlinable(this)
             val constructor = this@AssertionLowering.context.ir.symbols.assertionErrorConstructor
             val throwError = irThrow(irCall(constructor).apply {
-                val message = generator?.inline(parent)?.patchDeclarationParents(scope.getLocalDeclarationParent())
-                    ?: irString("Assertion failed")
-                putValueArgument(0, message)
+                putValueArgument(0, generator?.inline(parent) ?: irString("Assertion failed"))
             })
             +irIfThen(irNot(assertCondition), throwError)
         }
