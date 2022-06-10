@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDelegateField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 
 object FirDelegateFieldVisibilityConsistencyChecker : FirDelegateFieldChecker() {
+    @OptIn(SymbolInternals::class)
     override fun check(declaration: FirDelegateField, context: CheckerContext, reporter: DiagnosticReporter) {
         // Handled by the `WRONG_MODIFIER_CONTAINING_DECLARATION` diagnostic
-        if (declaration.propertySymbol.visibility == Visibilities.Local) {
+        if (declaration.propertySymbol.fir.visibility == Visibilities.Local) {
             return
         }
 
