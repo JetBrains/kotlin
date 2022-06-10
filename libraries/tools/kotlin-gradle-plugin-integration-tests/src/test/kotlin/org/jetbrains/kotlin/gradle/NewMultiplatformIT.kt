@@ -1956,16 +1956,24 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
-    private fun testWasmTest(engine: String, name: String) = with(
+    private fun testWasmTest(engine: String, name: String, useBinaryen: Boolean) = with(
         Project("new-mpp-wasm-test", gradleVersionRequirement = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0))
     ) {
         setupWorkingDir()
         gradleBuildScript().modify {
             transformBuildScriptWithPluginsDsl(it)
                 .replace("<JsEngine>", engine)
+                .replace("<ApplyBinaryen>", if (useBinaryen) "applyBinaryen()" else "")
         }
         build(":wasm${name}Test") {
             assertTasksExecuted(":compileKotlinWasm")
+            if (useBinaryen) {
+                assertTasksExecuted(":compileTestProductionExecutableKotlinWasmOptimize")
+                assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
+            } else {
+                assertTasksNotExecuted(":compileTestProductionExecutableKotlinWasmOptimize")
+                assertTasksNotExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
+            }
             assertTasksFailed(":wasm${name}Test")
             assertTestResults(
                 "testProject/new-mpp-wasm-test/TEST-${engine}.xml",
@@ -1975,10 +1983,16 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWasmNodeTest() = testWasmTest("nodejs", "Node")
+    fun testWasmNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = false)
 
     @Test
-    fun testWasmD8Test() = testWasmTest("d8", "D8")
+    fun testWasmWithBinaryenNodeTest() = testWasmTest("nodejs", "Node", useBinaryen = true)
+
+    @Test
+    fun testWasmD8Test() = testWasmTest("d8", "D8", useBinaryen = false)
+
+    @Test
+    fun testWasmWithBinaryenD8Test() = testWasmTest("d8", "D8", useBinaryen = true)
 
     @Test
     fun testResolveMetadataCompileClasspathKt50925() {

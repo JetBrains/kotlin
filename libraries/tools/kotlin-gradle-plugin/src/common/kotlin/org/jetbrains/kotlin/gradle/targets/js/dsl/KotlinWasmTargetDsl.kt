@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import groovy.lang.Closure
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 
 interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
@@ -16,6 +17,8 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
     val isD8Configured: Boolean
 
     fun whenD8Configured(body: KotlinWasmD8Dsl.() -> Unit)
+
+    fun whenBinaryenApplied(body: () -> Unit)
 }
 
 interface KotlinWasmTargetDsl : KotlinJsTargetDsl {
@@ -26,6 +29,8 @@ interface KotlinWasmTargetDsl : KotlinJsTargetDsl {
             ConfigureUtil.configure(fn, this)
         }
     }
+
+    fun applyBinaryen()
 }
 
 interface KotlinWasmD8Dsl : KotlinJsSubTargetDsl {

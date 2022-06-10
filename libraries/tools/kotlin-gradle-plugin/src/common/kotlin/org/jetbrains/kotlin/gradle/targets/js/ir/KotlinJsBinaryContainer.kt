@@ -10,10 +10,12 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
@@ -21,8 +23,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import javax.inject.Inject
-
 
 open class KotlinJsBinaryContainer
 @Inject
@@ -37,6 +39,30 @@ constructor(
 
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+
+    private fun configureBinaryen(binary: JsIrBinary) {
+        val linkTask = binary.linkTask
+
+        val compiledMjsFile = linkTask.map { link ->
+            link.kotlinOptions.outputFile?.let(::File)
+                ?: link.destinationDirectory.locationOnly.get().asFile.resolve("${link.compilation.ownModuleName}.mjs")
+        }
+
+        val compiledWasmFile = compiledMjsFile.map {
+            it.parentFile.resolve("${it.nameWithoutExtension}.wasm")
+        }
+
+        //TODO This is temporary solution that overrides compiled files that triggers recompile and reoptimize wasm every time (when binaryen is enabled)
+        val binaryenTask = BinaryenExec.create(binary.compilation, "${linkTask.name}Optimize") {
+            inputFileProperty.fileProvider(compiledWasmFile)
+            outputFileProperty.fileProvider(compiledWasmFile)
+        }
+
+        binary.compilation.compileKotlinTask.finalizedBy(binaryenTask)
+        binary.linkSyncTask.configure {
+            it.dependsOn(binaryenTask)
+        }
+    }
 
     // For Groovy DSL
     @JvmOverloads
@@ -173,6 +199,12 @@ constructor(
         // Allow accessing binaries as properties of the container in Groovy DSL.
         if (this is ExtensionAware) {
             extensions.add(binary.name, binary)
+        }
+
+        if (compilation.platformType == KotlinPlatformType.wasm && target is KotlinJsIrTarget && binary is JsIrBinary) {
+            target.whenBinaryenApplied {
+                configureBinaryen(binary)
+            }
         }
 
         return binary
