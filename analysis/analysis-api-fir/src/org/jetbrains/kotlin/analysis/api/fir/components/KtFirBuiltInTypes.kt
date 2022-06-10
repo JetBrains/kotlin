@@ -5,20 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirUsualClassType
 import org.jetbrains.kotlin.analysis.api.fir.utils.ValidityAwareCachedValue
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 
-internal class KtFirBuiltInTypes(builtinTypes: BuiltinTypes, builder: KtSymbolByFirBuilder, override val token: KtLifetimeToken) : KtBuiltinTypes() {
-    private val builder by weakRef(builder)
+internal class KtFirBuiltInTypes(
+    builtinTypes: BuiltinTypes,
+    private val builder: KtSymbolByFirBuilder,
+    override val token: KtLifetimeToken
+) : KtBuiltinTypes() {
 
     override val INT: KtType by cachedBuiltin(builtinTypes.intType)
     override val LONG: KtType by cachedBuiltin(builtinTypes.longType)
@@ -41,6 +43,6 @@ internal class KtFirBuiltInTypes(builtinTypes: BuiltinTypes, builder: KtSymbolBy
     override val NULLABLE_NOTHING: KtType by cachedBuiltin(builtinTypes.nullableNothingType)
 
     private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KtFirUsualClassType> = cached {
-        KtFirUsualClassType(builtinTypeRef.type as ConeClassLikeTypeImpl, token, builder) // TODO builder leaking
+        KtFirUsualClassType(builtinTypeRef.type as ConeClassLikeTypeImpl, token, builder)
     }
 }

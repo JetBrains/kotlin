@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -24,15 +23,13 @@ internal class KtFirReceiverParameterSymbol(
     val firSymbol: FirCallableSymbol<*>,
     val firResolveSession: LLFirResolveSession,
     override val token: KtLifetimeToken,
-    _builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
     override val psi: PsiElement? by cached { firSymbol.fir.receiverTypeRef?.findPsi(firSymbol.fir.moduleData.session) }
 
     init {
         require(firSymbol.fir.receiverTypeRef != null) { "$firSymbol doesn't have an extension receiver." }
     }
-
-    private val builder by weakRef(_builder)
 
     override val type: KtType by cached {
         firSymbol.receiverType(builder)
