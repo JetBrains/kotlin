@@ -15,16 +15,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 object TypeParser {
-    fun KtAnalysisSession.parseTypeFromString(
+    context (KtAnalysisSession)
+    fun parseTypeFromString(
         stringType: String,
-        ktFile: KtFile,
+        contextElement: KtElement,
         typeParameterByName: Map<String, KtTypeParameterSymbol>
     ): KtType {
-        val type = KtPsiFactory(ktFile).createType(stringType)
+        val type = KtPsiFactory(contextElement).createType(stringType)
         return convertType(type.typeElement ?: incorrectType(type), typeParameterByName)
     }
 
-    private fun KtAnalysisSession.convertType(type: KtTypeElement, typeParameterByName: Map<String, KtTypeParameterSymbol>): KtType =
+    context (KtAnalysisSession)
+            private fun convertType(type: KtTypeElement, typeParameterByName: Map<String, KtTypeParameterSymbol>): KtType =
         when (type) {
             is KtUserType -> {
                 val qualifier = fullQualifier(type)

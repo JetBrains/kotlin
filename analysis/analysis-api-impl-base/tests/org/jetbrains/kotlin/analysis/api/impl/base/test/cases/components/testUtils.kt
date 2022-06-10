@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
@@ -20,6 +21,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
+@OptIn(KtAnalysisApiInternals::class)
 internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any) {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun String.indented() = replace("\n", "\n  ")

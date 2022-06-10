@@ -104,7 +104,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
         useDirectives(JvmEnvironmentConfigurationDirectives)
-        useDirectives(SubstitutionParser.Directives)
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
