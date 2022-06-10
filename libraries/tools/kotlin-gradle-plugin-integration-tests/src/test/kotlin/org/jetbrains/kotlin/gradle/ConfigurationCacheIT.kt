@@ -61,13 +61,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
     @GradleTest
-    @OptIn(ExperimentalStdlibApi::class)
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             // KT-49933: Support Gradle Configuration caching with HMPP
             val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs")
 
             testConfigurationCacheOf(
+                ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
                 checkUpToDateOnRebuild = false
             )
