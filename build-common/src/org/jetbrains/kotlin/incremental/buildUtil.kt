@@ -149,8 +149,7 @@ fun ChangesCollector.getDirtyData(
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
 
-    val sealedParents = HashMap<FqName, MutableSet<FqName>>()
-    val notSealedParents = HashSet<FqName>()
+    val sealedParents = HashSet<FqName>()
 
     for (change in changes()) {
         reporter.reportVerbose { "Process $change" }
@@ -177,34 +176,12 @@ fun ChangesCollector.getDirtyData(
 
             fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
         } else if (change is ChangeInfo.ParentsChanged) {
-            fun FqName.isSealed(): Boolean {
-                if (notSealedParents.contains(this)) return false
-                if (sealedParents.containsKey(this)) return true
-                return isSealed(this, caches).also { sealed ->
-                    if (sealed) {
-                        sealedParents[this] = HashSet()
-                    } else {
-                        notSealedParents.add(this)
-                    }
-                }
-            }
             change.parentsChanged.forEach { parent ->
-                if (parent.isSealed()) {
-                    sealedParents.getOrPut(parent) { HashSet() }.add(change.fqName)
-                }
+                sealedParents.addAll(findSealedSupertypes(parent, caches))
             }
         }
     }
-
-    val forceRecompile = HashSet<FqName>().apply {
-        addAll(sealedParents.keys)
-        //we should recompile all inheritors with parent sealed class: add known subtypes
-        addAll(sealedParents.keys.flatMap { withSubtypes(it, caches) })
-        //we should recompile all inheritors with parent sealed class: add new subtypes
-        addAll(sealedParents.values.flatten())
-    }
-
-    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, forceRecompile)
+    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, sealedParents)
 }
 
 fun mapLookupSymbolsToFiles(
@@ -251,7 +228,22 @@ fun mapClassesFqNamesToFiles(
 fun isSealed(
     fqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
-): Boolean = caches.any { it.isSealed(fqName) ?: false }
+): Boolean = caches.any { cache -> cache.isSealed(fqName) ?: false }
+
+/**
+ * Finds sealed supertypes of class in same module.
+ * This method should be used for processing freedomOsSealedClasses feature, because
+ * mutually declared list of sealed subclasses could be declared only in the same module.
+ */
+fun findSealedSupertypes(
+    fqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
+): Collection<FqName> {
+    if (isSealed(fqName, caches)) {
+        return listOf(fqName)
+    }
+    return caches.flatMap { cache -> cache.getSupertypesOf(fqName).filter { cache.isSealed(it) ?: false }}
+}
 
 fun withSubtypes(
     typeFqName: FqName,
