@@ -201,7 +201,7 @@ class PSICallResolver(
     fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession, context: BasicCallResolutionContext) =
         KotlinResolutionCallbacksImpl(
             trace, expressionTypingServices, typeApproximator,
-            argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
+            argumentTypeResolver, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
             this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
             doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver,

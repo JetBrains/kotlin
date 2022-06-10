@@ -91,13 +91,6 @@ public interface TracingStrategy {
         public void abstractSuperCall(@NotNull BindingTrace trace) {}
 
         @Override
-        public void nestedClassAccessViaInstanceReference(
-                @NotNull BindingTrace trace,
-                @NotNull ClassDescriptor classDescriptor,
-                @NotNull ExplicitReceiverKind explicitReceiverKind
-        ) {}
-
-        @Override
         public void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke) {}
 
         @Override
@@ -153,12 +146,6 @@ public interface TracingStrategy {
     default void abstractSuperCallWarning(@NotNull BindingTrace trace) {
         abstractSuperCall(trace);
     }
-
-    void nestedClassAccessViaInstanceReference(
-            @NotNull BindingTrace trace,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull ExplicitReceiverKind explicitReceiverKind
-    );
 
     void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke);
 

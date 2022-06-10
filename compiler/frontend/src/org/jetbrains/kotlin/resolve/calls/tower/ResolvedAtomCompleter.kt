@@ -59,7 +59,6 @@ class ResolvedAtomCompleter(
     private val builtIns: KotlinBuiltIns,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val dataFlowValueFactory: DataFlowValueFactory,
     private val typeApproximator: TypeApproximator,
     private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
@@ -446,7 +445,6 @@ class ResolvedAtomCompleter(
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
         when (descriptor) {
             is CallableMemberDescriptor -> {

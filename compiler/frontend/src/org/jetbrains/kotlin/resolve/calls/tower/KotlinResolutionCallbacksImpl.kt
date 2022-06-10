@@ -67,7 +67,6 @@ class KotlinResolutionCallbacksImpl(
     private val expressionTypingServices: ExpressionTypingServices,
     private val typeApproximator: TypeApproximator,
     private val argumentTypeResolver: ArgumentTypeResolver,
-    private val languageVersionSettings: LanguageVersionSettings,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val dataFlowValueFactory: DataFlowValueFactory,
     override val inferenceSession: InferenceSession,

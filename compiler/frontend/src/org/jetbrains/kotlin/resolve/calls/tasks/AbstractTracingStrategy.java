@@ -153,30 +153,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void nestedClassAccessViaInstanceReference(
-            @NotNull BindingTrace trace,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull ExplicitReceiverKind explicitReceiverKind
-    ) {
-        if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
-            DeclarationDescriptor importableDescriptor = DescriptorUtilsKt.getImportableDescriptor(classDescriptor);
-            if (DescriptorUtils.getFqName(importableDescriptor).isSafe()) {
-                FqName fqName = getFqNameFromTopLevelClass(importableDescriptor);
-                String qualifiedName;
-                if (reference.getParent() instanceof KtCallableReferenceExpression) {
-                    qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
-                }
-                else {
-                    qualifiedName = fqName.asString();
-                }
-                trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor, qualifiedName));
-                return;
-            }
-        }
-        trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
-    }
-
-    @Override
     public void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke) {
         ASTNode callOperationNode = call.getCallOperationNode();
         if (callOperationNode != null && !isCallForImplicitInvoke) {

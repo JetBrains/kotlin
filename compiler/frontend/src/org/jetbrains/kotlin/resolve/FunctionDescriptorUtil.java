@@ -21,34 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.List;
 
 public class FunctionDescriptorUtil {
-    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
-        @Override
-        public TypeProjection get(@NotNull KotlinType key) {
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return "FunctionDescriptorUtil.MAKE_TYPE_PARAMETERS_FRESH";
-        }
-    });
-
     private FunctionDescriptorUtil() {
-    }
-
-    public static TypeSubstitution createSubstitution(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull List<KotlinType> typeArguments
-    ) {
-        if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.EMPTY;
-
-        return new IndexedParametersSubstitution(functionDescriptor.getTypeParameters(), TypeUtilsKt.defaultProjections(typeArguments));
     }
 
     @NotNull
@@ -88,10 +65,5 @@ public class FunctionDescriptorUtil {
                     return Unit.INSTANCE;
                 }
         );
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
-        return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
     }
 }

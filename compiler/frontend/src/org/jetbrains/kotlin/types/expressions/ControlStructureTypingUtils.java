@@ -154,7 +154,7 @@ public class ControlStructureTypingUtils {
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
-        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType, context.languageVersionSettings);
+        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenDescriptor(
                 context, call, function, tracing, knownTypeParameterSubstitutor, dataFlowInfoForArguments
         );
@@ -171,8 +171,7 @@ public class ControlStructureTypingUtils {
     private static @Nullable TypeSubstitutor createKnownTypeParameterSubstitutorForSpecialCall(
             @NotNull ResolveConstruct construct,
             @NotNull SimpleFunctionDescriptorImpl function,
-            @NotNull KotlinType expectedType,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull KotlinType expectedType
     ) {
         if (construct == ResolveConstruct.ELVIS
             || TypeUtils.noExpectedType(expectedType)
@@ -250,9 +249,6 @@ public class ControlStructureTypingUtils {
         public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
             dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
         }
-
-        @Override
-        public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) { }
 
         @NotNull
         @Override
@@ -632,14 +628,6 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void abstractSuperCall(@NotNull BindingTrace trace) {
-            logError();
-        }
-
-        @Override
-        public void nestedClassAccessViaInstanceReference(
-                @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor,
-                @NotNull ExplicitReceiverKind explicitReceiverKind
-        ) {
             logError();
         }
 

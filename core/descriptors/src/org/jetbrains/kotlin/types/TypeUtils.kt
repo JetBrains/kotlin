@@ -124,17 +124,13 @@ fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     return unwrap().replaceAttributes(attributes.replaceAnnotations(newAnnotations))
 }
 
-fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
-    if (type1 === type2) return true
-    if (type1 == null || type2 == null) return false
-    return equalTypes(type1, type2)
-}
-
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
-fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map(::TypeProjectionImpl)
-
-fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+fun AbstractTypeChecker.equalTypesOrNulls(state: TypeCheckerState, type1: KotlinType?, type2: KotlinType?): Boolean {
+    if (type1 === type2) return true
+    if (type1 == null || type2 == null) return false
+    return equalTypes(state, type1, type2)
+}
 
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)

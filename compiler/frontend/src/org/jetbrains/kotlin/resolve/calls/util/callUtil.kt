@@ -47,21 +47,16 @@ import org.jetbrains.kotlin.utils.sure
 
 // resolved call
 
-fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
-    return call.valueArguments.all { argument -> !getArgumentMapping(argument!!).isError() }
-}
+fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped() =
+    call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
 
 fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {
     return call.valueArguments.any { argument -> getArgumentMapping(argument!!) == ArgumentUnmapped }
 }
 
-fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
-    val parameterToArgumentMap = valueArguments
-    return !parameterToArgumentMap.keys.containsAll(resultingDescriptor.valueParameters)
-}
+fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
-fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped() =
-    call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
+fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
 fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
     val resolvedValueArgument = valueArguments[parameter]
@@ -102,10 +97,6 @@ fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter:
         return expressionType == null || expressionType.isError
     })
 }
-
-fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
-
-fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
 fun Call.getValueArgumentListOrElement(): KtElement =
     if (this is CallTransformer.CallForImplicitInvoke) {
@@ -331,16 +322,6 @@ inline fun BindingTrace.reportTrailingLambdaErrorOr(
         } else {
             report(originalDiagnostic(expr))
         }
-    }
-}
-
-fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
-    override fun get(key: KotlinType): TypeProjection? {
-        return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
-    }
-
-    override fun isEmpty(): Boolean {
-        return isEmpty
     }
 }
 

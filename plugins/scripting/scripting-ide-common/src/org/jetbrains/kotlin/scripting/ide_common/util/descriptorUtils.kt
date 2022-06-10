@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
+import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
 fun descriptorsEqualWithSubstitution(

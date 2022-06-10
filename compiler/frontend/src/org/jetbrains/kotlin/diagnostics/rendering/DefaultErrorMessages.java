@@ -965,7 +965,6 @@ public class DefaultErrorMessages {
                                                  "(argument types, receiver type or expected type). Try to specify it explicitly.", NAME);
         MAP.put(INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION, "Type argument for a type parameter {0} can''t be inferred because it has incompatible upper bounds: {1} ({2}{3})", TO_STRING, RENDER_COLLECTION_OF_TYPES, TO_STRING, TO_STRING);
         MAP.put(INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, "Type argument for a type parameter {0} has possible incompatible upper bounds: {1} ({2}{3})", TO_STRING, RENDER_COLLECTION_OF_TYPES, TO_STRING, TO_STRING);
-        MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG, "Please use spread operator to pass an array as vararg. It will be an error in 1.5.");
         MAP.put(TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE, "Postponed type variable (type variable of the builder inference) can't be used in the receiver type. Use a member function instead of extension one or specify type arguments of a function which uses the builder inference, explicitly.");
 

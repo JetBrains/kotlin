@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.calls.util.toOldSubstitution
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasBuilderInferenceAnnotation
-import org.jetbrains.kotlin.resolve.descriptorUtil.shouldBeSubstituteWithStubTypes
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -546,7 +544,7 @@ class BuilderInferenceSession(
         return ResolvedAtomCompleter(
             resultSubstitutor, context, kotlinToResolvedCallTransformer,
             expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, builtIns,
-            deprecationResolver, moduleDescriptor, context.dataFlowValueFactory, typeApproximator, missingSupertypesResolver
+            deprecationResolver, moduleDescriptor, typeApproximator, missingSupertypesResolver
         )
     }
 

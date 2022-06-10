@@ -134,28 +134,6 @@ public class ExpressionTypingUtils {
         }
     }
 
-    public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(
-            @NotNull BindingTrace trace,
-            @NotNull KtElement expressionToWatch,
-            @NotNull boolean[] mismatchFound
-    ) {
-        return new ObservableBindingTrace(trace) {
-
-            @Override
-            public void report(@NotNull Diagnostic diagnostic) {
-                DiagnosticFactory<?> factory = diagnostic.getFactory();
-                if (Errors.TYPE_MISMATCH_ERRORS.contains(factory) && diagnostic.getPsiElement() == expressionToWatch) {
-                    mismatchFound[0] = true;
-                }
-                if (TYPE_INFERENCE_ERRORS.contains(factory) &&
-                    PsiTreeUtil.isAncestor(expressionToWatch, diagnostic.getPsiElement(), false)) {
-                    mismatchFound[0] = true;
-                }
-                super.report(diagnostic);
-            }
-        };
-    }
-
     @NotNull
     public static KotlinTypeInfo getTypeInfoOrNullType(
             @Nullable KtExpression expression,
