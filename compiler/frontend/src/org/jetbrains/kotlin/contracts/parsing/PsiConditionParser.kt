@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.CastDiagnosticsUtil
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -41,11 +40,6 @@ internal class PsiConditionParser(
         val typeReference = expression.typeReference ?: return null
         val type = callContext.bindingContext[BindingContext.TYPE, typeReference]?.unwrap() ?: return null
         val descriptor = type.constructor.declarationDescriptor
-
-        if (type is CapturedType) {
-            collector.badDescription("references to captured types are forbidden in contracts", typeReference)
-            return null
-        }
 
         if (descriptor is AbstractTypeParameterDescriptor) {
             val reifiedGenericsAllowed = callContext.languageVersionSettings.supportsFeature(LanguageFeature.AllowReifiedGenericsInContracts)

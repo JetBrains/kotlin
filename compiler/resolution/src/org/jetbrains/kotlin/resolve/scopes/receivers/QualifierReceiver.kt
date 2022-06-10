@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.util.prepareArgumentTypeRegardingCaptureTypes
 
 // this receiver used only for resolution. see subtypes
 interface DetailedReceiver

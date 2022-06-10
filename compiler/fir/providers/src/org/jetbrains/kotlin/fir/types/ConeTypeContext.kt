@@ -171,8 +171,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.captureStatus
     }
 
-    override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
-
     override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker {
         require(this is ConeCapturedTypeConstructor)
         return this.projection

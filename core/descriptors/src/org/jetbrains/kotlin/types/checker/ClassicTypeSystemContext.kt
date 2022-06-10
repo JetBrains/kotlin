@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.util.captureFromExpression
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -332,7 +332,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         require(type is SimpleType, type::errorMessage)
-        return org.jetbrains.kotlin.types.checker.captureFromArguments(type, status)
+        return org.jetbrains.kotlin.types.util.captureFromArguments(type, status)
     }
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
@@ -368,7 +368,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is SimpleType, this::errorMessage)
         return !isError &&
                 constructor.declarationDescriptor !is TypeAliasDescriptor &&
-                (constructor.declarationDescriptor != null || this is CapturedType || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor || isSingleClassifierTypeWithEnhancement())
+                (constructor.declarationDescriptor != null || this is NewCapturedType || this is DefinitelyNotNullType || constructor is IntegerLiteralTypeConstructor || isSingleClassifierTypeWithEnhancement())
     }
 
     private fun SimpleTypeMarker.isSingleClassifierTypeWithEnhancement() =
@@ -512,11 +512,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker {
-        return when (this) {
-            is NewCapturedType -> this.constructor.projection
-            is CapturedType -> this.typeProjection
-            else -> error("Unsupported captured type")
-        }
+        require(this is NewCapturedType, this::errorMessage)
+        return this.constructor.projection
     }
 
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
@@ -539,8 +536,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is NewCapturedType, this::errorMessage)
         return this.captureStatus
     }
-
-    override fun CapturedTypeMarker.isOldCapturedType(): Boolean = this is CapturedType
 
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is KotlinType, this::errorMessage)

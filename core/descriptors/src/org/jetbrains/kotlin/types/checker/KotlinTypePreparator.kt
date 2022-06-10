@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorImpl
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
@@ -17,21 +15,6 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 abstract class KotlinTypePreparator : AbstractTypePreparator() {
     private fun transformToNewType(type: SimpleType): SimpleType {
         when (val constructor = type.constructor) {
-            // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
-            is CapturedTypeConstructorImpl -> {
-                val lowerType = constructor.projection.takeIf { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
-
-                // it is incorrect calculate this type directly because of recursive star projections
-                if (constructor.newTypeConstructor == null) {
-                    constructor.newTypeConstructor =
-                        NewCapturedTypeConstructor(constructor.projection, constructor.supertypes.map { it.unwrap() })
-                }
-                return NewCapturedType(
-                    CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                    lowerType, type.attributes, type.isMarkedNullable
-                )
-            }
-
             is IntegerValueTypeConstructor -> {
                 val newConstructor =
                     IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })

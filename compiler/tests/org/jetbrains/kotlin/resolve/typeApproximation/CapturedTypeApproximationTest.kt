@@ -22,18 +22,16 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
+import org.jetbrains.kotlin.types.util.approximateCapturedTypes
+import org.jetbrains.kotlin.types.util.approximateCapturedTypesIfNecessary
+import org.jetbrains.kotlin.types.util.createCapturedType
 import java.io.File
 import java.util.*
 
@@ -48,15 +46,15 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         val oneTypeVariable = substitutions.size == 1
 
         val declarationsText =
-            KtTestUtil.doLoadFile(File(testDataPath + "/declarations.kt"))
+            KtTestUtil.doLoadFile(File("$testDataPath/declarations.kt"))
 
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
             val testFile = KtPsiFactory(project).createFile(test)
             val bindingContext = JvmResolveUtil.analyze(testFile, environment).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
-            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" } ?:
-                              throw AssertionError("Function 'foo' is not declared")
+            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" }
+                ?: throw AssertionError("Function 'foo' is not declared")
             Pair(bindingContext, functionFoo)
         }
 
@@ -72,13 +70,17 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             val stringType = builtIns.stringType
             val t = typeParameters[0]
             val r = typeParameters[1]
-            if (oneTypeVariable)
-                listOf(mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
-                       mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType)))
-            else {
-                listOf(mapOf(
+            if (oneTypeVariable) {
+                listOf(
+                    mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
+                    mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType))
+                )
+            } else {
+                listOf(
+                    mapOf(
                         t to TypeProjectionImpl(IN_VARIANCE, intType),
-                        r to TypeProjectionImpl(OUT_VARIANCE, stringType))
+                        r to TypeProjectionImpl(OUT_VARIANCE, stringType)
+                    )
                 )
             }
         }
@@ -86,7 +88,8 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         fun createTestSubstitutor(testSubstitution: Map<TypeParameterDescriptor, TypeProjection>): TypeSubstitutor {
             val substitutionContext = testSubstitution.map {
                 val (typeParameter, typeProjection) = it
-                typeParameter.typeConstructor to TypeProjectionImpl(createCapturedType(typeProjection))
+
+                typeParameter.typeConstructor to TypeProjectionImpl(createCapturedType(typeProjection) as KotlinType)
             }.toMap()
             return TypeSubstitutor.create(substitutionContext)
         }
@@ -112,9 +115,9 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
                     val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type!!))!!.type
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
-                    val substitution =
-                            approximateCapturedTypesIfNecessary(
-                                    TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
+                    val substitution = approximateCapturedTypesIfNecessary(
+                        TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false
+                    )
 
                     append("  ")
                     for (typeParameter in testSubstitution.keys) {
@@ -127,7 +130,7 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "/" + filePath), result)
+        KotlinTestUtils.assertEqualsToFile(File("$testDataPath/$filePath"), result)
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")

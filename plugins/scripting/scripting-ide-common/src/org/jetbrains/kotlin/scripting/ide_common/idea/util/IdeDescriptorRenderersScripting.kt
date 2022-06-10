@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -18,7 +17,7 @@ object IdeDescriptorRenderersScripting {
 
     private fun unwrapAnonymousType(type: KotlinType): KotlinType {
         if (type.isDynamic()) return type
-        if (type.constructor is NewCapturedTypeConstructor) return type
+        if (type.constructor is CapturedTypeConstructor) return type
 
         val classifier = type.constructor.declarationDescriptor
         if (classifier != null && !classifier.name.isSpecial) return type

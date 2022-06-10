@@ -39,10 +39,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -174,7 +172,6 @@ internal class KtFe10TypeProvider(
             is FlexibleType -> return getUpperBounds(type.upperBound)
             is DefinitelyNotNullType -> return getUpperBounds(type.original)
             is ErrorType -> return emptyList()
-            is CapturedType -> return type.constructor.supertypes.flatMap { getUpperBounds(it) }
             is NewCapturedType -> return type.constructor.supertypes.flatMap { getUpperBounds(it) }
             is SimpleType -> {
                 val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
@@ -283,7 +280,7 @@ internal class KtFe10TypeProvider(
             is FlexibleType -> return lowerBound.collectLowerBounds()
             is DefinitelyNotNullType -> return original.collectLowerBounds()
             is ErrorType -> return emptySet()
-            is CapturedType, is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectLowerBounds() }
+            is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectLowerBounds() }
             is SimpleType -> {
                 val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(this)
                 if (typeParameterDescriptor != null) {
@@ -306,7 +303,7 @@ internal class KtFe10TypeProvider(
             is FlexibleType -> return lowerBound.collectUpperBounds()
             is DefinitelyNotNullType -> return original.collectUpperBounds()
             is ErrorType -> return emptySet()
-            is CapturedType, is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectUpperBounds() }
+            is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectUpperBounds() }
             is SimpleType -> {
                 val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(this)
                 if (typeParameterDescriptor != null) {

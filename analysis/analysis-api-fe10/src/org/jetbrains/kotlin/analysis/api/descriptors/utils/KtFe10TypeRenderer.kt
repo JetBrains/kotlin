@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -58,7 +56,6 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is FlexibleType -> renderFlexibleType(unwrappedType)
             is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType)
             is ErrorType -> renderErrorType()
-            is CapturedType -> renderCapturedType(unwrappedType)
             is NewCapturedType -> renderCapturedType(unwrappedType)
             is AbbreviatedType -> renderType(unwrappedType.abbreviation)
             is SimpleType -> {
@@ -150,12 +147,6 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
 
     private fun KtFe10RendererConsumer.renderErrorType() {
         append(ERROR_TYPE_TEXT)
-    }
-
-    private fun KtFe10RendererConsumer.renderCapturedType(type: CapturedType) {
-        append("CapturedType(")
-        renderTypeProjection(type.typeProjection)
-        append(")")
     }
 
     private fun KtFe10RendererConsumer.renderCapturedType(type: NewCapturedType) {

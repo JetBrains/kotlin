@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
-import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
+import org.jetbrains.kotlin.types.util.CapturedTypeUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
@@ -150,7 +148,7 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         if (!substitution.approximateCapturedTypes() && !substitution.approximateContravariantCapturedTypes()) {
             return substitutedTypeProjection;
         }
-        return CapturedTypeApproximationKt.approximateCapturedTypesIfNecessary(
+        return CapturedTypeUtilsKt.approximateCapturedTypesIfNecessary(
                 substitutedTypeProjection, substitution.approximateContravariantCapturedTypes());
     }
 
@@ -243,9 +241,9 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
             VarianceConflictType varianceConflict = conflictType(originalProjectionKind, replacement.getProjectionKind());
 
             // Captured type might be substituted in an opposite projection:
-            // out 'Captured (in Int)' = out Int
-            // in 'Captured (out Int)' = in Int
-            boolean allowVarianceConflict = CapturedTypeConstructorKt.isCaptured(type);
+            // out 'CapturedType (in Int)' = out Int
+            // in 'CapturedType (out Int)' = in Int
+            boolean allowVarianceConflict = CapturedTypeUtilsKt.isCaptured(type);
             if (!allowVarianceConflict) {
                 //noinspection EnumSwitchStatementWhichMissesCases
                 switch (varianceConflict) {

@@ -421,8 +421,6 @@ class ConstraintInjector(
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker): Boolean {
             val capturedType = type as? CapturedTypeMarker ?: return false
 
-            if (capturedType.isOldCapturedType()) return false
-
             return when (capturedType.captureStatus()) {
                 CaptureStatus.FROM_EXPRESSION -> false
                 CaptureStatus.FOR_SUBTYPING -> true

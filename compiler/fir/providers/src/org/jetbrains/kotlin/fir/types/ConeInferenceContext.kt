@@ -390,8 +390,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.captureStatus
     }
 
-    override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
-
     override fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean {
         return this is ConeCapturedTypeConstructor
     }
