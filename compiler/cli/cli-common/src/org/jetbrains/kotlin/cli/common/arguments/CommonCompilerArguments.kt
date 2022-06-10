@@ -121,12 +121,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var intellijPluginRoot: String? by NullableStringFreezableVar(null)
 
     @Argument(
-        value = "-Xnew-inference",
-        description = "Enable new experimental generic type inference algorithm"
-    )
-    var newInference: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xinline-classes",
         description = "Enable experimental inline classes"
     )
@@ -461,13 +455,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (selfUpperBoundInference) {
                 put(LanguageFeature.TypeInferenceOnCallsWithSelfTypes, LanguageFeature.State.ENABLED)
-            }
-
-            if (newInference) {
-                put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
             }
 
             if (contextReceivers) {
