@@ -226,7 +226,7 @@ object Analyser {
         @OptIn(SymbolInternals::class)
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?): EffectsAndPotentials {
             val (effs, pots) = variableAssignment.rValue.accept()
-            stateOfClass.errors.addAll(effs.flatMap(stateOfClass::effectChecking))
+            stateOfClass.errors.addAll(effs.flatMap { it.check(stateOfClass) })
 
             when (val firDeclaration = variableAssignment.lValue.toResolvedCallableSymbol()?.fir) {
                 is FirProperty -> {

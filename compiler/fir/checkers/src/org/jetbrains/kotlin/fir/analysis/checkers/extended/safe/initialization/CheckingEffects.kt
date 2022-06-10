@@ -132,7 +132,7 @@ object Checker {
                     }
                 }
                 val effsAndPots = analyseDeclaration(dec)
-                val errors = effsAndPots.effects.flatMap(::effectChecking)
+                val errors = effsAndPots.effects.flatMap { it.check(this) }
                 if (dec is FirProperty && dec.initializer != null) {
                     alreadyInitializedVariable.add(dec)
                 }
@@ -224,97 +224,6 @@ object Checker {
                 is Root -> EffectsAndPotentials(potential)
             }
         }
-
-        fun effectChecking(effect: Effect): Errors {
-            if (effectsInProcess.contains(effect)) return emptyList()
-            effectsInProcess.add(effect)
-            val errors = when (effect) {
-                is FieldAccess -> {
-                    val (pot, field) = effect
-                    when (pot) {
-                        is Root.This, is Root.Super -> {                                     // C-Acc1
-                            if (field.isPropertyInitialized())
-                                emptyList()
-                            else listOf(Error.AccessError(effect))
-                        }
-                        is Root.Warm -> emptyList()                              // C-Acc2
-                        is Root.Cold -> listOf(Error.AccessError(effect))           // illegal
-                        is FunPotential -> throw Exception()                  // impossible
-                        else ->                                                         // C-Acc3
-                            ruleAcc3(potentialPropagation(pot)) { p -> FieldAccess(p, field) }
-                    }
-                }
-                is MethodAccess -> {
-                    val (pot, method) = effect
-                    when (pot) {
-                        is Root.This -> {                                     // C-Inv1
-                            val state = resolve(method)
-                            val effectsOf = pot.effectsOf(state, method)
-                            effectsOf.flatMap(::effectChecking)
-                        }
-                        is Root.Warm -> {                                     // C-Inv2
-                            val state = resolve(method)
-                            pot.effectsOf(state, method).flatMap { eff ->
-                                viewChange(eff, pot)
-                                effectChecking(eff)
-                            }
-                        }
-                        is FunPotential -> emptyList() // invoke
-                        is Root.Cold -> listOf(Error.InvokeError(effect))              // illegal
-                        is Root.Super -> {
-                            val state = cache[pot.firClass] ?: TODO()
-                            val effectsOf = pot.effectsOf(state, method)
-                            effectsOf.flatMap(::effectChecking)
-                        }
-                        else ->                                                         // C-Inv3
-                            ruleAcc3(potentialPropagation(pot)) { p -> MethodAccess(p, method) }
-                    }
-                }
-                is Init -> {                                                     // C-Init
-                    val (pot, clazz) = effect
-                    val effects = pot.effectsOf(this, clazz)
-                    effects.flatMap { eff ->
-                        val eff1 = viewChange(eff, pot)
-                        effectChecking(eff1)
-                    }
-                    // ???
-                }
-                is Promote -> {
-                    val pot = effect.potential
-                    when (pot) {
-                        is Root.Warm -> {                                     // C-Up1
-                            pot.clazz.declarations.map {
-                                when (it) {
-//                                is FirAnonymousInitializer -> TODO()
-                                    is FirRegularClass -> TODO()
-//                                is FirConstructor -> TODO()
-                                    is FirSimpleFunction -> TODO()
-                                    is FirField, is FirProperty -> TODO()
-                                    else -> throw IllegalArgumentException()
-                                }
-                            }
-                        }
-                        is FunPotential -> ruleAcc3(pot.effectsAndPotentials, ::Promote)
-                        is Root.Cold, is Root.This, is Root.Super -> listOf(Error.PromoteError(effect))
-                        else -> {
-                            ruleAcc3(potentialPropagation(pot), ::Promote)   // C-Up2
-                        }
-                    }
-                }
-            }
-            for (error in errors) error.trace.add(effect)
-
-            effectsInProcess.removeLast()
-
-            return errors
-        }
-
-        private fun ruleAcc3(effectsAndPotentials: EffectsAndPotentials, producerOfEffects: (Potential) -> Effect): Errors =
-            effectsAndPotentials.run {
-                val errors = potentials.map { effectChecking(producerOfEffects(it)) } // call / select
-                val effectErrors = effects.map(::effectChecking)
-                (errors + effectErrors).flatten()
-            }
     }
 }
 typealias Errors = List<Error<*>>
