@@ -51,7 +51,10 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
 
     override fun defaultPlatformRandom(): Random =
         // while ThreadLocalRandom is available since SDK 21 (as documented), it has bugs in the implementation,
-        // so we don't use it for the same reasons as why we don't use it in JDK7.
-        if (sdkIsNullOrAtLeast(24)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
+        // so we don't use it for the same reasons as why we don't use it in JDK7. ThreadLocalRandom worked on
+        // SDK 24, but starting SDK 25 it had bugs in seeding so that it would return the same sequence of values
+        // for all application starts. That will be fixed in SDK 34. Therefore, do not use ThreadLocalRandom until
+        // then.
+        if (sdkIsNullOrAtLeast(34)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
 }
