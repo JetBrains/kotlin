@@ -158,8 +158,13 @@ fun printElements(generationPath: File, model: Model) = sequence {
                                 val elRef = child.type as ElementRef
                                 if (!elRef.element.transform) {
                                     append(" as")
-                                    if (child.nullable) append("?")
-                                    append(" %T")
+                                    if (child.strictCastInTransformChildren) {
+                                        append(" %T")
+                                        if (child.nullable) append("?")
+                                    } else {
+                                        if (child.nullable) append("?")
+                                        append(" %T")
+                                    }
                                     args.add(elRef.toPoet())
                                 }
                             }
