@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoColl
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -153,7 +153,7 @@ object Checker {
                             val potentials = pot.potentialsOf(state, field)
                             potentials.viewChange(pot).toEffectsAndPotentials()
                         }
-                        is Root.Warm -> {                                         // P-Acc2
+                        is Warm -> {                                         // P-Acc2
                             val state = resolve(field)
                             val potentials = pot.potentialsOf(state, field)
                             potentials.viewChange(pot).toEffectsAndPotentials()
@@ -180,7 +180,7 @@ object Checker {
                             val potentials = pot.potentialsOf(state, method)
                             potentials.toEffectsAndPotentials()
                         }
-                        is Root.Warm -> {                                     // P-Inv2
+                        is Warm -> {                                     // P-Inv2
                             val state = resolve(method)
                             val potentials = pot.potentialsOf(state, method)  // find real state
                             potentials.viewChange(pot).toEffectsAndPotentials()
@@ -203,7 +203,7 @@ object Checker {
                     val (pot, outer) = potential
                     when (pot) {
                         is Root.This -> emptyEffsAndPots                // P-Out1
-                        is Root.Warm -> {                               // P-Out2
+                        is Warm -> {                               // P-Out2
                             val (firClass, outerPot) = pot
                             return EffectsAndPotentials(outerPot)
                             // TODO:
@@ -221,11 +221,12 @@ object Checker {
                     }
                 }
                 is FunPotential -> TODO() // invoke?
-                is Root -> EffectsAndPotentials(potential)
+                is Root, is Warm -> EffectsAndPotentials(potential)
             }
         }
     }
 }
+
 typealias Errors = List<Error<*>>
 
 sealed class Error<T : Effect>(val effect: T) {

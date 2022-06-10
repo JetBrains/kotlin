@@ -5,125 +5,29 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration1
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.*
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 typealias Potentials = List<Potential>
-
-sealed class Potential(val firElement: FirElement, val length: Int = 0) {
-
-    sealed class Root(firElement: FirElement, length: Int = 0) : Potential(firElement, length) {
-
-        fun effectsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Effects =
-            state.analyseDeclaration1(firDeclaration).effects
-
-        fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
-            state.analyseDeclaration1(firDeclaration).potentials
-
-        data class This(val firThisReference: FirThisReference, val firClass: FirClass) : Root(firThisReference) {
-            override fun toString(): String {
-                return "this@${firClass.symbol.toLookupTag()}"
-            }
-        }
-
-        data class Warm(val clazz: FirClass, val outer: Potential) : Root(clazz, outer.length + 1) {
-            override fun toString(): String {
-                return "warm(${clazz.symbol.classId.shortClassName}, $outer)"
-            }
-        }
-
-        data class Super(val firSuperReference: FirSuperReference, val firClass: FirClass) : Root(firSuperReference)
-
-        data class Cold(val firDeclaration: FirDeclaration) : Root(firDeclaration) {
-            override fun toString(): String {
-                return "cold(${firDeclaration.symbol})"
-            }
-        }
-    }
-
-    data class MethodPotential(val potential: Potential, val method: FirFunction) :
-        Potential(method, potential.length + 1) {
-        override fun toString(): String {
-            return "$potential.${method.symbol.callableId.callableName}"
-        }
-    }
-
-    data class FieldPotential(val potential: Potential, val field: FirVariable) :
-        Potential(field, potential.length + 1) {
-        override fun toString(): String {
-            return "$potential.${field.symbol.callableId.callableName}"
-        }
-    }
-
-    data class OuterPotential(val potential: Potential, val outerClass: FirClass) :
-        Potential(outerClass, potential.length + 1) {
-        override fun toString(): String {
-            return "$potential.outer(${outerClass.symbol.classId}))"
-        }
-    }
-
-    data class FunPotential(
-        val effectsAndPotentials: EffectsAndPotentials,
-        val anonymousFunction: FirAnonymousFunction
-    ) : Potential(anonymousFunction, effectsAndPotentials.maxLength()) {
-        override fun toString(): String {
-            return "Fun($effectsAndPotentials, ${anonymousFunction.symbol.callableId.callableName})"
-        }
-    }
-}
 
 inline fun <reified T : FirMemberDeclaration> Checker.StateOfClass.resolveMember(potential: Potential, dec: T): T =
     if (potential is Root.Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
 
 fun Checker.StateOfClass.select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
-
-    fun Checker.StateOfClass.select(potential: Potential, field: FirVariable): EffectsAndPotentials = when {
-        field is FirValueParameter -> emptyEffsAndPots
-        potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 4 -> {
-            val f = resolveMember(potential, field)
-            EffectsAndPotentials(
-                FieldAccess(potential, f),
-                FieldPotential(potential, f)
-            )
-        }
-        else -> EffectsAndPotentials(Promote(potential))
-    }
-
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + select(pot, field) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { select(field) } }
 }
 
 fun Checker.StateOfClass.call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
-
-    fun Checker.StateOfClass.call(potential: Potential, function: FirFunction): EffectsAndPotentials = when {
-        potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 2 -> {
-            val f = resolveMember(potential, function)
-            EffectsAndPotentials(
-                MethodAccess(potential, f),
-                MethodPotential(potential, f)
-            )
-        }
-        else -> EffectsAndPotentials(Promote(potential))
-    }
-
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + call(pot, function) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { call(function) } }
 }
 
 fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotentials {
-
-    fun outerSelection(potential: Potential, clazz: FirClass): EffectsAndPotentials = when {
-        potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-        potential.length < 2 -> EffectsAndPotentials(OuterPotential(potential, clazz))
-        else -> EffectsAndPotentials(Promote(potential))
-    }
-
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + outerSelection(pot, clazz) }
+    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { outerSelection(clazz) } }
 }
 
 fun promote(potentials: Potentials): Effects = potentials.map(::Promote)
@@ -132,51 +36,10 @@ fun init(
     potentials: Potentials,
     clazz: FirClass,
 ): EffectsAndPotentials {
-    val prefixPotentials = potentials.map { pot -> Root.Warm(clazz, pot) }
+    val prefixPotentials = potentials.map { pot -> Warm(clazz, pot) }
     val initEffects = prefixPotentials.map { warm -> Init(warm, clazz) }
 
-    return EffectsAndPotentials(/* propagateEffects + */ initEffects, prefixPotentials)
+    return EffectsAndPotentials(initEffects, prefixPotentials)
 }
 
-fun Potentials.viewChange(root: Potential): Potentials = map { pot -> viewChange(pot, root) }
-
-fun viewChange(potential: Potential, root: Potential): Potential {
-
-    fun asPotSimpleRule(
-        pot: Potential,
-        potentialConstructor: (Potential) -> Potential
-    ): Potential {
-        val viewedPot = viewChange(pot, root)
-        return potentialConstructor(viewedPot)
-    }
-
-    return when (potential) {
-        is Root.This -> root                                              // As-Pot-This
-        is Root.Cold -> potential                                         // As-Pot-Cold
-        is Root.Super -> potential
-        is Root.Warm -> potential.run {
-            when { // ???
-                outer is Root.Cold -> potential
-                outer.length < 2 -> Root.Warm(clazz, Root.Cold(clazz)) // ???
-                else -> {
-                    val viewedPot = viewChange(outer, root)
-                    Root.Warm(clazz, viewedPot)
-                }
-            }
-        }
-        is FieldPotential -> {                                            // As-Pot-Acc
-            val (pot, field) = potential
-            val viewedPot = viewChange(pot, root)
-            FieldPotential(viewedPot, field)
-        }
-        is MethodPotential -> {                                           // As-Pot-Inv
-            val (pot, method) = potential
-            val viewedPot = viewChange(pot, root)
-            MethodPotential(viewedPot, method)
-        }
-        is OuterPotential -> {                                            // As-Pot-Out
-            asPotSimpleRule(potential.potential) { pot -> OuterPotential(pot, potential.outerClass) }
-        }
-        is FunPotential -> TODO()
-    }
-}
+fun Potentials.viewChange(root: Potential): Potentials = map { pot -> pot.viewChange(root) }

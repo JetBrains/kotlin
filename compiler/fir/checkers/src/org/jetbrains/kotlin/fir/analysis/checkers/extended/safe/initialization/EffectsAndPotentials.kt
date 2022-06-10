@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
+
 
 val emptyEffsAndPots = EffectsAndPotentials()
 

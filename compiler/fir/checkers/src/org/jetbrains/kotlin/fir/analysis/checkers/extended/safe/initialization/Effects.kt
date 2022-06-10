@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.FunPotential
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
 import org.jetbrains.kotlin.fir.declarations.*
 
 typealias Effects = List<Effect>
@@ -18,9 +21,9 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
                     emptyList()
                 else listOf(Error.AccessError(this@FieldAccess))
             }
-            is Root.Warm -> emptyList()                              // C-Acc2
+            is Warm -> emptyList()                              // C-Acc2
             is Root.Cold -> listOf(Error.AccessError(this@FieldAccess))           // illegal
-            is Potential.FunPotential -> throw Exception()                  // impossible
+            is FunPotential -> throw Exception()                  // impossible
             else ->                                                         // C-Acc3
                 ruleAcc3(potentialPropagation(potential))
         }
@@ -40,14 +43,14 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
                 val state = Checker.resolve(method)
                 potential.effectsOf(state, method).flatMap { it.check(this) }
             }
-            is Root.Warm -> {                                     // C-Inv2
+            is Warm -> {                                     // C-Inv2
                 val state = Checker.resolve(method)
                 potential.effectsOf(state, method).flatMap { eff ->
                     eff.viewChange(potential)
                     eff.check(this)
                 }
             }
-            is Potential.FunPotential -> emptyList() // invoke
+            is FunPotential -> emptyList() // invoke
             is Root.Cold -> listOf(Error.InvokeError(this@MethodAccess))              // illegal
             is Root.Super -> {
                 val state = Checker.cache[potential.firClass] ?: TODO()
@@ -68,7 +71,7 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
 data class Promote(override val potential: Potential) : Effect(potential) {
     override fun Checker.StateOfClass.check(): Errors = // C-Up2
         when (potential) {
-            is Root.Warm -> {                                     // C-Up1
+            is Warm -> {                                     // C-Up1
                 potential.clazz.declarations.map {
                     when (it) {
 //                                is FirAnonymousInitializer -> TODO()
@@ -80,8 +83,8 @@ data class Promote(override val potential: Potential) : Effect(potential) {
                     }
                 }
             }
-            is Potential.FunPotential -> ruleAcc3(potential.effectsAndPotentials)
-            is Root.Cold, is Root.This, is Root.Super -> listOf(Error.PromoteError(this@Promote))
+            is FunPotential -> ruleAcc3(potential.effectsAndPotentials)
+            is Root -> listOf(Error.PromoteError(this@Promote))
             else -> ruleAcc3(potentialPropagation(potential))
         }
 
@@ -92,7 +95,7 @@ data class Promote(override val potential: Potential) : Effect(potential) {
     }
 }
 
-data class Init(override val potential: Root.Warm, val clazz: FirClass) : Effect(potential) {
+data class Init(override val potential: Warm, val clazz: FirClass) : Effect(potential) {
     override fun Checker.StateOfClass.check(): Errors {                                                     // C-Init
         val effects = potential.effectsOf(this, clazz)
         return effects.flatMap { eff ->
@@ -102,7 +105,7 @@ data class Init(override val potential: Root.Warm, val clazz: FirClass) : Effect
         // ???
     }
 
-    override fun createEffectForPotential(pot: Potential) = Init(pot as Root.Warm, clazz)
+    override fun createEffectForPotential(pot: Potential) = Init(pot as Warm, clazz)
 
     override fun toString(): String {
         return "$potential.init(${clazz.symbol.classId.shortClassName})"
@@ -137,7 +140,7 @@ sealed class Effect(open val potential: Potential) {
         }
 
     fun viewChange(root: Potential): Effect {
-        val viewedPot = viewChange(potential, root)
+        val viewedPot = potential.viewChange(root)
         return createEffectForPotential(viewedPot)
     }
 }
