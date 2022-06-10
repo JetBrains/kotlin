@@ -223,11 +223,11 @@ abstract class AbstractIncrementalCache<ClassName>(
             for (actual in actuals) {
                 actualToExpect.getOrPut(actual) { hashSetOf() }.add(expect)
             }
-            complementaryFilesMap[expect] = actuals
+            complementaryFilesMap[expect] = actuals.union(complementaryFilesMap[expect])
         }
 
         for ((actual, expects) in actualToExpect) {
-            complementaryFilesMap[actual] = expects
+            complementaryFilesMap[actual] = expects.union(complementaryFilesMap[actual])
         }
     }
 }
