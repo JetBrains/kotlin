@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 
 class SchemaContext(val properties: List<SchemaProperty>, val coneTypeProjection: ConeTypeProjection)
 
@@ -47,15 +49,15 @@ class FirDataFrameReceiverInjector(
 
         val dataFrameSchema = interpret(functionCall, processor)
 
-        val properties = dataFrameSchema.columns.map {
-            val typeApproximation = when (val type = it.value.type) {
+        val properties = dataFrameSchema.columns().map {
+            val typeApproximation = when (val type = it.type) {
                 is TypeApproximationImpl -> type
                 ColumnGroupTypeApproximation -> TODO("support column groups in data schema")
             }
             val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(typeApproximation.fqName))).constructType(
                 emptyArray(), false
             )
-            SchemaProperty(false, it.key, type, callReturnType.typeArguments[0])
+            SchemaProperty(false, it.name(), type, callReturnType.typeArguments[0])
         }
 
         val id = ids.removeLast()
@@ -144,14 +146,13 @@ class FirDataFrameReceiverInjector(
                     val arg = it.expression.getSchema().schemaArg
                     val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
                     if (schemaTypeArg.isStarProjection) {
-                        PluginDataFrameSchema(mapOf())
+                        PluginDataFrameSchema(emptyList())
                     } else {
                         val declarationSymbols =
                             ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol).declarationSymbols
-                        val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().associate {
-
-                            it.name.identifier to PluginColumnSchema(
-                                TypeApproximation(
+                        val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map {
+                            SimpleCol(
+                                it.name.identifier, TypeApproximationImpl(
                                     it.resolvedReturnType.classId!!.asFqNameString(),
                                     it.resolvedReturnType.isNullable
                                 )
