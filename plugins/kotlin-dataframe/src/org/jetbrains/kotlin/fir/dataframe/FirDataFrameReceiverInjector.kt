@@ -48,7 +48,11 @@ class FirDataFrameReceiverInjector(
         val dataFrameSchema = interpret(functionCall, processor)
 
         val properties = dataFrameSchema.columns.map {
-            val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(it.value.type.fqName))).constructType(
+            val typeApproximation = when (val type = it.value.type) {
+                is TypeApproximationImpl -> type
+                ColumnGroupTypeApproximation -> TODO("support column groups in data schema")
+            }
+            val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(typeApproximation.fqName))).constructType(
                 emptyArray(), false
             )
             SchemaProperty(false, it.key, type, callReturnType.typeArguments[0])
