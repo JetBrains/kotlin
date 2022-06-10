@@ -123,7 +123,7 @@ fun buildTree(expression: IrExpression): Node? {
       }
     }
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Node) {
+    override fun visitConst(expression: IrConst<*>, data: Node) {
       // Do not include constants
     }
 

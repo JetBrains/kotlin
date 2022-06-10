@@ -43,12 +43,14 @@ fun IrBuilderWithScope.irLambda(
 ): IrFunctionExpression {
   val scope = this
   val lambda = context.irFactory.buildFun {
+    this.startOffset = startOffset
+    this.endOffset = endOffset
     name = Name.special("<anonymous>")
     this.returnType = returnType
     visibility = DescriptorVisibilities.LOCAL
     origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
   }.apply {
-    val bodyBuilder = DeclarationIrBuilder(context, symbol)
+    val bodyBuilder = DeclarationIrBuilder(context, symbol, startOffset, endOffset)
     body = bodyBuilder.irBlockBody {
       block()
     }
