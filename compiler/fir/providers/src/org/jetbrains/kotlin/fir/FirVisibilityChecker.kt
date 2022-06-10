@@ -445,6 +445,7 @@ val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComp
 fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
     return when (this) {
         is FirBackingFieldSymbol -> fir.propertySymbol.getOwnerLookupTag()
+        is FirDelegateFieldSymbol -> fir.propertySymbol.getOwnerLookupTag()
         is FirClassLikeSymbol<*> -> getContainingClassLookupTag()
         is FirCallableSymbol<*> -> containingClass()
         else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")

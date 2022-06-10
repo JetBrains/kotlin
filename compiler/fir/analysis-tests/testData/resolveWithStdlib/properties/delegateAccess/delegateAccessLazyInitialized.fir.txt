@@ -1,0 +1,40 @@
+FILE: delegateAccessLazyInitialized.kt
+    public final val <T> R|T|.delegate: R|T|
+        public get(): R|T| {
+            ^ this@R|/delegate|
+        }
+    public final val state: R|kotlin/Boolean|by R|kotlin/lazy|<R|kotlin/Boolean|>(<L> = lazy@fun <anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
+        ^ Boolean(false)
+    }
+    )
+        public get(): R|kotlin/Boolean| {
+            ^ D|/state|.R|kotlin/getValue|<R|kotlin/Boolean|>(Null(null), ::R|/state|)
+        }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            R|/state|.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|() ->  {
+                ^box String(FAIL: we shouldn't know the state for now)
+            }
+        }
+
+        when () {
+            R|/state|.R|/delegate|<R|kotlin/Lazy<kotlin/Boolean>|>.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|() ->  {
+                ^box String(FAIL: we shouldn't know the state for now)
+            }
+        }
+
+        lval observed: R|kotlin/Boolean| = R|/state|
+        when () {
+            R|/state|.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|().R|kotlin/Boolean.not|() ->  {
+                ^box String(FAIL: we've observed the state already)
+            }
+        }
+
+        when () {
+            R|/state|.R|/delegate|<R|kotlin/Lazy<kotlin/Boolean>|>.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|().R|kotlin/Boolean.not|() ->  {
+                ^box String(FAIL: we've observed the state already)
+            }
+        }
+
+        ^box String(OK)
+    }

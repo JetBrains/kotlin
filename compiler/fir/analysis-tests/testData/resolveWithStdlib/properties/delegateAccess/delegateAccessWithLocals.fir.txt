@@ -1,0 +1,21 @@
+FILE: delegateAccessWithLocals.kt
+    public final fun box(): R|kotlin/String| {
+        lval state: R|kotlin/Boolean|by R|kotlin/lazy|<R|kotlin/Boolean|>(<L> = lazy@fun <anonymous>(): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ Boolean(false)
+        }
+        )
+        when () {
+            R|<local>/state|.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|() ->  {
+                ^box String(FAIL: we shouldn't know the state for now)
+            }
+        }
+
+        lval observed: R|kotlin/Boolean| = R|<local>/state|
+        when () {
+            R|<local>/state|.R|SubstitutionOverride<kotlin/Lazy.isInitialized: R|kotlin/Boolean|>|().R|kotlin/Boolean.not|() ->  {
+                ^box String(FAIL: we've observed the state already)
+            }
+        }
+
+        ^box String(OK)
+    }

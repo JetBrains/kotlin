@@ -1177,7 +1177,7 @@ class DeclarationsConverter(
                     classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                     isExtension = false,
                     context = context,
-                    delegateVisibility = delegateModifiers.getVisibility(),
+                    delegateVisibility = delegateModifiers.getVisibility().knownOr(Visibilities.Local),
                 )
             } else {
                 this.isLocal = false

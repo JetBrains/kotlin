@@ -1593,7 +1593,7 @@ open class RawFirBuilder(
                             ownerRegularClassTypeParametersCount = null,
                             isExtension = false,
                             context = context,
-                            delegateVisibility = this@toFirProperty.delegate?.visibility ?: Visibilities.Unknown,
+                            delegateVisibility = this@toFirProperty.delegate?.visibility.knownOr(Visibilities.Local),
                         )
                     }
                 } else {

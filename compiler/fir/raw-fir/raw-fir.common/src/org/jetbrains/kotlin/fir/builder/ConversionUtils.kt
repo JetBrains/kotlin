@@ -511,8 +511,8 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }.build()
 }
 
-private fun Visibility.knownOr(default: Visibility) = when (this) {
-    Visibilities.Unknown -> default
+fun Visibility?.knownOr(default: Visibility) = when (this) {
+    Visibilities.Unknown, null -> default
     else -> this
 }
 
