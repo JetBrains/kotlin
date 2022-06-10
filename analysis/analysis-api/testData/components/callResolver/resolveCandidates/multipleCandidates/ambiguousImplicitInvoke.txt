@@ -17,7 +17,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = a: kotlin.String
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = null
     argumentMapping = {}
   isInBestCandidates = true
 
@@ -40,7 +42,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Boolean
             symbol = b: kotlin.Boolean
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = null
     argumentMapping = {}
   isInBestCandidates = true
 
@@ -61,6 +65,8 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Char
             symbol = c: kotlin.Char
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /x
     argumentMapping = {}
   isInBestCandidates = false

@@ -16,11 +16,14 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Any?
             symbol = other: kotlin.Any?
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /A.equals
     argumentMapping = {
       a2 -> (KtVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Any?
-        symbol = other: kotlin.Any?)
+        symbol = other: kotlin.Any?
+        callableIdIfNonLocal = null)
     }

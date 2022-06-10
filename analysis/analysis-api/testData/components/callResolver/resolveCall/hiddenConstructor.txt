@@ -10,6 +10,7 @@ KtErrorCallInfo:
           returnType = Obj
           symbol = <constructor>(): Obj
           valueParameters = []
+          callableIdIfNonLocal = null
       argumentMapping = {}
   ]
   diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol private constructor(): R|Obj| is invisible>

@@ -17,11 +17,14 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = T
             symbol = t: T
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = test/Target.add
     argumentMapping = {
       s -> (KtVariableLikeSignature:
         name = t
         receiverType = null
         returnType = T
-        symbol = t: T)
+        symbol = t: T
+        callableIdIfNonLocal = null)
     }

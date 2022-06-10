@@ -9,4 +9,5 @@ KtSuccessCallInfo:
         returnType = kotlin.collections.MutableList<kotlin.String>
         symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
         valueParameters = []
+        callableIdIfNonLocal = kotlin/collections/mutableListOf
     argumentMapping = {}

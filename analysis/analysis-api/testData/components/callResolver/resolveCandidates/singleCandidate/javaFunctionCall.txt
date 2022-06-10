@@ -11,5 +11,6 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
         valueParameters = []
+        callableIdIfNonLocal = /JavaClass.javaMethod
     argumentMapping = {}
   isInBestCandidates = true

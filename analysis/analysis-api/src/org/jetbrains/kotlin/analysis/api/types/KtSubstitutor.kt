@@ -42,6 +42,6 @@ public interface KtSubstitutor : KtLifetimeOwner {
     public class Empty(override val token: KtLifetimeToken) : KtSubstitutor {
         override fun substituteOrNull(type: KtType): KtType? = withValidityAssertion { null }
 
-        override fun substituteOrSelf(type: KtType): KtType = withValidityAssertion { type }
+        override fun substitute(type: KtType): KtType = withValidityAssertion { type }
     }
 }

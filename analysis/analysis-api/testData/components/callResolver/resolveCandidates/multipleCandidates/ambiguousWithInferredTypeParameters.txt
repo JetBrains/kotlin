@@ -14,19 +14,23 @@ KtInapplicableCallCandidateInfo:
             name = t
             receiverType = null
             returnType = T
-            symbol = t: T,
+            symbol = t: T
+            callableIdIfNonLocal = null,
           KtVariableLikeSignature:
             name = a
             receiverType = null
             returnType = kotlin.Char
             symbol = a: kotlin.Char
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = t
         receiverType = null
         returnType = T
-        symbol = t: T)
+        symbol = t: T
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true
 
@@ -46,19 +50,23 @@ KtInapplicableCallCandidateInfo:
             name = u
             receiverType = null
             returnType = U
-            symbol = u: U,
+            symbol = u: U
+            callableIdIfNonLocal = null,
           KtVariableLikeSignature:
             name = b
             receiverType = null
             returnType = kotlin.Boolean
             symbol = b: kotlin.Boolean
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = u
         receiverType = null
         returnType = U
-        symbol = u: U)
+        symbol = u: U
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true
 
@@ -78,18 +86,22 @@ KtInapplicableCallCandidateInfo:
             name = v
             receiverType = null
             returnType = V
-            symbol = v: V,
+            symbol = v: V
+            callableIdIfNonLocal = null,
           KtVariableLikeSignature:
             name = c
             receiverType = null
             returnType = kotlin.String
             symbol = c: kotlin.String
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = v
         receiverType = null
         returnType = V
-        symbol = v: V)
+        symbol = v: V
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true

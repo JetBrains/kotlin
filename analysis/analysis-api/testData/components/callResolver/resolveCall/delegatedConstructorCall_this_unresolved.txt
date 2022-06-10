@@ -14,13 +14,16 @@ KtErrorCallInfo:
               name = i
               receiverType = null
               returnType = kotlin.Int
-              symbol = i: kotlin.Int,
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null,
             KtVariableLikeSignature:
               name = j
               receiverType = null
               returnType = kotlin.Int
               symbol = j: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = null
       argumentMapping = {},
     KtDelegatedConstructorCall:
       kind = THIS_CALL
@@ -37,7 +40,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = p: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = null
       argumentMapping = {}
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [public constructor(p: R|kotlin/Int|): R|Sub|, public constructor(i: R|kotlin/Int|, j: R|kotlin/Int|): R|Sub|]>

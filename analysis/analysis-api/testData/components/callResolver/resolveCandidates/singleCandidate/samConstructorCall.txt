@@ -14,12 +14,15 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
             symbol = function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = java/util/Comparator
     argumentMapping = {
       {x: Int, y: Int -> 1} -> (KtVariableLikeSignature:
         name = function
         receiverType = null
         returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
-        symbol = function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>)
+        symbol = function: kotlin.Function2<ft<T & Any, T?>, ft<T & Any, T?>, kotlin.Int>
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true

@@ -12,5 +12,6 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
         valueParameters = []
+        callableIdIfNonLocal = /A.foo
     argumentMapping = {}
   isInBestCandidates = true

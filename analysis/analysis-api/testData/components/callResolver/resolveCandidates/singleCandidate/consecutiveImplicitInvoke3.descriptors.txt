@@ -11,6 +11,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
         valueParameters = []
+        callableIdIfNonLocal = /invoke
     argumentMapping = {}
   isInBestCandidates = true
 
@@ -28,6 +29,7 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.Long
         symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
         valueParameters = []
+        callableIdIfNonLocal = /invoke
     argumentMapping = {}
   isInBestCandidates = false
 
@@ -45,5 +47,6 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.Double
         symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
         valueParameters = []
+        callableIdIfNonLocal = /invoke
     argumentMapping = {}
   isInBestCandidates = false
