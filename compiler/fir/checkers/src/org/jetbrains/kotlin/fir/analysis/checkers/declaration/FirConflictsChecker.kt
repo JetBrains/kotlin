@@ -289,10 +289,6 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     symbol = parameter.symbol
                     name = symbol.name
                 }
-                is FirTypeParameter -> {
-                    symbol = parameter.symbol
-                    name = parameter.name
-                }
                 else -> throw AssertionError("Invalid parameter type")
             }
             if (!name.isSpecial) {
