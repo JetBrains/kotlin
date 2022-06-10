@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
-import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: String) :
     KotlinJsIrSubTarget(target, classifier) {
@@ -30,6 +28,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
             binary.mode.name.toLowerCase(),
             RUN_TASK_NAME
         )
+
         locateOrRegisterRunTask(binary, binaryRunName)
 
         if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
@@ -38,27 +37,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
         }
     }
 
-    private fun locateOrRegisterRunTask(
-        binary: JsIrBinary,
-        name: String
-    ) {
-        val runTask = project.locateTask<NodeJsExec>(name)
-        if (runTask == null) {
-            val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
-                group = taskGroupName
-                inputFileProperty.set(
-                    project.layout.file(
-                        binary.linkSyncTask.map {
-                            it.destinationDir
-                                .resolve(binary.linkTask.get().outputFileProperty.get().name)
-                        }
-                    )
-                )
-            }
-
-            target.runTask.dependsOn(runTaskHolder)
-        }
-    }
+    protected abstract fun locateOrRegisterRunTask(binary: JsIrBinary, name: String)
 
     override fun configureBuild(compilation: KotlinJsIrCompilation) {
         compilation.binaries

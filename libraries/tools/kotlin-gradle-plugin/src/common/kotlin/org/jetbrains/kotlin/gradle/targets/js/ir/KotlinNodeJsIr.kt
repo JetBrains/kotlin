@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
@@ -25,6 +27,23 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
+    }
+
+    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
+        if (project.locateTask<NodeJsExec>(name) != null) return
+
+        val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
+            group = taskGroupName
+            inputFileProperty.set(
+                project.layout.file(
+                    binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
+                    }
+                )
+            )
+        }
+        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {

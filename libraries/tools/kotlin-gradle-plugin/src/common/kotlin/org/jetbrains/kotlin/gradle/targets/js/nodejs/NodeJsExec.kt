@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -99,9 +101,10 @@ constructor(
                 it.executable = nodeJs.requireConfigured().nodeExecutable
                 it.workingDir = npmProject.dir
                 it.dependsOn(nodeJs.npmInstallTaskProvider)
-
-                it.dependsOn(nodeJs.npmInstallTaskProvider, compilation.compileKotlinTaskProvider)
-
+                it.dependsOn(compilation.compileKotlinTaskProvider)
+                if (compilation.platformType == KotlinPlatformType.wasm) {
+                    it.nodeArgs.addWasmExperimentalArguments()
+                }
                 it.configuration()
             }
         }

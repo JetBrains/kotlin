@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
@@ -48,8 +49,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
         val args = mutableListOf<String>()
         with(args) {
-            add("--experimental-wasm-gc")
-            add("--experimental-wasm-eh")
+            addWasmExperimentalArguments()
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())
         }

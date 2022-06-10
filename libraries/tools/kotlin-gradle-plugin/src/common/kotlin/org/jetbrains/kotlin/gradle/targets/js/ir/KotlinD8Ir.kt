@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
@@ -24,6 +26,23 @@ open class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun runTask(body: D8Exec.() -> Unit) {
         project.tasks.withType<D8Exec>().named(runTaskName).configure(body)
+    }
+
+    override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
+        if (project.locateTask<D8Exec>(name) != null) return
+
+        val runTaskHolder = D8Exec.create(binary.compilation, name) {
+            group = taskGroupName
+            inputFileProperty.set(
+                project.layout.file(
+                    binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
+                    }
+                )
+            )
+        }
+        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {

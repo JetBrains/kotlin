@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
@@ -57,14 +58,13 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
             exclude = task.excludePatterns
         )
 
-        val args = mutableListOf(
-            "--experimental-wasm-gc",
-            "--experimental-wasm-eh",
-            testRunnerFile.absolutePath,
-        )
-
-        args.add("--")
-        args.addAll(cliArgs.toList())
+        val args = mutableListOf<String>()
+        with(args) {
+            addWasmExperimentalArguments()
+            add(testRunnerFile.absolutePath)
+            add("--")
+            addAll(cliArgs.toList())
+        }
 
         return TCServiceMessagesTestExecutionSpec(
             forkOptions = forkOptions,

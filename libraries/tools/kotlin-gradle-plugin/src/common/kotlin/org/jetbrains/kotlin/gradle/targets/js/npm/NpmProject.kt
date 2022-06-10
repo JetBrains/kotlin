@@ -68,7 +68,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         get() = dir.resolve(DIST_FOLDER)
 
     val main: String
-        get() = "$DIST_FOLDER/$name$extension"
+        get() = "$DIST_FOLDER${File.separator}$name$extension"
 
     val externalsDirRoot by lazy {
         project.buildDir.resolve("externals").resolve(name)

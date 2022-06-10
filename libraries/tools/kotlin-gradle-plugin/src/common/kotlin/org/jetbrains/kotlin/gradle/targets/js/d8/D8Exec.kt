@@ -9,6 +9,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
@@ -74,6 +75,9 @@ constructor(
                 it.executable = d8.requireConfigured().executablePath.absolutePath
                 it.dependsOn(d8.setupTaskProvider)
                 it.dependsOn(compilation.compileKotlinTaskProvider)
+                if (compilation.platformType == KotlinPlatformType.wasm) {
+                    it.d8Args.addWasmExperimentalArguments()
+                }
                 it.configuration()
             }
         }

@@ -79,3 +79,8 @@ internal fun writeWasmUnitTestRunner(compiledFile: File): File {
     )
     return testRunnerFile
 }
+
+internal fun MutableList<String>.addWasmExperimentalArguments() {
+    add("--experimental-wasm-gc")
+    add("--experimental-wasm-eh")
+}
