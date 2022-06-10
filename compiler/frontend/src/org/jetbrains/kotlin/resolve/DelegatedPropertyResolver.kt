@@ -496,55 +496,16 @@ class DelegatedPropertyResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession
     ): KotlinType {
-        resolveWithNewInference(
-            delegateExpression,
-            variableDescriptor,
-            scopeForDelegate,
-            trace,
-            dataFlowInfo,
-            inferenceSession
-        )?.let { return it }
-
-        val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
-
-        val delegateType = expressionTypingServices.safeGetType(
-            scopeForDelegate,
-            delegateExpression,
-            NO_EXPECTED_TYPE,
-            dataFlowInfo,
-            inferenceSession,
-            traceToResolveDelegatedProperty
-        )
-
-        traceToResolveDelegatedProperty.commit()
-
-        return delegateType
-    }
-
-    private fun completeNotComputedDelegateType(trace: BindingTrace, traceToResolveDelegatedProperty: TemporaryBindingTrace) {
-        val ranIntoRecursionDiagnostic = traceToResolveDelegatedProperty.bindingContext.diagnostics.find {
-            it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory
-                    || it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.warningFactory
-        }
-        if (ranIntoRecursionDiagnostic != null) {
-            trace.report(
-                TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(
-                    languageVersionSettings,
-                    ranIntoRecursionDiagnostic.psiElement as KtExpression
-                )
+        fun getExistingType(): KotlinType {
+            val traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property")
+            val delegateType = expressionTypingServices.safeGetType(
+                scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE, dataFlowInfo, inferenceSession, traceToResolveDelegatedProperty
             )
-        }
-    }
 
-    private fun resolveWithNewInference(
-        delegateExpression: KtExpression,
-        variableDescriptor: VariableDescriptorWithAccessors,
-        scopeForDelegate: LexicalScope,
-        trace: BindingTrace,
-        dataFlowInfo: DataFlowInfo,
-        inferenceSession: InferenceSession
-    ): KotlinType? {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null
+            traceToResolveDelegatedProperty.commit()
+
+            return delegateType
+        }
 
         trace.getType(delegateExpression)?.let { return it }
 
@@ -557,7 +518,7 @@ class DelegatedPropertyResolver(
 
         var delegateType = delegateTypeInfo.type ?: run {
             completeNotComputedDelegateType(trace, traceToResolveDelegatedProperty)
-            return null
+            return getExistingType()
         }
 
         var delegateDataFlow = delegateTypeInfo.dataFlowInfo
@@ -592,7 +553,7 @@ class DelegatedPropertyResolver(
             if (provideDelegateResults.isSuccess) {
                 val provideDelegateDescriptor = provideDelegateResults.resultingDescriptor
                 if (provideDelegateDescriptor.isOperator) {
-                    delegateType = inverseSubstitution(provideDelegateDescriptor.returnType, substitutionMap) ?: return null
+                    delegateType = inverseSubstitution(provideDelegateDescriptor.returnType, substitutionMap) ?: return getExistingType()
                     delegateDataFlow = provideDelegateResults.resultingCall.dataFlowInfoForArguments.resultInfo
                 }
                 if (substitutionMap == null) {
@@ -606,6 +567,21 @@ class DelegatedPropertyResolver(
             traceToResolveDelegatedProperty, delegateType, delegateTypeForProperType,
             delegateDataFlow, inferenceSession
         )
+    }
+
+    private fun completeNotComputedDelegateType(trace: BindingTrace, traceToResolveDelegatedProperty: TemporaryBindingTrace) {
+        val ranIntoRecursionDiagnostic = traceToResolveDelegatedProperty.bindingContext.diagnostics.find {
+            it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory
+                    || it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.warningFactory
+        }
+        if (ranIntoRecursionDiagnostic != null) {
+            trace.report(
+                TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(
+                    languageVersionSettings,
+                    ranIntoRecursionDiagnostic.psiElement as KtExpression
+                )
+            )
+        }
     }
 
     private fun inverseSubstitution(type: KotlinType?, substitutionMap: Map<UnwrappedType, UnwrappedType>?): UnwrappedType? {

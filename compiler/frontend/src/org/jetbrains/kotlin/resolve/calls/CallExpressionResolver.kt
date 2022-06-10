@@ -297,14 +297,7 @@ class CallExpressionResolver(
                 false
             } else when (resolutionResult.resultCode) {
                 NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                else -> {
-                    val newInferenceEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-                    val success = !newInferenceEnabled || resolutionResult.isSuccess
-                    if (newInferenceEnabled && success) {
-                        temporaryTraceAndCache.commit()
-                    }
-                    success
-                }
+                else -> resolutionResult.isSuccess.also { if (it) { temporaryTraceAndCache.commit() } }
             }
         }
 

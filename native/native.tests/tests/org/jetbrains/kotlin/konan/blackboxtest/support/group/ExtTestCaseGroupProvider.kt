@@ -119,11 +119,7 @@ private class ExtTestDataFile(
         val optInsForCompiler = optIns intersect OPT_INS_PURELY_FOR_COMPILER
 
         ExtTestDataFileSettings(
-            languageSettings = structure.directives.multiValues(LANGUAGE_DIRECTIVE) {
-                // It is already on by default, but passing it explicitly turns on a special "compatibility mode" in FE,
-                // which is not desirable.
-                it != "+NewInference"
-            },
+            languageSettings = structure.directives.multiValues(LANGUAGE_DIRECTIVE),
             optInsForSourceCode = optInsForSourceCode + structure.directives.multiValues(USE_EXPERIMENTAL_DIRECTIVE),
             optInsForCompiler = optInsForCompiler,
             expectActualLinker = EXPECT_ACTUAL_LINKER_DIRECTIVE in structure.directives,

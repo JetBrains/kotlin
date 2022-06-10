@@ -28,7 +28,6 @@ class DebugInfoDiagnosticFactory0 private constructor(
         expression: KtExpression,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
-        languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
     ): Diagnostic {
         return DebugInfoDiagnostic(expression, this)

@@ -260,11 +260,6 @@ fun createFunctionType(
     return KotlinTypeFactory.simpleNotNullType(typeAnnotations.toDefaultAttributes(), classDescriptor, arguments)
 }
 
-fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(StandardNames.FqNames.extensionFunctionType)
-
-fun Annotations.withoutExtensionFunctionAnnotation() =
-    FilteredAnnotations(this, true) { it != StandardNames.FqNames.extensionFunctionType }
-
 fun Annotations.withExtensionFunctionAnnotation(builtIns: KotlinBuiltIns) =
     if (hasAnnotation(StandardNames.FqNames.extensionFunctionType)) {
         this

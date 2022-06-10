@@ -48,9 +48,7 @@ class JavaSyntheticScopes(
     val scopesWithForceEnabledSamAdapters: Collection<SyntheticScope>
 
     init {
-        val samConversionPerArgumentIsEnabled =
-            languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                    languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        val samConversionPerArgumentIsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
 
         val javaSyntheticPropertiesScope =
             JavaSyntheticPropertiesScope(

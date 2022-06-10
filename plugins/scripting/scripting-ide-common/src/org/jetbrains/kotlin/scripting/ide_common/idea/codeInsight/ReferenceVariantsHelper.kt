@@ -185,7 +185,6 @@ class ReferenceVariantsHelper(
                 bindingContext,
                 containingDeclaration,
                 dataFlowInfo,
-                languageVersionSettings,
                 resolutionFacade.frontendService<DataFlowValueFactory>()
             )
         }.toSet()

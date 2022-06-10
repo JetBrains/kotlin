@@ -352,11 +352,7 @@ class GenerationState private constructor(
     val globalSerializationBindings = JvmSerializationBindings()
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 
-    val typeApproximator: TypeApproximator? =
-        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            TypeApproximator(module.builtIns, languageVersionSettings)
-        else
-            null
+    val typeApproximator = TypeApproximator(module.builtIns, languageVersionSettings)
 
     init {
         this.interceptedBuilderFactory = builderFactory

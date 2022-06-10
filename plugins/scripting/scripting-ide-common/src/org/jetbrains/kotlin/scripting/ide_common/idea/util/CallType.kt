@@ -364,7 +364,6 @@ private fun receiverValueTypes(
     stableSmartCastsOnly: Boolean,
     resolutionFacade: ResolutionFacade
 ): List<KotlinType> {
-    val languageVersionSettings = resolutionFacade.getLanguageVersionSettings()
     val dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory()
     val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
@@ -374,7 +373,6 @@ private fun receiverValueTypes(
             bindingContext,
             moduleDescriptor,
             dataFlowInfo,
-            languageVersionSettings,
             dataFlowValueFactory
         )
     } else {

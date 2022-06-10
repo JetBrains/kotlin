@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NullableVarargArgumentCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
         if (resolvedCall is VariableAsFunctionResolvedCall) {
             check(resolvedCall.functionCall, reportOn, context)
             return

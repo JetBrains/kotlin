@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.*
 
-open class DiagnosticCodeMetaInfoRenderConfiguration(
-    val withNewInference: Boolean = true,
-    val renderSeverity: Boolean = false
-) : AbstractCodeMetaInfoRenderConfiguration() {
+open class DiagnosticCodeMetaInfoRenderConfiguration(val renderSeverity: Boolean = false) : AbstractCodeMetaInfoRenderConfiguration() {
     private val crossPlatformLineBreak = """\r?\n""".toRegex()
 
     override fun asString(codeMetaInfo: CodeMetaInfo): String {

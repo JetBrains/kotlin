@@ -10,7 +10,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -333,8 +332,7 @@ public class ExpressionTypingServices {
                             statementExpression, result.getType(), context);
                     DataFlowValue blockExpressionValue = expressionTypingComponents.dataFlowValueFactory.createDataFlowValue(
                             (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
-                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue,
-                                                                                        expressionTypingComponents.languageVersionSettings));
+                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue));
                 }
             }
             else {
@@ -383,7 +381,7 @@ public class ExpressionTypingServices {
                                      );
 
         if (!isUnitExpectedType && statementExpression instanceof KtCallableReferenceExpression) {
-            KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
+            KotlinTypeInfo typeInfo = createDontCareTypeInfoForLambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
 
@@ -400,7 +398,7 @@ public class ExpressionTypingServices {
         }
 
         if (KtPsiUtil.deparenthesize(statementExpression) instanceof KtLambdaExpression && context.contextDependency == ContextDependency.DEPENDENT) {
-            KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
+            KotlinTypeInfo typeInfo = createDontCareTypeInfoForLambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
 
@@ -431,11 +429,11 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    private static KotlinTypeInfo createDontCareTypeInfoForNILambda(
+    private static KotlinTypeInfo createDontCareTypeInfoForLambda(
             @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || context.inferenceSession instanceof BuilderInferenceSession)
+        if (context.inferenceSession instanceof BuilderInferenceSession)
             return null;
         KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
         if (functionLiteral != null) {

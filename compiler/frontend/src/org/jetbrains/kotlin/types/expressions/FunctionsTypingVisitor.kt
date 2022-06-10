@@ -117,35 +117,29 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         return if (isDeclaration) {
             createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         } else {
-            val newInferenceEnabled = components.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-
             // We forbid anonymous function expressions to suspend type coercion for now, until `suspend fun` syntax is supported
             val resultType = functionDescriptor.createFunctionType(
                 components.builtIns,
                 suspendFunction = false
             )
 
-            if (newInferenceEnabled) {
-                // We should avoid type checking for types containing `NO_EXPECTED_TYPE`, the error will be report later if needed
-                if (!context.expectedType.contains { it === NO_EXPECTED_TYPE }) {
-                    /*
-                     * We do type checking without converted vararg type as the new inference create expected type with raw vararg type (see KotlinResolutionCallbacksImpl.kt)
-                     * Example:
-                     *      fun foo(x: Any?) {}
-                     *      val x = foo(fun(vararg p: Int) {})
-                     *      In NI, context.expectedType = `Function1<Int, Unit>`
-                     */
-                    val typeToTypeCheck = functionDescriptor.createFunctionType(
-                        components.builtIns,
-                        suspendFunction = false,
-                        shouldUseVarargType = true
-                    )
-                    components.dataFlowAnalyzer.checkType(typeToTypeCheck, function, context)
-                }
-                createTypeInfo(resultType, context)
-            } else {
-                components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, function)
+            // We should avoid type checking for types containing `NO_EXPECTED_TYPE`, the error will be report later if needed
+            if (!context.expectedType.contains { it === NO_EXPECTED_TYPE }) {
+                /*
+                 * We do type checking without converted vararg type as the new inference create expected type with raw vararg type (see KotlinResolutionCallbacksImpl.kt)
+                 * Example:
+                 *      fun foo(x: Any?) {}
+                 *      val x = foo(fun(vararg p: Int) {})
+                 *      In NI, context.expectedType = `Function1<Int, Unit>`
+                 */
+                val typeToTypeCheck = functionDescriptor.createFunctionType(
+                    components.builtIns,
+                    suspendFunction = false,
+                    shouldUseVarargType = true
+                )
+                components.dataFlowAnalyzer.checkType(typeToTypeCheck, function, context)
             }
+            createTypeInfo(resultType, context)
         }
     }
 
@@ -270,7 +264,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
 
         // i.e. this lambda isn't call arguments
-        if (newInferenceLambdaInfo == null && context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+        if (newInferenceLambdaInfo == null) {
             newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
         }
 

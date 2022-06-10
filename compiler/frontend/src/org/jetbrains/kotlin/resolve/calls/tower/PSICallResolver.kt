@@ -415,7 +415,6 @@ class PSICallResolver(
 
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
-        override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val areContextReceiversEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         override val languageVersionSettings: LanguageVersionSettings get() = context.languageVersionSettings
         override val lexicalScope: LexicalScope get() = context.scope
@@ -567,7 +566,7 @@ class PSICallResolver(
                 dataFlowValueFactory.createDataFlowValue(variableReceiver, temporaryTrace.bindingContext, context.scope.ownerDescriptor)
             return ReceiverValueWithSmartCastInfo(
                 variableReceiver,
-                context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings).compactIfPossible(),
+                context.dataFlowInfo.getCollectedTypes(dataFlowValue).compactIfPossible(),
                 dataFlowValue.isStable
             ).prepareReceiverRegardingCaptureTypes()
         }

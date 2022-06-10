@@ -135,8 +135,6 @@ enum class LanguageFeature(
     MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
     ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass(KOTLIN_1_4, kind = BUG_FIX, defaultState = State.ENABLED),
 
-    NewInference(KOTLIN_1_4),
-
     // In the next block, features can be enabled only along with new inference
     // v----------------------------------------------------------------------v
     SamConversionForKotlinFunctions(KOTLIN_1_4),

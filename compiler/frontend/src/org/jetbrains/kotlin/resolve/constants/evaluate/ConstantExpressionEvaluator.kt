@@ -1110,12 +1110,7 @@ private class ConstantExpressionEvaluatorVisitor(
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError) {
             return if (parameters.dontCreateILT) {
                 value.createSimpleIntCompileTimeConst(parameters)
-            } else createIntegerValueTypeConstant(
-                value,
-                constantExpressionEvaluator.module,
-                parameters,
-                languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-            )
+            } else createIntegerValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
         }
         val integerValue = ConstantValueFactory.createIntegerConstantValue(
             value, expectedType, parameters.isUnsignedNumberLiteral

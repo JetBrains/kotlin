@@ -38,7 +38,7 @@ object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
             // because it will also cause recursion in declaration type resolution.
             inferred.replaceAttributes(
                 inferred.attributes.replaceAnnotations(
-                    FilteredAnnotations(inferred.annotations, languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+                    FilteredAnnotations(inferred.annotations) {
                         it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
                     }
                 )

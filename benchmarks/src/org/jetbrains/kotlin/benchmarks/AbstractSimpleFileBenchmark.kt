@@ -60,13 +60,9 @@ private fun createFile(shortName: String, text: String, project: Project): KtFil
 private val JDK_PATH = File("${System.getProperty("java.home")!!}/lib/rt.jar")
 private val RUNTIME_JAR = File(System.getProperty("kotlin.runtime.path") ?: "dist/kotlinc/lib/kotlin-runtime.jar")
 
-private val LANGUAGE_FEATURE_SETTINGS =
-    LanguageVersionSettingsImpl(
-        LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
-        specificFeatures = mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
-    )
+private val LANGUAGE_FEATURE_SETTINGS = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_4)
 
-private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
+private fun newConfiguration(): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
     configuration.put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, "../compiler/cli/cli-common/resources")
@@ -74,14 +70,8 @@ private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
     configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    configuration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_4)
 
-    val newInferenceState = if (useNewInference) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
-    configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-        LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
-        specificFeatures = mapOf(
-            LanguageFeature.NewInference to newInferenceState
-        )
-    )
     return configuration
 }
 
@@ -95,14 +85,11 @@ abstract class AbstractSimpleFileBenchmark {
     @Param("true", "false")
     protected var isIR: Boolean = false
 
-    protected open val useNewInference get() = isIR
-
     @Setup(Level.Trial)
     fun setUp() {
-        if (isIR && !useNewInference) error("Invalid configuration")
         env = KotlinCoreEnvironment.createForTests(
             myDisposable,
-            newConfiguration(useNewInference),
+            newConfiguration(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 

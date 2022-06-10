@@ -125,7 +125,7 @@ class PostponedArgumentsAnalyzer(
 
         val convertedAnnotations = lambda.expectedType?.annotations?.let { annotations ->
             if (receiver != null || expectedReceiver == null) annotations
-            else FilteredAnnotations(annotations, true) { it != StandardNames.FqNames.extensionFunctionType }
+            else FilteredAnnotations(annotations) { it != StandardNames.FqNames.extensionFunctionType }
         }
 
         val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(

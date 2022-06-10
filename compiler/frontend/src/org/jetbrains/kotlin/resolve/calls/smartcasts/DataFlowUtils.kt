@@ -23,7 +23,6 @@ fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): Kot
 fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     bindingContext: BindingContext,
     descriptor: DeclarationDescriptor?,
-    languageVersionSettings: LanguageVersionSettings,
     dataFlowValueFactory: DataFlowValueFactory,
     defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, _ -> givenType }
 ): KotlinType? {
@@ -39,7 +38,7 @@ fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
 
     if (descriptor != null) {
         val dataFlow = dataFlowValueFactory.createDataFlowValue(this, givenType, bindingContext, descriptor)
-        val stableTypes = bindingContext.getDataFlowInfoBefore(this).getStableTypes(dataFlow, languageVersionSettings)
+        val stableTypes = bindingContext.getDataFlowInfoBefore(this).getStableTypes(dataFlow)
         return stableTypes.firstNotNullOfOrNull {
             when {
                 KotlinBuiltIns.isDoubleOrNullableDouble(it) -> it

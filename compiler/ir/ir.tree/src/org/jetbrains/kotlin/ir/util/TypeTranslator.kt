@@ -239,22 +239,8 @@ abstract class TypeTranslator(
         return TypeProjectionImpl(typeProjection.projectionKind, newType)
     }
 
-    private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-
     private fun approximateByKotlinRules(ktType: KotlinType): KotlinType =
-        if (isWithNewInference) {
-            if (ktType.constructor.isDenotable && ktType.arguments.isEmpty())
-                ktType
-            else
-                approximateType(ktType)
-        } else {
-            // Hack to preserve *-projections in arguments in OI.
-            // Expected to be removed as soon as OI is deprecated.
-            if (ktType.constructor.isDenotable)
-                ktType
-            else
-                approximateCapturedTypes(ktType).upper
-        }
+        if (ktType.constructor.isDenotable && ktType.arguments.isEmpty()) ktType else approximateType(ktType)
 
     private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrConstructorCall> {
         val annotations = kotlinType.annotations

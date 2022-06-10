@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
-import org.jetbrains.kotlin.resolve.calls.CommonSuperTypeUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -40,14 +38,12 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.SuspendFunctionTypeUtilKt;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -170,9 +166,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (resultType != null && thenType != null && elseType != null) {
                 DataFlowValue resultValue = components.dataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
                 DataFlowValue thenValue = components.dataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
-                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue, components.languageVersionSettings);
+                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue);
                 DataFlowValue elseValue = components.dataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
-                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue, components.languageVersionSettings);
+                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
             }
 
             loopBreakContinuePossible |= thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
@@ -498,63 +494,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         });
 
-        if (typingContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-            return resolveTryExpressionWithNewInference(expression, typingContext);
-        }
-        ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT);
-        KtExpression tryBlock = expression.getTryBlock();
-        List<KtCatchClause> catchClauses = expression.getCatchClauses();
-        KtFinallySection finallyBlock = expression.getFinallyBlock();
-        List<KotlinType> types = new ArrayList<>();
-        boolean nothingInAllCatchBranches = true;
-        for (KtCatchClause catchClause : catchClauses) {
-            KtParameter catchParameter = catchClause.getCatchParameter();
-            KtExpression catchBody = catchClause.getCatchBody();
-            boolean nothingInCatchBranch = false;
-            if (catchParameter != null) {
-                VariableDescriptor variableDescriptor = resolveAndCheckCatchParameter(catchParameter, context);
-
-                if (catchBody != null) {
-                    LexicalWritableScope catchScope = newWritableScopeImpl(context, LexicalScopeKind.CATCH, components.overloadChecker);
-                    catchScope.addVariableDescriptor(variableDescriptor);
-                    KotlinType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
-                    if (type != null) {
-                        types.add(type);
-                        if (KotlinBuiltIns.isNothing(type)) {
-                            nothingInCatchBranch = true;
-                        }
-                    }
-                }
-            }
-            if (!nothingInCatchBranch) {
-                nothingInAllCatchBranches =  false;
-            }
-        }
-
-        KotlinTypeInfo tryResult = facade.getTypeInfo(tryBlock, context);
-        ExpressionTypingContext tryOutputContext = getCleanedContextFromTryWithAssignmentsToVar(expression, nothingInAllCatchBranches, context);
-
-        KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(tryOutputContext);
-        if (finallyBlock != null) {
-            result = facade.getTypeInfo(finallyBlock.getFinalExpression(), tryOutputContext);
-        }
-        else if (nothingInAllCatchBranches) {
-            result = tryResult;
-        }
-
-        KotlinType type = tryResult.getType();
-        if (type != null) {
-            types.add(type);
-        }
-        if (types.isEmpty()) {
-            return result.clearType();
-        }
-        else {
-            return result.replaceType(CommonSuperTypeUtilsKt.commonSuperType(types));
-        }
+        return resolveTryExpression(expression, typingContext);
     }
 
-    private KotlinTypeInfo resolveTryExpressionWithNewInference(@NotNull KtTryExpression tryExpression, ExpressionTypingContext tryInputContext) {
+    private KotlinTypeInfo resolveTryExpression(@NotNull KtTryExpression tryExpression, ExpressionTypingContext tryInputContext) {
         // tryInputContext is an ExpressionTypingContext before try/catch expression
 
         KtBlockExpression tryBlock = tryExpression.getTryBlock();

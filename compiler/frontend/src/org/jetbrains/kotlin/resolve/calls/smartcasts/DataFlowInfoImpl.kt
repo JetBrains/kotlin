@@ -111,15 +111,9 @@ internal class DataFlowInfoImpl private constructor(
         }
     }
 
+    override fun getCollectedTypes(key: DataFlowValue): Set<KotlinType> = getCollectedTypes(key, true)
 
-    override fun getCollectedTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings) =
-        getCollectedTypes(key, true, languageVersionSettings)
-
-    private fun getCollectedTypes(
-        key: DataFlowValue,
-        enrichWithNotNull: Boolean,
-        languageVersionSettings: LanguageVersionSettings
-    ): Set<KotlinType> {
+    private fun getCollectedTypes(key: DataFlowValue, enrichWithNotNull: Boolean): Set<KotlinType> {
         val types = completeTypeInfo[key].getOrElse(ImmutableLinkedHashSet.empty())
         if (!enrichWithNotNull || getCollectedNullability(key).canBeNull()) {
             return types.toJavaSet()
@@ -127,33 +121,22 @@ internal class DataFlowInfoImpl private constructor(
 
         val enrichedTypes = newLinkedHashSetWithExpectedSize<KotlinType>(types.size() + 1)
         val originalType = key.type
-        types.mapTo(enrichedTypes) { type -> type.makeReallyNotNullIfNeeded(languageVersionSettings) }
-        if (originalType.canBeDefinitelyNotNullOrNotNull(languageVersionSettings)) {
-            enrichedTypes.add(originalType.makeReallyNotNullIfNeeded(languageVersionSettings))
+        types.mapTo(enrichedTypes) { type -> type.makeReallyNotNullIfNeeded() }
+        if (originalType.canBeDefinitelyNotNullOrNotNull()) {
+            enrichedTypes.add(originalType.makeReallyNotNullIfNeeded())
         }
 
         return enrichedTypes
     }
 
-    override fun getStableTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings) =
-        getStableTypes(key, true, languageVersionSettings)
+    override fun getStableTypes(key: DataFlowValue) = getStableTypes(key, true)
 
-    private fun getStableTypes(key: DataFlowValue, enrichWithNotNull: Boolean, languageVersionSettings: LanguageVersionSettings) =
-        if (!key.isStable) LinkedHashSet() else getCollectedTypes(key, enrichWithNotNull, languageVersionSettings)
+    private fun getStableTypes(key: DataFlowValue, enrichWithNotNull: Boolean) =
+        if (!key.isStable) LinkedHashSet() else getCollectedTypes(key, enrichWithNotNull)
 
-    private fun KotlinType.canBeDefinitelyNotNullOrNotNull(settings: LanguageVersionSettings): Boolean {
-        return if (settings.supportsFeature(LanguageFeature.NewInference))
-            TypeUtils.isNullableType(this)
-        else
-            this.isMarkedNullable
-    }
+    private fun KotlinType.canBeDefinitelyNotNullOrNotNull(): Boolean = TypeUtils.isNullableType(this)
 
-    private fun KotlinType.makeReallyNotNullIfNeeded(settings: LanguageVersionSettings): KotlinType {
-        return if (settings.supportsFeature(LanguageFeature.NewInference))
-            this.unwrap().makeDefinitelyNotNullOrNotNull()
-        else
-            TypeUtils.makeNotNullable(this)
-    }
+    private fun KotlinType.makeReallyNotNullIfNeeded(): KotlinType = this.unwrap().makeDefinitelyNotNullOrNotNull()
 
     /**
      * Call this function to clear all data flow information about
@@ -167,11 +150,11 @@ internal class DataFlowInfoImpl private constructor(
         return create(this, resultNullabilityInfo, EMPTY_TYPE_INFO, value)
     }
 
-    override fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
+    override fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
         val nullabilityOfB = getStableNullability(b)
         val nullabilityUpdate = mapOf(a to nullabilityOfB)
 
-        var typesForB = getStableTypes(b, languageVersionSettings)
+        var typesForB = getStableTypes(b)
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A, there is no reason to do it
         // because own type is not saved in this set
@@ -226,8 +209,8 @@ internal class DataFlowInfoImpl private constructor(
 
         // NB: == has no guarantees of type equality, see KT-11280 for the example
         if (isEquate && (identityEquals || !nullabilityOfA.canBeNonNull() || !nullabilityOfB.canBeNonNull())) {
-            newTypeInfoBuilder.putAll(a, getStableTypes(b, false, languageVersionSettings))
-            newTypeInfoBuilder.putAll(b, getStableTypes(a, false, languageVersionSettings))
+            newTypeInfoBuilder.putAll(a, getStableTypes(b, false))
+            newTypeInfoBuilder.putAll(b, getStableTypes(a, false))
             if (a.type != b.type) {
                 // To avoid recording base types of own type
                 if (!a.type.isSubtypeOf(b.type)) {
@@ -247,16 +230,11 @@ internal class DataFlowInfoImpl private constructor(
         value: DataFlowValue, type: KotlinType, languageVersionSettings: LanguageVersionSettings
     ): DataFlowInfo {
         if (value.type == type) return this
-        if (getCollectedTypes(value, languageVersionSettings).contains(type)) return this
+        if (getCollectedTypes(value).contains(type)) return this
         if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
 
         val nullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-
-        val isTypeNotNull =
-            if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-                !TypeUtils.isNullableType(type)
-            else
-                !type.isMarkedNullable
+        val isTypeNotNull = !TypeUtils.isNullableType(type)
 
         if (isTypeNotNull) {
             putNullabilityAndTypeInfo(nullabilityInfo, value, NOT_NULL, languageVersionSettings)

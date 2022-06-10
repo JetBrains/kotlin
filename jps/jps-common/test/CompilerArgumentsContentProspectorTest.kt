@@ -83,7 +83,6 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::reportOutputFiles,
             CommonCompilerArguments::multiPlatform,
             CommonCompilerArguments::noCheckActual,
-            CommonCompilerArguments::newInference,
             CommonCompilerArguments::inlineClasses,
             CommonCompilerArguments::legacySmartCastAfterTry,
             CommonCompilerArguments::effectSystem,

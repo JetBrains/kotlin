@@ -339,7 +339,6 @@ internal fun createSimplePSICallArgument(
     contextForArgument.trace.bindingContext, contextForArgument.statementFilter,
     contextForArgument.scope.ownerDescriptor, valueArgument,
     contextForArgument.dataFlowInfo, typeInfoForArgument,
-    contextForArgument.languageVersionSettings,
     contextForArgument.dataFlowValueFactory,
     contextForArgument.call,
 )
@@ -351,7 +350,6 @@ internal fun createSimplePSICallArgument(
     valueArgument: ValueArgument,
     dataFlowInfoBeforeThisArgument: DataFlowInfo,
     typeInfoForArgument: KotlinTypeInfo,
-    languageVersionSettings: LanguageVersionSettings,
     dataFlowValueFactory: DataFlowValueFactory,
     call: Call
 ): SimplePSIKotlinCallArgument? {
@@ -377,7 +375,6 @@ internal fun createSimplePSICallArgument(
                 ownerDescriptor, bindingContext,
                 if (useDataFlowInfoBeforeArgument) dataFlowInfoBeforeThisArgument else typeInfoForArgument.dataFlowInfo,
                 expressionReceiver,
-                languageVersionSettings,
                 dataFlowValueFactory
             )
         }

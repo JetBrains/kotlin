@@ -354,19 +354,18 @@ fun transformToReceiverWithSmartCastInfo(
     bindingContext: BindingContext,
     dataFlowInfo: DataFlowInfo,
     receiver: ReceiverValue,
-    languageVersionSettings: LanguageVersionSettings,
     dataFlowValueFactory: DataFlowValueFactory
 ): ReceiverValueWithSmartCastInfo {
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiver, bindingContext, containingDescriptor)
     return ReceiverValueWithSmartCastInfo(
         receiver,
-        dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings).compactIfPossible(),
+        dataFlowInfo.getCollectedTypes(dataFlowValue).compactIfPossible(),
         dataFlowValue.isStable
     )
 }
 
 fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) = transformToReceiverWithSmartCastInfo(
-    scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver, languageVersionSettings, dataFlowValueFactory
+    scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver, dataFlowValueFactory
 )
 
 internal fun Call.isCallWithSuperReceiver(): Boolean = explicitReceiver is SuperCallReceiverValue

@@ -20,8 +20,6 @@ import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
 
-private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
-
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var totalTime = 0L
     private var files = 0
@@ -78,9 +76,6 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             LanguageVersionSettingsImpl(
                 configuration.languageVersionSettings.languageVersion,
                 configuration.languageVersionSettings.apiVersion,
-                specificFeatures = mapOf(
-                    LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
-                ),
                 analysisFlags = mapOf(
                     AnalysisFlags.skipPrereleaseCheck to true,
                     AnalysisFlags.optIn to moduleData.optInAnnotations
@@ -129,8 +124,6 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     fun testTotalKotlin() {
 
         isolate()
-
-        writeMessageToLog("use_ni: $USE_NI")
 
         for (i in 0 until PASSES) {
             runTestOnce(i)

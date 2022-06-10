@@ -536,16 +536,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
         }
 
-        if (this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
-            if (!standaloneSamConversionFeaturePassedExplicitly)
-                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-
-            if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
-                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-
-            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
-        }
-
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,

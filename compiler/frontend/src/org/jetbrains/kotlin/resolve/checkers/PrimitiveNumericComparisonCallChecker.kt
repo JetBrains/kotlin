@@ -101,7 +101,7 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
             expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor
         )
         val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return emptyList()
-        val stableTypes = dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings)
+        val stableTypes = dataFlowInfo.getStableTypes(dataFlowValue)
         return listOf(type) + stableTypes
     }
 
