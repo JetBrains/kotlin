@@ -74,6 +74,7 @@ sealed class Field(
     val nullable: Boolean,
     val mutable: Boolean,
     val isChild: Boolean,
+    val strictCastInTransformChildren: Boolean,
 ) {
     abstract val type: TypeRef
     abstract val baseDefaultValue: CodeBlock?
@@ -95,9 +96,10 @@ class SingleField(
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
+    strictCastInTransformChildren: Boolean,
     override val baseDefaultValue: CodeBlock?,
     override val baseGetter: CodeBlock?,
-) : Field(config, name, nullable, mutable, isChild) {
+) : Field(config, name, nullable, mutable, isChild, strictCastInTransformChildren) {
     override val transformable: Boolean
         get() = mutable
 }
@@ -110,10 +112,11 @@ class ListField(
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
+    strictCastInTransformChildren: Boolean,
     override val transformable: Boolean,
     override val baseDefaultValue: CodeBlock?,
     override val baseGetter: CodeBlock?,
-) : Field(config, name, nullable, mutable, isChild) {
+) : Field(config, name, nullable, mutable, isChild, strictCastInTransformChildren) {
     override val type: TypeRef
         get() = listType.withArgs(elementType)
 }

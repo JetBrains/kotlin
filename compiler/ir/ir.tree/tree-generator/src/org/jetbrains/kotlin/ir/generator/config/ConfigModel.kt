@@ -87,6 +87,7 @@ sealed class FieldConfig(
     var baseDefaultValue: CodeBlock? = null
     var baseGetter: CodeBlock? = null
     var printProperty = true
+    var strictCastInTransformChildren = false
 
     var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 
