@@ -18,7 +18,9 @@ KtSuccessCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = kotlin/Int.plus
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
@@ -27,3 +29,4 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = var i: kotlin.Int
+        callableIdIfNonLocal = null

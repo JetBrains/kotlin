@@ -11,4 +11,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = val i: kotlin.Int
+        callableIdIfNonLocal = /A.i
     simpleAccess = Read:

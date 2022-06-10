@@ -15,13 +15,16 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = null
       argumentMapping = {
         s -> (KtVariableLikeSignature:
           name = p1
           receiverType = null
           returnType = kotlin.Int
-          symbol = p1: kotlin.Int)
+          symbol = p1: kotlin.Int
+          callableIdIfNonLocal = null)
       }
   ]
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/String but kotlin/Int was expected>

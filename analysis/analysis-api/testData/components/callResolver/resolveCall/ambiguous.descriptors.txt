@@ -15,13 +15,16 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = /function
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = a
           receiverType = null
           returnType = kotlin.Char
-          symbol = a: kotlin.Char)
+          symbol = a: kotlin.Char
+          callableIdIfNonLocal = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -38,13 +41,16 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = /function
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean)
+          symbol = b: kotlin.Boolean
+          callableIdIfNonLocal = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -61,13 +67,16 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = /function
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = c
           receiverType = null
           returnType = kotlin.String
-          symbol = c: kotlin.String)
+          symbol = c: kotlin.String
+          callableIdIfNonLocal = null)
       }
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 

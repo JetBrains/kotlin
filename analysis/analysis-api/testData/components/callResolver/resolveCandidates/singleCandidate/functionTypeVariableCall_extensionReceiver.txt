@@ -18,6 +18,8 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = p1: P1
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = kotlin/Function1.invoke
     argumentMapping = {}
   isInBestCandidates = true
