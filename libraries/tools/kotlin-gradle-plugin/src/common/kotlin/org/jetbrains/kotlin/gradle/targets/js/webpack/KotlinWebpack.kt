@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -65,7 +65,7 @@ constructor(
     open val fileResolver: FileResolver
         get() = injected
 
-    override val rules: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule> =
+    override val rules: KotlinWebpackRulesContainer =
         project.objects.webpackRulesContainer()
 
     @get:Inject

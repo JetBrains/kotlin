@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.StringWriter
+import javax.inject.Inject
 
 @Suppress("LeakingThis")
-abstract class KotlinWebpackRule(private val name: String) : Named {
+abstract class KotlinWebpackRule @Inject constructor(private val name: String) : Named {
     @get:Input
     abstract val enabled: Property<Boolean>
 
@@ -35,7 +36,7 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
 
     @get:Input
     protected open val description: String
-        get() = this::class.simpleName?.removeSuffix("_Decorated") ?: "KotlinWebpackRule"
+        get() = (this::class.simpleName?.removeSuffix("_Decorated") ?: "KotlinWebpackRule") + "[${getName()}]"
 
     init {
         enabled.convention(false)
@@ -45,12 +46,12 @@ abstract class KotlinWebpackRule(private val name: String) : Named {
      * Validates the rule state just before it getting applied.
      * Returning false will skip the rule silently. To terminate the build instead, throw an error.
      */
-    internal abstract fun validate(): Boolean
+    open fun validate(): Boolean = true
 
     /**
      * Provides a list of required npm dependencies for the rule to function.
      */
-    internal abstract fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency>
+    open fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency> = listOf()
 
     /**
      * Provides a loaders sequence to apply to the rule.

@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.PolymorphicDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -17,6 +17,7 @@ import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
@@ -51,7 +52,7 @@ data class KotlinWebpackConfig(
     @Input
     var experiments: MutableSet<String> = mutableSetOf(),
     @Nested
-    override val rules: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>,
+    override val rules: KotlinWebpackRulesContainer,
     @Input
     @Optional
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,

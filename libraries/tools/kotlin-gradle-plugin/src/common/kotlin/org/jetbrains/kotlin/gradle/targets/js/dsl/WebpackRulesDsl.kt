@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 
 interface WebpackRulesDsl {
     @get:Nested
-    val rules: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>
+    val rules: KotlinWebpackRulesContainer
+
+    fun rules(action: Action<KotlinWebpackRulesContainer>) {
+        action.execute(rules)
+    }
 
     fun cssSupport(action: Action<KotlinWebpackCssRule>) {
         val rule = rules.maybeCreate("css", KotlinWebpackCssRule::class.java)
@@ -33,11 +37,12 @@ interface WebpackRulesDsl {
             container: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>
         ) = container.registerFactory(T::class.java) { newInstance<T>(it) }
 
-        fun ObjectFactory.webpackRulesContainer(): ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule> {
-            return polymorphicDomainObjectContainer(KotlinWebpackRule::class.java).also {
+        fun ObjectFactory.webpackRulesContainer(): KotlinWebpackRulesContainer {
+            val delegate = polymorphicDomainObjectContainer(KotlinWebpackRule::class.java).also {
                 bindTo<KotlinWebpackCssRule>(it)
                 bindTo<KotlinWebpackScssRule>(it)
             }
+            return KotlinWebpackRulesContainer(delegate, this)
         }
     }
 }

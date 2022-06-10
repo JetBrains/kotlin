@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import javax.inject.Inject
+
 plugins {
     kotlin("js")
 }
@@ -9,6 +12,15 @@ dependencies {
     testImplementation(kotlin("test-js"))
 }
 
+abstract class CustomWebpackRule
+@javax.inject.Inject
+constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule(name) {
+    init {
+        test.set("none")
+    }
+    override fun loaders() = listOf<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule.Loader>()
+}
+
 kotlin {
     target {
         browser {
@@ -18,6 +30,9 @@ kotlin {
                 }
                 scssSupport {
                     enabled.set(true)
+                }
+                rules {
+                    rule<CustomWebpackRule>("custom")
                 }
             }
             testTask {
