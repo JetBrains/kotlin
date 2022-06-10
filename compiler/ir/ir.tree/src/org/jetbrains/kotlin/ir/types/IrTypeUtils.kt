@@ -47,6 +47,7 @@ fun IrType.isNullable(): Boolean =
             else -> error("Unsupported classifier: $classifier")
         }
         is IrDynamicType -> true
+        is IrErrorType -> this.isMarkedNullable
         else -> false
     }
 
