@@ -93,16 +93,14 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
     abstract class FromKpmModule
     @Inject constructor (@get:Internal val module: GradleKpmModule) : BuildKotlinToolingMetadataTask() {
 
-        override val outputDirectory: File
-            get() = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.name)
+        override val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.name)
 
         override fun buildKotlinToolingMetadata() = module.getKotlinToolingMetadata()
     }
 
     abstract class FromKotlinExtension : BuildKotlinToolingMetadataTask() {
 
-        override val outputDirectory: File
-            get() = project.buildDir.resolve("kotlinToolingMetadata")
+        override val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata")
 
         override fun buildKotlinToolingMetadata() = project.kotlinExtension.getKotlinToolingMetadata()
     }
