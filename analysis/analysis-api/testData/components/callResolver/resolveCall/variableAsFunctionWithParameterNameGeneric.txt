@@ -16,11 +16,14 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
             symbol = p1: P1
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = kotlin/Function1.invoke
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-        symbol = p1: P1)
+        symbol = p1: P1
+        callableIdIfNonLocal = null)
     }

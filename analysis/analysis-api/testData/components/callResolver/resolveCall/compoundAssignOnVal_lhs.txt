@@ -8,4 +8,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = A
         symbol = l: A
+        callableIdIfNonLocal = null
     simpleAccess = Read:

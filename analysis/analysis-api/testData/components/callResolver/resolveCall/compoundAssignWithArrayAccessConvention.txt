@@ -18,7 +18,9 @@ KtSuccessCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = kotlin/Int.plus
     getPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = m
@@ -34,7 +36,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = k: K
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /MyMap.get
     indexArguments = [
       "a"
     ]
@@ -52,10 +56,13 @@ KtSuccessCallInfo:
             name = k
             receiverType = null
             returnType = kotlin.String
-            symbol = k: K,
+            symbol = k: K
+            callableIdIfNonLocal = null,
           KtVariableLikeSignature:
             name = v
             receiverType = null
             returnType = kotlin.Int
             symbol = v: V
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /MyMap.set

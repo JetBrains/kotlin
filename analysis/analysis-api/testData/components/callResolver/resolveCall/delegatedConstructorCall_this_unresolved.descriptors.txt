@@ -14,24 +14,29 @@ KtErrorCallInfo:
               name = i
               receiverType = null
               returnType = kotlin.Int
-              symbol = i: kotlin.Int,
+              symbol = i: kotlin.Int
+              callableIdIfNonLocal = null,
             KtVariableLikeSignature:
               name = j
               receiverType = null
               returnType = kotlin.Int
               symbol = j: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = null
       argumentMapping = {
         i -> (KtVariableLikeSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
-          symbol = i: kotlin.Int),
+          symbol = i: kotlin.Int
+          callableIdIfNonLocal = null),
         j -> (KtVariableLikeSignature:
           name = j
           receiverType = null
           returnType = kotlin.Int
-          symbol = j: kotlin.Int)
+          symbol = j: kotlin.Int
+          callableIdIfNonLocal = null)
       },
     KtDelegatedConstructorCall:
       kind = THIS_CALL
@@ -48,13 +53,16 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = p: kotlin.Int
+              callableIdIfNonLocal = null
           ]
+          callableIdIfNonLocal = null
       argumentMapping = {
         i -> (KtVariableLikeSignature:
           name = p
           receiverType = null
           returnType = kotlin.Int
-          symbol = p: kotlin.Int)
+          symbol = p: kotlin.Int
+          callableIdIfNonLocal = null)
       }
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 

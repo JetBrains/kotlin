@@ -16,11 +16,14 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = test.FirstTarget
             symbol = x: test.FirstTarget
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = test/Serializer.serializeFirstTarget
     argumentMapping = {
       target -> (KtVariableLikeSignature:
         name = x
         receiverType = null
         returnType = test.FirstTarget
-        symbol = x: test.FirstTarget)
+        symbol = x: test.FirstTarget
+        callableIdIfNonLocal = null)
     }

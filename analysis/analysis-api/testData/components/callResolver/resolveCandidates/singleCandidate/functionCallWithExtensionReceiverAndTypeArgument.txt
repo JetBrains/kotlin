@@ -16,12 +16,15 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = a: B
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = kotlin.Int
-        symbol = a: B)
+        symbol = a: B
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true

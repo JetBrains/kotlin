@@ -15,13 +15,16 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Char
             symbol = a: kotlin.Char
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = kotlin.Char
-        symbol = a: kotlin.Char)
+        symbol = a: kotlin.Char
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true
 
@@ -42,13 +45,16 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Boolean
             symbol = b: kotlin.Boolean
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = b
         receiverType = null
         returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean)
+        symbol = b: kotlin.Boolean
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true
 
@@ -69,12 +75,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = c: kotlin.String
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = c
         receiverType = null
         returnType = kotlin.String
-        symbol = c: kotlin.String)
+        symbol = c: kotlin.String
+        callableIdIfNonLocal = null)
     }
   isInBestCandidates = true

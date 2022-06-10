@@ -14,5 +14,7 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = vararg strings: kotlin.String
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = null
     argumentMapping = {}

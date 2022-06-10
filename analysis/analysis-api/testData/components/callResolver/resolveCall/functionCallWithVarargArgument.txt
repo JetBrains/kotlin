@@ -14,21 +14,26 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = vararg a: kotlin.Int
+            callableIdIfNonLocal = null
         ]
+        callableIdIfNonLocal = /function
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = kotlin.Int
-        symbol = vararg a: kotlin.Int),
+        symbol = vararg a: kotlin.Int
+        callableIdIfNonLocal = null),
       2 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = kotlin.Int
-        symbol = vararg a: kotlin.Int),
+        symbol = vararg a: kotlin.Int
+        callableIdIfNonLocal = null),
       3 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = kotlin.Int
-        symbol = vararg a: kotlin.Int)
+        symbol = vararg a: kotlin.Int
+        callableIdIfNonLocal = null)
     }

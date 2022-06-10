@@ -10,5 +10,6 @@ KtInapplicableCallCandidateInfo:
         returnType = Obj
         symbol = <constructor>(): Obj
         valueParameters = []
+        callableIdIfNonLocal = null
     argumentMapping = {}
   isInBestCandidates = true
