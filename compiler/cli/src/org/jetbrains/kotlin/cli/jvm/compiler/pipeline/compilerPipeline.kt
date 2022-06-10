@@ -365,7 +365,6 @@ fun writeOutputs(
     return true
 }
 
-
 fun createSession(
     name: String,
     platform: TargetPlatform,
@@ -551,18 +550,21 @@ fun createProjectEnvironment(
 }
 
 private fun contentRootToVirtualFile(
-    root: JvmContentRootBase, locaFileSystem: VirtualFileSystem, jarFileSystem: VirtualFileSystem, messageCollector: MessageCollector
+    root: JvmContentRootBase,
+    localFileSystem: VirtualFileSystem,
+    jarFileSystem: VirtualFileSystem,
+    messageCollector: MessageCollector,
 ): VirtualFile? =
     when (root) {
         // TODO: find out why non-existent location is not reported for JARs, add comment or fix
         is JvmClasspathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else locaFileSystem.findExistingRoot(root, "Classpath entry", messageCollector)
+            else localFileSystem.findExistingRoot(root, "Classpath entry", messageCollector)
         is JvmModulePathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else locaFileSystem.findExistingRoot(root, "Java module root", messageCollector)
+            else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
         is JavaSourceRoot ->
-            locaFileSystem.findExistingRoot(root, "Java source root", messageCollector)
+            localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
         else ->
             throw IllegalStateException("Unexpected root: $root")
     }
