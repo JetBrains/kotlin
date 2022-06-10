@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.KtCompilerPluginsProviderForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
+import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -46,6 +48,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
             registerService(SymbolLightClassFacadeCache::class.java)
             registerService(KotlinAsJavaSupport::class.java, KotlinAsJavaFirSupport(project))
+            registerService(KtCompilerPluginsProvider::class.java, KtCompilerPluginsProviderForTests(project))
         }
 
         with(PsiElementFinder.EP.getPoint(project)) {

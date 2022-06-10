@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createSealed
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.moduleScopeProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
@@ -47,9 +48,15 @@ internal inline fun createCompositeSymbolProvider(
     FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
-internal fun FirSession.registerCompilerPluginExtensions(project: Project) {
+internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
+    val extensionProvider = project.getService(KtCompilerPluginsProvider::class.java) ?: return
     FirSessionFactory.FirSessionConfigurator(this).apply {
-        for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
+        @Suppress("UNCHECKED_CAST")
+        val registrars = extensionProvider.getRegisteredExtensions(
+            module,
+            FirExtensionRegistrarAdapter,
+        ) as List<FirExtensionRegistrar>
+        for (extensionRegistrar in registrars) {
             registerExtensions(extensionRegistrar.configure())
         }
     }.configure()

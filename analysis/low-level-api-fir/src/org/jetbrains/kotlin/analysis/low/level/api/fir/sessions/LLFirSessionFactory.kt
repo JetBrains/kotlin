@@ -97,7 +97,7 @@ internal object LLFirSessionFactory {
             register(FirPhaseManager::class, LLFirPhaseManager(sessionInvalidator))
 
             registerCompilerPluginServices(contentScope, project, module)
-            registerCompilerPluginExtensions(project)
+            registerCompilerPluginExtensions(project, module)
 
             val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(session)?.also {
                 register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
@@ -197,8 +197,6 @@ internal object LLFirSessionFactory {
             val annotationsResolver = project.createAnnotationResolver(contentScope)
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider())
-
-            registerCompilerPluginExtensions(project)
 
             val dependencyProvider = LLFirDependentModuleProviders(this) {
                 // <all libraries scope> - <current library scope>
