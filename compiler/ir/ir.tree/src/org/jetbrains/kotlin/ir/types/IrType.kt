@@ -29,7 +29,11 @@ abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
     abstract override fun hashCode(): Int
 }
 
-abstract class IrErrorType(kotlinType: KotlinType?, private val errorClassStubSymbol: IrClassSymbol) : IrTypeBase(kotlinType), SimpleTypeMarker {
+abstract class IrErrorType(
+    kotlinType: KotlinType?,
+    private val errorClassStubSymbol: IrClassSymbol,
+    val isMarkedNullable: Boolean = false
+) : IrTypeBase(kotlinType), SimpleTypeMarker {
     val symbol: IrClassSymbol
         get() = errorClassStubSymbol
 }

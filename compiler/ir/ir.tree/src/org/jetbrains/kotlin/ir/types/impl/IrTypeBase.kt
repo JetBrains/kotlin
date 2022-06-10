@@ -40,7 +40,8 @@ class IrErrorTypeImpl(
     kotlinType: KotlinType?,
     override val annotations: List<IrConstructorCall>,
     override val variance: Variance,
-) : IrErrorType(kotlinType, IrErrorClassImpl.symbol) {
+    isMarkedNullable: Boolean = false
+) : IrErrorType(kotlinType, IrErrorClassImpl.symbol, isMarkedNullable) {
     override fun equals(other: Any?): Boolean = other is IrErrorTypeImpl
 
     override fun hashCode(): Int = IrErrorTypeImpl::class.java.hashCode()
@@ -51,7 +52,7 @@ object IrErrorClassImpl : IrClassImpl(
     Name.special("<error>"), ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL
 ) {
     override var parent: IrDeclarationParent
-        get() = object: IrFile() {
+        get() = object : IrFile() {
             override val startOffset: Int
                 get() = TODO("Not yet implemented")
             override val endOffset: Int
