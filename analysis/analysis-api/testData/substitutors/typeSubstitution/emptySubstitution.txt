@@ -1,0 +1,4 @@
+PSI type: List<String>
+KtType: kotlin.collections.List<kotlin.String>
+substitutor.substitute: kotlin.collections.List<kotlin.String>
+substitutor.substituteOrNull: null
