@@ -46,6 +46,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     // https://mochajs.org/#-timeout-ms-t-ms
     var timeout: String = DEFAULT_TIMEOUT
 
+    var skipDryRun: Boolean = false
+
     private val platformType = compilation.platformType
 
     override fun createTestExecutionSpec(
@@ -94,7 +96,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
             }
         }
 
-        val dryRunArgs = if (platformType == KotlinPlatformType.wasm)
+        val dryRunArgs = if (skipDryRun || platformType == KotlinPlatformType.wasm)
             null
         else {
             mutableListOf(
@@ -104,6 +106,11 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
                 add(mocha)
                 add(createAdapterJs(file, "kotlin-test-nodejs-empty-runner", ADAPTER_EMPTY_NODEJS).canonicalPath)
                 addAll(cliArgs.toList())
+                if (debug) {
+                    add(NO_TIMEOUT_ARG)
+                } else {
+                    addAll(cliArg(TIMEOUT_ARG, timeout))
+                }
 
                 addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
             }
