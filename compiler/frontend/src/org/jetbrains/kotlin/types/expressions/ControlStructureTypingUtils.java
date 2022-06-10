@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveUtilsKt;
@@ -250,9 +248,6 @@ public class ControlStructureTypingUtils {
             dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
         }
 
-        @Override
-        public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) { }
-
         @NotNull
         @Override
         public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
@@ -457,28 +452,6 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
-        public void missingReceiver(
-                @NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver
-        ) {
-            logError();
-        }
-
-        @Override
-        public void wrongReceiverType(
-                @NotNull BindingTrace trace,
-                @NotNull ReceiverParameterDescriptor receiverParameter,
-                @NotNull ReceiverValue receiverArgument,
-                @NotNull ResolutionContext<?> c
-        ) {
-            logError();
-        }
-
-        @Override
-        public void noReceiverAllowed(@NotNull BindingTrace trace) {
-            logError();
-        }
-
-        @Override
         public void noValueForParameter(
                 @NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter
         ) {
@@ -518,14 +491,6 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void abstractSuperCall(@NotNull BindingTrace trace) {
-            logError();
-        }
-
-        @Override
-        public void nestedClassAccessViaInstanceReference(
-                @NotNull BindingTrace trace, @NotNull ClassDescriptor classDescriptor,
-                @NotNull ExplicitReceiverKind explicitReceiverKind
-        ) {
             logError();
         }
 

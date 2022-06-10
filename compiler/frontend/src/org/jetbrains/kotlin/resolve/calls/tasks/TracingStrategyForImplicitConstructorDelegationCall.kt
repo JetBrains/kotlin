@@ -101,12 +101,6 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("abstractSuperCall")
     }
 
-    override fun nestedClassAccessViaInstanceReference(
-        trace: BindingTrace, classDescriptor: ClassDescriptor, explicitReceiverKind: ExplicitReceiverKind
-    ) {
-        unexpectedError("nestedClassAccessViaInstanceReference")
-    }
-
     override fun unsafeCall(trace: BindingTrace, type: KotlinType, isCallForImplicitInvoke: Boolean) {
         unexpectedError("unsafeCall")
     }

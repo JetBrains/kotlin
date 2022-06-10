@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code
 
 abstract class AbstractOverloadResolutionResults<D : CallableDescriptor> : OverloadResolutionResults<D> {
     override fun isSuccess() = resultCode.isSuccess
-    override fun isSingleResult() = resultingCalls.size == 1 && resultCode != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER
-    override fun isNothing() = resultCode == OverloadResolutionResults.Code.NAME_NOT_FOUND
-    override fun isAmbiguity() = resultCode == OverloadResolutionResults.Code.AMBIGUITY
-    override fun isIncomplete() = resultCode == OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE
+    override fun isSingleResult() = resultingCalls.size == 1 && resultCode != Code.CANDIDATES_WITH_WRONG_RECEIVER
+    override fun isNothing() = resultCode == Code.NAME_NOT_FOUND
+    override fun isAmbiguity() = resultCode == Code.AMBIGUITY
+    override fun isIncomplete() = resultCode == Code.INCOMPLETE_TYPE_INFERENCE
 }
 
 class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: ResolvedCall<D>) : AbstractOverloadResolutionResults<D>() {
@@ -66,7 +66,6 @@ class ManyCandidates<D : CallableDescriptor>(
             else -> Code.MANY_FAILED_CANDIDATES
         }
 }
-
 
 class AllCandidates<D : CallableDescriptor>(private val allCandidates: Collection<ResolvedCall<D>>) : NameNotFoundResolutionResult<D>() {
     override fun getAllCandidates() = allCandidates

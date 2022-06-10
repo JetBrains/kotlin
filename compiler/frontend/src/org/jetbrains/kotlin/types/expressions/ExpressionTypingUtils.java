@@ -19,21 +19,17 @@ package org.jetbrains.kotlin.types.expressions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
 import org.jetbrains.kotlin.resolve.OverloadChecker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
@@ -44,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_INFERENCE_ERRORS;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {
@@ -132,28 +127,6 @@ public class ExpressionTypingUtils {
             }
             trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
         }
-    }
-
-    public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(
-            @NotNull BindingTrace trace,
-            @NotNull KtElement expressionToWatch,
-            @NotNull boolean[] mismatchFound
-    ) {
-        return new ObservableBindingTrace(trace) {
-
-            @Override
-            public void report(@NotNull Diagnostic diagnostic) {
-                DiagnosticFactory<?> factory = diagnostic.getFactory();
-                if (Errors.TYPE_MISMATCH_ERRORS.contains(factory) && diagnostic.getPsiElement() == expressionToWatch) {
-                    mismatchFound[0] = true;
-                }
-                if (TYPE_INFERENCE_ERRORS.contains(factory) &&
-                    PsiTreeUtil.isAncestor(expressionToWatch, diagnostic.getPsiElement(), false)) {
-                    mismatchFound[0] = true;
-                }
-                super.report(diagnostic);
-            }
-        };
     }
 
     @NotNull

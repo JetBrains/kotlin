@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -67,7 +66,6 @@ class KotlinResolutionCallbacksImpl(
     private val expressionTypingServices: ExpressionTypingServices,
     private val typeApproximator: TypeApproximator,
     private val argumentTypeResolver: ArgumentTypeResolver,
-    private val languageVersionSettings: LanguageVersionSettings,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val dataFlowValueFactory: DataFlowValueFactory,
     override val inferenceSession: InferenceSession,

@@ -544,7 +544,7 @@ class BuilderInferenceSession(
         return ResolvedAtomCompleter(
             resultSubstitutor, context, kotlinToResolvedCallTransformer,
             expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, builtIns,
-            deprecationResolver, moduleDescriptor, context.dataFlowValueFactory, typeApproximator, missingSupertypesResolver
+            deprecationResolver, moduleDescriptor, typeApproximator, missingSupertypesResolver
         )
     }
 

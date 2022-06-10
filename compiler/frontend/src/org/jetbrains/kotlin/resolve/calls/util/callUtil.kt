@@ -22,44 +22,16 @@ import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiKotlinCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
-
-fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
-    return call.valueArguments.all { argument -> !getArgumentMapping(argument!!).isError() }
-}
-
-fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {
-    return call.valueArguments.any { argument -> getArgumentMapping(argument!!) == ArgumentUnmapped }
-}
-
-fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
-    val parameterToArgumentMap = valueArguments
-    return !parameterToArgumentMap.keys.containsAll(resultingDescriptor.valueParameters)
-}
-
-fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped() =
-    call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
-
-fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
-    val resolvedValueArgument = valueArguments[parameter]
-    if (resolvedValueArgument == null) return true
-
-    return resolvedValueArgument.arguments.any { argument ->
-        val argumentMapping = getArgumentMapping(argument)
-        argumentMapping is ArgumentMatch && argumentMapping.status == ArgumentMatchStatus.TYPE_MISMATCH
-    }
-}
 
 fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valueArgument: ValueArgument?): ValueParameterDescriptor? {
     return (valueArgument?.let { getArgumentMapping(it) } as? ArgumentMatch)?.valueParameter
@@ -91,19 +63,12 @@ fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter:
     })
 }
 
-fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
-
-fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
-
 fun Call.getValueArgumentListOrElement(): KtElement =
     if (this is CallTransformer.CallForImplicitInvoke) {
         outerCall.getValueArgumentListOrElement()
     } else {
         valueArgumentList ?: calleeExpression ?: callElement
     }
-
-@Suppress("UNCHECKED_CAST")
-private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtLambdaArgument } as List<ValueArgument>
 
 fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? {
     fun KtElement.deparenthesizeStructurally(): KtElement? {
@@ -130,8 +95,7 @@ fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument?
  *  so there is a corresponding call for them.
  */
 fun KtElement.getCall(context: BindingContext): Call? {
-    val element = if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this
-    if (element == null) return null
+    val element = (if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this) ?: return null
 
     // Do not use Call bound to outer call expression (if any) to prevent stack overflow during analysis
     if (element is KtCallElement && element.calleeExpression == null) return null
@@ -143,8 +107,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
         }
     }
 
-    val parent = element.parent
-    val reference: KtExpression? = when (parent) {
+    val reference: KtExpression? = when (val parent = element.parent) {
         is KtInstanceExpressionWithLabel -> parent
         is KtUserType -> parent.parent.parent as? KtConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
@@ -179,10 +142,6 @@ fun KtElement?.getResolvedCall(context: BindingContext): ResolvedCall<out Callab
 
 fun KtElement?.getParentResolvedCall(context: BindingContext, strict: Boolean = true): ResolvedCall<out CallableDescriptor>? {
     return this?.getParentCall(context, strict)?.getResolvedCall(context)
-}
-
-fun KtElement.getCallWithAssert(context: BindingContext): Call {
-    return getCall(context).sure { "No call for ${this.getTextWithLocation()}" }
 }
 
 fun KtElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
@@ -308,16 +267,6 @@ inline fun BindingTrace.reportTrailingLambdaErrorOr(
         } else {
             report(originalDiagnostic(expr))
         }
-    }
-}
-
-fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
-    override fun get(key: KotlinType): TypeProjection? {
-        return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
-    }
-
-    override fun isEmpty(): Boolean {
-        return isEmpty
     }
 }
 

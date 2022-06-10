@@ -19,22 +19,17 @@ package org.jetbrains.kotlin.resolve.calls.tasks;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -43,7 +38,6 @@ import java.util.HashSet;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
 
 public abstract class AbstractTracingStrategy implements TracingStrategy {
     protected final KtExpression reference;
@@ -67,33 +61,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
         KtElement reportOn = CallUtilKt.getValueArgumentListOrElement(call);
         trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
-    }
-
-    @Override
-    public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver) {
-        trace.report(MISSING_RECEIVER.on(reference, expectedReceiver.getType()));
-    }
-
-    @Override
-    public void wrongReceiverType(
-            @NotNull BindingTrace trace,
-            @NotNull ReceiverParameterDescriptor receiverParameter,
-            @NotNull ReceiverValue receiverArgument,
-            @NotNull ResolutionContext<?> c
-    ) {
-        KtExpression reportOn = receiverArgument instanceof ExpressionReceiver
-                                ? ((ExpressionReceiver) receiverArgument).getExpression()
-                                : reference;
-
-        if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(
-                c, reportOn, receiverParameter.getType(), receiverArgument.getType())) {
-            trace.report(TYPE_MISMATCH.on(reportOn, receiverParameter.getType(), receiverArgument.getType()));
-        }
-    }
-
-    @Override
-    public void noReceiverAllowed(@NotNull BindingTrace trace) {
-        trace.report(NO_RECEIVER_ALLOWED.on(reference));
     }
 
     @Override
@@ -150,30 +117,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     @Override
     public void abstractSuperCallWarning(@NotNull BindingTrace trace) {
         trace.report(ABSTRACT_SUPER_CALL_WARNING.on(reference));
-    }
-
-    @Override
-    public void nestedClassAccessViaInstanceReference(
-            @NotNull BindingTrace trace,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull ExplicitReceiverKind explicitReceiverKind
-    ) {
-        if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
-            DeclarationDescriptor importableDescriptor = DescriptorUtilsKt.getImportableDescriptor(classDescriptor);
-            if (DescriptorUtils.getFqName(importableDescriptor).isSafe()) {
-                FqName fqName = getFqNameFromTopLevelClass(importableDescriptor);
-                String qualifiedName;
-                if (reference.getParent() instanceof KtCallableReferenceExpression) {
-                    qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
-                }
-                else {
-                    qualifiedName = fqName.asString();
-                }
-                trace.report(NESTED_CLASS_SHOULD_BE_QUALIFIED.on(reference, classDescriptor, qualifiedName));
-                return;
-            }
-        }
-        trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(reference, classDescriptor));
     }
 
     @Override

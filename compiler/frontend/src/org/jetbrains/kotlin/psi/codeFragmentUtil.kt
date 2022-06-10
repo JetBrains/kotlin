@@ -40,5 +40,3 @@ var KtFile.suppressDiagnosticsInDebugMode: Boolean
     set(skip) {
         putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)
     }
-
-val DEBUG_TYPE_REFERENCE_STRING: String = "DebugTypeKotlinRulezzzz"

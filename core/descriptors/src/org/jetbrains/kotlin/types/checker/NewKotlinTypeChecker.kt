@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
@@ -109,3 +111,16 @@ fun UnwrappedType.hasSupertypeWithGivenTypeConstructor(typeConstructor: TypeCons
  * ClassType means that type constructor for this type is type for real class or interface
  */
 val SimpleType.isClassType: Boolean get() = constructor.declarationDescriptor is ClassDescriptor
+
+/**
+ * SingleClassifierType is one of the following types:
+ *  - classType
+ *  - type for type parameter
+ *  - captured type
+ *
+ * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
+ */
+val SimpleType.isSingleClassifierType: Boolean
+    get() = !isError &&
+            constructor.declarationDescriptor !is TypeAliasDescriptor &&
+            (constructor.declarationDescriptor != null || this is CapturedType || this is DefinitelyNotNullType)

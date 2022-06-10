@@ -16,32 +16,6 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
-import org.jetbrains.kotlin.resolve.calls.commonSuperType
-import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-
-/**
- * This is temporary hack for type intersector.
- *
- * It is almost save, because:
- *  - it running only if general algorithm is failed
- *  - returned type is subtype of all [types].
- *
- * But it is hack, because it can give unstable result, but it better than exception.
- * See KT-11266.
- */
-internal fun hackForTypeIntersector(types: Collection<KotlinType>): KotlinType? {
-    if (types.size < 2) return types.firstOrNull()
-
-    return types.firstOrNull { candidate ->
-        types.all {
-            ErrorTypesAreEqualToAnything.isSubtypeOf(candidate, it)
-        }
-    }
-}
-
 fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
     if (parameterVariance === Variance.INVARIANT) {
         return projectionKind

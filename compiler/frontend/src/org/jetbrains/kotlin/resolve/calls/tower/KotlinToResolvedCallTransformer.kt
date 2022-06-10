@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
@@ -53,7 +52,6 @@ class KotlinToResolvedCallTransformer(
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
     private val additionalDiagnosticReporter: AdditionalDiagnosticReporter,
     private val moduleDescriptor: ModuleDescriptor,
-    private val dataFlowValueFactory: DataFlowValueFactory,
     private val builtIns: KotlinBuiltIns,
     private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate,
     private val smartCastManager: SmartCastManager,
@@ -62,9 +60,6 @@ class KotlinToResolvedCallTransformer(
     private val candidateInterceptor: CandidateInterceptor,
 ) {
     companion object {
-        private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
-            get() = false
-
         fun keyForPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom): Call {
             val psiKotlinCall = resolvedCallAtom.atom.psiKotlinCall
             return if (psiKotlinCall is PSIKotlinCallForInvoke)
@@ -123,7 +118,7 @@ class KotlinToResolvedCallTransformer(
 
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context, this, expressionTypingServices, argumentTypeResolver,
-                    doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory,
+                    doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor,
                     typeApproximator, missingSupertypesResolver,
                 )
 
@@ -424,7 +419,7 @@ class KotlinToResolvedCallTransformer(
             expressions.reverse()
         }
 
-        var shouldBeMadeNullable: Boolean = false
+        var shouldBeMadeNullable = false
         for (expression in expressions) {
             if (!(expression is KtParenthesizedExpression || expression is KtLabeledExpression || expression is KtAnnotatedExpression)) {
                 shouldBeMadeNullable = hasNecessarySafeCall(expression, context.trace)
@@ -540,14 +535,6 @@ class KotlinToResolvedCallTransformer(
                 reportResolvedUsingDeprecatedVisibility(
                     resolvedCall.psiKotlinCall.psiCall, resolvedCall.candidateDescriptor, resultingDescriptor, diagnostic, trace,
                 )
-            }
-
-            val dontRecordToTraceAsIs = diagnostic is ResolutionDiagnostic && diagnostic !is VisibilityError
-            val shouldReportMissingDiagnostic = !trackingTrace.reported && !dontRecordToTraceAsIs
-            if (shouldReportMissingDiagnostic && REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC) {
-                val factory =
-                    if (diagnostic.candidateApplicability.isSuccess) Errors.NEW_INFERENCE_DIAGNOSTIC else Errors.NEW_INFERENCE_ERROR
-                trace.report(factory.on(diagnosticReporter.psiKotlinCall.psiCall.callElement, "Missing diagnostic: $diagnostic"))
             }
         }
     }
