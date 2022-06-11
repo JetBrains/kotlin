@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -36,13 +37,14 @@ internal fun MethodNode.acceptWithStateMachine(
     varsCountByType: Map<Type, Int>,
     obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
-    val state = classCodegen.context.state
+    val context = classCodegen.context
+    val state = context.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
     val element = if (irFunction.isSuspend)
         irFunction.psiElement ?: classCodegen.irClass.psiElement
     else
-        classCodegen.context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.psiElement
+        context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.psiElement
 
     val lineNumber = if (irFunction.isSuspend) {
         val irFile = irFunction.file
@@ -74,6 +76,7 @@ internal fun MethodNode.acceptWithStateMachine(
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
+        shouldOptimiseUnusedVariables = !context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     )
     accept(visitor)
 }

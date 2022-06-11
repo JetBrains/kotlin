@@ -156,4 +156,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> LINK_VIA_SIGNATURES =
             CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_DEBUG_MODE =
+            CompilerConfigurationKey.create("Enable debug mode");
 }
