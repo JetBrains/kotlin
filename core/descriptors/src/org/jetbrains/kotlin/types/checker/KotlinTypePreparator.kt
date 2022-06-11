@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -15,22 +14,9 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 abstract class KotlinTypePreparator : AbstractTypePreparator() {
     private fun transformToNewType(type: SimpleType): SimpleType {
         when (val constructor = type.constructor) {
-            is IntegerValueTypeConstructor -> {
-                val newConstructor =
-                    IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
-                return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                    type.attributes,
-                    newConstructor,
-                    listOf(),
-                    false,
-                    type.memberScope
-                )
-            }
-
             is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
                 val newConstructor = constructor.transformComponents(transform = { it.makeNullable() }) ?: constructor
                 return newConstructor.createType()
-
             }
         }
 

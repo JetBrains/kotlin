@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
@@ -491,14 +490,6 @@ public class TypeUtils {
         }
     }
 
-    @NotNull
-    public static KotlinType getDefaultPrimitiveNumberType(@NotNull IntegerValueTypeConstructor numberValueTypeConstructor) {
-        KotlinType type = getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
-        assert type != null : "Strange number value type constructor: " + numberValueTypeConstructor + ". " +
-                              "Super types doesn't contain double, int or long: " + numberValueTypeConstructor.getSupertypes();
-        return type;
-    }
-
     @Nullable
     public static KotlinType getDefaultPrimitiveNumberType(@NotNull Collection<KotlinType> supertypes) {
         if (supertypes.isEmpty()) {
@@ -541,23 +532,6 @@ public class TypeUtils {
         }
         return null;
     }
-
-    @NotNull
-    public static KotlinType getPrimitiveNumberType(
-            @NotNull IntegerValueTypeConstructor numberValueTypeConstructor,
-            @NotNull KotlinType expectedType
-    ) {
-        if (noExpectedType(expectedType) || KotlinTypeKt.isError(expectedType)) {
-            return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
-        }
-        for (KotlinType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(primitiveNumberType, expectedType)) {
-                return primitiveNumberType;
-            }
-        }
-        return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
-    }
-
     @NotNull
     public static KotlinType getPrimitiveNumberType(
             @NotNull IntegerLiteralTypeConstructor literalTypeConstructor,

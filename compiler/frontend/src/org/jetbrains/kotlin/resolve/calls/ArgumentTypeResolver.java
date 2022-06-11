@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.*;
@@ -473,12 +472,6 @@ public class ArgumentTypeResolver {
     ) {
         TypeConstructor typeConstructor = targetType.getConstructor();
         if (!typeConstructor.isDenotable()) {
-            if (typeConstructor instanceof IntegerValueTypeConstructor) {
-                IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) typeConstructor;
-                KotlinType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, expectedType);
-                constantExpressionEvaluator.updateNumberType(primitiveType, expression, statementFilter, trace);
-                return primitiveType;
-            }
             if (typeConstructor instanceof IntegerLiteralTypeConstructor) {
                 IntegerLiteralTypeConstructor constructor = (IntegerLiteralTypeConstructor) typeConstructor;
                 KotlinType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, expectedType);
