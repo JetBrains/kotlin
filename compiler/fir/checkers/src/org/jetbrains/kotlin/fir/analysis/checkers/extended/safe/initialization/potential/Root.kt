@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.coneType
 
 sealed class Root(firElement: FirElement) : Potential(firElement), Potential.Propagatable {
+
+    override fun propagate() = EffectsAndPotentials(this)
 
     data class This(val firThisReference: FirThisReference, val firClass: FirClass) : Root(firThisReference) {
         override fun viewChange(root: Potential) = root

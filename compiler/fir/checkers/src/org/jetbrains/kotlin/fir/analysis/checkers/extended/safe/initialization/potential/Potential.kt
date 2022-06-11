@@ -19,6 +19,8 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
             state.analyseDeclaration1(firDeclaration).potentials
     }
 
+    abstract fun propagate(): EffectsAndPotentials
+
     fun Checker.StateOfClass.select(field: FirVariable): EffectsAndPotentials = when {
         field is FirValueParameter -> emptyEffsAndPots
         this@Potential is Root.Cold -> EffectsAndPotentials(Promote(this@Potential))

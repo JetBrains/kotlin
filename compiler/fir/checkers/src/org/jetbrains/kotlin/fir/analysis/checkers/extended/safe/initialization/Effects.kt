@@ -25,7 +25,7 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
             is Root.Cold -> listOf(Error.AccessError(this@FieldAccess))           // illegal
             is FunPotential -> throw Exception()                  // impossible
             else ->                                                         // C-Acc3
-                ruleAcc3(potentialPropagation(potential))
+                ruleAcc3(potential.propagate())
         }
     }
 
@@ -57,7 +57,7 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
                 potential.effectsOf(state, method).flatMap { it.check(this) }
             }
             else ->                                                         // C-Inv3
-                ruleAcc3(potentialPropagation(potential))
+                ruleAcc3(potential.propagate())
         }
     }
 
@@ -85,7 +85,7 @@ data class Promote(override val potential: Potential) : Effect(potential) {
             }
             is FunPotential -> ruleAcc3(potential.effectsAndPotentials)
             is Root -> listOf(Error.PromoteError(this@Promote))
-            else -> ruleAcc3(potentialPropagation(potential))
+            else -> ruleAcc3(potential.propagate())
         }
 
     override fun createEffectForPotential(pot: Potential) = Promote(pot)

@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirClass
 
 data class Warm(val clazz: FirClass, override val potential: Potential) : WithPrefix(potential, clazz), Potential.Propagatable {
-    override fun viewChange(root: Potential): Potential {
-        return when { // ???
-            potential is Root.Cold -> this
-            potential.length < 2 -> createPotentialForPotential(Root.Cold(clazz))  // ???
-            else -> {
-                val viewedPot = potential.viewChange(root)
-                Warm(clazz, viewedPot)
-            }
-        }
+
+    override fun viewChange(root: Potential) = when {
+        potential is Root.Cold -> this
+        // The original solution used the replacement of such as potential.viewChange(Cold(clazz)) if the nesting was too large
+        // This is roughly equivalent to what is written
+        potential.length > 2 -> createPotentialForPotential(Root.Cold(clazz))
+        else -> super.viewChange(root)
     }
+
+    override fun propagate() = EffectsAndPotentials(this)
 
     override fun createPotentialForPotential(pot: Potential) = Warm(clazz, pot)
 

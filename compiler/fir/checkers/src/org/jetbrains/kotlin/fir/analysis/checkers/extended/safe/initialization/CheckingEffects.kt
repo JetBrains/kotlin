@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
@@ -143,87 +142,7 @@ object Checker {
             return errors
         }
 
-        fun potentialPropagation(potential: Potential): EffectsAndPotentials {
-            return when (potential) {
-                is FieldPotential -> {
-                    val (pot, field) = potential
-                    when (pot) {
-                        is Root.This -> {                                  // P-Acc1
-                            val state = resolve(field)
-                            val potentials = pot.potentialsOf(state, field)
-                            potentials.viewChange(pot).toEffectsAndPotentials()
-                        }
-                        is Warm -> {                                         // P-Acc2
-                            val state = resolve(field)
-                            val potentials = pot.potentialsOf(state, field)
-                            potentials.viewChange(pot).toEffectsAndPotentials()
-                        }
-                        is Root.Cold -> EffectsAndPotentials(Promote(pot)) // or exception or empty list
-                        is Root.Super -> {
-                            val state = cache[pot.firClass] ?: TODO()
-                            val potentials = pot.potentialsOf(state, field)
-                            potentials.viewChange(pot).toEffectsAndPotentials()
-                        }
-                        is FunPotential -> throw IllegalArgumentException()
-                        else -> {                                                       // P-Acc3
-                            val (effects, potentials) = potentialPropagation(pot)
-                            val select = select(potentials, field)
-                            select + effects
-                        }
-                    }
-                }
-                is MethodPotential -> {
-                    val (pot, method) = potential
-                    when (pot) {
-                        is Root.This -> {                                     // P-Inv1
-                            val state = resolve(method)
-                            val potentials = pot.potentialsOf(state, method)
-                            potentials.toEffectsAndPotentials()
-                        }
-                        is Warm -> {                                     // P-Inv2
-                            val state = resolve(method)
-                            val potentials = pot.potentialsOf(state, method)  // find real state
-                            potentials.viewChange(pot).toEffectsAndPotentials()
-                        }
-                        is Root.Cold -> EffectsAndPotentials(Promote(pot))
-                        is Root.Super -> {
-                            val state = cache[pot.firClass] ?: TODO()
-                            val potentials = pot.potentialsOf(state, method)
-                            potentials.toEffectsAndPotentials()
-                        }
-                        is FunPotential -> TODO()
-                        else -> {                                                       // P-Inv3
-                            val (effects, potentials) = potentialPropagation(pot)
-                            val call = call(potentials, method)
-                            call + effects
-                        }
-                    }
-                }
-                is OuterPotential -> {
-                    val (pot, outer) = potential
-                    when (pot) {
-                        is Root.This -> emptyEffsAndPots                // P-Out1
-                        is Warm -> {                               // P-Out2
-                            val (firClass, outerPot) = pot
-                            return EffectsAndPotentials(outerPot)
-                            // TODO:
-                            //  if (firClass != this.firClass) rec: findParent(firClass)
-                            //  просто вверх по цепочке наследования если inner от кого-то наследуется
-                        }
-                        is Root.Cold -> EffectsAndPotentials(Promote(pot))  // or exception or empty list
-                        is Root.Super -> TODO()
-                        is FunPotential -> throw IllegalArgumentException()
-                        else -> {                                                       // P-Out3
-                            val (effects, potentials) = potentialPropagation(pot)
-                            val (_, outPots) = outerSelection(potentials, outer)
-                            EffectsAndPotentials(effects, outPots)
-                        }
-                    }
-                }
-                is FunPotential -> TODO() // invoke?
-                is Root, is Warm -> EffectsAndPotentials(potential)
-            }
-        }
+
     }
 }
 

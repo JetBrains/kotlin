@@ -13,6 +13,10 @@ data class FunPotential(
     val anonymousFunction: FirAnonymousFunction
 ) : Potential(anonymousFunction, effectsAndPotentials.maxLength()) {
 
+    override fun propagate(): EffectsAndPotentials {
+        TODO("Not yet implemented")
+    }
+
     override fun viewChange(root: Potential): Potential {
         TODO("Not yet implemented")
     }
