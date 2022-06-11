@@ -100,17 +100,19 @@ internal fun configureProjectEnvironment(
 ) {
     reRegisterJavaElementFinder(project)
 
-    // FIR LC
-    project.registerService(
-        SymbolLightClassFacadeCache::class.java
-    )
-    project.registerService(
-        ClsJavaStubByVirtualFileCache::class.java
-    )
-
     project.picoContainer.registerComponentInstance(
         KotlinModificationTrackerFactory::class.qualifiedName,
         KotlinStaticModificationTrackerFactory()
+    )
+
+    // FIR LC
+    project.registerService(
+        SymbolLightClassFacadeCache::class.java,
+        SymbolLightClassFacadeCache(project)
+    )
+    project.registerService(
+        ClsJavaStubByVirtualFileCache::class.java,
+        ClsJavaStubByVirtualFileCache()
     )
 
     project.registerService(
