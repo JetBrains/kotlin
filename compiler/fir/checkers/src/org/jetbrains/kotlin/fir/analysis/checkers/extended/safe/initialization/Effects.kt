@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 
 typealias Effects = List<Effect>
 
+fun Effects.viewChange(root: Potential): Effects = map { eff -> eff.viewChange(root) }
+
 data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential) {
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
@@ -20,7 +22,7 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
             }
             is Warm -> emptyList()                              // C-Acc2
             is Root.Cold -> listOf(Error.AccessError(this@FieldAccess))           // illegal
-            is FunPotential -> throw Exception()                  // impossible
+            is LambdaPotential -> throw IllegalArgumentException()                  // impossible
             else ->                                                         // C-Acc3
                 ruleAcc3(potential.propagate())
         }
@@ -47,7 +49,9 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
                     eff.check(this)
                 }
             }
-            is FunPotential -> emptyList() // invoke
+            is LambdaPotential -> {                                 // invoke
+                potential.effectsAndPotentials.effects.flatMap { it.check(this) }
+            }
             is Root.Cold -> listOf(Error.InvokeError(this@MethodAccess))              // illegal
             is Super -> {
                 val state = potential.getRightStateOfClass()
@@ -80,7 +84,7 @@ data class Promote(override val potential: Potential) : Effect(potential) {
                     }
                 }
             }
-            is FunPotential -> ruleAcc3(potential.effectsAndPotentials)
+            is LambdaPotential -> ruleAcc3(potential.effectsAndPotentials)
             is Root -> listOf(Error.PromoteError(this@Promote))
             else -> ruleAcc3(potential.propagate())
         }

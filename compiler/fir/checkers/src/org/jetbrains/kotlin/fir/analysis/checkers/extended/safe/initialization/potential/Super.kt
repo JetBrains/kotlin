@@ -20,7 +20,7 @@ data class Super(val firSuperReference: FirSuperReference, val firClass: FirClas
         return EffectsAndPotentials(effs, pots.map(::createPotentialForPotential))
     }
 
-    fun getRightStateOfClass() = Checker.cache[firClass] ?: TODO()
+    fun getRightStateOfClass() = Checker.alreadyCheckedClasses[firClass] ?: TODO()
 
     override fun toString(): String {
         return "super@${firSuperReference.superTypeRef.coneType}"

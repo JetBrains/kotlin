@@ -1,12 +1,14 @@
 // KT-12152
 class Test(extFun: Test.() -> String) {
-    val x = <!VALUE_CANNOT_BE_PROMOTED!>extFun()<!>
+    // This test also works for implicit this, but you need to find a symbol to attach the warning
+    val x = <!VALUE_CANNOT_BE_PROMOTED!>this<!>.extFun()
 }
 
-val kaboom = Test { x }.x
-
+class B {
+    val kaboom = Test { x }.x
+}
 // KT-17382
-class A {
-    <!ACCESS_TO_UNINITIALIZED_VALUE!>val x: String = { y }()<!>
+class C {
+    val x: String = { y }()
     <!ACCESS_TO_UNINITIALIZED_VALUE!>val y: String = x<!>
 }

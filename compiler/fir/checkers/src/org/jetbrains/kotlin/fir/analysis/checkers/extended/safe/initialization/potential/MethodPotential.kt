@@ -31,11 +31,17 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
                 val potentials = potential.potentialsOf(state, method)
                 potentials.toEffectsAndPotentials()
             }
-            is FunPotential -> TODO()
+            is LambdaPotential -> {
+                val (_, pots) = potential.effectsAndPotentials
+                pots.toEffectsAndPotentials()
+            }
             else -> {                                                       // P-Inv3
                 val (effects, potentials) = potential.propagate()
-                val state = Checker.resolve(method)
-                val call = state.call(potentials, method)
+                val call =
+                    if (potentials.isNotEmpty()) {
+                        val state = Checker.resolve(method)
+                        state.call(potentials, method)
+                    } else emptyEffsAndPots
                 call + effects
             }
         }

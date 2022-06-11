@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration1
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     sealed interface Propagatable {
@@ -22,7 +25,6 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     abstract fun propagate(): EffectsAndPotentials
 
     fun Checker.StateOfClass.select(field: FirVariable): EffectsAndPotentials = when {
-        field is FirValueParameter -> emptyEffsAndPots
         this@Potential is Root.Cold -> EffectsAndPotentials(Promote(this@Potential))
         length < 4 -> {
             val f = resolveMember(this@Potential, field)

@@ -28,7 +28,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
             }
             is Root.Cold -> EffectsAndPotentials(Promote(potential))  // or exception or empty list
             is Super -> TODO()
-            is FunPotential -> throw IllegalArgumentException()
+            is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Out3
                 val (effects, potentials) = potential.propagate()
                 val (_, outPots) = outerSelection(potentials, outerClass)

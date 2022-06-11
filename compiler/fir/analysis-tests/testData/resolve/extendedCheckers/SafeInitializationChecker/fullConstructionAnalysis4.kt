@@ -11,7 +11,7 @@ open class A {
     }
 }
 
-class B : A {
+class B : A() {
     <!ACCESS_TO_UNINITIALIZED_VALUE!>val b = "Hello"<!>
     override fun foo() {
         b.hashCode()

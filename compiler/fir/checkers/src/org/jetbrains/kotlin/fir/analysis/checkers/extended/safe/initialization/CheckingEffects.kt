@@ -49,9 +49,9 @@ object Checker {
 
     @OptIn(SymbolInternals::class)
     fun resolve(dec: FirCallableDeclaration): StateOfClass =
-        dec.dispatchReceiverType?.toRegularClassSymbol(dec.moduleData.session)?.fir?.let(cache::get) ?: TODO()
+        dec.dispatchReceiverType?.toRegularClassSymbol(dec.moduleData.session)?.fir?.let(alreadyCheckedClasses::get) ?: TODO()
 
-    val cache = mutableMapOf<FirClass, StateOfClass>()
+    val alreadyCheckedClasses = mutableMapOf<FirClass, StateOfClass>()
 
     @OptIn(SymbolInternals::class)
     data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
@@ -89,7 +89,7 @@ object Checker {
         val superClasses =
             firClass.superTypeRefs.filterIsInstanceWithChecker<FirResolvedTypeRef> { it.delegatedTypeRef is FirUserTypeRef }
                 .mapNotNull { it.toRegularClassSymbol(context.session)?.fir }
-        val declarations = (superClasses + firClass).flatMap { clazz -> clazz.declarations }
+        val declarations = (superClasses + firClass).flatMap(FirClass::declarations)
 
         val allProperties = declarations.filterIsInstance<FirProperty>()
 
@@ -119,7 +119,7 @@ object Checker {
             for (init in inits)
                 init.initBlockAnalyser(p)
 
-            cache[firClass] = this
+            alreadyCheckedClasses[firClass] = this
         }
 
         fun checkClass(): Errors {
@@ -141,8 +141,6 @@ object Checker {
             errors.addAll(classErrors)
             return errors
         }
-
-
     }
 }
 

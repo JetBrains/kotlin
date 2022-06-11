@@ -8,23 +8,30 @@ FILE: lambda1.kt
             public get(): R|kotlin/String|
 
     }
-    public final val kaboom: R|kotlin/String| = R|/Test.Test|(<L> = Test@fun R|Test|.<anonymous>(): R|kotlin/String| <inline=NoInline>  {
-        ^ this@R|special/anonymous|.R|/Test.x|
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val kaboom: R|kotlin/String| = R|/Test.Test|(<L> = Test@fun R|Test|.<anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ this@R|special/anonymous|.R|/Test.x|
+        }
+        ).R|/Test.x|
+            public get(): R|kotlin/String|
+
     }
-    ).R|/Test.x|
-        public get(): R|kotlin/String|
-    public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
         public final val x: R|kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
-            ^ this@R|/A|.R|/A.y|
+            ^ this@R|/C|.R|/C.y|
         }
         .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
             public get(): R|kotlin/String|
 
-        public final val y: R|kotlin/String| = this@R|/A|.R|/A.x|
+        public final val y: R|kotlin/String| = this@R|/C|.R|/C.x|
             public get(): R|kotlin/String|
 
     }

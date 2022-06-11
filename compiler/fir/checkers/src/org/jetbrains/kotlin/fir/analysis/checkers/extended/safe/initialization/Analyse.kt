@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
 import org.jetbrains.kotlin.fir.containingClass
@@ -128,15 +129,15 @@ object Analyser {
             return effsAndPotsOfMethod + effsOfArgs
         }
 
-        override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: Nothing?): EffectsAndPotentials {
-            TODO()
-        }
-
-        override fun visitCallableReferenceAccess(
-            callableReferenceAccess: FirCallableReferenceAccess,
+        override fun visitAnonymousFunctionExpression(
+            anonymousFunctionExpression: FirAnonymousFunctionExpression,
             data: Nothing?
         ): EffectsAndPotentials {
-            TODO()
+
+            val anonymousFunction = anonymousFunctionExpression.anonymousFunction
+            val effectsAndPotentials = anonymousFunction.body?.accept() ?: emptyEffsAndPots
+            val lambdaPot = LambdaPotential(effectsAndPotentials, anonymousFunction)
+            return EffectsAndPotentials(lambdaPot)
         }
 
         @OptIn(SymbolInternals::class)

@@ -31,7 +31,7 @@ data class FieldPotential(override val potential: Potential, val field: FirVaria
                 val potentials = potential.potentialsOf(state, field)
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }
-            is FunPotential -> throw IllegalArgumentException()
+            is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Acc3
                 val state = Checker.resolve(field)
                 val (effects, potentials) = potential.propagate()
