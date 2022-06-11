@@ -2613,6 +2613,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("fullConstructionAnalysisTermination.kt")
+                public void testFullConstructionAnalysisTermination() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/fullConstructionAnalysisTermination.kt");
+                }
+
+                @Test
                 @TestMetadata("getterAndSetter.kt")
                 public void testGetterAndSetter() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/getterAndSetter.kt");

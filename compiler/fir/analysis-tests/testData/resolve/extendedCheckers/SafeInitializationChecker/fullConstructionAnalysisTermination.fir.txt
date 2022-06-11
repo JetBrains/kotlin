@@ -1,0 +1,17 @@
+FILE: fullConstructionAnalysisTermination.kt
+    public open class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class C : R|B| {
+            public constructor(): R|B.C| {
+                super<R|B|>()
+            }
+
+        }
+
+        public final val c: R|B.C| = R|/B.C.C|()
+            public get(): R|B.C|
+
+    }
