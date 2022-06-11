@@ -27,7 +27,8 @@ open class TypeCheckerState(
     val allowedTypeVariable: Boolean,
     val typeSystemContext: TypeSystemContext,
     val kotlinTypePreparator: AbstractTypePreparator,
-    val kotlinTypeRefiner: AbstractTypeRefiner
+    val kotlinTypeRefiner: AbstractTypeRefiner,
+    val captureArguments: Boolean = true
 ) {
     @OptIn(TypeRefinement::class)
     fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -39,6 +40,8 @@ open class TypeCheckerState(
     }
 
     open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true
+
+    open fun customAreEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean = false
 
     protected var argumentsDepth = 0
 
@@ -621,7 +624,7 @@ object AbstractTypeChecker {
 
         if (superConstructor.isCommonFinalClassConstructor()) {
             return if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor))
-                listOf(captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType)
+                listOf(if (state.captureArguments) captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType else subType)
             else
                 emptyList()
         }
@@ -630,10 +633,14 @@ object AbstractTypeChecker {
 
         state.anySupertype(subType, { false }) {
 
-            val current = captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it
+            val current = if (state.captureArguments) captureFromArguments(it, CaptureStatus.FOR_SUBTYPING) ?: it else it
 
             when {
                 areEqualTypeConstructors(current.typeConstructor(), superConstructor) -> {
+                    result.add(current)
+                    SupertypesPolicy.None
+                }
+                state.customAreEqualTypeConstructors(current.typeConstructor(), superConstructor) -> {
                     result.add(current)
                     SupertypesPolicy.None
                 }

@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.types.intersectTypes
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.typeUtil.isEmptyIntersectionTypeCompatible
@@ -167,7 +166,7 @@ object CastDiagnosticsUtil {
 
         // Now, let's find a supertype of List<T> that is a Collection of something,
         // in this case it will be Collection<T>
-        val supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype)
+        val supertypeWithVariables = findCorrespondingSupertype(subtypeWithVariables, supertype)
 
         val variables = subtypeWithVariables.constructor.parameters
         val variableConstructors = variables.map(TypeParameterDescriptor::getTypeConstructor).toSet()

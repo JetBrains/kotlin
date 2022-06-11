@@ -50,7 +50,8 @@ fun createClassicTypeCheckerState(
     isStubTypeEqualsToAnything: Boolean = true,
     typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext,
     kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
-    kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
+    kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
+    captureArguments: Boolean = true
 ): TypeCheckerState {
     return TypeCheckerState(
         isErrorTypeEqualsToAnything,
@@ -58,6 +59,7 @@ fun createClassicTypeCheckerState(
         allowedTypeVariable = true,
         typeSystemContext,
         kotlinTypePreparator,
-        kotlinTypeRefiner
+        kotlinTypeRefiner,
+        captureArguments
     )
 }

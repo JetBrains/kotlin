@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 
 object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
@@ -55,7 +55,7 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
         // Anything is acceptable for raw types
         if (expectedType.unwrap() is RawTypeImpl) return
 
-        val correspondingSubType = TypeCheckingProcedure.findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
+        val correspondingSubType = findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
 
         assert(lowerBound.arguments.size == upperBound.arguments.size) {
             "Different arguments count in flexible bounds: " +

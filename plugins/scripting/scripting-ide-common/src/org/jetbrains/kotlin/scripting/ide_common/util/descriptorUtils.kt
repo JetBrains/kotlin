@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.scripting.ide_common.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -26,10 +27,19 @@ fun descriptorsEqualWithSubstitution(
     if (descriptor1 !is CallableDescriptor) return true
     descriptor2 as CallableDescriptor
 
-    val typeChecker = KotlinTypeCheckerImpl.withAxioms(object : KotlinTypeChecker.TypeConstructorEquality {
-        override fun equals(a: TypeConstructor, b: TypeConstructor): Boolean {
-            val typeParam1 = a.declarationDescriptor as? TypeParameterDescriptor
-            val typeParam2 = b.declarationDescriptor as? TypeParameterDescriptor
+    val typeCheckerState = object : TypeCheckerState(
+        isErrorTypeEqualsToAnything = false,
+        isStubTypeEqualsToAnything = true,
+        allowedTypeVariable = true,
+        SimpleClassicTypeSystemContext,
+        KotlinTypePreparator.Default,
+        KotlinTypeRefiner.Default
+    ) {
+        override fun customAreEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+            c1 as TypeConstructor
+            c2 as TypeConstructor
+            val typeParam1 = c1.declarationDescriptor as? TypeParameterDescriptor
+            val typeParam2 = c2.declarationDescriptor as? TypeParameterDescriptor
             if (typeParam1 != null
                 && typeParam2 != null
                 && typeParam1.containingDeclaration == descriptor1
@@ -38,19 +48,25 @@ fun descriptorsEqualWithSubstitution(
                 return typeParam1.index == typeParam2.index
             }
 
-            return a == b
+            return c1 == c2
         }
-    })
+    }
 
-    if (!typeChecker.equalTypesOrNulls(descriptor1.returnType, descriptor2.returnType)) return false
+    if (!AbstractTypeChecker.equalTypesOrNulls(typeCheckerState, descriptor1.returnType, descriptor2.returnType)) return false
 
     val parameters1 = descriptor1.valueParameters
     val parameters2 = descriptor2.valueParameters
     if (parameters1.size != parameters2.size) return false
     for ((param1, param2) in parameters1.zip(parameters2)) {
-        if (!typeChecker.equalTypes(param1.type, param2.type)) return false
+        if (!AbstractTypeChecker.equalTypes(typeCheckerState, param1.type, param2.type)) return false
     }
     return true
+}
+
+private fun AbstractTypeChecker.equalTypesOrNulls(state: TypeCheckerState, type1: KotlinType?, type2: KotlinType?): Boolean {
+    if (type1 === type2) return true
+    if (type1 == null || type2 == null) return false
+    return equalTypes(state, type1, type2)
 }
 
 fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {
@@ -60,20 +76,6 @@ fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {
     }
     return if (noSuperClass) supertypes + builtIns.anyType else supertypes
 }
-
-val ClassifierDescriptorWithTypeParameters.constructors: Collection<ConstructorDescriptor>
-    get() = when (this) {
-        is TypeAliasDescriptor -> this.constructors
-        is ClassDescriptor -> this.constructors
-        else -> emptyList()
-    }
-
-val ClassifierDescriptorWithTypeParameters.kind: ClassKind?
-    get() = when (this) {
-        is TypeAliasDescriptor -> classDescriptor?.kind
-        is ClassDescriptor -> kind
-        else -> null
-    }
 
 val DeclarationDescriptor.isJavaDescriptor
     get() = this is JavaClassDescriptor || this is JavaCallableMemberDescriptor

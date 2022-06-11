@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
@@ -40,8 +39,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.CollectionStub
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
+import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker.DEFAULT
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -60,6 +60,27 @@ class CollectionStubMethodGenerator(
         val syntheticStubsToGenerate: Set<JvmMethodGenericSignature>,
         val bridgesToGenerate: Set<FunctionDescriptor>
     )
+
+    private val typeCheckerState = object : TypeCheckerState(
+        isErrorTypeEqualsToAnything = false,
+        isStubTypeEqualsToAnything = true,
+        allowedTypeVariable = true,
+        SimpleClassicTypeSystemContext,
+        KotlinTypePreparator.Default,
+        KotlinTypeRefiner.Default
+    ) {
+        override fun customAreEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+            c1 as TypeConstructor
+            c2 as TypeConstructor
+            val firstClass = c1.declarationDescriptor as? ClassDescriptor ?: return c1 == c2
+            val secondClass = c2.declarationDescriptor as? ClassDescriptor ?: return c1 == c2
+
+            val j2k = JavaToKotlinClassMapper
+            val firstReadOnly = if (j2k.isMutable(firstClass)) j2k.convertMutableToReadOnly(firstClass) else firstClass
+            val secondReadOnly = if (j2k.isMutable(secondClass)) j2k.convertMutableToReadOnly(secondClass) else secondClass
+            return firstReadOnly.typeConstructor == secondReadOnly.typeConstructor
+        }
+    }
 
     companion object {
         private val NO_TASKS = TasksToGenerate(emptySet(), emptySet(), emptySet())
@@ -250,32 +271,25 @@ class CollectionStubMethodGenerator(
                     // But overrides binding algorithm suppose there should be no conflicts like this, so it simply chooses a random
                     // representative for fake override, while we interested here in ones from mutable version.
                     //
-                    // NB: READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER is used here for cases like:
+                    // NB: custom type checker is used here for cases like:
                     // `fun iterator(): CharIterator` defined in read-only collection
                     // The problem is that 'CharIterator' is not a subtype of 'MutableIterator' while from Java's point of view it is,
                     // so we must hack our subtyping a little bit
-                    val newDescriptor =
-                        if (READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER.isSubtypeOf(
-                                fakeOverride.returnType!!,
-                                foundOverriddenFromDirectSuperClass.returnType!!
-                            )
+                    val newDescriptor = if (
+                        AbstractTypeChecker.isSubtypeOf(typeCheckerState, fakeOverride.returnType!!, foundOverriddenFromDirectSuperClass.returnType!!)
+                    ) fakeOverride else {
+                        foundOverriddenFromDirectSuperClass.copy(
+                            fakeOverride.containingDeclaration,
+                            foundOverriddenFromDirectSuperClass.modality,
+                            foundOverriddenFromDirectSuperClass.visibility,
+                            fakeOverride.kind, false
                         )
-                            fakeOverride
-                        else
-                            foundOverriddenFromDirectSuperClass.copy(
-                                fakeOverride.containingDeclaration,
-                                foundOverriddenFromDirectSuperClass.modality,
-                                foundOverriddenFromDirectSuperClass.visibility,
-                                fakeOverride.kind, false
-                            )
+                    }
 
                     newDescriptor.overriddenDescriptors =
                         fakeOverride.overriddenDescriptors.filter { superDescriptor ->
                             // filter out incompatible descriptors, e.g. `fun remove(e: E): ImmutableCollection<E>` for `fun remove(e: E): Boolean`
-                            READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER.isSubtypeOf(
-                                newDescriptor.returnType!!,
-                                superDescriptor.returnType!!
-                            )
+                            AbstractTypeChecker.isSubtypeOf(typeCheckerState, newDescriptor.returnType!!, superDescriptor.returnType!!)
                         }
 
                     result.add(newDescriptor)
@@ -297,7 +311,7 @@ class CollectionStubMethodGenerator(
         if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
-            types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
+            types.all { other -> DEFAULT.isSubtypeOf(type, other) }
         }
     }
 
@@ -362,14 +376,4 @@ class CollectionStubMethodGenerator(
         )
         FunctionCodegen.endVisit(mv, "built-in stub for $signature")
     }
-}
-
-private val READ_ONLY_ARE_EQUAL_TO_MUTABLE_TYPE_CHECKER = KotlinTypeCheckerImpl.withAxioms { x, y ->
-    val firstClass = x.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
-    val secondClass = y.declarationDescriptor as? ClassDescriptor ?: return@withAxioms x == y
-
-    val j2k = JavaToKotlinClassMapper
-    val firstReadOnly = if (j2k.isMutable(firstClass)) j2k.convertMutableToReadOnly(firstClass) else firstClass
-    val secondReadOnly = if (j2k.isMutable(secondClass)) j2k.convertMutableToReadOnly(secondClass) else secondClass
-    firstReadOnly.typeConstructor == secondReadOnly.typeConstructor
 }

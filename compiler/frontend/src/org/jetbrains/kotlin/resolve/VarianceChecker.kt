@@ -35,10 +35,10 @@ import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.types.EnrichedProjectionKind
+import org.jetbrains.kotlin.types.EnrichedProjectionKind.Companion.getEffectiveProjectionKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -176,7 +176,7 @@ class VarianceCheckerCore(
         for (argument in arguments) {
             if (argument?.typeParameter == null || argument.projection.isStarProjection) continue
 
-            val newPosition = when (TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!) {
+            val newPosition = when (getEffectiveProjectionKind(argument.typeParameter!!.variance, argument.projection.projectionKind)) {
                 EnrichedProjectionKind.OUT -> position
                 EnrichedProjectionKind.IN -> position.opposite()
                 EnrichedProjectionKind.INV -> INVARIANT
