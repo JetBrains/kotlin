@@ -61,7 +61,8 @@ class CoroutineTransformerMethodVisitor(
     // JVM_IR backend generates $completion, while old backend does not
     private val putContinuationParameterToLvt: Boolean = true,
     // Parameters of suspend lambda are put to the same fields as spilled variables
-    private val initialVarsCountByType: Map<Type, Int> = emptyMap()
+    private val initialVarsCountByType: Map<Type, Int> = emptyMap(),
+    private val shouldOptimiseUnusedVariables: Boolean = true
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -206,7 +207,9 @@ class CoroutineTransformerMethodVisitor(
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
 
-        updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
+        if (shouldOptimiseUnusedVariables) {
+            updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
+        }
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
     }
@@ -667,7 +670,7 @@ class CoroutineTransformerMethodVisitor(
             for (slot in 0 until localsCount) {
                 if (slot == continuationIndex || slot == dataIndex) continue
                 val value = frame.getLocal(slot)
-                if (value.type == null || !livenessFrame.isAlive(slot)) continue
+                if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
 
                 if (value == StrictBasicValue.NULL_VALUE) {
                     referencesToSpill += slot to null
@@ -875,12 +878,16 @@ class CoroutineTransformerMethodVisitor(
             for ((slot, referenceToSpill) in referencesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(suspension, slot, referenceToSpill)
             }
-            val (currentSpilledCount, predSpilledCount) = referencesToCleanBySuspensionPointIndex[suspensionPointIndex]
-            if (predSpilledCount > currentSpilledCount) {
-                for (fieldIndex in currentSpilledCount until predSpilledCount) {
-                    cleanUpField(suspension, fieldIndex)
+
+            if (shouldOptimiseUnusedVariables) {
+                val (currentSpilledCount, predSpilledCount) = referencesToCleanBySuspensionPointIndex[suspensionPointIndex]
+                if (predSpilledCount > currentSpilledCount) {
+                    for (fieldIndex in currentSpilledCount until predSpilledCount) {
+                        cleanUpField(suspension, fieldIndex)
+                    }
                 }
             }
+
             for ((slot, primitiveToSpill) in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(suspension, slot, primitiveToSpill)
             }
