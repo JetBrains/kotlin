@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.typeUtil.isEmptyIntersectionTypeCompatible
@@ -162,12 +162,12 @@ object CastDiagnosticsUtil {
 
         // Assume we are casting an expression of type Collection<Foo> to List<Bar>
         // First, let's make List<T>, where T is a type variable
-        val descriptor = subtypeConstructor.declarationDescriptor ?: error("Can't create default type for " + subtypeConstructor)
+        val descriptor = subtypeConstructor.declarationDescriptor ?: error("Can't create default type for $subtypeConstructor")
         val subtypeWithVariables = descriptor.defaultType
 
         // Now, let's find a supertype of List<T> that is a Collection of something,
         // in this case it will be Collection<T>
-        val supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype)
+        val supertypeWithVariables = findCorrespondingSupertype(subtypeWithVariables, supertype)
 
         val variables = subtypeWithVariables.constructor.parameters
         val variableConstructors = variables.map(TypeParameterDescriptor::getTypeConstructor).toSet()
@@ -190,10 +190,7 @@ object CastDiagnosticsUtil {
         for (variable in variables) {
             val value = substitution[variable.typeConstructor]
             if (value == null) {
-                substitution.put(
-                    variable.typeConstructor,
-                    TypeUtils.makeStarProjection(variable)
-                )
+                substitution[variable.typeConstructor] = TypeUtils.makeStarProjection(variable)
                 allArgumentsInferred = false
             }
         }
@@ -267,7 +264,8 @@ object CastDiagnosticsUtil {
         var parent = expression.parent
         while (parent is KtParenthesizedExpression ||
             parent is KtLabeledExpression ||
-            parent is KtAnnotatedExpression) {
+            parent is KtAnnotatedExpression
+        ) {
             parent = parent.parent
         }
 
@@ -279,12 +277,12 @@ object CastDiagnosticsUtil {
                 PsiTreeUtil.isAncestor(receiver, expression, false)
             }
 
-        // in binary expression, left argument can be a receiver and right an argument
-        // in unary expression, left argument can be a receiver
+            // in binary expression, left argument can be a receiver and right an argument
+            // in unary expression, left argument can be a receiver
             is KtBinaryExpression, is KtUnaryExpression -> true
 
-        // Previously we've checked that there is no expected type, therefore cast in property or
-        // in function has an effect on inference and thus isn't useless
+            // Previously we've checked that there is no expected type, therefore cast in property or
+            // in function has an effect on inference and thus isn't useless
             is KtProperty, is KtPropertyAccessor, is KtNamedFunction, is KtFunctionLiteral -> true
 
             else -> false

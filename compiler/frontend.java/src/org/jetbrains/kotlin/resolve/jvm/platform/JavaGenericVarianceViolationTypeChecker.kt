@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 
 object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
@@ -36,13 +36,16 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // val x: MutableList<String>
     // JavaClass.fillWithDefaultObjects(x) // using `x` after this call may lead to CCE
     override fun checkType(
-            expression: KtExpression,
-            expressionType: KotlinType,
-            expressionTypeWithSmartCast: KotlinType,
-            c: ResolutionContext<*>
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>
     ) {
         val expectedType = c.expectedType
-        if (TypeUtils.noExpectedType(expectedType) || ErrorUtils.containsErrorType(expectedType) || ErrorUtils.containsUninferredTypeVariable(expectedType)) return
+        if (TypeUtils.noExpectedType(expectedType) ||
+            ErrorUtils.containsErrorType(expectedType) ||
+            ErrorUtils.containsUninferredTypeVariable(expectedType)
+        ) return
 
         // optimization: if no arguments or flexibility, everything is OK
         if (expectedType.arguments.isEmpty() || !expectedType.isFlexible()) return
@@ -55,16 +58,16 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
         // Anything is acceptable for raw types
         if (expectedType.unwrap() is RawTypeImpl) return
 
-        val correspondingSubType = TypeCheckingProcedure.findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
+        val correspondingSubType = findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
 
         assert(lowerBound.arguments.size == upperBound.arguments.size) {
             "Different arguments count in flexible bounds: " +
-            "($lowerBound(${lowerBound.arguments.size})..$upperBound(${upperBound.arguments.size})"
+                    "($lowerBound(${lowerBound.arguments.size})..$upperBound(${upperBound.arguments.size})"
         }
 
         assert(lowerBound.arguments.size == correspondingSubType.arguments.size) {
             "Different arguments count in corresponding subtype and supertype: " +
-            "($lowerBound(${lowerBound.arguments.size})..$correspondingSubType(${correspondingSubType.arguments.size})"
+                    "($lowerBound(${lowerBound.arguments.size})..$correspondingSubType(${correspondingSubType.arguments.size})"
         }
 
 
@@ -72,8 +75,7 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
         val upperParameters = upperBound.constructor.parameters
         val lowerArguments = lowerBound.arguments
 
-        correspondingSubType.arguments.indices.forEach {
-            index ->
+        correspondingSubType.arguments.indices.forEach { index ->
             val lowerArgument = lowerArguments[index]
             // Currently we don't have flexible types with different constructors with contravariant arguments
             // So check just covariant case

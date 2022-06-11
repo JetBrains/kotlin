@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 
 object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
     private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
@@ -159,7 +159,7 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
             // Kotlin class
 
             val doesOverrideBuiltinDeclaration =
-                TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
+                findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
 
             if (doesOverrideBuiltinDeclaration) {
                 return !KotlinBuiltIns.isBuiltIn(superClassDescriptor)

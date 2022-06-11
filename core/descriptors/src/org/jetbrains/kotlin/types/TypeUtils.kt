@@ -107,9 +107,6 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
 
 fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-fun isNullabilityMismatch(expected: KotlinType, actual: KotlinType) =
-    !expected.isMarkedNullable && actual.isMarkedNullable && actual.isSubtypeOf(TypeUtils.makeNullable(expected))
-
 fun KotlinType.cannotBeReified(): Boolean =
     KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic() || this.isCaptured()
 
@@ -125,12 +122,6 @@ fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
 }
 
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
-
-fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
-    if (type1 === type2) return true
-    if (type1 == null || type2 == null) return false
-    return equalTypes(type1, type2)
-}
 
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
