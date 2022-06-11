@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.types.coneType
 
 sealed class Root(firElement: FirElement) : Potential(firElement), Potential.Propagatable {
 
@@ -22,14 +20,6 @@ sealed class Root(firElement: FirElement) : Potential(firElement), Potential.Pro
 
         override fun toString(): String {
             return "this@${firClass.symbol.toLookupTag()}"
-        }
-    }
-
-    data class Super(val firSuperReference: FirSuperReference, val firClass: FirClass) : Root(firSuperReference) {
-        override fun viewChange(root: Potential) = this
-
-        override fun toString(): String {
-            return "super@${firSuperReference.superTypeRef.coneType}"
         }
     }
 

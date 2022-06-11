@@ -27,7 +27,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
                 //  просто вверх по цепочке наследования если inner от кого-то наследуется
             }
             is Root.Cold -> EffectsAndPotentials(Promote(potential))  // or exception or empty list
-            is Root.Super -> TODO()
+            is Super -> TODO()
             is FunPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Out3
                 val (effects, potentials) = potential.propagate()

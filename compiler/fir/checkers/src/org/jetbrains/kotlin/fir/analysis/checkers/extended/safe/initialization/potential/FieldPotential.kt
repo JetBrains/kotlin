@@ -26,8 +26,8 @@ data class FieldPotential(override val potential: Potential, val field: FirVaria
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }
             is Root.Cold -> EffectsAndPotentials(Promote(potential)) // or exception or empty list
-            is Root.Super -> {
-                val state = Checker.cache[potential.firClass] ?: TODO()
+            is Super -> {
+                val state = potential.getRightStateOfClass()
                 val potentials = potential.potentialsOf(state, field)
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }

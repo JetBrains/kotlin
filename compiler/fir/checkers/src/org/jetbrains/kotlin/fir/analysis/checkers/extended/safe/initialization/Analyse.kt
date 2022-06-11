@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.C
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -57,8 +58,10 @@ object Analyser {
     object ReferenceVisitor : FirDefaultVisitor<EffectsAndPotentials, Pair<StateOfClass, Potentials>>() {
         override fun visitElement(element: FirElement, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials = emptyEffsAndPots
 
-        override fun visitSuperReference(superReference: FirSuperReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials =
-            EffectsAndPotentials(Root.Super(superReference, data.first.firClass))
+        override fun visitSuperReference(superReference: FirSuperReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials {
+            val (stateOfClass, pots) = data
+            return pots.map { pot -> Super(superReference, stateOfClass.firClass, pot) }.toEffectsAndPotentials()
+        }
 
         @OptIn(SymbolInternals::class)
         override fun visitThisReference(thisReference: FirThisReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials =

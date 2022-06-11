@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 typealias Potentials = List<Potential>
 
 inline fun <reified T : FirMemberDeclaration> Checker.StateOfClass.resolveMember(potential: Potential, dec: T): T =
-    if (potential is Root.Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
+    if (potential is Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
 
 fun Checker.StateOfClass.select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
     return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { select(field) } }

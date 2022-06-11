@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.FunPotential
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.declarations.*
 
 typealias Effects = List<Effect>
@@ -16,7 +13,7 @@ typealias Effects = List<Effect>
 data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential) {
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
-            is Root.This, is Root.Super -> {                                     // C-Acc1
+            is Root.This, is Super -> {                                     // C-Acc1
                 if (field.isPropertyInitialized())
                     emptyList()
                 else listOf(Error.AccessError(this@FieldAccess))
@@ -52,8 +49,8 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
             }
             is FunPotential -> emptyList() // invoke
             is Root.Cold -> listOf(Error.InvokeError(this@MethodAccess))              // illegal
-            is Root.Super -> {
-                val state = Checker.cache[potential.firClass] ?: TODO()
+            is Super -> {
+                val state = potential.getRightStateOfClass()
                 potential.effectsOf(state, method).flatMap { it.check(this) }
             }
             else ->                                                         // C-Inv3

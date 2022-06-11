@@ -26,8 +26,8 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }
             is Root.Cold -> EffectsAndPotentials(Promote(potential))
-            is Root.Super -> {
-                val state = Checker.cache[potential.firClass] ?: TODO()
+            is Super -> {
+                val state = potential.getRightStateOfClass()
                 val potentials = potential.potentialsOf(state, method)
                 potentials.toEffectsAndPotentials()
             }
