@@ -149,8 +149,8 @@ public class StandaloneAnalysisAPISessionBuilder(
                 }
             )
 
-            registerService(SymbolLightClassFacadeCache::class.java)
-            registerService(ClsJavaStubByVirtualFileCache::class.java)
+            registerService(SymbolLightClassFacadeCache::class.java, SymbolLightClassFacadeCache(this))
+            registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
             registerService(KotlinAsJavaSupport::class.java, KotlinAsJavaFirSupport(this))
         }
 
