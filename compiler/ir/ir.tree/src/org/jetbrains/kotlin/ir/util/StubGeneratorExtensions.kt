@@ -51,7 +51,6 @@ open class StubGeneratorExtensions {
         irClass: IrClass,
         stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,
-        allowErrorNodes: Boolean,
     ): Boolean = false
 
     open val enhancedNullability: EnhancedNullability

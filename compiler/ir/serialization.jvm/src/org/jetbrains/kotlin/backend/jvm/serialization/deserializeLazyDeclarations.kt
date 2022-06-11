@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -43,7 +43,6 @@ fun deserializeFromByteArray(
     irProviders: List<IrProvider>,
     toplevelParent: IrClass,
     typeSystemContext: IrTypeSystemContext,
-    allowErrorNodes: Boolean,
 ) {
     val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
@@ -79,7 +78,7 @@ fun deserializeFromByteArray(
     // Patching will be needed.
     val deserializer = IrDeclarationDeserializer(
         irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, toplevelParent,
-        allowErrorNodes = allowErrorNodes,
+        allowErrorNodes = false,
         deserializeInlineFunctions = true,
         deserializeBodies = true,
         symbolDeserializer,

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -165,7 +167,7 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyGenerationStarted()
         performanceManager?.notifyIRTranslationStarted()
 
-        val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration)
+        val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
         val fir2IrResult = firResult.session.convertToIr(firResult.scopeSession, firResult.fir, fir2IrExtensions, irGenerationExtensions)
 
         performanceManager?.notifyIRTranslationFinished()

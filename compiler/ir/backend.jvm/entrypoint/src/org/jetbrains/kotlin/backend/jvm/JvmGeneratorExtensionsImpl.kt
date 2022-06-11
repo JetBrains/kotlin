@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -31,8 +30,6 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -103,7 +100,7 @@ open class JvmGeneratorExtensionsImpl(
             if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
             facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
             deserializedSource,
-            deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent, allowErrorNodes = false) }
+            deserializeIr = { facade -> deserializeClass(facade, stubGenerator, facade.parent) }
         ).also {
             it.createParameterDeclarations()
             classNameOverride[it] = facadeName
@@ -114,22 +111,9 @@ open class JvmGeneratorExtensionsImpl(
         irClass: IrClass,
         stubGenerator: DeclarationStubGenerator,
         parent: IrDeclarationParent,
-        allowErrorNodes: Boolean
-    ): Boolean {
-        val serializedIr = when (val source = irClass.source) {
-            is KotlinJvmBinarySourceElement -> source.binaryClass.classHeader.serializedIr
-            is JvmPackagePartSource -> source.knownJvmBinaryClass?.classHeader?.serializedIr
-            else -> null
-        } ?: return false
-        deserializeFromByteArray(
-            serializedIr,
-            stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator),
-            irClass,
-            JvmIrTypeSystemContext(stubGenerator.irBuiltIns), allowErrorNodes
-        )
-        irClass.handleJvmStaticInSingletonObjects(stubGenerator.irBuiltIns, cachedFields)
-        return true
-    }
+    ): Boolean = JvmIrDeserializerImpl().deserializeTopLevelClass(
+        irClass, stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator), this
+    )
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
         descriptor.hasJvmFieldAnnotation()

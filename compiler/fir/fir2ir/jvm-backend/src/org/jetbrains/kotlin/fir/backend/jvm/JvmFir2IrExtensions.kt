@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.serialization.deserializeFromByteArray
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -15,24 +14,21 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.createSpecialAnnotationClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
-class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensions, JvmGeneratorExtensions {
-
+class JvmFir2IrExtensions(
+    configuration: CompilerConfiguration,
+    private val irDeserializer: JvmIrDeserializer,
+    private val mangler: KotlinMangler.IrMangler,
+) : Fir2IrExtensions, JvmGeneratorExtensions {
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
@@ -62,7 +58,7 @@ class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensio
         }
 
     override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = PublicIdSignatureComputer(JvmIrMangler)
+        val signatureComputer = PublicIdSignatureComputer(mangler)
         specialAnnotationConstructors.forEach { constructor ->
             symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
         }
@@ -86,21 +82,8 @@ class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensio
         }
     }
 
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean {
-        with(components) {
-            val serializedIr = when (val source = irClass.source) {
-                is KotlinJvmBinarySourceElement -> source.binaryClass.classHeader.serializedIr
-                is JvmPackagePartSource -> source.knownJvmBinaryClass?.classHeader?.serializedIr
-                else -> null
-            } ?: return false
-            deserializeFromByteArray(
-                serializedIr,
-                irBuiltIns, symbolTable, irProviders,
-                irClass,
-                JvmIrTypeSystemContext(irBuiltIns), allowErrorNodes = false
-            )
-            irClass.handleJvmStaticInSingletonObjects(irBuiltIns, cachedFields)
-            return true
-        }
-    }
+    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean =
+        irDeserializer.deserializeTopLevelClass(
+            irClass, components.irBuiltIns, components.symbolTable, components.irProviders, this
+        )
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -268,7 +269,7 @@ class IncrementalFirJvmCompilerRunner(
             performanceManager?.notifyGenerationStarted()
             performanceManager?.notifyIRTranslationStarted()
 
-            val extensions = JvmFir2IrExtensions(configuration)
+            val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
             val signaturer = JvmIdSignatureDescriptor(JvmDescriptorMangler(null))
