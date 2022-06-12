@@ -48,6 +48,7 @@ internal class LLFirJavaFacadeForBinaries(
                 // To work with LibraryPathFilter, a hacky workaround here is to remove "modules/" from actual file path.
                 // e.g. "/path/to/jdk/home!/java.base/java/lang/Object.class", which, from Path viewpoint, belongs to "/java.base",
                 // after splitting at the JAR separator, in a similar way.
+                // See [StandaloneProjectFactory#getAllBinaryRoots] for a similar hack.
                 Paths.get(path.replace("modules/", ""))
             }
             else ->
