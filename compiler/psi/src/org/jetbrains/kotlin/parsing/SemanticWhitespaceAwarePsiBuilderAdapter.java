@@ -68,4 +68,9 @@ public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter 
     public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
         return myBuilder.isWhitespaceOrComment(elementType);
     }
+
+    @Override
+    public boolean hasErrorsAfter(@NotNull Marker marker) {
+        return myBuilder.hasErrorsAfter(marker);
+    }
 }

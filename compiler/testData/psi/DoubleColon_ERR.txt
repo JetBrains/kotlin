@@ -159,37 +159,39 @@ KtFile: DoubleColon_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Type arguments are not allowed
-          PsiElement(LT)('<')
-          TYPE_PROJECTION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-          PsiElement(GT)('>')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(GT)('>')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Type arguments are not allowed
-          PsiElement(LT)('<')
-          TYPE_PROJECTION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-          PsiElement(COMMA)(',')
-          TYPE_PROJECTION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('c')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    PsiElement(MUL)('*')
-                  PsiElement(GT)('>')
-          PsiElement(GT)('>')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(COMMA)(',')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      PsiElement(MUL)('*')
+                    PsiElement(GT)('>')
+            PsiElement(GT)('>')
       PsiWhiteSpace('\n    ')
       CALLABLE_REFERENCE_EXPRESSION
         REFERENCE_EXPRESSION
@@ -198,26 +200,28 @@ KtFile: DoubleColon_ERR.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('b')
         PsiErrorElement:Type arguments are not allowed
-          PsiElement(LT)('<')
-          TYPE_PROJECTION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('c')
-          PsiElement(GT)('>')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
+            PsiElement(GT)('>')
       PsiWhiteSpace('\n\n    ')
       CALLABLE_REFERENCE_EXPRESSION
         PsiElement(COLONCOLON)('::')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Type arguments are not allowed
-          PsiElement(LT)('<')
-          TYPE_PROJECTION
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-          PsiElement(GT)('>')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+            PsiElement(GT)('>')
         PsiErrorElement:This syntax is reserved for future use; to call a reference, enclose it in parentheses: (foo::bar)(args)
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
