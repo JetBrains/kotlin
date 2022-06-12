@@ -32150,6 +32150,28 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/typeArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TypeArguments {
+            @Test
+            public void testAllFilesPresentInTypeArguments() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typeArguments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("allowTypeArgumentListLikeExpressions.kt")
+            public void testAllowTypeArgumentListLikeExpressions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeArguments/allowTypeArgumentListLikeExpressions.kt");
+            }
+
+            @Test
+            @TestMetadata("forbidTypeArgumentListLikeExpressions.kt")
+            public void testForbidTypeArgumentListLikeExpressions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeArguments/forbidTypeArgumentListLikeExpressions.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/typeParameters")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeParameters {
