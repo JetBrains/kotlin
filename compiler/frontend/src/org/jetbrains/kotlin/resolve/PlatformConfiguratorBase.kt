@@ -54,6 +54,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     UnsupportedUntilRangeDeclarationChecker,
     DataObjectContentChecker,
     ExpressionAfterTypeParameterWithoutSpacingChecker,
+    TypeArgumentListLikeExpressionsChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

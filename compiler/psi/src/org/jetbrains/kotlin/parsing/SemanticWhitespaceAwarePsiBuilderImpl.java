@@ -202,4 +202,10 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
         }
         return getJoinedTokenType(super.lookAhead(steps), 2);
     }
+
+    @Override
+    public boolean hasErrorsAfter(@NotNull Marker marker) {
+        assert delegateImpl != null : "PsiBuilderImpl not found";
+        return delegateImpl.hasErrorsAfter(marker);
+    }
 }

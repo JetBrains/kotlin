@@ -34,4 +34,6 @@ public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
 
     @Override
     boolean isWhitespaceOrComment(@NotNull IElementType elementType);
+
+    boolean hasErrorsAfter(@NotNull PsiBuilder.Marker marker);
 }
