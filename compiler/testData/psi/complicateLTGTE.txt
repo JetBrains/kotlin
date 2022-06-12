@@ -41,6 +41,8 @@ KtFile: complicateLTGTE.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
+            TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
+              <empty list>
             OPERATION_REFERENCE
               PsiElement(LT)('<')
             PsiWhiteSpace(' ')
