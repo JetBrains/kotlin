@@ -350,7 +350,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 "with ${gcSchedulerType.name.lowercase()} garbage collector scheduler"
             }
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
-            runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
+            // TODO: it should be disabled but test infrastructure need to be reworked for that
+            runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> null
             else -> null
         }
         CacheSupport(
