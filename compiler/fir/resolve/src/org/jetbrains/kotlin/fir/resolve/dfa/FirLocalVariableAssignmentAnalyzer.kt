@@ -112,14 +112,15 @@ internal class FirLocalVariableAssignmentAnalyzer(
     }
 
     fun exitLocalFunction(function: FirFunction) {
-        val eventOccurrencesRange: EventOccurrencesRange? = (function as? FirAnonymousFunction)?.invocationKind
         concurrentlyAssignedLocalVariablesStack.removeLast()
-        when (eventOccurrencesRange) {
+        when ((function as? FirAnonymousFunction)?.invocationKind) {
             EventOccurrencesRange.UNKNOWN, null ->
                 // The function may be stored and then called later, so any access to the variables it touches
                 // is no longer smartcastable ever.
                 assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let {
-                    concurrentlyAssignedLocalVariablesStack.last() += it
+                    for (outerScope in concurrentlyAssignedLocalVariablesStack) {
+                        outerScope += it
+                    }
                 }
             else -> {} // The function is only called inline; this is handled by CFG construction by visiting the function body.
         }
@@ -358,8 +359,9 @@ internal class FirLocalVariableAssignmentAnalyzer(
             class MiniCfgData(var flow: MiniFlow?) {
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
                 val localFunctionToAssignedLocalVariables: MutableMap<FirFunctionSymbol<*>, AssignedLocalVariables> = mutableMapOf()
+
                 fun resolveLocalVariable(name: Name): FirProperty? {
-                    return variableDeclarations.asReversed().firstNotNullOfOrNull { it[name] }
+                    return variableDeclarations.lastOrNull { name in it }?.getValue(name)
                 }
             }
         }
