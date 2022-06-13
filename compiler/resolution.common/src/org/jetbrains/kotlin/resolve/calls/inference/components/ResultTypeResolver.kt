@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.CommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.extractTypeForGivenRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -203,7 +203,7 @@ class ResultTypeResolver(
     }
 
     private fun Context.computeCommonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker =
-        with(NewCommonSuperTypeCalculator) { commonSuperType(types) }
+        with(CommonSuperTypeCalculator) { commonSuperType(types) }
 
     private fun Context.prepareLowerConstraints(constraints: List<Constraint>): List<KotlinTypeMarker> {
         var atLeastOneProper = false

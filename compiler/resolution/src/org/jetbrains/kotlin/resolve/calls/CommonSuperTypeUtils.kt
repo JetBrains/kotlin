@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.util.lowerIfFlexible
 import org.jetbrains.kotlin.utils.DFS
 
 fun commonSuperType(types: List<KotlinType>): KotlinType =
-    with(NewCommonSuperTypeCalculator) { SimpleClassicTypeSystemContext.commonSuperType(types) as KotlinType }
+    with(CommonSuperTypeCalculator) { SimpleClassicTypeSystemContext.commonSuperType(types) as KotlinType }
 
 fun topologicallySortSuperclassesAndRecordAllInstances(
     type: SimpleType,
