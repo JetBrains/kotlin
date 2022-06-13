@@ -10,7 +10,7 @@ public inline fun <reified T : Any> inlineMeIfYouCan(): String? =
             f {
                 T::class.java.getName()
             }
-        }()
+        }.let { it() }
 
 inline fun f(x: () -> String) = x()
 

@@ -3,7 +3,7 @@ package test
 
 inline fun inline1(crossinline action: () -> Unit) {
     action();
-    { action() }()
+    { action() }.let { it() }
 }
 
 inline fun inline2(crossinline action: () -> Unit) = { action() }

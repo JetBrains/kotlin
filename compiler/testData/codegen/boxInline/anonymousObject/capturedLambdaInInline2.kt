@@ -4,7 +4,7 @@
 package test
 
 inline fun bar(crossinline y: () -> String) = {
-    { { call(y) }() }()
+    { { call(y) }.let { it() } }.let { it() }
 }
 
 public inline fun <T> call(f: () -> T): T = f()

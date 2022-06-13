@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-builders/_1Kt$call$1
+builders/_1Kt$call$lambda$1
 *L
 1#1,13:1
 *E
@@ -22,13 +22,13 @@ _2Kt
 builders/_1Kt
 *L
 1#1,31:1
-8#2:32
+8#2,4:32
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-20#1:32
+20#1:32,4
 *E
 
 SMAP
@@ -37,7 +37,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-builders/_1Kt$call$1
+builders/_1Kt$call$lambda$1
 + 2 2.kt
 _2Kt
 *L

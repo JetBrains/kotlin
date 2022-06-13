@@ -4,7 +4,7 @@
 package test
 
 inline fun <R> call(crossinline f: () -> R) : R {
-    return { f() }()
+    return { f() }.let { it() }
 }
 
 // FILE: 2.kt

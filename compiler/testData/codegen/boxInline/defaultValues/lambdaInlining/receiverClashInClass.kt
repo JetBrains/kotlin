@@ -8,7 +8,7 @@ class A(val value: String) {
     inline fun String.inlineFun(crossinline lambda: () -> String = { this }): String {
         return {
             "$value ${this} ${lambda()}"
-        }()
+        }.let { it() }
     }
 }
 

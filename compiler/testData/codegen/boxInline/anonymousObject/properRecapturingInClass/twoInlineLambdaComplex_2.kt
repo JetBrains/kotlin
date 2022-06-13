@@ -21,8 +21,8 @@ class B(val o: String, val k: String) {
         call {
             f("start");
             {
-                testNested ({ it -> { f(it + o) }() }) { it -> { f(it + k) }() }
-            }()
+                testNested ({ it -> { f(it + o) }.let { it() } }) { it -> { f(it + k) }.let { it() } }
+            }.let { it() }
         }
     }
 

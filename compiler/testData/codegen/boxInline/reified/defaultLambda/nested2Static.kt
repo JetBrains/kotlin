@@ -4,10 +4,10 @@
 // FILE: 1.kt
 package test
 
-inline fun <reified T> inlineFun(crossinline lambda: () -> String = { { T::class.java.simpleName } () }): String {
+inline fun <reified T> inlineFun(crossinline lambda: () -> String = { { T::class.java.simpleName }.let { it() } }): String {
     return {
         lambda()
-    } ()
+    }.let { it() }
 }
 
 // FILE: 2.kt

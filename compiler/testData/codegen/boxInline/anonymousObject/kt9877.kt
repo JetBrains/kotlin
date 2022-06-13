@@ -27,7 +27,7 @@ fun box(): String {
             {
                 locusMap = value
                 gene = "OK"
-            }()
+            }.let { it() }
         }
     }
     return gene

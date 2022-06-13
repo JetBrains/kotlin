@@ -21,7 +21,7 @@ inline fun vBox(crossinline action: () -> Unit) {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
     }
-    return { action() }()
+    return { action() }.let { it() }
 }
 
 inline fun button(onAction: () -> Unit) {

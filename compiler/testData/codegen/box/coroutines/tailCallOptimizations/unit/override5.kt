@@ -18,7 +18,7 @@ interface Base<T> {
 inline fun inlineMe(crossinline c: suspend () -> Unit) = object : Base<Unit> {
     override suspend fun generic(): Unit {
         c();
-        {}()
+        {}.let { it() }
     }
 }
 

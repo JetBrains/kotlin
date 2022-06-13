@@ -8,8 +8,8 @@ class A(val value: String) {
         return {
             {
                 this + lambda()
-            }()
-        }()
+            }.let { it() }
+        }.let { it() }
     }
 }
 

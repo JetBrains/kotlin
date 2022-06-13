@@ -9,7 +9,7 @@ inline fun Int.inlineMethod() : Int {
     return noInlineLambda()
 }
 
-inline fun Int.noInlineLambda() =  { s++ } ()
+inline fun Int.noInlineLambda() = { s++ }.let { it() }
 
 // FILE: 2.kt
 

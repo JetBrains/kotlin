@@ -18,7 +18,7 @@ class B(val o: String, val k: String) {
     }
 
     fun test(f: (String) -> Unit) {
-        testNested { it -> { f(it + k) }() }
+        testNested { it -> { f(it + k) }.let { it() } }
     }
 
 

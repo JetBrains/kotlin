@@ -10,7 +10,7 @@ fun test(): String  = ""
 
 inline fun String.switchMapOnce(crossinline mapper: (String) -> String): String {
     Callable(::test)
-    return { mapper(this) }()
+    return { mapper(this) }.let { it() }
 }
 // FILE: 2.kt
 

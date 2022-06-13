@@ -17,7 +17,7 @@ class B(val o: String, val k: String) {
     }
 
     inline fun test(crossinline f: (String) -> Unit) {
-        testNested { it -> { f(it + "K") }() }
+        testNested { it -> { f(it + "K") }.let { it() } }
     }
 
 }

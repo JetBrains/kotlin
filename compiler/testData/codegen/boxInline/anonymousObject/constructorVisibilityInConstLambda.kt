@@ -6,7 +6,7 @@ internal class A {
     inline fun doSomething(): String  {
         return {
             "OK"
-        }()
+        }.let { it() }
     }
 }
 

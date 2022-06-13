@@ -7,7 +7,7 @@ object ContentTypeByExtension {
              {
                 val ext = B("OK")
                 operation(ext.toLowerCase())
-            }()
+            }.let { it() }
 }
 
 

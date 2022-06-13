@@ -10,7 +10,7 @@ object C {
     inline fun inlineFun() = {
         val O by "K"
         O
-    }()
+    }.let { it() }
 }
 
 // FILE: box.kt

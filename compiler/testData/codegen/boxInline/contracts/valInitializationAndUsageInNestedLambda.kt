@@ -25,7 +25,7 @@ fun box(): String {
         x = 42
         {
             x
-        }()
+        }.let { it() }
     }
     return if (res == 42 && x.inc() == 43) "OK" else "Fail: ${x.inc()}"
 }

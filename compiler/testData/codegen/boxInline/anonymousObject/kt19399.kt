@@ -26,7 +26,7 @@ class Foo {
                 ifNotBusyPerform {
                     ifNotBusySayHello()
                 }
-            }()
+            }.let { it() }
         }
     }
 }

@@ -19,10 +19,10 @@ class A {
                     {
                         {
                             result = param + c + a
-                        }()
-                    }()
+                        }.let { it() }
+                    }.let { it() }
                 }
-            }()
+            }.let { it() }
         }
 
         return if (result == "start1_additional_2_additional_") "OK" else "fail: $result"

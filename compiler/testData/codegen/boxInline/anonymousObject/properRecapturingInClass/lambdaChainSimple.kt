@@ -11,7 +11,7 @@ class A {
     inline fun inlineFun(arg: String, crossinline f: (String) -> Unit) {
         {
             f(arg + addParam)
-        }()
+        }.let { it() }
     }
 
 
@@ -19,7 +19,7 @@ class A {
         inlineFun("2") { a ->
             {
                 result = param + a
-            }()
+            }.let { it() }
         }
         return if (result == "start2_additional_") "OK" else "fail: $result"
     }

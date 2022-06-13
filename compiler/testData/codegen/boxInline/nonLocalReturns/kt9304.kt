@@ -14,4 +14,4 @@ inline fun foo(f: () -> Unit) {
 fun box(): String = (bar@ l@ fun(): String {
     foo { return@bar "OK" }
     return "fail"
-}) ()
+}).let { it() }

@@ -5,9 +5,9 @@
 
 package test
 inline fun inlineFun(capturedParam: String, crossinline lambda: () -> String = { capturedParam }): String {
-    return {
+    val lambda2 = {
         lambda()
-    }()
+    }; return lambda2()
 }
 
 // FILE: 2.kt

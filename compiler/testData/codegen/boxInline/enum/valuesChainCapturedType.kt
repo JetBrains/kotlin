@@ -5,7 +5,7 @@
 package test
 
 inline fun <reified Y : Enum<Y>> myValues2(): String {
-    val values = { enumValues<Y>() }()
+    val values = { enumValues<Y>() }.let { it() }
     return values.joinToString("")
 }
 
