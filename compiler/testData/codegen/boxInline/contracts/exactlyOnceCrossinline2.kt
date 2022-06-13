@@ -26,7 +26,7 @@ inline fun baz(crossinline exactly_once: () -> Unit) {
         callsInPlace(exactly_once, InvocationKind.EXACTLY_ONCE)
     };
 
-    { exactly_once() }()
+    { exactly_once() }.let { it() }
 }
 
 // FILE: 2.kt

@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/Introspector$SchemaRetriever$inSchema$1
+test/Introspector$SchemaRetriever$inSchema$lambda$1
 *L
 1#1,12:1
 *E
@@ -37,7 +37,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/Introspector$SchemaRetriever$inSchema$1
+test/Introspector$SchemaRetriever$inSchema$lambda$1
 + 2 2.kt
 IntrospectorImpl$SchemaRetriever
 *L

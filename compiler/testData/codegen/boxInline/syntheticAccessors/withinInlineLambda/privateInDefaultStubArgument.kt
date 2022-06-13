@@ -2,7 +2,7 @@
 package test
 
 // Argument `f` of `call$default` is technically nullable and inline.
-inline fun call(other: Int = 1, crossinline f: () -> String = { "fail" }) = { f() }()
+inline fun call(other: Int = 1, crossinline f: () -> String = { "fail" }) = { f() }.let { it() }
 
 // FILE: 2.kt
 import test.*

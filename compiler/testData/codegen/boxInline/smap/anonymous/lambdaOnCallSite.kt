@@ -17,9 +17,9 @@ fun test(): String {
     var res = "Fail"
 
     call {
-        {
+        val lambda ={
             res = "OK"
-        }()
+        }; lambda()
     }
 
     return res

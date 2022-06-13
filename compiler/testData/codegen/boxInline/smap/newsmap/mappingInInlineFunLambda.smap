@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$test$1
+test/_1Kt$test$lambda$1
 + 2 1.kt
 test/_1Kt
 *L
@@ -14,7 +14,7 @@ test/_1Kt
 *S KotlinDebug
 *F
 + 1 1.kt
-test/_1Kt$test$1
+test/_1Kt$test$lambda$1
 *L
 13#1:19,3
 *E
@@ -46,7 +46,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$test$1
+test/_1Kt$test$lambda$1
 + 2 1.kt
 test/_1Kt
 + 3 2.kt
@@ -59,7 +59,7 @@ _2Kt
 *S KotlinDebug
 *F
 + 1 1.kt
-test/_1Kt$test$1
+test/_1Kt$test$lambda$1
 *L
 13#1:19,2
 13#1:23

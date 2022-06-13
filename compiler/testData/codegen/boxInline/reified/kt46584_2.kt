@@ -3,7 +3,7 @@ package test
 
 inline fun foo(x: () -> String) = x()
 
-inline fun <reified T> bar() = { foo { { T::class.simpleName!! }() } }()
+inline fun <reified T> bar() = { foo { { T::class.simpleName!! }.let { it() } } }.let { it() }
 
 // FILE: 2.kt
 import test.*

@@ -15,8 +15,8 @@ inline fun test(crossinline s: () -> Unit) {
     {
         {
             s()
-        }()
-    }()
+        }.let { it() }
+    }.let { it() }
 }
 
 // 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1\s

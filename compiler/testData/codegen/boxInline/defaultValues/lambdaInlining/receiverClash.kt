@@ -5,7 +5,7 @@ package test
 inline fun String.inlineFun(crossinline lambda: () -> String = { this }): String {
     return {
         this + lambda()
-    }()
+    }.let { it() }
 }
 
 // FILE: 2.kt

@@ -15,7 +15,7 @@ inline fun testNested(crossinline f: (String) -> Unit) {
 }
 
 fun test(f: (String) -> Unit) {
-    testNested { it ->  { f(it) }()}
+    testNested { it ->  { f(it) }.let { it() } }
 }
 
 // FILE: 2.kt

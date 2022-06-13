@@ -25,7 +25,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$kValue$1
+test/_1Kt$kValue$lambda$1
 + 2 1.kt
 test/_1Kt$lParams$1
 *L
@@ -39,7 +39,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$kValue$1
+test/_1Kt$kValue$lambda$1
 *L
 1#1,41:1
 *E
@@ -77,7 +77,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$kValue$1
+test/_1Kt$kValue$lambda$1
 + 2 1.kt
 test/_1Kt$lParams$1
 *L

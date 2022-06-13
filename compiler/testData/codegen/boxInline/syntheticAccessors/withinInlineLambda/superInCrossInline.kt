@@ -6,7 +6,7 @@ package test
 inline fun call(crossinline s: () -> String): String {
     return {
         s()
-    }()
+    }.let { it() }
 }
 
 open class Base {

@@ -5,9 +5,9 @@
 package builders
 
 inline fun call(crossinline init: () -> Unit) {
-    return {
+    val lambda = {
         init()
-    }()
+    }; lambda()
 }
 
 // FILE: 2.kt

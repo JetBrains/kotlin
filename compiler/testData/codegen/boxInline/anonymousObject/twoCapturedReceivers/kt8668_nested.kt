@@ -5,7 +5,7 @@ class C(val x: String) {
     fun f(y: String) = C(y).g { x }
 
     inline fun g(crossinline h: () -> String) =
-        { { h() + x }() }()
+        { { h() + x }.let { it() } }.let { it() }
 }
 
 // FILE: 2.kt

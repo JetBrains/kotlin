@@ -8,7 +8,7 @@ inline fun <reified Z : Enum<Z>> myValueOf(): String {
 }
 
 inline fun <reified Y : Enum<Y>> myValueOf2(): String {
-    return { enumValueOf<Y>("OK").name }()
+    return { enumValueOf<Y>("OK").name }.let { it() }
 }
 
 

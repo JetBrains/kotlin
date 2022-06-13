@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 
 inline fun <reified T : Any> injectFnc(): KClass<T> = {
     T::class
-} ()
+}.let { it() }
 
 public class Box
 

@@ -2,7 +2,7 @@
 
 package test
 
-inline fun <R> call(crossinline s: () -> R) = { s() }()
+inline fun <R> call(crossinline s: () -> R) = { s() }.let { it() }
 
 inline fun test(crossinline z: () -> String) = { z() }
 

@@ -17,8 +17,8 @@ inline fun inlineMe(crossinline c: suspend () -> Unit) = {
             }
         }
         sr
-    }()
-}()
+    }.let { it() }
+}.let { it() }
 
 // FILE: box.kt
 import helpers.*

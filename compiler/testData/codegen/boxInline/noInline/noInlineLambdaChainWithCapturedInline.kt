@@ -19,10 +19,10 @@ inline fun test1(crossinline param: () -> String): String {
                 {
                     {
                         result = param() + c + a
-                    }()
-                }()
+                    }.let { it() }
+                }.let { it() }
             }
-        }()
+        }.let { it() }
     }
 
     return result
@@ -35,8 +35,8 @@ inline fun test2(crossinline param: () -> String): String {
         {
             {
                 result = param() + a
-            }()
-        }()
+            }.let { it() }
+        }.let { it() }
     }
 
     return result
@@ -51,10 +51,10 @@ inline fun test3(crossinline param: () -> String): String {
                     {
                         {
                             result = param() + c + a
-                        }()
-                    }()
+                        }.let { it() }
+                    }.let { it() }
                 }
-            }()
+            }.let { it() }
         }
     }
 

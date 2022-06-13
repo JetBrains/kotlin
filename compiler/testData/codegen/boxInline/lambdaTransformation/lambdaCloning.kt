@@ -4,11 +4,11 @@
 package test
 
 inline fun <T> doSmth(a: T) : String {
-    return {a.toString()}()
+    return { a.toString() }.let { it() }
 }
 
 inline fun <T> doSmth2(a: T) : String {
-    return {{a.toString()}()}()
+    return { { a.toString() }.let { it() } }.let { it() }
 }
 
 // FILE: 2.kt

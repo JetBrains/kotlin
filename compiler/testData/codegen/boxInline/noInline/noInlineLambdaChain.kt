@@ -19,10 +19,10 @@ fun test1(param: String): String {
                 {
                     {
                         result = param + c + a
-                    }()
-                }()
+                    }.let { it() }
+                }.let { it() }
             }
-        }()
+        }.let { it() }
     }
 
     return result
@@ -35,8 +35,8 @@ fun test2(param: String): String {
         {
             {
                 result = param + a
-            }()
-        }()
+            }.let { it() }
+        }.let { it() }
     }
 
     return result
@@ -51,10 +51,10 @@ fun test3(param: String): String {
                     {
                         {
                             result = param + c + a
-                        }()
-                    }()
+                        }.let { it() }
+                    }.let { it() }
                 }
-            }()
+            }.let { it() }
         }
     }
 

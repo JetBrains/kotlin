@@ -1,7 +1,7 @@
 inline fun test(crossinline l: () -> String) {
     {
         l()
-    }()
+    }.let { it() }
 
     object {
         val z = l() //constuctor

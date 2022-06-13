@@ -3,8 +3,7 @@
 package test
 
 inline fun Double.test(a: Int, b: Long, crossinline c: () -> String): String {
-
-    return { "${this}_${a}_${b}_${c()}"} ()
+    return { "${this}_${a}_${b}_${c()}" }.let { it() }
 }
 
 // FILE: 2.kt

@@ -14,5 +14,5 @@ enum class Z {
 import test.*
 
 fun box(): String {
-    return  { enumValueOf<Z>("OK").name  } ()
+    return  { enumValueOf<Z>("OK").name  }.let { it() }
 }

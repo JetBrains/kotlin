@@ -9,7 +9,7 @@ class A {
             f()
             s
             v = "OK"
-        } ()
+        }.let { it() }
     }
 
     inline fun g2(crossinline f: () -> Unit) {
@@ -19,7 +19,7 @@ class A {
                 s
                 v = "OK"
             }
-        }.run ()
+        }.run()
     }
 
     inline fun use() {

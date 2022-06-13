@@ -8,7 +8,7 @@ inline fun foo(crossinline x: () -> Unit) = suspend {
     try { } finally {
         // This object is regenerated twice (normal return & "catch Throwable, execute finally, and rethrow")
         // It doesn't *need* to be, but this should work regardless.
-        { x() }()
+        { x() }.let { it() }
     }
 }
 

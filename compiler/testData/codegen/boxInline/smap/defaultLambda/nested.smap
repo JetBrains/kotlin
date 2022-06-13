@@ -5,7 +5,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$inlineFun$2
+test/_1Kt$inlineFun$lambda2$1
 *L
 1#1,13:1
 *E
@@ -33,13 +33,13 @@ _2Kt
 test/_1Kt
 *L
 1#1,20:1
-7#2,2:21
+7#2,4:21
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-18#1:21,2
+18#1:21,4
 *E
 
 SMAP
@@ -48,7 +48,7 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt$inlineFun$2
+test/_1Kt$inlineFun$lambda2$1
 + 2 1.kt
 test/_1Kt$inlineFun$1
 *L
