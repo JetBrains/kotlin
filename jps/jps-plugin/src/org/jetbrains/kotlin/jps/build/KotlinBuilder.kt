@@ -415,18 +415,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
 
-        val isBuildScriptsModule = targets.firstOrNull()?.presentableName.toString() == "Module 'intellij.platform.buildScripts' production"
+        val targetName = targets.firstOrNull()?.presentableName.toString()
+        val isBuildScriptsModule = targetName == "Module 'intellij.platform.buildScripts' production"
         if (isBuildScriptsModule) {
-            LOG.info("!!!>>>I'm going to build intellij.platform.buildScripts")
-            LOG.info("!!!>>>Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
+            LOG.info("!!!>>>intellij.platform.buildScripts I'm going to build intellij.platform.buildScripts")
+            LOG.info("!!!>>>intellij.platform.buildScripts Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
-        val outModuleFolder =
-            File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
-        if (outModuleFolder.exists()) {
-            LOG.info(">>>Folder exists")
-            outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
+
+        val buildContextOutput =
+            File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build/BuildContext.class")
+        if (buildContextOutput.exists()) {
+            LOG.info(">>>($targetName) buildContext Output exists")
         } else {
-            LOG.info(">>>out folder for intellij.platform.buildScripts is empty")
+            LOG.info(">>>($targetName)buildContext Output does not exist")
         }
 
         val start = System.nanoTime()
@@ -443,11 +444,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (isBuildScriptsModule) {
             LOG.info("!!!>>>intellij.platform.buildScripts was built")
-            if (outModuleFolder.exists()) {
-                LOG.info(">>>Folder exists")
-                outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
+            if (buildContextOutput.exists()) {
+                LOG.info(">>>intellij.platform.buildScripts buildContext Output exists")
             } else {
-                LOG.info(">>>out folder for intellij.platform.buildScripts is empty")
+                LOG.info("!!!>>>intellij.platform.buildScripts buildContext Output does not exists")
+                val folder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
+                if(folder.exists()) {
+                    folder.walkTopDown().forEach { LOG.info("===>intellij.platform.buildScripts $it") }
+                } else {
+                    LOG.info("!!!>>>intellij.platform.buildScripts build folder does not exists")
+                }
             }
         }
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
