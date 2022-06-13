@@ -227,10 +227,12 @@ abstract class KtLightClassForSourceDeclaration(
             isAbstract() || isSealed() -> {
                 psiModifiers.add(PsiModifier.ABSTRACT)
             }
+
             isEnum -> {
                 // Enum class should not be `final`, since its enum entries extend it.
                 // It could be either `abstract` w/o ctor, or empty modality w/ private ctor.
             }
+
             !(classOrObject.hasModifier(OPEN_KEYWORD)) -> {
                 val descriptor = lazy { getDescriptor() }
                 var modifier = PsiModifier.FINAL
@@ -314,10 +316,13 @@ abstract class KtLightClassForSourceDeclaration(
             }
 
         if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
-            result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
+            result.add(createClassForInterfaceDefaultImpls())
         }
+
         return result
     }
+
+    protected open fun createClassForInterfaceDefaultImpls(): PsiClass = KtLightClassForInterfaceDefaultImpls(classOrObject)
 
     override fun getUseScope(): SearchScope = kotlinOrigin.useScope
 
@@ -398,6 +403,7 @@ abstract class KtLightClassForSourceDeclaration(
             return when {
                 !classOrObject.safeIsLocal() && containingScript != null ->
                     KtLightClassForScript.getLightClassCachedValue(containingScript).value
+
                 else ->
                     getLightClassCachedValue(classOrObject).value
             }

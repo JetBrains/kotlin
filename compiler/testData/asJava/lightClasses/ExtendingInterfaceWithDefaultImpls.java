@@ -1,13 +1,16 @@
-public abstract interface B /* p.B*/ extends p.A {
+public abstract interface C /* p.C*/ extends p.B {
   @org.jetbrains.annotations.NotNull()
-  public abstract java.lang.String b();//  b()
+  public abstract java.lang.String c();//  c()
 
 
-public static final class DefaultImpls /* p.B.DefaultImpls*/ {
+public static final class DefaultImpls /* p.C.DefaultImpls*/ {
   @org.jetbrains.annotations.NotNull()
-  public static java.lang.String a(@org.jetbrains.annotations.NotNull() p.B);//  a(p.B)
+  public static java.lang.String a(@org.jetbrains.annotations.NotNull() p.C);//  a(p.C)
 
   @org.jetbrains.annotations.NotNull()
-  public static java.lang.String b(@org.jetbrains.annotations.NotNull() p.B);//  b(p.B)
+  public static java.lang.String b(@org.jetbrains.annotations.NotNull() p.C);//  b(p.C)
+
+  @org.jetbrains.annotations.NotNull()
+  public static java.lang.String c(@org.jetbrains.annotations.NotNull() p.C);//  c(p.C)
 
 }}
