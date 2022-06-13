@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
@@ -24,7 +30,8 @@ class JsIrLinker(
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
-    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols = false)
+    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols = false),
+    private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,
     messageLogger = messageLogger,
@@ -46,9 +53,17 @@ class JsIrLinker(
     private val IrLibrary.libContainsErrorCode: Boolean
         get() = this is KotlinLibrary && this.containsErrorCode
 
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
+    override fun createModuleDeserializer(
+        moduleDescriptor: ModuleDescriptor,
+        klib: KotlinLibrary?,
+        strategyResolver: (String) -> DeserializationStrategy
+    ): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
-        return JsModuleDeserializer(moduleDescriptor, klib, strategyResolver, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, klib.libContainsErrorCode)
+        val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+        return when (val lazyIrGenerator = stubGenerator) {
+            null -> JsModuleDeserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion, klib.libContainsErrorCode)
+            else -> JsLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
+        }
     }
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
