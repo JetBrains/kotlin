@@ -404,7 +404,7 @@ class ConstraintInjector(
 
         // from AbstractTypeCheckerContextForConstraintSystem
         override fun isMyTypeVariable(type: SimpleTypeMarker): Boolean =
-            c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableConstructor())
+            c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableTypeConstructor())
 
         override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker) =
             addConstraint(typeVariable, superType, UPPER)
@@ -430,13 +430,13 @@ class ConstraintInjector(
         }
 
         private fun addConstraint(
-            typeVariableConstructor: TypeConstructorMarker,
+            TypeVariableTypeConstructor: TypeConstructorMarker,
             type: KotlinTypeMarker,
             kind: ConstraintKind,
             isFromNullabilityConstraint: Boolean = false
         ) {
-            val typeVariable = c.allTypeVariables[typeVariableConstructor.unwrapStubTypeVariableConstructor()]
-                ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
+            val typeVariable = c.allTypeVariables[TypeVariableTypeConstructor.unwrapStubTypeVariableTypeConstructor()]
+                ?: error("Should by type variableConstructor: $TypeVariableTypeConstructor. ${c.allTypeVariables.values}")
 
             addNewIncorporatedConstraint(
                 typeVariable,

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.resultCallAtom
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -597,12 +596,12 @@ class DelegatedPropertyResolver(
 
     private fun buildSubstitutionMapOfNonFixedVariables(type: KotlinType): Map<UnwrappedType, UnwrappedType>? {
         // This is an exception for delegated properties that return just type variable
-        if (type.constructor is NewTypeVariableConstructor) return null
+        if (type.constructor is TypeVariableTypeConstructor) return null
 
         var substitutionMap: MutableMap<UnwrappedType, UnwrappedType>? = null
         type.contains { innerType ->
             val constructor = innerType.constructor
-            if (constructor is NewTypeVariableConstructor) {
+            if (constructor is TypeVariableTypeConstructor) {
                 if (substitutionMap == null) substitutionMap = hashMapOf()
                 if (innerType !in substitutionMap!!) {
                     substitutionMap!![innerType] = StubTypeForProvideDelegateReceiver(constructor, innerType.isMarkedNullable)

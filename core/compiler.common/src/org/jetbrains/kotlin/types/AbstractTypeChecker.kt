@@ -433,9 +433,9 @@ object AbstractTypeChecker {
         // that can lead to adding problematic constraints like UPPER(Nothing) given by CapturedType(*) <: TypeVariable(A)
         if (simpleSubArgumentType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return false
 
-        val typeVariableConstructor = superArgumentType.typeConstructor() as? TypeVariableTypeConstructorMarker ?: return false
+        val TypeVariableTypeConstructor = superArgumentType.typeConstructor() as? TypeVariableTypeConstructorMarker ?: return false
 
-        return typeVariableConstructor.typeParameter?.hasRecursiveBounds(selfConstructor) == true
+        return TypeVariableTypeConstructor.typeParameter?.hasRecursiveBounds(selfConstructor) == true
     }
 
     fun TypeCheckerState.isSubtypeForSameConstructor(

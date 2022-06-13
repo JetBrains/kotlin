@@ -306,8 +306,8 @@ public class TypeUtils {
             return hasNullableSuperType(type);
         }
         if (type instanceof AbstractStubType) {
-            NewTypeVariableConstructor typeVariableConstructor = (NewTypeVariableConstructor) ((AbstractStubType) type).getOriginalTypeVariable();
-            TypeParameterDescriptor typeParameter = typeVariableConstructor.getOriginalTypeParameter();
+            TypeVariableTypeConstructor TypeVariableTypeConstructor = (TypeVariableTypeConstructor) ((AbstractStubType) type).getOriginalTypeVariable();
+            TypeParameterDescriptor typeParameter = TypeVariableTypeConstructor.getOriginalTypeParameter();
             return typeParameter == null || hasNullableSuperType(typeParameter.getDefaultType());
         }
 
@@ -557,7 +557,7 @@ public class TypeUtils {
     }
 
     public static boolean isTypeParameter(@NotNull KotlinType type) {
-        return getTypeParameterDescriptorOrNull(type) != null || type.getConstructor() instanceof NewTypeVariableConstructor;
+        return getTypeParameterDescriptorOrNull(type) != null || type.getConstructor() instanceof TypeVariableTypeConstructor;
     }
 
     public static boolean isReifiedTypeParameter(@NotNull KotlinType type) {

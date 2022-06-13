@@ -227,10 +227,10 @@ class PostponedArgumentInputTypesResolver(
 
         return allGroupedParameterTypes.mapIndexed { index, types ->
             val parameterTypeVariable = createTypeVariableForParameterType(argument, index)
-            val typeVariableConstructor = parameterTypeVariable.freshTypeConstructor()
+            val TypeVariableTypeConstructor = parameterTypeVariable.freshTypeConstructor()
 
             for (typeWithKind in types) {
-                if (typeVariableConstructor in fixedTypeVariables) break
+                if (TypeVariableTypeConstructor in fixedTypeVariables) break
                 if (typeWithKind == null) continue
 
                 when (typeWithKind.direction) {
@@ -246,7 +246,7 @@ class PostponedArgumentInputTypesResolver(
                 }
             }
 
-            val resultType = fixedTypeVariables[typeVariableConstructor] ?: parameterTypeVariable.defaultType()
+            val resultType = fixedTypeVariables[TypeVariableTypeConstructor] ?: parameterTypeVariable.defaultType()
 
             resultType.asTypeArgument()
         }

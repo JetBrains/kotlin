@@ -59,7 +59,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is AbbreviatedType -> renderType(unwrappedType.abbreviation)
             is SimpleType -> {
                 when (val typeConstructor = unwrappedType.constructor) {
-                    is NewTypeVariableConstructor -> renderTypeVariableType(typeConstructor)
+                    is TypeVariableTypeConstructor -> renderTypeVariableType(typeConstructor)
                     is IntersectionTypeConstructor -> renderIntersectionType(typeConstructor)
                     else -> {
                         val descriptor = unwrappedType.constructor.declarationDescriptor
@@ -154,7 +154,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         append(")")
     }
 
-    private fun KtFe10RendererConsumer.renderTypeVariableType(typeConstructor: NewTypeVariableConstructor) {
+    private fun KtFe10RendererConsumer.renderTypeVariableType(typeConstructor: TypeVariableTypeConstructor) {
         val name = typeConstructor.originalTypeParameter?.name ?: SpecialNames.NO_NAME_PROVIDED
         append("TypeVariable(").append(name.asString()).append(")")
     }

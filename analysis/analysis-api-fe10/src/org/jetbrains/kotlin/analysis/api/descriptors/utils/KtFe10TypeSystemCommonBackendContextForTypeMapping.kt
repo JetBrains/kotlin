@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
-import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -30,7 +29,7 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         require(this is TypeConstructor)
         return when (this) {
-            is NewTypeVariableConstructor -> originalTypeParameter != null
+            is TypeVariableTypeConstructor -> originalTypeParameter != null
             else -> declarationDescriptor is TypeParameterDescriptor
         }
     }
@@ -38,7 +37,7 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker {
         require(this is TypeConstructor)
         return when (this) {
-            is NewTypeVariableConstructor -> originalTypeParameter!!
+            is TypeVariableTypeConstructor -> originalTypeParameter!!
             else -> declarationDescriptor as TypeParameterDescriptor
         }
     }

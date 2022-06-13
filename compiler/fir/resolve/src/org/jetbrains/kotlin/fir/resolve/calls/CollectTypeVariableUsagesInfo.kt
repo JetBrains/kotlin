@@ -96,22 +96,22 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
     ): Boolean {
         val returnType = candidateSymbol.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return false
 
-        val typeVariableConstructor = variable.typeConstructor
-        if (isContainedInInvariantOrContravariantPositions(session, typeVariableConstructor, returnType)) {
+        val TypeVariableTypeConstructor = variable.typeConstructor
+        if (isContainedInInvariantOrContravariantPositions(session, TypeVariableTypeConstructor, returnType)) {
             return true
         }
 
-        val dependingOnTypeParameter = getDependingOnTypeParameter(typeVariableConstructor)
+        val dependingOnTypeParameter = getDependingOnTypeParameter(TypeVariableTypeConstructor)
         if (dependingOnTypeParameter.any { isContainedInInvariantOrContravariantPositions(session, it, returnType) }) {
             return true
         }
 
-        val dependentTypeParameters = getDependentTypeParameters(typeVariableConstructor)
+        val dependentTypeParameters = getDependentTypeParameters(TypeVariableTypeConstructor)
         if (dependentTypeParameters.any { isContainedInInvariantOrContravariantPositions(session, it.first, returnType) }) {
             return true
         }
 
-        if (!isContainedInInvariantOrContravariantPositionsAmongUpperBound(session, typeVariableConstructor, dependentTypeParameters)) {
+        if (!isContainedInInvariantOrContravariantPositionsAmongUpperBound(session, TypeVariableTypeConstructor, dependentTypeParameters)) {
             return false
         }
 

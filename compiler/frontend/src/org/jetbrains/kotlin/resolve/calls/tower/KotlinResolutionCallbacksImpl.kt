@@ -9,7 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -33,8 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -127,7 +125,7 @@ class KotlinResolutionCallbacksImpl(
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
+        stubsForPostponedVariables: Map<TypeVariable, StubTypeForBuilderInference>,
     ): ReturnArgumentsAnalysisResult {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class StubTypeForBuilderInference(
-    originalTypeVariable: NewTypeVariableConstructor,
+    originalTypeVariable: TypeVariableTypeConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable), StubTypeMarker {
@@ -29,7 +29,7 @@ class StubTypeForBuilderInference(
 }
 
 class StubTypeForTypeVariablesInSubtyping(
-    originalTypeVariable: NewTypeVariableConstructor,
+    originalTypeVariable: TypeVariableTypeConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable), StubTypeMarker {
@@ -43,7 +43,7 @@ class StubTypeForTypeVariablesInSubtyping(
 
 // This type is used as a replacement of type variables for provideDelegate resolve
 class StubTypeForProvideDelegateReceiver(
-    originalTypeVariable: NewTypeVariableConstructor,
+    originalTypeVariable: TypeVariableTypeConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable) {
@@ -55,7 +55,7 @@ class StubTypeForProvideDelegateReceiver(
     }
 }
 
-abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstructor, override val isMarkedNullable: Boolean) : SimpleType() {
+abstract class AbstractStubType(val originalTypeVariable: TypeVariableTypeConstructor, override val isMarkedNullable: Boolean) : SimpleType() {
     override val memberScope: MemberScope = ErrorUtils.createErrorScope(ErrorScopeKind.STUB_TYPE_SCOPE, originalTypeVariable.toString())
 
     override val arguments: List<TypeProjection>
@@ -76,7 +76,7 @@ abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstru
     abstract fun materialize(newNullability: Boolean): AbstractStubType
 
     companion object {
-        fun createConstructor(originalTypeVariable: NewTypeVariableConstructor) =
+        fun createConstructor(originalTypeVariable: TypeVariableTypeConstructor) =
             ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.STUB_TYPE, originalTypeVariable.toString())
     }
 }

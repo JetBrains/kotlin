@@ -34,14 +34,14 @@ class ResultTypeResolver(
         constraints: List<Constraint>,
         typeVariable: TypeVariableMarker
     ): KotlinTypeMarker? {
-        val typeVariableConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
+        val TypeVariableTypeConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
             if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
-            val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
+            val typeParameter = TypeVariableTypeConstructor.typeParameter ?: return@mapNotNull null
             extractTypeForGivenRecursiveTypeParameter(constraint.type, typeParameter)
         }.takeIf { it.isNotEmpty() } ?: return null
 
-        return createCapturedStarProjectionForSelfType(typeVariableConstructor, typesForRecursiveTypeParameters)
+        return createCapturedStarProjectionForSelfType(TypeVariableTypeConstructor, typesForRecursiveTypeParameters)
     }
 
     private fun Context.getDefaultType(

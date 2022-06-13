@@ -68,7 +68,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
         get() {
-            require(this is NewTypeVariableConstructor, this::errorMessage)
+            require(this is TypeVariableTypeConstructor, this::errorMessage)
             return this.originalTypeParameter
         }
 
@@ -113,13 +113,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.isSimpleTypeStubTypeForBuilderInference()
     }
 
-    override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {
+    override fun TypeConstructorMarker.unwrapStubTypeVariableTypeConstructor(): TypeConstructorMarker {
         return this
     }
 
     override fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker {
         require(this is AbstractStubType, this::errorMessage)
-        return this.originalTypeVariable as TypeVariableTypeConstructorMarker
+        return this.originalTypeVariable
     }
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
@@ -584,7 +584,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {
         require(this is UnwrappedType, this::errorMessage)
-        return constructor is NewTypeVariableConstructor ||
+        return constructor is TypeVariableTypeConstructor ||
                 constructor.declarationDescriptor is TypeParameterDescriptor ||
                 this is CapturedType
     }
@@ -914,7 +914,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
-        return this is UnwrappedType && constructor is NewTypeVariableConstructor
+        return this is UnwrappedType && constructor is TypeVariableTypeConstructor
     }
 
     class WA // Workaround for KT-52313

@@ -451,19 +451,19 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
         if (!returnType.isComputed) return false
 
-        val typeVariableConstructor = variable.freshTypeConstructor
-        val dependentTypeParameters = getDependentTypeParameters(typeVariableConstructor)
-        val dependingOnTypeParameter = getDependingOnTypeParameter(typeVariableConstructor)
+        val TypeVariableTypeConstructor = variable.freshTypeConstructor
+        val dependentTypeParameters = getDependentTypeParameters(TypeVariableTypeConstructor)
+        val dependingOnTypeParameter = getDependingOnTypeParameter(TypeVariableTypeConstructor)
 
         val isContainedInUpperBounds =
-            isContainedInInvariantOrContravariantPositionsAmongUpperBound(typeVariableConstructor, dependentTypeParameters)
+            isContainedInInvariantOrContravariantPositionsAmongUpperBound(TypeVariableTypeConstructor, dependentTypeParameters)
         val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { (typeParameter, _) ->
             returnType.contains {
                 it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
             }
         }
 
-        return isContainedInInvariantOrContravariantPositions(typeVariableConstructor, returnType)
+        return isContainedInInvariantOrContravariantPositions(TypeVariableTypeConstructor, returnType)
                 || dependingOnTypeParameter.any { isContainedInInvariantOrContravariantPositions(it, returnType) }
                 || dependentTypeParameters.any { isContainedInInvariantOrContravariantPositions(it.first, returnType) }
                 || (isContainedAnyDependentTypeInReturnType && isContainedInUpperBounds)

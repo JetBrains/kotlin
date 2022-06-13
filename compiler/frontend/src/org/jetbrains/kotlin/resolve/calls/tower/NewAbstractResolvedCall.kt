@@ -188,10 +188,10 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
         val newSubstitutorMap = currentSubstitutor.map.toMutableMap()
 
         explicitTypeArguments.forEachIndexed { index, typeArgument ->
-            val typeVariableConstructor = typeVariables.getOrNull(index)?.freshTypeConstructor ?: return@forEachIndexed
+            val TypeVariableTypeConstructor = typeVariables.getOrNull(index)?.freshTypeConstructor ?: return@forEachIndexed
 
-            newSubstitutorMap[typeVariableConstructor] =
-                newSubstitutorMap[typeVariableConstructor]?.withNullabilityFromExplicitTypeArgument(typeArgument)
+            newSubstitutorMap[TypeVariableTypeConstructor] =
+                newSubstitutorMap[TypeVariableTypeConstructor]?.withNullabilityFromExplicitTypeArgument(typeArgument)
                     ?: return@forEachIndexed
         }
 

@@ -44,7 +44,7 @@ class BuilderInferenceSession(
     callComponents: KotlinCallComponents,
     builtIns: KotlinBuiltIns,
     private val topLevelCallContext: BasicCallResolutionContext,
-    private val stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
+    private val stubsForPostponedVariables: Map<TypeVariable, StubTypeForBuilderInference>,
     private val trace: BindingTrace,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val expressionTypingServices: ExpressionTypingServices,
@@ -365,7 +365,7 @@ class BuilderInferenceSession(
             for ((variableConstructor, type) in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerTypeVariableIfNotPresent(typeVariable)
-                commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, BuilderInferencePosition)
+                commonSystem.addEqualityConstraint((typeVariable as TypeVariable).defaultType, type, BuilderInferencePosition)
             }
         }
     }

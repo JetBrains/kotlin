@@ -29,7 +29,7 @@ class ClassicConstraintSystemUtilContext(
     }
 
     override fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean {
-        require(this is NewTypeVariable)
+        require(this is TypeVariable)
         return hasOnlyInputTypesAnnotation()
     }
 

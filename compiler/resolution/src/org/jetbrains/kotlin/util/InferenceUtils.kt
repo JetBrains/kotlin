@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.model.typeForTypeVariable
+import org.jetbrains.kotlin.types.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 fun NewConstraintSystem.buildNotFixedVariablesToPossibleResultType(resolutionCallbacks: KotlinResolutionCallbacks): TypeSubstitutorMarker =

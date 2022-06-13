@@ -52,7 +52,7 @@ class ConstraintIncorporator(
     }
 
     private fun Context.areThereRecursiveConstraints(typeVariable: TypeVariableMarker, constraint: Constraint) =
-        constraint.type.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable.freshTypeConstructor() }
+        constraint.type.contains { it.typeConstructor().unwrapStubTypeVariableTypeConstructor() == typeVariable.freshTypeConstructor() }
 
     // A <:(=) \alpha <:(=) B => A <: B
     private fun Context.directWithVariable(
@@ -263,7 +263,7 @@ class ConstraintIncorporator(
 
     private fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
         getNestedArguments(type).mapNotNullTo(SmartList()) {
-            getTypeVariable(it.getType().typeConstructor().unwrapStubTypeVariableConstructor())
+            getTypeVariable(it.getType().typeConstructor().unwrapStubTypeVariableTypeConstructor())
         }
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {

@@ -243,7 +243,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
 
             val typeConstructor = unwrappedType.constructor
 
-            if (typeConstructor is NewTypeVariableConstructor) {
+            if (typeConstructor is TypeVariableTypeConstructor) {
                 val newTypeParameterDescriptor = typeConstructor.originalTypeParameter
                 return if (newTypeParameterDescriptor != null) {
                     KtFe10TypeParameterType(unwrappedType, newTypeParameterDescriptor, analysisContext)

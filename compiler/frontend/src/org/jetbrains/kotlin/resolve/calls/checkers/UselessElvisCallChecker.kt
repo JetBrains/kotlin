@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.contains

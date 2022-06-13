@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE_INFO
 import org.jetbrains.kotlin.resolve.calls.components.stableType
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.SimplePSIKotlinCallArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NullableVarargArgumentCallChecker : CallChecker {

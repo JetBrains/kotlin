@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariable
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
@@ -27,12 +26,12 @@ class ClassicTypeSystemContextForCS(
     BuiltInsProvider {
 
     override fun TypeVariableMarker.defaultType(): SimpleTypeMarker {
-        require(this is NewTypeVariable, this::errorMessage)
+        require(this is TypeVariable, this::errorMessage)
         return this.defaultType
     }
 
     override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
-        require(this is NewTypeVariable, this::errorMessage)
+        require(this is TypeVariable, this::errorMessage)
         return this.freshTypeConstructor
     }
 
@@ -78,14 +77,14 @@ class ClassicTypeSystemContextForCS(
 
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubTypeForBuilderInference(
-            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
+            typeVariable.freshTypeConstructor() as TypeVariableTypeConstructor,
             typeVariable.defaultType().isMarkedNullable()
         )
     }
 
     override fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubTypeForTypeVariablesInSubtyping(
-            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
+            typeVariable.freshTypeConstructor() as TypeVariableTypeConstructor,
             typeVariable.defaultType().isMarkedNullable()
         )
     }

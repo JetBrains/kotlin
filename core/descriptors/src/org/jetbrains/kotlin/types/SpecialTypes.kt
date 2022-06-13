@@ -146,7 +146,7 @@ class DefinitelyNotNullType private constructor(
         }
 
         private fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
-            constructor is NewTypeVariableConstructor
+            constructor is TypeVariableTypeConstructor
                     || constructor.declarationDescriptor is TypeParameterDescriptor
                     || this is CapturedType
                     || this is StubTypeForBuilderInference
@@ -160,7 +160,7 @@ class DefinitelyNotNullType private constructor(
         get() = false
 
     override val isTypeParameter: Boolean
-        get() = delegate.constructor is NewTypeVariableConstructor ||
+        get() = delegate.constructor is TypeVariableTypeConstructor ||
                 delegate.constructor.declarationDescriptor is TypeParameterDescriptor
 
     override fun substitutionResult(replacement: KotlinType): KotlinType =

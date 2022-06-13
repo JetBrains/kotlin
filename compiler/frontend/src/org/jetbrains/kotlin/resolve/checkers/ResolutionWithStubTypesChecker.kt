@@ -126,7 +126,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         lambda: LambdaKotlinCallArgument,
         context: BasicCallResolutionContext,
         substitutionMap: Map<TypeConstructor, UnwrappedType>
-    ): Set<NewTypeVariableConstructor> = buildSet {
+    ): Set<TypeVariableTypeConstructor> = buildSet {
         val receiverType = receiver.type
         val newReceiverType = newReceiver.type
         val relatedLambdaToLabel = (lambda.psiExpression as? KtLambdaExpression)?.takeIf {
@@ -137,7 +137,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         }
 
         if (receiverType != newReceiverType) {
-            val typeVariables = substitutionMap.map { it.key as NewTypeVariableConstructor }
+            val typeVariables = substitutionMap.map { it.key as TypeVariableTypeConstructor }
             val typeParameters = typeVariables.joinToString { (it.originalTypeParameter?.name ?: it).toString() }
             val inferredTypes = substitutionMap.values
 
@@ -158,7 +158,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         newArguments: List<KotlinCallArgument>,
         context: BasicCallResolutionContext,
         substitutionMap: Map<TypeConstructor, UnwrappedType>
-    ): Set<NewTypeVariableConstructor> = buildSet {
+    ): Set<TypeVariableTypeConstructor> = buildSet {
         for ((i, valueArgument) in valueArguments.withIndex()) {
             if (valueArgument !is SimpleKotlinCallArgument) continue
 
@@ -168,7 +168,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
 
             if (originalType != substitutedType) {
                 val psiExpression = valueArgument.psiExpression ?: continue
-                val typeVariables = substitutionMap.map { it.key as NewTypeVariableConstructor }
+                val typeVariables = substitutionMap.map { it.key as TypeVariableTypeConstructor }
                 val typeParameters = typeVariables.joinToString { (it.originalTypeParameter?.name ?: it).toString() }
                 val inferredTypes = substitutionMap.values
 
