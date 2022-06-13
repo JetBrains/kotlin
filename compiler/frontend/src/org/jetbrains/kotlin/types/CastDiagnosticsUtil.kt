@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.argumentsCount
 import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
@@ -173,14 +174,11 @@ object CastDiagnosticsUtil {
 
         val substitution: MutableMap<TypeConstructor, TypeProjection> = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
-            val solution = TypeUnifier.unify(
-                TypeProjectionImpl(supertype), TypeProjectionImpl(supertypeWithVariables), variableConstructors::contains
-            )
-            Maps.newHashMap(solution.substitution)
+            Maps.newHashMap(buildSubstitutionMapByTwoTypes(supertype, supertypeWithVariables, variableConstructors::contains))
         } else {
             // If there's no corresponding supertype, no variables are determined
             // This may be OK, e.g. in case 'Any as List<*>'
-            Maps.newHashMapWithExpectedSize<TypeConstructor, TypeProjection>(variables.size)
+            Maps.newHashMapWithExpectedSize(variables.size)
         }
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,
@@ -202,6 +200,49 @@ object CastDiagnosticsUtil {
         val substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT)
 
         return TypeReconstructionResult(substituted, allArgumentsInferred)
+    }
+
+    private fun buildSubstitutionMapByTwoTypes(
+        baseType: KotlinType,
+        typeWithTypeParameters: KotlinType,
+        isVariable: (TypeConstructor) -> Boolean
+    ): Map<TypeConstructor, TypeProjection> {
+        val substitutionMap = mutableMapOf<TypeConstructor, TypeProjection>()
+        val wasBuildingSuccessful = buildSubstitutionMapByTwoTypes(baseType, typeWithTypeParameters, isVariable, substitutionMap)
+
+        return if (wasBuildingSuccessful) substitutionMap else emptyMap()
+    }
+
+    private fun buildSubstitutionMapByTwoTypes(
+        baseType: KotlinType,
+        typeWithTypeParameters: KotlinType,
+        isVariable: (TypeConstructor) -> Boolean,
+        substitutionMap: MutableMap<TypeConstructor, TypeProjection>
+    ): Boolean {
+        if (baseType.constructor != typeWithTypeParameters.constructor)
+            return false
+
+        if (baseType.argumentsCount() != typeWithTypeParameters.argumentsCount())
+            return false // probably first or second is an error type, do nothing in this case
+
+        for ((i, argument) in typeWithTypeParameters.arguments.withIndex()) {
+            val baseArgument = baseType.arguments[i]
+            val typeParameterConstructor = argument.type.constructor
+            if (typeParameterConstructor in substitutionMap && substitutionMap[typeParameterConstructor] != baseArgument)
+                return false
+            if (isVariable(typeParameterConstructor)) {
+                substitutionMap[typeParameterConstructor] = baseArgument
+            }
+            val argumentType = argument.type
+            if (argumentType.arguments.isNotEmpty()) {
+                val wasBuildingSuccessful = buildSubstitutionMapByTwoTypes(baseArgument.type, argumentType, isVariable, substitutionMap)
+
+                if (!wasBuildingSuccessful)
+                    return false
+            }
+        }
+
+        return true
     }
 
     private fun allParametersReified(subtype: KotlinType) = subtype.constructor.parameters.all { it.isReified }

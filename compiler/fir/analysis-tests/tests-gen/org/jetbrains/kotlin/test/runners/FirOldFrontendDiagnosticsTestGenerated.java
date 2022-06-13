@@ -4424,6 +4424,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("EitherIsNested.kt")
+                public void testEitherIsNested() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/bare/EitherIsNested.kt");
+                }
+
+                @Test
+                @TestMetadata("EitherIsNestedDifferent.kt")
+                public void testEitherIsNestedDifferent() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/bare/EitherIsNestedDifferent.kt");
+                }
+
+                @Test
                 @TestMetadata("EitherNotIs.kt")
                 public void testEitherNotIs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/cast/bare/EitherNotIs.kt");
