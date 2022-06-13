@@ -5,17 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.emptyExtras
 import java.io.File
 import java.io.Serializable
 
 sealed interface IdeaKpmSourceDirectory : Serializable {
+    val extras: Extras
     val file: File
+    val type: String
+
+    companion object {
+        const val SOURCE_TYPE = "source"
+        const val RESOURCE_TYPE = "resource"
+    }
 }
 
 @InternalKotlinGradlePluginApi
 data class IdeaKpmSourceDirectoryImpl(
     override val file: File,
-) : IdeaKpmSourceDirectory {
+    override val type: String,
+    override val extras: Extras = emptyExtras(),
+    ) : IdeaKpmSourceDirectory {
 
     @InternalKotlinGradlePluginApi
     companion object {
