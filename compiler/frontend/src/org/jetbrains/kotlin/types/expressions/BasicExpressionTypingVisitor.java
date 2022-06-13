@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
@@ -78,7 +78,6 @@ import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperK
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -1387,7 +1386,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (allCandidates == null || allCandidates.isEmpty()) return false;
 
         boolean areAllCandidatesFailedWithOnlyInputTypesError = allCandidates.stream().allMatch((resolvedCall) ->
-            resolvedCall instanceof NewAbstractResolvedCall<?> && ((NewAbstractResolvedCall<?>) resolvedCall).containsOnlyOnlyInputTypesErrors()
+                                                                                                        resolvedCall instanceof AbstractResolvedCall<?> && ((AbstractResolvedCall<?>) resolvedCall).containsOnlyOnlyInputTypesErrors()
         );
         boolean isNonStrictOnlyInputTypesCheckEnabled = !context.languageVersionSettings.supportsFeature(LanguageFeature.StrictOnlyInputTypesChecks);
 

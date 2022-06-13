@@ -52,7 +52,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         // The stdlib migration is going to be finished in 1.8, checks aren't needed there (DisableCheckingChangedProgressionsResolve has 1.8 since version)
         val isCheckingDisabled = context.languageVersionSettings.supportsFeature(LanguageFeature.DisableCheckingChangedProgressionsResolve)
 
-        if (isCheckingDisabled || resolvedCall !is NewResolvedCallImpl<*>) return
+        if (isCheckingDisabled || resolvedCall !is ResolvedCallImpl<*>) return
 
         val kotlinCall = resolvedCall.psiKotlinCall
         val valueArguments = kotlinCall.argumentsInParenthesis.takeIf { it.isNotEmpty() } ?: return
@@ -143,7 +143,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
     ) {
         if (!overloadResolutionResults.isSingleResult) return
 
-        val resolvedCall = overloadResolutionResults.resultingCall as? NewAbstractResolvedCall<*> ?: return
+        val resolvedCall = overloadResolutionResults.resultingCall as? AbstractResolvedCall<*> ?: return
 
         check(resolvedCall, scopeTower, resolutionCallbacks, expectedType, context)
     }

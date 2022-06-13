@@ -6,22 +6,15 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiCallArgument
-import org.jetbrains.kotlin.resolve.calls.tower.psiExpression
 
 object SuspendConversionCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (resolvedCall !is NewResolvedCallImpl<*>) return
+        if (resolvedCall !is ResolvedCallImpl<*>) return
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion)) return
 

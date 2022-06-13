@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -105,8 +105,8 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         @Suppress("UNCHECKED_CAST")
         return replacedFunctionCall.copy(
             resolvedCall = VariableAsFunctionResolvedCall(
-                variableCall as NewAbstractResolvedCall<VariableDescriptor>,
-                replacedFunctionCall.resolvedCall as NewAbstractResolvedCall<FunctionDescriptor>
+                variableCall,
+                replacedFunctionCall.resolvedCall as AbstractResolvedCall<FunctionDescriptor>
             )
         )
     }
@@ -124,7 +124,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
 
     val psiFactory = KtPsiFactory(project, markGenerated = false)
     val arguments = psiFactory.createCallArguments("(this)").arguments.single()
-    val newResolvedCall = (this as NewAbstractResolvedCall<*>).copyResolvedCall(
+    val newResolvedCall = (this as AbstractResolvedCall<*>).copyResolvedCall(
         newCandidateDescriptor,
         additionalValueArguments = mapOf(newCandidateDescriptor.valueParameters.last() to ExpressionValueArgument(arguments)),
     )

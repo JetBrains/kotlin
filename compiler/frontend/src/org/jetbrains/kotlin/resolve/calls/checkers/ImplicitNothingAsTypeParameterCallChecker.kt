@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.stableType
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiExpression
 import org.jetbrains.kotlin.resolve.calls.tower.psiKotlinCall
 import org.jetbrains.kotlin.resolve.calls.util.SPECIAL_FUNCTION_NAMES
@@ -99,7 +99,7 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
         val resolutionAtom = atom as? KotlinCallArgument ?: return null
         val resolvedCall = resolutionAtom.psiExpression.getResolvedCall(bindingContext)
 
-        return if (resolvedCall is NewResolvedCallImpl) resolvedCall.resolvedCallAtom else null
+        return if (resolvedCall is ResolvedCallImpl) resolvedCall.resolvedCallAtom else null
     }
 
     private fun findFunctionsWithImplicitNothingAndReport(resolvedAtoms: List<ResolvedAtom>, context: CallCheckerContext): Boolean {
@@ -145,7 +145,7 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
         expectedType: KotlinType,
         bindingContext: BindingContext,
     ): List<ResolvedAtom>? {
-        if (resolvedCall !is NewResolvedCallImpl) return null
+        if (resolvedCall !is ResolvedCallImpl) return null
 
         val hasNotNothingExpectedType = !TypeUtils.noExpectedType(expectedType) && !expectedType.isNothingOrNullableNothing()
         val hasNothingReturnType = resolvedCall.resultingDescriptor.returnType?.isNothingOrNullableNothing() == true
@@ -159,7 +159,7 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
             if (argument !is ExpressionValueArgument) return@mapNotNull null
 
             val resolvedCallForArgument =
-                argument.valueArgument?.getArgumentExpression()?.getResolvedCall(bindingContext) as? NewResolvedCallImpl
+                argument.valueArgument?.getArgumentExpression()?.getResolvedCall(bindingContext) as? ResolvedCallImpl
                     ?: return@mapNotNull null
             val expectedTypeForArgument = resolvedCall.getParameterForArgument(argument.valueArgument)?.type ?: return@mapNotNull null
 

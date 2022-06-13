@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class VariableAsFunctionResolvedCall(
-    val variableCall: NewAbstractResolvedCall<VariableDescriptor>,
-    val functionCall: NewAbstractResolvedCall<FunctionDescriptor>,
-) : NewAbstractResolvedCall<FunctionDescriptor>() {
+    val variableCall: AbstractResolvedCall<VariableDescriptor>,
+    val functionCall: AbstractResolvedCall<FunctionDescriptor>,
+) : AbstractResolvedCall<FunctionDescriptor>() {
     val baseCall: PSIKotlinCallImpl = functionCall.psiKotlinCall.cast<PSIKotlinCallForInvoke>().baseCall
 
     override val resolvedCallAtom: ResolvedCallAtom? = functionCall.resolvedCallAtom

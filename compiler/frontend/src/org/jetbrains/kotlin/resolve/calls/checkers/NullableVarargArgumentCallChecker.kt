@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE_INFO
 import org.jetbrains.kotlin.resolve.calls.components.stableType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.SimplePSIKotlinCallArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.FlexibleType
@@ -25,7 +25,7 @@ object NullableVarargArgumentCallChecker : CallChecker {
             check(resolvedCall.functionCall, reportOn, context)
             return
         }
-        if (resolvedCall !is NewResolvedCallImpl<*>) return
+        if (resolvedCall !is ResolvedCallImpl<*>) return
         for (argument in resolvedCall.argumentMappingByOriginal.values) {
             for (arg in argument.arguments) {
                 if (!arg.isSpread || arg !is SimplePSIKotlinCallArgument) continue

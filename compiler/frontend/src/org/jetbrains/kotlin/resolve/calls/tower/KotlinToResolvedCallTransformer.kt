@@ -72,13 +72,13 @@ class KotlinToResolvedCallTransformer(
     fun <D : CallableDescriptor> onlyTransform(
         resolvedCallAtom: ResolvedCallAtom,
         diagnostics: Collection<KotlinCallDiagnostic>,
-    ): NewAbstractResolvedCall<D> = transformToResolvedCall(resolvedCallAtom, null, null, diagnostics)
+    ): AbstractResolvedCall<D> = transformToResolvedCall(resolvedCallAtom, null, null, diagnostics)
 
     fun <D : CallableDescriptor> transformAndReport(
         baseResolvedCall: CallResolutionResult,
         context: BasicCallResolutionContext,
         tracingStrategy: TracingStrategy,
-    ): NewAbstractResolvedCall<D> {
+    ): AbstractResolvedCall<D> {
         return when (baseResolvedCall) {
             is PartialCallResolutionResult -> {
                 val candidate = baseResolvedCall.resultCallAtom
@@ -113,7 +113,7 @@ class KotlinToResolvedCallTransformer(
                     forwardCallToInferenceSession(baseResolvedCall, context, stub, tracingStrategy)
 
                     @Suppress("UNCHECKED_CAST")
-                    return stub as NewAbstractResolvedCall<D>
+                    return stub as AbstractResolvedCall<D>
                 }
 
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
@@ -131,7 +131,7 @@ class KotlinToResolvedCallTransformer(
                 @Suppress("UNCHECKED_CAST")
                 val resolvedCall = ktPrimitiveCompleter.completeResolvedCall(
                     candidate, baseResolvedCall.completedDiagnostic(resultSubstitutor),
-                ) as NewAbstractResolvedCall<D>
+                ) as AbstractResolvedCall<D>
 
                 forwardCallToInferenceSession(baseResolvedCall, context, resolvedCall, tracingStrategy)
 
@@ -146,7 +146,7 @@ class KotlinToResolvedCallTransformer(
     private fun forwardCallToInferenceSession(
         baseResolvedCall: CallResolutionResult,
         context: BasicCallResolutionContext,
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         tracingStrategy: TracingStrategy,
     ) {
         if (baseResolvedCall is CompletedCallResolutionResult) {
@@ -159,7 +159,7 @@ class KotlinToResolvedCallTransformer(
         trace: BindingTrace,
         diagnostics: Collection<KotlinCallDiagnostic>,
         substitutor: NewTypeSubstitutor?,
-    ): NewAbstractResolvedCall<D> {
+    ): AbstractResolvedCall<D> {
         val result = transformToResolvedCall<D>(candidate, trace, substitutor, diagnostics)
         val psiKotlinCall = candidate.atom.psiKotlinCall
         val tracing = psiKotlinCall.safeAs<PSIKotlinCallForInvoke>()?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy
@@ -175,7 +175,7 @@ class KotlinToResolvedCallTransformer(
         trace: BindingTrace?,
         resultSubstitutor: NewTypeSubstitutor? = null, // if substitutor is not null, it means that this call is completed
         diagnostics: Collection<KotlinCallDiagnostic>,
-    ): NewAbstractResolvedCall<D> {
+    ): AbstractResolvedCall<D> {
         val psiKotlinCall = completedCallAtom.atom.psiKotlinCall
 
         completedCallAtom.setCandidateDescriptor(
@@ -196,7 +196,7 @@ class KotlinToResolvedCallTransformer(
             VariableAsFunctionResolvedCall(
                 createOrGet(psiKotlinCall.variableCall.resolvedCall, trace, resultSubstitutor, diagnosticsForVariableCall),
                 createOrGet(completedCallAtom, trace, resultSubstitutor, diagnosticsForFunctionCall),
-            ) as NewAbstractResolvedCall<D>
+            ) as AbstractResolvedCall<D>
         } else {
             createOrGet(completedCallAtom, trace, resultSubstitutor, diagnostics)
         }
@@ -207,7 +207,7 @@ class KotlinToResolvedCallTransformer(
         trace: BindingTrace?,
         resultSubstitutor: NewTypeSubstitutor?,
         diagnostics: Collection<KotlinCallDiagnostic>,
-    ): NewAbstractResolvedCall<D> {
+    ): AbstractResolvedCall<D> {
         if (trace != null) {
             val storedResolvedCall = completedSimpleAtom.atom.psiKotlinCall.getResolvedPsiKotlinCall<D>(trace)
             if (storedResolvedCall != null) {
@@ -218,14 +218,14 @@ class KotlinToResolvedCallTransformer(
         }
 
         return if (completedSimpleAtom.atom.callKind == KotlinCallKind.CALLABLE_REFERENCE) {
-            NewCallableReferenceResolvedCall(
+            CallableReferenceResolvedCall(
                 completedSimpleAtom as ResolvedCallableReferenceCallAtom,
                 typeApproximator,
                 expressionTypingServices.languageVersionSettings,
                 resultSubstitutor
             )
         } else {
-            NewResolvedCallImpl(
+            ResolvedCallImpl(
                 completedSimpleAtom, resultSubstitutor, diagnostics, typeApproximator, expressionTypingServices.languageVersionSettings
             )
         }
@@ -280,8 +280,8 @@ class KotlinToResolvedCallTransformer(
     }
 
     // todo very beginning code
-    fun runArgumentsChecks(context: BasicCallResolutionContext, resolvedCall: NewAbstractResolvedCall<*>) {
-        if (resolvedCall !is NewResolvedCallImpl<*>) return
+    fun runArgumentsChecks(context: BasicCallResolutionContext, resolvedCall: AbstractResolvedCall<*>) {
+        if (resolvedCall !is ResolvedCallImpl<*>) return
 
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
@@ -397,7 +397,7 @@ class KotlinToResolvedCallTransformer(
         if (!ExpressionTypingUtils.dependsOnExpectedType(expression))
             null
         else
-            expression.getResolvedCall(context.trace.bindingContext) as? NewAbstractResolvedCall<*>
+            expression.getResolvedCall(context.trace.bindingContext) as? AbstractResolvedCall<*>
 
     // See CallCompleter#updateRecordedTypeForArgument
     private fun updateRecordedTypeForArgument(
@@ -454,14 +454,14 @@ class KotlinToResolvedCallTransformer(
     }
 
     internal fun bind(trace: BindingTrace, resolvedCall: ResolvedCall<*>) {
-        resolvedCall.safeAs<NewAbstractResolvedCall<*>>()?.let { bind(trace, it) }
+        resolvedCall.safeAs<AbstractResolvedCall<*>>()?.let { bind(trace, it) }
         resolvedCall.safeAs<VariableAsFunctionResolvedCall>()?.let { bind(trace, it) }
     }
 
     fun reportDiagnostics(
         context: BasicCallResolutionContext,
         trace: BindingTrace,
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         diagnostics: Collection<KotlinCallDiagnostic>,
     ) {
         when (resolvedCall) {
@@ -481,7 +481,7 @@ class KotlinToResolvedCallTransformer(
         }
     }
 
-    private fun bind(trace: BindingTrace, simpleResolvedCall: NewAbstractResolvedCall<*>) {
+    private fun bind(trace: BindingTrace, simpleResolvedCall: AbstractResolvedCall<*>) {
         val tracing = simpleResolvedCall.psiKotlinCall.tracingStrategy
 
         tracing.bindReference(trace, simpleResolvedCall)
@@ -501,7 +501,7 @@ class KotlinToResolvedCallTransformer(
     fun reportCallDiagnostic(
         context: BasicCallResolutionContext,
         trace: BindingTrace,
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         resultingDescriptor: CallableDescriptor,
         diagnostics: Collection<KotlinCallDiagnostic>,
     ) {

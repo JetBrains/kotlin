@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class NewResolvedCallImpl<D : CallableDescriptor>(
+class ResolvedCallImpl<D : CallableDescriptor>(
     override val resolvedCallAtom: ResolvedCallAtom,
     substitutor: NewTypeSubstitutor?,
     diagnostics: Collection<KotlinCallDiagnostic>,
     override val typeApproximator: TypeApproximator,
     override val languageVersionSettings: LanguageVersionSettings,
-) : NewAbstractResolvedCall<D>() {
+) : AbstractResolvedCall<D>() {
     override val psiKotlinCall: PSIKotlinCall = resolvedCallAtom.atom.psiKotlinCall
     override val kotlinCall: KotlinCall = resolvedCallAtom.atom
 

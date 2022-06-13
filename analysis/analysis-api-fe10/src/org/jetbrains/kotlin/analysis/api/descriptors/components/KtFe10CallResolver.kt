@@ -221,7 +221,7 @@ internal class KtFe10CallResolver(
                 // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
                 // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
                 val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
-                if (candidate is NewAbstractResolvedCall<*>) {
+                if (candidate is AbstractResolvedCall<*>) {
                     analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
                         callResolutionContext,
                         candidateTrace,

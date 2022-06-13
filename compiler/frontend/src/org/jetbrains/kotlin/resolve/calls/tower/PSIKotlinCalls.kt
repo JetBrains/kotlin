@@ -40,8 +40,8 @@ val KotlinCall.psiKotlinCall: PSIKotlinCall
     }
 
 @Suppress("UNCHECKED_CAST")
-fun <D : CallableDescriptor> KotlinCall.getResolvedPsiKotlinCall(trace: BindingTrace): NewResolvedCallImpl<D>? =
-    psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext) as? NewResolvedCallImpl<D>
+fun <D : CallableDescriptor> KotlinCall.getResolvedPsiKotlinCall(trace: BindingTrace): ResolvedCallImpl<D>? =
+    psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext) as? ResolvedCallImpl<D>
 
 abstract class PSIKotlinCall : KotlinCall {
     abstract val psiCall: Call

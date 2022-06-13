@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.util.isFlexible
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 
-sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
+sealed class AbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val kotlinCall: KotlinCall?
     abstract val languageVersionSettings: LanguageVersionSettings

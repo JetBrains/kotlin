@@ -55,12 +55,12 @@ public class OverloadResolutionResultsUtil {
     ) {
         if (results.isSingleResult() && context.contextDependency == ContextDependency.INDEPENDENT) {
             ResolvedCall<D> resultingCall = results.getResultingCall();
-            NewAbstractResolvedCall<?> newResolvedCall;
+            AbstractResolvedCall<?> newResolvedCall;
             if (resultingCall instanceof VariableAsFunctionResolvedCall) {
                 newResolvedCall = ((VariableAsFunctionResolvedCall) resultingCall).getFunctionCall();
             }
-            else if (resultingCall instanceof NewAbstractResolvedCall<?>) {
-                newResolvedCall = (NewAbstractResolvedCall<?>) resultingCall;
+            else if (resultingCall instanceof AbstractResolvedCall<?>) {
+                newResolvedCall = (AbstractResolvedCall<?>) resultingCall;
             } else {
                 newResolvedCall = null;
             }

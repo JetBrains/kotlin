@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.resolve.calls.util.toResolutionStatus
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 
-class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
+class CallableReferenceResolvedCall<D : CallableDescriptor>(
     val resolvedAtom: ResolvedCallableReferenceAtom,
     override val typeApproximator: TypeApproximator,
     override val languageVersionSettings: LanguageVersionSettings,
     substitutor: NewTypeSubstitutor? = null,
-) : NewAbstractResolvedCall<D>() {
+) : AbstractResolvedCall<D>() {
     override val positionDependentApproximation: Boolean = true
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument> = emptyMap()
     override val diagnostics: Collection<KotlinCallDiagnostic> = emptyList()

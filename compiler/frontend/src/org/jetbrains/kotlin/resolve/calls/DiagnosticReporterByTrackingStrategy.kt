@@ -398,7 +398,7 @@ class DiagnosticReporterByTrackingStrategy(
             else -> null
         }
         val resolvedCall =
-            smartCastDiagnostic.kotlinCall?.psiKotlinCall?.psiCall?.getResolvedCall(trace.bindingContext) as? NewResolvedCallImpl<*>
+            smartCastDiagnostic.kotlinCall?.psiKotlinCall?.psiCall?.getResolvedCall(trace.bindingContext) as? ResolvedCallImpl<*>
         if (resolvedCall != null && smartCastResult != null) {
             if (resolvedCall.extensionReceiver == expressionArgument.receiver.receiverValue) {
                 resolvedCall.updateExtensionReceiverWithSmartCastIfNeeded(smartCastResult.resultType)

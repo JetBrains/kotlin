@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.isArrayOrArrayLiteral
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -397,7 +397,7 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
     if (expression is IrBlock && expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
         return expression
 
-    val newResolvedCall = resolvedCall as? NewResolvedCallImpl<*>
+    val newResolvedCall = resolvedCall as? ResolvedCallImpl<*>
         ?: return expression
 
     val suspendConversionType = newResolvedCall.getExpectedTypeForSuspendConvertedArgument(valueArgument)
@@ -629,7 +629,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 "$originalDescriptor has ${originalDescriptor.typeParameters}"
     }
 
-    val resolvedCallArguments = resolvedCall.safeAs<NewResolvedCallImpl<*>>()?.argumentMappingByOriginal?.values
+    val resolvedCallArguments = resolvedCall.safeAs<ResolvedCallImpl<*>>()?.argumentMappingByOriginal?.values
     assert(resolvedCallArguments == null || resolvedCallArguments.size == underlyingValueParameters.size) {
         "Mismatching resolved call arguments:\n" +
                 "${resolvedCallArguments?.size} != ${underlyingValueParameters.size}"
@@ -648,7 +648,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val underlyingValueParameter: ValueParameterDescriptor = underlyingValueParameters[i]
 
         val expectedSamConversionTypesForVararg =
-            if (!isArrayAssignedToVararg && resolvedCall is NewResolvedCallImpl<*>) {
+            if (!isArrayAssignedToVararg && resolvedCall is ResolvedCallImpl<*>) {
                 val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments
                 arguments?.map { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
             } else null

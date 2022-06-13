@@ -36,7 +36,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         // Don't check builder inference lambdas if the entire builder call itself has resolution ambiguity
         if (!overloadResolutionResults.isSingleResult) return
 
-        val builderResolvedCall = overloadResolutionResults.resultingCall as? NewAbstractResolvedCall<*> ?: return
+        val builderResolvedCall = overloadResolutionResults.resultingCall as? AbstractResolvedCall<*> ?: return
 
         val builderLambdas = (builderResolvedCall.psiKotlinCall.argumentsInParenthesis + builderResolvedCall.psiKotlinCall.externalArgument)
             .filterIsInstance<LambdaKotlinCallArgument>()
@@ -48,7 +48,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
             for (errorCall in errorCalls) {
                 val resolutionResult = errorCall.result
                 if (resolutionResult.isAmbiguity) {
-                    val firstResolvedCall = resolutionResult.resultingCalls.first() as? NewAbstractResolvedCall<*> ?: continue
+                    val firstResolvedCall = resolutionResult.resultingCalls.first() as? AbstractResolvedCall<*> ?: continue
                     processResolutionAmbiguityError(context, firstResolvedCall, lambda, resolutionCallbacks, expectedType, scopeTower)
                 }
             }
@@ -57,7 +57,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
 
     private fun processResolutionAmbiguityError(
         context: BasicCallResolutionContext,
-        firstResolvedCall: NewAbstractResolvedCall<*>,
+        firstResolvedCall: AbstractResolvedCall<*>,
         lambda: LambdaKotlinCallArgument,
         resolutionCallbacks: KotlinResolutionCallbacks,
         expectedType: UnwrappedType?,

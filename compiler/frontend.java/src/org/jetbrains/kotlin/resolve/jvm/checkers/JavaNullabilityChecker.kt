@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -140,7 +140,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             ?: return
         val resolvedCall = c.trace.bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
 
-        val typeArguments = if (resolvedCall is NewResolvedCallImpl<*>) {
+        val typeArguments = if (resolvedCall is ResolvedCallImpl<*>) {
             resolvedCall.resolvedCallAtom.typeArgumentMappingByOriginal
         } else {
             resolvedCall.typeArguments.entries

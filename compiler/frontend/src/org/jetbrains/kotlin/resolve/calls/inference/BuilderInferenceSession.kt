@@ -444,7 +444,7 @@ class BuilderInferenceSession(
         return commonSystem.notFixedTypeVariables.all { it.value.constraints.isEmpty() }
     }
 
-    private fun reportErrors(completedCall: CallInfo, resolvedCall: NewAbstractResolvedCall<*>, errors: List<ConstraintSystemError>) {
+    private fun reportErrors(completedCall: CallInfo, resolvedCall: AbstractResolvedCall<*>, errors: List<ConstraintSystemError>) {
         kotlinToResolvedCallTransformer.reportCallDiagnostic(
             completedCall.context,
             trace,
@@ -522,7 +522,7 @@ class BuilderInferenceSession(
     private fun completeCall(
         callInfo: CallInfo,
         atomCompleter: ResolvedAtomCompleter
-    ): NewAbstractResolvedCall<*>? {
+    ): AbstractResolvedCall<*>? {
         val resultCallAtom = callInfo.callResolutionResult.resultCallAtom
         resultCallAtom.subResolvedAtoms?.forEach { subResolvedAtom ->
             atomCompleter.completeAll(subResolvedAtom)

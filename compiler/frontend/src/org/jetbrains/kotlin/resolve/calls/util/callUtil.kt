@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.psiKotlinCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -87,7 +87,7 @@ fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter:
 
         val resolvedCall = argument.getResolvedCall(bindingContext)
 
-        if (resolvedCall is NewResolvedCallImpl<*> && resolvedCall.resultingDescriptor.returnType?.isError == true) {
+        if (resolvedCall is ResolvedCallImpl<*> && resolvedCall.resultingDescriptor.returnType?.isError == true) {
             return false
         }
 

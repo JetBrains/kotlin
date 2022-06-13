@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCallAtom
@@ -41,8 +40,8 @@ import org.jetbrains.kotlin.resolve.calls.util.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
-import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -739,10 +738,10 @@ fun String.encodedUTF8Size(): Int {
     return result
 }
 
-fun <D : CallableDescriptor> NewAbstractResolvedCall<D>.copyResolvedCall(
+fun <D : CallableDescriptor> AbstractResolvedCall<D>.copyResolvedCall(
     newCandidateDescriptor: CallableDescriptor,
     additionalValueArguments: Map<ValueParameterDescriptor, ExpressionValueArgument>? = null
-): NewAbstractResolvedCall<D> {
+): AbstractResolvedCall<D> {
     val resolvedCallAtom = with(resolvedCallAtom as ResolvedCallAtom) {
         MutableResolvedCallAtom(
             atom, newCandidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument,
@@ -756,7 +755,7 @@ fun <D : CallableDescriptor> NewAbstractResolvedCall<D>.copyResolvedCall(
             newResolvedCallAtom.knownParametersSubstitutor = knownParametersSubstitutor
         }
     }
-    val newResolvedCall = NewResolvedCallImpl<D>(
+    val newResolvedCall = ResolvedCallImpl<D>(
         resolvedCallAtom, substitutor = null, diagnostics, typeApproximator, languageVersionSettings
     )
     val arguments = valueArguments.mapKeys { newCandidateDescriptor.valueParameters[it.key.index] }

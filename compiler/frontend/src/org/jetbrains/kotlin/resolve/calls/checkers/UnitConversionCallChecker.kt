@@ -9,12 +9,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiCallArgument
 
 object UnitConversionCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (resolvedCall !is NewResolvedCallImpl<*>) return
+        if (resolvedCall !is ResolvedCallImpl<*>) return
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.UnitConversionsOnArbitraryExpressions)) return
 

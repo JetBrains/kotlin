@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
@@ -119,7 +117,7 @@ class ResolvedAtomCompleter(
         if (deparenthesizedExpression is KtCallableReferenceExpression) {
             val callableReferenceResolvedCall = kotlinToResolvedCallTransformer.getResolvedCallForArgumentExpression(
                 deparenthesizedExpression.callableReference, topLevelCallContext
-            ) as? NewCallableReferenceResolvedCall<*>
+            ) as? CallableReferenceResolvedCall<*>
             if (callableReferenceResolvedCall != null) {
                 completeCallableReferenceCall(callableReferenceResolvedCall)
             }
@@ -137,7 +135,7 @@ class ResolvedAtomCompleter(
     fun completeResolvedCall(
         resolvedCallAtom: ResolvedCallAtom,
         diagnostics: Collection<KotlinCallDiagnostic>
-    ): NewAbstractResolvedCall<*>? {
+    ): AbstractResolvedCall<*>? {
         val diagnosticsFromPartiallyResolvedCall = extractDiagnosticsFromPartiallyResolvedCall(resolvedCallAtom)
 
         clearPartiallyResolvedCall(resolvedCallAtom)
@@ -147,7 +145,7 @@ class ResolvedAtomCompleter(
 
         val allDiagnostics = diagnostics + diagnosticsFromPartiallyResolvedCall
 
-        val resolvedCall: NewAbstractResolvedCall<out CallableDescriptor> = kotlinToResolvedCallTransformer.transformToResolvedCall(
+        val resolvedCall: AbstractResolvedCall<out CallableDescriptor> = kotlinToResolvedCallTransformer.transformToResolvedCall(
             resolvedCallAtom,
             topLevelTrace,
             resultSubstitutor,
@@ -461,7 +459,7 @@ class ResolvedAtomCompleter(
             else -> this
         }
 
-    fun completeCallableReferenceCall(resolvedCall: NewCallableReferenceResolvedCall<*>): KotlinType? {
+    fun completeCallableReferenceCall(resolvedCall: CallableReferenceResolvedCall<*>): KotlinType? {
         val candidate = resolvedCall.resolvedCallAtom?.candidate ?: return null
         return completeCallableReference(candidate, resolvedCall.resultingDescriptor, resolvedCall)
     }
@@ -477,7 +475,7 @@ class ResolvedAtomCompleter(
             else -> null
         }
         val dataFlowInfo = resolvedAtom.atom.psiCallArgument.dataFlowInfoAfterThisArgument
-        val resolvedCall = NewCallableReferenceResolvedCall<CallableDescriptor>(
+        val resolvedCall = CallableReferenceResolvedCall<CallableDescriptor>(
             resolvedAtom,
             typeApproximator,
             expressionTypingServices.languageVersionSettings
@@ -490,7 +488,7 @@ class ResolvedAtomCompleter(
     private fun completeCallableReference(
         callableCandidate: CallableReferenceResolutionCandidate,
         recordedDescriptor: CallableDescriptor?,
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         additionalDataFlowInfo: DataFlowInfo? = null,
     ): KotlinType? {
         val rawExtensionReceiver = callableCandidate.extensionReceiver
@@ -560,7 +558,7 @@ class ResolvedAtomCompleter(
     }
 
     private fun recordArgumentAdaptationForCallableReference(
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         callableReferenceAdaptation: CallableReferenceAdaptation?
     ) {
         if (callableReferenceAdaptation == null) return
@@ -616,7 +614,7 @@ class ResolvedAtomCompleter(
     }
 
     private fun isCallableReferenceWithImplicitConversion(
-        resolvedCall: NewAbstractResolvedCall<*>,
+        resolvedCall: AbstractResolvedCall<*>,
         callableReferenceAdaptation: CallableReferenceAdaptation
     ): Boolean {
         val resultingDescriptor = resolvedCall.resultingDescriptor

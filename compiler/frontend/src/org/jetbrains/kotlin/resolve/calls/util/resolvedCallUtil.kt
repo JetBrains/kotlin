@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
@@ -111,7 +111,7 @@ fun CallableDescriptor.isNotSimpleCall(): Boolean =
                 }
             } ?: false)
 
-fun ResolvedCall<*>.isNewNotCompleted(): Boolean = if (this is NewAbstractResolvedCall) !isCompleted() else false
+fun ResolvedCall<*>.isNewNotCompleted(): Boolean = if (this is AbstractResolvedCall) !isCompleted() else false
 
 fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     if (isNewNotCompleted()) return false

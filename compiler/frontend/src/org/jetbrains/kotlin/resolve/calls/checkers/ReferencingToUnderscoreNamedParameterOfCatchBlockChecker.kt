@@ -6,31 +6,13 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
-import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnceWrtDiagnosticFactoryList
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.util.getParameterForArgument
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
-import org.jetbrains.kotlin.resolve.calls.tower.psiCallArgument
-import org.jetbrains.kotlin.resolve.calls.tower.psiExpression
-import org.jetbrains.kotlin.resolve.calls.tower.psiKotlinCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isNothingOrNullableNothing
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
 object ReferencingToUnderscoreNamedParameterOfCatchBlockChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
