@@ -16,16 +16,11 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.lowerBoundIfFlexible
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-
-interface NewTypeVariableConstructor : TypeConstructor {
-    val originalTypeParameter: TypeParameterDescriptor?
-}
 
 @Suppress("UNCHECKED_CAST")
 fun findCorrespondingSupertypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker): List<SimpleType> =

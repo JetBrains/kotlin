@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.util.replaceArguments
 import org.jetbrains.kotlin.resolve.calls.util.replaceTypes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
 class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallResolver) : CallCheckerWithAdditionalResolve {
     override fun check(
