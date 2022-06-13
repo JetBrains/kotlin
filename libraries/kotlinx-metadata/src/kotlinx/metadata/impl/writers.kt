@@ -158,6 +158,10 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.receiverType = it.build() }
 
+        @ExperimentalContextReceivers
+        override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+            writeType(c, flags) { t.addContextReceiverType(it) }
+
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             writeValueParameter(c, flags, name) { t.addValueParameter(it) }
 
@@ -194,6 +198,10 @@ fun writeProperty(
 
     override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.receiverType = it.build() }
+
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        writeType(c, flags) { t.addContextReceiverType(it) }
 
     override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor? =
         writeValueParameter(c, flags, name) { t.setterValueParameter = it.build() }
@@ -463,6 +471,10 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
 
     override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.inlineClassUnderlyingType = it.build() }
+
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        writeType(c, flags) { t.addContextReceiverType(it) }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         writeVersionRequirement(c) { t.addVersionRequirement(it) }

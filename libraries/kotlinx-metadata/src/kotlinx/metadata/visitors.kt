@@ -150,6 +150,15 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
         delegate?.visitInlineClassUnderlyingType(flags)
 
     /**
+     * Visits the type of a context receiver of the class.
+     *
+     * @param flags type flags, consisting of [Flag.Type] flags
+     */
+    @ExperimentalContextReceivers
+    open fun visitContextReceiverType(flags: Flags): KmTypeVisitor? =
+        delegate?.visitContextReceiverType(flags)
+
+    /**
      * Visits the version requirement on this class.
      */
     open fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -320,6 +329,15 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
         delegate?.visitReceiverParameterType(flags)
 
     /**
+     * Visits the type of a context receiver of the function.
+     *
+     * @param flags type flags, consisting of [Flag.Type] flags
+     */
+    @ExperimentalContextReceivers
+    open fun visitContextReceiverType(flags: Flags): KmTypeVisitor? =
+        delegate?.visitContextReceiverType(flags)
+
+    /**
      * Visits a value parameter of the function.
      *
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
@@ -390,6 +408,15 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      */
     open fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
         delegate?.visitReceiverParameterType(flags)
+
+    /**
+     * Visits the type of a context receiver of the property.
+     *
+     * @param flags type flags, consisting of [Flag.Type] flags
+     */
+    @ExperimentalContextReceivers
+    open fun visitContextReceiverType(flags: Flags): KmTypeVisitor? =
+        delegate?.visitContextReceiverType(flags)
 
     /**
      * Visits a value parameter of the setter of this property, if this is a `var` property.

@@ -104,6 +104,12 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     var inlineClassUnderlyingType: KmType? = null
 
     /**
+     * Types of context receivers of the class.
+     */
+    @ExperimentalContextReceivers
+    val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
      * Version requirements on this class.
      */
     val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
@@ -157,6 +163,10 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
     override fun visitInlineClassUnderlyingType(flags: Flags): KmTypeVisitor =
         KmType(flags).also { inlineClassUnderlyingType = it }
 
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        KmType(flags).addTo(contextReceiverTypes)
+
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
@@ -168,6 +178,7 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
      *
      * @param visitor the visitor which will visit data in this class
      */
+    @OptIn(ExperimentalContextReceivers::class)
     fun accept(visitor: KmClassVisitor) {
         visitor.visit(flags, name)
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
@@ -182,6 +193,7 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         sealedSubclasses.forEach(visitor::visitSealedSubclass)
         inlineClassUnderlyingPropertyName?.let(visitor::visitInlineClassUnderlyingPropertyName)
         inlineClassUnderlyingType?.let { visitor.visitInlineClassUnderlyingType(it.flags)?.let(it::accept) }
+        contextReceiverTypes.forEach { visitor.visitContextReceiverType(it.flags)?.let(it::accept) }
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()
@@ -361,6 +373,12 @@ class KmFunction(
     var receiverParameterType: KmType? = null
 
     /**
+     * Types of context receivers of the function.
+     */
+    @ExperimentalContextReceivers
+    val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
      * Value parameters of the function.
      */
     val valueParameters: MutableList<KmValueParameter> = ArrayList()
@@ -389,6 +407,10 @@ class KmFunction(
     override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        KmType(flags).addTo(contextReceiverTypes)
+
     override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).addTo(valueParameters)
 
@@ -409,9 +431,11 @@ class KmFunction(
      *
      * @param visitor the visitor which will visit data in this function
      */
+    @OptIn(ExperimentalContextReceivers::class)
     fun accept(visitor: KmFunctionVisitor) {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         receiverParameterType?.let { visitor.visitReceiverParameterType(it.flags)?.let(it::accept) }
+        contextReceiverTypes.forEach { visitor.visitContextReceiverType(it.flags)?.let(it::accept) }
         valueParameters.forEach { visitor.visitValueParameter(it.flags, it.name)?.let(it::accept) }
         visitor.visitReturnType(returnType.flags)?.let(returnType::accept)
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }
@@ -448,6 +472,12 @@ class KmProperty(
     var receiverParameterType: KmType? = null
 
     /**
+     * Types of context receivers of the property.
+     */
+    @ExperimentalContextReceivers
+    val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
      * Value parameter of the setter of this property, if this is a `var` property.
      */
     var setterParameter: KmValueParameter? = null
@@ -471,6 +501,10 @@ class KmProperty(
     override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        KmType(flags).addTo(contextReceiverTypes)
+
     override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).also { setterParameter = it }
 
@@ -488,9 +522,11 @@ class KmProperty(
      *
      * @param visitor the visitor which will visit data in this property
      */
+    @OptIn(ExperimentalContextReceivers::class)
     fun accept(visitor: KmPropertyVisitor) {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         receiverParameterType?.let { visitor.visitReceiverParameterType(it.flags)?.let(it::accept) }
+        contextReceiverTypes.forEach { visitor.visitContextReceiverType(it.flags)?.let(it::accept) }
         setterParameter?.let { visitor.visitSetterParameter(it.flags, it.name)?.let(it::accept) }
         visitor.visitReturnType(returnType.flags)?.let(returnType::accept)
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }

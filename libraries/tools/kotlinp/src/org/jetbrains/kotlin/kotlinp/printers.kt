@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kotlinp
 
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
-import java.util.*
 
 private object SpecialCharacters {
     const val TYPE_ALIAS_MARKER = '^'
@@ -18,6 +17,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         val typeParams = mutableListOf<String>()
         val params = mutableListOf<String>()
         var receiverParameterType: String? = null
+        val contextReceiverTypes = mutableListOf<String>()
         var returnType: String? = null
         val versionRequirements = mutableListOf<String>()
         var jvmSignature: JvmMemberSignature? = null
@@ -26,6 +26,10 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
+
+        @ExperimentalContextReceivers
+        override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+            printType(flags) { contextReceiverTypes.add(it) }
 
         override fun visitTypeParameter(
             flags: Flags, name: String, id: Int, variance: KmVariance
@@ -68,6 +72,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             if (jvmSignature != null) {
                 sb.appendLine("  // signature: $jvmSignature")
             }
+            if (contextReceiverTypes.isNotEmpty()) {
+                sb.appendLine(contextReceiverTypes.joinToString(prefix = "  context(", postfix = ")"))
+            }
             sb.append("  ")
             sb.appendFlags(flags, FUNCTION_FLAGS_MAP)
             sb.append("fun ")
@@ -96,6 +103,7 @@ private fun visitProperty(
     object : KmPropertyVisitor() {
         val typeParams = mutableListOf<String>()
         var receiverParameterType: String? = null
+        val contextReceiverTypes = mutableListOf<String>()
         var returnType: String? = null
         var setterParameter: String? = null
         val versionRequirements = mutableListOf<String>()
@@ -108,6 +116,10 @@ private fun visitProperty(
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
+
+        @ExperimentalContextReceivers
+        override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+            printType(flags) { contextReceiverTypes.add(it) }
 
         override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
             printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
@@ -168,6 +180,9 @@ private fun visitProperty(
             }
             if (isMovedFromInterfaceCompanion) {
                 sb.appendLine("  // is moved from interface companion")
+            }
+            if (contextReceiverTypes.isNotEmpty()) {
+                sb.appendLine(contextReceiverTypes.joinToString(prefix = "  context(", postfix = ")"))
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
@@ -711,6 +726,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     private var name: ClassName? = null
     private val typeParams = mutableListOf<String>()
     private val supertypes = mutableListOf<String>()
+    private val contextReceiverTypes = mutableListOf<String>()
     private val versionRequirements = mutableListOf<String>()
     private var anonymousObjectOriginName: String? = null
 
@@ -725,6 +741,9 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         }
         for (versionRequirement in versionRequirements) {
             result.appendLine("// $versionRequirement")
+        }
+        if (contextReceiverTypes.isNotEmpty()) {
+            result.appendLine(contextReceiverTypes.joinToString(prefix = "context(", postfix = ")"))
         }
         result.appendFlags(flags!!, CLASS_FLAGS_MAP)
         result.append(name)
@@ -788,6 +807,10 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
             sb.appendLine()
             sb.appendLine("  // underlying type: $it")
         }
+
+    @ExperimentalContextReceivers
+    override fun visitContextReceiverType(flags: Flags): KmTypeVisitor =
+        printType(flags) { contextReceiverTypes.add(it) }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         printVersionRequirement { versionRequirements.add(it) }

@@ -46,6 +46,7 @@ class ReadContext(
         }
 }
 
+@OptIn(ExperimentalContextReceivers::class)
 fun ProtoBuf.Class.accept(
     v: KmClassVisitor,
     strings: NameResolver,
@@ -98,6 +99,10 @@ fun ProtoBuf.Class.accept(
     }
     loadInlineClassUnderlyingType(c)?.let { underlyingType ->
         v.visitInlineClassUnderlyingType(underlyingType.typeFlags)?.let { underlyingType.accept(it, c) }
+    }
+
+    for (contextReceiverType in contextReceiverTypes(c.types)) {
+        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
     }
 
     for (versionRequirement in versionRequirementList) {
@@ -214,6 +219,7 @@ private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext)
     v.visitEnd()
 }
 
+@OptIn(ExperimentalContextReceivers::class)
 private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
@@ -223,6 +229,10 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
 
     receiverType(c.types)?.let { receiverType ->
         v.visitReceiverParameterType(receiverType.typeFlags)?.let { receiverType.accept(it, c) }
+    }
+
+    for (contextReceiverType in contextReceiverTypes(c.types)) {
+        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
     }
 
     for (parameter in valueParameterList) {
@@ -248,6 +258,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     v.visitEnd()
 }
 
+@OptIn(ExperimentalContextReceivers::class)
 fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
@@ -257,6 +268,10 @@ fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
 
     receiverType(c.types)?.let { receiverType ->
         v.visitReceiverParameterType(receiverType.typeFlags)?.let { receiverType.accept(it, c) }
+    }
+
+    for (contextReceiverType in contextReceiverTypes(c.types)) {
+        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
     }
 
     if (hasSetterValueParameter()) {

@@ -34,6 +34,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Annotations.kt");
     }
 
+    @TestMetadata("ContextReceivers.kt")
+    public void testContextReceivers() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/ContextReceivers.kt");
+    }
+
     @TestMetadata("Contracts.kt")
     public void testContracts() throws Exception {
         runTest("libraries/tools/kotlinp/testData/Contracts.kt");

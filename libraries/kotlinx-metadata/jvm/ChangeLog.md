@@ -4,6 +4,8 @@
 
 - kotlinx-metadata-jvm can no longer be used on JVM 1.6, and now requires JVM 1.8 or later.
 - Add `Flag.Type.IS_DEFINITELY_NON_NULL`.
+- Add `KmClass.contextReceiverTypes`, `KmFunction.contextReceiverTypes`, `KmProperty.contextReceiverTypes`
+  - The API is experimental and requires `@ExperimentalContextReceivers` on the usages.
 
 ## 0.4.2
 
