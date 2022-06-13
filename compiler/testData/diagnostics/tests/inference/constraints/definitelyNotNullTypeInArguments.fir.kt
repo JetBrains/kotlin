@@ -114,8 +114,8 @@ fun <L> main(x: L?, y: L) {
         foo16(y, Bar())
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().foo18(x)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().foo18(y)
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().foo18(x)
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>().foo18(y)
 
     foo21(x, Foo(Foo(OutBar())))
     foo21(y, Foo(Foo(OutBar())))

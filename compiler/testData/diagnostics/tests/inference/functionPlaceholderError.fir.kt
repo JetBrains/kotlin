@@ -12,5 +12,5 @@ fun test() {
     val q = foo(fun Int.() {}, emptyList()) //type inference no information for parameter error
     checkSubtype<Int>(q)
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>({}, emptyList())
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>({}, emptyList())
 }

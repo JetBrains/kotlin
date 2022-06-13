@@ -34,7 +34,7 @@ fun test() {
     val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> } }
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { { it } }
     val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> } }
-    val x4 = <!FUNCTION_CALL_EXPECTED, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>foo<!><!DEBUG_INFO_MISSING_UNRESOLVED!><<!>Int<!SYNTAX!>, _ -> Float><!> { { <!UNRESOLVED_REFERENCE!>it<!> } }
+    val x4 = <!FUNCTION_CALL_EXPECTED, NO_VALUE_FOR_PARAMETER, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!><!DEBUG_INFO_MISSING_UNRESOLVED!><<!>Int<!SYNTAX!>, _ -> Float><!> { { <!UNRESOLVED_REFERENCE!>it<!> } }
     val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>it<!> }<!> }
     val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>it<!> }<!> }
     val x7 = foo<Int, Foo<(Int) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>it<!> }<!> }

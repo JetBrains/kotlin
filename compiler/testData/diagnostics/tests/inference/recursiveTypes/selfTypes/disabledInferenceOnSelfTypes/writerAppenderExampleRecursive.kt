@@ -1,10 +1,10 @@
 // !LANGUAGE: -TypeInferenceOnCallsWithSelfTypes
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Builder1<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newBuilder<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Builder1<!>()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>intersectTwoSelfTypes<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>WriterAppender.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>intersectTwoSelfTypes<!>()<!>
 }
 
 object WriterAppender {

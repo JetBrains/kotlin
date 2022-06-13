@@ -28,7 +28,7 @@ fun test() {
     val x: Flow<String> = flow {
         <!COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE!>produce<!> {
             select<Unit> {
-                <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>onSend<!>("") {
+                <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>onSend<!>("") {
 
                 }
             }

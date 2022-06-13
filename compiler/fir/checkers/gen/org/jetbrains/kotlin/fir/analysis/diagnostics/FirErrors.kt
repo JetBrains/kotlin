@@ -109,7 +109,7 @@ object FirErrors {
     // Meta-errors
     val UNSUPPORTED by error1<PsiElement, String>()
     val UNSUPPORTED_FEATURE by error1<PsiElement, Pair<LanguageFeature, LanguageVersionSettings>>()
-    val NEW_INFERENCE_ERROR by error1<PsiElement, String>()
+    val TYPE_INFERENCE_ERROR by error1<PsiElement, String>()
 
     // Miscellaneous
     val OTHER_ERROR by error0<PsiElement>()
@@ -342,7 +342,7 @@ object FirErrors {
     val ASSIGNMENT_TYPE_MISMATCH by error3<KtExpression, ConeKotlinType, ConeKotlinType, Boolean>()
     val RESULT_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error0<KtValueArgument>()
-    val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error1<KtElement, String>()
+    val TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error1<KtElement, String>()
     val SPREAD_OF_NULLABLE by error0<PsiElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION by deprecationError1<KtExpression, ConeKotlinType>(ProhibitAssigningSingleElementsToVarargsInNamedForm)
     val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION by deprecationError0<KtExpression>(ProhibitAssigningSingleElementsToVarargsInNamedForm)

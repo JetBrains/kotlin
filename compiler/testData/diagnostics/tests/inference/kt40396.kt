@@ -8,6 +8,6 @@ class Foo<K> {
 }
 
 class Bar {
-    val bar = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {}
+    val bar = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {}
     val baz = <!TYPE_ARGUMENTS_NOT_ALLOWED!>foo<!><Int> {}
 }

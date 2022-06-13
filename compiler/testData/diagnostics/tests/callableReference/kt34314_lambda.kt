@@ -3,5 +3,5 @@
 fun <T> materialize(): T = TODO()
 
 fun main() {
-    val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!> { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() }
+    val x = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!> { <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() }
 }

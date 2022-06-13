@@ -7,7 +7,7 @@ class A<R>() {
     operator fun <T> setValue(t: Any?, p: KProperty<*>, x: T) = Unit
 }
 
-var a1: Int by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>A<!>()
+var a1: Int by <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>A<!>()
 var a2: Int by A<String>()
 
 class B<R>() {

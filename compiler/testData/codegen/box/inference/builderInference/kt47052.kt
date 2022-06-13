@@ -4,7 +4,7 @@ public inline fun <R, C : MutableCollection<in R>> flatMapTo1(destination: C, tr
 
 @OptIn(ExperimentalStdlibApi::class)
 fun box(): String {
-    buildSet { // NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER is reported
+    buildSet { // TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER is reported
         flatMapTo1(this) { it }
     }
     return "OK"

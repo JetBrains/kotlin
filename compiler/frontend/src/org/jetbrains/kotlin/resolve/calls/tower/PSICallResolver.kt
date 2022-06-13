@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER
+import org.jetbrains.kotlin.resolve.BindingContext.TYPE_INFERENCE_CATCH_EXCEPTION_PARAMETER
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
@@ -873,7 +873,7 @@ class PSICallResolver(
     private fun BasicCallResolutionContext.expandContextForCatchClause(ktExpression: Any): BasicCallResolutionContext {
         if (ktExpression !is KtExpression) return this
 
-        val variableDescriptorHolder = trace.bindingContext[NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER, ktExpression] ?: return this
+        val variableDescriptorHolder = trace.bindingContext[TYPE_INFERENCE_CATCH_EXCEPTION_PARAMETER, ktExpression] ?: return this
         val variableDescriptor = variableDescriptorHolder.get() ?: return this
         variableDescriptorHolder.set(null)
 

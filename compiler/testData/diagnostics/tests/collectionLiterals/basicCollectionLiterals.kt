@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 
 fun test() {
-    val a = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>[]<!>
+    val a = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>[]<!>
     val b: Array<Int> = []
     val c = [1, 2]
     val d: Array<Int> = [1, 2]

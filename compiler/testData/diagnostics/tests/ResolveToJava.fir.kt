@@ -25,7 +25,7 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!>
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>
   Collections.emptyList<Int>()
-  Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  Collections.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)

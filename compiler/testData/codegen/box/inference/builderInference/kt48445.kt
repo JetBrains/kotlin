@@ -1,6 +1,6 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on lazy call (Name3, T)
+// FIR status: TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER on lazy call (Name3, T)
 // WITH_STDLIB
 
 internal class TowerDataElementsForName() {

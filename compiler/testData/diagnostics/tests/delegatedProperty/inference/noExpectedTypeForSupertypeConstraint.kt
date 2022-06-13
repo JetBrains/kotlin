@@ -1,7 +1,7 @@
 import kotlin.reflect.KProperty
 
 class A {
-    var a by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()<!>
+    var a by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()<!>
 }
 
 class MyProperty<T, R> {

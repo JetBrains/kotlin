@@ -23,4 +23,4 @@ val y7: B<String> = <!TYPE_MISMATCH!>B(1)<!>
 val y8: B<String> = B("")
 
 val y9 = B(1)
-val y10 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>B<!>("")
+val y10 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>B<!>("")

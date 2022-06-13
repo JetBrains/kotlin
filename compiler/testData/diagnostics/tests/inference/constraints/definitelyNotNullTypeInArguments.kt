@@ -114,8 +114,8 @@ fun <L> main(x: L?, y: L) {
         foo16(<!DEBUG_INFO_SMARTCAST!>y<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(x)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(y)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(x)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(y)
 
     foo21(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<OutBar<L & Any>>>")!>Foo(Foo(OutBar()))<!>)
     foo21(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<OutBar<L & Any>>>")!>Foo(Foo(OutBar()))<!>)

@@ -97,8 +97,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val unsupportedFeature: Pair<LanguageFeature, LanguageVersionSettings>
     }
 
-    abstract class NewInferenceError : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = NewInferenceError::class
+    abstract class TypeInferenceError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeInferenceError::class
         abstract val error: String
     }
 
@@ -1084,8 +1084,8 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ManyLambdaExpressionArguments::class
     }
 
-    abstract class NewInferenceNoInformationForParameter : KtFirDiagnostic<KtElement>() {
-        override val diagnosticClass get() = NewInferenceNoInformationForParameter::class
+    abstract class TypeInferenceNoInformationForParameter : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = TypeInferenceNoInformationForParameter::class
         abstract val name: String
     }
 

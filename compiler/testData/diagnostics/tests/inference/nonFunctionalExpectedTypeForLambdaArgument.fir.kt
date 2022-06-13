@@ -19,7 +19,7 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
         param -> param
     }
 }

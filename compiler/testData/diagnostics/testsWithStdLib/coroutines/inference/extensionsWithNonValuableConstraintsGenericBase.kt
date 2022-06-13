@@ -27,7 +27,7 @@ val test1 = generate {
     yield("foo")
 }
 
-val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test2 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     starBase()
 }
 
@@ -46,6 +46,6 @@ val test5 = generateSpecific {
     stringBase()
 }
 
-val test6 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generateSpecific<!> {
+val test6 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generateSpecific<!> {
     stringBase()
 }

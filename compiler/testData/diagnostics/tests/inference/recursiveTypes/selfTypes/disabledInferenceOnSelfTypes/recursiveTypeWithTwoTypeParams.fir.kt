@@ -5,6 +5,6 @@ interface BodySpec<B, S : BodySpec<B, S>> {
 }
 
 fun test(b: BodySpec<String, *>) {
-    val x = b.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
+    val x = b.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
     x
 }

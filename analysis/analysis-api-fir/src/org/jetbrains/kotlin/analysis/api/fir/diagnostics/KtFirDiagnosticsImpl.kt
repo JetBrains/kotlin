@@ -99,11 +99,11 @@ internal class UnsupportedFeatureImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.UnsupportedFeature(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class NewInferenceErrorImpl(
+internal class TypeInferenceErrorImpl(
     override val error: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.NewInferenceError(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.TypeInferenceError(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class OtherErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -1299,11 +1299,11 @@ internal class ManyLambdaExpressionArgumentsImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ManyLambdaExpressionArguments(), KtAbstractFirDiagnostic<KtValueArgument>
 
-internal class NewInferenceNoInformationForParameterImpl(
+internal class TypeInferenceNoInformationForParameterImpl(
     override val name: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.NewInferenceNoInformationForParameter(), KtAbstractFirDiagnostic<KtElement>
+) : KtFirDiagnostic.TypeInferenceNoInformationForParameter(), KtAbstractFirDiagnostic<KtElement>
 
 internal class SpreadOfNullableImpl(
     override val firDiagnostic: KtPsiDiagnostic,

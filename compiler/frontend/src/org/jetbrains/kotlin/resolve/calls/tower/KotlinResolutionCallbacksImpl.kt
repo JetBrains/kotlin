@@ -216,7 +216,7 @@ class KotlinResolutionCallbacksImpl(
         else
             null
 
-        (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
+        (temporaryTrace ?: trace).record(BindingContext.TYPE_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val actualContext = outerCallContext
             .replaceBindingTrace(temporaryTrace ?: trace)
@@ -227,7 +227,7 @@ class KotlinResolutionCallbacksImpl(
             }
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
-        (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
+        (temporaryTrace ?: trace).record(BindingContext.TYPE_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         if (builderInferenceSession?.hasInapplicableCall() == true) {
             return ReturnArgumentsAnalysisResult(
@@ -357,7 +357,7 @@ class KotlinResolutionCallbacksImpl(
             val valueParameterDescriptor = candidate.resolvedCall.argumentToCandidateParameter[atom.atom] ?: return
             InlineUtil.isInlineParameter(valueParameterDescriptor)
         }.takeIf { it }
-        trace.record(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, literal, isLambdaInline)
+        trace.record(BindingContext.TYPE_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, literal, isLambdaInline)
     }
 
     override fun getLhsResult(call: KotlinCall): LHSResult {

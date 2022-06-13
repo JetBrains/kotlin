@@ -5,13 +5,13 @@
 import kotlin.experimental.ExperimentalTypeInference
 
 fun test1() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
         val a: Array<Int> = arrayOf(1, 2, 3)
         val b = arrayOf(1, 2, 3)
     }
 }
 
-fun test2() = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> { arrayOf(1, 2, 3) }
+fun test2() = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> { arrayOf(1, 2, 3) }
 
 
 class Foo<T>
@@ -23,11 +23,11 @@ fun <T> f2(f: Foo<T>.() -> Unit) {
 }
 
 fun test3() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f1<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f1<!> {
         val a: Array<Int> = arrayOf(1, 2, 3)
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f2<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f2<!> {
         val a: Array<Int> = arrayOf(1, 2, 3)
     }
 }

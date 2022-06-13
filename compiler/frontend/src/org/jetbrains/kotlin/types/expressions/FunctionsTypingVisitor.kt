@@ -261,7 +261,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
 
-        val newInferenceLambdaInfo = context.trace[BindingContext.NEW_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
+        val newInferenceLambdaInfo = context.trace[BindingContext.TYPE_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
 
         // i.e. this lambda isn't call arguments
         if (newInferenceLambdaInfo == null) {

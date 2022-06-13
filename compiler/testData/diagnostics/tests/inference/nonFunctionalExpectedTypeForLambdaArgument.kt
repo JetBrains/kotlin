@@ -19,13 +19,13 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>param<!>
     }
 }
 
 fun testParamCall() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
         <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!DEBUG_INFO_MISSING_UNRESOLVED!>param<!>()
     }
 }

@@ -9,7 +9,7 @@ inline fun <reified Self : DatabaseEntity, reified Target : DatabaseEntity> Self
     property: KProperty1<Target, MutableCollection<Self>>): Delegate<Self, Target?> = TODO()
 
 class GitLabBuildProcessor: DatabaseEntity {
-    var processor by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>parent<!>(GitLabChangesProcessor::buildProcessors)
+    var processor by <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>parent<!>(GitLabChangesProcessor::buildProcessors)
 }
 
 interface DatabaseEntity: Entity

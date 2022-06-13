@@ -542,7 +542,7 @@ class DiagnosticReporterByTrackingStrategy(
                 argumentPosition?.let {
                     val expression = it.argument.psiExpression ?: return
                     trace.reportDiagnosticOnce(
-                        NEW_INFERENCE_ERROR.on(
+                        TYPE_INFERENCE_ERROR.on(
                             expression,
                             "Capture type from subtyping ${error.constraintType} for variable ${error.typeVariable}"
                         )
@@ -612,7 +612,7 @@ class DiagnosticReporterByTrackingStrategy(
                     val diagnostic = if (error.couldBeResolvedWithUnrestrictedBuilderInference) {
                         COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE
                     } else {
-                        NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER
+                        TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER
                     }
 
                     trace.reportDiagnosticOnce(diagnostic.on(unwrappedExpression, typeVariableName))
@@ -699,7 +699,7 @@ class DiagnosticReporterByTrackingStrategy(
                 ) { "Unsupported special construct: ${resolvedAtom.candidateDescriptor.name} not found in special construct names" }
 
                 trace.reportDiagnosticOnce(
-                    NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(
+                    TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(
                         argumentsExpression, " for subcalls of ${specialFunctionName.getName()} expression"
                     )
                 )

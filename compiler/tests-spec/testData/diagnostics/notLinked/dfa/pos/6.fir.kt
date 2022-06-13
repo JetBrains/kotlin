@@ -713,7 +713,7 @@ fun case_36(x: Any) {
 
     if (<!SENSELESS_COMPARISON!>x == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
     }
 }
 
@@ -993,7 +993,7 @@ fun case_57(a: (() -> Unit)) {
 
     if (<!SENSELESS_COMPARISON!>a == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
     }
 }
 

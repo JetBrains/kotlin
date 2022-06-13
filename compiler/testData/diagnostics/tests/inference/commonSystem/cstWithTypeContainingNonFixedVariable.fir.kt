@@ -58,11 +58,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!NEW_INFERENCE_ERROR!>select(SubInv<String>(), createWithNumberBound())<!>
+    val c2 = <!TYPE_INFERENCE_ERROR!>select(SubInv<String>(), createWithNumberBound())<!>
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Double>(), createWithIntBound())<!>
+    val c3 = <!TYPE_INFERENCE_ERROR!>select(SubInv<Double>(), createWithIntBound())<!>
 
     c3
 }
@@ -81,7 +81,7 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Number>(), createInvIn())<!>
+    val c3 = <!TYPE_INFERENCE_ERROR!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }

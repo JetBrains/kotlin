@@ -9,7 +9,7 @@ fun <K> select(x: K, y: K): K = TODO()
 fun takeUByte(u: UByte) {}
 
 fun foo() {
-    <!NEW_INFERENCE_ERROR!>select(1, 1u)<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Comparable<*>>() }
+    <!TYPE_INFERENCE_ERROR!>select(1, 1u)<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Comparable<*>>() }
     takeUByte(<!ARGUMENT_TYPE_MISMATCH!>id(1)<!>)
 
     1 <!NONE_APPLICABLE!>+<!> 1u

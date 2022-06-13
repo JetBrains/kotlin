@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.diagnostics.deprecationError2
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -47,7 +46,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNSUPPORTED_FEATURE by error<PsiElement> {
             parameter<Pair<LanguageFeature, LanguageVersionSettings>>("unsupportedFeature")
         }
-        val NEW_INFERENCE_ERROR by error<PsiElement> {
+        val TYPE_INFERENCE_ERROR by error<PsiElement> {
             parameter<String>("error")
         }
     }
@@ -497,7 +496,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error<KtValueArgument>()
 
-        val NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
+        val TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER by error<KtElement> {
             parameter<String>("name")
         }
 

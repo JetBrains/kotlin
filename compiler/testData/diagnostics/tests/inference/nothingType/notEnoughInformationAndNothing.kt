@@ -16,8 +16,8 @@ fun test1(b: Boolean?) {
 }
 
 fun test2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     )
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
@@ -25,13 +25,13 @@ fun test2() {
         materialize(),
         null
     )
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     )
     select(
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
         null
     )
 }

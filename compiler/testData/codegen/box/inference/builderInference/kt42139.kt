@@ -13,8 +13,8 @@ fun f2(): Sequence<List<Int>> = sequence {
 }
 
 fun f3(): Sequence<List<Int>> = sequence {
-    if (true) yield(myEmptyList()) // [NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER] Not enough information to infer type variable T
-    else yield(myEmptyList()) // [NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER] Not enough information to infer type variable T
+    if (true) yield(myEmptyList()) // [TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER] Not enough information to infer type variable T
+    else yield(myEmptyList()) // [TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER] Not enough information to infer type variable T
 }
 
 fun box(): String {

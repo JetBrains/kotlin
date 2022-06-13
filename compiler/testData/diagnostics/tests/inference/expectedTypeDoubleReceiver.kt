@@ -8,10 +8,10 @@ class A {
 
 fun <V> id(value: V) = value
 
-val asA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
+val asA = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
 
-val receiverParenthesized = (<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()).<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
-val no2A = A().<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooA<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
+val receiverParenthesized = (<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()).<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
+val no2A = A().<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooA<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>fooA<!>() as A
 
 val correct1 = A().fooA() as A
 val correct2 = foo<A>().fooA() as A

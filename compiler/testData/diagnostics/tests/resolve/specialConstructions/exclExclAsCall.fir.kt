@@ -13,7 +13,7 @@ fun <T: A> emptyNullableListOfA(): List<T>? = null
 
 fun testExclExcl() {
     <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION("T; a/A, kotlin/Int; final class and interface")!>doList<!>(emptyNullableListOfA()!!) //should be an error here
-    val l: List<Int> = <!INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>id(emptyNullableListOfA()!!)<!>
+    val l: List<Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_INFERENCE_ERROR!>id(emptyNullableListOfA()!!)<!>
 
     doList(strangeNullableList { doInt(it) }!!) //lambda should be analyzed (at completion phase)
 }

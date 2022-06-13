@@ -726,8 +726,8 @@ public class DefaultErrorMessages {
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
         MAP.put(UNSUPPORTED_WARNING, "Unsupported [{0}]. This warning will be an error in future releases", STRING);
-        MAP.put(NEW_INFERENCE_ERROR, "New inference error [{0}]", STRING);
-        MAP.put(NEW_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
+        MAP.put(TYPE_INFERENCE_ERROR, "New inference error [{0}]", STRING);
+        MAP.put(TYPE_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
         MAP.put(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE, "Non-applicable call for builder inference");
 
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
@@ -955,7 +955,7 @@ public class DefaultErrorMessages {
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 
-        MAP.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING);
+        MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING);
         MAP.put(INFERRED_INTO_DECLARED_UPPER_BOUNDS, "Type parameter for a type argument {0} can''t be inferred into declared upper bounds. " +
                                                      "Please provide any use-site type information. It will become an error in future releases.", STRING);
         MAP.put(COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE, "Builder inference lambda contains inapplicable calls so {0} can''t be inferred. It could be resolved only with unrestricted builder inference. Please use -Xunrestricted-builder-inference compiler flag to enable it.", STRING);

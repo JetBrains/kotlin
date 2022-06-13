@@ -280,7 +280,7 @@ public class ExpressionTypingServices {
             @NotNull KtElement function
     ) {
         if (function instanceof KtFunction) {
-            return context.trace.get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, (KtFunction) function);
+            return context.trace.get(BindingContext.TYPE_INFERENCE_LAMBDA_INFO, (KtFunction) function);
         }
         return null;
     }
@@ -438,7 +438,7 @@ public class ExpressionTypingServices {
         KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
         if (functionLiteral != null) {
             KotlinResolutionCallbacksImpl.LambdaInfo info =
-                    context.trace.getBindingContext().get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, functionLiteral);
+                    context.trace.getBindingContext().get(BindingContext.TYPE_INFERENCE_LAMBDA_INFO, functionLiteral);
             if (info != null) {
                 info.getLastExpressionInfo().setLexicalScope(context.scope);
                 info.getLastExpressionInfo().setTrace(context.trace);

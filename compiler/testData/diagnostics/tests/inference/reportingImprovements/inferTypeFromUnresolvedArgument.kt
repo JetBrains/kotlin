@@ -7,6 +7,6 @@ fun test() {
     id2(<!UNRESOLVED_REFERENCE!>unresolved<!>, "foo")
     id2(<!UNRESOLVED_REFERENCE!>unresolved<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>)
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>ret<!>("foo")
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>ret<!>("foo")
     ret(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>)
 }

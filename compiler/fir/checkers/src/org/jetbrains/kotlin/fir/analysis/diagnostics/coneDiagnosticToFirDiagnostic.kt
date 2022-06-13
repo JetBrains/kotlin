@@ -312,7 +312,7 @@ private fun mapSystemHasContradictionError(
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
 
-                FirErrors.NEW_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
+                FirErrors.TYPE_INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source, message)
             }
         )
     }
@@ -387,7 +387,7 @@ private fun ConstraintSystemError.toDiagnostic(
                 else -> error("Unsupported type variable: $typeVariable")
             }
 
-            FirErrors.NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
+            FirErrors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.createOn(
                 source,
                 typeVariableName,
             )

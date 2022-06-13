@@ -41,12 +41,12 @@ fun test() {
     val foo = Foo<Nothing?>()
 
     val x9: String? = select(foo.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
-    val x10: String? = select(foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
+    val x10: String? = select(foo.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
     val x11: String? = select(foo.idFromClassTypeArg(), null)
 
     foo.run {
         val x12: String? = select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
-        val x13: String? = select(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
+        val x13: String? = select(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
         val x14: String? = select(idFromClassTypeArg(), null)
     }
 

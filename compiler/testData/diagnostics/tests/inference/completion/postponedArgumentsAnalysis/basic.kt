@@ -77,12 +77,12 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>select(id(::withOverload), id(::takeInt), id(id(::takeNumber)))<!>
 
     // Interdependent lambdas by input-output types aren't supported
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({}, {})
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }, { 10 })
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> })
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> })
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 }, { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> })
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 })
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({}, {})
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }, { 10 })
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> })
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ 10 }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> })
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 }, { <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> })
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>takeInterdependentLambdas<!>({ <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }, { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> 10 })
 
     // Dependent lambdas by input-output types
     takeDependentLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }, { it })

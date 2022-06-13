@@ -4,7 +4,7 @@
 package a
 
 fun main() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
 
     }
 }

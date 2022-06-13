@@ -13,11 +13,11 @@ interface BodySpec<B, S : BodySpec<B, S>> {
 }
 
 fun test(b: BodySpec<String, *>) {
-    val x = b.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
+    val x = b.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>x<!>
 }
 
 fun testJava(b: JavaBodySpec<String, *>) {
-    val x = b.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
+    val x = b.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>isEqualTo<!>("")
     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>x<!>
 }

@@ -12,15 +12,15 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>yield<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>())
+    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>yield<!>(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>())
     }
 }
 
 fun test_3() {
     sequence {
         yield(materialize<Int>())
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

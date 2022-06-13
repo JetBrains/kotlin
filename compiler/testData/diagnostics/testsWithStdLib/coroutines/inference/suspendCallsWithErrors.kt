@@ -13,7 +13,7 @@ fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 class A
 
-val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test1 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(<!NO_COMPANION_OBJECT!>A<!>)
 }
 
