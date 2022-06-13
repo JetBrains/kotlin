@@ -28,7 +28,19 @@ abstract class JsAstDeserializerBase {
         return statement
     }
 
-    protected fun deserializeNoMetadata(proto: JsAstProtoBuf.Statement): JsStatement = when (proto.statementCase) {
+    protected fun deserializeNoMetadata(proto: JsAstProtoBuf.Statement): JsStatement {
+        return deserializeNoMetadataHelper(proto).apply {
+            if (proto.beforeCommentsCount != 0) {
+                commentsBeforeNode = proto.beforeCommentsList.map(::deserializeComment)
+            }
+
+            if (proto.afterCommentsCount != 0) {
+                commentsAfterNode = proto.afterCommentsList.map(::deserializeComment)
+            }
+        }
+    }
+
+    protected fun deserializeNoMetadataHelper(proto: JsAstProtoBuf.Statement): JsStatement = when (proto.statementCase) {
         JsAstProtoBuf.Statement.StatementCase.RETURN_STATEMENT -> {
             val returnProto = proto.returnStatement
             JsReturn(if (returnProto.hasValue()) deserialize(returnProto.value) else null)
@@ -192,7 +204,19 @@ abstract class JsAstDeserializerBase {
         )
     }
 
-    protected fun deserializeNoMetadata(proto: JsAstProtoBuf.Expression): JsExpression = when (proto.expressionCase) {
+    protected fun deserializeNoMetadata(proto: JsAstProtoBuf.Expression): JsExpression {
+        return deserializeNoMetadataHelper(proto).apply {
+            if (proto.beforeCommentsCount != 0) {
+                commentsBeforeNode = proto.beforeCommentsList.map(::deserializeComment)
+            }
+
+            if (proto.afterCommentsCount != 0) {
+                commentsAfterNode = proto.afterCommentsList.map(::deserializeComment)
+            }
+        }
+    }
+
+    protected fun deserializeNoMetadataHelper(proto: JsAstProtoBuf.Expression): JsExpression = when (proto.expressionCase) {
         JsAstProtoBuf.Expression.ExpressionCase.THIS_LITERAL -> JsThisRef()
         JsAstProtoBuf.Expression.ExpressionCase.NULL_LITERAL -> JsNullLiteral()
         JsAstProtoBuf.Expression.ExpressionCase.TRUE_LITERAL -> JsBooleanLiteral(true)
@@ -478,6 +502,14 @@ abstract class JsAstDeserializerBase {
         }
 
         return node
+    }
+
+    protected fun deserializeComment(comment: JsAstProtoBuf.Comment): JsComment {
+        return if (comment.multiline) {
+            JsMultiLineComment(comment.text)
+        } else {
+            JsSingleLineComment(comment.text)
+        }
     }
 
     protected abstract fun embedSources(deserializedLocation: JsLocation, file: String): JsLocationWithSource?

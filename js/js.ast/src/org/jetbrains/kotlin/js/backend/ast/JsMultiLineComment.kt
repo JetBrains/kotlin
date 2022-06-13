@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-class JsMultiLineComment(val text: String) : SourceInfoAwareJsNode(), JsStatement {
+class JsMultiLineComment(override val text: String) : SourceInfoAwareJsNode(), JsComment {
     override fun accept(visitor: JsVisitor) {
         visitor.visitMultiLineComment(this)
     }

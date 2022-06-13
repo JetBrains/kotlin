@@ -174,8 +174,10 @@ abstract class JsAstSerializerBase {
             }
         }
 
-        withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
-            statement.accept(visitor)
+        withComments(statement, { visitor.builder.addBeforeComments(it) }, { visitor.builder.addAfterComments(it) }) {
+            withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
+                statement.accept(visitor)
+            }
         }
 
         if (statement is HasMetadata && statement.synthetic) {
@@ -348,8 +350,10 @@ abstract class JsAstSerializerBase {
             }
         }
 
-        withLocation(expression, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
-            expression.accept(visitor)
+        withComments(expression, { visitor.builder.addBeforeComments(it) }, { visitor.builder.addAfterComments(it) }) {
+            withLocation(expression, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
+                expression.accept(visitor)
+            }
         }
 
         with(visitor.builder) {
@@ -522,6 +526,18 @@ abstract class JsAstSerializerBase {
         result
     }
 
+    protected fun serialize(comment: JsComment): JsAstProtoBuf.Comment {
+        val builder = JsAstProtoBuf.Comment.newBuilder().apply {
+            text = comment.text
+            multiline = when (comment) {
+                is JsSingleLineComment -> false
+                is JsMultiLineComment -> true
+                else -> error("Unknown type of comment ${comment.javaClass.name}")
+            }
+        }
+        return builder.build()
+    }
+
     private inline fun withLocation(node: JsNode, fileConsumer: (Int) -> Unit, locationConsumer: (JsAstProtoBuf.Location) -> Unit, inner: () -> Unit) {
         val location = extractLocation(node)
         var fileChanged = false
@@ -544,6 +560,17 @@ abstract class JsAstSerializerBase {
         if (fileChanged) {
             fileStack.pop()
         }
+    }
+
+    private inline fun withComments(
+        node: JsNode,
+        beforeCommentsConsumer: (JsAstProtoBuf.Comment) -> Unit,
+        afterCommentsConsumer: (JsAstProtoBuf.Comment) -> Unit,
+        inner: () -> Unit
+    ) {
+        node.commentsBeforeNode?.forEach { beforeCommentsConsumer(serialize(it))}
+        node.commentsAfterNode?.forEach { afterCommentsConsumer(serialize(it))}
+        inner()
     }
 
     abstract fun extractLocation(node: JsNode): JsLocation?

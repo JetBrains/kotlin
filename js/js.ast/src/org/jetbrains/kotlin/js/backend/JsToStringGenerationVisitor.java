@@ -173,8 +173,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
+    protected boolean insideComments = false;
     protected boolean needSemi = true;
     private boolean lineBreakAfterBlock = true;
+
 
     /**
      * "Global" blocks are either the global block of a fragment, or a block
@@ -198,6 +200,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitArrayAccess(@NotNull JsArrayAccess x) {
+        printCommentsBeforeNode(x);
         pushSourceInfo(x.getSource());
 
         printPair(x, x.getArrayExpression());
@@ -205,17 +208,20 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getIndexExpression());
         rightSquare();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitArray(@NotNull JsArrayLiteral x) {
+        printCommentsBeforeNode(x);
         pushSourceInfo(x.getSource());
 
         leftSquare();
         printExpressions(x.getExpressions());
         rightSquare();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -233,6 +239,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitBinaryExpression(@NotNull JsBinaryOperation binaryOperation) {
+        printCommentsBeforeNode(binaryOperation);
         pushSourceInfo(binaryOperation.getSource());
 
         JsBinaryOperator operator = binaryOperation.getOperator();
@@ -277,6 +284,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             rightParen();
         }
 
+        printCommentsAfterNode(binaryOperation);
         popSourceInfo();
     }
 
@@ -288,6 +296,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitBoolean(@NotNull JsBooleanLiteral x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         if (x.getValue()) {
             p.print(CHARS_TRUE);
@@ -296,26 +305,31 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print(CHARS_FALSE);
         }
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitBreak(@NotNull JsBreak x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_BREAK);
         continueOrBreakLabel(x);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitContinue(@NotNull JsContinue x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_CONTINUE);
         continueOrBreakLabel(x);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -330,12 +344,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitCase(@NotNull JsCase x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_CASE);
         space();
         accept(x.getCaseExpression());
         _colon();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         newlineOpt();
@@ -362,6 +378,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitCatch(@NotNull JsCatch x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         spaceOpt();
         p.print(CHARS_CATCH);
@@ -382,6 +399,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         rightParen();
         spaceOpt();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         sourceLocationConsumer.pushSourceInfo(null);
@@ -392,6 +410,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitConditional(@NotNull JsConditional x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         // Associativity: for the then and else branches, it is safe to insert
         // another
@@ -407,6 +426,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         spaceOpt();
         printPair(x, x.getElseExpression());
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -428,19 +448,23 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitDebugger(@NotNull JsDebugger x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_DEBUGGER);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitDefault(@NotNull JsDefault x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_DEFAULT);
         _colon();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
         newlineOpt();
 
@@ -452,6 +476,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitWhile(@NotNull JsWhile x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         _while();
         spaceOpt();
@@ -459,6 +484,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getCondition());
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         JsStatement body = materialize(x.getBody());
@@ -473,6 +499,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitDoWhile(@NotNull JsDoWhile x) {
         sourceLocationConsumer.pushSourceInfo(null);
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_DO);
 
@@ -499,6 +526,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getCondition());
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -513,6 +541,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             source = x.getExpression().getSource();
         }
         pushSourceInfo(source);
+        printCommentsBeforeNode(x);
 
         boolean surroundWithParentheses = JsFirstExpressionVisitor.exec(x);
         if (surroundWithParentheses) {
@@ -523,12 +552,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             rightParen();
         }
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitFor(@NotNull JsFor x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         _for();
         spaceOpt();
@@ -563,6 +594,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         JsStatement body = materialize(x.getBody());
@@ -579,6 +611,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitForIn(@NotNull JsForIn x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         _for();
         spaceOpt();
@@ -609,6 +642,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         JsStatement body = materialize(x.getBody());
@@ -622,12 +656,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitFunction(@NotNull JsFunction x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_FUNCTION);
         space();
 
         printFunction(x);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -659,6 +695,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitClass(@NotNull JsClass x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_CLASS);
         space();
@@ -699,12 +736,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         needSemi = false;
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitIf(@NotNull JsIf x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         _if();
         spaceOpt();
@@ -712,6 +751,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getIfExpression());
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
         JsStatement thenStmt = x.getThenStatement();
@@ -777,6 +817,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitInvocation(@NotNull JsInvocation invocation) {
         pushSourceInfo(invocation.getSource());
+        printCommentsBeforeNode(invocation);
 
         printPair(invocation, invocation.getQualifier());
 
@@ -784,6 +825,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printExpressions(invocation.getArguments());
         rightParen();
 
+        printCommentsAfterNode(invocation);
         popSourceInfo();
     }
 
@@ -800,10 +842,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitNameRef(@NotNull JsNameRef nameRef) {
+        visitNameRef(nameRef, true);
+    }
+
+    public void visitNameRef(@NotNull JsNameRef nameRef, boolean withQualifier) {
         pushSourceInfo(nameRef.getSource());
+        printCommentsBeforeNode(nameRef);
 
         JsExpression qualifier = nameRef.getQualifier();
-        if (qualifier != null) {
+        if (qualifier != null && withQualifier) {
             boolean enclose;
             if (qualifier instanceof JsLiteral.JsValueLiteral) {
                 // "42.foo" is not allowed, but "(42).foo" is.
@@ -826,12 +873,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.maybeIndent();
         p.print(nameRef.getIdent());
 
+        printCommentsAfterNode(nameRef);
         popSourceInfo();
     }
 
     @Override
     public void visitNew(@NotNull JsNew x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_NEW);
         space();
@@ -850,39 +899,47 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printExpressions(x.getArguments());
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitNull(@NotNull JsNullLiteral x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_NULL);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitInt(@NotNull JsIntLiteral x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(x.value);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitDouble(@NotNull JsDoubleLiteral x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(x.value);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitObjectLiteral(@NotNull JsObjectLiteral objectLiteral) {
         pushSourceInfo(objectLiteral.getSource());
+        printCommentsBeforeNode(objectLiteral);
 
         p.print('{');
 
@@ -908,26 +965,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             pushSourceInfo(item.getSource());
 
             JsExpression labelExpr = item.getLabelExpr();
-            // labels can be either string, integral, or decimal literals
-            if (labelExpr instanceof JsNameRef) {
-                p.print(((JsNameRef) labelExpr).getIdent());
-            }
-            else if (labelExpr instanceof JsStringLiteral) {
+
+            if (labelExpr instanceof JsStringLiteral) {
                 JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
                 String value = stringLiteral.getValue();
-                boolean isValidIdentifier = IdentifierPolicyKt.isValidES5Identifier(value);
-
-                if (!isValidIdentifier)  {
-                    p.print('\'');
-                }
-
-                p.print(value);
-
-                if (!isValidIdentifier)  {
-                    p.print('\'');
+                if (IdentifierPolicyKt.isValidES5Identifier(value)) {
+                   labelExpr = new JsNameRef(value).withMetadataFrom(stringLiteral);
                 }
             }
-            else {
+            // labels can be either string, integral, or decimal literals
+            if (labelExpr instanceof JsNameRef) {
+                visitNameRef((JsNameRef) labelExpr, false);
+            } else {
                 accept(labelExpr);
             }
 
@@ -949,6 +998,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.print('}');
+
+        printCommentsAfterNode(objectLiteral);
         popSourceInfo();
     }
 
@@ -960,6 +1011,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         JsUnaryOperator op = x.getOperator();
         JsExpression arg = x.getArg();
@@ -967,12 +1019,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printPair(x, arg);
         p.print(op.getSymbol());
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         JsUnaryOperator op = x.getOperator();
         p.print(op.getSymbol());
@@ -983,6 +1037,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         // unary operators always associate correctly (I think)
         printPair(x, arg);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
@@ -994,6 +1049,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitRegExp(@NotNull JsRegExp x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         slash();
         p.print(x.getPattern());
@@ -1003,12 +1059,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print(flags);
         }
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitReturn(@NotNull JsReturn x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_RETURN);
         JsExpression expr = x.getExpression();
@@ -1017,21 +1075,25 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             accept(expr);
         }
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitString(@NotNull JsStringLiteral x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(javaScriptString(x.getValue()));
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visit(@NotNull JsSwitch x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_SWITCH);
         spaceOpt();
@@ -1039,6 +1101,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getExpression());
         rightParen();
 
+        printCommentsAfterNode(x);
         popSourceInfo();
 
 
@@ -1053,25 +1116,30 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitThis(@NotNull JsThisRef x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_THIS);
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitThrow(@NotNull JsThrow x) {
         pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
 
         p.print(CHARS_THROW);
         space();
         accept(x.getExpression());
 
+        printCommentsAfterNode(x);
         popSourceInfo();
     }
 
     @Override
     public void visitTry(@NotNull JsTry x) {
+        printCommentsBeforeNode(x);
         p.print(CHARS_TRY);
         spaceOpt();
         lineBreakAfterBlock = false;
@@ -1085,11 +1153,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             spaceOpt();
             accept(finallyBlock);
         }
+        printCommentsAfterNode(x);
     }
 
     @Override
     public void visit(@NotNull JsVar var) {
         pushSourceInfo(var.getSource());
+        printCommentsBeforeNode(var);
 
         nameOf(var);
         JsExpression initExpr = var.getInitExpression();
@@ -1104,12 +1174,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             }
         }
 
+        printCommentsAfterNode(var);
         popSourceInfo();
     }
 
     @Override
     public void visitVars(@NotNull JsVars vars) {
         pushSourceInfo(vars.getSource());
+        printCommentsBeforeNode(vars);
 
         var();
         space();
@@ -1129,15 +1201,20 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             accept(var);
         }
 
+        printCommentsAfterNode(vars);
         popSourceInfo();
     }
 
     @Override
     public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
+        if (needSemi && insideComments) {
+            semi();
+            space();
+        }
         p.print("//");
         p.print(comment.getText());
-        needSemi = false;
         newline();
+        needSemi = false;
     }
 
     @Override
@@ -1153,8 +1230,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.print("*/");
-        needSemi = false;
-        newline();
     }
 
     @Override
@@ -1295,6 +1370,32 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
+    private void printCommentsBeforeNode(JsNode x) {
+       printComments(x.getCommentsBeforeNode(), false);
+    }
+
+    private void printCommentsAfterNode(JsNode x) {
+        printComments(x.getCommentsAfterNode(), true);
+    }
+
+    private void printComments(List<JsComment> comments, boolean isAfterNode) {
+        if (comments == null) return;
+
+        boolean previousNeedSemi = needSemi;
+        needSemi = isAfterNode;
+        insideComments = true;
+
+        for (JsComment comment : comments) {
+            comment.accept(this);
+        }
+
+        insideComments = false;
+
+        if (!isAfterNode) {
+            needSemi = previousNeedSemi;
+        }
+    }
+
     private void popSourceInfo() {
         if (!sourceInfoStack.isEmpty() && sourceInfoStack.remove(sourceInfoStack.size() - 1) != null) {
             sourceLocationConsumer.popSourceInfo();
@@ -1308,6 +1409,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         sourceLocationConsumer.pushSourceInfo(null);
+        printCommentsBeforeNode(x);
 
         boolean needBraces = !x.isTransparent();
 
@@ -1390,6 +1492,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
         needSemi = false;
 
+
+        printCommentsAfterNode(x);
         sourceLocationConsumer.popSourceInfo();
     }
 

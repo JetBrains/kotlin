@@ -47,6 +47,8 @@ message Expression {
     optional bool synthetic = 3 [default = false];
     optional SideEffects side_effects = 4 [default = AFFECTS_STATE];
     optional JsImportedModule local_alias = 5;
+    repeated Comment before_comments = 6;
+    repeated Comment after_comments = 7;
 
     oneof expression {
         int32 simple_name_reference = 22;
@@ -126,6 +128,11 @@ message DocCommentTag {
         int32 value_string_id = 2;
         Expression expression = 3;
     }
+}
+
+message Comment {
+    required string text = 1;
+    required bool multiline = 2;
 }
 
 message BinaryOperation {
@@ -233,6 +240,8 @@ message Statement {
     optional int32 fileId = 1;
     optional Location location = 2;
     optional bool synthetic = 3 [default = false];
+    repeated Comment before_comments = 4;
+    repeated Comment after_comments = 5;
 
     oneof statement {
         Return return_statement = 21;

@@ -90,37 +90,6 @@ public class Node implements Cloneable {
         private String str;
     }
 
-    private static class CommentNode extends Node {
-        CommentNode(int type, String str, CodePosition position) {
-            super(type, position);
-            if (null == str) {
-                throw new IllegalArgumentException("CommentNode: str is null");
-            }
-            this.str = str;
-        }
-
-        /** returns the string content.
-         * @return non null.
-         */
-        @Override
-        public String getString() {
-            return this.str;
-        }
-
-        /** sets the string content.
-         * @param str the new value.  Non null.
-         */
-        @Override
-        public void setString(String str) {
-            if (null == str) {
-                throw new IllegalArgumentException("CommentNode: str is null");
-            }
-            this.str = str;
-        }
-
-        private String str;
-    }
-
     public Node(int nodeType) {
         type = nodeType;
     }
@@ -222,10 +191,6 @@ public class Node implements Cloneable {
         return new StringNode(type, str, position);
     }
 
-    public static Node newComment(int type, String str, CodePosition position) {
-        return new CommentNode(type, str, position);
-    }
-
     public int getType() {
         return type;
     }
@@ -276,6 +241,24 @@ public class Node implements Cloneable {
         if (first == null) {
             first = children;
         }
+    }
+
+    public Comment getCommentsBeforeNode() {
+        return commentBefore;
+    }
+
+    public Comment getCommentsAfterNode() {
+        return commentAfter;
+    }
+
+    public void setCommentsBeforeNode(Comment comment) {
+        if (comment == null) return;
+        commentBefore = comment;
+    }
+
+    public void setCommentsAfterNode(Comment comment) {
+        if (comment == null) return;
+        commentAfter = comment;
     }
 
     public static final int
@@ -441,5 +424,9 @@ public class Node implements Cloneable {
     private Node first;    // first element of a linked list of children
     private Node last;     // last element of a linked list of children
     private CodePosition position;
+
+    private Comment commentBefore;
+
+    private Comment commentAfter;
     private int operation;
 }

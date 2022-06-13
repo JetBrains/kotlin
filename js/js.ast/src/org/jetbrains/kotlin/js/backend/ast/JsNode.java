@@ -6,6 +6,9 @@ package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public interface JsNode {
     /**
      * Causes this object to have the visitor visit itself and its children.
@@ -40,4 +43,12 @@ public interface JsNode {
      * @param ctx the context of an existing traversal
      */
     void traverse(JsVisitorWithContext visitor, JsContext ctx);
+
+    List<JsComment> getCommentsBeforeNode();
+
+    List<JsComment> getCommentsAfterNode();
+
+    void setCommentsBeforeNode(List<JsComment> comment);
+
+    void setCommentsAfterNode(List<JsComment> comment);
 }

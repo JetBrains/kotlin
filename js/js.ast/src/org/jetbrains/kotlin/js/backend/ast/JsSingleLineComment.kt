@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-class JsSingleLineComment(val text: String) : SourceInfoAwareJsNode(), JsStatement {
+class JsSingleLineComment(override val text: String) : SourceInfoAwareJsNode(), JsComment {
     override fun accept(visitor: JsVisitor) {
         visitor.visitSingleLineComment(this)
     }

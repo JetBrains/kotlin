@@ -20,7 +20,13 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
 import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
 import org.jetbrains.kotlin.js.util.TextOutputImpl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 abstract class AbstractNode extends HasMetadata implements JsNode {
+    private List<JsComment> commentsBefore = null;
+    private List<JsComment> commentsAfter = null;
+
     @Override
     public String toString() {
         TextOutputImpl out = new TextOutputImpl();
@@ -29,12 +35,34 @@ abstract class AbstractNode extends HasMetadata implements JsNode {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
+    public <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
         this.copyMetadataFrom(other);
         Object otherSource = other.getSource();
         if (otherSource != null) {
             source(otherSource);
         }
+        setCommentsBeforeNode(other.getCommentsBeforeNode());
+        setCommentsAfterNode(other.getCommentsAfterNode());
         return (T) this;
+    }
+
+    @Override
+    public List<JsComment> getCommentsBeforeNode() {
+        return commentsBefore;
+    }
+
+    @Override
+    public List<JsComment> getCommentsAfterNode() {
+        return commentsAfter;
+    }
+
+    @Override
+    public void setCommentsBeforeNode(List<JsComment> comments) {
+        commentsBefore = comments;
+    }
+
+    @Override
+    public void setCommentsAfterNode(List<JsComment> comments) {
+        commentsAfter = comments;
     }
 }

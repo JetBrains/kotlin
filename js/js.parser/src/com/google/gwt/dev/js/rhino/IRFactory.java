@@ -331,14 +331,6 @@ public class IRFactory {
         return new Node(nodeType, left, right, nodeOp, location);
     }
 
-    public Node createSingleLineComment(String string, CodePosition position) {
-        return Node.newComment(TokenStream.SINGLE_LINE_COMMENT, string, position);
-    }
-
-    public Node createMultiLineComment(String string, CodePosition position) {
-        return Node.newComment(TokenStream.MULTI_LINE_COMMENT, string, position);
-    }
-
     public Node createAssignment(int nodeOp, Node left, Node right, CodePosition location) {
         int nodeType = left.getType();
         switch (nodeType) {

@@ -253,8 +253,6 @@ public class TokenStream {
 
         LAST_TOKEN  = 147,
         NUMBER_INT  = 148,
-        SINGLE_LINE_COMMENT  = 149,
-        MULTI_LINE_COMMENT  = 150,
 
         // This value is only used as a return value for getTokenHelper,
         // which is only called from getToken and exists to avoid an excessive
@@ -415,8 +413,6 @@ public class TokenStream {
                 case NEWLOCAL:        return "newlocal";
                 case USELOCAL:        return "uselocal";
                 case SCRIPT:          return "script";
-                case SINGLE_LINE_COMMENT:          return "singlelinecomment";
-                case MULTI_LINE_COMMENT:           return "multilinecomment";
             }
             return "<unknown="+token+">";
         }
@@ -539,10 +535,6 @@ public class TokenStream {
         return peekTokenHelper(getToken());
     }
 
-    public int peekTokenWithComment() throws IOException {
-        return peekTokenHelper(getTokenWithComment());
-    }
-
     private int peekTokenHelper(int token) throws IOException {
         this.pushbackToken = token;
         lastPosition = secondToLastPosition;
@@ -596,15 +588,8 @@ public class TokenStream {
         in.unread();
     }
 
-    public int getTokenWithComment() throws IOException {
-        lastTokenPosition = tokenPosition;
-        int c;
-        do {
-            c = getTokenHelper();
-        } while (c == RETRY_TOKEN);
-
-        updatePosition();
-        return c;
+    public void collectCommentsAfter() throws IOException {
+        ungetToken(getToken());
     }
 
     public int getToken() throws IOException {
@@ -612,7 +597,7 @@ public class TokenStream {
         int c;
         do {
             c = getTokenHelper();
-        } while (c == RETRY_TOKEN || c == SINGLE_LINE_COMMENT || c == MULTI_LINE_COMMENT);
+        } while (c == RETRY_TOKEN);
 
         updatePosition();
         return c;
@@ -1084,8 +1069,8 @@ public class TokenStream {
                 while ((c = in.read()) != -1 && c != '\n') {
                     addToString(c);
                 }
-                this.string = getStringFromBuffer();
-                return SINGLE_LINE_COMMENT;
+                addCommentToQueue(new Comment(getStringFromBuffer(), false));
+                return RETRY_TOKEN;
             }
             if (in.match('*')) {
                 stringBufferTop = 0;
@@ -1097,8 +1082,8 @@ public class TokenStream {
                     reportTokenError("msg.unterminated.comment", null);
                     return ERROR;
                 }
-                this.string = getStringFromBuffer();
-                return MULTI_LINE_COMMENT;  // `goto retry'
+                addCommentToQueue(new Comment(getStringFromBuffer(), true));
+                return RETRY_TOKEN;  // `goto retry'
             }
 
             // is it a regexp?
@@ -1481,6 +1466,17 @@ public class TokenStream {
         }
     }
 
+    private void addCommentToQueue(Comment comment) {
+        if (headComment == null) {
+            headComment = comment;
+            lastComment = comment;
+        }
+        else {
+            lastComment.setNext(comment);
+            lastComment = comment;
+        }
+    }
+
     public String getSourceName() { return sourceName; }
     public int getLineno() { return in.getLineno(); }
     public int getOp() { return op; }
@@ -1490,6 +1486,15 @@ public class TokenStream {
     public int getOffset() { return in.getOffset(); }
     public int getTokenno() { return tokenno; }
     public boolean eof() { return in.eof(); }
+
+    public Comment getHeadComment() {
+        return headComment;
+    }
+
+    public void releaseComments() {
+        headComment = null;
+        lastComment = null;
+    }
 
     // instance variables
     private LineBuffer in;
@@ -1510,6 +1515,9 @@ public class TokenStream {
     CodePosition lastPosition;
     CodePosition tokenPosition;
     CodePosition lastTokenPosition;
+
+    private Comment headComment;
+    private Comment lastComment;
 
     private int op;
     public boolean treatKeywordAsIdentifier;

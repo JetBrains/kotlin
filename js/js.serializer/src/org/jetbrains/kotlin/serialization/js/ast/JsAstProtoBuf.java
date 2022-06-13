@@ -1343,6 +1343,34 @@ public final class JsAstProtoBuf {
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.JsImportedModule getLocalAlias();
 
     /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> 
+        getBeforeCommentsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    int getBeforeCommentsCount();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> 
+        getAfterCommentsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    int getAfterCommentsCount();
+
+    /**
      * <code>optional int32 simple_name_reference = 22;</code>
      */
     boolean hasSimpleNameReference();
@@ -1629,6 +1657,22 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000010;
               break;
             }
+            case 50: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                beforeComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              beforeComments_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.PARSER, extensionRegistry));
+              break;
+            }
+            case 58: {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+                afterComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>();
+                mutable_bitField0_ |= 0x00000040;
+              }
+              afterComments_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.PARSER, extensionRegistry));
+              break;
+            }
             case 176: {
               expressionCase_ = 22;
               expression_ = input.readInt32();
@@ -1878,6 +1922,12 @@ public final class JsAstProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          beforeComments_ = java.util.Collections.unmodifiableList(beforeComments_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+          afterComments_ = java.util.Collections.unmodifiableList(afterComments_);
+        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -2046,6 +2096,76 @@ public final class JsAstProtoBuf {
      */
     public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.JsImportedModule getLocalAlias() {
       return localAlias_;
+    }
+
+    public static final int BEFORE_COMMENTS_FIELD_NUMBER = 6;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> beforeComments_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getBeforeCommentsList() {
+      return beforeComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder> 
+        getBeforeCommentsOrBuilderList() {
+      return beforeComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    public int getBeforeCommentsCount() {
+      return beforeComments_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index) {
+      return beforeComments_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder getBeforeCommentsOrBuilder(
+        int index) {
+      return beforeComments_.get(index);
+    }
+
+    public static final int AFTER_COMMENTS_FIELD_NUMBER = 7;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> afterComments_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getAfterCommentsList() {
+      return afterComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder> 
+        getAfterCommentsOrBuilderList() {
+      return afterComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    public int getAfterCommentsCount() {
+      return afterComments_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index) {
+      return afterComments_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder getAfterCommentsOrBuilder(
+        int index) {
+      return afterComments_.get(index);
     }
 
     public static final int SIMPLE_NAME_REFERENCE_FIELD_NUMBER = 22;
@@ -2411,6 +2531,8 @@ public final class JsAstProtoBuf {
       synthetic_ = false;
       sideEffects_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.SideEffects.AFFECTS_STATE;
       localAlias_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.JsImportedModule.getDefaultInstance();
+      beforeComments_ = java.util.Collections.emptyList();
+      afterComments_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2426,6 +2548,18 @@ public final class JsAstProtoBuf {
       }
       if (hasLocalAlias()) {
         if (!getLocalAlias().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getBeforeCommentsCount(); i++) {
+        if (!getBeforeComments(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAfterCommentsCount(); i++) {
+        if (!getAfterComments(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -2530,6 +2664,12 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(5, localAlias_);
       }
+      for (int i = 0; i < beforeComments_.size(); i++) {
+        output.writeMessage(6, beforeComments_.get(i));
+      }
+      for (int i = 0; i < afterComments_.size(); i++) {
+        output.writeMessage(7, afterComments_.get(i));
+      }
       if (expressionCase_ == 22) {
         output.writeInt32(
             22, (int)((java.lang.Integer) expression_));
@@ -2625,6 +2765,14 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(5, localAlias_);
+      }
+      for (int i = 0; i < beforeComments_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, beforeComments_.get(i));
+      }
+      for (int i = 0; i < afterComments_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(7, afterComments_.get(i));
       }
       if (expressionCase_ == 22) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -2818,6 +2966,10 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         localAlias_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.JsImportedModule.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000010);
+        beforeComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        afterComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
         expressionCase_ = 0;
         expression_ = null;
         return this;
@@ -2863,6 +3015,16 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000010;
         }
         result.localAlias_ = localAlias_;
+        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+          beforeComments_ = java.util.Collections.unmodifiableList(beforeComments_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.beforeComments_ = beforeComments_;
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          afterComments_ = java.util.Collections.unmodifiableList(afterComments_);
+          bitField0_ = (bitField0_ & ~0x00000040);
+        }
+        result.afterComments_ = afterComments_;
         if (expressionCase_ == 22) {
           result.expression_ = expression_;
         }
@@ -2947,6 +3109,26 @@ public final class JsAstProtoBuf {
         }
         if (other.hasLocalAlias()) {
           mergeLocalAlias(other.getLocalAlias());
+        }
+        if (!other.beforeComments_.isEmpty()) {
+          if (beforeComments_.isEmpty()) {
+            beforeComments_ = other.beforeComments_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureBeforeCommentsIsMutable();
+            beforeComments_.addAll(other.beforeComments_);
+          }
+          
+        }
+        if (!other.afterComments_.isEmpty()) {
+          if (afterComments_.isEmpty()) {
+            afterComments_ = other.afterComments_;
+            bitField0_ = (bitField0_ & ~0x00000040);
+          } else {
+            ensureAfterCommentsIsMutable();
+            afterComments_.addAll(other.afterComments_);
+          }
+          
         }
         switch (other.getExpressionCase()) {
           case SIMPLE_NAME_REFERENCE: {
@@ -3051,6 +3233,18 @@ public final class JsAstProtoBuf {
         }
         if (hasLocalAlias()) {
           if (!getLocalAlias().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getBeforeCommentsCount(); i++) {
+          if (!getBeforeComments(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getAfterCommentsCount(); i++) {
+          if (!getAfterComments(i).isInitialized()) {
             
             return false;
           }
@@ -3385,6 +3579,256 @@ public final class JsAstProtoBuf {
         localAlias_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.JsImportedModule.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> beforeComments_ =
+        java.util.Collections.emptyList();
+      private void ensureBeforeCommentsIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          beforeComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>(beforeComments_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getBeforeCommentsList() {
+        return java.util.Collections.unmodifiableList(beforeComments_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public int getBeforeCommentsCount() {
+        return beforeComments_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index) {
+        return beforeComments_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder setBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder setBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder addBeforeComments(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder addBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder addBeforeComments(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder addBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder addAllBeforeComments(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> values) {
+        ensureBeforeCommentsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, beforeComments_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder clearBeforeComments() {
+        beforeComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 6;</code>
+       */
+      public Builder removeBeforeComments(int index) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.remove(index);
+
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> afterComments_ =
+        java.util.Collections.emptyList();
+      private void ensureAfterCommentsIsMutable() {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+          afterComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>(afterComments_);
+          bitField0_ |= 0x00000040;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getAfterCommentsList() {
+        return java.util.Collections.unmodifiableList(afterComments_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public int getAfterCommentsCount() {
+        return afterComments_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index) {
+        return afterComments_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder setAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder setAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder addAfterComments(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder addAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder addAfterComments(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder addAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder addAllAfterComments(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> values) {
+        ensureAfterCommentsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, afterComments_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder clearAfterComments() {
+        afterComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 7;</code>
+       */
+      public Builder removeAfterComments(int index) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.remove(index);
+
         return this;
       }
 
@@ -10080,6 +10524,531 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.DocCommentTag)
   }
 
+  public interface CommentOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Comment)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required string text = 1;</code>
+     */
+    boolean hasText();
+    /**
+     * <code>required string text = 1;</code>
+     */
+    java.lang.String getText();
+    /**
+     * <code>required string text = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getTextBytes();
+
+    /**
+     * <code>required bool multiline = 2;</code>
+     */
+    boolean hasMultiline();
+    /**
+     * <code>required bool multiline = 2;</code>
+     */
+    boolean getMultiline();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Comment}
+   */
+  public static final class Comment extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.Comment)
+      CommentOrBuilder {
+    // Use Comment.newBuilder() to construct.
+    private Comment(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Comment(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final Comment defaultInstance;
+    public static Comment getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Comment getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private Comment(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              text_ = bs;
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              multiline_ = input.readBool();
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<Comment> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Comment>() {
+      public Comment parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Comment(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Comment> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int TEXT_FIELD_NUMBER = 1;
+    private java.lang.Object text_;
+    /**
+     * <code>required string text = 1;</code>
+     */
+    public boolean hasText() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string text = 1;</code>
+     */
+    public java.lang.String getText() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          text_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string text = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getTextBytes() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        text_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MULTILINE_FIELD_NUMBER = 2;
+    private boolean multiline_;
+    /**
+     * <code>required bool multiline = 2;</code>
+     */
+    public boolean hasMultiline() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required bool multiline = 2;</code>
+     */
+    public boolean getMultiline() {
+      return multiline_;
+    }
+
+    private void initFields() {
+      text_ = "";
+      multiline_ = false;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasText()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasMultiline()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getTextBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBool(2, multiline_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBytesSize(1, getTextBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(2, multiline_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Comment}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.Comment)
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        text_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        multiline_ = false;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment build() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment result = new org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.text_ = text_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.multiline_ = multiline_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.getDefaultInstance()) return this;
+        if (other.hasText()) {
+          bitField0_ |= 0x00000001;
+          text_ = other.text_;
+          
+        }
+        if (other.hasMultiline()) {
+          setMultiline(other.getMultiline());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasText()) {
+          
+          return false;
+        }
+        if (!hasMultiline()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object text_ = "";
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public boolean hasText() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public java.lang.String getText() {
+        java.lang.Object ref = text_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            text_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getTextBytes() {
+        java.lang.Object ref = text_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          text_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public Builder setText(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        text_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public Builder clearText() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        text_ = getDefaultInstance().getText();
+        
+        return this;
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public Builder setTextBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        text_ = value;
+        
+        return this;
+      }
+
+      private boolean multiline_ ;
+      /**
+       * <code>required bool multiline = 2;</code>
+       */
+      public boolean hasMultiline() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required bool multiline = 2;</code>
+       */
+      public boolean getMultiline() {
+        return multiline_;
+      }
+      /**
+       * <code>required bool multiline = 2;</code>
+       */
+      public Builder setMultiline(boolean value) {
+        bitField0_ |= 0x00000002;
+        multiline_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required bool multiline = 2;</code>
+       */
+      public Builder clearMultiline() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        multiline_ = false;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Comment)
+    }
+
+    static {
+      defaultInstance = new Comment(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Comment)
+  }
+
   public interface BinaryOperationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.BinaryOperation)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -15495,6 +16464,34 @@ public final class JsAstProtoBuf {
     boolean getSynthetic();
 
     /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> 
+        getBeforeCommentsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    int getBeforeCommentsCount();
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> 
+        getAfterCommentsList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    int getAfterCommentsCount();
+
+    /**
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Return return_statement = 21;</code>
      */
     boolean hasReturnStatement();
@@ -15745,6 +16742,22 @@ public final class JsAstProtoBuf {
             case 24: {
               bitField0_ |= 0x00000004;
               synthetic_ = input.readBool();
+              break;
+            }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                beforeComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              beforeComments_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.PARSER, extensionRegistry));
+              break;
+            }
+            case 42: {
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                afterComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>();
+                mutable_bitField0_ |= 0x00000010;
+              }
+              afterComments_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.PARSER, extensionRegistry));
               break;
             }
             case 170: {
@@ -16015,6 +17028,12 @@ public final class JsAstProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          beforeComments_ = java.util.Collections.unmodifiableList(beforeComments_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          afterComments_ = java.util.Collections.unmodifiableList(afterComments_);
+        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -16151,6 +17170,76 @@ public final class JsAstProtoBuf {
      */
     public boolean getSynthetic() {
       return synthetic_;
+    }
+
+    public static final int BEFORE_COMMENTS_FIELD_NUMBER = 4;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> beforeComments_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getBeforeCommentsList() {
+      return beforeComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder> 
+        getBeforeCommentsOrBuilderList() {
+      return beforeComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    public int getBeforeCommentsCount() {
+      return beforeComments_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index) {
+      return beforeComments_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder getBeforeCommentsOrBuilder(
+        int index) {
+      return beforeComments_.get(index);
+    }
+
+    public static final int AFTER_COMMENTS_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> afterComments_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getAfterCommentsList() {
+      return afterComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder> 
+        getAfterCommentsOrBuilderList() {
+      return afterComments_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    public int getAfterCommentsCount() {
+      return afterComments_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index) {
+      return afterComments_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.CommentOrBuilder getAfterCommentsOrBuilder(
+        int index) {
+      return afterComments_.get(index);
     }
 
     public static final int RETURN_STATEMENT_FIELD_NUMBER = 21;
@@ -16497,6 +17586,8 @@ public final class JsAstProtoBuf {
       fileId_ = 0;
       location_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Location.getDefaultInstance();
       synthetic_ = false;
+      beforeComments_ = java.util.Collections.emptyList();
+      afterComments_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -16506,6 +17597,18 @@ public final class JsAstProtoBuf {
 
       if (hasLocation()) {
         if (!getLocation().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getBeforeCommentsCount(); i++) {
+        if (!getBeforeComments(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAfterCommentsCount(); i++) {
+        if (!getAfterComments(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -16622,6 +17725,12 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBool(3, synthetic_);
       }
+      for (int i = 0; i < beforeComments_.size(); i++) {
+        output.writeMessage(4, beforeComments_.get(i));
+      }
+      for (int i = 0; i < afterComments_.size(); i++) {
+        output.writeMessage(5, afterComments_.get(i));
+      }
       if (statementCase_ == 21) {
         output.writeMessage(21, (org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Return) statement_);
       }
@@ -16702,6 +17811,14 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeBoolSize(3, synthetic_);
+      }
+      for (int i = 0; i < beforeComments_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, beforeComments_.get(i));
+      }
+      for (int i = 0; i < afterComments_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, afterComments_.get(i));
       }
       if (statementCase_ == 21) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -16883,6 +18000,10 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         synthetic_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
+        beforeComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        afterComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
         statementCase_ = 0;
         statement_ = null;
         return this;
@@ -16920,6 +18041,16 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.synthetic_ = synthetic_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          beforeComments_ = java.util.Collections.unmodifiableList(beforeComments_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.beforeComments_ = beforeComments_;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          afterComments_ = java.util.Collections.unmodifiableList(afterComments_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.afterComments_ = afterComments_;
         if (statementCase_ == 21) {
           result.statement_ = statement_;
         }
@@ -16995,6 +18126,26 @@ public final class JsAstProtoBuf {
         }
         if (other.hasSynthetic()) {
           setSynthetic(other.getSynthetic());
+        }
+        if (!other.beforeComments_.isEmpty()) {
+          if (beforeComments_.isEmpty()) {
+            beforeComments_ = other.beforeComments_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureBeforeCommentsIsMutable();
+            beforeComments_.addAll(other.beforeComments_);
+          }
+          
+        }
+        if (!other.afterComments_.isEmpty()) {
+          if (afterComments_.isEmpty()) {
+            afterComments_ = other.afterComments_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureAfterCommentsIsMutable();
+            afterComments_.addAll(other.afterComments_);
+          }
+          
         }
         switch (other.getStatementCase()) {
           case RETURN_STATEMENT: {
@@ -17089,6 +18240,18 @@ public final class JsAstProtoBuf {
       public final boolean isInitialized() {
         if (hasLocation()) {
           if (!getLocation().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getBeforeCommentsCount(); i++) {
+          if (!getBeforeComments(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getAfterCommentsCount(); i++) {
+          if (!getAfterComments(i).isInitialized()) {
             
             return false;
           }
@@ -17346,6 +18509,256 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         synthetic_ = false;
         
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> beforeComments_ =
+        java.util.Collections.emptyList();
+      private void ensureBeforeCommentsIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          beforeComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>(beforeComments_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getBeforeCommentsList() {
+        return java.util.Collections.unmodifiableList(beforeComments_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public int getBeforeCommentsCount() {
+        return beforeComments_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getBeforeComments(int index) {
+        return beforeComments_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder setBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder setBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder addBeforeComments(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder addBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder addBeforeComments(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder addBeforeComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder addAllBeforeComments(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> values) {
+        ensureBeforeCommentsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, beforeComments_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder clearBeforeComments() {
+        beforeComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment before_comments = 4;</code>
+       */
+      public Builder removeBeforeComments(int index) {
+        ensureBeforeCommentsIsMutable();
+        beforeComments_.remove(index);
+
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> afterComments_ =
+        java.util.Collections.emptyList();
+      private void ensureAfterCommentsIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          afterComments_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment>(afterComments_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> getAfterCommentsList() {
+        return java.util.Collections.unmodifiableList(afterComments_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public int getAfterCommentsCount() {
+        return afterComments_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment getAfterComments(int index) {
+        return afterComments_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder setAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder setAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder addAfterComments(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder addAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder addAfterComments(
+          org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder addAfterComments(
+          int index, org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment.Builder builderForValue) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder addAllAfterComments(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Comment> values) {
+        ensureAfterCommentsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, afterComments_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder clearAfterComments() {
+        afterComments_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Comment after_comments = 5;</code>
+       */
+      public Builder removeAfterComments(int index) {
+        ensureAfterCommentsIsMutable();
+        afterComments_.remove(index);
+
         return this;
       }
 

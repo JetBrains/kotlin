@@ -17,6 +17,7 @@ package com.google.gwt.dev.js;
 
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.CodePosition;
+import com.google.gwt.dev.js.rhino.Comment;
 import com.google.gwt.dev.js.rhino.Node;
 import com.google.gwt.dev.js.rhino.TokenStream;
 import com.intellij.util.SmartList;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsAstMapper {
@@ -44,7 +46,18 @@ public class JsAstMapper {
     }
 
     private JsNode map(Node node) throws JsParserException {
-        return withLocation(mapWithoutLocation(node), node);
+        return withLocation(mapWithComments(node), node);
+    }
+
+    private JsNode mapWithComments(Node node) throws JsParserException {
+        JsNode jsNode = mapWithoutLocation(node);
+
+        if (jsNode != null) {
+            jsNode.setCommentsBeforeNode(mapComments(node.getCommentsBeforeNode()));
+            jsNode.setCommentsAfterNode(mapComments(node.getCommentsAfterNode()));
+        }
+
+        return jsNode;
     }
 
     private JsNode mapWithoutLocation(Node node) throws JsParserException {
@@ -215,12 +228,6 @@ public class JsAstMapper {
 
             case TokenStream.LABEL:
                 return mapLabel(node);
-
-            case TokenStream.SINGLE_LINE_COMMENT:
-                return mapSingleLineComment(node);
-
-            case TokenStream.MULTI_LINE_COMMENT:
-                return mapMultiLineComment(node);
 
             default:
                 int tokenType = node.getType();
@@ -1138,5 +1145,20 @@ public class JsAstMapper {
             }
         }
         return astNode;
+    }
+
+    private List<JsComment> mapComments(Comment comment) {
+        if (comment == null) return null;
+
+        List<JsComment> comments = new LinkedList<>();
+
+        while (comment != null) {
+            String text = comment.getText();
+            JsComment jsComment = comment.isMultiLine() ? new JsMultiLineComment(text) : new JsSingleLineComment(text);
+            comments.add(jsComment);
+            comment = comment.getNext();
+        }
+
+        return comments;
     }
 }
