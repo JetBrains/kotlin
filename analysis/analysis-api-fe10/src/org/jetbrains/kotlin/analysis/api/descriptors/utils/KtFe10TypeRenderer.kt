@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -56,7 +55,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             is FlexibleType -> renderFlexibleType(unwrappedType)
             is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType)
             is ErrorType -> renderErrorType()
-            is NewCapturedType -> renderCapturedType(unwrappedType)
+            is CapturedType -> renderCapturedType(unwrappedType)
             is AbbreviatedType -> renderType(unwrappedType.abbreviation)
             is SimpleType -> {
                 when (val typeConstructor = unwrappedType.constructor) {
@@ -149,7 +148,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
         append(ERROR_TYPE_TEXT)
     }
 
-    private fun KtFe10RendererConsumer.renderCapturedType(type: NewCapturedType) {
+    private fun KtFe10RendererConsumer.renderCapturedType(type: CapturedType) {
         append("CapturedType(")
         renderTypeProjection(type.constructor.projection)
         append(")")

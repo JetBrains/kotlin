@@ -405,13 +405,13 @@ class BuilderInferenceSession(
         return substitutedLowerType to substitutedUpperType
     }
 
-    private fun extractCommonCapturedTypes(a: KotlinType, b: KotlinType): List<NewCapturedType> {
-        val extractedCapturedTypes = mutableSetOf<NewCapturedType>().also { extractCapturedTypesTo(a, it) }
+    private fun extractCommonCapturedTypes(a: KotlinType, b: KotlinType): List<CapturedType> {
+        val extractedCapturedTypes = mutableSetOf<CapturedType>().also { extractCapturedTypesTo(a, it) }
         return extractedCapturedTypes.filter { capturedType -> b.contains { it.constructor === capturedType.constructor } }
     }
 
-    private fun extractCapturedTypesTo(type: KotlinType, to: MutableSet<NewCapturedType>) {
-        if (type is NewCapturedType) {
+    private fun extractCapturedTypesTo(type: KotlinType, to: MutableSet<CapturedType>) {
+        if (type is CapturedType) {
             to.add(type)
         }
         for (typeArgument in type.arguments) {

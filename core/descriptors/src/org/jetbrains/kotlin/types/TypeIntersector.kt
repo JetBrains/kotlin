@@ -88,7 +88,7 @@ object TypeIntersector {
          */
         val correctNullability = inputTypes.mapTo(LinkedHashSet()) {
             if (resultNullability == ResultNullability.NOT_NULL) {
-                (if (it is NewCapturedType) it.withNotNullProjection() else it).makeSimpleTypeDefinitelyNotNullOrNotNull()
+                (if (it is CapturedType) it.withNotNullProjection() else it).makeSimpleTypeDefinitelyNotNullOrNotNull()
             } else it
         }
 

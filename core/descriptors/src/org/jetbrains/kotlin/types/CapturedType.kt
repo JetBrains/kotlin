@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.types.error.ErrorScopeKind
  *     We should set [lowerType] for Q as Number. For this we should use constraint system.
  *
  */
-class NewCapturedType(
+class CapturedType(
     val captureStatus: CaptureStatus,
-    override val constructor: NewCapturedTypeConstructor,
+    override val constructor: CapturedTypeConstructor,
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
     override val attributes: TypeAttributes = TypeAttributes.Empty,
     override val isMarkedNullable: Boolean = false,
@@ -31,7 +31,7 @@ class NewCapturedType(
 ) : SimpleType(), CapturedTypeMarker {
     internal constructor(
         captureStatus: CaptureStatus, lowerType: UnwrappedType?, projection: TypeProjection, typeParameter: TypeParameterDescriptor
-    ) : this(captureStatus, NewCapturedTypeConstructor(projection, typeParameter = typeParameter), lowerType)
+    ) : this(captureStatus, CapturedTypeConstructor(projection, typeParameter = typeParameter), lowerType)
 
     override val arguments: List<TypeProjection> get() = listOf()
 
@@ -39,14 +39,14 @@ class NewCapturedType(
         get() = ErrorUtils.createErrorScope(ErrorScopeKind.CAPTURED_TYPE_SCOPE, throwExceptions = true)
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
-        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)
+        CapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
-        NewCapturedType(captureStatus, constructor, lowerType, attributes, newNullability)
+        CapturedType(captureStatus, constructor, lowerType, attributes, newNullability)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
-        NewCapturedType(
+        CapturedType(
             captureStatus,
             constructor.refine(kotlinTypeRefiner),
             lowerType?.let { kotlinTypeRefiner.refineType(it).unwrap() },

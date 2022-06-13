@@ -329,7 +329,7 @@ fun UnwrappedType.unCapture(): UnwrappedType = when (this) {
 
 fun SimpleType.unCapture(): UnwrappedType {
     if (this is ErrorType) return this
-    if (this is NewCapturedType)
+    if (this is CapturedType)
         return unCaptureTopLevelType()
 
     val newArguments = arguments.map(::unCaptureProjection)
@@ -337,7 +337,7 @@ fun SimpleType.unCapture(): UnwrappedType {
 }
 
 fun unCaptureProjection(projection: TypeProjection): TypeProjection {
-    val unCapturedProjection = projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.projection ?: projection
+    val unCapturedProjection = projection.type.constructor.safeAs<CapturedTypeConstructor>()?.projection ?: projection
     if (unCapturedProjection.isStarProjection || unCapturedProjection.type is ErrorType) return unCapturedProjection
 
     val newArguments = unCapturedProjection.type.arguments.map(::unCaptureProjection)
@@ -366,7 +366,7 @@ fun FlexibleType.unCapture(): FlexibleType {
     return FlexibleTypeImpl(unCapturedLowerBound, unCapturedUpperBound)
 }
 
-private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
+private fun CapturedType.unCaptureTopLevelType(): UnwrappedType {
     if (lowerType != null) return lowerType
 
     val supertypes = constructor.supertypes

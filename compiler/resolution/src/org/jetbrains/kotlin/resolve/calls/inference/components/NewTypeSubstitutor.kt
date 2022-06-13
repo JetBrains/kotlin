@@ -94,15 +94,15 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
 
         val typeConstructor = type.constructor
 
-        if (typeConstructor is NewCapturedTypeConstructor) {
+        if (typeConstructor is CapturedTypeConstructor) {
             if (!runCapturedChecks) return null
 
-            assert(type is NewCapturedType || (type is DefinitelyNotNullType && type.original is NewCapturedType)) {
+            assert(type is CapturedType || (type is DefinitelyNotNullType && type.original is CapturedType)) {
                 // KT-16147
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
                         "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
-            val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
+            val capturedType = if (type is DefinitelyNotNullType) type.original as CapturedType else type as CapturedType
 
             val innerType = capturedType.lowerType ?: capturedType.constructor.projection.type.unwrap()
             val substitutedInnerType = substitute(innerType, keepAnnotation, runCapturedChecks = false)
@@ -111,9 +111,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
 
             if (substitutedInnerType != null) {
                 return if (substitutedInnerType.isCaptured()) substitutedInnerType else {
-                    NewCapturedType(
+                    CapturedType(
                         capturedType.captureStatus,
-                        NewCapturedTypeConstructor(
+                        CapturedTypeConstructor(
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
                             typeParameter = typeConstructor.typeParameter
                         ).also { it.initializeSupertypes(projectionSupertype, boundSupertypes) },

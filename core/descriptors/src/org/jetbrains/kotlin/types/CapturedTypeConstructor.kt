@@ -12,21 +12,17 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-interface CapturedTypeConstructor : CapturedTypeConstructorMarker, TypeConstructor {
-    val projection: TypeProjection
-}
-
-class NewCapturedTypeConstructor(
-    override val projection: TypeProjection,
+class CapturedTypeConstructor(
+    val projection: TypeProjection,
     private var supertypesComputation: (() -> List<UnwrappedType>)? = null,
-    private val original: NewCapturedTypeConstructor? = null,
+    private val original: CapturedTypeConstructor? = null,
     val typeParameter: TypeParameterDescriptor? = null
-) : CapturedTypeConstructor {
+) : CapturedTypeConstructorMarker, TypeConstructor {
 
     constructor(
         projection: TypeProjection,
         supertypes: List<UnwrappedType>,
-        original: NewCapturedTypeConstructor? = null
+        original: CapturedTypeConstructor? = null
     ) : this(projection, { supertypes }, original)
 
     // supertypes from the corresponding type parameter upper bounds
@@ -64,7 +60,7 @@ class NewCapturedTypeConstructor(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
-        NewCapturedTypeConstructor(
+        CapturedTypeConstructor(
             projection.refine(kotlinTypeRefiner),
             supertypesComputation?.let {
                 {
@@ -79,7 +75,7 @@ class NewCapturedTypeConstructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as NewCapturedTypeConstructor
+        other as CapturedTypeConstructor
 
         return (original ?: this) === (other.original ?: other)
     }

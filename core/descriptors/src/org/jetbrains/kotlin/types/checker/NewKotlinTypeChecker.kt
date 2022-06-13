@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype

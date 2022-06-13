@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -235,7 +234,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
         is FlexibleType -> KtFe10FlexibleType(unwrappedType, analysisContext)
         is DefinitelyNotNullType -> KtFe10DefinitelyNotNullType(unwrappedType, analysisContext)
         is ErrorType -> KtFe10ClassErrorType(unwrappedType, analysisContext)
-        is NewCapturedType -> KtFe10NewCapturedType(unwrappedType, analysisContext)
+        is CapturedType -> KtFe10CapturedType(unwrappedType, analysisContext)
         is SimpleType -> {
             val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(unwrappedType)
             if (typeParameterDescriptor != null) {

@@ -296,9 +296,9 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         if (!originalType.getAnnotations().hasAnnotation(StandardNames.FqNames.unsafeVariance)) return substituted;
 
         TypeConstructor constructor = substituted.getType().getConstructor();
-        if (!(constructor instanceof NewCapturedTypeConstructor)) return substituted;
+        if (!(constructor instanceof CapturedTypeConstructor)) return substituted;
 
-        NewCapturedTypeConstructor capturedType = (NewCapturedTypeConstructor) constructor;
+        CapturedTypeConstructor capturedType = (CapturedTypeConstructor) constructor;
         TypeProjection capturedTypeProjection = capturedType.getProjection();
         Variance varianceOfCapturedType = capturedTypeProjection.getProjectionKind();
 

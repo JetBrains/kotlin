@@ -174,7 +174,7 @@ class KotlinTypeRefinerImpl(
 
 private val TypeConstructor.allDependentTypeConstructors: Collection<TypeConstructor>
     get() = when (this) {
-        is NewCapturedTypeConstructor -> {
+        is CapturedTypeConstructor -> {
             supertypes.map { it.constructor } + projection.type.constructor
         }
         else -> supertypes.map { it.constructor }

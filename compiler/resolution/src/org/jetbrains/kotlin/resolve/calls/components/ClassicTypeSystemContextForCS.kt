@@ -46,13 +46,13 @@ class ClassicTypeSystemContextForCS(
         require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)
 
         @Suppress("UNCHECKED_CAST")
-        val newCapturedTypeConstructor = NewCapturedTypeConstructor(
+        val capturedTypeConstructor = CapturedTypeConstructor(
             constructorProjection,
             constructorSupertypes as List<UnwrappedType>
         )
-        return NewCapturedType(
+        return CapturedType(
             captureStatus,
-            newCapturedTypeConstructor,
+            capturedTypeConstructor,
             lowerType = lowerType
         )
     }

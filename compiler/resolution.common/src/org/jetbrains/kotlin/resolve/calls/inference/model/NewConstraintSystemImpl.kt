@@ -293,7 +293,7 @@ class NewConstraintSystemImpl(
     private fun isProperTypeImpl(type: KotlinTypeMarker): Boolean =
         !type.contains {
             val capturedType = it.asSimpleType()?.asCapturedType()
-            // TODO: change NewCapturedType to markered one for FE-IR
+            // TODO: change CapturedType to markered one for FE-IR
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
                 capturedType.typeConstructorProjection().takeUnless { projection -> projection.isStarProjection() }?.getType()
             else

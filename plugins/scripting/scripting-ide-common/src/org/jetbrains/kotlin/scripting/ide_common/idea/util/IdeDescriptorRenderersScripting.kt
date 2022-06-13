@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.ide_common.idea.util
 
 import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.types.CapturedTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns

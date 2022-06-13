@@ -148,7 +148,7 @@ class DefinitelyNotNullType private constructor(
         private fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
             constructor is NewTypeVariableConstructor
                     || constructor.declarationDescriptor is TypeParameterDescriptor
-                    || this is NewCapturedType
+                    || this is CapturedType
                     || this is StubTypeForBuilderInference
 
     }
@@ -186,8 +186,8 @@ fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityF
         ?: makeIntersectionTypeDefinitelyNotNullOrNotNull()
         ?: makeNullableAsSpecified(false)
 
-fun NewCapturedType.withNotNullProjection() =
-    NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
+fun CapturedType.withNotNullProjection() =
+    CapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters: Boolean = false): UnwrappedType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this, useCorrectedNullabilityForTypeParameters)

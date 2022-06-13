@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebug
 import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.types.NewCapturedType
+import org.jetbrains.kotlin.types.CapturedType
 
-internal class KtFe10NewCapturedType(
-    override val type: NewCapturedType,
+internal class KtFe10CapturedType(
+    override val type: CapturedType,
     override val analysisContext: Fe10AnalysisContext
 ) : KtCapturedType(), KtFe10Type {
     override fun asStringForDebugging(): String = withValidityAssertion { type.asStringForDebugging() }

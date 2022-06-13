@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.ArrayList
 
-fun createCapturedType(typeProjection: TypeProjection): NewCapturedType {
-    val newCapturedTypeConstructor = NewCapturedTypeConstructor(
+fun createCapturedType(typeProjection: TypeProjection): CapturedType {
+    val capturedTypeConstructor = CapturedTypeConstructor(
         typeProjection,
         if (typeProjection.isStarProjection) listOf() else listOf(typeProjection.type.unwrap()),
         original = null
     )
-    return NewCapturedType(
+    return CapturedType(
         CaptureStatus.FROM_EXPRESSION,
-        newCapturedTypeConstructor,
+        capturedTypeConstructor,
         lowerType = null
     )
 }
@@ -178,7 +178,7 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
                 null
             }
 
-        NewCapturedType(status, lowerType, projection, parameter).asTypeProjection() // todo optimization: do not create type projection
+        CapturedType(status, lowerType, projection, parameter).asTypeProjection() // todo optimization: do not create type projection
     }
 
     val substitutor = TypeConstructorSubstitution.create(type.constructor, capturedArguments).buildSubstitutor()
@@ -196,7 +196,7 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
             KotlinTypePreparator.Default.prepareType(oldProjection.type.unwrap())
         } else null
 
-        val capturedType = newProjection.type as NewCapturedType
+        val capturedType = newProjection.type as CapturedType
         capturedType.constructor.initializeSupertypes(projectionSupertype, boundSupertypes)
     }
 
@@ -352,5 +352,5 @@ private fun approximateProjection(typeArgument: TypeArgument): ApproximationBoun
 
 // null means that type should be leaved as is
 fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): UnwrappedType? {
-    return if (argumentType is NewCapturedType) null else captureFromExpression(argumentType)
+    return if (argumentType is CapturedType) null else captureFromExpression(argumentType)
 }

@@ -104,7 +104,7 @@ fun CallableDescriptor.isNotSimpleCall(): Boolean =
     typeParameters.isNotEmpty() ||
             (returnType?.let { type ->
                 type.contains {
-                    it is NewCapturedType ||
+                    it is CapturedType ||
                             it.constructor is IntegerLiteralTypeConstructor ||
                             it is DefinitelyNotNullType ||
                             it is StubTypeForBuilderInference

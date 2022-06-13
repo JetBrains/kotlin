@@ -381,7 +381,7 @@ internal class DataFlowInfoImpl private constructor(
 
             for ((value, types) in updatedTypeInfo) {
                 for (type in types) {
-                    if (value.type == type || type.contains { it.constructor is NewCapturedTypeConstructor }) continue
+                    if (value.type == type || type.contains { it.constructor is CapturedTypeConstructor }) continue
                     resultingTypeInfo = resultingTypeInfo.put(value, type)
                 }
             }
