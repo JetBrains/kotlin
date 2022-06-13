@@ -134,6 +134,7 @@ compileKotlin2Js {
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-XXLanguage:+RangeUntilOperator",
         ]
     }
 }
@@ -145,6 +146,7 @@ compileTestKotlin2Js {
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
             "-opt-in=kotlin.ExperimentalStdlibApi",
+            "-XXLanguage:+RangeUntilOperator",
         ]
     }
 }

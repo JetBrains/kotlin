@@ -117,7 +117,8 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-opt-in=kotlin.RequiresOptIn",
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        "-opt-in=kotlin.ExperimentalStdlibApi"
+        "-opt-in=kotlin.ExperimentalStdlibApi",
+        "-XXLanguage:+RangeUntilOperator",
     )
 }
 

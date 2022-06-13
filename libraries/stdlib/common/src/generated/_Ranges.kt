@@ -458,6 +458,8 @@ public operator fun ClosedRange<Double>.contains(value: Float): Boolean {
     return contains(value.toDouble())
 }
 
+// TODO: for OpenEndRange<Double>
+
 /**
  * Checks if the specified [value] belongs to this range.
  */

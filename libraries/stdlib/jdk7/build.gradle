@@ -78,6 +78,7 @@ compileTestKotlin {
             "-opt-in=kotlin.io.path.ExperimentalPathApi",
             "-Xcommon-sources=${fileTree('../test').join(',')}",
             "-Xsuppress-deprecated-jvm-target-warning",
+            "-XXLanguage:+RangeUntilOperator",
     ]
 }
 

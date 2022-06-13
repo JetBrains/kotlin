@@ -313,6 +313,7 @@ konanArtifacts {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+                "-XXLanguage:+RangeUntilOperator",
         )
 
         commonStdlibSrcDirs.forEach { commonSrcDir(it) }

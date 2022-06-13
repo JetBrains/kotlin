@@ -115,6 +115,7 @@ compileKotlin {
                 "-Xuse-14-inline-classes-mangling-scheme",
                 "-Xsuppress-deprecated-jvm-target-warning",
                 "-Xbuiltins-from-sources",
+                "-XXLanguage:+RangeUntilOperator",
         ]
         moduleName = "kotlin-stdlib"
     }
@@ -127,6 +128,7 @@ compileTestKotlin {
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-Xsuppress-deprecated-jvm-target-warning",
+                "-XXLanguage:+RangeUntilOperator",
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
         freeCompilerArgs.remove("-Xno-optimized-callable-references")

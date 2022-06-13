@@ -52,9 +52,18 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 """/**
  * A range of values of type `$t`.
  */
-public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
+@OptIn(ExperimentalStdlibApi::class)
+public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t>, OpenEndRange<$t> {
     override val start: $t get() = first
     override val endInclusive: $t get() = last
+    
+    @SinceKotlin("1.7")
+    @ExperimentalStdlibApi
+    @Deprecated("Can throw an exception when it's impossible to represent the value with $t type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    override val endExclusive: $t get() {
+        if (last == $t.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
+        return last + 1
+    }
 
     override fun contains(value: $t): Boolean = first <= value && value <= last
 
