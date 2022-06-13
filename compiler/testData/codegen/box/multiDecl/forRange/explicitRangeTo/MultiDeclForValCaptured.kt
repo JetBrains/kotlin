@@ -23,7 +23,7 @@ class C(val i : Int) {
 fun doTest(): String {
     var s = ""
     for ((a, b) in C(0) rangeTo C(2)) {
-        s += {"$a:$b;"}()
+        s += {"$a:$b;"}.let { it() }
     }
     return s
 }

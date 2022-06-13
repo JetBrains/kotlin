@@ -3,7 +3,7 @@ class A {
     fun k(k: Int) = k
 }
 
-fun A.foo() = (A::o)(this) + (A::k)(this, 222)
+fun A.foo() = (A::o).let { it(this) } + (A::k).let { it(this, 222) }
 
 fun box(): String {
     val result = A().foo()

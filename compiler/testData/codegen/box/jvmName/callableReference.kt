@@ -6,7 +6,7 @@
 fun foo() = "foo"
 
 fun box(): String {
-    val f = (::foo)()
+    val f = (::foo).let { it() }
     if (f != "foo") return "Fail: $f"
 
     return "OK"

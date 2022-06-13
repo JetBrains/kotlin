@@ -6,7 +6,7 @@ class C {
         {
             "".ext()
             f()
-        }.invoke()
+        }.let { it.invoke() }
 
         object : Runnable {
             public override fun run() {

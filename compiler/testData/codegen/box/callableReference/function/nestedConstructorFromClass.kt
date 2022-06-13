@@ -4,7 +4,7 @@ class A {
         val k = 222
     }
     
-    fun result() = (::Nested)().o + (A::Nested)().k
+    fun result() = (::Nested).let { it() }.o + (A::Nested).let { it() }.k
 }
 
 fun box(): String {

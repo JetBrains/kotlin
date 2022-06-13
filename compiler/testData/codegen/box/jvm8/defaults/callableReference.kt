@@ -12,7 +12,7 @@ interface Test {
         get() = "K"
 
     fun test(): String {
-        return (::foo)() + (::bar)()
+        return (::foo).let { it() } + (::bar).let { it() }
     }
 }
 

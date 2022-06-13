@@ -2,4 +2,4 @@ class A {
     var result = "OK"
 }
 
-fun box() = (::A)().result
+fun box() = (::A).let { it() }.result

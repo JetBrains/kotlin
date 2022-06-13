@@ -9,27 +9,27 @@ object A {
     @JvmStatic val c: String = "OK"
 
     @JvmStatic fun test1() : String {
-        return {b}()
+        return {b}.let { it() }
     }
 
     @JvmStatic fun test2() : String {
-        return {test1()}()
+        return {test1()}.let { it() }
     }
 
     fun test3(): String {
-        return {"1".test5()}()
+        return {"1".test5()}.let { it() }
     }
 
     @JvmStatic fun test4(): String {
-        return {"1".test5()}()
+        return {"1".test5()}.let { it() }
     }
 
     @JvmStatic fun String.test5() : String {
-        return {this + b}()
+        return {this + b}.let { it() }
     }
 
     fun test6(): String {
-        return {c}()
+        return {c}.let { it() }
     }
 }
 

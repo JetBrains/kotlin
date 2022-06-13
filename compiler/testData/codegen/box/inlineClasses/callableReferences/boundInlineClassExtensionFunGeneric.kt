@@ -16,9 +16,9 @@ fun L<Long>.test() = x
 fun S<String>.test() = x
 
 fun box(): String {
-    if (Z(42)::test.invoke() != 42) throw AssertionError()
-    if (L(1234L)::test.invoke() != 1234L) throw AssertionError()
-    if (S("abcdef")::test.invoke() != "abcdef") throw AssertionError()
+    if (Z(42)::test.let { it.invoke() } != 42) throw AssertionError()
+    if (L(1234L)::test.let { it.invoke() } != 1234L) throw AssertionError()
+    if (S("abcdef")::test.let { it.invoke() } != "abcdef") throw AssertionError()
 
     return "OK"
 }

@@ -6,7 +6,7 @@ val o = object : T {
     val a = "OK"
     val f = {
         a
-    }()
+    }.let { it() }
 
     override fun foo() = f
 }

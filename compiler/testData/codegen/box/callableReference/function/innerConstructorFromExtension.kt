@@ -5,7 +5,7 @@ class A {
     }
 }
 
-fun A.foo() = (A::Inner)(this).o + (A::Inner)(this).k
+fun A.foo() = (A::Inner).let { it(this) }.o + (A::Inner).let { it(this) }.k
 
 fun box(): String {
     val result = A().foo()

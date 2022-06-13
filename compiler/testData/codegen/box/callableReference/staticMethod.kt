@@ -13,6 +13,6 @@ class A {
 
 fun box(): String {
     val args = arrayOf("Fail")
-    (A::main)(args)
+    (A::main).let { it(args) }
     return args[0]
 }

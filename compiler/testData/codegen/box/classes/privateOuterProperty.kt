@@ -4,7 +4,7 @@ class C{
     public fun foo() : Int {
         {
             v = v + 1
-        }.invoke()
+        }.let { it.invoke() }
 
         object : Runnable {
             public override fun run() {

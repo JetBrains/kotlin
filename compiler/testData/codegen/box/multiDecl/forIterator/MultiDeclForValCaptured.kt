@@ -7,7 +7,7 @@ class C(val i: Int) {
 fun doTest(l : ArrayList<C>): String {
     var s = ""
     for ((a, b) in l) {
-      s += {"$a:$b;"}()
+      s += {"$a:$b;"}.let { it() }
     }
     return s
 }

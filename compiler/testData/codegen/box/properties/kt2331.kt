@@ -3,7 +3,7 @@ class P {
         private set
 
     fun foo() {
-        ({ x = 4 })()
+        ({ x = 4 }).let { it() }
     }
 }
 

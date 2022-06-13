@@ -7,11 +7,11 @@ class A {
     val aMemberProperty: Int get() = 42.also { result += "A.amp," }
 
     fun test(): String {
-        (::memberFunction)()
-        (::aExtensionFunction)()
+        (::memberFunction).let { it() }
+        (::aExtensionFunction).let { it() }
 
-        (::memberProperty)()
-        (::aExtensionProperty)()
+        (::memberProperty).let { it() }
+        (::aExtensionProperty).let { it() }
 
         return result
     }
@@ -21,17 +21,17 @@ class A {
         val memberProperty: Int get() = 42.also { result += "B.mp," }
 
         fun test(): String {
-            (::aMemberFunction)()
-            (::aExtensionFunction)()
+            (::aMemberFunction).let { it() }
+            (::aExtensionFunction).let { it() }
 
-            (::aMemberProperty)()
-            (::aExtensionProperty)()
+            (::aMemberProperty).let { it() }
+            (::aExtensionProperty).let { it() }
 
-            (::memberFunction)()
-            (::memberProperty)()
+            (::memberFunction).let { it() }
+            (::memberProperty).let { it() }
 
-            (::bExtensionFunction)()
-            (::bExtensionProperty)()
+            (::bExtensionFunction).let { it() }
+            (::bExtensionProperty).let { it() }
 
             return result
         }
@@ -53,28 +53,28 @@ fun box(): String {
 
     result = ""
     with(A()) {
-        (::memberFunction)()
-        (::aExtensionFunction)()
+        (::memberFunction).let { it() }
+        (::aExtensionFunction).let { it() }
 
-        (::memberProperty)()
-        (::aExtensionProperty)()
+        (::memberProperty).let { it() }
+        (::aExtensionProperty).let { it() }
     }
     if (result != "A.mf,A.ef,A.mp,A.ep,") return "Fail $result"
 
     result = ""
     with(A()) {
         with(B()) {
-            (::aMemberFunction)()
-            (::aExtensionFunction)()
+            (::aMemberFunction).let { it() }
+            (::aExtensionFunction).let { it() }
 
-            (::aMemberProperty)()
-            (::aExtensionProperty)()
+            (::aMemberProperty).let { it() }
+            (::aExtensionProperty).let { it() }
 
-            (::memberFunction)()
-            (::memberProperty)()
+            (::memberFunction).let { it() }
+            (::memberProperty).let { it() }
 
-            (::bExtensionFunction)()
-            (::bExtensionProperty)()
+            (::bExtensionFunction).let { it() }
+            (::bExtensionProperty).let { it() }
         }
     }
     if (result != "A.amf,A.ef,A.amp,A.ep,B.mf,B.mp,B.ef,B.ep,") return "Fail $result"

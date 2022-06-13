@@ -4,7 +4,7 @@ fun result(r: String) { result = r }
 object Foo {
     private operator fun String.unaryPlus() = "(" + this + ")"
 
-    fun foo() = { result(+"Stuff") }()
+    fun foo() = { result(+"Stuff") }.let { it() }
 }
 
 fun box(): String {

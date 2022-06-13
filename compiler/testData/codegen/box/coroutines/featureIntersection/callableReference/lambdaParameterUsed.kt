@@ -2,7 +2,7 @@
 
 import kotlin.coroutines.*
 
-fun box(): String = a { (::write)() }
+fun box(): String = a { (::write).let { it() } }
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(Continuation(EmptyCoroutineContext) {
