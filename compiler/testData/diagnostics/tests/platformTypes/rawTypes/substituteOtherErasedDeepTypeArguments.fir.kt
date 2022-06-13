@@ -21,7 +21,7 @@ interface I2<S> {}
 
 // FILE: test.kt
 fun test() {
-    val t = X.E.<!UNRESOLVED_REFERENCE!>t<!>
+    val t = X.E.t
     t
-    t.<!UNRESOLVED_REFERENCE!>id<!> // error before
+    t.id // error before
 }
