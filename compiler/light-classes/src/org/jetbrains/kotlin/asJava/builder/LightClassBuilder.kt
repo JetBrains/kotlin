@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 data class LightClassBuilderResult(val stub: PsiJavaFileStub, val bindingContext: BindingContext, val diagnostics: Diagnostics)
 
 fun buildLightClass(
-        packageFqName: FqName,
-        files: Collection<KtFile>,
-        generateClassFilter: GenerationState.GenerateClassFilter,
-        context: LightClassConstructionContext,
-        generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
+    packageFqName: FqName,
+    files: Collection<KtFile>,
+    generateClassFilter: GenerationState.GenerateClassFilter,
+    context: LightClassConstructionContext,
+    generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
 ): LightClassBuilderResult {
     val project = files.first().project
 
@@ -62,18 +62,16 @@ fun buildLightClass(
 
         stubComputationTrackerInstance(project)?.onStubComputed(javaFileStub, context)
         return LightClassBuilderResult(javaFileStub, context.bindingContext, state.collectedExtraJvmDiagnostics)
-    }
-    catch (e: ProcessCanceledException) {
+    } catch (e: ProcessCanceledException) {
         throw e
-    }
-    catch (e: RuntimeException) {
-        logErrorWithOSInfo(e, packageFqName, null)
+    } catch (e: RuntimeException) {
+        logErrorWithOSInfo(e, packageFqName, files.firstOrNull()?.virtualFile)
         throw e
     }
 }
 
 private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
-    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
+    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /* compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
     val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
@@ -93,11 +91,11 @@ private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>)
 }
 
 private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {
-    val path = if (virtualFile == null) "<null>" else virtualFile.path
+    val path = virtualFile?.path ?: "<null>"
     LOG.error(
-            "Could not generate LightClass for $fqName declared in $path\n" +
-            "System: ${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION} Java Runtime: ${SystemInfo.JAVA_RUNTIME_VERSION}",
-            cause
+        "Could not generate LightClass for $fqName declared in $path\n" +
+                "System: ${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION} Java Runtime: ${SystemInfo.JAVA_RUNTIME_VERSION}",
+        cause,
     )
 }
 
