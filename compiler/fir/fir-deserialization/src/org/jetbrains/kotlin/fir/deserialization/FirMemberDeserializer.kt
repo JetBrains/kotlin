@@ -423,42 +423,23 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
             deprecation = annotations.getDeprecationInfosFromAnnotations(c.session.languageVersionSettings.apiVersion, false)
 
-            contextReceivers.addAll(
-                when {
-                    proto.contextReceiverTypeCount > 0 ->
-                        proto.contextReceiverTypeList.map(::loadContextReceiverFromType)
-                    proto.contextReceiverTypeIdCount > 0 ->
-                        proto.contextReceiverTypeIdList.map(::loadContextReceiverFromTypeId)
-                    else -> emptyList()
-                }
-            )
-
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
             versionRequirementsTable = c.versionRequirementTable
         }
     }
 
-    fun loadContextReceiverFromType(proto: ProtoBuf.Type): FirContextReceiver =
-        loadContextReceiverFromTypeRef(proto.toTypeRef(c))
-
-    fun loadContextReceiverFromTypeId(id: Int): FirContextReceiver = loadContextReceiverFromType(c.typeTable[id])
-
-    private fun loadContextReceiverFromTypeRef(typeRef: FirTypeRef): FirContextReceiver =
-        buildContextReceiver {
+    private fun loadContextReceiver(proto: ProtoBuf.Type): FirContextReceiver {
+        val typeRef = proto.toTypeRef(c)
+        return buildContextReceiver {
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
             this.typeRef = typeRef
         }
-
-    fun createContextReceiversForClass(
-        classProto: ProtoBuf.Class,
-    ): List<FirContextReceiver> = when {
-        classProto.contextReceiverTypeCount > 0 ->
-            classProto.contextReceiverTypeList.map(::loadContextReceiverFromType)
-        classProto.contextReceiverTypeIdCount > 0 ->
-            classProto.contextReceiverTypeIdList.map(::loadContextReceiverFromTypeId)
-        else -> emptyList()
     }
+
+    internal fun createContextReceiversForClass(classProto: ProtoBuf.Class): List<FirContextReceiver> =
+        classProto.contextReceiverTypes(c.typeTable).map(::loadContextReceiver)
 
     fun loadFunction(
         proto: ProtoBuf.Function,
@@ -521,15 +502,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             deprecation = annotations.getDeprecationInfosFromAnnotations(c.session.languageVersionSettings.apiVersion, false)
             this.containerSource = c.containerSource
 
-            contextReceivers.addAll(
-                when {
-                    proto.contextReceiverTypeCount > 0 ->
-                        proto.contextReceiverTypeList.map(::loadContextReceiverFromType)
-                    proto.contextReceiverTypeIdCount > 0 ->
-                        proto.contextReceiverTypeIdList.map(::loadContextReceiverFromTypeId)
-                    else -> emptyList()
-                }
-            )
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
         }.apply {
             versionRequirementsTable = c.versionRequirementTable
         }

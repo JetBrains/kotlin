@@ -60,7 +60,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
                 DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
             },
-            proto.contextReceiverTypeList.map { it.toContextReceiver(local, property) }
+            proto.contextReceiverTypes(c.typeTable).map { it.toContextReceiver(local, property) }
         )
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
@@ -212,7 +212,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
             },
             getDispatchReceiverParameter(),
-            proto.contextReceiverTypeList.mapNotNull { it.toContextReceiver(local, function) },
+            proto.contextReceiverTypes(c.typeTable).mapNotNull { it.toContextReceiver(local, function) },
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),

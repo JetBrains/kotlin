@@ -2674,6 +2674,24 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/contextReceivers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ContextReceivers extends AbstractLoadJavaTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestCompiledKotlin, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInContextReceivers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("SimpleContextReceivers.kt")
+            public void testSimpleContextReceivers() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/contextReceivers/SimpleContextReceivers.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/coroutines")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

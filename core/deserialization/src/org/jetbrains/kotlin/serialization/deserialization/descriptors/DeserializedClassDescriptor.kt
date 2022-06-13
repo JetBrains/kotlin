@@ -146,7 +146,7 @@ class DeserializedClassDescriptor(
 
     override fun getConstructors() = constructors()
 
-    override fun getContextReceivers(): List<ReceiverParameterDescriptor> = classProto.contextReceiverTypeList.map {
+    override fun getContextReceivers(): List<ReceiverParameterDescriptor> = classProto.contextReceiverTypes(c.typeTable).map {
         val contextReceiverType = c.typeDeserializer.type(it)
         ReceiverParameterDescriptorImpl(
             thisAsReceiverParameter,
