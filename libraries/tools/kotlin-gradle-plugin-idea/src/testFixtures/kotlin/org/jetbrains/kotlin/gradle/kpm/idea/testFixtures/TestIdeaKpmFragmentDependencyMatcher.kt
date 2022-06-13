@@ -2,18 +2,18 @@ package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
 
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmFragmentDependency
 
-fun buildIdeaKpmFragmentDependencyMatchers(notation: Any?): List<IdeaKpmFragmentDependencyMatcher> {
+fun buildIdeaKpmFragmentDependencyMatchers(notation: Any?): List<TestIdeaKpmFragmentDependencyMatcher> {
     return when (notation) {
         null -> emptyList()
         is Iterable<*> -> notation.flatMap { buildIdeaKpmFragmentDependencyMatchers(it) }
-        is String -> listOf(IdeaKpmFragmentDependencyMatcher.DependencyLiteral(notation))
-        is Regex -> listOf(IdeaKpmFragmentDependencyMatcher.DependencyRegex(notation))
-        else -> error("Can't build ${IdeaKpmFragmentDependencyMatcher::class.simpleName} from $notation")
+        is String -> listOf(TestIdeaKpmFragmentDependencyMatcher.DependencyLiteral(notation))
+        is Regex -> listOf(TestIdeaKpmFragmentDependencyMatcher.DependencyRegex(notation))
+        else -> error("Can't build ${TestIdeaKpmFragmentDependencyMatcher::class.simpleName} from $notation")
     }
 }
 
-interface IdeaKpmFragmentDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmFragmentDependency> {
-    class DependencyLiteral(private val dependencyLiteral: String) : IdeaKpmFragmentDependencyMatcher {
+interface TestIdeaKpmFragmentDependencyMatcher : TestIdeaKpmDependencyMatcher<IdeaKpmFragmentDependency> {
+    class DependencyLiteral(private val dependencyLiteral: String) : TestIdeaKpmFragmentDependencyMatcher {
         override val description: String = dependencyLiteral
 
         override fun matches(dependency: IdeaKpmFragmentDependency): Boolean {
@@ -21,7 +21,7 @@ interface IdeaKpmFragmentDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmFra
         }
     }
 
-    class DependencyRegex(private val dependencyRegex: Regex) : IdeaKpmFragmentDependencyMatcher {
+    class DependencyRegex(private val dependencyRegex: Regex) : TestIdeaKpmFragmentDependencyMatcher {
         override val description: String = dependencyRegex.pattern
 
         override fun matches(dependency: IdeaKpmFragmentDependency): Boolean {

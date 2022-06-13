@@ -10,22 +10,22 @@ import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmBinaryDependency
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmResolvedBinaryDependency
 import java.io.File
 
-fun buildIdeaKpmBinaryDependencyMatchers(notation: Any?): List<IdeaKpmBinaryDependencyMatcher> {
+fun buildIdeaKpmBinaryDependencyMatchers(notation: Any?): List<TestIdeaKpmBinaryDependencyMatcher> {
     return when (notation) {
         null -> emptyList()
-        is IdeaKpmBinaryDependencyMatcher -> listOf(notation)
-        is String -> listOf(IdeaKpmBinaryDependencyMatcher.Coordinates(parseIdeaKpmBinaryCoordinates(notation)))
-        is Regex -> listOf(IdeaKpmBinaryDependencyMatcher.CoordinatesRegex(notation))
-        is File -> listOf(IdeaKpmBinaryDependencyMatcher.BinaryFile(notation))
+        is TestIdeaKpmBinaryDependencyMatcher -> listOf(notation)
+        is String -> listOf(TestIdeaKpmBinaryDependencyMatcher.Coordinates(parseIdeaKpmBinaryCoordinates(notation)))
+        is Regex -> listOf(TestIdeaKpmBinaryDependencyMatcher.CoordinatesRegex(notation))
+        is File -> listOf(TestIdeaKpmBinaryDependencyMatcher.BinaryFile(notation))
         is Iterable<*> -> notation.flatMap { child -> buildIdeaKpmBinaryDependencyMatchers(child) }
-        else -> error("Can't build ${IdeaKpmBinaryDependencyMatcher::class.simpleName} from $notation")
+        else -> error("Can't build ${TestIdeaKpmBinaryDependencyMatcher::class.simpleName} from $notation")
     }
 }
 
-interface IdeaKpmBinaryDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmBinaryDependency>{
+interface TestIdeaKpmBinaryDependencyMatcher : TestIdeaKpmDependencyMatcher<IdeaKpmBinaryDependency>{
     class Coordinates(
         private val coordinates: IdeaKpmBinaryCoordinates
-    ) : IdeaKpmBinaryDependencyMatcher {
+    ) : TestIdeaKpmBinaryDependencyMatcher {
         override val description: String = coordinates.toString()
 
         override fun matches(dependency: IdeaKpmBinaryDependency): Boolean {
@@ -35,7 +35,7 @@ interface IdeaKpmBinaryDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmBinar
 
     class CoordinatesRegex(
         private val regex: Regex
-    ) : IdeaKpmBinaryDependencyMatcher {
+    ) : TestIdeaKpmBinaryDependencyMatcher {
         override val description: String = regex.pattern
 
         override fun matches(dependency: IdeaKpmBinaryDependency): Boolean {
@@ -45,7 +45,7 @@ interface IdeaKpmBinaryDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmBinar
 
     class BinaryFile(
         private val binaryFile: File
-    ) : IdeaKpmBinaryDependencyMatcher {
+    ) : TestIdeaKpmBinaryDependencyMatcher {
         override val description: String = binaryFile.path
 
         override fun matches(dependency: IdeaKpmBinaryDependency): Boolean {
@@ -55,7 +55,7 @@ interface IdeaKpmBinaryDependencyMatcher : IdeaKpmDependencyMatcher<IdeaKpmBinar
 
     class InDirectory(
         private val parentFile: File
-    ) : IdeaKpmBinaryDependencyMatcher {
+    ) : TestIdeaKpmBinaryDependencyMatcher {
         constructor(parentFilePath: String) : this(File(parentFilePath))
 
         override val description: String = "$parentFile/**"

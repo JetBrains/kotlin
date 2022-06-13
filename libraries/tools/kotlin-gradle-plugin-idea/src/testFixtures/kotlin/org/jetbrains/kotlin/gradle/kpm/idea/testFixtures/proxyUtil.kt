@@ -1,3 +1,5 @@
+package org.jetbrains.kotlin.gradle.kpm.idea.testFixtures
+
 import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter
 
 /*
@@ -11,4 +13,9 @@ inline fun <reified T> createProxyInstance(obj: Any): T {
 
 fun unwrapProxyInstance(obj: Any): Any {
     return ProtocolToModelAdapter().unpack(obj)
+}
+
+inline fun <reified T : Any> Any.copy(): T {
+    val instance = runCatching { unwrapProxyInstance(this) }.getOrElse { this }
+    return T::class.java.cast(instance.serialize().deserialize())
 }

@@ -26,6 +26,12 @@ fun ByteArray.deserialize(classLoader: ClassLoader): Any {
     return objectInputStream.use { it.readObject() }
 }
 
+fun ByteArray.deserialize(): Any {
+    val inputStream = ByteArrayInputStream(this)
+    val objectInputStream = ObjectInputStream(inputStream)
+    return objectInputStream.use { it.readObject() }
+}
+
 class ClassLoaderObjectInputStream(stream: InputStream?, private val classLoader: ClassLoader) : ObjectInputStream(stream) {
     @Throws(IOException::class, ClassNotFoundException::class)
     override fun resolveClass(desc: ObjectStreamClass): Class<*> {

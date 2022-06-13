@@ -26,7 +26,7 @@ fun IdeaKpmModule.assertContainsFragment(name: String): IdeaKpmFragment {
 
 fun IdeaKpmFragment.assertResolvedBinaryDependencies(
     binaryType: String,
-    matchers: Set<IdeaKpmBinaryDependencyMatcher>
+    matchers: Set<TestIdeaKpmBinaryDependencyMatcher>
 ): Set<IdeaKpmResolvedBinaryDependency> {
     val resolvedBinaryDependencies = dependencies
         .mapNotNull { dependency ->
@@ -91,7 +91,7 @@ fun IdeaKpmFragment.assertResolvedBinaryDependencies(
     binaryType: String, vararg matchers: Any?
 ) = assertResolvedBinaryDependencies(binaryType, matchers.toSet())
 
-fun IdeaKpmFragment.assertFragmentDependencies(matchers: Set<IdeaKpmFragmentDependencyMatcher>): Set<IdeaKpmFragmentDependency> {
+fun IdeaKpmFragment.assertFragmentDependencies(matchers: Set<TestIdeaKpmFragmentDependencyMatcher>): Set<IdeaKpmFragmentDependency> {
     val sourceDependencies = dependencies.filterIsInstance<IdeaKpmFragmentDependency>().toSet()
 
     val unexpectedDependencies = sourceDependencies
