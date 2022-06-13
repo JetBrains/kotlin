@@ -170,7 +170,7 @@ void ClearMemoryForTests(MemoryState*);
 // Arena containers are not reference counted, and is explicitly freed when leaving
 // its owner frame.
 // Escape analysis algorithm is the provider of information for decision on exact aux slot
-// selection, and comes from upper bound esteemation of object lifetime.
+// selection, and comes from upper bound estimation of object lifetime.
 //
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
 

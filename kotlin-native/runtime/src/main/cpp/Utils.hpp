@@ -56,7 +56,7 @@ protected:
     ~Pinned() = default;
 };
 
-// A helper that scopley assings a value to a variable. The variable will
+// A helper that scopley assigns a value to a variable. The variable will
 // be set to its original value upon destruction of the AutoReset instance.
 // Note that an AutoReset instance must have a shorter lifetime than
 // the variable it works with to avoid invalid memory access.
