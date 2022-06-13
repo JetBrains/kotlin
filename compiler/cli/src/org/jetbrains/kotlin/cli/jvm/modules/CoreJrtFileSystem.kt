@@ -71,16 +71,6 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
         return handlers[jdkHomePath]?.findFile(pathInImage)
     }
 
-    private fun splitPath(path: String): Pair<String, String> {
-        val separator = path.indexOf(URLUtil.JAR_SEPARATOR)
-        if (separator < 0) {
-            throw IllegalArgumentException("Path in CoreJrtFileSystem must contain a separator: $path")
-        }
-        val localPath = path.substring(0, separator)
-        val pathInJar = path.substring(separator + 2)
-        return Pair(localPath, pathInJar)
-    }
-
     override fun refresh(asynchronous: Boolean) {}
 
     override fun refreshAndFindFileByPath(path: String): VirtualFile? = findFileByPath(path)
@@ -91,6 +81,16 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
 
         fun isModularJdk(jdkHome: File): Boolean =
             loadJrtFsJar(jdkHome) != null
+
+        fun splitPath(path: String): Pair<String, String> {
+            val separator = path.indexOf(URLUtil.JAR_SEPARATOR)
+            if (separator < 0) {
+                throw IllegalArgumentException("Path in CoreJrtFileSystem must contain a separator: $path")
+            }
+            val localPath = path.substring(0, separator)
+            val pathInJar = path.substring(separator + URLUtil.JAR_SEPARATOR.length)
+            return Pair(localPath, pathInJar)
+        }
 
         private val jrtFsClassLoaderCache = ContainerUtil.createConcurrentWeakValueMap<File, URLClassLoader>()
     }
