@@ -1,0 +1,8 @@
+expression: o
+KtType: AAA
+
+KtTypeScope:
+NO_SCOPE
+
+Declaration Scope:
+NO_SCOPE

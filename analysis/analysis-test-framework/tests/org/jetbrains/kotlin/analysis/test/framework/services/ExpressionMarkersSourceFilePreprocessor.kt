@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String): String {
@@ -100,6 +101,15 @@ class ExpressionMarkerProvider : TestService {
             error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
         }
         return elements.single() as KtElement
+    }
+
+    inline fun <reified E : KtElement> getSelectedElementOfType(file: KtFile): E {
+        return when (val selected = getSelectedElement(file)) {
+            is E -> selected
+            else -> generateSequence(selected as PsiElement) { current ->
+                current.children.singleOrNull()?.takeIf { it.textRange == current.textRange }
+            }.firstIsInstance()
+        }
     }
 
     private fun List<PsiElement>.trimWhitespaces(): List<PsiElement> =

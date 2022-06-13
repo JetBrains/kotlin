@@ -1,0 +1,15 @@
+KtTypeScope:
+fun foo(x: kotlin.Int, y: Y): kotlin.collections.Map<kotlin.Int, Y>
+val map: kotlin.collections.Map<kotlin.Int, kotlin.String>
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+
+
+Declaration Scope:
+fun <Y> foo(x: X, y: Y): kotlin.collections.Map<X, Y>
+val map: kotlin.collections.Map<X, kotlin.String>
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+

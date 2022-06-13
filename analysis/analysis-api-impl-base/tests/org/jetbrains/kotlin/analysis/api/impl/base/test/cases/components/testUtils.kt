@@ -12,9 +12,14 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KProperty1
@@ -104,6 +109,35 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         }
     }
 }
+
+internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignature<*>): String = prettyPrint {
+    when (signature) {
+        is KtFunctionLikeSignature -> {
+            append("fun ")
+            signature.receiverType?.let { append('.'); append(it.render()) }
+            append((signature.symbol as KtNamedSymbol).name.asString())
+            printCollection(signature.valueParameters, prefix = "(", postfix = ")") { parameter ->
+                append(parameter.name.asString())
+                append(": ")
+                append(parameter.returnType.render())
+            }
+            append(": ")
+            append(signature.returnType.render())
+        }
+        is KtVariableLikeSignature -> {
+            val symbol = signature.symbol
+            if (symbol is KtVariableSymbol) {
+                append(if (symbol.isVal) "val" else "var")
+                append(" ")
+            }
+            signature.receiverType?.let { append('.'); append(it.render()) }
+            append((symbol as KtNamedSymbol).name.asString())
+            append(": ")
+            append(signature.returnType.render())
+        }
+    }
+}
+
 
 internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
