@@ -1,3 +1,5 @@
+import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
+
 plugins {
     kotlin("jvm")
     `java-test-fixtures`
@@ -29,7 +31,13 @@ dependencies {
     testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 
-publish()
+publish(moduleMetadata = true) {
+    val kotlinLibraryComponent = components[ADHOC_COMPONENT_NAME] as AdhocComponentWithVariants
+    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesApiElements.get()) { mapToMavenScope("compile") }
+    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesRuntimeElements.get()) { mapToMavenScope("runtime") }
+    suppressAllPomMetadataWarnings()
+}
+
 javadocJar()
 sourcesJar()
 
