@@ -54,7 +54,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*;
-import static org.jetbrains.kotlin.types.expressions.ExpressionTypingServices.getNewInferenceLambdaInfo;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingServices.getLambdaInfo;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
@@ -627,13 +627,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             KotlinType resultType
     ) {
         /*
-         * See [resolveTryExpressionWithNewInference] for the definition of tryOutputContext
+         * See [resolveTryExpression] for the definition of tryOutputContext
          * Here was added some others context and another definitions:
          * - catchOutputContextFromNonNothingBranches is a tryOutputContext without information about variables
          *     assigned in non-Nothing catch branches
          * - catchOutputContextFromAllBranches is tryOutputContext that was cut with assignments from all catch branches
          * - tryInfo is resolved KotlinTypeInfo of try branch, so its dataFlowInfo contains all interesting infos from try block
-         *     (e.g. info about s != null from example in function [resolveTryExpressionWithNewInference])
+         *     (e.g. info about s != null from example in function [resolveTryExpression])
          * - finallyTypeInfo is resolved KotlinTypeInfo of finally branch (it's resolved with assumption that we can came into
          *     finally block from any catch block, even if it returns Nothing)
          * - resultDataFlowInfo is dataFlowInfo that leaves after try/catch/finally (if catch or finally is presented)
@@ -765,7 +765,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         KtExpression returnedExpression = expression.getReturnedExpression();
 
-        KotlinResolutionCallbacksImpl.LambdaInfo newInferenceLambdaInfo = null;
+        KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = null;
 
         KotlinType expectedType = NO_EXPECTED_TYPE;
         KotlinType resultType = components.builtIns.getNothingType();
@@ -798,7 +798,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (KtElement) containingFunInfo.getSecond(), context);
-                newInferenceLambdaInfo = getNewInferenceLambdaInfo(context, (KtElement) containingFunInfo.getSecond());
+                lambdaInfo = getLambdaInfo(context, (KtElement) containingFunInfo.getSecond());
             }
             else {
                 // Outside a function
@@ -810,7 +810,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement, context);
-                newInferenceLambdaInfo = getNewInferenceLambdaInfo(context, labelTargetElement);
+                lambdaInfo = getLambdaInfo(context, labelTargetElement);
                 if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
@@ -836,7 +836,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (returnedExpression != null) {
-            if (newInferenceLambdaInfo != null) {
+            if (lambdaInfo != null) {
                 LambdaContextInfo contextInfo;
                 KtExpression deparenthesizedReturnExpression = KtPsiUtil.deparenthesize(returnedExpression);
                 if (deparenthesizedReturnExpression instanceof KtLambdaExpression ||
@@ -850,11 +850,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     );
                 } else {
                     KotlinTypeInfo result = facade
-                            .getTypeInfo(returnedExpression, context.replaceExpectedType(newInferenceLambdaInfo.getExpectedType())
-                                    .replaceContextDependency(newInferenceLambdaInfo.getContextDependency()));
+                            .getTypeInfo(returnedExpression, context.replaceExpectedType(lambdaInfo.getExpectedType())
+                                    .replaceContextDependency(lambdaInfo.getContextDependency()));
                     contextInfo = new LambdaContextInfo(result, null, context.scope, context.trace);
                 }
-                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, contextInfo));
+                lambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, contextInfo));
             }
             else {
                 facade.getTypeInfo(returnedExpression, context.replaceExpectedType(expectedType).replaceContextDependency(INDEPENDENT));
@@ -865,8 +865,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (!noExpectedType(expectedType) && !KotlinBuiltIns.isUnit(expectedType) && !isDontCarePlaceholder(expectedType)) {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
-            if (newInferenceLambdaInfo != null) {
-                newInferenceLambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, null));
+            if (lambdaInfo != null) {
+                lambdaInfo.getReturnStatements().add(new kotlin.Pair<>(expression, null));
             }
         }
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression);

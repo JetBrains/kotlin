@@ -754,27 +754,24 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         CallableDescriptor descriptor = call.getResultingDescriptor();
         if (!(descriptor instanceof FunctionDescriptor)) return;
 
-        recordSamValuesForNewInference(call);
+        recordSamValues(call, descriptor);
         recordSamConstructorIfNeeded(expression, call);
-        recordSamValuesForOldInference(call, descriptor);
     }
 
-    private void recordSamValuesForOldInference(ResolvedCall<?> call, CallableDescriptor descriptor) {
+    private void recordSamValues(@NotNull ResolvedCall<?> call, CallableDescriptor descriptor) {
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
-        if (original == null) return;
 
-        // TODO we can just record SAM_VALUE on relevant value arguments as we do in recordSamValuesForNewInference
-        List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
-        for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
-            ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
-            if (KotlinTypeChecker.DEFAULT.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
-            valueParametersWithSAMConversion.add(valueParameter);
+        if (original != null) {
+            List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
+            for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
+                ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
+                if (KotlinTypeChecker.DEFAULT.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
+                valueParametersWithSAMConversion.add(valueParameter);
+            }
+            writeSamValueForValueParameters(valueParametersWithSAMConversion, call.getValueArgumentsByIndex());
         }
-        writeSamValueForValueParameters(valueParametersWithSAMConversion, call.getValueArgumentsByIndex());
-    }
 
-    private void recordSamValuesForNewInference(@NotNull ResolvedCall<?> call) {
-        AbstractResolvedCall<?> newResolvedCall = getNewResolvedCallForCallWithPossibleSamConversions(call);
+        AbstractResolvedCall<?> newResolvedCall = getResolvedCallForCallWithPossibleSamConversions(call);
         if (!(newResolvedCall instanceof ResolvedCallImpl<?>)) return;
 
         Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = newResolvedCall.getValueArguments();
@@ -797,7 +794,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Nullable
-    private static AbstractResolvedCall<?> getNewResolvedCallForCallWithPossibleSamConversions(@NotNull ResolvedCall<?> call) {
+    private static AbstractResolvedCall<?> getResolvedCallForCallWithPossibleSamConversions(@NotNull ResolvedCall<?> call) {
         if (call instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) call).getFunctionCall();
         }
@@ -935,7 +932,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (resolvedCall != null) recordSamValuesForNewInference(resolvedCall);
+        if (resolvedCall != null) recordSamValues(resolvedCall, (FunctionDescriptor)operationDescriptor);
 
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
@@ -960,7 +957,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (resolvedCall != null) recordSamValuesForNewInference(resolvedCall);
+        if (resolvedCall != null) recordSamValues(resolvedCall, (FunctionDescriptor)operationDescriptor);
 
         boolean isSetter = operationDescriptor.getName().asString().equals("set");
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);

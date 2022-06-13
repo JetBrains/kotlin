@@ -130,7 +130,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                  * Example:
                  *      fun foo(x: Any?) {}
                  *      val x = foo(fun(vararg p: Int) {})
-                 *      In NI, context.expectedType = `Function1<Int, Unit>`
+                 *      context.expectedType = `Function1<Int, Unit>`
                  */
                 val typeToTypeCheck = functionDescriptor.createFunctionType(
                     components.builtIns,
@@ -261,10 +261,10 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
 
-        val newInferenceLambdaInfo = context.trace[BindingContext.TYPE_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
+        val lambdaInfo = context.trace[BindingContext.TYPE_INFERENCE_LAMBDA_INFO, expression.functionLiteral]
 
         // i.e. this lambda isn't call arguments
-        if (newInferenceLambdaInfo == null) {
+        if (lambdaInfo == null) {
             newContext = newContext.replaceContextDependency(ContextDependency.INDEPENDENT)
         }
 
@@ -273,7 +273,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             components.expressionTypingServices.getBlockReturnedType(functionLiteral.bodyExpression!!, COERCION_TO_UNIT, newContext)
         val typeOfBodyExpression = blockReturnedType.type
 
-        newInferenceLambdaInfo?.let {
+        lambdaInfo?.let {
             it.lastExpressionInfo.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
         }
 

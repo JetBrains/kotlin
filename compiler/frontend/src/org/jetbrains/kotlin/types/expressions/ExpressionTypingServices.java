@@ -234,8 +234,8 @@ public class ExpressionTypingServices {
                 expressionTypingComponents.dataFlowValueFactory, inferenceSession
         );
 
-        KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = getNewInferenceLambdaInfo(context, function);
-        context = updateContextFromNILambdaInfo(lambdaInfo, context);
+        KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = getLambdaInfo(context, function);
+        context = updateContextFromLambdaInfo(lambdaInfo, context);
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
         updateLambdaContextInfoForAnonymousFunction(lambdaInfo, typeInfo, context);
 
@@ -262,7 +262,7 @@ public class ExpressionTypingServices {
         contextInfo.setTrace(context.trace);
     }
 
-    private static ExpressionTypingContext updateContextFromNILambdaInfo(
+    private static ExpressionTypingContext updateContextFromLambdaInfo(
             @Nullable KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo,
             @NotNull ExpressionTypingContext context
     ) {
@@ -275,7 +275,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public static KotlinResolutionCallbacksImpl.LambdaInfo getNewInferenceLambdaInfo(
+    public static KotlinResolutionCallbacksImpl.LambdaInfo getLambdaInfo(
             @NotNull ExpressionTypingContext context,
             @NotNull KtElement function
     ) {

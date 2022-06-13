@@ -625,7 +625,7 @@ class DelegatedPropertyResolver(
         inferenceSession: InferenceSession
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
-        val newInferenceSession = DelegateInferenceSession(
+        val delegateInferenceSession = DelegateInferenceSession(
             variableDescriptor, expectedType, psiCallResolver,
             postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
             callComponents, builtIns, inferenceSession
@@ -633,7 +633,7 @@ class DelegatedPropertyResolver(
 
         val receiver = createReceiverForGetSetValueMethods(delegateExpression, delegateType, trace)
         val context = createContextForGetSetValueMethods(
-            variableDescriptor, scopeForDelegate, delegateDataFlow, trace, newInferenceSession
+            variableDescriptor, scopeForDelegate, delegateDataFlow, trace, delegateInferenceSession
         )
 
         fun recordResolvedDelegateOrReportError(
@@ -670,8 +670,8 @@ class DelegatedPropertyResolver(
 
         val call = CallMaker.makeCall(delegateExpression, receiver)
         val resolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
-        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, newInferenceSession, resolutionContext)
-        val resolutionResults = newInferenceSession.resolveCandidates(resolutionCallbacks)
+        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, delegateInferenceSession, resolutionContext)
+        val resolutionResults = delegateInferenceSession.resolveCandidates(resolutionCallbacks)
 
         for ((name, isGet) in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
             val result = resolutionResults.firstOrNull {
