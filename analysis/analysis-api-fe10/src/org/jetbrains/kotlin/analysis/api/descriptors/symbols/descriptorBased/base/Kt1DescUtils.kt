@@ -412,6 +412,9 @@ internal val CallableMemberDescriptor.callableIdIfNotLocal: CallableId?
     get() = calculateCallableId(allowLocal = false)
 
 internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): CallableId? {
+    if (this is SyntheticJavaPropertyDescriptor) {
+        return getMethod.calculateCallableId(allowLocal)?.copy(callableName = name)
+    }
     var current: DeclarationDescriptor = containingDeclaration
 
     val localName = mutableListOf<String>()
@@ -422,6 +425,14 @@ internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): 
             is PackageFragmentDescriptor -> {
                 return CallableId(
                     packageName = current.fqName,
+                    className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
+                    callableName = name,
+                    pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
+                )
+            }
+            is ModuleDescriptor -> {
+                return CallableId(
+                    packageName = FqName.ROOT,
                     className = if (className.isNotEmpty()) FqName.fromSegments(className.asReversed()) else null,
                     callableName = name,
                     pathToLocal = if (localName.isNotEmpty()) FqName.fromSegments(localName.asReversed()) else null
