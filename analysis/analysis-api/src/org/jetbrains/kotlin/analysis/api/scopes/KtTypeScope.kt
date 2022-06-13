@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.scopes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 
-
+/**
+ * A scope inside which use-site type-parameters of callable declarations may be substituted. Such declarations are represented as [KtCallableSignature].
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KtScopeProviderMixIn.getTypeScope
+ * @see KtCallableSignature
+ */
 public interface KtTypeScope : KtScopeLike {
 
     /**
-     * Return a sequence of [KtCallableSymbol] which current scope contain if declaration name matches [nameFilter]
+     * Return a sequence of [KtCallableSignature] which current scope contain if declaration name matches [nameFilter].
      */
     public fun getCallableSignatures(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSignature<*>>
 
