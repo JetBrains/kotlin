@@ -110,6 +110,20 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var bundleId: String? = null
 
     @Argument(
+            value = "-Xbundle-short-version-string",
+            valueDescription = "<short version string>",
+            description = "Bundle short version string to be set in Info.plist of a produced framework"
+    )
+    var bundleShortVersionString: String? = null
+
+    @Argument(
+            value = "-Xbundle-version",
+            valueDescription = "<version>",
+            description = "Bundle version to be set in Info.plist of a produced framework"
+    )
+    var bundleVersion: String? = null
+
+    @Argument(
             value = "-Xcache-directory",
             valueDescription = "<path>",
             description = "Path to the directory containing caches",

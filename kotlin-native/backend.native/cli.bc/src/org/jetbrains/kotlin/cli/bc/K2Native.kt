@@ -382,6 +382,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
                 putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, configuration))
+                putIfNotNull(BUNDLE_SHORT_VERSION_STRING, arguments.bundleShortVersionString)
+                putIfNotNull(BUNDLE_VERSION, arguments.bundleVersion)
                 put(MEANINGFUL_BRIDGE_NAMES, arguments.meaningfulBridgeNames)
                 arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
                 put(PARTIAL_LINKAGE, arguments.partialLinkage)

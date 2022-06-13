@@ -5684,15 +5684,24 @@ if (isAppleTarget(project)) {
 
         framework("Foo") {
             sources = ["framework/bundle_id/main.kt", "framework/bundle_id/lib.kt"]
+            opts = ["-Xbundle-version=FooBundleVersion", "-Xbundle-short-version-string=FooBundleShortVersionString"]
         }
         swiftSources = []
 
         doLast {
             def frameworkPath = "$testOutputFramework/testFrameworkBundleId/$target/Foo.framework"
-            def pattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>Foo</string>"
+            def bundleIdPattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>Foo</string>"
+            def bundleShortVersionStringPattern = ~"<key>CFBundleShortVersionString</key>\n\\s*<string>FooBundleShortVersionString</string>"
+            def bundleVersionPattern = ~"<key>CFBundleVersion</key>\n\\s*<string>FooBundleVersion</string>"
             def plistContent = file("$frameworkPath/Resources/Info.plist").text
-            if (!pattern.matcher(plistContent).find()) {
-                throw new Error("Unexpected Info.plist content:\n$plistContent")
+            if (!bundleIdPattern.matcher(plistContent).find()) {
+                throw new Error("Unexpected CFBundleIdentifier in Info.plist:\n$plistContent")
+            }
+            if (!bundleShortVersionStringPattern.matcher(plistContent).find()) {
+                throw new Error("Unexpected CFBundleShortVersionString in Info.plist:\n$plistContent")
+            }
+            if (!bundleVersionPattern.matcher(plistContent).find()) {
+                throw new Error("Unexpected CFBundleVersion in Info.plist:\n$plistContent")
             }
         }
     }

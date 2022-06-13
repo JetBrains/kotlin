@@ -14,6 +14,10 @@ class KonanConfigKeys {
         // Keep the list lexically sorted.
         val BUNDLE_ID: CompilerConfigurationKey<String>
                 = CompilerConfigurationKey.create("bundle ID to be set in Info.plist of a produced framework")
+        val BUNDLE_SHORT_VERSION_STRING: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create("bundle short version string to be set in Info.plist of the produced framework")
+        val BUNDLE_VERSION: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create("bundle version to be set in Info.plist of the produced framework")
         val CHECK_DEPENDENCIES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("check dependencies and download the missing ones")
         val DEBUG: CompilerConfigurationKey<Boolean>

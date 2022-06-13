@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_SHORT_VERSION_STRING
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_VERSION
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
@@ -164,6 +166,8 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         val file = directory.child("Info.plist")
         val bundleId = guessBundleID(name)
+        val bundleShortVersionString = context.configuration[BUNDLE_SHORT_VERSION_STRING] ?: "1.0"
+        val bundleVersion = context.configuration[BUNDLE_VERSION] ?: "1"
         val platform = properties.platformName()
         val minimumOsVersion = properties.osVersionMin
 
@@ -184,13 +188,13 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                 <key>CFBundlePackageType</key>
                 <string>FMWK</string>
                 <key>CFBundleShortVersionString</key>
-                <string>1.0</string>
+                <string>$bundleShortVersionString</string>
                 <key>CFBundleSupportedPlatforms</key>
                 <array>
                     <string>$platform</string>
                 </array>
                 <key>CFBundleVersion</key>
-                <string>1</string>
+                <string>$bundleVersion</string>
 
         """.trimIndent())
 
