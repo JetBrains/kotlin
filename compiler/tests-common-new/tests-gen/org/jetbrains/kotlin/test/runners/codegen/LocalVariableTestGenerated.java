@@ -44,6 +44,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("directInvoke.kt")
+    public void testDirectInvoke() throws Exception {
+        runTest("compiler/testData/debug/localVariables/directInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("doWhile.kt")
     public void testDoWhile() throws Exception {
         runTest("compiler/testData/debug/localVariables/doWhile.kt");
