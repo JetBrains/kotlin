@@ -69,16 +69,16 @@ digraph incorrectSmartcastToNothing_kt {
                     33 [label="Postponed enter to lambda"];
                     subgraph cluster_10 {
                         color=blue
-                        43 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        45 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_11 {
                             color=blue
-                            44 [label="Enter block"];
-                            45 [label="Access variable R|<local>/it|"];
-                            46 [label="Const: String(main.kts.compiled.cache)"];
-                            47 [label="Function call: R|java/io/File.File|(...)"];
-                            48 [label="Exit block"];
+                            46 [label="Enter block"];
+                            47 [label="Access variable R|<local>/it|"];
+                            48 [label="Const: String(main.kts.compiled.cache)"];
+                            49 [label="Function call: R|java/io/File.File|(...)"];
+                            50 [label="Exit block"];
                         }
-                        49 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        51 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     34 [label="Postponed exit from lambda"];
                     35 [label="Function call: $subj$.R|kotlin/let|<R|java/io/File|, R|java/io/File|>(...)"];
@@ -93,6 +93,8 @@ digraph incorrectSmartcastToNothing_kt {
         }
         42 [label="Exit function test" style="filled" fillcolor=red];
     }
+    43 [label="Merge postponed lambda exits"];
+    44 [label="Merge postponed lambda exits"];
     4 -> {5};
     5 -> {6};
     6 -> {7};
@@ -122,23 +124,25 @@ digraph incorrectSmartcastToNothing_kt {
     30 -> {31};
     31 -> {32 36};
     32 -> {33};
-    33 -> {43};
+    33 -> {45};
     33 -> {34} [color=red];
-    33 -> {43} [style=dashed];
+    33 -> {45} [style=dashed];
     34 -> {35};
     35 -> {36};
-    36 -> {37};
+    36 -> {43 37};
     37 -> {38};
     38 -> {39};
-    39 -> {40};
+    39 -> {44 40};
     40 -> {41};
     41 -> {42};
-    43 -> {44};
-    44 -> {45};
+    43 -> {44} [color=red];
     45 -> {46};
     46 -> {47};
     47 -> {48};
     48 -> {49};
-    49 -> {34} [color=green];
+    49 -> {50};
+    50 -> {51};
+    51 -> {43} [color=red];
+    51 -> {34} [color=green];
 
 }

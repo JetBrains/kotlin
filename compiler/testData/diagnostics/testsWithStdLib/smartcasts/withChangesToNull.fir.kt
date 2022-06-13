@@ -3,8 +3,8 @@ fun foo(y: String?) {
     if (x != null) {
         with(y?.let { x = null; it }) {
             this<!UNSAFE_CALL!>.<!>length
-            x.length
+            x<!UNSAFE_CALL!>.<!>length
         }
-        x.length
+        x<!UNSAFE_CALL!>.<!>length
     }
 }

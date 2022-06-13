@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
@@ -85,7 +86,7 @@ class ControlFlowGraphBuilder {
     private val loopEnterNodes: NodeStorage<FirElement, CFGNode<FirElement>> = NodeStorage()
     private val loopExitNodes: NodeStorage<FirLoop, LoopExitNode> = NodeStorage()
 
-    private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<PostponedLambdaExitNode> = mutableListOf()
+    private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<MutableList<CFGNode<*>>> = mutableListOf()
 
     private val whenExitNodes: NodeStorage<FirWhenExpression, WhenExitNode> = NodeStorage()
     private val whenBranchIndices: Stack<Map<FirWhenBranch, Int>> = stackOf()
@@ -341,7 +342,8 @@ class ControlFlowGraphBuilder {
         val graph = popGraph().also { graph ->
             assert(graph.declaration == anonymousFunction)
             assert(graph.exitNode == exitNode)
-            exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
+            // TODO: disregarding the edges is probably not correct, though this should never find any nodes anyway
+            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.removeAll { it.owner == graph }
         }
 
         val postponedEnterNode = entersToPostponedAnonymousFunctions.remove(symbol)!!
@@ -361,7 +363,7 @@ class ControlFlowGraphBuilder {
         }
 
         if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE && shouldPassFlowFromInplaceLambda.top()) {
-            exitsFromCompletedPostponedAnonymousFunctions += postponedExitNode
+            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(postponedExitNode)
         }
 
         val containingGraph = parentGraphForAnonymousFunctions.remove(symbol) ?: currentGraph
@@ -666,6 +668,7 @@ class ControlFlowGraphBuilder {
         whenBranchIndices.push(whenExpression.branches.mapIndexed { index, branch -> branch to index }.toMap())
         notCompletedFunctionCalls.push(mutableListOf())
         levelCounter++
+        splitDataFlowForPostponedLambdas()
         return node
     }
 
@@ -696,7 +699,9 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitWhenExpression(whenExpression: FirWhenExpression): Pair<WhenExitNode, WhenSyntheticElseBranchNode?> {
+    fun exitWhenExpression(
+        whenExpression: FirWhenExpression
+    ): Triple<WhenExitNode, WhenSyntheticElseBranchNode?, MergePostponedLambdaExitsNode?> {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
@@ -710,10 +715,9 @@ class ControlFlowGraphBuilder {
         } else null
         whenExitNode.updateDeadStatus()
         lastNodes.push(whenExitNode)
-        dropPostponedLambdasForNonDeterministicCalls()
         levelCounter--
         whenBranchIndices.pop()
-        return whenExitNode to syntheticElseBranchNode
+        return Triple(whenExitNode, syntheticElseBranchNode, joinDataFlowFromPostponedLambdasWith(whenExitNode))
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -920,6 +924,7 @@ class ControlFlowGraphBuilder {
             finallyExitNodes.push(createFinallyBlockExitNode(tryExpression))
         }
         notCompletedFunctionCalls.push(mutableListOf())
+        splitDataFlowForPostponedLambdas()
         return enterTryExpressionNode to enterTryNodeBlock
     }
 
@@ -1074,6 +1079,7 @@ class ControlFlowGraphBuilder {
 
     fun enterCall() {
         levelCounter++
+        splitDataFlowForPostponedLambdas()
     }
 
     fun exitIgnoredCall(functionCall: FirFunctionCall) {
@@ -1151,53 +1157,92 @@ class ControlFlowGraphBuilder {
         return node to unionNode
     }
 
-    /*
-     * This is needed for some control flow constructions which are resolved as calls (when and elvis)
-     * For usual call we have invariant that all arguments will be called before function call, but for
-     *   when and elvis only one of arguments will be actually called, so it's illegal to pass data flow info
-     *   from lambda in one of branches
-     */
-    private fun dropPostponedLambdasForNonDeterministicCalls() {
-        exitsFromCompletedPostponedAnonymousFunctions.clear()
+    // Arguments are evaluated left to right, and this is how data flows.
+    //    foo(run { x as String; 1 }, { /* x smartcasted to String */ x.length })
+    //
+    // However, as we need to fix type parameters before analyzing lambdas, this is not always the order of analysis;
+    // if that is possible, multiple lambdas should be considered to be concurrent.
+    //
+    //    foo(run { x as String; genericFunction() }, run { /* x not smartcastable because this lambda may be resolved first */ 1 })
+    //    /* x is smartcastable after the call */
+    //
+    // And if the lambda is conditional, then the data flow needs to be merged with other branches.
+    //
+    //    foo(nullable?.let { x as String; genericFunction() }, run { 1 })
+    //    /* x is not smartcastable */
+    //
+    //    foo(nullable ?: run { x as String; genericFunction() }, run { 1 })
+    //    /* x is not smartcastable */
+    //
+    //    foo(if (condition) run { x as String; genericFunction() } else { genericFunction() }, run { 1 })
+    //    /* x is not smartcastable */
+    //
+    //    foo(if (condition) run { x as String; genericFunction() } else { x as String; genericFunction() }, run { 1 })
+    //    /* x is smartcastable */
+    //
+    // `splitDataFlowForPostponedLambdas` in `enterX` should be matched with either `joinDataFlowFromPostponedLambdasWith`
+    // or `processUnionOfArguments` in `exitX`. The difference is that the latter creates an intersection of all the lambdas'
+    // type information (like after function calls - all casts from all lambdas are valid) while the former is a union
+    // (like after `if` - only the casts from one of the lambdas are valid, and we don't know which).
+    //
+    private fun splitDataFlowForPostponedLambdas() {
+        exitsFromCompletedPostponedAnonymousFunctions.add(mutableListOf())
+    }
+
+    private fun joinDataFlowFromPostponedLambdasWith(node: CFGNode<*>): MergePostponedLambdaExitsNode? {
+        val currentLevelExits = exitsFromCompletedPostponedAnonymousFunctions.popLast()
+        if (currentLevelExits.isEmpty()) {
+            return null
+        }
+
+        val joinNode = createMergePostponedLambdaExitsNode(node.fir)
+        addEdge(node, joinNode)
+        currentLevelExits.joinDataFlowFromPostponedLambdasTo(joinNode)
+        exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(joinNode)
+        return joinNode
+    }
+
+    private fun MutableList<CFGNode<*>>.joinDataFlowFromPostponedLambdasTo(node: CFGNode<*>) {
+        for (exitNode in this) {
+            // To avoid storing nodes from subgraphs in the list, we have PostponedLambdaExitNode instead of the real
+            // exit node of the lambda subgraph. The latter is the previous node of the former. Everything else is
+            // already a join/union node in this graph.
+            val functionExitOrMerge = if (exitNode is PostponedLambdaExitNode) exitNode.lastPreviousNode else exitNode
+            addEdge(functionExitOrMerge, node, preferredKind = EdgeKind.DfgForward)
+        }
     }
 
     private fun processUnionOfArguments(
         node: CFGNode<*>,
         callCompleted: Boolean
     ): Pair<EdgeKind, UnionFunctionCallArgumentsNode?> {
-        if (!shouldPassFlowFromInplaceLambda.top()) return EdgeKind.Forward to null
-        var kind = EdgeKind.Forward
-        if (!callCompleted || exitsFromCompletedPostponedAnonymousFunctions.isEmpty()) {
+        val currentLevelExits = exitsFromCompletedPostponedAnonymousFunctions.popLast()
+        if (currentLevelExits.isEmpty()) {
             return EdgeKind.Forward to null
         }
-        val unionNode by lazy { createUnionFunctionCallArgumentsNode(node.fir) }
-        var hasDirectPreviousNode = false
-        var hasPostponedLambdas = false
 
-        val iterator = exitsFromCompletedPostponedAnonymousFunctions.iterator()
-        val lastPostponedLambdaExitNode = lastNode
-        while (iterator.hasNext()) {
-            val exitNode = iterator.next()
-            if (node.level >= exitNode.level) continue
-            hasPostponedLambdas = true
-            if (exitNode == lastPostponedLambdaExitNode) {
-                popAndAddEdge(node, preferredKind = EdgeKind.CfgForward)
-                kind = EdgeKind.DfgForward
-                hasDirectPreviousNode = true
+        if (!callCompleted || !shouldPassFlowFromInplaceLambda.top()) {
+            currentLevelExits.singleOrNull()?.let {
+                exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(it)
+                return EdgeKind.Forward to null
             }
-            addEdge(exitNode.lastPreviousNode, unionNode, preferredKind = EdgeKind.DfgForward)
-            iterator.remove()
+
+            val unionNode = createUnionFunctionCallArgumentsNode(node.fir)
+            currentLevelExits.joinDataFlowFromPostponedLambdasTo(unionNode)
+            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.addAll(currentLevelExits)
+            return EdgeKind.Forward to unionNode
         }
-        if (hasPostponedLambdas) {
-            if (hasDirectPreviousNode) {
-                lastNodes.push(unionNode)
-            } else {
-                addNewSimpleNode(unionNode)
-            }
-        } else {
-            return EdgeKind.Forward to null
+
+        val unionNode = createUnionFunctionCallArgumentsNode(node.fir)
+        currentLevelExits.joinDataFlowFromPostponedLambdasTo(unionNode)
+
+        if (lastNode in currentLevelExits) {
+            popAndAddEdge(node, preferredKind = EdgeKind.CfgForward)
+            lastNodes.push(unionNode)
+            return EdgeKind.DfgForward to unionNode
         }
-        return Pair(kind, unionNode)
+        addNewSimpleNode(unionNode)
+        return EdgeKind.Forward to unionNode
     }
 
     fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression): WhenSubjectExpressionExitNode {
@@ -1290,19 +1335,21 @@ class ControlFlowGraphBuilder {
         } else {
             addEdge(lastNode, exitNode)
         }
+        splitDataFlowForPostponedLambdas()
         return enterNode
     }
 
-    fun exitSafeCall(): ExitSafeCallNode {
+    fun exitSafeCall(): Pair<ExitSafeCallNode, MergePostponedLambdaExitsNode?> {
         // There will be two paths towards this exit safe call node:
         // one from the node prior to the enclosing safe call, and
         // the other from the selector part in the enclosing safe call.
         // Note that *neither* points to the safe call directly.
         // So, when it comes to the real exit of the enclosing block/function,
         // the safe call bound to this exit safe call node should be retrieved.
-        return exitSafeCallNodes.pop().also {
+        return exitSafeCallNodes.pop().let {
             addNewSimpleNode(it)
             it.updateDeadStatus()
+            it to joinDataFlowFromPostponedLambdasWith(it)
         }
     }
 
@@ -1310,6 +1357,7 @@ class ControlFlowGraphBuilder {
 
     fun enterElvis(elvisExpression: FirElvisExpression) {
         elvisRhsEnterNodes.push(createElvisRhsEnterNode(elvisExpression))
+        splitDataFlowForPostponedLambdas()
     }
 
     fun exitElvisLhs(elvisExpression: FirElvisExpression): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
@@ -1342,12 +1390,11 @@ class ControlFlowGraphBuilder {
         return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
     }
 
-    fun exitElvis(): ElvisExitNode {
+    fun exitElvis(): Pair<ElvisExitNode, MergePostponedLambdaExitsNode?> {
         val exitNode = exitElvisExpressionNodes.pop()
         addNewSimpleNode(exitNode)
         exitNode.updateDeadStatus()
-        dropPostponedLambdasForNonDeterministicCalls()
-        return exitNode
+        return exitNode to joinDataFlowFromPostponedLambdasWith(exitNode)
     }
 
     // ----------------------------------- Contract description -----------------------------------

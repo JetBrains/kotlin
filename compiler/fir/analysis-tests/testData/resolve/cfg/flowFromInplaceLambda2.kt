@@ -21,7 +21,7 @@ fun test2(x: String?) {
     foo(
         id(run { x as String; n() }),
         someCompletedCall(1),
-        run { x.length; 123 } // Bad (resolution order undefined)
+        run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
     x.length // OK (x as String unconditional)
 }
@@ -32,7 +32,7 @@ fun test3(x: String?) {
         if (true) 1 else 2,
         run { x<!UNSAFE_CALL!>.<!>length; 123 } // Bad (resolution order undefined)
     )
-    x<!UNSAFE_CALL!>.<!>length // OK (x as String unconditional)
+    x.length // OK (x as String unconditional)
 }
 
 fun test4(x: String?) {
@@ -41,9 +41,9 @@ fun test4(x: String?) {
         foo(
             id(if (true) run { p = null; n() } else run { n() }),
             1,
-            run { p.length; 123 } // Bad (p = null possible)
+            run { p<!UNSAFE_CALL!>.<!>length; 123 } // Bad (p = null possible)
         )
-        p.length // Bad (p = null possible)
+        p<!UNSAFE_CALL!>.<!>length // Bad (p = null possible)
     }
 }
 
@@ -53,7 +53,7 @@ fun test5(x: String?, y: String?) {
         1,
         run { "" }
     )
-    x.length // Bad (x as String conditional)
+    x<!UNSAFE_CALL!>.<!>length // Bad (x as String conditional)
 }
 
 fun test6(x: String?) {

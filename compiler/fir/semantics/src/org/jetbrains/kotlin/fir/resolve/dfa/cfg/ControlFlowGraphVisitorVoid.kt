@@ -32,6 +32,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode) {
+        visitNode(node)
+    }
+
     // ----------------------------------- Anonymous object -----------------------------------
 
     open fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode) {
@@ -323,6 +327,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitUnionFunctionCallArgumentsNode(node: UnionFunctionCallArgumentsNode, data: Nothing?) {
         visitUnionFunctionCallArgumentsNode(node)
+    }
+
+    final override fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: Nothing?) {
+        visitMergePostponedLambdaExitsNode(node)
     }
 
     // ----------------------------------- Anonymous object -----------------------------------

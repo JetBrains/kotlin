@@ -826,7 +826,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitWhenExpression(whenExpression: FirWhenExpression) {
-        val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
+        val (whenExitNode, syntheticElseNode, mergePostponedLambdaExitsNode) = graphBuilder.exitWhenExpression(whenExpression)
         if (syntheticElseNode != null) {
             val previousConditionExitNode = syntheticElseNode.firstPreviousNode as? WhenBranchConditionExitNode
             // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
@@ -844,6 +844,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow()
+        mergePostponedLambdaExitsNode?.mergeIncomingFlow()
     }
 
     fun exitWhenSubjectExpression(expression: FirWhenSubjectExpression) {
@@ -1022,8 +1023,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitSafeCall(safeCall: FirSafeCallExpression) {
-        val node = graphBuilder.exitSafeCall().mergeIncomingFlow()
-        val flow = node.flow
+        val (node, mergePostponedLambdaExitsNode) = graphBuilder.exitSafeCall()
+        val flow = node.mergeIncomingFlow().flow
+        mergePostponedLambdaExitsNode?.mergeIncomingFlow()
 
         val variable = variableStorage.getOrCreateVariable(flow, safeCall)
         val receiverVariable = when (variable) {
@@ -1462,7 +1464,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitElvis(elvisExpression: FirElvisExpression, isLhsNotNull: Boolean) {
-        val node = graphBuilder.exitElvis().mergeIncomingFlow()
+        val (node, mergePostponedLambdaExitsNode) = graphBuilder.exitElvis()
+        node.mergeIncomingFlow()
+        mergePostponedLambdaExitsNode?.mergeIncomingFlow()
         if (isLhsNotNull) {
             elvisExpression.lhs.propagateNotNullInfo(node)
         }
