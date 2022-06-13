@@ -32,7 +32,7 @@ internal class KtFe10SamResolver(
                 descriptor.containingDeclaration,
                 descriptor,
                 analysisContext.resolveSession.samConversionResolver,
-                JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings)
+                JvmSamConversionOracle
             )
 
             return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)

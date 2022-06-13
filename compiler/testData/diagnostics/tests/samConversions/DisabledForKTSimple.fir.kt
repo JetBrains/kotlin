@@ -1,4 +1,3 @@
-// !LANGUAGE: -SamConversionForKotlinFunctions
 // FILE: Runnable.java
 public interface Runnable {
     void run();

@@ -137,7 +137,6 @@ enum class LanguageFeature(
 
     // In the next block, features can be enabled only along with new inference
     // v----------------------------------------------------------------------v
-    SamConversionForKotlinFunctions(KOTLIN_1_4),
     SamConversionPerArgument(KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(KOTLIN_1_4),
     OverloadResolutionByLambdaReturnType(KOTLIN_1_4),

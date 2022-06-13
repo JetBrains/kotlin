@@ -111,11 +111,11 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
         container.useImpl<JvmTypeSpecificityComparatorDelegate>()
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
-        container.useImpl<JvmSamConversionOracle>()
         container.useImpl<JvmAdditionalClassPartsProvider>()
         container.useImpl<JvmRecordApplicabilityChecker>()
         container.useImpl<JvmPlatformAnnotationFeaturesSupport>()
 
+        container.useInstance(JvmSamConversionOracle)
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// !LANGUAGE: +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: F.java
 public interface F<S> {

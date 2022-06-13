@@ -5,20 +5,12 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.types.KotlinType
 
-class JvmSamConversionOracle(
-    private val languageVersionSettings: LanguageVersionSettings
-) : SamConversionOracle {
-
-    override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) return true
-        return JavaBasedSamConversionOracle.shouldRunSamConversionForFunction(candidate)
-    }
+object JvmSamConversionOracle : SamConversionOracle {
+    override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean = true
 
     override fun isPossibleSamType(samType: KotlinType): Boolean =
         JavaBasedSamConversionOracle.isPossibleSamType(samType)

@@ -32,11 +32,6 @@ object SamTypeConversions : ParameterTypeConversion {
         if (expectedParameterType.isNothing()) return true
         if (expectedParameterType.isFunctionType) return true
 
-        val samConversionOracle = callComponents.samConversionOracle
-        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
-            if (!samConversionOracle.shouldRunSamConversionForFunction(candidate.resolvedCall.candidateDescriptor)) return true
-        }
-
         val declarationDescriptor = expectedParameterType.constructor.declarationDescriptor
         if (declarationDescriptor is ClassDescriptor && declarationDescriptor.isDefinitelyNotSamInterface) return true
 

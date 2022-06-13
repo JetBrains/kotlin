@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// !LANGUAGE: +SamConversionPerArgument
 // FILE: Runnable.java
 public interface Runnable {
     void run();

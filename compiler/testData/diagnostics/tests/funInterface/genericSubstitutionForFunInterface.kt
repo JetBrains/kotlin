@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// !LANGUAGE: +SamConversionPerArgument +FunctionalInterfaceConversion
 // !CHECK_TYPE
 
 fun interface F<S> {

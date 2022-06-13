@@ -31,7 +31,7 @@ class KtFe10DescSamConstructorSymbolPointer(private val classId: ClassId) : KtSy
             samInterface.containingDeclaration,
             samInterface,
             analysisContext.resolveSession.samConversionResolver,
-            JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings)
+            JvmSamConversionOracle
         )
 
         return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)

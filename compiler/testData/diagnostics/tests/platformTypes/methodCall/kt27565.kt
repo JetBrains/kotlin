@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-27565
 
