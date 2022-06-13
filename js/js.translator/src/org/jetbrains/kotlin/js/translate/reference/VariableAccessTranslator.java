@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 
 import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
@@ -41,9 +40,6 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
     ) {
         ResolvedCall<? extends VariableDescriptor> resolvedCall =
                 CallUtilKt.getVariableResolvedCallWithAssert(referenceExpression, context.bindingContext());
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
-        }
         return new VariableAccessTranslator(context, referenceExpression, resolvedCall, receiver);
     }
 

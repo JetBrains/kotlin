@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
@@ -23,7 +23,7 @@ class KtFe10InvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunc
         val resolvedCall = call.getResolvedCall(context)
         return when {
             resolvedCall is VariableAsFunctionResolvedCall ->
-                setOf<DeclarationDescriptor>((resolvedCall as VariableAsFunctionResolvedCall).functionCall.candidateDescriptor)
+                setOf<DeclarationDescriptor>(resolvedCall.functionCall.candidateDescriptor)
             call != null && resolvedCall != null && call.callType == Call.CallType.INVOKE ->
                 setOf<DeclarationDescriptor>(resolvedCall.candidateDescriptor)
             else ->

@@ -147,7 +147,7 @@ class ResolvedAtomCompleter(
 
         val allDiagnostics = diagnostics + diagnosticsFromPartiallyResolvedCall
 
-        val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
+        val resolvedCall: NewAbstractResolvedCall<out CallableDescriptor> = kotlinToResolvedCallTransformer.transformToResolvedCall(
             resolvedCallAtom,
             topLevelTrace,
             resultSubstitutor,
@@ -155,7 +155,7 @@ class ResolvedAtomCompleter(
         )
 
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) {
-            resolvedCall.functionCall as NewAbstractResolvedCall<*>
+            resolvedCall.functionCall
         } else resolvedCall
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
             kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, lastCall)
@@ -202,7 +202,7 @@ class ResolvedAtomCompleter(
     }
 
     private fun checkMissingReceiverSupertypes(
-        resolvedCall: ResolvedCall<CallableDescriptor>,
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
         missingSupertypesResolver: MissingSupertypesResolver,
         trace: BindingTrace
     ) {

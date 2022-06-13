@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitIllegalValueParameterUsageInDefaultArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
 object ValueParameterUsageInDefaultArgumentChecker : DeclarationChecker {
@@ -51,7 +50,7 @@ object ValueParameterUsageInDefaultArgumentChecker : DeclarationChecker {
 
             override fun visitCallExpression(expression: KtCallExpression) {
                 val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall is NewVariableAsFunctionResolvedCallImpl) {
+                if (resolvedCall is VariableAsFunctionResolvedCall) {
                     val calleeExpression = expression.calleeExpression as? KtSimpleNameExpression
                     val descriptor = resolvedCall.variableCall.resultingDescriptor as? ValueParameterDescriptor
                     if (calleeExpression != null && descriptor != null) {

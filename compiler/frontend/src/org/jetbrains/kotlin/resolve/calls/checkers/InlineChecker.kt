@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsidePrivateClass
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -205,7 +205,7 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
 
         val thisCall = expression.getResolvedCall(context.trace.bindingContext)
         if (unwrapVariableAsFunction && thisCall is VariableAsFunctionResolvedCall) {
-            return (thisCall as VariableAsFunctionResolvedCall).variableCall.resultingDescriptor
+            return thisCall.variableCall.resultingDescriptor
         }
         return thisCall?.resultingDescriptor
     }

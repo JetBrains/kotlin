@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -49,7 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
-import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
+import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -66,7 +65,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.NUMBERED_FUNCTION_PREFIX;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.name.SpecialNames.safeIdentifier;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -800,8 +798,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
     @Nullable
     private static NewAbstractResolvedCall<?> getNewResolvedCallForCallWithPossibleSamConversions(@NotNull ResolvedCall<?> call) {
-        if (call instanceof NewVariableAsFunctionResolvedCallImpl) {
-            return ((NewVariableAsFunctionResolvedCallImpl) call).getFunctionCall();
+        if (call instanceof VariableAsFunctionResolvedCall) {
+            return ((VariableAsFunctionResolvedCall) call).getFunctionCall();
         }
         else if (call instanceof NewResolvedCallImpl) {
             return (NewResolvedCallImpl<?>) call;

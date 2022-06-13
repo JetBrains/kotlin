@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -104,7 +104,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
 
         @Suppress("UNCHECKED_CAST")
         return replacedFunctionCall.copy(
-            resolvedCall = NewVariableAsFunctionResolvedCallImpl(
+            resolvedCall = VariableAsFunctionResolvedCall(
                 variableCall as NewAbstractResolvedCall<VariableDescriptor>,
                 replacedFunctionCall.resolvedCall as NewAbstractResolvedCall<FunctionDescriptor>
             )

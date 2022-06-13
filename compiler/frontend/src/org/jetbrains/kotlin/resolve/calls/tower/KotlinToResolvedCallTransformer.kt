@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
@@ -194,7 +193,7 @@ class KotlinToResolvedCallTransformer(
             val diagnosticsForFunctionCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) diagnostics else emptyList()
 
             @Suppress("UNCHECKED_CAST")
-            NewVariableAsFunctionResolvedCallImpl(
+            VariableAsFunctionResolvedCall(
                 createOrGet(psiKotlinCall.variableCall.resolvedCall, trace, resultSubstitutor, diagnosticsForVariableCall),
                 createOrGet(completedCallAtom, trace, resultSubstitutor, diagnosticsForFunctionCall),
             ) as NewAbstractResolvedCall<D>
@@ -456,7 +455,7 @@ class KotlinToResolvedCallTransformer(
 
     internal fun bind(trace: BindingTrace, resolvedCall: ResolvedCall<*>) {
         resolvedCall.safeAs<NewAbstractResolvedCall<*>>()?.let { bind(trace, it) }
-        resolvedCall.safeAs<NewVariableAsFunctionResolvedCallImpl>()?.let { bind(trace, it) }
+        resolvedCall.safeAs<VariableAsFunctionResolvedCall>()?.let { bind(trace, it) }
     }
 
     fun reportDiagnostics(
@@ -466,7 +465,7 @@ class KotlinToResolvedCallTransformer(
         diagnostics: Collection<KotlinCallDiagnostic>,
     ) {
         when (resolvedCall) {
-            is NewVariableAsFunctionResolvedCallImpl -> {
+            is VariableAsFunctionResolvedCall -> {
                 val variableCall = resolvedCall.variableCall
                 val functionCall = resolvedCall.functionCall
 
@@ -489,7 +488,7 @@ class KotlinToResolvedCallTransformer(
         tracing.bindResolvedCall(trace, simpleResolvedCall)
     }
 
-    private fun bind(trace: BindingTrace, variableAsFunction: NewVariableAsFunctionResolvedCallImpl) {
+    private fun bind(trace: BindingTrace, variableAsFunction: VariableAsFunctionResolvedCall) {
         val outerTracingStrategy = variableAsFunction.baseCall.tracingStrategy
         val variableCall = variableAsFunction.variableCall
         val functionCall = variableAsFunction.functionCall
