@@ -28,5 +28,5 @@ fun Project.applyKpmPlugin(configure: KotlinPm20ProjectExtension.() -> Unit = {}
 }
 
 fun KotlinPm20ProjectExtension.buildIdeaKpmProjectModel(): IdeaKpmProject {
-    return ideaKpmProjectModelBuilder.buildIdeaKpmProjectModel()
+    return ideaKpmProjectModelBuilder.buildIdeaKpmProject()
 }

@@ -11,12 +11,19 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
+import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.kpm.idea.proto.toByteArray
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods instead") constructor(
     private val extension: KotlinPm20ProjectExtension,
 ) : ToolingModelBuilder, IdeaKpmProjectModelBuilder {
+
+    private inner class IdeaKpmBuildingContextImpl : IdeaKpmProjectBuildingContext {
+        override val dependencyResolver = createDependencyResolver()
+    }
 
     private data class RegisteredDependencyResolver(
         val resolver: IdeaKpmDependencyResolver,
@@ -39,6 +46,7 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
+    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKpmExtrasSerializationExtension>()
 
     override fun registerDependencyResolver(
         resolver: IdeaKpmDependencyResolver,
@@ -70,20 +78,37 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
         )
     }
 
-    override fun buildIdeaKpmProjectModel(): IdeaKpmProject {
-        return Context().IdeaKpmProject(extension)
+    override fun registerExtrasSerializationExtension(
+        extension: IdeaKpmExtrasSerializationExtension
+    ) {
+        registeredExtrasSerializationExtensions.add(extension)
     }
+
+    override fun buildSerializationContext(): IdeaKpmSerializationContext {
+        return IdeaKpmSerializationContext(
+            logger = extension.project.logger,
+            extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
+        )
+    }
+
+    override fun buildIdeaKpmProject(): IdeaKpmProject =
+        IdeaKpmBuildingContextImpl().IdeaKpmProject(extension)
+
 
     override fun canBuild(modelName: String): Boolean =
-        modelName == IdeaKpmProject::class.java.name
+        modelName == IdeaKpmProject::class.java.name || modelName == IdeaKpmProjectContainer::class.java.name
 
-    override fun buildAll(modelName: String, project: Project): IdeaKpmProject {
+    override fun buildAll(modelName: String, project: Project): Any {
         check(project === extension.project) { "Expected project ${extension.project.path}, found ${project.path}" }
-        return buildIdeaKpmProjectModel()
-    }
 
-    private inner class Context : IdeaKpmProjectModelBuildingContext {
-        override val dependencyResolver = createDependencyResolver()
+        return when (modelName) {
+            IdeaKpmProject::class.java.name -> buildIdeaKpmProject()
+            IdeaKpmProjectContainer::class.java.name -> IdeaKpmProjectContainer(
+                buildIdeaKpmProject().toByteArray(buildSerializationContext())
+            )
+
+            else -> throw IllegalArgumentException("Unexpected modelName: $modelName")
+        }
     }
 
     private fun createDependencyResolver(): IdeaKpmDependencyResolver {

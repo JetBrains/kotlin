@@ -5,6 +5,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.FragmentConstraint
+import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtensionBuilder
+import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
@@ -13,10 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
 import org.jetbrains.kotlin.project.model.KpmVariant
 import java.io.File
 
-internal interface IdeaKpmProjectModelBuildingContext {
+internal interface IdeaKpmProjectBuildingContext {
     val dependencyResolver: IdeaKpmDependencyResolver
 
-    companion object Empty : IdeaKpmProjectModelBuildingContext {
+    companion object Empty : IdeaKpmProjectBuildingContext {
         override val dependencyResolver: IdeaKpmDependencyResolver = IdeaKpmDependencyResolver.Empty
     }
 }
@@ -124,12 +127,19 @@ interface IdeaKpmProjectModelBuilder {
         constraint: FragmentConstraint
     )
 
-    fun buildIdeaKpmProjectModel(): IdeaKpmProject
+    @ExternalVariantApi
+    fun registerExtrasSerializationExtension(
+        extension: IdeaKpmExtrasSerializationExtension
+    )
+
+    fun buildSerializationContext(): IdeaKpmSerializationContext
+
+    fun buildIdeaKpmProject(): IdeaKpmProject
 
     companion object
 }
 
-internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmProject(extension: KotlinPm20ProjectExtension): IdeaKpmProject {
+internal fun IdeaKpmProjectBuildingContext.IdeaKpmProject(extension: KotlinPm20ProjectExtension): IdeaKpmProject {
     return IdeaKpmProjectImpl(
         gradlePluginVersion = extension.project.getKotlinPluginVersion(),
         coreLibrariesVersion = extension.coreLibrariesVersion,
@@ -153,4 +163,11 @@ infix fun FragmentConstraint.and(
 
 operator fun FragmentConstraint.not() = FragmentConstraint { fragment ->
     this@not(fragment).not()
+}
+
+@ExternalVariantApi
+fun IdeaKpmProjectModelBuilder.registerExtrasSerializationExtension(
+    builder: IdeaKpmExtrasSerializationExtensionBuilder.() -> Unit
+) {
+    registerExtrasSerializationExtension(IdeaKpmExtrasSerializationExtension(builder))
 }

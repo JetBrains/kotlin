@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 
-internal fun IdeaKpmProjectModelBuildingContext.IdeaKpmModule(module: GradleKpmModule): IdeaKpmModule {
+internal fun IdeaKpmProjectBuildingContext.IdeaKpmModule(module: GradleKpmModule): IdeaKpmModule {
     return IdeaKpmModuleImpl(
         coordinates = IdeaKpmModuleCoordinates(module),
         fragments = module.fragments.toList().map { fragment -> IdeaKpmFragment(fragment) }
