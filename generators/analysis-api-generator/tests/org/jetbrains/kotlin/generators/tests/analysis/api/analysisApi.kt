@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.AbstractDelegateMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.AbstractFileScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.AbstractMemberScopeByFqNameTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.AbstractSubstitutionOverridesUnwrappingTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
@@ -286,6 +283,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
             test(AbstractSubstitutorBuilderTest::class) {
                 model("substitutorBuilder")
+            }
+        }
+    }
+
+    component("scopeProvider") {
+        group(filter = frontendIs(FrontendKind.Fir)) {
+            test(AbstractTypeScopeTest::class) {
+                model("typeScope")
             }
         }
     }
