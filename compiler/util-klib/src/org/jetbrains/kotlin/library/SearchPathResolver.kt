@@ -193,8 +193,9 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .asSequence()
                 .filterNot { it.name.startsWith('.') }
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_STDLIB_NAME }
-                .map { UnresolvedLibrary(it.absolutePath, null) }
+                .map { LenientUnresolvedLibrary(it.absolutePath, null) }
                 .map { resolve(it, isDefaultLink = true) }
+                .filterNotNull()
         } else emptySequence()
 
     override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> {
