@@ -287,6 +287,7 @@ private val jvmFilePhases = listOf(
     jvmLateinitLowering,
 
     inlineCallableReferenceToLambdaPhase,
+    directInvokeLowering,
     functionReferencePhase,
     suspendLambdaPhase,
     propertyReferenceDelegationPhase,
