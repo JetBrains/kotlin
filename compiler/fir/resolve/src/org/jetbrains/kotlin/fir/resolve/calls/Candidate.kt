@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -40,7 +40,7 @@ class Candidate(
 ) : AbstractCandidate() {
 
     var systemInitialized: Boolean = false
-    val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
+    val system: ConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
         val system = constraintSystemFactory.createConstraintSystem()
         system.addOtherSystem(baseSystem)
         systemInitialized = true

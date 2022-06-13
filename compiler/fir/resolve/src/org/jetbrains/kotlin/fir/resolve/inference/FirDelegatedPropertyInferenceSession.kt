@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.NotFixedTypeToVariableSubstitutorForDelegateInference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.types.model.*
 
@@ -35,7 +35,7 @@ class FirDelegatedPropertyInferenceSession(
     override val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
     private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
-    private lateinit var resultingConstraintSystem: NewConstraintSystem
+    private lateinit var resultingConstraintSystem: ConstraintSystem
 
     private fun ConeKotlinType.containsStubType(): Boolean {
         return this.contains {
@@ -259,7 +259,7 @@ class FirDelegatedPropertyInferenceSession(
         }
     }
 
-    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
+    override fun createSyntheticStubTypes(system: ConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeStubType>()
         registerSyntheticVariables(system.currentStorage())
@@ -279,7 +279,7 @@ class FirDelegatedPropertyInferenceSession(
 
 
     private fun integrateConstraints(
-        commonSystem: NewConstraintSystemImpl,
+        commonSystem: ConstraintSystemImpl,
         storage: ConstraintStorage,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
         shouldIntegrateAllConstraints: Boolean

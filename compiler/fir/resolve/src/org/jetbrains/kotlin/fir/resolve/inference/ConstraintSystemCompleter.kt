@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDependencyInformationProvider
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
@@ -535,4 +535,4 @@ private fun FirResolvable.processCandidateIfApplicable(
     }
 }
 
-val Candidate.csBuilder: NewConstraintSystemImpl get() = system.getBuilder()
+val Candidate.csBuilder: ConstraintSystemImpl get() = system.getBuilder()

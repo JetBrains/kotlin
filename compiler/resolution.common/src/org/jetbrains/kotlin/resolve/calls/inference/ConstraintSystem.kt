@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
-interface NewConstraintSystem {
+interface ConstraintSystem {
     val hasContradiction: Boolean
     val errors: List<ConstraintSystemError>
 

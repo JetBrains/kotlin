@@ -352,7 +352,7 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
 internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     private val KotlinType.isComputed get() = this !is WrappedType || isComputed()
 
-    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositions(
+    private fun ConstraintSystem.isContainedInInvariantOrContravariantPositions(
         variableTypeConstructor: TypeConstructorMarker,
         baseType: KotlinTypeMarker,
         wasOutVariance: Boolean = true
@@ -388,7 +388,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         it.variance != Variance.OUT_VARIANCE && it.typeConstructor == checkingType.originalTypeParameter.typeConstructor
     }
 
-    private fun NewConstraintSystem.getDependentTypeParameters(
+    private fun ConstraintSystem.getDependentTypeParameters(
         variable: TypeConstructorMarker,
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = listOf()
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
@@ -417,7 +417,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         }
     }
 
-    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
+    private fun ConstraintSystem.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
         checkingType: TypeConstructorMarker,
         dependentTypeParameters: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>>
     ): Boolean {
@@ -431,17 +431,17 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         }
     }
 
-    private fun NewConstraintSystem.getTypeParameterByVariable(typeConstructor: TypeConstructorMarker) =
+    private fun ConstraintSystem.getTypeParameterByVariable(typeConstructor: TypeConstructorMarker) =
         (getBuilder().currentStorage().allTypeVariables[typeConstructor] as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.typeConstructor
 
-    private fun NewConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
+    private fun ConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
         getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
             if (it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER) {
                 it.type.typeConstructor(asConstraintSystemCompleterContext())
             } else null
         } ?: emptyList()
 
-    private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsWithDependencies(
+    private fun ConstraintSystem.isContainedInInvariantOrContravariantPositionsWithDependencies(
         variable: TypeVariableFromCallableDescriptor,
         declarationDescriptor: DeclarationDescriptor?
     ): Boolean {

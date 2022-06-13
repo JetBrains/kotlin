@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.resolve.calls.components.candidate
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -52,7 +52,7 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     private val stepCount get() = resolutionSequence.sumOf { it.run { workCount() } }
 
     private var step = 0
-    private var newSystem: NewConstraintSystemImpl? = null
+    private var newSystem: ConstraintSystemImpl? = null
     private var currentApplicability: CandidateApplicability = CandidateApplicability.RESOLVED
 
     abstract fun getSubResolvedAtoms(): List<ResolvedAtom>
@@ -76,7 +76,7 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
         return "$okOrFail($step): $descriptor"
     }
 
-    fun getSystem(): NewConstraintSystem {
+    fun getSystem(): ConstraintSystem {
         if (newSystem == null) {
             newSystem = NewConstraintSystemImpl(
                 callComponents.constraintInjector, callComponents.builtIns,

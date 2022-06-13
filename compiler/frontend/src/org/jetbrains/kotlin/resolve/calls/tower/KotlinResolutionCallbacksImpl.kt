@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
@@ -91,7 +91,7 @@ class KotlinResolutionCallbacksImpl(
         }
     }
 
-    override fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType? {
+    override fun findResultType(constraintSystem: ConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType? {
         val variableWithConstraints = constraintSystem.getBuilder().currentStorage().notFixedTypeVariables[typeVariable] ?: return null
         return resultTypeResolver.findResultType(
             constraintSystem.asConstraintSystemCompleterContext(),
@@ -100,7 +100,7 @@ class KotlinResolutionCallbacksImpl(
         ) as KotlinType
     }
 
-    override fun createEmptyConstraintSystem(): NewConstraintSystem = NewConstraintSystemImpl(
+    override fun createEmptyConstraintSystem(): ConstraintSystem = NewConstraintSystemImpl(
         callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
     )
 

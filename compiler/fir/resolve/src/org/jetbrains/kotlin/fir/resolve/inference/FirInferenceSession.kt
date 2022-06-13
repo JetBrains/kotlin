@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -48,7 +48,7 @@ abstract class FirInferenceSession {
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
     abstract fun clear()
-    abstract fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType>
+    abstract fun createSyntheticStubTypes(system: ConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType>
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
@@ -75,7 +75,7 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
         completionContext: ConstraintSystemCompletionContext
     ) {}
 
-    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
+    override fun createSyntheticStubTypes(system: ConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
 
     override fun clear() {
     }

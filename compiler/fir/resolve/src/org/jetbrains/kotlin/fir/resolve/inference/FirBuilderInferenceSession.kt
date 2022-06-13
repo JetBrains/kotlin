@@ -148,9 +148,9 @@ class FirBuilderInferenceSession(
         return commonSystem.fixedTypeVariables as Map<ConeTypeVariableTypeConstructor, ConeKotlinType>
     }
 
-    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
+    override fun createSyntheticStubTypes(system: ConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
 
-    private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
+    private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<ConstraintSystemImpl, Boolean> {
         val commonSystem = components.session.inferenceComponents.createConstraintSystem()
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
@@ -189,7 +189,7 @@ class FirBuilderInferenceSession(
     }
 
     private fun integrateConstraints(
-        commonSystem: NewConstraintSystemImpl,
+        commonSystem: ConstraintSystemImpl,
         storage: ConstraintStorage,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
         shouldIntegrateAllConstraints: Boolean
@@ -230,7 +230,7 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ChainedSubstitutor {
+    private fun getResultingSubstitutor(commonSystem: ConstraintSystemImpl): ChainedSubstitutor {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         return ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)

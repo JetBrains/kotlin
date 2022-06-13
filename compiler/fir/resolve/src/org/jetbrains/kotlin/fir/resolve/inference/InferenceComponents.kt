@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
@@ -36,12 +36,12 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
 
     val constraintSystemFactory = ConstraintSystemFactory()
 
-    fun createConstraintSystem(): NewConstraintSystemImpl {
-        return NewConstraintSystemImpl(injector, typeContext, session.languageVersionSettings)
+    fun createConstraintSystem(): ConstraintSystemImpl {
+        return ConstraintSystemImpl(injector, typeContext, session.languageVersionSettings)
     }
 
     inner class ConstraintSystemFactory {
-        fun createConstraintSystem(): NewConstraintSystemImpl {
+        fun createConstraintSystem(): ConstraintSystemImpl {
             return this@InferenceComponents.createConstraintSystem()
         }
     }

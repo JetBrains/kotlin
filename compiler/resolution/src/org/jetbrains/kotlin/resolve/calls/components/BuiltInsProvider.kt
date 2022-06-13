@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 
 
 interface BuiltInsProvider {
     val builtIns: KotlinBuiltIns
 }
 
-internal val ConstraintSystemBuilder.builtIns: KotlinBuiltIns get() = ((this as NewConstraintSystemImpl).typeSystemContext as BuiltInsProvider).builtIns
-internal val NewConstraintSystem.builtIns: KotlinBuiltIns get() = ((this as NewConstraintSystemImpl).typeSystemContext as BuiltInsProvider).builtIns
+internal val ConstraintSystemBuilder.builtIns: KotlinBuiltIns get() = ((this as ConstraintSystemImpl).typeSystemContext as BuiltInsProvider).builtIns
+internal val ConstraintSystem.builtIns: KotlinBuiltIns get() = ((this as ConstraintSystemImpl).typeSystemContext as BuiltInsProvider).builtIns

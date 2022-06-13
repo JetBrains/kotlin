@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -37,7 +37,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
         nestedInferenceSessions.add(inferenceSession)
     }
 
-    open fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
+    open fun prepareForCompletion(commonSystem: ConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         // do nothing
     }
 
@@ -88,7 +88,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
             false
         }
 
-        fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
+        fun runCompletion(constraintSystem: ConstraintSystem, atoms: List<ResolvedAtom>) {
             val completionMode = ConstraintSystemCompletionMode.FULL
             kotlinConstraintSystemCompleter.runCompletion(
                 constraintSystem.asConstraintSystemCompleterContext(),
@@ -190,7 +190,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
 
     private fun PartialCallInfo.asCallResolutionResult(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
-        commonSystem: NewConstraintSystem
+        commonSystem: ConstraintSystem
     ): CallResolutionResult {
         val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.errors.asDiagnostics()
         return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem)

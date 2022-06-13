@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.*
 
 abstract class FirInferenceSessionForChainedResolve(
@@ -54,7 +54,7 @@ abstract class FirInferenceSessionForChainedResolve(
     }
 
     protected fun integrateConstraintToSystem(
-        commonSystem: NewConstraintSystemImpl,
+        commonSystem: ConstraintSystemImpl,
         initialConstraint: InitialConstraint,
         callSubstitutor: ConeSubstitutor,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,

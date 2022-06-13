@@ -78,7 +78,7 @@ class BuilderInferenceSession(
     override val parentSession = topLevelCallContext.inferenceSession
 
     override fun shouldRunCompletion(candidate: ResolutionCandidate): Boolean {
-        val system = candidate.getSystem() as NewConstraintSystemImpl
+        val system = candidate.getSystem() as ConstraintSystemImpl
 
         if (system.hasContradiction) return true
 

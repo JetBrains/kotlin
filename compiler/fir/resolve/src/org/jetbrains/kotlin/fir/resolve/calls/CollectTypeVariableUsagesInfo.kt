@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -50,7 +50,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         it.symbol.fir.variance != Variance.OUT_VARIANCE && it.symbol == checkingTypeVariable.typeParameterSymbol
     }
 
-    private fun NewConstraintSystemImpl.isContainedInInvariantOrContravariantPositions(
+    private fun ConstraintSystemImpl.isContainedInInvariantOrContravariantPositions(
         session: FirSession,
         variableTypeConstructor: ConeTypeVariableTypeConstructor,
         baseType: ConeKotlinType,
@@ -89,7 +89,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         return false
     }
 
-    private fun NewConstraintSystemImpl.isContainedInInvariantOrContravariantPositionsWithDependencies(
+    private fun ConstraintSystemImpl.isContainedInInvariantOrContravariantPositionsWithDependencies(
         session: FirSession,
         variable: ConeTypeParameterBasedTypeVariable,
         candidateSymbol: FirCallableSymbol<*>
@@ -122,7 +122,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         }
     }
 
-    private fun NewConstraintSystemImpl.getDependentTypeParameters(
+    private fun ConstraintSystemImpl.getDependentTypeParameters(
         variable: TypeConstructorMarker,
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = listOf()
     ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> {
@@ -151,7 +151,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         }
     }
 
-    private fun NewConstraintSystemImpl.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
+    private fun ConstraintSystemImpl.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
         session: FirSession,
         checkingType: ConeTypeVariableTypeConstructor,
         dependentTypeParameters: List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>>
@@ -166,10 +166,10 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         }
     }
 
-    private fun NewConstraintSystemImpl.getTypeParameterByVariable(typeConstructor: ConeTypeVariableTypeConstructor): TypeConstructorMarker? =
+    private fun ConstraintSystemImpl.getTypeParameterByVariable(typeConstructor: ConeTypeVariableTypeConstructor): TypeConstructorMarker? =
         (getBuilder().currentStorage().allTypeVariables[typeConstructor] as? ConeTypeParameterBasedTypeVariable)?.typeParameterSymbol?.toLookupTag()
 
-    private fun NewConstraintSystemImpl.getDependingOnTypeParameter(variable: TypeConstructorMarker): List<ConeTypeVariableTypeConstructor> =
+    private fun ConstraintSystemImpl.getDependingOnTypeParameter(variable: TypeConstructorMarker): List<ConeTypeVariableTypeConstructor> =
         getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
             if (it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
                 it.type.typeConstructor() as? ConeTypeVariableTypeConstructor

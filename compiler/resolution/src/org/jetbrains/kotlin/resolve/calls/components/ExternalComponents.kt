@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariable
@@ -94,9 +94,9 @@ interface KotlinResolutionCallbacks {
         baseSystem: ConstraintStorage,
     ): Collection<CallableReferenceResolutionCandidate>
 
-    fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType?
+    fun findResultType(constraintSystem: ConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType?
 
-    fun createEmptyConstraintSystem(): NewConstraintSystem
+    fun createEmptyConstraintSystem(): ConstraintSystem
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 

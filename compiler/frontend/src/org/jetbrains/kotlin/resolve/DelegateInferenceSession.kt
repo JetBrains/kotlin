@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -52,7 +52,7 @@ class DelegateInferenceSession(
         return builderInferenceSessions + delegatedPropertyInferenceSessions.map { it.getNestedBuilderInferenceSessions() }.flatten()
     }
 
-    override fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
+    override fun prepareForCompletion(commonSystem: ConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
         val csBuilder = commonSystem.getBuilder()
         for (callInfo in resolvedCallsInfo) {
             val resultAtom = callInfo.callResolutionResult.resultCallAtom

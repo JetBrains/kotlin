@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
@@ -72,7 +72,7 @@ fun TypeSystemInferenceExtensionContext.extractTypeForGivenRecursiveTypeParamete
     return null
 }
 
-fun NewConstraintSystemImpl.registerTypeVariableIfNotPresent(
+fun ConstraintSystemImpl.registerTypeVariableIfNotPresent(
     typeVariable: TypeVariableMarker
 ) {
     val builder = getBuilder()

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjecto
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariable
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
@@ -119,6 +119,6 @@ fun NewConstraintSystemImpl(
     builtIns: KotlinBuiltIns,
     kotlinTypeRefiner: KotlinTypeRefiner,
     languageVersionSettings: LanguageVersionSettings
-): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner), languageVersionSettings)
+): ConstraintSystemImpl {
+    return ConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner), languageVersionSettings)
 }

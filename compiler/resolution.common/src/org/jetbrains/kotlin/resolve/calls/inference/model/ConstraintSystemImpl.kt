@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import kotlin.math.max
 
-class NewConstraintSystemImpl(
+class ConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
     val typeSystemContext: TypeSystemInferenceExtensionContext,
     private val languageVersionSettings: LanguageVersionSettings,
 ) : ConstraintSystemCompletionContext(),
     TypeSystemInferenceExtensionContext by typeSystemContext,
-    NewConstraintSystem,
+    ConstraintSystem,
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
@@ -386,7 +386,7 @@ class NewConstraintSystemImpl(
         return forkPointData.any { constraintSetForSingleFork ->
             runTransaction {
                 constraintInjector.processForkConstraints(
-                    this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+                    this@ConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
                     constraintSetForSingleFork,
                     position,
                 )
@@ -416,7 +416,7 @@ class NewConstraintSystemImpl(
 
         checkInferredEmptyIntersection(variable, resultType)
 
-        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
+        constraintInjector.addInitialEqualityConstraint(this@ConstraintSystemImpl, variable.defaultType(), resultType, position)
 
         /*
          * Checking missed constraint can introduce new type mismatch warnings.
@@ -476,7 +476,7 @@ class NewConstraintSystemImpl(
     }
 
     private fun checkMissedConstraints() {
-        val constraintSystem = this@NewConstraintSystemImpl
+        val constraintSystem = this@ConstraintSystemImpl
         val errorsByMissedConstraints = buildList {
             runTransaction {
                 for ((position, constraints) in storage.missedConstraints) {
