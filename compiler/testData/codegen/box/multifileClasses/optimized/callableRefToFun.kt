@@ -6,7 +6,7 @@
 
 import a.*
 
-fun box(): String = (::ok)()
+fun box(): String = (::ok).let { it() }
 
 // FILE: part1.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]

@@ -3,7 +3,7 @@
 
 object Test {
 
-    fun test() = { createWildcard("OK") }()
+    fun test() = { createWildcard("OK") }.let { it() }
 
     @JvmStatic
     private fun createWildcard(s: String) = Type<Any>(s).x

@@ -4,7 +4,7 @@
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class R<T: Long>(private val r: T) {
-    fun test() = { ok() }()
+    fun test() = { ok() }.let { it() }
 
     private fun ok() = "OK"
 }

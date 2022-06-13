@@ -81,7 +81,7 @@ fun testLambdaResultExpression_throws(a: A) {
             A.V1 -> 1
             // else -> throw
         }
-    }()
+    }.let { it() }
 }
 
 // JVM_TEMPLATES

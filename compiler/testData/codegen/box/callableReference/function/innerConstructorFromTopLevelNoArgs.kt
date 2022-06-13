@@ -6,7 +6,7 @@ class A {
 }
 
 fun box(): String {
-    val result = (A::Inner)((::A)()).o + (A::Inner)(A()).k
+    val result = (A::Inner).let { c -> c((::A).let { it() }).o } + (A::Inner).let { it(A()) }.k
     if (result != 333) return "Fail $result"
     return "OK"
 }

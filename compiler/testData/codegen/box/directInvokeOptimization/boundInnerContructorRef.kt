@@ -1,6 +1,6 @@
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 Function(^.)*.invoke
+// 0 invoke
 
 class Outer (val x: String) {
     inner class Inner(val y: String) {

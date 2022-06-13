@@ -18,9 +18,9 @@ value class S<T: String>(val x: T) {
 }
 
 fun box(): String {
-    if (Z<Int>::test.invoke(Z(42)) != 42) throw AssertionError()
-    if (L<Long>::test.invoke(L(1234L)) != 1234L) throw AssertionError()
-    if (S<String>::test.invoke(S("abcdef")) != "abcdef") throw AssertionError()
+    if (Z<Int>::test.let { it.invoke(Z(42)) } != 42) throw AssertionError()
+    if (L<Long>::test.let { it.invoke(L(1234L)) } != 1234L) throw AssertionError()
+    if (S<String>::test.let { it.invoke(S("abcdef")) } != "abcdef") throw AssertionError()
 
     return "OK"
 }

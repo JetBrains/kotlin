@@ -6,7 +6,7 @@ fun foo(o: Int, k: Int) = o + k
 
 class A
 
-fun A.bar() = (::foo)(111, 222)
+fun A.bar() = (::foo).let { it(111, 222) }
 
 fun box(): String {
     val result = A().bar()

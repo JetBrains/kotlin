@@ -67,7 +67,7 @@ private fun testDelegateStr() {
         localD = 1234
         if (localD != 1234) throw AssertionError()
         if (backing != 1234) throw AssertionError()
-    }()
+    }.let { it() }
 }
 
 private fun testDelegateInt() {
@@ -79,7 +79,7 @@ private fun testDelegateInt() {
         localD = 1234
         if (localD != 1234) throw AssertionError()
         if (backing != 1234) throw AssertionError()
-    }()
+    }.let { it() }
 }
 
 private fun testDelegateLong() {
@@ -91,5 +91,5 @@ private fun testDelegateLong() {
         localD = 1234
         if (localD != 1234) throw AssertionError()
         if (backing != 1234) throw AssertionError()
-    }()
+    }.let { it() }
 }

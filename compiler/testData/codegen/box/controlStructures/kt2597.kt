@@ -5,6 +5,6 @@ fun box(): String {
             i++
         } else {
         }
-    }()
+    }.let { it() }
     return "OK"
 }

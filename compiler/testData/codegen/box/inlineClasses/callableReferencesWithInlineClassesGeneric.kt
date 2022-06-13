@@ -14,7 +14,7 @@ fun box(): String {
     val result1 = function1.invoke(Foo("+argument+"), 42)
     if (result1.x != "original+argument+42") return "Fail first"
 
-    val result2 = Foo<String>::bar.invoke(Foo("explicit"), Foo("+argument2+"), 10)
+    val result2 = Foo<String>::bar.let { it.invoke(Foo("explicit"), Foo("+argument2+"), 10) }
     if (result2.x != "explicit+argument2+10") return "Fail second"
 
     return "OK"

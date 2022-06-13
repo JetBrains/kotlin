@@ -5,4 +5,4 @@ class A {
     }
 }
 
-fun box() = (A.Companion::ok)()
+fun box() = (A.Companion::ok).let { it() }

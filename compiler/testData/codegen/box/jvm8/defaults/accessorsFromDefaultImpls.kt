@@ -14,7 +14,7 @@ interface Test {
     }
 
     fun call(): String {
-        return { foo + bar()} ()
+        return { foo + bar() }.let { it() }
     }
 }
 

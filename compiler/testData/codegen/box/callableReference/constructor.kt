@@ -10,6 +10,7 @@ class A {
 // FILE: 1.kt
 
 fun box(): String {
-    (::A)(0.0, 0)
+    val constructor = ::A
+    constructor(0.0, 0)
     return "OK"
 }

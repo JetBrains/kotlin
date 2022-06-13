@@ -29,7 +29,7 @@ inline suspend fun K(block: suspend (String) -> String) = block("K")
 suspend fun ok(o: String): String {
     return o + run {
         if (o != "K") {
-            (::ok)("K")
+            (::ok).let { it("K") }
         } else ""
     }
 }

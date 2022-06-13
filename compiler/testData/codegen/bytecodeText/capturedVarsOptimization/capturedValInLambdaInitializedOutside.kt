@@ -3,7 +3,7 @@ fun box(): String {
     x = "OK"
     {
         val y = x
-    }()
+    }.let { it() }
     return x
 }
 

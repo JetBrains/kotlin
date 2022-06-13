@@ -3,14 +3,14 @@ class Foo {
         lateinit var x: String
 
         fun test() {
-            consume({ x }());
-            { consume(x) }()
+            consume({ x }.let { it() });
+            { consume(x) }.let { it() }
         }
     }
 
     fun test2() {
-        consume({ x }());
-        { consume(x) }()
+        consume({ x }.let { it() });
+        { consume(x) }.let { it() }
     }
 }
 

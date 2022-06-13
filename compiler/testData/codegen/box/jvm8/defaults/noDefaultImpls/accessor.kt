@@ -21,7 +21,7 @@ interface Test {
         return {
             foo = "O"
             foo + bar()
-        } ()
+        }.let { it() }
     }
 }
 

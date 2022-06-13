@@ -24,5 +24,5 @@ fun box(): String {
     return {
         prop = "O"
         prop + test()
-    }()
+    }.let { it() }
 }
