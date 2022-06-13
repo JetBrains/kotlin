@@ -30142,6 +30142,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("capturedByNested.kt")
+                public void testCapturedByNested() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedByNested.kt");
+                }
+
+                @Test
                 @TestMetadata("doWhileWithMiddleBreak.kt")
                 public void testDoWhileWithMiddleBreak() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/doWhileWithMiddleBreak.kt");
