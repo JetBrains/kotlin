@@ -1,7 +1,8 @@
 # kotlinx-metadata-jvm
 
-## Next
+## 0.5.0
 
+- Update to Kotlin 1.7 with metadata version 1.7, support reading/writing metadata of version 1.8 which will be used in Kotlin 1.8.
 - kotlinx-metadata-jvm can no longer be used on JVM 1.6, and now requires JVM 1.8 or later.
 - Add `Flag.Type.IS_DEFINITELY_NON_NULL`.
 - Add `KmClass.contextReceiverTypes`, `KmFunction.contextReceiverTypes`, `KmProperty.contextReceiverTypes`
