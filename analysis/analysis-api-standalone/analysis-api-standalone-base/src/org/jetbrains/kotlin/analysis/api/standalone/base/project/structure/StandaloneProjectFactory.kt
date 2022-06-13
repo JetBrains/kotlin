@@ -12,6 +12,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
@@ -200,7 +201,7 @@ object StandaloneProjectFactory {
                         environment.environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
                     }
                     else -> {
-                        null
+                        VirtualFileManager.getInstance().findFileByNioPath(path)
                     }
                 }?.let { root ->
                     add(JavaRoot(root, JavaRoot.RootType.BINARY))
