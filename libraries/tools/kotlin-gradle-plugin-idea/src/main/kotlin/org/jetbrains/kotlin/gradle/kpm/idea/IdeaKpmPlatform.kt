@@ -7,94 +7,80 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.emptyExtras
 import java.io.Serializable
 
 sealed interface IdeaKpmPlatform : Serializable {
-    val platformType: String
-    val platformDetails: IdeaKpmPlatformDetails?
-
-    companion object {
-        val unknown: IdeaKpmPlatform = IdeaKpmPlatformImpl("unknown", null)
-
-        const val wasmPlatformType = "wasm"
-        const val nativePlatformType = "native"
-        const val jvmPlatformType = "jvm"
-        const val jsPlatformType = "js"
-    }
+    val extras: Extras
 }
 
-sealed interface IdeaKpmPlatformDetails : Serializable
-
-sealed interface IdeaKpmWasmPlatformDetails : IdeaKpmPlatformDetails
-
-sealed interface IdeaKpmNativePlatformDetails : IdeaKpmPlatformDetails {
-    val konanTarget: String
-}
-
-sealed interface IdeaKpmJvmPlatformDetails : IdeaKpmPlatformDetails {
+sealed interface IdeaKpmJvmPlatform : IdeaKpmPlatform {
     val jvmTarget: String
 }
 
-sealed interface IdeaKpmJsPlatformDetails : IdeaKpmPlatformDetails {
+sealed interface IdeaKpmNativePlatform : IdeaKpmPlatform {
+    val konanTarget: String
+}
+
+sealed interface IdeaKpmJsPlatform : IdeaKpmPlatform {
     val isIr: Boolean
 }
 
-@InternalKotlinGradlePluginApi
-fun IdeaKpmPlatform.Companion.wasm(): IdeaKpmPlatform {
-    return IdeaKpmPlatformImpl(wasmPlatformType, IdeaKpmWasmPlatformDetailsImpl)
-}
+sealed interface IdeaKpmWasmPlatform : IdeaKpmPlatform
+
+sealed interface IdeaKpmUnknownPlatform : IdeaKpmPlatform
+
+val IdeaKpmPlatform.isWasm get() = this is IdeaKpmWasmPlatform
+val IdeaKpmPlatform.isNative get() = this is IdeaKpmNativePlatform
+val IdeaKpmPlatform.isJvm get() = this is IdeaKpmJvmPlatform
+val IdeaKpmPlatform.isJs get() = this is IdeaKpmJsPlatform
+val IdeaKpmPlatform.isUnknown get() = this is IdeaKpmUnknownPlatform
 
 @InternalKotlinGradlePluginApi
-fun IdeaKpmPlatform.Companion.native(konanTarget: String): IdeaKpmPlatform {
-    return IdeaKpmPlatformImpl(nativePlatformType, IdeaKpmNativePlatformDetailsImpl(konanTarget))
-}
-
-@InternalKotlinGradlePluginApi
-fun IdeaKpmPlatform.Companion.jvm(jvmTarget: String): IdeaKpmPlatform {
-    return IdeaKpmPlatformImpl(jvmPlatformType, IdeaKpmJvmPlatformDetailsImpl(jvmTarget))
-}
-
-@InternalKotlinGradlePluginApi
-fun IdeaKpmPlatform.Companion.js(isIr: Boolean): IdeaKpmPlatform {
-    return IdeaKpmPlatformImpl(jsPlatformType, IdeaKpmJsPlatformDetailsImpl(isIr))
-}
-
-val IdeaKpmPlatform.isWasm get() = platformType == IdeaKpmPlatform.wasmPlatformType
-val IdeaKpmPlatform.isNative get() = platformType == IdeaKpmPlatform.nativePlatformType
-val IdeaKpmPlatform.isJvm get() = platformType == IdeaKpmPlatform.jvmPlatformType
-val IdeaKpmPlatform.isJs get() = platformType == IdeaKpmPlatform.jsPlatformType
-
-val IdeaKpmPlatform.nativeOrNull get() = (platformDetails as? IdeaKpmNativePlatformDetails)
-val IdeaKpmPlatform.jvmOrNull get() = (platformDetails as? IdeaKpmJvmPlatformDetails)
-val IdeaKpmPlatform.jsOrNull get() = (platformDetails as? IdeaKpmJsPlatformDetails)
-
-private data class IdeaKpmPlatformImpl(
-    override val platformType: String, override val platformDetails: IdeaKpmPlatformDetails?
-) : IdeaKpmPlatform {
-
-    companion object {
+data class IdeaKpmJvmPlatformImpl(
+    override val jvmTarget: String,
+    override val extras: Extras = emptyExtras()
+) : IdeaKpmJvmPlatform {
+    internal companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private object IdeaKpmWasmPlatformDetailsImpl : IdeaKpmWasmPlatformDetails {
-    private const val serialVersionUID = 0L
-}
-
-private data class IdeaKpmJvmPlatformDetailsImpl(override val jvmTarget: String) : IdeaKpmJvmPlatformDetails {
-    private companion object {
+@InternalKotlinGradlePluginApi
+data class IdeaKpmNativePlatformImpl(
+    override val konanTarget: String,
+    override val extras: Extras = emptyExtras()
+) : IdeaKpmNativePlatform {
+    internal companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private data class IdeaKpmNativePlatformDetailsImpl(override val konanTarget: String) : IdeaKpmNativePlatformDetails {
-    private companion object {
+@InternalKotlinGradlePluginApi
+data class IdeaKpmJsPlatformImpl(
+    override val isIr: Boolean,
+    override val extras: Extras = emptyExtras()
+) : IdeaKpmJsPlatform {
+    internal companion object {
         const val serialVersionUID = 0L
     }
 }
 
-private data class IdeaKpmJsPlatformDetailsImpl(override val isIr: Boolean) : IdeaKpmJsPlatformDetails {
-    private companion object {
+@InternalKotlinGradlePluginApi
+data class IdeaKpmWasmPlatformImpl(
+    override val extras: Extras = emptyExtras()
+) : IdeaKpmWasmPlatform {
+    internal companion object {
+        const val serialVersionUID = 0L
+    }
+}
+
+@InternalKotlinGradlePluginApi
+data class IdeaKpmUnknownPlatformImpl(
+    override val extras: Extras = emptyExtras()
+) : IdeaKpmUnknownPlatform {
+    internal companion object {
         const val serialVersionUID = 0L
     }
 }
