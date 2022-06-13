@@ -2,7 +2,7 @@ class A<T> {
     fun <T> a(t: T) {}
 
     inner class B<U, V : U> {
-        fun <T, U> b(t: T, u: U, v: V) where T : Comparable<T>, T : Cloneable {}
+        fun <T, U> b(t: T, u: U & Any, v: V) where T : Comparable<T>, T : Cloneable {}
 
         fun bb(t: T) {}
 

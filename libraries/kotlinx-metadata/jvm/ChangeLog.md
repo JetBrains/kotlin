@@ -3,6 +3,7 @@
 ## Next
 
 - kotlinx-metadata-jvm can no longer be used on JVM 1.6, and now requires JVM 1.8 or later.
+- Add `Flag.Type.IS_DEFINITELY_NON_NULL`.
 
 ## 0.4.2
 

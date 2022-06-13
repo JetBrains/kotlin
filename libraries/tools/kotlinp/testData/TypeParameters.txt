@@ -19,8 +19,9 @@ public final inner class A.B<T#1 /* U */, T#2 /* V */ : T#1> : kotlin/Any {
   // signature: <init>(LA;)V
   public constructor()
 
+  // requires language version 1.7.0 (level=ERROR)
   // signature: b(Ljava/lang/Comparable;Ljava/lang/Object;Ljava/lang/Object;)V
-  public final fun <T#3 /* T */ : kotlin/Comparable<T#3> & kotlin/Cloneable, T#4 /* U */> b(t: T#3, u: T#4, v: T#2): kotlin/Unit
+  public final fun <T#3 /* T */ : kotlin/Comparable<T#3> & kotlin/Cloneable, T#4 /* U */> b(t: T#3, u: T#4 & Any, v: T#2): kotlin/Unit
 
   // signature: bb(Ljava/lang/Object;)V
   public final fun bb(t: T#0): kotlin/Unit

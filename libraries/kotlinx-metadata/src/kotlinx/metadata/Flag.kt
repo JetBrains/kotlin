@@ -459,6 +459,13 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          */
         @JvmField
         val IS_SUSPEND = Flag(F.SUSPEND_TYPE.offset + 1, F.SUSPEND_TYPE.bitWidth, 1)
+
+        /**
+         * Signifies that the corresponding type is
+         * [definitely non-null](https://kotlinlang.org/docs/whatsnew17.html#stable-definitely-non-nullable-types).
+         */
+        @JvmField
+        val IS_DEFINITELY_NON_NULL = Flag(F.DEFINITELY_NOT_NULL_TYPE.offset + 1, F.DEFINITELY_NOT_NULL_TYPE.bitWidth, 1)
     }
 
     /**

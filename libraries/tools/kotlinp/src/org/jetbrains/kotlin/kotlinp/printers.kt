@@ -369,6 +369,9 @@ private fun printType(flags: Flags, output: (String) -> Unit): KmTypeVisitor =
                 if (Flag.Type.IS_NULLABLE(flags)) {
                     append("?")
                 }
+                if (Flag.Type.IS_DEFINITELY_NON_NULL(flags)) {
+                    append(" & Any")
+                }
                 if (abbreviatedType != null) {
                     append(" /* = ").append(abbreviatedType).append(" */")
                 }
