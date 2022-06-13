@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
-import org.gradle.api.Project
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.plugins.DslObject
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.addConvention
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
-import java.io.File
 
 internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     val project = target.project
@@ -24,7 +23,7 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     android.sourceSets.all { androidSourceSet ->
         val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
         val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
-        androidSourceSet.kotlinSourceSet = kotlinSourceSet
+        androidSourceSet.addKotlinSources(kotlinSourceSet)
 
         createDefaultDependsOnEdges(target, kotlinSourceSet, androidSourceSet)
         syncKotlinAndAndroidSourceDirs(target, kotlinSourceSet, androidSourceSet)
@@ -36,14 +35,13 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     }
 }
 
-internal var AndroidSourceSet.kotlinSourceSet: KotlinSourceSet
-    get() = checkNotNull(kotlinSourceSetOrNull) { "Missing kotlinSourceSet for Android source set $name" }
-    private set(value) {
-        addConvention(KOTLIN_DSL_NAME, value)
-    }
+internal val AndroidSourceSet.kotlinSourceSet: SourceDirectorySet
+    get() = checkNotNull(getExtension(KOTLIN_DSL_NAME)) { "Missing kotlinSourceSet for Android source set $name" }
 
-internal val AndroidSourceSet.kotlinSourceSetOrNull: KotlinSourceSet?
-    get() = getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+internal fun AndroidSourceSet.addKotlinSources(kotlinSourceSet: KotlinSourceSet) {
+    @Suppress("DEPRECATION") addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+    DslObject(this).addExtension(KOTLIN_DSL_NAME, kotlinSourceSet.kotlin)
+}
 
 private fun createDefaultDependsOnEdges(
     target: KotlinAndroidTarget,

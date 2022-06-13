@@ -194,12 +194,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     @Deprecated("Retained for older Kotlin/Native MPP plugin binary compatibility")
     protected val SourceSet.kotlin: SourceDirectorySet?
         get() {
-            // Access through reflection, because another project's KotlinSourceSet might be loaded
-            // by a different class loader:
-            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
-            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
-            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
-            return getKotlin(convention) as? SourceDirectorySet
+            @Suppress("DEPRECATION")
+            return getExtension(KOTLIN_DSL_NAME) ?: getExtension(KOTLIN_JS_DSL_NAME)
         }
 }
 

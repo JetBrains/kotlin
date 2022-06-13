@@ -246,4 +246,13 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             build("validateExternalPlugins")
         }
     }
+
+    @DisplayName("Accessing Kotlin SourceSet in KotlinDSL")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_1)
+    @GradleTest
+    internal fun kotlinDslSourceSets(gradleVersion: GradleVersion) {
+        project("sourceSetsKotlinDsl", gradleVersion) {
+            build("assemble")
+        }
+    }
 }

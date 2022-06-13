@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDepen
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -60,6 +61,7 @@ internal const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClassp
 internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
 
 val KOTLIN_DSL_NAME = "kotlin"
+@Deprecated("Should be removed with 'platform.js' plugin removal")
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
@@ -491,7 +493,7 @@ internal abstract class AbstractKotlinPlugin(
                 .getInstance(project)
                 .sourceSets
 
-            val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
+            @Suppress("DEPRECATION") val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
                 KotlinPlatformType.js -> KOTLIN_JS_DSL_NAME
                 else -> KOTLIN_DSL_NAME
             }
@@ -508,9 +510,13 @@ internal abstract class AbstractKotlinPlugin(
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)
                     kotlinCompilation.source(kotlinSourceSet)
+                    @Suppress("DEPRECATION")
                     javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinSourceSet)
+                    javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinSourceSet.kotlin)
                 } else {
+                    @Suppress("DEPRECATION")
                     javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet)
+                    javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet.kotlin)
                 }
             }
 
@@ -868,45 +874,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
                 )
             }
         }
-
-        // Then also add the Kotlin compilation dependencies (which include the dependencies from all source sets that
-        // take part in the compilation) to Android source sets that are only included into a single variant corresponding
-        // to that compilation. This is needed in order for the dependencies to get propagated to
-        // the test variants; see KT-29343;
-
-        // Trivial mapping of Android variants to Android source set names is impossible here,
-        // because some variants have their dedicated source sets with mismatching names,
-        // because some variants have their dedicated source sets with mismatching names,
-        // e.g. variant 'fooBarDebugAndroidTest' <-> source set 'androidTestFooBarDebug'
-
-        // In single-platform projects, the Kotlin compilations already reference the Android plugin's configurations by the names,
-        // so there are no such separate things as the configurations of the compilations, and there's no need to setup the
-        // extendsFrom relationship.
-        if (kotlinAndroidTarget.disambiguationClassifier != null) {
-
-            val sourceSetToVariants = mutableMapOf<AndroidSourceSet, MutableList<BaseVariant>>().apply {
-                forEachVariant(project) { variant ->
-                    for (sourceSet in variant.sourceSets) {
-                        val androidSourceSet = sourceSet as? AndroidSourceSet ?: continue
-                        getOrPut(androidSourceSet) { mutableListOf() }.add(variant)
-                    }
-                }
-            }
-
-            for ((androidSourceSet, variants) in sourceSetToVariants) {
-                val variant = variants.singleOrNull()
-                    ?: continue // skip source sets that are included in multiple Android variants
-
-                val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                addDependenciesToAndroidSourceSet(
-                    androidSourceSet,
-                    compilation.apiConfigurationName,
-                    compilation.implementationConfigurationName,
-                    compilation.compileOnlyConfigurationName,
-                    compilation.runtimeOnlyConfigurationName
-                )
-            }
-        }
     }
 
     private fun addAndroidUnitTestTasksAsDependenciesToAllTest(project: Project) {
@@ -956,7 +923,12 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
 
-        compilation.androidVariant.forEachKotlinSourceSet { kotlinSourceSet -> compilation.source(kotlinSourceSet) }
+        compilation.androidVariant.forEachKotlinSourceSet(
+            compilation.target as KotlinAndroidTarget,
+            project.kotlinExtension
+        ) { kotlinSourceSet ->
+            compilation.source(kotlinSourceSet)
+        }
     }
 
     private fun postprocessVariant(
@@ -985,9 +957,22 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceSet(action: (KotlinSourceSet) -> Unit) {
+internal inline fun BaseVariant.forEachKotlinSourceSet(
+    kotlinAndroidTarget: KotlinAndroidTarget,
+    kotlinExtension: KotlinProjectExtension,
+    action: (KotlinSourceSet) -> Unit
+) {
     sourceSets
-        .mapNotNull { provider -> provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet }
+        .mapNotNull { provider ->
+            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, provider.name)
+            kotlinExtension.sourceSets.findByName(kotlinSourceSetName)
+        }
+        .forEach(action)
+}
+
+internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(action: (SourceDirectorySet) -> Unit) {
+    sourceSets
+        .mapNotNull { it.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME) }
         .forEach(action)
 }
 

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.ExtensionAware
 
+@Deprecated("Conventions are deprecated in Gradle")
 internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
     (this as HasConvention).convention.plugins[name] = plugin
 }
@@ -26,5 +29,5 @@ internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T)
 internal inline fun <reified T : Any> Any.addExtension(name: String, extension: T) =
     (this as ExtensionAware).extensions.add(T::class.java, name, extension)
 
-internal fun Any.getConvention(name: String): Any? =
-    (this as HasConvention).convention.plugins[name]
+internal inline fun <reified T : Any> Any.getExtension(name: String): T? =
+    (this as ExtensionAware).extensions.getByName(name) as T?

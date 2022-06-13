@@ -107,7 +107,7 @@ class SyncKotlinAndAndroidSourceSetsTest {
         fun assertSourceSetsExist(androidName: String, kotlinName: String) {
             val androidSourceSet = assertNotNull(android.sourceSets.findByName(androidName), "Expected Android source set '$androidName'")
             val kotlinSourceSet = assertNotNull(kotlin.sourceSets.findByName(kotlinName), "Expected Kotlin source set '$kotlinName'")
-            assertSame(kotlinSourceSet, androidSourceSet.kotlinSourceSet)
+            assertSame(kotlinSourceSet.kotlin, androidSourceSet.kotlinSourceSet)
         }
 
         assertSourceSetsExist("freeBetaDebug", "androidFreeBetaDebug")
@@ -182,13 +182,13 @@ class SyncKotlinAndAndroidSourceSetsTest {
         kotlin.android()
 
         val main = android.sourceSets.getByName("main")
-        assertSame(kotlin.sourceSets.getByName("androidMain"), main.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidMain").kotlin, main.kotlinSourceSet)
 
         val test = android.sourceSets.getByName("test")
-        assertSame(kotlin.sourceSets.getByName("androidTest"), test.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidTest").kotlin, test.kotlinSourceSet)
 
         val androidTest = android.sourceSets.getByName("androidTest")
-        assertSame(kotlin.sourceSets.getByName("androidAndroidTest"), androidTest.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidAndroidTest").kotlin, androidTest.kotlinSourceSet)
     }
 }
 

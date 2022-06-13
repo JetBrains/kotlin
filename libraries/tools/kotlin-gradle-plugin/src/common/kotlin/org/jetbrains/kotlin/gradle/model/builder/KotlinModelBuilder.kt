@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.model.builder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.model.CompilerArguments
 import org.jetbrains.kotlin.gradle.model.KotlinProject
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.model.impl.CompilerArgumentsImpl
 import org.jetbrains.kotlin.gradle.model.impl.KotlinProjectImpl
 import org.jetbrains.kotlin.gradle.model.impl.SourceSetImpl
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.getConvention
+import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
@@ -76,16 +76,19 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         private fun Project.pathOrName() = if (path == ":") name else path
 
         private fun AbstractKotlinCompile<*>.createSourceSet(project: Project, projectType: KotlinProject.ProjectType): SourceSet? {
-            val javaSourceSet =
-                project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.find { it.name == sourceSetName.get() }
-            val kotlinSourceSet =
-                javaSourceSet?.getConvention(if (projectType == KotlinProject.ProjectType.PLATFORM_JS) KOTLIN_JS_DSL_NAME else KOTLIN_DSL_NAME) as? KotlinSourceSet
+            val javaSourceSet = project.gradle
+                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                .getInstance(project)
+                .sourceSetsIfAvailable
+                ?.find { it.name == sourceSetName.get() }
+            @Suppress("DEPRECATION") val kotlinSourceSet: SourceDirectorySet? = javaSourceSet
+                ?.getExtension(if (projectType == KotlinProject.ProjectType.PLATFORM_JS) KOTLIN_JS_DSL_NAME else KOTLIN_DSL_NAME)
             return if (kotlinSourceSet != null) {
                 SourceSetImpl(
                     sourceSetName.get(),
                     if (sourceSetName.get().contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
                     friendSourceSets.get(),
-                    kotlinSourceSet.kotlin.srcDirs,
+                    kotlinSourceSet.srcDirs,
                     javaSourceSet.resources.srcDirs,
                     destinationDirectory.get().asFile,
                     javaSourceSet.output.resourcesDir!!,

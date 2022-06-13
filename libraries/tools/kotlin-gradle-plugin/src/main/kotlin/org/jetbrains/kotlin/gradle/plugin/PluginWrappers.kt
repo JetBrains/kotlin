@@ -9,6 +9,7 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
@@ -127,9 +128,9 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
     override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
         val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+        val kotlinSourceSet = androidSourceSet.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME)
             ?: return
-        kotlinSourceSet.kotlin.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
+        kotlinSourceSet.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
     }
 }
 

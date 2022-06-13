@@ -142,9 +142,6 @@ sourceSets {
             srcDirs("prebuilt/nativeInteropStubs/kotlin")
         }
         kotlin{
-            target {
-
-            }
         }
     }
 }
