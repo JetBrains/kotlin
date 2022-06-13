@@ -157,14 +157,8 @@ fun printElements(generationPath: File, model: Model) = sequence {
                             if (child is SingleField) {
                                 val elRef = child.type as ElementRef
                                 if (!elRef.element.transform) {
-                                    append(" as")
-                                    if (child.strictCastInTransformChildren) {
-                                        append(" %T")
-                                        if (child.nullable) append("?")
-                                    } else {
-                                        if (child.nullable) append("?")
-                                        append(" %T")
-                                    }
+                                    append(" as %T")
+                                    if (child.nullable) append("?")
                                     args.add(elRef.toPoet())
                                 }
                             }

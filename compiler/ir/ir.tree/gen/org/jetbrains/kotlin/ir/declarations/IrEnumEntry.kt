@@ -39,6 +39,6 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         initializerExpression = initializerExpression?.transform(transformer, data)
-        correspondingClass = correspondingClass?.transform(transformer, data) as? IrClass
+        correspondingClass = correspondingClass?.transform(transformer, data) as IrClass?
     }
 }

@@ -380,12 +380,8 @@ object IrTree : AbstractTreeBuilder() {
         +field("isExpect", boolean)
         +field("isFakeOverride", boolean)
         +field("backingField", field, mutable = true, nullable = true, isChild = true)
-        +field("getter", simpleFunction, mutable = true, nullable = true, isChild = true) {
-            strictCastInTransformChildren = true
-        }
-        +field("setter", simpleFunction, mutable = true, nullable = true, isChild = true) {
-            strictCastInTransformChildren = true
-        }
+        +field("getter", simpleFunction, mutable = true, nullable = true, isChild = true)
+        +field("setter", simpleFunction, mutable = true, nullable = true, isChild = true)
     }
 
     //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class

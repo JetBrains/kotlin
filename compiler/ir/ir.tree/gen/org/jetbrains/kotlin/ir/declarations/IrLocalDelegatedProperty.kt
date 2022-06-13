@@ -48,6 +48,6 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         delegate = delegate.transform(transformer, data) as IrVariable
         getter = getter.transform(transformer, data) as IrSimpleFunction
-        setter = setter?.transform(transformer, data) as? IrSimpleFunction
+        setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }
 }

@@ -28,7 +28,6 @@ fun config2model(config: Config): Model {
                     fc.nullable,
                     fc.mutable,
                     fc.isChild,
-                    fc.strictCastInTransformChildren,
                     fc.baseDefaultValue,
                     fc.baseGetter
                 )
@@ -45,7 +44,6 @@ fun config2model(config: Config): Model {
                         fc.nullable,
                         fc.mutability == ListFieldConfig.Mutability.Var,
                         fc.isChild,
-                        fc.strictCastInTransformChildren,
                         fc.mutability != ListFieldConfig.Mutability.Immutable,
                         fc.baseDefaultValue,
                         fc.baseGetter

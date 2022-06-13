@@ -54,7 +54,7 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        backingField = backingField?.transform(transformer, data) as? IrField
+        backingField = backingField?.transform(transformer, data) as IrField?
         getter = getter?.transform(transformer, data) as IrSimpleFunction?
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }
