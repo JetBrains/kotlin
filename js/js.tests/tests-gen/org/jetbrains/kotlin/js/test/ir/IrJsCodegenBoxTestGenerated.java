@@ -12222,6 +12222,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("canary.kt")
+        public void testCanary() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/canary.kt");
+        }
+
+        @Test
         @TestMetadata("capturingLambda.kt")
         public void testCapturingLambda() throws Exception {
             runTest("compiler/testData/codegen/box/directInvokeOptimization/capturingLambda.kt");
