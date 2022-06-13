@@ -103,7 +103,6 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Didea.home.path=$ideaSdkPath",
         "-Didea.use.native.fs.for.win=false",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
-        "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
     ).filterNotNull().joinToString(" ")

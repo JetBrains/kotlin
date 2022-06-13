@@ -202,7 +202,6 @@ fun Project.projectTest(
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.buildDir)
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
-        systemProperty("kotlin.ni", if (project.rootProject.hasProperty("newInferenceTests")) "true" else "false")
         systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
