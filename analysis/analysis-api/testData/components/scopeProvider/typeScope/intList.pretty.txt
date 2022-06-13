@@ -1,0 +1,33 @@
+KtTypeScope:
+fun contains(element: kotlin.Int): kotlin.Boolean
+fun containsAll(elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+fun get(index: kotlin.Int): kotlin.Int
+fun indexOf(element: kotlin.Int): kotlin.Int
+fun isEmpty(): kotlin.Boolean
+fun iterator(): kotlin.collections.Iterator<kotlin.Int>
+fun lastIndexOf(element: kotlin.Int): kotlin.Int
+fun listIterator(): kotlin.collections.ListIterator<kotlin.Int>
+fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<kotlin.Int>
+fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<kotlin.Int>
+val size: kotlin.Int
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+
+
+Declaration Scope:
+fun contains(element: E): kotlin.Boolean
+fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+fun get(index: kotlin.Int): E
+fun indexOf(element: E): kotlin.Int
+fun isEmpty(): kotlin.Boolean
+fun iterator(): kotlin.collections.Iterator<E>
+fun lastIndexOf(element: E): kotlin.Int
+fun listIterator(): kotlin.collections.ListIterator<E>
+fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>
+fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
+val size: kotlin.Int
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+
