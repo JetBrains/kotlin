@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFrom
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintMismatch
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintWarning
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintError
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintMismatch
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintWarning
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
@@ -280,12 +280,12 @@ sealed class CallResolutionResult(
     fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
         return diagnostics.map {
             val error = it.constraintSystemError ?: return@map it
-            if (error !is NewConstraintMismatch) return@map it
+            if (error !is ConstraintMismatch) return@map it
             val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
             when (error) {
-                is NewConstraintError -> NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
-                is NewConstraintWarning -> NewConstraintWarning(newLowerType, error.upperType, error.position).asDiagnostic()
+                is ConstraintError -> ConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
+                is ConstraintWarning -> ConstraintWarning(newLowerType, error.upperType, error.position).asDiagnostic()
             }
         }
     }

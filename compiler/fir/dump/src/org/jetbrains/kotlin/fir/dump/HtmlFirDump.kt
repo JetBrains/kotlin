@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintError
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
@@ -1247,7 +1247,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 br
                 diagnostic.candidate.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
-                        is NewConstraintError -> {
+                        is ConstraintError -> {
                             ident()
 
                             generate(callDiagnostic.lowerType as ConeKotlinType)

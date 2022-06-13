@@ -484,11 +484,11 @@ class ConstraintSystemImpl(
                         constraints.filter { (typeVariable, _) -> typeVariable.freshTypeConstructor() in notFixedTypeVariables }
                     constraintInjector.processMissedConstraints(constraintSystem, position, fixedVariableConstraints)
                 }
-                errors.filterIsInstance<NewConstraintError>().forEach(::add)
+                errors.filterIsInstance<ConstraintError>().forEach(::add)
                 false
             }
         }
-        val constraintErrors = constraintSystem.errors.filterIsInstance<NewConstraintError>()
+        val constraintErrors = constraintSystem.errors.filterIsInstance<ConstraintError>()
         // Don't report warning if an error on the same call has already been reported
         if (constraintErrors.isEmpty()) {
             errorsByMissedConstraints.forEach {

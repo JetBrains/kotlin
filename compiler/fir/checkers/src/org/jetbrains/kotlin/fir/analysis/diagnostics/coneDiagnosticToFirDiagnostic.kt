@@ -298,16 +298,16 @@ private fun mapSystemHasContradictionError(
             diagnostic.candidate.errors.firstNotNullOfOrNull {
                 if (it in errorsToIgnore) return@firstNotNullOfOrNull null
                 val message = when (it) {
-                    is NewConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
+                    is ConstraintError -> "NewConstraintError at ${it.position}: ${it.lowerType} <!: ${it.upperType}"
                     // Error should be reported on the error type itself
                     is ConstrainingTypeIsError -> return@firstNotNullOfOrNull null
                     is NotEnoughInformationForTypeParameter<*> -> return@firstNotNullOfOrNull null
                     else -> "Inference error: ${it::class.simpleName}"
                 }
 
-                if (it is NewConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
+                if (it is ConstraintError && it.position.from is FixVariableConstraintPosition<*>) {
                     val morePreciseDiagnosticExists = diagnostic.candidate.errors.any { other ->
-                        other is NewConstraintError && other.position.from !is FixVariableConstraintPosition<*>
+                        other is ConstraintError && other.position.from !is FixVariableConstraintPosition<*>
                     }
                     if (morePreciseDiagnosticExists) return@firstNotNullOfOrNull null
                 }
@@ -326,7 +326,7 @@ private fun ConstraintSystemError.toDiagnostic(
     candidate: AbstractCandidate,
 ): KtDiagnostic? {
     return when (this) {
-        is NewConstraintError -> {
+        is ConstraintError -> {
             val position = position.from
             val argument =
                 when (position) {
@@ -376,7 +376,7 @@ private fun ConstraintSystemError.toDiagnostic(
         is NotEnoughInformationForTypeParameter<*> -> {
             val isDiagnosticRedundant = candidate.errors.any { otherError ->
                 (otherError is ConstrainingTypeIsError && otherError.typeVariable == this.typeVariable)
-                        || otherError is NewConstraintError
+                        || otherError is ConstraintError
             }
 
             if (isDiagnosticRedundant) return null
@@ -430,8 +430,8 @@ private fun reportInferredIntoEmptyIntersectionError(
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }
 
-private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
-private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
+private val ConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
+private val ConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
     @Suppress("UNCHECKED_CAST")

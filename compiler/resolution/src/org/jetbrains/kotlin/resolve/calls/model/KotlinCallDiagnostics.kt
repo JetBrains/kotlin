@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintWarning
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintError
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintWarning
 import org.jetbrains.kotlin.resolve.calls.inference.model.transformToWarning
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
@@ -333,7 +333,7 @@ class KotlinConstraintSystemDiagnostic(
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(error)
 
     override fun transformToWarning(): KotlinConstraintSystemDiagnostic? =
-        if (error is NewConstraintError) KotlinConstraintSystemDiagnostic(error.transformToWarning()) else null
+        if (error is ConstraintError) KotlinConstraintSystemDiagnostic(error.transformToWarning()) else null
 }
 
 val KotlinCallDiagnostic.constraintSystemError: ConstraintSystemError?
@@ -343,4 +343,4 @@ fun ConstraintSystemError.asDiagnostic(): KotlinConstraintSystemDiagnostic = Kot
 fun Collection<ConstraintSystemError>.asDiagnostics(): List<KotlinConstraintSystemDiagnostic> = map(ConstraintSystemError::asDiagnostic)
 
 fun List<KotlinCallDiagnostic>.filterErrorDiagnostics() =
-    filter { it !is KotlinConstraintSystemDiagnostic || it.error !is NewConstraintWarning }
+    filter { it !is KotlinConstraintSystemDiagnostic || it.error !is ConstraintWarning }

@@ -222,7 +222,7 @@ class ResolvedCallImpl<D : CallableDescriptor>(
 
         diagnostics.forEach {
             val position = when (val error = it.constraintSystemError) {
-                is NewConstraintError -> error.position.originalPosition()
+                is ConstraintError -> error.position.originalPosition()
                 is CapturedTypeFromSubtyping -> error.position.originalPosition()
                 is ConstrainingTypeIsError -> error.position.originalPosition()
                 else -> null

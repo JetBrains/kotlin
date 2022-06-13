@@ -394,10 +394,10 @@ class ConstraintInjector(
                     require(upperType is SimpleTypeMarker)
                     val flexibleUpperType = createFlexibleType(upperType, upperType.withNullability(true))
                     if (!isSubtypeOf(flexibleUpperType)) {
-                        c.addError(NewConstraintError(lowerType, flexibleUpperType, position))
+                        c.addError(ConstraintError(lowerType, flexibleUpperType, position))
                     }
                 } else {
-                    c.addError(NewConstraintError(lowerType, upperType, position))
+                    c.addError(ConstraintError(lowerType, upperType, position))
                 }
             }
         }
