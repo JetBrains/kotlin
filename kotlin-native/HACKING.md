@@ -140,9 +140,9 @@ To run Kotlin/Native target-specific tests use (takes time):
  
 To run runtime unit tests on the host machine for both mimalloc and the standard allocator:
 
-    ./gradlew :kotlin-native:hostRuntimeTests
+    ./gradlew :kotlin-native:runtime:hostRuntimeTests
        
-To run tests for only one of these two allocators, run `:kotlin-native:hostStdAllocRuntimeTests` or `:kotlin-native:hostMimallocRuntimeTests`.
+To run tests for only one of these two allocators, run `:kotlin-native:runtime:hostStdAllocRuntimeTests` or `:kotlin-native:runtime:hostMimallocRuntimeTests`.
 
 We use [Google Test](https://github.com/google/googletest) to execute the runtime unit tests. The build automatically fetches
 the specified Google Test revision to `kotlin-native/runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
@@ -150,11 +150,11 @@ purposes; the build will not overwrite them by default.
 
 To forcibly redownload Google Test when running tests, use the corresponding project property:
 
-     ./gradlew :kotlin-native:hostRuntimeTests -Prefresh-gtest
+     ./gradlew :kotlin-native:runtime:hostRuntimeTests -Prefresh-gtest
 
-or run the `downloadGTest` task directly with the `--refresh` CLI key:
+or run the `downloadGoogleTest` task directly with the `--refresh` CLI key:
 
-    ./gradlew :kotlin-native:downloadGTest --refresh
+    ./gradlew :kotlin-native:downloadGoogleTest --refresh
     
 To use a local GTest copy instead of the downloaded one, add the following line to `kotlin-native/runtime/build.gradle.kts`:
 
