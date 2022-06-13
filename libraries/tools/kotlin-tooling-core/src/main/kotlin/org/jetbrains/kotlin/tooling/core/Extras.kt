@@ -65,7 +65,7 @@ import java.io.Serializable
 interface Extras : Collection<Entry<out Any>> {
     /* Not implemented as data class to ensure more controllable binary compatibility */
     class Key<T : Any> @PublishedApi internal constructor(
-        internal val type: ReifiedTypeSignature<T>,
+        val type: Type<T>,
         val name: String? = null,
     ) : Serializable {
 
@@ -95,8 +95,8 @@ interface Extras : Collection<Entry<out Any>> {
             fun fromString(stableString: String): Key<*> {
                 @OptIn(UnsafeApi::class) return if (stableString.contains(';')) {
                     val split = stableString.split(';', limit = 2)
-                    Key(ReifiedTypeSignature(split[0]), split[1])
-                } else Key(ReifiedTypeSignature(stableString))
+                    Key(Type(split[0]), split[1])
+                } else Key(Type(stableString))
             }
 
             private const val serialVersionUID = 0L

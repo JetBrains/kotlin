@@ -25,7 +25,7 @@ package org.jetbrains.kotlin.tooling.core
  * ```
  */
 inline fun <reified T : Any> extrasKeyOf(name: String? = null): Extras.Key<T> =
-    Extras.Key(ReifiedTypeSignature(), name)
+    Extras.Key(Type(), name)
 
 fun emptyExtras(): Extras = EmptyExtras
 
