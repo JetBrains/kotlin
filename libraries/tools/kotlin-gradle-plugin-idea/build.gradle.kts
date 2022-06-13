@@ -18,7 +18,7 @@ dependencies {
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
-    testImplementation(project(":kotlin-gradle-statistics"))
+    testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
 
     testImplementation("org.reflections:reflections:0.10.2") {
@@ -28,6 +28,7 @@ dependencies {
     testFixturesImplementation(gradleApi())
     testFixturesImplementation(gradleKotlinDsl())
     testFixturesImplementation(project(":kotlin-tooling-core"))
+    testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 

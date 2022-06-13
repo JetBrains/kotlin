@@ -15,6 +15,7 @@ if (isSnapshotTest) {
     repositories {
         clear()
         mavenLocal()
+        mavenCentral()
     }
 }
 
@@ -29,6 +30,8 @@ val incomingClasspath by configurations.creating {
 
 dependencies {
     incomingClasspath(kotlin("gradle-plugin-idea", resolvedTestedVersion))
+    incomingClasspath(testFixtures(kotlin("gradle-plugin-idea", resolvedTestedVersion)))
+    incomingClasspath(kotlin("gradle-plugin-idea-proto", resolvedTestedVersion))
 }
 
 val syncClasspath by tasks.register<Sync>("syncClasspath") {
