@@ -46,6 +46,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitAnonymousFunctionExpressionExitNode(node: AnonymousFunctionExpressionExitNode, data: D): R {
         return visitNode(node, data)
     }

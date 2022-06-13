@@ -244,6 +244,9 @@ fun ControlFlowGraphBuilder.createAnonymousObjectExpressionExitNode(fir: FirAnon
 fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
     UnionFunctionCallArgumentsNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
+    MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass): ClassEnterNode =
     ClassEnterNode(currentGraph, fir, levelCounter, createId())
 

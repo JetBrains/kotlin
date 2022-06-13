@@ -789,6 +789,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return checkNotNullCall
         }
 
+        dataFlowAnalyzer.enterCall()
         checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
         checkNotNullCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 

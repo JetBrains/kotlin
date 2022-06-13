@@ -228,14 +228,22 @@ class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAno
         return visitor.visitPostponedLambdaEnterNode(this, data)
     }
 }
+
 class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int, id: Int) : CFGNode<FirAnonymousFunctionExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaExitNode(this, data)
     }
 }
+
 class UnionFunctionCallArgumentsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int, id: Int) : CFGNode<FirElement>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitUnionFunctionCallArgumentsNode(this, data)
+    }
+}
+
+class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int, id: Int) : CFGNode<FirElement>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitMergePostponedLambdaExitsNode(this, data)
     }
 }
 
