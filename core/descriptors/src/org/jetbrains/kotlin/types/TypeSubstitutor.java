@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.types.util.CapturedTypeUtilsKt;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
@@ -208,8 +209,8 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
                 null;
 
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeParameter(type)) {
-            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+        if (replacement == null && FlexibleTypeUtilsKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeParameter(type)) {
+            FlexibleType flexibleType = FlexibleTypeUtilsKt.asFlexibleType(type);
             TypeProjection substitutedLower =
                     unsafeSubstitute(
                             new TypeProjectionImpl(originalProjectionKind, flexibleType.getLowerBound()),

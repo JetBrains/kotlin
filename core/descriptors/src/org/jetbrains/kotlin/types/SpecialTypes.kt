@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
 
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType

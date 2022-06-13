@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
 import org.jetbrains.kotlin.utils.DFS
 
 fun commonSuperType(types: List<KotlinType>): KotlinType =

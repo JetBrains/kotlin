@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.util.isFlexible
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"

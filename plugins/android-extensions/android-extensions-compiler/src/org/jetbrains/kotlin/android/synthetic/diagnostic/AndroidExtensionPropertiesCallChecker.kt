@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.util.isFlexible
 
 class AndroidExtensionPropertiesCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {

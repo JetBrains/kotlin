@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.types.typeUtil.constituentTypes
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class DeclarationsCheckerBuilder(

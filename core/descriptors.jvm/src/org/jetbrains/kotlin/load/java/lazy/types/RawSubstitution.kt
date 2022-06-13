@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeParameterUpperBoundEraser
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpperBoundEraser? = null) : TypeSubstitution() {
     private val projectionComputer = RawProjectionComputer()

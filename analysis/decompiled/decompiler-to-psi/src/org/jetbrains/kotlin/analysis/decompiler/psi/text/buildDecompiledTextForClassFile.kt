@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.types.asFlexibleType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 
 fun buildDecompiledTextForClassFile(
     classFile: VirtualFile,

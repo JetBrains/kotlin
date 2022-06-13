@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
 
 object SimpleClassicTypeSystemContext : ClassicTypeSystemContext
 

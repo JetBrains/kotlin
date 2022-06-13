@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypePreparator;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -694,7 +695,7 @@ public class OverridingUtil {
         H firstNonFlexible = null;
         for (H candidate : candidates) {
             //noinspection ConstantConditions
-            if (!FlexibleTypesKt.isFlexible(descriptorByHandle.invoke(candidate).getReturnType())) {
+            if (!FlexibleTypeUtilsKt.isFlexible(descriptorByHandle.invoke(candidate).getReturnType())) {
                 firstNonFlexible = candidate;
                 break;
             }

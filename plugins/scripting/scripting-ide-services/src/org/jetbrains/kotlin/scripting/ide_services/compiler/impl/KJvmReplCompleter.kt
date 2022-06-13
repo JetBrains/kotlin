@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.KJvmReplComplet
 import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
 import org.jetbrains.kotlin.scripting.resolve.classId
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.asFlexibleType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant

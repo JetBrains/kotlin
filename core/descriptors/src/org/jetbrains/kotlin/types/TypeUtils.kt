@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.util.asFlexibleType
 import org.jetbrains.kotlin.types.util.isCaptured
+import org.jetbrains.kotlin.types.util.isFlexible
+import org.jetbrains.kotlin.types.util.isNullabilityFlexible
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

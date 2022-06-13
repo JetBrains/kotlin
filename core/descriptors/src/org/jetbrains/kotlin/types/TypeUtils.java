@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.error.ErrorTypeKind;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -295,7 +296,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
+        if (FlexibleTypeUtilsKt.isFlexible(type) && isNullableType(FlexibleTypeUtilsKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
         if (SpecialTypesKt.isDefinitelyNotNullType(type)) {
@@ -329,7 +330,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
+        if (FlexibleTypeUtilsKt.isFlexible(type) && acceptsNullable(FlexibleTypeUtilsKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
         return false;

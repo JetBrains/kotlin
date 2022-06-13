@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerStateInternals
 import org.jetbrains.kotlin.types.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 /*
  NB: this checker is exceptionally temporary added for stdlib migration purposes (see KT-49276).

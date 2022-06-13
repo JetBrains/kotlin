@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.types.upperIfFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 import org.jetbrains.org.objectweb.asm.Type
 
 class CallBasedArgumentGenerator(

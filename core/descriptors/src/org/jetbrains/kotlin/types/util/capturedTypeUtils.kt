@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
 import org.jetbrains.kotlin.types.model.CaptureStatus

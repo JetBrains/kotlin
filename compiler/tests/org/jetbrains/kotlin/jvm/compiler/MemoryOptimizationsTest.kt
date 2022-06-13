@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
-import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.upperIfFlexible
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 class MemoryOptimizationsTest : KtUsefulTestCase() {
     fun testBasicFlexibleTypeCase() {

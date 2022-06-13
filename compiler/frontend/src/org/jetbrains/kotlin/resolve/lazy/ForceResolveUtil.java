@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 
 import java.util.Collection;
 
@@ -107,9 +107,9 @@ public class ForceResolveUtil {
         if (type == null) return null;
 
         forceResolveAllContents(type.getAnnotations());
-        if (FlexibleTypesKt.isFlexible(type)) {
-            forceResolveAllContents(FlexibleTypesKt.asFlexibleType(type).getLowerBound());
-            forceResolveAllContents(FlexibleTypesKt.asFlexibleType(type).getUpperBound());
+        if (FlexibleTypeUtilsKt.isFlexible(type)) {
+            forceResolveAllContents(FlexibleTypeUtilsKt.asFlexibleType(type).getLowerBound());
+            forceResolveAllContents(FlexibleTypeUtilsKt.asFlexibleType(type).getUpperBound());
         }
         else {
             forceResolveAllContents(type.getConstructor());

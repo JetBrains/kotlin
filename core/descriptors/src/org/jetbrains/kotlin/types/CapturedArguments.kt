@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.types.checker.FlexibleTypeBoundsChecker
+
 internal class CapturedArguments(val capturedArguments: List<TypeProjection>, private val originalType: KotlinType) {
     fun isSuitableForType(type: KotlinType): Boolean {
         val areArgumentsMatched = type.arguments.withIndex().all { (i, typeArgumentsType) ->

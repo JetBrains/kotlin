@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.types.util.captureFromExpression
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 class ReceiverInfo(
     val isReceiver: Boolean,

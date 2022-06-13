@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
+import org.jetbrains.kotlin.types.util.isNullabilityFlexible
+import org.jetbrains.kotlin.types.util.lowerIfFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 

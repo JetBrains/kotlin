@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.util.isNullabilityFlexible
 
 internal val MemberDescriptor.ktSymbolKind: KtSymbolKind
     get() {

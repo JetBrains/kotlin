@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 
 @DefaultImplementation(impl = UpperBoundChecker::class)
 open class UpperBoundChecker {

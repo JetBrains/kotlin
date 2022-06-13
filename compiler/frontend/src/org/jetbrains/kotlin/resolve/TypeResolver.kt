@@ -63,6 +63,8 @@ import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 

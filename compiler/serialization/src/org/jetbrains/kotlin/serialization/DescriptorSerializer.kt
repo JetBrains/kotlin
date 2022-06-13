@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 import java.util.*
 
 class DescriptorSerializer private constructor(

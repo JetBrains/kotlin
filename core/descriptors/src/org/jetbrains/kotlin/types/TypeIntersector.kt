@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import java.util.*
 import kotlin.collections.LinkedHashSet
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 fun intersectWrappedTypes(types: Collection<KotlinType>) = intersectTypes(types.map { it.unwrap() })
 

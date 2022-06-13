@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.util.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object NullableExtensionOperatorWithSafeCallChecker : CallChecker {

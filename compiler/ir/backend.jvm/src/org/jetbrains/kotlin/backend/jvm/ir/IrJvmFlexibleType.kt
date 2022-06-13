@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker
+import org.jetbrains.kotlin.types.checker.FlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 
 internal interface IrJvmFlexibleType : FlexibleTypeMarker {

@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil;
 import org.jetbrains.kotlin.types.FlexibleType;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.*;
@@ -242,9 +242,9 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        if (FlexibleTypesKt.isFlexible(type)) {
+        if (FlexibleTypeUtilsKt.isFlexible(type)) {
             // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
-            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
+            FlexibleType flexibleType = FlexibleTypeUtilsKt.asFlexibleType(type);
 
             if (!TypeUtils.isNullableType(flexibleType.getLowerBound()) && TypeUtils.isNullableType(flexibleType.getUpperBound())) {
                 AnnotationDescriptor notNull = type.getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);

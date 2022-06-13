@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.isClassType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {

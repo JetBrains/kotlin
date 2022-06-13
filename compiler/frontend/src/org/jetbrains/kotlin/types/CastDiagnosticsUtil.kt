@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.typeUtil.isEmptyIntersectionTypeCompatible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 
 object CastDiagnosticsUtil {
 

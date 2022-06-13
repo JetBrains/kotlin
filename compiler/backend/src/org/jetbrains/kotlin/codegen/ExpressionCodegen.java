@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.util.CapturedTypeUtilsKt;
+import org.jetbrains.kotlin.types.util.FlexibleTypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -4358,7 +4359,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type exprType = expressionType(expr);
         KotlinType exprKotlinType = kotlinType(expr);
         if (exprKotlinType != null && InlineClassesUtilsKt.isInlineClassType(exprKotlinType) &&
-            FlexibleTypesKt.isNullabilityFlexible(exprKotlinType)) {
+            FlexibleTypeUtilsKt.isNullabilityFlexible(exprKotlinType)) {
             exprKotlinType = TypeUtils.makeNullable(exprKotlinType);
         }
         StackValue value;

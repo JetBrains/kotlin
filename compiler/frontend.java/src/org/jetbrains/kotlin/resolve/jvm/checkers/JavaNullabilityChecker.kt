@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 
 class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : AdditionalTypeChecker {
     override fun checkType(

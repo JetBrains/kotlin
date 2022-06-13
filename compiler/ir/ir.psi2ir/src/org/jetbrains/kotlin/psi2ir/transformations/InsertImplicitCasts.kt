@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.util.isNullabilityFlexible
+import org.jetbrains.kotlin.types.util.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun insertImplicitCasts(file: IrFile, context: GeneratorContext) {

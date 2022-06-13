@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.util.isFlexible
 import org.jetbrains.kotlin.util.javaslang.*
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import java.util.*

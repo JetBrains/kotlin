@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
+import org.jetbrains.kotlin.types.util.asFlexibleType
+import org.jetbrains.kotlin.types.util.isFlexible
 
 object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
