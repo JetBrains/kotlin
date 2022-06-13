@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -44,7 +45,10 @@ import org.jetbrains.kotlin.types.KotlinType
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
-        val operatorCall = generateAssignOperatorCall(ktExpression, origin)
+        val operatorCall = when (LanguageFeature.AssignOperatorOverloadForJvmOldFrontend.isSupported()) {
+            true -> generateAssignOperatorCall(ktExpression, origin)
+            else -> null
+        }
         return if (operatorCall != null) {
             operatorCall
         } else {
@@ -54,6 +58,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             irAssignmentReceiver.assign(irRhs)
         }
     }
+
+    private fun LanguageFeature.isSupported(): Boolean = statementGenerator.context.languageVersionSettings.supportsFeature(this)
 
     private fun generateAssignOperatorCall(
         ktExpression: KtBinaryExpression,

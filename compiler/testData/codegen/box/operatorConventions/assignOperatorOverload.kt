@@ -1,5 +1,6 @@
 
 // TARGET_BACKEND: JVM_IR
+// !LANGUAGE:+AssignOperatorOverloadForJvmOldFrontend
 
 var result: String = "Fail"
 
@@ -29,6 +30,21 @@ operator fun NullCheckContainer.assign(value: String) {
     nullCheckResult = value
 }
 
+operator fun String.assign(value: Int) {
+    result = "OK.operator.String.assign"
+}
+
+class SelectAssignTest {
+    fun String.assign(value: Int) {
+        result = "Fail.String.assign"
+    }
+
+    fun test() {
+        val s = "hello"
+        s = 1
+    }
+}
+
 fun box(): String {
     // Test simple assign for local variable
     val x = 10
@@ -56,10 +72,16 @@ fun box(): String {
     foo.x[1] = 2L
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
+    // TODO Fix these tests
     // Test assign() on null is not called
 //    val nullCheck: NullCheck? = null
 //    nullCheck?.x = "Fail"
 //    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
+
+    // Test operator String.assign is selected over Foo.String.assign
+//    result = "Fail"
+//    SelectAssignTest().test()
+//    if (result != "OK.operator.String.assign") return "Fail: ${result}"
 
     return "OK"
 }

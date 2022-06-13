@@ -837,7 +837,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): FirStatement {
         // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
+        val resolvedAssignment = callResolver.resolveVariableAccessSelectCandidate(variableAssignment, isUsedAsReceiver = false)
 
         fun FirFunctionCall.updateFunctionCallDataflow(): FirStatement {
             dataFlowAnalyzer.enterFunctionCall(this)

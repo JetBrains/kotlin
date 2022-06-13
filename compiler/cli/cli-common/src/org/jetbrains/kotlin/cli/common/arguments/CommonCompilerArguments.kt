@@ -415,6 +415,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render internal names of warnings and errors")
     var renderInternalDiagnosticNames: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xenable-assign-operator-for-f10", description = "Enable assign operator overload for frontend 1.0")
+    var assignOperatorForOldFrontend: Boolean by FreezableVar(false)
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -498,6 +501,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
+            }
+
+            if (assignOperatorForOldFrontend) {
+                put(LanguageFeature.AssignOperatorOverloadForJvmOldFrontend, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {

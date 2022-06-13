@@ -443,35 +443,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
-
-        // Resolve assign overload
-        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
-        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
-        KotlinType assignmentOperationType = null;
-        TemporaryTraceAndCache temporaryForAssignmentOperation = null;
-        boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
-        if (descriptor != null && !descriptor.isVar() && !isDelegated) {
-            ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
-            temporaryForAssignmentOperation = TemporaryTraceAndCache.create(
-                    context, "trace to check assignment operation like '=' for", expression);
-            assignmentOperationDescriptors =
-                    components.callResolver.resolveBinaryCall(
-                            context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
-                            receiver, expression, ASSIGN
-                    );
-            assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
-        }
-        boolean isResolvedAssignOverload = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
-        if (isResolvedAssignOverload) {
-            temporaryForAssignmentOperation.commit();
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
-                KtSimpleNameExpression operationSign = expression.getOperationReference();
-                context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
+        // Resolve assign operator overload
+        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvmOldFrontend)) {
+            KotlinTypeInfo assignOperatorOverload = resolveAssignOperatorOverload(bindingContext, expression, contextWithExpectedType, leftOperand, left, leftInfo, context);
+            if (assignOperatorOverload != null) {
+                return assignOperatorOverload;
             }
-            KotlinTypeInfo rightInfo = leftInfo;
-            return rightInfo.replaceType(checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType));
         }
-
 
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
@@ -508,6 +486,46 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         return resultInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(expression, contextWithExpectedType));
     }
+
+    private KotlinTypeInfo resolveAssignOperatorOverload(
+            BindingContext bindingContext,
+            KtBinaryExpression expression,
+            ExpressionTypingContext contextWithExpectedType,
+            KtExpression leftOperand,
+            KtExpression left,
+            KotlinTypeInfo leftInfo,
+            ExpressionTypingContext context
+    ) {
+        KotlinType leftType = leftInfo.getType();
+        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
+        KotlinType assignmentOperationType = null;
+        TemporaryTraceAndCache temporaryForAssignmentOperation = null;
+        boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
+        if (descriptor != null && !descriptor.isVar() && !isDelegated) {
+            ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
+            temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
+            assignmentOperationDescriptors = components.callResolver.resolveBinaryCall(
+                    context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
+                    receiver, expression, ASSIGN
+            );
+            assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
+        }
+
+        boolean isResolvedAssignOverload = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
+        if (isResolvedAssignOverload) {
+            temporaryForAssignmentOperation.commit();
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
+                KtSimpleNameExpression operationSign = expression.getOperationReference();
+                context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
+            }
+            KotlinTypeInfo rightInfo = leftInfo;
+            return rightInfo.replaceType(checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType));
+        } else {
+            return null;
+        }
+    }
+
 
     private void checkPropertyInTypeWithWarnings(
             @NotNull ResolutionContext<?> context,
