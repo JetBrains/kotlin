@@ -65,6 +65,26 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun List<KtScope>.asCompositeScope(): KtScope =
         withValidityAssertion { analysisSession.scopeProvider.getCompositeScope(this) }
 
+    /**
+     * Return a [KtTypeScope] for a given [KtType].
+     * The type scope will include all members which are declared and callable on a given type.
+     *
+     * Comparing to the [KtScope], in the [KtTypeScope] all use-site type parameters are substituted.
+     *
+     * Consider the following code
+     * ```
+     * fun foo(list: List<String>) {
+     *      list // get KtTypeScope for it
+     * }
+     *```
+     *
+     * Inside the `LIST_KT_ELEMENT.getKtType().getTypeScope()` would contain the `get(i: Int): String` method with substituted type `T = String`
+     *
+     * @return type scope for the given type if given `KtType` is not error type, `null` otherwise.
+     *
+     * @see KtTypeScope
+     * @see KtTypeProviderMixIn.getKtType
+     */
     public fun KtType.getTypeScope(): KtTypeScope? =
         withValidityAssertion { analysisSession.scopeProvider.getTypeScope(this) }
 
