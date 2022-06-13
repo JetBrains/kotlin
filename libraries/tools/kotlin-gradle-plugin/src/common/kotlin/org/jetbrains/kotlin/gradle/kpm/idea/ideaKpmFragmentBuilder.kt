@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.tooling.core.emptyExtras
 
 internal fun IdeaKpmProjectBuildingContext.IdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {
     return if (fragment is GradleKpmVariant) buildIdeaKpmVariant(fragment)
@@ -19,9 +18,10 @@ private fun IdeaKpmProjectBuildingContext.buildIdeaKpmFragment(fragment: GradleK
         platforms = fragment.containingVariants.map { variant -> IdeaKpmPlatform(variant) }.toSet(),
         languageSettings = IdeaKpmLanguageSettings(fragment.languageSettings),
         dependencies = dependencyResolver.resolve(fragment).toList(),
-        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.toList().map { file -> IdeaKpmSourceDirectoryImpl(file) },
-        resourceDirectories = emptyList(), // TODO
-        extras = emptyExtras() // TODO: Requires more sophisticated serialization
+        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.map { file ->
+            IdeaKpmSourceDirectoryImpl(file, type = IdeaKpmSourceDirectory.SOURCE_TYPE)
+        },
+        extras = fragment.extras
     )
 }
 
