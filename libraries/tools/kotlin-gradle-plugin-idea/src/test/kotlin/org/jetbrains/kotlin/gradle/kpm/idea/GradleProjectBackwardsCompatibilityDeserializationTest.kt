@@ -7,26 +7,28 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-import buildIdeaKpmProjectModel
-import createKpmProject
-import createProxyInstance
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.buildIdeaKpmProject
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.createKpmProject
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.createProxyInstance
+import org.jetbrains.kotlin.gradle.kpm.idea.testUtils.deserializeIdeaKpmProjectWithBackwardsCompatibleClasses
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.deserialize
-import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.serialize
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtra
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.TestIdeaKpmExtrasSerializationExtension.anySerializableKey
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.copy
 import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmIosX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
-import unwrapProxyInstance
-import java.io.File
-import java.io.Serializable
-import java.net.URLClassLoader
-import kotlin.test.*
+import org.jetbrains.kotlin.gradle.kpm.idea.testFixtures.unwrapProxyInstance
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.fail
 
 /**
  * This test is designed to test if serialized models can still be deserialized with a older (minimal supported)
@@ -38,9 +40,8 @@ import kotlin.test.*
  * - Deserialize this model with the older version of the classes (using a custom class loader)
  * - Assert the deserialized model is healthy
  */
-class BackwardsCompatibilityDeserializationTest {
+class GradleProjectBackwardsCompatibilityDeserializationTest {
 
-    data class RetainedModel(val id: Int) : Serializable
     data class UnretainedModel(val id: Int)
 
     @Test
@@ -57,8 +58,8 @@ class BackwardsCompatibilityDeserializationTest {
         }
         project.evaluate()
 
-        val model = project.buildIdeaKpmProjectModel()
-        val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
+        val model = project.buildIdeaKpmProject()
+        val deserializedModel = deserializeIdeaKpmProjectWithBackwardsCompatibleClasses(model)
 
         /* Use proxy instances to assert the deserialized model */
         run {
@@ -80,10 +81,8 @@ class BackwardsCompatibilityDeserializationTest {
         }
     }
 
-    @Ignore("No serialisation for extras implemented, yet")
     @Test
     fun `test - attaching serializable extras`() {
-        val retainedModelKey = extrasKeyOf<RetainedModel>()
         val unretainedModelKey = extrasKeyOf<UnretainedModel>()
 
         val project = ProjectBuilder.builder().build() as ProjectInternal
@@ -91,11 +90,11 @@ class BackwardsCompatibilityDeserializationTest {
 
         /* Setup example project */
         val kotlinExtension = project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
-        kotlinExtension.main.common.extras[retainedModelKey] = RetainedModel(2411)
+        kotlinExtension.main.common.extras[anySerializableKey] = TestIdeaKpmExtra(2411)
         kotlinExtension.main.common.extras[unretainedModelKey] = UnretainedModel(510)
 
-        val model = project.buildIdeaKpmProjectModel()
-        val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
+        val model = project.buildIdeaKpmProject()
+        val deserializedModel = deserializeIdeaKpmProjectWithBackwardsCompatibleClasses(model)
         val deserializedModelProxy = createProxyInstance<IdeaKpmProject>(deserializedModel)
 
         val deserializedMainModuleProxy = deserializedModelProxy.modules.find { it.coordinates.moduleClassifier == null }
@@ -106,47 +105,10 @@ class BackwardsCompatibilityDeserializationTest {
 
         run {
             val deserializedCommonFragment = unwrapProxyInstance(deserializedCommonFragmentProxy)
-            val extras = deserializedCommonFragment.serialize().deserialize<IdeaKpmFragment>().extras
+            val extras = deserializedCommonFragment.copy<IdeaKpmFragment>().extras
             assertEquals(1, extras.keys.size)
-            assertEquals(RetainedModel(2411), extras[retainedModelKey])
+            assertEquals(TestIdeaKpmExtra(2411), extras[anySerializableKey])
             assertNull(extras[unretainedModelKey])
         }
     }
-}
-
-private fun getClassLoaderForBackwardsCompatibilityTest(): ClassLoader {
-    val uris = getClasspathForBackwardsCompatibilityTest().map { file -> file.toURI().toURL() }.toTypedArray()
-    return URLClassLoader.newInstance(uris, null)
-}
-
-private fun getClasspathForBackwardsCompatibilityTest(): List<File> {
-    val compatibilityTestClasspath = System.getProperty("compatibilityTestClasspath")
-        ?: error("Missing compatibilityTestClasspath system property")
-
-    return compatibilityTestClasspath.split(";").map { path -> File(path) }
-        .onEach { file -> if (!file.exists()) println("[WARNING] Missing $file") }
-        .flatMap { file -> if (file.isDirectory) file.listFiles().orEmpty().toList() else listOf(file) }
-}
-
-private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKpmProject): Any {
-    val backwardsCompatibilityClassLoader = getClassLoaderForBackwardsCompatibilityTest()
-    val backwardsCompatibilityModel = model.serialize().deserialize(backwardsCompatibilityClassLoader)
-
-    assertSame(
-        backwardsCompatibilityModel.javaClass.classLoader,
-        backwardsCompatibilityClassLoader,
-        "Expected deserialized model being loaded by 'backwardsCompatibilityTestClassLoader'"
-    )
-
-    assertNotEquals<Class<*>>(
-        model.javaClass, backwardsCompatibilityModel.javaClass,
-        "Expected deserialized model java class to be different from origin"
-    )
-
-    assertEquals(
-        model.javaClass.name, backwardsCompatibilityModel.javaClass.name,
-        "Expected deserialized model to be same java class as origin"
-    )
-
-    return backwardsCompatibilityModel
 }
