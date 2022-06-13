@@ -292,7 +292,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         project(
             "kaptIncrementalWithParceler",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42.version)
         ) {
             build("clean", ":mylibrary:assembleDebug")
 

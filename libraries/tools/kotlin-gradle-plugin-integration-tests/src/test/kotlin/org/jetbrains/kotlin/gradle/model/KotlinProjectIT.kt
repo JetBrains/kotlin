@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 @OtherGradlePluginTests
 class KotlinProjectIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = TestVersions.AGP.AGP_34,
+        androidVersion = TestVersions.AGP.AGP_34.version,
     )
 
     @DisplayName("Valid model is available in Kotlin only project")

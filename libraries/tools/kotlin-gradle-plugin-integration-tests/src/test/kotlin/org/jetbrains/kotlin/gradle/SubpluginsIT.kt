@@ -168,7 +168,7 @@ class SubpuginsIT : KGPBaseTest() {
             build(
                 ":app:compileDebugKotlin",
                 buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42
+                    androidVersion = TestVersions.AGP.AGP_42.version
                 )
             )
         }

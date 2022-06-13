@@ -139,3 +139,59 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
         )
     }
 }
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class AndroidTestVersions(
+    val minVersion: String = TestVersions.AGP.MIN_SUPPORTED,
+    val maxVersion: String = TestVersions.AGP.MAX_SUPPORTED,
+    val additionalVersions: Array<String> = []
+)
+
+class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
+    override fun provideArguments(
+        context: ExtensionContext
+    ): Stream<out Arguments> {
+        val agpVersionsAnnotation = findAnnotation<AndroidTestVersions>(context)
+        val agpVersions = setOf(
+            agpVersionsAnnotation.minVersion,
+            *agpVersionsAnnotation.additionalVersions,
+            agpVersionsAnnotation.maxVersion
+        )
+
+        val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+
+        return agpVersions
+            .flatMap { version ->
+                val agpVersion = TestVersions.AGP.values().find { it.version == version }
+                    ?: throw IllegalArgumentException("AGP version $version is not defined in TestVersions.AGP!")
+
+                val providedJdk = JdkVersions.ProvidedJdk(
+                    agpVersion.requiredJdkVersion,
+                    File(System.getProperty("jdk${agpVersion.requiredJdkVersion.majorVersion}Home"))
+                )
+
+                gradleVersions
+                    .filter { it in agpVersion.minSupportedGradleVersion..agpVersion.maxSupportedGradleVersion }
+                    .map {
+                        AgpTestArguments(it, agpVersion.version, providedJdk)
+                    }
+                    .also {
+                        require(it.isNotEmpty()) {
+                            "Could not find suitable Gradle version for AGP $agpVersion version!"
+                        }
+                    }
+            }
+            .asSequence()
+            .map {
+                Arguments.of(it.gradleVersion, it.agpVersion, it.jdkVersion)
+            }
+            .asStream()
+    }
+
+    data class AgpTestArguments(
+        val gradleVersion: GradleVersion,
+        val agpVersion: String,
+        val jdkVersion: JdkVersions.ProvidedJdk
+    )
+}

@@ -10,6 +10,8 @@ To run all tests for all Gradle plugins use `check` task.
 More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJvmTests` - runs all tests for Kotlin Gradle Plugin/Jvm platform (parallel execution)
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
+- `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
+- `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
 - `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
@@ -99,6 +101,27 @@ fun someTest(
 ) {
     project("simple", gradleVersion, buildJdk = providedJdk.location) {
         build("assemble")
+    }
+}
+```
+
+- Whenever Android Gradle plugin different versions should be checked in the tests - it is possible to use `@GradleAndroidTest` annotation 
+instead of `@GradleTest`. Test will receive additionally to Gradle version AGP version and required JDK version:
+```kotlin
+@AndroidTestVersions(additionalVersions = [TestVersions.AGP.AGP_42])
+@GradleAndroidTest
+fun someTest(
+    gradleVersion: GradleVersion,
+    agpVersion: String,
+    jdkVersion: JdkVersions.ProvidedJdk
+) {
+    project(
+        "simpleAndroid",
+        gradleVersion,
+        buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        buildJdk = jdkVersion.location
+    ) {
+        build("assembleDebug")
     }
 }
 ```

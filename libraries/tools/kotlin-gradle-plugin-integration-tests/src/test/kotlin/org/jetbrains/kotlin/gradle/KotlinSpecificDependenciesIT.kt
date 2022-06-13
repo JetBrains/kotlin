@@ -97,28 +97,44 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("Android: kotlin-stdlib dependency is added by default")
-    @GradleTest
-    fun testStdlibDefaultAndroid(gradleVersion: GradleVersion) {
+    @GradleAndroidTest
+    fun testStdlibDefaultAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+            ),
+            buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
             checkTaskCompileClasspath("compileDebugKotlin", listOf("kotlin-stdlib" /*any of them*/))
         }
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("Android: kotlin-stdlib dependency is not added when disabled via properties")
-    @GradleTest
-    fun testStdlibDisabledAndroid(gradleVersion: GradleVersion) {
+    @GradleAndroidTest
+    fun testStdlibDisabledAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+            ),
+            buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
             gradleProperties.appendText(
@@ -221,14 +237,22 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in unit tests")
-    @GradleTest
-    fun kotlinTestSingleDependencyAndroidUnitTests(gradleVersion: GradleVersion) {
+    @GradleAndroidTest
+    fun kotlinTestSingleDependencyAndroidUnitTests(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+            ),
+            buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
                 listOf("testImplementation"),
@@ -240,14 +264,22 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
+    @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in ui tests")
-    @GradleTest
-    fun kotlinTestSingleDependencyAndroidUiTests(gradleVersion: GradleVersion) {
+    @GradleAndroidTest
+    fun kotlinTestSingleDependencyAndroidUiTests(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+            ),
+            buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
                 listOf("androidTestImplementation"),

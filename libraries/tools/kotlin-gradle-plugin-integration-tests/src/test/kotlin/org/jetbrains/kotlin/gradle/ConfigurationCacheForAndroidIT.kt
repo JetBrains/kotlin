@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName
 @JvmGradlePluginTests
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = AGP_42
+        androidVersion = AGP_42.version
     )
 
     @DisplayName("works in android plus kapt project")
