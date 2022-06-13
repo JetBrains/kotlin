@@ -1,0 +1,10 @@
+public final class org/jetbrains/kotlin/kpm/idea/proto/KpmIdeaProto {
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;Lcom/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;Ljava/io/InputStream;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
+	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;[B)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;
+	public static final fun toByteArray (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;)[B
+	public static final fun toByteString (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;)Lcom/google/protobuf/ByteString;
+	public static final fun writeTo (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProject;Ljava/io/OutputStream;Lorg/jetbrains/kotlin/gradle/kpm/idea/serialize/IdeaKpmSerializationContext;)V
+}
+

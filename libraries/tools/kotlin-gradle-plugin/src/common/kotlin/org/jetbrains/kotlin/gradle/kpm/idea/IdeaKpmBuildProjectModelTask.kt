@@ -55,7 +55,7 @@ internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
             val protoBinaryFile = outputDirectory.resolve("model.proto.bin")
             if (protoBinaryFile.exists()) protoBinaryFile.delete()
             protoBinaryFile.outputStream().use { stream ->
-                model.writeTo(serializationContext, stream)
+                model.writeTo(stream, serializationContext)
             }
         }
 

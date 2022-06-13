@@ -15,6 +15,7 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
     testArtifacts project(':kotlin-gradle-plugin-idea')
+    testArtifacts project(':kotlin-gradle-plugin-idea-proto')
     testArtifacts project(':kotlin-tooling-core')
 
     testCompileOnly("org.ow2.asm:asm-tree:9.0") {

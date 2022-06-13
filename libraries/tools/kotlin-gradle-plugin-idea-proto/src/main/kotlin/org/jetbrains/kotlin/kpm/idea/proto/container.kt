@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FunctionName")
+@file:JvmName("KpmIdeaProto")
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
@@ -50,7 +51,7 @@ fun IdeaKpmProject.toByteString(context: IdeaKpmSerializationContext): ByteStrin
     return context.IdeaKpmContainerProto(this).toByteString()
 }
 
-fun IdeaKpmProject.writeTo(context: IdeaKpmSerializationContext, output: OutputStream) {
+fun IdeaKpmProject.writeTo(output: OutputStream, context: IdeaKpmSerializationContext) {
     context.IdeaKpmContainerProto(this).writeDelimitedTo(output)
 }
 

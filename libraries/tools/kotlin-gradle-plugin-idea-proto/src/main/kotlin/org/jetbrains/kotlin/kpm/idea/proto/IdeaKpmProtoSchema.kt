@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-object IdeaKpmProtoSchema {
+internal object IdeaKpmProtoSchema {
     const val versionMajor = 1
     const val versionMinor = 0
     const val versionPatch = 0
