@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -217,17 +218,29 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
         val javaSourceFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY !in it.directives }
 
-        if (javaSourceFiles.isNotEmpty() && JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives && ALL_JAVA_AS_BINARY !in registeredDirectives) {
-            javaSourceFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+        if (javaSourceFiles.isNotEmpty() &&
+            JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives &&
+            ALL_JAVA_AS_BINARY !in registeredDirectives
+        ) {
+            // NB: [getRealFileForSourceFile] is misleading, since it actually creates a real file from the given test file as well.
+            val realSourceFileMap = javaSourceFiles.associateWith { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
 
             // TODO: temporary hack to provide java 9 modules in the source mode properly (see comment on ClasspathRootsResolved::addModularRoots)
             addJavaCompiledModulesFromDependentKotlinModules(configuration, configurationKind, module, bySources = true)
 
-            val moduleInfoFiles = javaSourceFiles.filter { it.name == MODULE_INFO_FILE }
-
+            val (moduleInfoFiles, sourceFiles) = javaSourceFiles.partition { it.name == MODULE_INFO_FILE }
             if (moduleInfoFiles.isNotEmpty()) {
                 addJavaSourceRootsByJavaModules(configuration, moduleInfoFiles)
             } else {
+                sourceFiles.forEach l@{ testFile ->
+                    val file = realSourceFileMap[testFile] ?: return@l
+                    if (JvmEnvironmentConfigurationDirectives.USE_JAVAC !in module.directives &&
+                        !file.isDirectory &&
+                        file.extension == JavaFileType.DEFAULT_EXTENSION
+                    ) {
+                        configuration.addJavaSourceRoot(file)
+                    }
+                }
                 configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
             }
         }
