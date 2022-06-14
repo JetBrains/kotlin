@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.core.CoreJavaFileManager
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
@@ -100,16 +101,19 @@ object StandaloneProjectFactory {
             addAll(allSourceFileRoots)
         }
 
+        val (roots, singleJavaFileRoots) =
+            sourceAndLibraryRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
         val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
 
         javaFileManager.initialize(
-            JvmDependenciesIndexImpl(sourceAndLibraryRoots),
+            JvmDependenciesIndexImpl(roots),
             listOf(
                 createPackagePartsProvider(project, libraryRoots, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
-            SingleJavaFileRootsIndex(emptyList()),
+            SingleJavaFileRootsIndex(singleJavaFileRoots),
             true
         )
 
@@ -118,7 +122,7 @@ object StandaloneProjectFactory {
             CliJavaModuleResolver(JavaModuleGraph(javaModuleFinder), emptyList(), javaModuleFinder.systemModules.toList(), project)
         )
 
-        val finderFactory = CliVirtualFileFinderFactory(JvmDependenciesIndexImpl(sourceAndLibraryRoots), false)
+        val finderFactory = CliVirtualFileFinderFactory(JvmDependenciesIndexImpl(roots), false)
 
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
