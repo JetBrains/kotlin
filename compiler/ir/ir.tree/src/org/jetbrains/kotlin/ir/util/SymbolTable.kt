@@ -1163,17 +1163,19 @@ inline fun <T> ReferenceSymbolTable.withReferenceScope(owner: IrDeclaration, blo
 }
 
 val SymbolTable.allUnbound: Set<IrSymbol>
-    get() {
-        val r = mutableSetOf<IrSymbol>()
-        r.addAll(unboundClasses)
-        r.addAll(unboundConstructors)
-        r.addAll(unboundEnumEntries)
-        r.addAll(unboundFields)
-        r.addAll(unboundSimpleFunctions)
-        r.addAll(unboundProperties)
-        r.addAll(unboundTypeAliases)
-        r.addAll(unboundTypeParameters)
-        return r.filter { !it.isBound }.toSet()
+    get() = buildSet {
+        fun addUnbound(symbols: Collection<IrSymbol>) {
+            symbols.filterTo(this) { !it.isBound }
+        }
+
+        addUnbound(unboundClasses)
+        addUnbound(unboundConstructors)
+        addUnbound(unboundEnumEntries)
+        addUnbound(unboundFields)
+        addUnbound(unboundSimpleFunctions)
+        addUnbound(unboundProperties)
+        addUnbound(unboundTypeAliases)
+        addUnbound(unboundTypeParameters)
     }
 
 fun SymbolTable.noUnboundLeft(message: String) {
