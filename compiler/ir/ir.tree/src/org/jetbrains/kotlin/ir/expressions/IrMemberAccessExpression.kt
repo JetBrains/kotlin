@@ -16,61 +16,54 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  */
 abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
+
     var extensionReceiver: IrExpression? = null
 
     abstract override val symbol: S
 
     abstract val origin: IrStatementOrigin?
 
-    protected abstract val typeArguments: Array<IrType?>
-    val typeArgumentsCount: Int get() = typeArguments.size
-
     protected abstract val valueArguments: Array<IrExpression?>
-    open val valueArgumentsCount: Int get() = valueArguments.size
 
-    fun getValueArgument(index: Int): IrExpression? {
-        if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
-        }
-        return valueArguments[index]
-    }
+    protected abstract val typeArguments: Array<IrType?>
 
-    fun putValueArgument(index: Int, valueArgument: IrExpression?) {
-        if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
-        }
-        valueArguments[index] = valueArgument
-    }
+    val valueArgumentsCount: Int
+        get() = valueArguments.size
 
-    fun getTypeArgument(index: Int): IrType? {
-        if (index >= typeArgumentsCount) {
-            throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
-        }
-        return typeArguments[index]
-    }
-
-    fun putTypeArgument(index: Int, type: IrType?) {
-        if (index >= typeArgumentsCount) {
-            throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
-        }
-        typeArguments[index] = type
-    }
+    val typeArgumentsCount: Int
+        get() = typeArguments.size
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
-        if (valueArgumentsCount > 0) {
-            valueArguments.forEach { it?.accept(visitor, data) }
-        }
+        valueArguments.forEach { it?.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
-        if (valueArgumentsCount > 0) {
-            valueArguments.forEachIndexed { i, irExpression ->
-                valueArguments[i] = irExpression?.transform(transformer, data)
-            }
+        valueArguments.forEachIndexed { i, irExpression ->
+            valueArguments[i] = irExpression?.transform(transformer, data)
         }
+    }
+
+    fun getValueArgument(index: Int): IrExpression? {
+        checkArgumentSlotAccess("value", index, valueArguments.size)
+        return valueArguments[index]
+    }
+
+    fun getTypeArgument(index: Int): IrType? {
+        checkArgumentSlotAccess("type", index, typeArguments.size)
+        return typeArguments[index]
+    }
+
+    fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        checkArgumentSlotAccess("value", index, valueArguments.size)
+        valueArguments[index] = valueArgument
+    }
+
+    fun putTypeArgument(index: Int, type: IrType?) {
+        checkArgumentSlotAccess("type", index, typeArguments.size)
+        typeArguments[index] = type
     }
 }
