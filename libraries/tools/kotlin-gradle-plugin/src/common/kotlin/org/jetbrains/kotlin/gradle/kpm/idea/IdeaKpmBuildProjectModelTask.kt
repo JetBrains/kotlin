@@ -27,8 +27,9 @@ internal fun Project.locateOrRegisterIdeaKpmBuildProjectModelTask(): TaskProvide
  * Internal Task used for troubleshooting/debugging/diagnosing IdeaKpm model building.
  */
 internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
+
     @OutputDirectory
-    val outputDirectory = project.buildDir.resolve("ideaKpmProjectModel")
+    val outputDirectory = project.buildDir.resolve("IdeaKpmProject")
 
     private val builder = project.pm20Extension.ideaKpmProjectModelBuilder
 
