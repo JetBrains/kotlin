@@ -30,7 +30,7 @@ class CacheVersionManager(
     override fun loadActual(): CacheVersion? =
         if (Files.notExists(versionFile)) null
         else try {
-            CacheVersion(Files.newInputStream(versionFile).bufferedReader().use { it.readText() }.toInt())
+            CacheVersion(Files.readAllBytes(versionFile).toString().toInt())
         } catch (e: NumberFormatException) {
             null
         } catch (e: IOException) {
@@ -41,7 +41,7 @@ class CacheVersionManager(
         if (values == null) Files.deleteIfExists(versionFile)
         else {
             Files.createDirectories(versionFile.parent)
-            Files.newOutputStream(versionFile).bufferedWriter().use { it.append(values.intValue.toString()) }
+            Files.write(versionFile, values.intValue.toString().toByteArray())
         }
     }
 
