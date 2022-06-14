@@ -42,6 +42,7 @@ abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedSingleModuleTes
                 ?: error("Only single annotation entry is supported for now")
             annotationEntry.resolveCall()
         }
+        is KtCallElement -> element.resolveCall()
         is KtElement -> element.resolveCall()
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
     }
