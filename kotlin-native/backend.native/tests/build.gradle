@@ -6152,6 +6152,10 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
     annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
 }
 
+fileCheckTest("filecheck_redundant_boxing_unboxing") {
+    annotatedSource = project.file('filecheck/redundant_boxing_unboxing.kt')
+}
+
 fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
 }
