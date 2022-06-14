@@ -51,17 +51,24 @@ public final class org/jetbrains/kotlin/tooling/core/Extras$Entry : java/io/Seri
 
 public final class org/jetbrains/kotlin/tooling/core/Extras$Key : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/tooling/core/Extras$Key$Companion;
-	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Type;Ljava/lang/String;)V
+	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/Extras$Type;Ljava/lang/String;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
 	public final fun getStableString ()Ljava/lang/String;
-	public final fun getType ()Lorg/jetbrains/kotlin/tooling/core/Type;
+	public final fun getType ()Lorg/jetbrains/kotlin/tooling/core/Extras$Type;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/Extras$Key$Companion {
 	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+}
+
+public final class org/jetbrains/kotlin/tooling/core/Extras$Type : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
@@ -133,14 +140,7 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/MutableExtras 
 	public abstract fun set (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public final class org/jetbrains/kotlin/tooling/core/Type : java/io/Serializable {
-	public fun <init> (Ljava/lang/String;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/tooling/core/TypeKt {
+public final class org/jetbrains/kotlin/tooling/core/TypeUtils {
 	public static final fun renderReifiedTypeSignatureString (Lkotlin/reflect/KType;)Ljava/lang/String;
 }
 

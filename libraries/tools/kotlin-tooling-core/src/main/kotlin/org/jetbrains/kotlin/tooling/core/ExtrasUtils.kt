@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+import kotlin.reflect.typeOf
+
 /**
  *  Creates a value based key for accessing any [Extras] container
  *
@@ -25,7 +27,7 @@ package org.jetbrains.kotlin.tooling.core
  * ```
  */
 inline fun <reified T : Any> extrasKeyOf(name: String? = null): Extras.Key<T> =
-    Extras.Key(Type(), name)
+    Extras.Key(extrasTypeOf(), name)
 
 fun emptyExtras(): Extras = EmptyExtras
 
@@ -36,6 +38,11 @@ fun extrasOf(vararg entries: Extras.Entry<*>): Extras = if (entries.isEmpty()) E
 fun mutableExtrasOf(): MutableExtras = MutableExtrasImpl()
 
 fun mutableExtrasOf(vararg entries: Extras.Entry<*>): MutableExtras = MutableExtrasImpl(entries.toList())
+
+inline fun <reified T> extrasTypeOf(): Extras.Type<T> {
+    @OptIn(UnsafeApi::class, ExperimentalStdlibApi::class)
+    return Extras.Type(renderReifiedTypeSignatureString(typeOf<T>()))
+}
 
 fun Iterable<Extras.Entry<*>>.toExtras(): Extras = ImmutableExtrasImpl(this)
 

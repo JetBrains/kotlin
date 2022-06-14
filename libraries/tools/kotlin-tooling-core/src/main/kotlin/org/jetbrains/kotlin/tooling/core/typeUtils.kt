@@ -4,41 +4,13 @@
  */
 
 @file:Suppress("FunctionName")
+@file:JvmName("TypeUtils")
 
 package org.jetbrains.kotlin.tooling.core
 
-import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KVariance
-import kotlin.reflect.typeOf
-
-inline fun <reified T> Type(): Type<T> {
-    @OptIn(UnsafeApi::class, ExperimentalStdlibApi::class)
-    return Type(renderReifiedTypeSignatureString(typeOf<T>()))
-}
-
-class Type<T>
-@UnsafeApi("Use 'Type' instead")
-@PublishedApi internal constructor(internal val signature: String) : Serializable {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Type<*>) return false
-        if (other.signature != this.signature) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return 31 * signature.hashCode()
-    }
-
-    override fun toString(): String = signature
-
-    internal companion object {
-        private const val serialVersionUID = 0L
-    }
-}
 
 @PublishedApi
 @UnsafeApi("Use 'ReifiedTypeSignature' instead")

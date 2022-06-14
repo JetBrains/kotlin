@@ -63,6 +63,27 @@ import java.io.Serializable
  * ```
  */
 interface Extras : Collection<Entry<out Any>> {
+    class Type<T> @UnsafeApi("Use 'extrasTypeOf()' instead") @PublishedApi internal constructor(
+        internal val signature: String
+    ) : Serializable {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Type<*>) return false
+            if (other.signature != this.signature) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return 31 * signature.hashCode()
+        }
+
+        override fun toString(): String = signature
+
+        internal companion object {
+            private const val serialVersionUID = 0L
+        }
+    }
+
     /* Not implemented as data class to ensure more controllable binary compatibility */
     class Key<T : Any> @PublishedApi internal constructor(
         val type: Type<T>,
