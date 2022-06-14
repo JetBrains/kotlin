@@ -6,7 +6,7 @@
 import kotlin.reflect.KClass
 
 annotation class X(<!CYCLE_IN_ANNOTATION_PARAMETER_ERROR!>val value: X<!>) // error
-annotation class Y(<!CYCLE_IN_ANNOTATION_PARAMETER_ERROR!>val value: Array<Y><!>) // error
+annotation class Y(val value: Array<Y>) //no  error
 
 annotation class Z1(<!CYCLE_IN_ANNOTATION_PARAMETER_ERROR!>val a: Z2<!>, <!CYCLE_IN_ANNOTATION_PARAMETER_ERROR!>val b: Z2<!>) // error
 annotation class Z2(<!CYCLE_IN_ANNOTATION_PARAMETER_ERROR!>val value: Z1<!>) // error

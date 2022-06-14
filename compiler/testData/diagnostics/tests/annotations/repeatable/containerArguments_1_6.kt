@@ -28,9 +28,8 @@ annotation class C5(val value: Array<A5>, val irrelevant: String)
 annotation class A6
 annotation class C6(val irrelevant: Double, val value: Array<A6> = [])
 
-// Should be an error after fixing KT-47932.
 @R(A7::class)
-annotation class A7(<!CYCLE_IN_ANNOTATION_PARAMETER_WARNING!>val value: Array<A7><!>)
+annotation class A7(val value: Array<A7>)
 
 
 

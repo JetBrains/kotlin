@@ -1189,6 +1189,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("cycleInParameters_array.kt")
+            public void testCycleInParameters_array() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_array.kt");
+            }
+
+            @Test
             @TestMetadata("cycleInParameters_before.kt")
             public void testCycleInParameters_before() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_before.kt");

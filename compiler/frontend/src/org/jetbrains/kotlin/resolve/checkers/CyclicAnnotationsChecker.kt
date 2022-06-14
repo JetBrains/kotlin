@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isArrayOrNullableArray
 
 object CyclicAnnotationsChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -52,6 +54,7 @@ object CyclicAnnotationsChecker : DeclarationChecker {
         fun parameterHasCycle(ownedAnnotation: ClassDescriptor, parameterDescriptor: ValueParameterDescriptor): Boolean {
             val returnType = parameterDescriptor.returnType?.unwrap() ?: return false
             return when {
+                parameterDescriptor.isVararg || returnType.isArrayOrNullableArray() -> false
                 returnType.arguments.isNotEmpty() && !ReflectionTypes.isKClassType(returnType) -> {
                     for (argument in returnType.arguments) {
                         if (!argument.isStarProjection) {
@@ -83,4 +86,3 @@ object CyclicAnnotationsChecker : DeclarationChecker {
         }
     }
 }
-

@@ -192,6 +192,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         fun parameterHasCycle(ownedAnnotation: FirRegularClassSymbol, parameter: FirValueParameterSymbol): Boolean {
             val returnType = parameter.resolvedReturnTypeRef.coneType
             return when {
+                parameter.isVararg || returnType.isNonPrimitiveArray -> false
                 returnType.typeArguments.isNotEmpty() -> {
                     if (returnType.classId == StandardClassIds.KClass) return false
                     for (argument in returnType.typeArguments) {
