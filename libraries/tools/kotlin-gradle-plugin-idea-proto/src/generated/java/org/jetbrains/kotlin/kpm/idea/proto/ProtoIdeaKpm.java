@@ -284,24 +284,27 @@ final class ProtoIdeaKpm {
       "eaKpmModuleProtoB\t\n\007_extrasB\030\n\026_gradle_p" +
       "lugin_versionB\031\n\027_core_libraries_version" +
       "B\037\n\035_explicit_api_mode_cli_optionB\025\n\023_ko" +
-      "tlin_native_home\"\222\002\n\026IdeaKpmSchemaInfoPr" +
+      "tlin_native_home\"\252\003\n\026IdeaKpmSchemaInfoPr" +
       "oto\022\'\n\032since_schema_version_major\030\001 \001(\rH" +
       "\000\210\001\001\022\'\n\032since_schema_version_minor\030\002 \001(\r" +
       "H\001\210\001\001\022\'\n\032since_schema_version_patch\030\003 \001(" +
-      "\rH\002\210\001\001\022\024\n\007message\030\004 \001(\tH\003\210\001\001B\035\n\033_since_s" +
-      "chema_version_majorB\035\n\033_since_schema_ver" +
-      "sion_minorB\035\n\033_since_schema_version_patc" +
-      "hB\n\n\010_message\"\372\002\n\025IdeaKpmContainerProto\022" +
-      "!\n\024schema_version_major\030\001 \001(\rH\000\210\001\001\022!\n\024sc" +
-      "hema_version_minor\030\002 \001(\rH\001\210\001\001\022!\n\024schema_" +
-      "version_patch\030\003 \001(\rH\002\210\001\001\022Q\n\014schema_infos" +
-      "\030\004 \003(\0132;.org.jetbrains.kotlin.kpm.idea.p" +
-      "roto.IdeaKpmSchemaInfoProto\022N\n\007project\030\030" +
-      " \001(\01328.org.jetbrains.kotlin.kpm.idea.pro" +
-      "to.IdeaKpmProjectProtoH\003\210\001\001B\027\n\025_schema_v" +
-      "ersion_majorB\027\n\025_schema_version_minorB\027\n" +
-      "\025_schema_version_patchB\n\n\010_projectB\002P\001b\006" +
-      "proto3"
+      "\rH\002\210\001\001\022[\n\010severity\030\004 \001(\0162D.org.jetbrains" +
+      ".kotlin.kpm.idea.proto.IdeaKpmSchemaInfo" +
+      "Proto.SeverityH\003\210\001\001\022\024\n\007message\030\005 \001(\tH\004\210\001" +
+      "\001\",\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WARNING\020\001\022\t\n\005" +
+      "ERROR\020\002B\035\n\033_since_schema_version_majorB\035" +
+      "\n\033_since_schema_version_minorB\035\n\033_since_" +
+      "schema_version_patchB\013\n\t_severityB\n\n\010_me" +
+      "ssage\"\372\002\n\025IdeaKpmContainerProto\022!\n\024schem" +
+      "a_version_major\030\001 \001(\rH\000\210\001\001\022!\n\024schema_ver" +
+      "sion_minor\030\002 \001(\rH\001\210\001\001\022!\n\024schema_version_" +
+      "patch\030\003 \001(\rH\002\210\001\001\022Q\n\014schema_infos\030\004 \003(\0132;" +
+      ".org.jetbrains.kotlin.kpm.idea.proto.Ide" +
+      "aKpmSchemaInfoProto\022N\n\007project\030\030 \001(\01328.o" +
+      "rg.jetbrains.kotlin.kpm.idea.proto.IdeaK" +
+      "pmProjectProtoH\003\210\001\001B\027\n\025_schema_version_m" +
+      "ajorB\027\n\025_schema_version_minorB\027\n\025_schema" +
+      "_version_patchB\n\n\010_projectB\002P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -439,7 +442,7 @@ final class ProtoIdeaKpm {
     internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSchemaInfoProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSchemaInfoProto_descriptor,
-        new java.lang.String[] { "SinceSchemaVersionMajor", "SinceSchemaVersionMinor", "SinceSchemaVersionPatch", "Message", "SinceSchemaVersionMajor", "SinceSchemaVersionMinor", "SinceSchemaVersionPatch", "Message", });
+        new java.lang.String[] { "SinceSchemaVersionMajor", "SinceSchemaVersionMinor", "SinceSchemaVersionPatch", "Severity", "Message", "SinceSchemaVersionMajor", "SinceSchemaVersionMinor", "SinceSchemaVersionPatch", "Severity", "Message", });
     internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContainerProto_descriptor =
       getDescriptor().getMessageTypes().get(21);
     internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContainerProto_fieldAccessorTable = new

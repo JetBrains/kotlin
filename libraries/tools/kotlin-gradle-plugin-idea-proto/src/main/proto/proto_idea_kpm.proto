@@ -146,10 +146,17 @@ message IdeaKpmProjectProto {
 }
 
 message IdeaKpmSchemaInfoProto {
+  enum Severity {
+    INFO = 0;
+    WARNING = 1;
+    ERROR = 2;
+  };
+
   optional uint32 since_schema_version_major = 1;
   optional uint32 since_schema_version_minor = 2;
   optional uint32 since_schema_version_patch = 3;
-  optional string message = 4;
+  optional Severity severity = 4;
+  optional string message = 5;
 }
 
 message IdeaKpmContainerProto {
@@ -157,6 +164,5 @@ message IdeaKpmContainerProto {
   optional uint32 schema_version_minor = 2;
   optional uint32 schema_version_patch = 3;
   repeated IdeaKpmSchemaInfoProto schema_infos = 4;
-
   optional IdeaKpmProjectProto project = 24;
 }

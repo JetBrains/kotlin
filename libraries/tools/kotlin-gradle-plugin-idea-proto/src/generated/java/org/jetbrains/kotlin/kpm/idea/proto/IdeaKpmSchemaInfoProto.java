@@ -16,6 +16,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private IdeaKpmSchemaInfoProto() {
+    severity_ = 0;
     message_ = "";
   }
 
@@ -65,9 +66,15 @@ private static final long serialVersionUID = 0L;
             sinceSchemaVersionPatch_ = input.readUInt32();
             break;
           }
-          case 34: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 32: {
+            int rawValue = input.readEnum();
             bitField0_ |= 0x00000008;
+            severity_ = rawValue;
+            break;
+          }
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
+            bitField0_ |= 0x00000010;
             message_ = s;
             break;
           }
@@ -101,6 +108,123 @@ private static final long serialVersionUID = 0L;
     return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSchemaInfoProto_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.class, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Builder.class);
+  }
+
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity}
+   */
+  public enum Severity
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>INFO = 0;</code>
+     */
+    INFO(0),
+    /**
+     * <code>WARNING = 1;</code>
+     */
+    WARNING(1),
+    /**
+     * <code>ERROR = 2;</code>
+     */
+    ERROR(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>INFO = 0;</code>
+     */
+    public static final int INFO_VALUE = 0;
+    /**
+     * <code>WARNING = 1;</code>
+     */
+    public static final int WARNING_VALUE = 1;
+    /**
+     * <code>ERROR = 2;</code>
+     */
+    public static final int ERROR_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Severity valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static Severity forNumber(int value) {
+      switch (value) {
+        case 0: return INFO;
+        case 1: return WARNING;
+        case 2: return ERROR;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Severity>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Severity> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Severity>() {
+            public Severity findValueByNumber(int number) {
+              return Severity.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final Severity[] VALUES = values();
+
+    public static Severity valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private Severity(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity)
   }
 
   private int bitField0_;
@@ -161,18 +285,44 @@ private static final long serialVersionUID = 0L;
     return sinceSchemaVersionPatch_;
   }
 
-  public static final int MESSAGE_FIELD_NUMBER = 4;
+  public static final int SEVERITY_FIELD_NUMBER = 4;
+  private int severity_;
+  /**
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return Whether the severity field is set.
+   */
+  @java.lang.Override public boolean hasSeverity() {
+    return ((bitField0_ & 0x00000008) != 0);
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return The enum numeric value on the wire for severity.
+   */
+  @java.lang.Override public int getSeverityValue() {
+    return severity_;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return The severity.
+   */
+  @java.lang.Override public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity getSeverity() {
+    @SuppressWarnings("deprecation")
+    org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity result = org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity.valueOf(severity_);
+    return result == null ? org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity.UNRECOGNIZED : result;
+  }
+
+  public static final int MESSAGE_FIELD_NUMBER = 5;
   private volatile java.lang.Object message_;
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional string message = 5;</code>
    * @return Whether the message field is set.
    */
   @java.lang.Override
   public boolean hasMessage() {
-    return ((bitField0_ & 0x00000008) != 0);
+    return ((bitField0_ & 0x00000010) != 0);
   }
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional string message = 5;</code>
    * @return The message.
    */
   @java.lang.Override
@@ -189,7 +339,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional string message = 5;</code>
    * @return The bytes for message.
    */
   @java.lang.Override
@@ -231,7 +381,10 @@ private static final long serialVersionUID = 0L;
       output.writeUInt32(3, sinceSchemaVersionPatch_);
     }
     if (((bitField0_ & 0x00000008) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, message_);
+      output.writeEnum(4, severity_);
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, message_);
     }
     unknownFields.writeTo(output);
   }
@@ -255,7 +408,11 @@ private static final long serialVersionUID = 0L;
         .computeUInt32Size(3, sinceSchemaVersionPatch_);
     }
     if (((bitField0_ & 0x00000008) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, message_);
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(4, severity_);
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, message_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -287,6 +444,10 @@ private static final long serialVersionUID = 0L;
       if (getSinceSchemaVersionPatch()
           != other.getSinceSchemaVersionPatch()) return false;
     }
+    if (hasSeverity() != other.hasSeverity()) return false;
+    if (hasSeverity()) {
+      if (severity_ != other.severity_) return false;
+    }
     if (hasMessage() != other.hasMessage()) return false;
     if (hasMessage()) {
       if (!getMessage()
@@ -314,6 +475,10 @@ private static final long serialVersionUID = 0L;
     if (hasSinceSchemaVersionPatch()) {
       hash = (37 * hash) + SINCE_SCHEMA_VERSION_PATCH_FIELD_NUMBER;
       hash = (53 * hash) + getSinceSchemaVersionPatch();
+    }
+    if (hasSeverity()) {
+      hash = (37 * hash) + SEVERITY_FIELD_NUMBER;
+      hash = (53 * hash) + severity_;
     }
     if (hasMessage()) {
       hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
@@ -458,8 +623,10 @@ private static final long serialVersionUID = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       sinceSchemaVersionPatch_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
-      message_ = "";
+      severity_ = 0;
       bitField0_ = (bitField0_ & ~0x00000008);
+      message_ = "";
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -502,6 +669,10 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
         to_bitField0_ |= 0x00000008;
+      }
+      result.severity_ = severity_;
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        to_bitField0_ |= 0x00000010;
       }
       result.message_ = message_;
       result.bitField0_ = to_bitField0_;
@@ -562,8 +733,11 @@ private static final long serialVersionUID = 0L;
       if (other.hasSinceSchemaVersionPatch()) {
         setSinceSchemaVersionPatch(other.getSinceSchemaVersionPatch());
       }
+      if (other.hasSeverity()) {
+        setSeverity(other.getSeverity());
+      }
       if (other.hasMessage()) {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         message_ = other.message_;
         onChanged();
       }
@@ -714,16 +888,77 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object message_ = "";
+    private int severity_ = 0;
     /**
-     * <code>optional string message = 4;</code>
-     * @return Whether the message field is set.
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @return Whether the severity field is set.
      */
-    public boolean hasMessage() {
+    @java.lang.Override public boolean hasSeverity() {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @return The enum numeric value on the wire for severity.
+     */
+    @java.lang.Override public int getSeverityValue() {
+      return severity_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @param value The enum numeric value on the wire for severity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSeverityValue(int value) {
+      bitField0_ |= 0x00000008;
+      severity_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @return The severity.
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity getSeverity() {
+      @SuppressWarnings("deprecation")
+      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity result = org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity.valueOf(severity_);
+      return result == null ? org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @param value The severity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSeverity(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x00000008;
+      severity_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSeverity() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      severity_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object message_ = "";
+    /**
+     * <code>optional string message = 5;</code>
+     * @return Whether the message field is set.
+     */
+    public boolean hasMessage() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <code>optional string message = 5;</code>
      * @return The message.
      */
     public java.lang.String getMessage() {
@@ -739,7 +974,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      * @return The bytes for message.
      */
     public com.google.protobuf.ByteString
@@ -756,7 +991,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      * @param value The message to set.
      * @return This builder for chaining.
      */
@@ -765,23 +1000,23 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000008;
+  bitField0_ |= 0x00000010;
       message_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      * @return This builder for chaining.
      */
     public Builder clearMessage() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       message_ = getDefaultInstance().getMessage();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      * @param value The bytes for message to set.
      * @return This builder for chaining.
      */
@@ -791,7 +1026,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       message_ = value;
       onChanged();
       return this;

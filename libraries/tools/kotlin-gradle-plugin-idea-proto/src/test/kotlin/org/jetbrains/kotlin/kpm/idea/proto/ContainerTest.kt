@@ -19,11 +19,18 @@ class ContainerTest : IdeaKpmSerializationContext {
     override val extrasSerializationExtension = TestIdeaKpmExtrasSerializationExtension
 
     @Test
-    fun `deserialize - with too high major version - returns null`() {
+    fun `deserialize - with error future message - returns null`() {
         val data = ideaKpmContainerProto {
             schemaVersionMajor = IdeaKpmProtoSchema.versionMajor + 1
             schemaVersionMinor = IdeaKpmProtoSchema.versionMinor
             schemaVersionPatch = IdeaKpmProtoSchema.versionPatch
+            schemaInfos.add(ideaKpmSchemaInfoProto {
+                sinceSchemaVersionMajor = IdeaKpmProtoSchema.versionMajor + 1
+                sinceSchemaVersionMinor = 0
+                sinceSchemaVersionPatch = 0
+                message = "Incompatible for this test!"
+                severity = IdeaKpmSchemaInfoProto.Severity.ERROR
+            })
         }.toByteArray()
 
         assertTrue(logger.reports.isEmpty(), "Expected no reports in logger")

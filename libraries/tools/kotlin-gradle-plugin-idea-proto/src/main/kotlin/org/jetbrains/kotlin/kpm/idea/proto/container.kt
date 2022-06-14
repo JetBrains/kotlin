@@ -76,23 +76,45 @@ internal fun IdeaKpmSerializationContext.IdeaKpmProject(proto: IdeaKpmContainerP
         return null
     }
 
-    if (proto.schemaVersionMajor > IdeaKpmProtoSchema.versionMajor) {
+    if (!proto.hasSchemaVersionPatch()) {
+        logger.warn("Missing 'schema_version_patch", Throwable())
+    }
+
+    val messagesFromFuture = proto.schemaInfosList.filter { schemaInfo ->
+        val sinceMajor = schemaInfo.sinceSchemaVersionMajor
+        val sinceMinor = schemaInfo.sinceSchemaVersionMinor
+        val sincePatch = schemaInfo.sinceSchemaVersionPatch
+
+        sinceMajor > IdeaKpmProtoSchema.versionMajor ||
+                (sinceMajor == IdeaKpmProtoSchema.versionMajor && IdeaKpmProtoSchema.versionMinor > IdeaKpmProtoSchema.versionMinor) ||
+                (sinceMajor == IdeaKpmProtoSchema.versionMajor && sinceMinor == IdeaKpmProtoSchema.versionMinor &&
+                        sincePatch > IdeaKpmProtoSchema.versionPatch)
+    }
+
+    messagesFromFuture.forEach { messageFromFuture ->
+        val userMessage = "Since: " +
+                "${messageFromFuture.sinceSchemaVersionMajor}." +
+                "${messageFromFuture.sinceSchemaVersionMinor}." +
+                "${messageFromFuture.sinceSchemaVersionPatch}: " +
+                messageFromFuture.message
+
+        when (messageFromFuture.severity) {
+            IdeaKpmSchemaInfoProto.Severity.INFO -> logger.warn("Info: $userMessage")
+            IdeaKpmSchemaInfoProto.Severity.WARNING -> logger.warn("Warn: $userMessage")
+            IdeaKpmSchemaInfoProto.Severity.ERROR,
+            IdeaKpmSchemaInfoProto.Severity.UNRECOGNIZED,
+            null -> logger.error("Error: $userMessage")
+        }
+    }
+
+    if (messagesFromFuture.any { it.severity == IdeaKpmSchemaInfoProto.Severity.ERROR }) {
+        val schemaVersionMajor = proto.schemaVersionMajor
+        val schemaVersionMinor = proto.schemaVersionMinor
+        val schemaVersionPatch = if (proto.hasSchemaVersionPatch()) proto.schemaVersionPatch else 0
         logger.error(
-            "Incompatible IdeaKpmProto* version. Received major version ${proto.schemaVersionMajor}. " +
-                    "Supported version ${IdeaKpmProtoSchema.versionMajor}", Throwable()
+            "Binary version $schemaVersionMajor.$schemaVersionMinor.$schemaVersionPatch is incompatible with this schema version: " +
+                    "${IdeaKpmProtoSchema.versionMajor}.${IdeaKpmProtoSchema.versionMinor}.${IdeaKpmProtoSchema.versionPatch}"
         )
-
-
-        val relevantInfos = proto.schemaInfosList.filter { info ->
-            info.sinceSchemaVersionMajor > IdeaKpmProtoSchema.versionMajor
-        }
-
-        relevantInfos.forEach { info ->
-            logger.error(
-                "Since: ${info.sinceSchemaVersionMajor}.${info.sinceSchemaVersionMinor}.${info.sinceSchemaVersionPatch}: ${info.message}"
-            )
-        }
-
 
         return null
     }

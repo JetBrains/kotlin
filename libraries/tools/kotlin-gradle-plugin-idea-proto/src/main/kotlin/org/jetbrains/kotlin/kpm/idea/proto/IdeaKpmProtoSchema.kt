@@ -15,6 +15,7 @@ internal object IdeaKpmProtoSchema {
             sinceSchemaVersionMajor = 1
             sinceSchemaVersionMinor = 0
             sinceSchemaVersionPatch = 0
+            severity = IdeaKpmSchemaInfoProto.Severity.INFO
             message = "Initial version of IdeaKpmProto*"
         }
     )

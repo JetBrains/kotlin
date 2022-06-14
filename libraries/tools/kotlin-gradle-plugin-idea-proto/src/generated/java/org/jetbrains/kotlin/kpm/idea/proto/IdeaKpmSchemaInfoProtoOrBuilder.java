@@ -41,17 +41,33 @@ interface IdeaKpmSchemaInfoProtoOrBuilder extends
   int getSinceSchemaVersionPatch();
 
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return Whether the severity field is set.
+   */
+  boolean hasSeverity();
+  /**
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return The enum numeric value on the wire for severity.
+   */
+  int getSeverityValue();
+  /**
+   * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+   * @return The severity.
+   */
+  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity getSeverity();
+
+  /**
+   * <code>optional string message = 5;</code>
    * @return Whether the message field is set.
    */
   boolean hasMessage();
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional string message = 5;</code>
    * @return The message.
    */
   java.lang.String getMessage();
   /**
-   * <code>optional string message = 4;</code>
+   * <code>optional string message = 5;</code>
    * @return The bytes for message.
    */
   com.google.protobuf.ByteString

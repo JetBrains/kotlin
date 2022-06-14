@@ -95,7 +95,31 @@ internal object IdeaKpmSchemaInfoProtoKt {
     }
 
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     */
+    internal var severity: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity
+      @JvmName("getSeverity")
+      get() = _builder.getSeverity()
+      @JvmName("setSeverity")
+      set(value) {
+        _builder.setSeverity(value)
+      }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     */
+    internal fun clearSeverity() {
+      _builder.clearSeverity()
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSchemaInfoProto.Severity severity = 4;</code>
+     * @return Whether the severity field is set.
+     */
+    internal fun hasSeverity(): kotlin.Boolean {
+      return _builder.hasSeverity()
+    }
+
+    /**
+     * <code>optional string message = 5;</code>
      */
     internal var message: kotlin.String
       @JvmName("getMessage")
@@ -105,13 +129,13 @@ internal object IdeaKpmSchemaInfoProtoKt {
         _builder.setMessage(value)
       }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      */
     internal fun clearMessage() {
       _builder.clearMessage()
     }
     /**
-     * <code>optional string message = 4;</code>
+     * <code>optional string message = 5;</code>
      * @return Whether the message field is set.
      */
     internal fun hasMessage(): kotlin.Boolean {
