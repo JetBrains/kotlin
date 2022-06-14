@@ -4,4 +4,3 @@ public fun mixedReceiver(/*0*/ s: kotlin.String?): kotlin.Unit
 public fun smartcastOnReceiver(/*0*/ s: kotlin.String?): kotlin.Unit
 public fun kotlin.CharSequence?.isNullOrEmpty(): kotlin.Boolean
     Returns(FALSE) -> <this> != null
-

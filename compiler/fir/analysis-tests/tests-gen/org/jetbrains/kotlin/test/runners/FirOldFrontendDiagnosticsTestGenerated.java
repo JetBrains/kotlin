@@ -35998,12 +35998,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
-                @TestMetadata("extensionReceiver_after.kt")
-                public void testExtensionReceiver_after() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/extensionReceiver_after.kt");
-                }
-
-                @Test
                 @TestMetadata("externalArguments.kt")
                 public void testExternalArguments() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/externalArguments.kt");

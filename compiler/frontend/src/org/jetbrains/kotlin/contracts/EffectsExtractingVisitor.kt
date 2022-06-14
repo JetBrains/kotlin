@@ -180,13 +180,7 @@ class EffectsExtractingVisitor(
 
     private fun ReceiverValue.toComputation(): Computation = when (this) {
         is ExpressionReceiver -> extractOrGetCached(expression)
-        is ExtensionReceiver -> {
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ContractsOnCallsWithImplicitReceiver)) {
-                ESReceiverWithDataFlowValue(this, createDataFlowValue())
-            } else {
-                UNKNOWN_COMPUTATION
-            }
-        }
+        is ExtensionReceiver -> ESReceiverWithDataFlowValue(this, createDataFlowValue())
         else -> UNKNOWN_COMPUTATION
     }
 

@@ -137,7 +137,6 @@ enum class LanguageFeature(
 
     // In the next block, features can be enabled only along with new inference
     // v----------------------------------------------------------------------v
-    ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4),
     BooleanElvisBoundSmartCasts(KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
     NewDataFlowForTryExpressions(KOTLIN_1_4, defaultState = State.DISABLED),
     ReferencesToSyntheticJavaProperties(KOTLIN_1_3, defaultState = State.DISABLED),
