@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
+import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -123,6 +122,9 @@ internal class KtFirCallResolver(
     ): KtCallInfo? {
         if (this is FirCheckNotNullCall)
             return KtSuccessCallInfo(KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression))
+
+        createGenericTypeQualifierCallIfApplicable(this, psi)?.let { return it }
+
         if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
             // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
             // implicit invoke call. For example,
@@ -190,6 +192,21 @@ internal class KtFirCallResolver(
             )
             else -> null
         }
+    }
+
+    /**
+     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo` and `test.Foo<Bar>::foo`.
+     *
+     * We have a separate [KtGenericTypeQualifier] type of [KtCall].
+     */
+    private fun createGenericTypeQualifierCallIfApplicable(firElement: FirElement, psiElement: KtElement): KtCallInfo? {
+        if (psiElement !is KtExpression) return null
+        if (firElement !is FirResolvedQualifier) return null
+
+        val call = psiElement.getPossiblyQualifiedCallExpression() ?: return null
+        if (call.typeArgumentList == null || call.valueArgumentList != null) return null
+
+        return KtSuccessCallInfo(KtGenericTypeQualifier(token, psiElement))
     }
 
     /**

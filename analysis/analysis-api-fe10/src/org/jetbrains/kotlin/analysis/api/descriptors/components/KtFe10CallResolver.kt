@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -156,7 +158,9 @@ internal class KtFe10CallResolver(
                 handleAsCheckNotNullCall(unwrappedPsi)?.let { return@with it }
                 handleAsFunctionCall(this, unwrappedPsi)
             }
-            else -> handleAsFunctionCall(this, unwrappedPsi) ?: handleAsPropertyRead(this, unwrappedPsi)
+            else -> handleAsFunctionCall(this, unwrappedPsi)
+                ?: handleAsPropertyRead(this, unwrappedPsi)
+                ?: handleAsGenericTypeQualifier(unwrappedPsi)
         } ?: handleResolveErrors(this, psi)
     }
 
@@ -383,6 +387,23 @@ internal class KtFe10CallResolver(
     private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KtCallInfo? {
         val call = element.getResolvedCall(context) ?: return null
         return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, listOf(call)) }
+    }
+
+    /**
+     * Handles call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo` and `test.Foo<Bar>::foo`.
+     *
+     * ATM does not perform any resolve checks, since it does not seem possible with [BindingContext], so it might give some
+     * false positives.
+     */
+    private fun handleAsGenericTypeQualifier(element: KtElement): KtCallInfo? {
+        if (element !is KtExpression) return null
+
+        val wholeQualifier = element.getQualifiedExpressionForSelector() as? KtDotQualifiedExpression ?: element
+
+        val call = wholeQualifier.getPossiblyQualifiedCallExpression() ?: return null
+        if (call.typeArgumentList == null || call.valueArgumentList != null) return null
+
+        return KtSuccessCallInfo(KtGenericTypeQualifier(token, wholeQualifier))
     }
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KtVariableAccessCall? {

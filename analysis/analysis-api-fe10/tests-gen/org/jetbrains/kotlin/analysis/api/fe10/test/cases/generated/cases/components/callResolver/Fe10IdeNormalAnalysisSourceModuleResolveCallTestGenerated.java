@@ -215,6 +215,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("callableReference_genericQualifier1.kt")
+    public void testCallableReference_genericQualifier1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReference_genericQualifier1.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReference_genericQualifier2.kt")
+    public void testCallableReference_genericQualifier2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/callableReference_genericQualifier2.kt");
+    }
+
+    @Test
     @TestMetadata("calleeExpressionOfImplicitInvoke.kt")
     public void testCalleeExpressionOfImplicitInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/calleeExpressionOfImplicitInvoke.kt");
