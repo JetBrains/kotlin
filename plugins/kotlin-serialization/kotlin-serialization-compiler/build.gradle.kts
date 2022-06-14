@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
     compileOnly(project(":kotlin-util-klib-metadata"))

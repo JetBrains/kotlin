@@ -14,7 +14,7 @@ dependencies {
     testApi(project(":compiler:util"))
     testApi(project(":compiler:tests-mutes"))
     testApi(project(":compiler:backend"))
-    testApi(project(":compiler:ir.tree.impl"))
+    testApi(project(":compiler:ir.tree"))
     testApi(project(":compiler:fir:tree"))
     testApi(project(":compiler:fir:raw-fir:psi2fir"))
     testApi(project(":compiler:fir:raw-fir:light-tree2fir"))

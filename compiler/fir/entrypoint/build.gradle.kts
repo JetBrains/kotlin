@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
-    implementation(project(":compiler:ir.tree.impl"))
+    implementation(project(":compiler:ir.tree"))
 
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCore())

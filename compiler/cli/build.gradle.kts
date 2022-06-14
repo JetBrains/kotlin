@@ -35,9 +35,6 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-io"))
 
-    // TODO: as soon as cli-jvm is extracted out of this module, move this dependency there
-    compileOnly(project(":compiler:ir.tree.impl"))
-
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))

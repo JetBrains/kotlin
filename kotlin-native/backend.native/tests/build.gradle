@@ -6155,7 +6155,6 @@ dependencies {
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
-    nopPluginApi project(":compiler:ir.tree.impl")
     nopPluginApi project(":compiler:ir.backend.common")
     nopPluginApi project(":compiler:util")
     nopPluginApi project(":native:frontend.native")
