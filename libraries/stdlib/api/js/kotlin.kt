@@ -1507,7 +1507,7 @@ public final annotation class ExtensionFunctionType : kotlin.Annotation {
     public constructor ExtensionFunctionType()
 }
 
-public abstract class ExternalEnum {
+public abstract external class ExternalEnum {
     public constructor ExternalEnum()
 
     public final override operator fun equals(other: kotlin.Any?): kotlin.Boolean

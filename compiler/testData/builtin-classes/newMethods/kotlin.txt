@@ -368,7 +368,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, jav
     /*primary*/ public constructor ExtensionFunctionType()
 }
 
-public abstract class ExternalEnum {
+public abstract external class ExternalEnum {
     /*primary*/ public constructor ExternalEnum()
 }
 
