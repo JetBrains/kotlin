@@ -703,10 +703,13 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
             is FirLazyBlock -> {
                 println(" { LAZY_BLOCK }")
             }
-            else -> renderInBraces {
-                for (statement in additionalStatements + statements) {
-                    statement.accept(this@FirRenderer)
-                    println()
+            else -> {
+                renderAnnotations(this)
+                renderInBraces {
+                    for (statement in additionalStatements + statements) {
+                        statement.accept(this@FirRenderer)
+                        println()
+                    }
                 }
             }
         }
@@ -1428,6 +1431,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+        renderAnnotations(resolvedQualifier)
         print("Q|")
         val classId = resolvedQualifier.classId
         if (classId != null) {
