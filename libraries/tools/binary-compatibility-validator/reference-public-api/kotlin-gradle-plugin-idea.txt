@@ -18,6 +18,25 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmComp
 	public abstract fun getResourcesDir ()Ljava/io/File;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRoot : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRoot$Companion;
+	public static final field RESOURCES_TYPE Ljava/lang/String;
+	public static final field SOURCES_TYPE Ljava/lang/String;
+	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+	public abstract fun getFile ()Ljava/io/File;
+	public abstract fun getType ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRoot$Companion {
+	public static final field RESOURCES_TYPE Ljava/lang/String;
+	public static final field SOURCES_TYPE Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRootKt {
+	public static final fun isResources (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRoot;)Z
+	public static final fun isSources (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmContentRoot;)Z
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmDependency : java/io/Serializable {
 	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmDependency$Companion;
@@ -43,12 +62,12 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmDependencyKt {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmFragment : java/io/Serializable {
+	public abstract fun getContentRoots ()Ljava/util/List;
 	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmFragmentCoordinates;
 	public abstract fun getDependencies ()Ljava/util/List;
 	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmLanguageSettings;
 	public abstract fun getPlatforms ()Ljava/util/Set;
-	public abstract fun getSourceDirectories ()Ljava/util/List;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmFragmentCoordinates : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmDependencyCoordinates {
@@ -177,20 +196,6 @@ public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmProjectInstanceCo
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmResolvedBinaryDependency : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmBinaryDependency {
 	public abstract fun getBinaryFile ()Ljava/io/File;
 	public abstract fun getBinaryType ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmSourceDirectory : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmSourceDirectory$Companion;
-	public static final field RESOURCE_TYPE Ljava/lang/String;
-	public static final field SOURCE_TYPE Ljava/lang/String;
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-	public abstract fun getFile ()Ljava/io/File;
-	public abstract fun getType ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmSourceDirectory$Companion {
-	public static final field RESOURCE_TYPE Ljava/lang/String;
-	public static final field SOURCE_TYPE Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmUnknownPlatform : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKpmPlatform {
