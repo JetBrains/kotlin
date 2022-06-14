@@ -1004,6 +1004,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/unrestrictedBuilderInference.args");
         }
 
+        @TestMetadata("unsupportedDisablingFeatures.args")
+        public void testUnsupportedDisablingFeatures() throws Exception {
+            runTest("compiler/testData/cli/jvm/unsupportedDisablingFeatures.args");
+        }
+
         @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImport.args")
         public void testUseDeclarationThatWasExperimentalWithoutExplicitImport() throws Exception {
             runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutExplicitImport.args");

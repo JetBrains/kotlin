@@ -512,6 +512,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
+        val unsupportedDisablingFeatures = mutableListOf<LanguageFeature>()
 
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
@@ -521,6 +522,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (state == LanguageFeature.State.DISABLED && feature.sinceVersion?.isUnsupported == true) {
                 disabledFeaturesFromUnsupportedVersions += feature
+            }
+
+            if (feature.unsupportedDisabling && state == LanguageFeature.State.DISABLED) {
+                unsupportedDisablingFeatures += feature
             }
         }
 
@@ -536,6 +541,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 CompilerMessageSeverity.ERROR,
                 "The following features cannot be disabled manually, because the version they first appeared in is no longer " +
                         "supported:\n${disabledFeaturesFromUnsupportedVersions.joinToString()}"
+            )
+        }
+
+        if (unsupportedDisablingFeatures.isNotEmpty()) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "The following features are enabled by default and couldn't be disabled explicitly anymore, " +
+                        "because the corresponding language version is no longer supported:\n${unsupportedDisablingFeatures.joinToString { "${it.name} (enabled since ${it.sinceVersion})" }}"
             )
         }
     }

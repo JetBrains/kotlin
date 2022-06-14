@@ -15,7 +15,8 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     val defaultState: State = State.ENABLED,
-    val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
+    val kind: Kind = OTHER, // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
+    val unsupportedDisabling: Boolean = false,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
 
@@ -134,6 +135,13 @@ enum class LanguageFeature(
     GenerateJvmOverloadsAsFinal(KOTLIN_1_4),
     MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
     ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass(KOTLIN_1_4, kind = BUG_FIX, defaultState = State.ENABLED),
+
+    NewInference(KOTLIN_1_4, unsupportedDisabling = true),
+    SamConversionForKotlinFunctions(KOTLIN_1_4, unsupportedDisabling = true),
+    SamConversionPerArgument(KOTLIN_1_4, unsupportedDisabling = true),
+    FunctionReferenceWithDefaultValueAsOtherType(KOTLIN_1_4, unsupportedDisabling = true),
+    OverloadResolutionByLambdaReturnType(KOTLIN_1_4, unsupportedDisabling = true),
+    ContractsOnCallsWithImplicitReceiver(KOTLIN_1_4, unsupportedDisabling = true),
 
     // 1.5
 

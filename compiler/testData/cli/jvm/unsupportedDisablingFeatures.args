@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/removedFeatures.kt
+-d
+$TEMP_DIR$
+-XXLanguage\:-NewInference
+-XXLanguage\:-SamConversionPerArgument

@@ -1,0 +1,13 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-NewInference
+-XXLanguage:-SamConversionPerArgument
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+error: the following features are enabled by default and couldn't be disabled explicitly anymore, because the corresponding language version is no longer supported:
+NewInference (enabled since 1.4), SamConversionPerArgument (enabled since 1.4)
+COMPILATION_ERROR
