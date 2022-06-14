@@ -79,7 +79,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -126,6 +125,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -300,12 +300,12 @@ abstract class AbstractComposeLowering(
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
     fun IrType.unboxType(): IrType? {
-        val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation ?: return null
-        if (!isInlineClassType()) return null
+        val classSymbol = classOrNull ?: return null
+        val klass = classSymbol.owner
+        if (!klass.isInline) return null
 
         // TODO: Apply type substitutions
-        val underlyingType = representation.underlyingType.unboxInlineClass()
+        val underlyingType = getUnderlyingType(klass).unboxInlineClass()
         if (!isNullable()) return underlyingType
         if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
             return null
@@ -316,7 +316,7 @@ abstract class AbstractComposeLowering(
         if (type.isNullable()) return this
         val classSymbol = type.classOrNull ?: return this
         val klass = classSymbol.owner
-        if (type.isInlineClassType()) {
+        if (klass.isInline) {
             if (context.platform.isJvm()) {
                 return coerceInlineClasses(
                     this,
@@ -1336,7 +1336,13 @@ fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
 
 // workaround for KT-45361
 val IrConstructorCall.annotationClass get() =
+    if (type.isUnit()) {
+        // in js annotation type is always unit, so we use the constructed class
+        symbol.owner.constructedClass.symbol
+    } else {
+        // on jvm we can rely on type, but the owner can be unbound
         type.classOrNull
+    }
 
 fun ParameterDescriptor.index(): Int =
     when (this) {
@@ -1344,6 +1350,8 @@ fun ParameterDescriptor.index(): Int =
         is ValueParameterDescriptor -> index
         else -> error("expected either receiver or value parameter, but got: $this")
     }
+
+fun getUnderlyingType(irClass: IrClass) = irClass.inlineClassRepresentation!!.underlyingType
 
 inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
     try {

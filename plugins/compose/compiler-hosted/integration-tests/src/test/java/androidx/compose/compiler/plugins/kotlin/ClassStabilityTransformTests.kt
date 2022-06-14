@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
 import org.junit.Test
@@ -1173,8 +1172,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         )
         val irModule = JvmCompilation().compile(files)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = StabilityInferencer(pluginContext!!)
-            .stabilityOf(irClass.defaultType as IrType)
+        val classStability = StabilityInferencer(pluginContext!!).stabilityOf(irClass.defaultType)
 
         assertEquals(
             stability,
@@ -1192,8 +1190,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     ) {
         val irModule = buildModule(externalSrc, classDefSrc, dumpClasses)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = StabilityInferencer(pluginContext!!)
-            .stabilityOf(irClass.defaultType as IrType)
+        val classStability = StabilityInferencer(pluginContext!!).stabilityOf(irClass.defaultType)
 
         assertEquals(
             stability,

@@ -42,7 +42,6 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLClassLoader
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 
 private const val KOTLIN_RUNTIME_VERSION = "1.3.11"
 
@@ -98,7 +97,6 @@ abstract class AbstractCompilerTest : TestCase() {
 
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
-        configuration.configureJdkClasspathRoots()
 
         System.setProperty("idea.ignore.disabled.plugins", "true")
         return KotlinCoreEnvironment.createForTests(
