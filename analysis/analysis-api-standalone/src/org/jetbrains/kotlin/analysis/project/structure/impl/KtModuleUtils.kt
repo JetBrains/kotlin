@@ -98,39 +98,35 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             val moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
             val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
-            val libraryRootsByType = libraryRoots.groupBy { it.isDirectory }
-            libraryRootsByType[true]?.let { directories ->
-                directories.forEach {
-                    // E.g., project/app/build/intermediates/javac/debug/classes
-                    val root = it.toPath()
-                    addRegularDependency(
-                        buildKtLibraryModule {
-                            contentScope = ProjectScope.getLibrariesScope(project)
-                            this.platform = platform
-                            this.project = project
-                            binaryRoots = listOf(root)
-                            libraryName = "$moduleName-${root.toString().replace("/", "-")}"
-                        }
-                    )
-                }
+            val (directories, jars) = libraryRoots.partition { it.isDirectory }
+            directories.forEach {
+                // E.g., project/app/build/intermediates/javac/debug/classes
+                val root = it.toPath()
+                addRegularDependency(
+                    buildKtLibraryModule {
+                        contentScope = ProjectScope.getLibrariesScope(project)
+                        this.platform = platform
+                        this.project = project
+                        binaryRoots = listOf(root)
+                        libraryName = "$moduleName-${root.toString().replace("/", "-")}"
+                    }
+                )
             }
-            libraryRootsByType[false]?.let { jars ->
-                jars.forEach {
-                    // E.g., project/libs/libA/a.jar
-                    val root = it.toPath()
-                    addRegularDependency(
-                        buildKtLibraryModule {
-                            contentScope = ProjectScope.getLibrariesScope(project)
-                            this.platform = platform
-                            this.project = project
-                            binaryRoots = listOf(root)
-                            libraryName = getNameWithoutExtension(root.toString())
-                            isBuiltinsContainingStdlib =
-                                libraryName.startsWith("kotlin-stdlib") &&
-                                        !libraryName.contains("common") && !libraryName.contains("jdk")
-                        }
-                    )
-                }
+            jars.forEach {
+                // E.g., project/libs/libA/a.jar
+                val root = it.toPath()
+                addRegularDependency(
+                    buildKtLibraryModule {
+                        contentScope = ProjectScope.getLibrariesScope(project)
+                        this.platform = platform
+                        this.project = project
+                        binaryRoots = listOf(root)
+                        libraryName = getNameWithoutExtension(root.toString())
+                        isBuiltinsContainingStdlib =
+                            libraryName.startsWith("kotlin-stdlib") &&
+                                    !libraryName.contains("common") && !libraryName.contains("jdk")
+                    }
+                )
             }
             compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
                 val vfm = VirtualFileManager.getInstance()
