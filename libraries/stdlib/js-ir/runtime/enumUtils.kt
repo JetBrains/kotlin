@@ -17,6 +17,7 @@ public inline fun <reified T: ExternalEnum> enumValueOf(name: String): T {
     }
 }
 
+
 /**
  * Returns an array containing external enum entries.
  */

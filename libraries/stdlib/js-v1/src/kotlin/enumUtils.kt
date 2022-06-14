@@ -8,15 +8,13 @@ package kotlin.js
 /**
  * Returns an external enum entry with specified name.
  */
-// TODO: `Any` should be replaced with `ExternalEnum` after bootstraping
-public inline fun <reified T: Any> enumValueOf(name: String): T {
+public inline fun <reified T: ExternalEnum> enumValueOf(name: String): T {
     return js("Kotlin").defaultEnumValueOf(T::class, name)
 }
 
 /**
  * Returns an array containing external enum entries.
  */
-// TODO: `Any` should be replaced with `ExternalEnum` after bootstraping
-public inline fun <reified T: Any> enumValues(): Array<T> {
+public inline fun <reified T: ExternalEnum> enumValues(): Array<T> {
     return js("Kotlin").defaultEnumValues(T::class)
 }

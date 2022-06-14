@@ -220,6 +220,7 @@
 
         <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Comparable.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Enum.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/ExternalEnum.kt"/>
 
         <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Iterator.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Collections.kt"/>

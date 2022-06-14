@@ -96,6 +96,7 @@ task prepareBuiltinsSources(type: Copy) {
         include "Collections.kt"
         include "CharSequence.kt"
         include "Annotation.kt"
+        include "ExternalEnum.kt"
     }
     from("${builtinsDir}/src/kotlin/") {
         include "annotation/Annotations.kt"
