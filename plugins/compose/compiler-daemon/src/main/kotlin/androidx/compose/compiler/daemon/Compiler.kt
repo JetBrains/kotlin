@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled
-import org.jetbrains.kotlin.incremental.EmptyICReporter
+import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.withIC
@@ -95,7 +95,7 @@ object BasicDaemonCompiler : DaemonCompiler {
 object IncrementalDaemonCompiler : DaemonCompiler {
     private val compiler = IncrementalJvmCompilerRunner(
         workingDir = Files.createTempDirectory("workingDir").toFile(),
-        reporter = BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
+        reporter = BuildReporter(DoNothingICReporter, DoNothingBuildMetricsReporter),
         usePreciseJavaTracking = true,
         outputFiles = emptyList(),
         buildHistoryFile = Files.createTempFile("build-history", ".bin").toFile(),
@@ -114,7 +114,7 @@ object IncrementalDaemonCompiler : DaemonCompiler {
         return try {
             val compilerArgs = parseArgs(args, daemonCompilerSettings.composePluginPath)
             compilerArgs.moduleName = "test"
-            withIC {
+            withIC(compilerArgs) {
                 compiler.compile(
                     compilerArgs.freeArgs.map { File(it) },
                     compilerArgs,
