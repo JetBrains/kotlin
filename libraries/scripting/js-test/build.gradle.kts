@@ -12,7 +12,7 @@ dependencies {
     testApi(project(":kotlin-scripting-compiler-js"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:backend.js"))
-    testApi(project(":compiler:ir.tree.impl"))
+    testApi(project(":compiler:ir.tree"))
     testApi(project(":js:js.engines"))
     testApi(intellijCore())
 

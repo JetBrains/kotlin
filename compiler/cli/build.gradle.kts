@@ -36,7 +36,7 @@ dependencies {
     api(project(":kotlin-util-io"))
 
     // TODO: as soon as cli-jvm is extracted out of this module, move this dependency there
-    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:ir.tree"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
