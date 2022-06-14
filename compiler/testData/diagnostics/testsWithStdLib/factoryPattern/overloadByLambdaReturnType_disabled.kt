@@ -1,4 +1,3 @@
-// !LANGUAGE: -OverloadResolutionByLambdaReturnType
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
@@ -20,17 +19,17 @@ fun takeString(s: String) {}
 fun takeInt(s: Int) {}
 
 fun test_1() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { "" }
-    takeString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    val x = create { "" }
+    takeString(x)
 }
 
 fun test_2() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1 }
-    takeInt(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    val x = create { 1 }
+    takeInt(x)
 }
 
 fun test_3() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1.0 }
+    val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>create { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
 }
 
 @OverloadResolutionByLambdaReturnType
@@ -38,11 +37,11 @@ fun <K> create(x: K, f: (K) -> Int): Int = 1
 fun <T> create(x: T, f: (T) -> String): String = ""
 
 fun test_4() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { "" }
-    takeString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    val x = create("") { "" }
+    takeString(x)
 }
 
 fun test_5() {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { 1 }
-    takeInt(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    val x = create("") { 1 }
+    takeInt(x)
 }
