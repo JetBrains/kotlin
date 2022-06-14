@@ -135,13 +135,6 @@ enum class LanguageFeature(
     MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
     ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass(KOTLIN_1_4, kind = BUG_FIX, defaultState = State.ENABLED),
 
-    // In the next block, features can be enabled only along with new inference
-    // v----------------------------------------------------------------------v
-    BooleanElvisBoundSmartCasts(KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
-    NewDataFlowForTryExpressions(KOTLIN_1_4, defaultState = State.DISABLED),
-    ReferencesToSyntheticJavaProperties(KOTLIN_1_3, defaultState = State.DISABLED),
-    // ^----------------------------------------------------------------------^
-
     // 1.5
 
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
@@ -295,6 +288,9 @@ enum class LanguageFeature(
     ValueClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, defaultState = State.DISABLED),
+    BooleanElvisBoundSmartCasts(sinceVersion = null, defaultState = State.DISABLED), // see KT-26357 for details
+    NewDataFlowForTryExpressions(sinceVersion = null, defaultState = State.DISABLED),
+    ReferencesToSyntheticJavaProperties(sinceVersion = null, defaultState = State.DISABLED),
     ;
 
     val presentableName: String
