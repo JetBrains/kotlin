@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import androidx.compose.compiler.plugins.kotlin.analysis.forEach
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -96,7 +95,7 @@ class ClassStabilityTransformer(
             cls.isInner ||
             cls.isFileClass ||
             cls.isCompanion ||
-            cls.defaultType.isInlineClassType()
+            cls.isInline
         ) return cls
 
         if (declaration.hasStableMarker()) {
