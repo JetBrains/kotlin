@@ -261,25 +261,6 @@ class DiagnosticReporterByTrackingStrategy(
                 reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
             }
 
-            CallableReferencesDefaultArgumentUsed::class.java -> {
-                require(diagnostic is CallableReferencesDefaultArgumentUsed) {
-                    "diagnostic ($diagnostic) should have type CallableReferencesDefaultArgumentUsed"
-                }
-
-                val callableReferenceExpression = diagnostic.argument.call.extractCallableReferenceExpression()
-
-                require(callableReferenceExpression != null) {
-                    "A call element must be callable reference for `CallableReferencesDefaultArgumentUsed`"
-                }
-
-                trace.report(
-                    UNSUPPORTED_FEATURE.on(
-                        callableReferenceExpression,
-                        LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings
-                    )
-                )
-            }
-
             ResolvedToSamWithVarargDiagnostic::class.java -> {
                 trace.report(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG.on(callArgument.psiCallArgument.valueArgument.asElement()))
             }

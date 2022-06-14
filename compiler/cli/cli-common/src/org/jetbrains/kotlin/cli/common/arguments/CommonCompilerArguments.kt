@@ -513,8 +513,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
 
-        var standaloneSamConversionFeaturePassedExplicitly = false
-        var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
@@ -523,13 +521,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (state == LanguageFeature.State.DISABLED && feature.sinceVersion?.isUnsupported == true) {
                 disabledFeaturesFromUnsupportedVersions += feature
-            }
-
-            when (feature) {
-                LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType ->
-                    functionReferenceWithDefaultValueFeaturePassedExplicitly = true
-
-                else -> {}
             }
         }
 

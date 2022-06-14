@@ -105,13 +105,6 @@ class CallableReferencesCandidateFactory(
             }
         }
 
-        if (callableReferenceAdaptation != null &&
-            callableReferenceAdaptation.defaults != 0 &&
-            !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
-        ) {
-            diagnostics.add(CallableReferencesDefaultArgumentUsed(kotlinCall, candidateDescriptor, callableReferenceAdaptation.defaults))
-        }
-
         if (candidateDescriptor !is CallableMemberDescriptor) {
             return createCallableReferenceCallCandidate(listOf(NotCallableMemberReference(kotlinCall, candidateDescriptor)))
         }

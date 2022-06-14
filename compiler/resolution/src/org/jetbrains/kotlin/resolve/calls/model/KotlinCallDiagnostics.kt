@@ -130,13 +130,6 @@ class CallableReferenceNotCompatible(
     val callableReverenceType: UnwrappedType
 ) : CallableReferenceInapplicableDiagnostic(argument)
 
-// supported by FE but not supported by BE now
-class CallableReferencesDefaultArgumentUsed(
-    val argument: CallableReferenceResolutionAtom,
-    val candidate: CallableDescriptor,
-    val defaultsCount: Int
-) : CallableReferenceInapplicableDiagnostic(argument)
-
 class NotCallableMemberReference(
     val argument: CallableReferenceResolutionAtom,
     val candidate: CallableDescriptor
