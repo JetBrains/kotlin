@@ -101,26 +101,26 @@ interface IdeaKpmFragmentProtoOrBuilder extends
       int index);
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
-  java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> 
+  java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> 
       getSourceDirectoriesList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
-  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getSourceDirectories(int index);
+  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getSourceDirectories(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   int getSourceDirectoriesCount();
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
-  java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder> 
+  java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder> 
       getSourceDirectoriesOrBuilderList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
-  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder getSourceDirectoriesOrBuilder(
+  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder getSourceDirectoriesOrBuilder(
       int index);
 }

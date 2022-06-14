@@ -23,15 +23,10 @@ message IdeaKpmLanguageSettingsProto {
   repeated string free_compiler_args = 8;
 }
 
-message IdeaKpmSourceDirectoryProto {
+message IdeaKpmContentRootProto {
   optional IdeaKpmExtrasProto extras = 1;
   optional string absolute_path = 2;
   optional string type = 3;
-}
-
-message IdeaKpmResourceDirectoryProto {
-  optional IdeaKpmExtrasProto extras = 1;
-  optional string absolute_path = 2;
 }
 
 message IdeaKpmBinaryCoordinatesProto {
@@ -119,7 +114,7 @@ message IdeaKpmFragmentProto {
   repeated IdeaKpmPlatformProto platforms = 3;
   optional IdeaKpmLanguageSettingsProto language_settings = 4;
   repeated IdeaKpmDependencyProto dependencies = 5;
-  repeated IdeaKpmSourceDirectoryProto source_directories = 6;
+  repeated IdeaKpmContentRootProto source_directories = 6;
 }
 
 message IdeaKpmCompilationOutputProto {

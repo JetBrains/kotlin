@@ -231,62 +231,62 @@ internal object IdeaKpmFragmentProtoKt {
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
     internal class SourceDirectoriesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-     internal val sourceDirectories: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>
+     internal val sourceDirectories: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>
       @kotlin.jvm.JvmSynthetic
       get() = com.google.protobuf.kotlin.DslList(
         _builder.getSourceDirectoriesList()
       )
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      * @param value The sourceDirectories to add.
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("addSourceDirectories")
-    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.add(value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) {
+    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.add(value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) {
       _builder.addSourceDirectories(value)
     }/**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      * @param value The sourceDirectories to add.
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("plusAssignSourceDirectories")
     @Suppress("NOTHING_TO_INLINE")
-    internal inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.plusAssign(value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) {
+    internal inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.plusAssign(value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) {
       add(value)
     }/**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      * @param values The sourceDirectories to add.
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("addAllSourceDirectories")
-    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto>) {
+    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto>) {
       _builder.addAllSourceDirectories(values)
     }/**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      * @param values The sourceDirectories to add.
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("plusAssignAllSourceDirectories")
     @Suppress("NOTHING_TO_INLINE")
-    internal inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto>) {
+    internal inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto>) {
       addAll(values)
     }/**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      * @param index The index to set the value at.
      * @param value The sourceDirectories to set.
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("setSourceDirectories")
-    internal operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) {
+    internal operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) {
       _builder.setSourceDirectories(index, value)
     }/**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     @kotlin.jvm.JvmSynthetic
     @kotlin.jvm.JvmName("clearSourceDirectories")
-    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, SourceDirectoriesProxy>.clear() {
+    internal fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, SourceDirectoriesProxy>.clear() {
       _builder.clearSourceDirectories()
     }}
 }

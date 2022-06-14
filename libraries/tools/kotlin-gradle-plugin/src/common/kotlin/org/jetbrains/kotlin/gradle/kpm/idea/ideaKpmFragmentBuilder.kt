@@ -18,8 +18,8 @@ private fun IdeaKpmProjectBuildingContext.buildIdeaKpmFragment(fragment: GradleK
         platforms = fragment.containingVariants.map { variant -> IdeaKpmPlatform(variant) }.toSet(),
         languageSettings = IdeaKpmLanguageSettings(fragment.languageSettings),
         dependencies = dependencyResolver.resolve(fragment).toList(),
-        sourceDirectories = fragment.kotlinSourceRoots.sourceDirectories.files.map { file ->
-            IdeaKpmSourceDirectoryImpl(file, type = IdeaKpmSourceDirectory.SOURCE_TYPE)
+        contentRoots = fragment.kotlinSourceRoots.sourceDirectories.files.map { file ->
+            IdeaKpmContentRootImpl(file, type = IdeaKpmContentRoot.SOURCE_TYPE)
         },
         extras = fragment.extras
     )

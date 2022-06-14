@@ -71,7 +71,7 @@ object TestIdeaKpmInstances {
         coordinates = simpleFragmentCoordinates
     )
 
-    val simpleSourceDirectory = IdeaKpmSourceDirectoryImpl(
+    val simpleSourceDirectory = IdeaKpmContentRootImpl(
         file = File("myFile").absoluteFile,
         type = "myType"
     )
@@ -81,7 +81,7 @@ object TestIdeaKpmInstances {
         platforms = setOf(simpleJvmPlatform),
         languageSettings = simpleLanguageSettings,
         dependencies = listOf(simpleUnresolvedBinaryDependency, simpleResolvedBinaryDependency, simpleFragmentDependency),
-        sourceDirectories = listOf(simpleSourceDirectory),
+        contentRoots = listOf(simpleSourceDirectory),
         extras = emptyExtras()
     )
 

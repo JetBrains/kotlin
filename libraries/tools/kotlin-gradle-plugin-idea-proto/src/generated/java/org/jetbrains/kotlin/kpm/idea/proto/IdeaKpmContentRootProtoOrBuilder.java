@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto;
 
-interface IdeaKpmSourceDirectoryProtoOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)
+interface IdeaKpmContentRootProtoOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)
     com.google.protobuf.MessageOrBuilder {
 
   /**

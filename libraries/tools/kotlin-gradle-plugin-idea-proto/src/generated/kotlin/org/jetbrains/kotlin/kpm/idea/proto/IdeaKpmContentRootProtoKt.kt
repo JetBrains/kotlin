@@ -4,23 +4,23 @@
 package org.jetbrains.kotlin.kpm.idea.proto;
 
 @kotlin.jvm.JvmSynthetic
-internal inline fun ideaKpmSourceDirectoryProto(block: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto =
-  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoKt.Dsl._create(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.newBuilder()).apply { block() }._build()
-internal object IdeaKpmSourceDirectoryProtoKt {
+internal inline fun ideaKpmContentRootProto(block: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto =
+  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoKt.Dsl._create(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.newBuilder()).apply { block() }._build()
+internal object IdeaKpmContentRootProtoKt {
   @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
   @com.google.protobuf.kotlin.ProtoDslMarker
   internal class Dsl private constructor(
-    private val _builder: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder
+    private val _builder: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder
   ) {
     internal companion object {
       @kotlin.jvm.JvmSynthetic
       @kotlin.PublishedApi
-      internal fun _create(builder: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder): Dsl = Dsl(builder)
+      internal fun _create(builder: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder): Dsl = Dsl(builder)
     }
 
     @kotlin.jvm.JvmSynthetic
     @kotlin.PublishedApi
-    internal fun _build(): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto = _builder.build()
+    internal fun _build(): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto = _builder.build()
 
     /**
      * <code>optional .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmExtrasProto extras = 1;</code>
@@ -96,5 +96,5 @@ internal object IdeaKpmSourceDirectoryProtoKt {
   }
 }
 @kotlin.jvm.JvmSynthetic
-internal inline fun org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.copy(block: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto =
-  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+internal inline fun org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.copy(block: org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto =
+  org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoKt.Dsl._create(this.toBuilder()).apply { block() }._build()

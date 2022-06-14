@@ -111,11 +111,11 @@ private static final long serialVersionUID = 0L;
           }
           case 50: {
             if (!((mutable_bitField0_ & 0x00000020) != 0)) {
-              sourceDirectories_ = new java.util.ArrayList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto>();
+              sourceDirectories_ = new java.util.ArrayList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto>();
               mutable_bitField0_ |= 0x00000020;
             }
             sourceDirectories_.add(
-                input.readMessage(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.parser(), extensionRegistry));
+                input.readMessage(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.parser(), extensionRegistry));
             break;
           }
           default: {
@@ -319,41 +319,41 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int SOURCE_DIRECTORIES_FIELD_NUMBER = 6;
-  private java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> sourceDirectories_;
+  private java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> sourceDirectories_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   @java.lang.Override
-  public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> getSourceDirectoriesList() {
+  public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> getSourceDirectoriesList() {
     return sourceDirectories_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder> 
+  public java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder> 
       getSourceDirectoriesOrBuilderList() {
     return sourceDirectories_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   @java.lang.Override
   public int getSourceDirectoriesCount() {
     return sourceDirectories_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getSourceDirectories(int index) {
+  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getSourceDirectories(int index) {
     return sourceDirectories_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+   * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
    */
   @java.lang.Override
-  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder getSourceDirectoriesOrBuilder(
+  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder getSourceDirectoriesOrBuilder(
       int index) {
     return sourceDirectories_.get(index);
   }
@@ -1754,22 +1754,22 @@ private static final long serialVersionUID = 0L;
       return dependenciesBuilder_;
     }
 
-    private java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> sourceDirectories_ =
+    private java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> sourceDirectories_ =
       java.util.Collections.emptyList();
     private void ensureSourceDirectoriesIsMutable() {
       if (!((bitField0_ & 0x00000020) != 0)) {
-        sourceDirectories_ = new java.util.ArrayList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto>(sourceDirectories_);
+        sourceDirectories_ = new java.util.ArrayList<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto>(sourceDirectories_);
         bitField0_ |= 0x00000020;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder> sourceDirectoriesBuilder_;
+        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder> sourceDirectoriesBuilder_;
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> getSourceDirectoriesList() {
+    public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> getSourceDirectoriesList() {
       if (sourceDirectoriesBuilder_ == null) {
         return java.util.Collections.unmodifiableList(sourceDirectories_);
       } else {
@@ -1777,7 +1777,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public int getSourceDirectoriesCount() {
       if (sourceDirectoriesBuilder_ == null) {
@@ -1787,9 +1787,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getSourceDirectories(int index) {
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getSourceDirectories(int index) {
       if (sourceDirectoriesBuilder_ == null) {
         return sourceDirectories_.get(index);
       } else {
@@ -1797,10 +1797,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder setSourceDirectories(
-        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto value) {
+        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto value) {
       if (sourceDirectoriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1814,10 +1814,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder setSourceDirectories(
-        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder builderForValue) {
       if (sourceDirectoriesBuilder_ == null) {
         ensureSourceDirectoriesIsMutable();
         sourceDirectories_.set(index, builderForValue.build());
@@ -1828,9 +1828,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public Builder addSourceDirectories(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto value) {
+    public Builder addSourceDirectories(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto value) {
       if (sourceDirectoriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1844,10 +1844,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder addSourceDirectories(
-        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto value) {
+        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto value) {
       if (sourceDirectoriesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1861,10 +1861,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder addSourceDirectories(
-        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder builderForValue) {
+        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder builderForValue) {
       if (sourceDirectoriesBuilder_ == null) {
         ensureSourceDirectoriesIsMutable();
         sourceDirectories_.add(builderForValue.build());
@@ -1875,10 +1875,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder addSourceDirectories(
-        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder builderForValue) {
       if (sourceDirectoriesBuilder_ == null) {
         ensureSourceDirectoriesIsMutable();
         sourceDirectories_.add(index, builderForValue.build());
@@ -1889,10 +1889,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder addAllSourceDirectories(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto> values) {
+        java.lang.Iterable<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto> values) {
       if (sourceDirectoriesBuilder_ == null) {
         ensureSourceDirectoriesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1904,7 +1904,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder clearSourceDirectories() {
       if (sourceDirectoriesBuilder_ == null) {
@@ -1917,7 +1917,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
     public Builder removeSourceDirectories(int index) {
       if (sourceDirectoriesBuilder_ == null) {
@@ -1930,16 +1930,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder getSourceDirectoriesBuilder(
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder getSourceDirectoriesBuilder(
         int index) {
       return getSourceDirectoriesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder getSourceDirectoriesOrBuilder(
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder getSourceDirectoriesOrBuilder(
         int index) {
       if (sourceDirectoriesBuilder_ == null) {
         return sourceDirectories_.get(index);  } else {
@@ -1947,9 +1947,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder> 
+    public java.util.List<? extends org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder> 
          getSourceDirectoriesOrBuilderList() {
       if (sourceDirectoriesBuilder_ != null) {
         return sourceDirectoriesBuilder_.getMessageOrBuilderList();
@@ -1958,33 +1958,33 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder addSourceDirectoriesBuilder() {
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder addSourceDirectoriesBuilder() {
       return getSourceDirectoriesFieldBuilder().addBuilder(
-          org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.getDefaultInstance());
+          org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder addSourceDirectoriesBuilder(
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder addSourceDirectoriesBuilder(
         int index) {
       return getSourceDirectoriesFieldBuilder().addBuilder(
-          index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.getDefaultInstance());
+          index, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.getDefaultInstance());
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto source_directories = 6;</code>
+     * <code>repeated .org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto source_directories = 6;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder> 
+    public java.util.List<org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder> 
          getSourceDirectoriesBuilderList() {
       return getSourceDirectoriesFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder> 
+        org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder> 
         getSourceDirectoriesFieldBuilder() {
       if (sourceDirectoriesBuilder_ == null) {
         sourceDirectoriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder>(
+            org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder>(
                 sourceDirectories_,
                 ((bitField0_ & 0x00000020) != 0),
                 getParentForChildren(),

@@ -39,8 +39,8 @@ class FragmentTest : AbstractSerializationTest<IdeaKpmFragment>() {
             languageSettings = (value.languageSettings as IdeaKpmLanguageSettingsImpl).copy(
                 compilerPluginClasspath = value.languageSettings.compilerPluginClasspath.map { it.absoluteFile }
             ),
-            sourceDirectories = value.sourceDirectories
-                .map { it as IdeaKpmSourceDirectoryImpl }
+            contentRoots = value.contentRoots
+                .map { it as IdeaKpmContentRootImpl }
                 .map { it.copy(file = it.file.absoluteFile) }
         )
 

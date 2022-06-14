@@ -4,18 +4,18 @@
 package org.jetbrains.kotlin.kpm.idea.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto}
+ * Protobuf type {@code org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto}
  */
-final class IdeaKpmSourceDirectoryProto extends
+final class IdeaKpmContentRootProto extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)
-    IdeaKpmSourceDirectoryProtoOrBuilder {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)
+    IdeaKpmContentRootProtoOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use IdeaKpmSourceDirectoryProto.newBuilder() to construct.
-  private IdeaKpmSourceDirectoryProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use IdeaKpmContentRootProto.newBuilder() to construct.
+  private IdeaKpmContentRootProto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private IdeaKpmSourceDirectoryProto() {
+  private IdeaKpmContentRootProto() {
     absolutePath_ = "";
     type_ = "";
   }
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new IdeaKpmSourceDirectoryProto();
+    return new IdeaKpmContentRootProto();
   }
 
   @java.lang.Override
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private IdeaKpmSourceDirectoryProto(
+  private IdeaKpmContentRootProto(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -97,15 +97,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSourceDirectoryProto_descriptor;
+    return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContentRootProto_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSourceDirectoryProto_fieldAccessorTable
+    return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContentRootProto_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.class, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder.class);
+            org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.class, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder.class);
   }
 
   private int bitField0_;
@@ -279,10 +279,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)) {
+    if (!(obj instanceof org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)) {
       return super.equals(obj);
     }
-    org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto other = (org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) obj;
+    org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto other = (org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) obj;
 
     if (hasExtras() != other.hasExtras()) return false;
     if (hasExtras()) {
@@ -327,69 +327,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseDelimitedFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parseFrom(
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -402,7 +402,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -418,26 +418,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto}
+   * Protobuf type {@code org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)
-      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProtoOrBuilder {
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)
+      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProtoOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSourceDirectoryProto_descriptor;
+      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContentRootProto_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSourceDirectoryProto_fieldAccessorTable
+      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContentRootProto_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.class, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.Builder.class);
+              org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.class, org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.Builder.class);
     }
 
-    // Construct using org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.newBuilder()
+    // Construct using org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -472,17 +472,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmSourceDirectoryProto_descriptor;
+      return org.jetbrains.kotlin.kpm.idea.proto.ProtoIdeaKpm.internal_static_org_jetbrains_kotlin_kpm_idea_proto_IdeaKpmContentRootProto_descriptor;
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.getDefaultInstance();
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.getDefaultInstance();
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto build() {
-      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto result = buildPartial();
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto build() {
+      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -490,8 +490,8 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto buildPartial() {
-      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto result = new org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto(this);
+    public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto buildPartial() {
+      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto result = new org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -549,16 +549,16 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) {
-        return mergeFrom((org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)other);
+      if (other instanceof org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) {
+        return mergeFrom((org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto other) {
-      if (other == org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto other) {
+      if (other == org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto.getDefaultInstance()) return this;
       if (other.hasExtras()) {
         mergeExtras(other.getExtras());
       }
@@ -587,11 +587,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto parsedMessage = null;
+      org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -900,41 +900,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto)
-  private static final org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto)
+  private static final org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto();
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto();
   }
 
-  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getDefaultInstance() {
+  public static org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<IdeaKpmSourceDirectoryProto>
-      PARSER = new com.google.protobuf.AbstractParser<IdeaKpmSourceDirectoryProto>() {
+  private static final com.google.protobuf.Parser<IdeaKpmContentRootProto>
+      PARSER = new com.google.protobuf.AbstractParser<IdeaKpmContentRootProto>() {
     @java.lang.Override
-    public IdeaKpmSourceDirectoryProto parsePartialFrom(
+    public IdeaKpmContentRootProto parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new IdeaKpmSourceDirectoryProto(input, extensionRegistry);
+      return new IdeaKpmContentRootProto(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<IdeaKpmSourceDirectoryProto> parser() {
+  public static com.google.protobuf.Parser<IdeaKpmContentRootProto> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<IdeaKpmSourceDirectoryProto> getParserForType() {
+  public com.google.protobuf.Parser<IdeaKpmContentRootProto> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmSourceDirectoryProto getDefaultInstanceForType() {
+  public org.jetbrains.kotlin.kpm.idea.proto.IdeaKpmContentRootProto getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

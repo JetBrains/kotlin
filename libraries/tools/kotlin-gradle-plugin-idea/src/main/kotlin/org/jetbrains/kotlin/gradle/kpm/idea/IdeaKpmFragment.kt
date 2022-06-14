@@ -13,7 +13,7 @@ sealed interface IdeaKpmFragment : Serializable {
     val platforms: Set<IdeaKpmPlatform>
     val languageSettings: IdeaKpmLanguageSettings
     val dependencies: List<IdeaKpmDependency>
-    val sourceDirectories: List<IdeaKpmSourceDirectory>
+    val contentRoots: List<IdeaKpmContentRoot>
     val extras: Extras
 }
 
@@ -25,7 +25,7 @@ data class IdeaKpmFragmentImpl(
     override val platforms: Set<IdeaKpmPlatform>,
     override val languageSettings: IdeaKpmLanguageSettings,
     override val dependencies: List<IdeaKpmDependency>,
-    override val sourceDirectories: List<IdeaKpmSourceDirectory>,
+    override val contentRoots: List<IdeaKpmContentRoot>,
     override val extras: Extras
 ) : IdeaKpmFragment {
 

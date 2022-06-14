@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tooling.core.emptyExtras
 import java.io.File
 import java.io.Serializable
 
-sealed interface IdeaKpmSourceDirectory : Serializable {
+sealed interface IdeaKpmContentRoot : Serializable {
     val extras: Extras
     val file: File
     val type: String
@@ -22,11 +22,11 @@ sealed interface IdeaKpmSourceDirectory : Serializable {
 }
 
 @InternalKotlinGradlePluginApi
-data class IdeaKpmSourceDirectoryImpl(
+data class IdeaKpmContentRootImpl(
     override val file: File,
     override val type: String,
     override val extras: Extras = emptyExtras(),
-    ) : IdeaKpmSourceDirectory {
+) : IdeaKpmContentRoot {
 
     @InternalKotlinGradlePluginApi
     companion object {

@@ -15,7 +15,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmFragmentProto(fragment: IdeaKpmF
         platforms.addAll(fragment.platforms.map { IdeaKpmPlatformProto(it) })
         languageSettings = IdeaKpmLanguageSettingsProto(fragment.languageSettings)
         dependencies.addAll(fragment.dependencies.map { IdeaKpmDependencyProto(it) })
-        sourceDirectories.addAll(fragment.sourceDirectories.map { IdeaKpmSourceDirectoryProto(it) })
+        sourceDirectories.addAll(fragment.contentRoots.map { IdeaKpmContentRootProto(it) })
         extras = IdeaKpmExtrasProto(fragment.extras)
     }
 }
@@ -26,7 +26,7 @@ internal fun IdeaKpmSerializationContext.IdeaKpmFragment(proto: IdeaKpmFragmentP
         platforms = proto.platformsList.map { IdeaKpmPlatform(it) }.toSet(),
         languageSettings = IdeaKpmLanguageSettings(proto.languageSettings),
         dependencies = proto.dependenciesList.mapNotNull { IdeaKpmDependency(it) },
-        sourceDirectories = proto.sourceDirectoriesList.mapNotNull { IdeaKpmSourceDirectory(it) },
+        contentRoots = proto.sourceDirectoriesList.mapNotNull { IdeaKpmContentRoot(it) },
         extras = Extras(proto.extras)
     )
 }
