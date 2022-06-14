@@ -475,15 +475,16 @@ internal class KtFe10CallResolver(
         resolvedCall: ResolvedCall<*>,
         smartCastType: KotlinType? = null
     ): KtReceiverValue? {
+        val ktType = type.toKtType(analysisContext)
         val result = when (this) {
-            is ExpressionReceiver -> expression.toExplicitReceiverValue()
+            is ExpressionReceiver -> expression.toExplicitReceiverValue(ktType)
             is ExtensionReceiver -> {
                 val extensionReceiverParameter = this.declarationDescriptor.extensionReceiverParameter ?: return null
-                KtImplicitReceiverValue(KtFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext))
+                KtImplicitReceiverValue(KtFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext), ktType)
             }
             is ImplicitReceiver -> {
                 val symbol = this.declarationDescriptor.toKtSymbol(analysisContext) ?: return null
-                KtImplicitReceiverValue(symbol)
+                KtImplicitReceiverValue(symbol, ktType)
             }
             else -> null
         }

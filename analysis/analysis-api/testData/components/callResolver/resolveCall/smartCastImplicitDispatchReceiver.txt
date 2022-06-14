@@ -6,7 +6,8 @@ KtSuccessCallInfo:
           symbol = KtReceiverParameterSymbol:
             origin: SOURCE
             type: kotlin/Any
-        smartCastType = kotlin.String
+          type = kotlin.Any
+        type = kotlin.String
       extensionReceiver = null
       signature = KtVariableLikeSignature:
         name = length

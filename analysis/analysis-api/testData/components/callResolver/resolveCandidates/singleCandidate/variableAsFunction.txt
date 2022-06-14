@@ -5,6 +5,7 @@ KtApplicableCallCandidateInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = x
         isSafeNavigation = false
+        type = kotlin.Function1<kotlin.Int, kotlin.String>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

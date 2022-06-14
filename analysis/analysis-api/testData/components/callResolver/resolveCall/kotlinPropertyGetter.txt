@@ -4,6 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = ktClass
         isSafeNavigation = false
+        type = KtClass
       extensionReceiver = null
       signature = KtVariableLikeSignature:
         name = foo

@@ -7,7 +7,8 @@ KtApplicableCallCandidateInfo:
         original = KtExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
-        smartCastType = kotlin.String
+          type = kotlin.Any
+        type = kotlin.String
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.String
         returnType = kotlin.Unit

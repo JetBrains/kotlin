@@ -6,6 +6,7 @@ KtErrorCallInfo:
         dispatchReceiver = KtExplicitReceiverValue:
           expression = c
           isSafeNavigation = false
+          type = C
         extensionReceiver = null
         signature = KtFunctionLikeSignature:
           receiverType = null

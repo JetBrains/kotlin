@@ -8,7 +8,8 @@ KtSuccessCallInfo:
           symbol = KtReceiverParameterSymbol:
             origin: SOURCE
             type: kotlin/Any
-        smartCastType = kotlin.String
+          type = kotlin.Any
+        type = kotlin.String
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.String
         returnType = kotlin.Unit

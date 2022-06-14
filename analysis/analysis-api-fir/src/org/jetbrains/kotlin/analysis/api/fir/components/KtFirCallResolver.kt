@@ -308,16 +308,16 @@ internal class KtFirCallResolver(
             explicitReceiverKind: ExplicitReceiverKind
         ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtCallableSignature<KtCallableSymbol>> {
             isImplicitInvoke = true
+
+            // For implicit invoke, the explicit receiver is always set in FIR and this receiver is the variable or property that has
+            // the `invoke` member function. In this case, we use the `calleeExpression` in the `KtCallExpression` as the PSI
+            // representation of this receiver. Caller can then use this PSI for further call resolution, which is implemented by the
+            // parameter `resolveCalleeExpressionOfFunctionCall` in `toKtCallInfo`.
             val explicitReceiverPsi = when (psi) {
                 is KtQualifiedExpression -> (psi.selectorExpression as KtCallExpression).calleeExpression
                 is KtCallExpression -> psi.calleeExpression
                 else -> error("unexpected PSI $psi for FirImplicitInvokeCall")
             } ?: error("missing calleeExpression in PSI $psi for FirImplicitInvokeCall")
-            // For implicit invoke, the explicit receiver is always set in FIR and this receiver is the variable or property that has
-            // the `invoke` member function. In this case, we use the `calleeExpression` in the `KtCallExpression` as the PSI
-            // representation of this receiver. Caller can then use this PSI for further call resolution, which is implemented by the
-            // parameter `resolveCalleeExpressionOfFunctionCall` in `toKtCallInfo`.
-            val explicitReceiverValue = KtExplicitReceiverValue(explicitReceiverPsi, false, token)
 
             // Specially handle @ExtensionFunctionType
             if (dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType == true) {
@@ -327,7 +327,7 @@ internal class KtFirCallResolver(
             val dispatchReceiverValue: KtReceiverValue?
             val extensionReceiverValue: KtReceiverValue?
             if (explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER) {
-                dispatchReceiverValue = explicitReceiverValue
+                dispatchReceiverValue = KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.typeRef.coneType.asKtType(), false, token)
                 if (firstArgIsExtensionReceiver) {
                     extensionReceiverValue = (fir as FirFunctionCall).arguments.first().toKtReceiverValue()
                 } else {
@@ -335,7 +335,7 @@ internal class KtFirCallResolver(
                 }
             } else {
                 dispatchReceiverValue = dispatchReceiver.toKtReceiverValue()
-                extensionReceiverValue = explicitReceiverValue
+                extensionReceiverValue = KtExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.typeRef.coneType.asKtType(), false, token)
             }
             return KtPartiallyAppliedSymbol(
                 with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
@@ -640,12 +640,12 @@ internal class KtFirCallResolver(
             (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
         val substitutor = createConeSubstitutorFromTypeArguments() ?: return null
         val dispatchReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == dispatchReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue()
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(dispatchReceiver.typeRef.coneType.asKtType())
         } else {
             dispatchReceiver.toKtReceiverValue()
         }
         val extensionReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == extensionReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue()
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(extensionReceiver.typeRef.coneType.asKtType())
         } else {
             extensionReceiver.toKtReceiverValue()
         }
@@ -677,15 +677,15 @@ internal class KtFirCallResolver(
                             ?: return null
                         else -> return null
                     }
-                    KtImplicitReceiverValue(implicitPartiallyAppliedSymbol)
+                    KtImplicitReceiverValue(implicitPartiallyAppliedSymbol, typeRef.coneType.asKtType())
                 } else {
                     if (psi !is KtExpression) return null
-                    psi.toExplicitReceiverValue()
+                    psi.toExplicitReceiverValue(typeRef.coneType.asKtType())
                 }
             }
             else -> {
                 if (psi !is KtExpression) return null
-                psi.toExplicitReceiverValue()
+                psi.toExplicitReceiverValue(typeRef.coneType.asKtType())
             }
         }
     }
@@ -919,14 +919,16 @@ internal class KtFirCallResolver(
                 val equalsSymbolInAny = equalsSymbolInAny
                 val leftOperand = arguments.firstOrNull() ?: return null
                 val session = analysisSession.useSiteSession
-                val classSymbol = leftOperand.typeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
+                val leftOperandType = leftOperand.typeRef.coneType
+
+                val classSymbol = leftOperandType.fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
                 val equalsSymbol = classSymbol?.getEqualsSymbol(equalsSymbolInAny) ?: equalsSymbolInAny
                 val ktSignature = equalsSymbol.toKtSignature()
                 KtSuccessCallInfo(
                     KtSimpleFunctionCall(
                         KtPartiallyAppliedSymbol(
                             ktSignature,
-                            KtExplicitReceiverValue(leftPsi, false, token),
+                            KtExplicitReceiverValue(leftPsi, leftOperandType.asKtType(), false, token),
                             null
                         ),
                         LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>().apply {

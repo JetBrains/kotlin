@@ -5,7 +5,8 @@ KtSuccessCallInfo:
         original = KtExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
-        smartCastType = kotlin.String
+          type = kotlin.Any
+        type = kotlin.String
       extensionReceiver = null
       signature = KtVariableLikeSignature:
         name = length
