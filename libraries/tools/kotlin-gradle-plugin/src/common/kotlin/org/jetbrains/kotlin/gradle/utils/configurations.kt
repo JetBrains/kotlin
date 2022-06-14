@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ResolvedConfiguration
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 
@@ -22,25 +22,29 @@ const val RUNTIME = "runtime"
 internal const val INTRANSITIVE = "intransitive"
 
 /**
- * Gradle Configuration Cache-friendly holder of resolved Configuration
+ * Gradle Configuration Cache-friendly representation of resolved Configuration
  */
-class FilesWithResolvedDependencyGraph
+internal class ResolvedDependencyGraph
 private constructor (
     val files: FileCollection,
-    val graphRootProvider: Provider<ResolvedComponentResult>
+    private val graphRootProvider: Provider<ResolvedComponentResult>,
+    private val artifactsProvider: Provider<Set<ResolvedArtifactResult>>
 ) {
-    val graphRoot get() = graphRootProvider.get()
+    val root get() = graphRootProvider.get()
+    val artifacts get() = artifactsProvider.get()
+
+    val artifactsByComponentId by lazy { artifacts.groupBy { it.id.componentIdentifier } }
+
+    fun dependencyArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
+        val componentId = dependency.selected.id
+        return artifactsByComponentId[componentId] ?: emptyList()
+    }
 
     companion object {
-        operator fun invoke(project: Project, configuration: Configuration) = FilesWithResolvedDependencyGraph(
+        operator fun invoke(project: Project, configuration: Configuration) = ResolvedDependencyGraph(
             files = project.files(configuration),
-            graphRootProvider = configuration.incoming.resolutionResult.let { rr -> project.provider { rr.root } }
+            graphRootProvider = configuration.incoming.resolutionResult.let { rr -> project.provider { rr.root } },
+            artifactsProvider = configuration.incoming.artifacts.let { collection -> project.provider { collection.artifacts } }
         )
     }
 }
-
-/**
- * Configuration Cache-friendly alternative of [ResolvedConfiguration.getFirstLevelModuleDependencies]
- */
-internal val ResolvedComponentResult.firstLevelModuleDependencies: Set<ResolvedDependency> get() =
-    dependencies.filterIsInstance<ResolvedDependency>().toSet()

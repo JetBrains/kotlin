@@ -637,7 +637,7 @@ constructor(
     @get:Internal
     internal abstract val konanPropertiesService: Property<KonanPropertiesBuildService>
 
-    private val compileDependencyFiles = FilesWithResolvedDependencyGraph(
+    private val resolvedDependencyGraph = ResolvedDependencyGraph(
         project,
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )
@@ -659,7 +659,7 @@ constructor(
             executionContext = executionContext,
             settings = cacheBuilderSettings,
             konanPropertiesService = konanPropertiesService.get()
-        ).buildCompilerArgs(compileDependencyFiles)
+        ).buildCompilerArgs(resolvedDependencyGraph)
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,
@@ -939,33 +939,47 @@ internal class CacheBuilder(
     private val partialLinkage: Boolean
         get() = PARTIAL_LINKAGE in settings.kotlinOptions.freeCompilerArgs
 
-    private fun getCacheDirectory(dependency: ResolvedDependency): File = getCacheDirectory(
+    private fun getCacheDirectory(
+        resolvedDependencyGraph: ResolvedDependencyGraph,
+        dependency: ResolvedDependencyResult
+    ): File = getCacheDirectory(
         rootCacheDirectory = rootCacheDirectory,
         dependency = dependency,
         artifact = null,
+        resolvedDependencyGraph = resolvedDependencyGraph,
         partialLinkage = partialLinkage
     )
 
     private fun needCache(libraryPath: String) =
         libraryPath.startsWith(settings.gradleUserHomeDir.absolutePath) && libraryPath.endsWith(".klib")
 
-    private fun ensureDependencyPrecached(dependency: ResolvedDependency, visitedDependencies: MutableSet<ResolvedDependency>) {
+    private fun ResolvedDependencyGraph.ensureDependencyPrecached(
+        dependency: ResolvedDependencyResult,
+        visitedDependencies: MutableSet<ResolvedDependencyResult>
+    ) {
         if (dependency in visitedDependencies)
             return
-        visitedDependencies += dependency
-        dependency.children.forEach { ensureDependencyPrecached(it, visitedDependencies) }
 
-        val artifactsToAddToCache = dependency.moduleArtifacts.filter { needCache(it.file.absolutePath) }
+        visitedDependencies += dependency
+        dependency
+            .selected
+            .dependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            .forEach { ensureDependencyPrecached(it, visitedDependencies) }
+
+        val artifactsToAddToCache = dependencyArtifacts(dependency).filter { needCache(it.file.absolutePath) }
+
         if (artifactsToAddToCache.isEmpty()) return
 
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
             rootCacheDirectory = rootCacheDirectory,
             dependency = dependency,
             considerArtifact = false,
+            resolvedDependencyGraph = this,
             partialLinkage = partialLinkage
         ) ?: return
 
-        val cacheDirectory = getCacheDirectory(dependency)
+        val cacheDirectory = getCacheDirectory(this, dependency)
         cacheDirectory.mkdirs()
 
         val artifactsLibraries = artifactsToAddToCache
@@ -1017,7 +1031,7 @@ internal class CacheBuilder(
                 args += "-Xcache-directory=${it.absolutePath}"
             }
             getAllDependencies(dependency)
-                .flatMap { it.moduleArtifacts }
+                .flatMap { dependencyArtifacts(it) }
                 .map { it.file }
                 .filterKlibsPassedToCompiler()
                 .forEach {
@@ -1085,17 +1099,17 @@ internal class CacheBuilder(
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
     }
 
-    fun buildCompilerArgs(compileDependencyFiles: FilesWithResolvedDependencyGraph): List<String> = mutableListOf<String>().apply {
+    fun buildCompilerArgs(resolvedDependencyGraph: ResolvedDependencyGraph): List<String> = mutableListOf<String>().apply {
         if (konanCacheKind != NativeCacheKind.NONE && !optimized && konanPropertiesService.cacheWorksFor(konanTarget)) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
-            val visitedDependencies = mutableSetOf<ResolvedDependency>()
+            val visitedDependencies = mutableSetOf<ResolvedDependencyResult>()
             val allCacheDirectories = mutableSetOf<String>()
-            for (root in compileDependencyFiles.graphRoot.firstLevelModuleDependencies) {
-                ensureDependencyPrecached(root, visitedDependencies)
+            for (root in resolvedDependencyGraph.root.dependencies.filterIsInstance<ResolvedDependencyResult>()) {
+                resolvedDependencyGraph.ensureDependencyPrecached(root, visitedDependencies)
                 for (dependency in listOf(root) + getAllDependencies(root)) {
-                    val cacheDirectory = getCacheDirectory(dependency)
+                    val cacheDirectory = getCacheDirectory(resolvedDependencyGraph, dependency)
                     if (cacheDirectory.exists())
                         allCacheDirectories += cacheDirectory.absolutePath
                 }
