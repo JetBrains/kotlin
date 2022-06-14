@@ -17,6 +17,21 @@ fun IdeaKpmProjectContainer(project: IdeaKpmProject): IdeaKpmProjectInstanceCont
     return IdeaKpmProjectInstanceContainerImpl(project)
 }
 
+/**
+ * Wrapper around [IdeaKpmProject] which can store the project in two forms
+ * - binary : [IdeaKpmProjectBinaryContainer]
+ * - instance: [IdeaKpmProjectInstanceContainer]
+ *
+ * This class is used to transport the [IdeaKpmProject] into the IDE, where it needs
+ * to take those two forms, while keeping the same class as key on IJ side.
+ *
+ * This class overcomes a limitation in IntelliJ's SerializationService, which basically
+ * requires a single class.
+ *
+ * When this container is requested from a Model Builder, it will
+ * return the binary form. This gets deserialized by the SerializationService and transformed
+ * into [IdeaKpmProjectInstanceContainer].
+ */
 sealed interface IdeaKpmProjectContainer<T : Any> : Serializable {
     val project: T
     val binaryOrNull: ByteArray?
