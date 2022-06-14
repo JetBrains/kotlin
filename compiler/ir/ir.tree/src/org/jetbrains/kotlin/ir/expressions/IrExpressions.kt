@@ -68,11 +68,13 @@ fun IrExpression.isUnchanging(): Boolean =
 fun IrExpression.hasNoSideEffects(): Boolean =
     isUnchanging() || this is IrGetValue
 
-internal fun IrMemberAccessExpression<*>.throwNoSuchArgumentSlotException(kind: String, index: Int, total: Int): Nothing {
-    throw AssertionError(
-        "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
-                (symbol.signature?.let { ".\nSymbol: $it" } ?: "")
-    )
+internal fun IrMemberAccessExpression<*>.checkArgumentSlotAccess(kind: String, index: Int, total: Int) {
+    if (index >= total) {
+        throw AssertionError(
+            "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
+                    (symbol.signature?.let { ".\nSymbol: $it" } ?: "")
+        )
+    }
 }
 
 fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpression<*>, shift: Int = 0) {

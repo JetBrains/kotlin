@@ -34,11 +34,14 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override var setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
-    override val typeArguments: Array<IrType?> = emptyArray()
+    override val typeArguments: Array<IrType?>
+        get() = EMPTY_TYPE_ARGUMENTS
 
     override val valueArguments: Array<IrExpression?>
-        get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
+        get() = EMPTY_VALUE_ARGUMENTS
 
-    override val valueArgumentsCount: Int
-        get() = 0
+    companion object {
+        private val EMPTY_TYPE_ARGUMENTS = emptyArray<IrType?>()
+        private val EMPTY_VALUE_ARGUMENTS = emptyArray<IrExpression?>()
+    }
 }
