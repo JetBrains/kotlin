@@ -3,8 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("unused")
+
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRoot.Companion.RESOURCES_TYPE
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmContentRoot.Companion.SOURCES_TYPE
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.emptyExtras
 import java.io.File
@@ -16,10 +20,14 @@ sealed interface IdeaKpmContentRoot : Serializable {
     val type: String
 
     companion object {
-        const val SOURCE_TYPE = "source"
-        const val RESOURCE_TYPE = "resource"
+        const val SOURCES_TYPE = "source"
+        const val RESOURCES_TYPE = "resource"
     }
 }
+
+val IdeaKpmContentRoot.isSources get() = type == SOURCES_TYPE
+
+val IdeaKpmContentRoot.isResources get() = type == RESOURCES_TYPE
 
 @InternalKotlinGradlePluginApi
 data class IdeaKpmContentRootImpl(
