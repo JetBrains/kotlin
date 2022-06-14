@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument +FunctionalInterfaceConversion
+// !LANGUAGE: +FunctionalInterfaceConversion
 // !CHECK_TYPE
 
 fun interface F<S> {

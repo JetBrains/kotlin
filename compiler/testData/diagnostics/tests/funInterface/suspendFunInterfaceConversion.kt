@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument +FunctionalInterfaceConversion
+// !LANGUAGE: +FunctionalInterfaceConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
 
 fun interface SuspendRunnable {

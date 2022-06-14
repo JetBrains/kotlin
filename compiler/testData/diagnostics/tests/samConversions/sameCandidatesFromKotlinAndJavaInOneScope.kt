@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Action.java

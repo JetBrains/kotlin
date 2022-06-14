@@ -48,8 +48,6 @@ class JavaSyntheticScopes(
     val scopesWithForceEnabledSamAdapters: Collection<SyntheticScope>
 
     init {
-        val samConversionPerArgumentIsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)
-
         val javaSyntheticPropertiesScope =
             JavaSyntheticPropertiesScope(
                 storageManager, lookupTracker,
@@ -59,14 +57,13 @@ class JavaSyntheticScopes(
             .getInstances(project)
             .flatMap { it.getScopes(moduleDescriptor, javaSyntheticPropertiesScope) }
 
-
         val samAdapterFunctionsScope = SamAdapterFunctionsScope(
             storageManager,
             samConventionResolver,
             samConversionOracle,
             deprecationResolver,
             lookupTracker,
-            samViaSyntheticScopeDisabled = samConversionPerArgumentIsEnabled,
+            samViaSyntheticScopeDisabled = true,
             allowNonSpreadArraysForVarargAfterSam = !languageVersionSettings.supportsFeature(
                 LanguageFeature.ProhibitVarargAsArrayAfterSamArgument
             )
@@ -77,22 +74,18 @@ class JavaSyntheticScopes(
 
         scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope, funInterfaceConstructorsScopes) + scopesFromExtensions
 
-        if (samConversionPerArgumentIsEnabled) {
-            val forceEnabledSamAdapterFunctionsScope = SamAdapterFunctionsScope(
-                storageManager,
-                samConventionResolver,
-                samConversionOracle,
-                deprecationResolver,
-                lookupTracker,
-                samViaSyntheticScopeDisabled = false,
-                allowNonSpreadArraysForVarargAfterSam = false
-            )
+        val forceEnabledSamAdapterFunctionsScope = SamAdapterFunctionsScope(
+            storageManager,
+            samConventionResolver,
+            samConversionOracle,
+            deprecationResolver,
+            lookupTracker,
+            samViaSyntheticScopeDisabled = false,
+            allowNonSpreadArraysForVarargAfterSam = false
+        )
 
-            scopesWithForceEnabledSamAdapters =
-                listOf(javaSyntheticPropertiesScope, forceEnabledSamAdapterFunctionsScope) + scopesFromExtensions
-        } else {
-            scopesWithForceEnabledSamAdapters = scopes
-        }
+        scopesWithForceEnabledSamAdapters =
+            listOf(javaSyntheticPropertiesScope, forceEnabledSamAdapterFunctionsScope) + scopesFromExtensions
     }
 }
 

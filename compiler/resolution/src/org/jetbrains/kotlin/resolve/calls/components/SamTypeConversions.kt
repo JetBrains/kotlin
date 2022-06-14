@@ -26,9 +26,6 @@ object SamTypeConversions : ParameterTypeConversion {
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean {
-        val callComponents = candidate.callComponents
-
-        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return true
         if (expectedParameterType.isNothing()) return true
         if (expectedParameterType.isFunctionType) return true
 

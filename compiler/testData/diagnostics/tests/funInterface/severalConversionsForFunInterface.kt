@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument +FunctionalInterfaceConversion
+// !LANGUAGE: +FunctionalInterfaceConversion
 
 interface J {
     fun foo1(r: KRunnable)

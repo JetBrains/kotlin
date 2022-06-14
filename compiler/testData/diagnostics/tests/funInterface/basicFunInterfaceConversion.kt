@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument
+// !LANGUAGE: +FunctionalInterfaceConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Foo {

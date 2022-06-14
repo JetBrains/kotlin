@@ -500,7 +500,6 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (candidateExpectedType.isBuiltinFunctionalType(session)) return null
-    // TODO: if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
     val firFunction = symbol.fir as? FirFunction ?: return null
     if (!context.bodyResolveComponents.samResolver.shouldRunSamConversionForFunction(firFunction)) return null
 

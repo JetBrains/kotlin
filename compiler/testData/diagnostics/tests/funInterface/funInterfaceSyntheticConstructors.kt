@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument +FunctionalInterfaceConversion
+// !LANGUAGE: +FunctionalInterfaceConversion
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface KRunnable {

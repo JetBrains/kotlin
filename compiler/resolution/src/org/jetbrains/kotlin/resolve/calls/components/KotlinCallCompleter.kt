@@ -192,8 +192,7 @@ class KotlinCallCompleter(
 
     private fun ResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
         val samConversionPerArgumentWithWarningsForVarargAfterSam =
-            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                    !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+            !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
         val candidateDescriptor = resolvedCall.candidateDescriptor
         if (samConversionPerArgumentWithWarningsForVarargAfterSam && candidateDescriptor is SyntheticMemberDescriptor<*>) {

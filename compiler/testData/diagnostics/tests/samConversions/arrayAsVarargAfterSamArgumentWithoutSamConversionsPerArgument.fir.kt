@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument -SamConversionPerArgument
+// !LANGUAGE: -ProhibitVarargAsArrayAfterSamArgument
 // IGNORE_BACKEND: JS, JS_IR
 // SKIP_TXT
 

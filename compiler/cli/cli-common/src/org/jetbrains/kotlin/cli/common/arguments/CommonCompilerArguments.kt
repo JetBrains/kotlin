@@ -526,9 +526,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
 
             when (feature) {
-                LanguageFeature.SamConversionPerArgument ->
-                    standaloneSamConversionFeaturePassedExplicitly = true
-
                 LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType ->
                     functionReferenceWithDefaultValueFeaturePassedExplicitly = true
 

@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionPerArgument
 // FILE: Runnable.java
 public interface Runnable {
     void run();
