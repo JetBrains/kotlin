@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import androidx.build.Publish
+
+import androidx.build.LibraryType
 
 plugins {
     id("AndroidXPlugin")
@@ -30,7 +31,7 @@ dependencies {
 
 androidx {
     name = "AndroidX Compiler Daemon CLI Tests"
-    publish = Publish.NONE
+    type = LibraryType.COMPILER_DAEMON_TEST
     inceptionYear = "2021"
     description = "Contains test for the compose compiler daemon"
 }
