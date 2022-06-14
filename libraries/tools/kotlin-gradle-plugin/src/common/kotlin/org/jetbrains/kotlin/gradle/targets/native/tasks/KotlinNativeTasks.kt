@@ -124,7 +124,7 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
+internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
     (it.extension == "klib" || it.isDirectory) && it.exists()
 }
 

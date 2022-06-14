@@ -6,11 +6,19 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop
 
 import org.gradle.api.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.findRefiningFragments
+import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.io.File
 import javax.inject.Inject
 
@@ -51,11 +59,13 @@ internal open class GradleKpmCinteropModule @Inject constructor(
 }
 
 internal open class GradleKpmCinteropFragment(
-    override val containingModule: GradleKpmCinteropModule,
-    override val fragmentName: String,
-    override val languageSettings: LanguageSettings?
+    final override val containingModule: GradleKpmCinteropModule,
+    final override val fragmentName: String,
+    final override val languageSettings: LanguageSettings?,
+    val task: TaskProvider<out DefaultTaskWithOutputFile>
 ) : KpmFragment {
     override val declaredRefinesDependencies: MutableSet<GradleKpmCinteropFragment> = mutableSetOf()
+    val outputFiles: FileCollection = containingModule.project.files().builtBy(task)
 
     //isn't used
     override val kotlinSourceRoots: Iterable<File> = emptyList()
@@ -84,8 +94,9 @@ internal class GradleKpmCinteropVariant(
     containingModule: GradleKpmCinteropModule,
     fragmentName: String,
     languageSettings: LanguageSettings?,
+    task: TaskProvider<out DefaultTaskWithOutputFile>,
     val konanTarget: KonanTarget
-) : GradleKpmCinteropFragment(containingModule, fragmentName, languageSettings), KpmVariant {
+) : GradleKpmCinteropFragment(containingModule, fragmentName, languageSettings, task), KpmVariant {
     override val variantAttributes: Map<KotlinAttributeKey, String>
         get() = mapOf(
             KotlinPlatformTypeAttribute to KotlinPlatformTypeAttribute.NATIVE,
@@ -116,13 +127,15 @@ internal fun GradleKpmCinteropModule.applyFragmentRequirements(
                     this,
                     fragment.fragmentName,
                     fragment.languageSettings,
+                    project.registerCinteropTask(name, fragment.konanTarget),
                     fragment.konanTarget
                 )
             } else {
                 GradleKpmCinteropFragment(
                     this,
                     fragment.fragmentName,
-                    fragment.languageSettings
+                    fragment.languageSettings,
+                    project.registerCommonizerTask(name, fragment.fragmentName)
                 )
             }
             fragments.add(new)
@@ -136,4 +149,48 @@ internal fun GradleKpmCinteropModule.applyFragmentRequirements(
     }
 
     requestingVariants.forEach { addFragmentWithRefines(it) }
+
+    //setup commonizer tasks at the end of construction CinteropModule structure
+    //because we can several times add FragmentRequirements to the CinteropModule
+    fragments.forEach { cinteropFragment ->
+        if (cinteropFragment !is GradleKpmCinteropVariant) {
+            val commonizerTask = cinteropFragment.task as TaskProvider<CommonizerTask>
+            val cinteropTasks = variantsContainingFragment(cinteropFragment).associate { variant ->
+                variant as GradleKpmCinteropVariant
+                variant.konanTarget to variant.task
+            }
+            cinteropTasks.forEach { (target, cinterop) ->
+                commonizerTask.configure { task ->
+                    task.dependsOn(cinterop)
+                    task.libraries.put(target, cinterop.flatMap { it.outputFile })
+                }
+            }
+        }
+    }
 }
+
+private fun Project.registerCinteropTask(
+    libraryName: String,
+    konanTarget: KonanTarget
+): TaskProvider<CinteropTask> = locateOrRegisterTask(
+    lowerCamelCaseName("cinterop", libraryName, *konanTarget.visibleName.split("_").toTypedArray())
+) { task ->
+    task.group = KotlinNativeTargetConfigurator.INTEROP_GROUP
+    task.description = "Generates Kotlin/Native interop library '$libraryName' of target '${konanTarget.name}'."
+    task.enabled = konanTarget.enabledOnCurrentHost
+
+    task.interopName.set(libraryName)
+    task.target.set(konanTarget)
+}
+
+private fun Project.registerCommonizerTask(
+    libraryName: String,
+    fragmentName: String
+) = locateOrRegisterTask<CommonizerTask>(
+    lowerCamelCaseName("commonize", libraryName, "for", fragmentName)
+) { task ->
+    task.group = KotlinNativeTargetConfigurator.INTEROP_GROUP
+    task.description = "Generates common library '$libraryName' for $fragmentName."
+    task.libraryName.set(libraryName)
+}
+
