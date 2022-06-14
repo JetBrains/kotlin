@@ -3,8 +3,10 @@ package
 public var result: kotlin.String
 public fun test(): kotlin.Unit
 public fun test_delegate_priority(): kotlin.Unit
+public fun test_return_type_diagnostic(): kotlin.Unit
 public operator fun C.assign(/*0*/ a: kotlin.String): kotlin.Unit
 public operator fun kotlin.Int.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun kotlin.String.assign(/*0*/ a: kotlin.String): kotlin.String
 
 public final class ByDelegate {
     public constructor ByDelegate()

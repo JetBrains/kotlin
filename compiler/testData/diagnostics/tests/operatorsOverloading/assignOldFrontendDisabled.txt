@@ -1,7 +1,7 @@
 package
 
 public fun test(): kotlin.Unit
-public operator fun C.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun C.assign(/*0*/ a: kotlin.String): kotlin.String
 public operator fun kotlin.Int.assign(/*0*/ a: kotlin.String): kotlin.Unit
 
 public final class C {

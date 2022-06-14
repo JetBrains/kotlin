@@ -15,6 +15,13 @@ operator fun C.assign(a: String) {
 operator fun Int.assign(a: String) {
 }
 
+/**
+ * Test that if return type is not Unit then method has an error
+ */
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.assign(a: String): String {
+    return ""
+}
+
 class ByDelegate {
     val v: Int by Delegate()
 }
@@ -37,4 +44,9 @@ fun test() {
 fun test_delegate_priority() {
     val x: ByDelegate = ByDelegate()
     <!VAL_REASSIGNMENT!>x.v<!> = <!TYPE_MISMATCH!>"OK"<!>
+}
+
+fun test_return_type_diagnostic() {
+    val x = ""
+    <!VAL_REASSIGNMENT!>x<!> <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>=<!> ""
 }
