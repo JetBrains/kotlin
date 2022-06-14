@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -34,6 +35,17 @@ private constructor (
     val artifacts get() = artifactsProvider.get()
 
     val artifactsByComponentId by lazy { artifacts.groupBy { it.id.componentIdentifier } }
+
+    val allDependencies: List<DependencyResult> get() {
+        fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> =
+            if (this is ResolvedDependencyResult) {
+                listOf(this) + selected.dependencies.flatMap { it.allDependenciesRecursive() }
+            } else {
+                listOf(this)
+            }
+
+        return root.dependencies.flatMap { it.allDependenciesRecursive() }
+    }
 
     fun dependencyArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
         val componentId = dependency.selected.id

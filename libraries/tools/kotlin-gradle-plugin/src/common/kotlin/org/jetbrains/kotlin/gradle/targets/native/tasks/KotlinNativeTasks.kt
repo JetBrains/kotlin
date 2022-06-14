@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.ConfigurableFileCollection
@@ -557,14 +558,12 @@ constructor(
         @Input get() = binary is TestExecutable
 
     @get:Classpath
-    val exportLibraries: FileCollection by lazy {
-        binary.let {
-            if (it is AbstractNativeLibrary) {
-                project.files(project.configurations.getByName(it.exportConfigurationName))
-            } else {
-                objectFactory.fileCollection()
-            }
-        }
+    val exportLibraries: FileCollection get() = exportLibrariesResolvedGraph?.files ?: objectFactory.fileCollection()
+
+    private val exportLibrariesResolvedGraph = if (binary is AbstractNativeLibrary) {
+        ResolvedDependencyGraph(project, project.configurations.getByName(binary.exportConfigurationName))
+    } else {
+        null
     }
 
     @get:Input
@@ -605,22 +604,26 @@ constructor(
     ) = Unit
 
     private fun validatedExportedLibraries() {
-        val exportConfiguration = exportLibraries as? Configuration ?: return
+        if (exportLibrariesResolvedGraph == null) return
 
-        val failed = mutableSetOf<Dependency>()
-        exportConfiguration.allDependencies.forEach {
-            val dependencyFiles = exportConfiguration.files(it).filterKlibsPassedToCompiler()
-            if (!apiFiles.containsAll(dependencyFiles)) {
-                failed.add(it)
+        val failed = mutableSetOf<ResolvedDependencyResult>()
+        exportLibrariesResolvedGraph
+            .allDependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            .forEach {
+                val dependencyFiles = exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
+                if (!apiFiles.containsAll(dependencyFiles)) {
+                    failed.add(it)
+                }
             }
-        }
 
         check(failed.isEmpty()) {
             val failedDependenciesList = failed.joinToString(separator = "\n") {
-                when (it) {
-                    is FileCollectionDependency -> "|Files: ${it.files.files}"
-                    is ProjectDependency -> "|Project ${it.dependencyProject.path}"
-                    else -> "|${it.group}:${it.name}:${it.version}"
+                val componentId = it.selected.id
+                when (componentId) {
+                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }}"
+                    is ProjectComponentIdentifier -> "|Project ${componentId.projectPath}"
+                    else -> "|${componentId.displayName}"
                 }
             }
 
