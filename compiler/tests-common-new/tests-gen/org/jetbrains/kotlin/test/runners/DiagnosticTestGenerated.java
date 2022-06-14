@@ -12947,6 +12947,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("EnumEntryVsStaticAmbiguity2.kt")
+            public void testEnumEntryVsStaticAmbiguity2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/EnumEntryVsStaticAmbiguity2.kt");
+            }
+
+            @Test
+            @TestMetadata("EnumEntryVsStaticAmbiguity3.kt")
+            public void testEnumEntryVsStaticAmbiguity3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/EnumEntryVsStaticAmbiguity3.kt");
+            }
+
+            @Test
+            @TestMetadata("EnumEntryVsStaticAmbiguity4.kt")
+            public void testEnumEntryVsStaticAmbiguity4() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/EnumEntryVsStaticAmbiguity4.kt");
+            }
+
+            @Test
             @TestMetadata("ExplicitImportsAmbiguity.kt")
             public void testExplicitImportsAmbiguity() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/ExplicitImportsAmbiguity.kt");
