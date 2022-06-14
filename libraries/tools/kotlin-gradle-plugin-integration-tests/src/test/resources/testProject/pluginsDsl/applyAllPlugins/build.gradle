@@ -5,6 +5,10 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring'
     id 'org.jetbrains.kotlin.plugin.noarg'
     id 'org.jetbrains.kotlin.plugin.jpa'
+    id 'org.jetbrains.kotlin.plugin.atomicfu'
+    id 'org.jetbrains.kotlin.plugin.lombok'
+    id 'org.jetbrains.kotlin.plugin.sam.with.receiver'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 repositories {
