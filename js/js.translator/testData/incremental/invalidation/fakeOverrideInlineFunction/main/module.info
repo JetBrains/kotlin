@@ -3,3 +3,4 @@ STEP 0:
     added file: m.kt
 STEP 1..2:
     dependencies: lib1, lib2
+    updated inline imports: m.kt

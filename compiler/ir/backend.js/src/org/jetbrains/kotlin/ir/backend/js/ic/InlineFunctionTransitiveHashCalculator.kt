@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -37,7 +38,13 @@ class InlineFunctionTransitiveHashCalculator {
                 if (declaration in flatHashes) {
                     return
                 }
-                flatHashes[declaration] = declaration.irElementHashForIC()
+
+                flatHashes[declaration] = if (declaration.isFakeOverride) {
+                    declaration.resolveFakeOverride()?.irElementHashForIC()
+                        ?: icError("can not resolve fake override for ${declaration.render()}")
+                } else {
+                    declaration.irElementHashForIC()
+                }
             }
             // go deeper since local inline special declarations (like a reference adaptor) may appear
             declaration.acceptChildren(this, null)
@@ -61,10 +68,7 @@ class InlineFunctionTransitiveHashCalculator {
         override fun visitCall(expression: IrCall, data: MutableSet<IrFunction>) {
             val callee = expression.symbol.owner
             if (callee.isInline) {
-                // TODO: do not ignore fake overrides after KT-51896
-                if (!callee.isFakeOverride) {
-                    data += callee
-                }
+                data += callee
                 inlineFunctionCallDepth += 1
             }
             expression.acceptChildren(this, data)

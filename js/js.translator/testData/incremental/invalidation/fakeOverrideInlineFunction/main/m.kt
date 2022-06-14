@@ -23,12 +23,12 @@ fun box(stepId: Int): String {
             if (callIt(b::fakeOverrideFunction) != 0) return "Fail 0-6"
         }
         1 -> {
-            if (a.test2() != null) return "Fail 1-1" // TODO: test2() must return "OTHER 2", should be fixed in KT-51896
-            if (b.test2() != null) return "Fail 1-2" // TODO: test2() must return "OTHER 1", should be fixed in KT-51896
+            if (a.test2() != "OTHER 2") return "Fail 1-1"
+            if (b.test2() != "OTHER 1") return "Fail 1-2"
         }
         2 -> {
-            if (a.fakeOverrideFunction() != 0) return "Fail 2-1" // TODO: fakeOverrideFunction() must return 2, should be fixed in KT-51896
-            if (b.fakeOverrideFunction() != 0) return "Fail 2-2" // TODO: fakeOverrideFunction() must return 2, should be fixed in KT-51896
+            if (a.fakeOverrideFunction() != 2) return "Fail 2-1"
+            if (b.fakeOverrideFunction() != 2) return "Fail 2-2"
 
             if (callIt(a::fakeOverrideFunction) != 2) return "Fail 2-3"
             if (callIt(b::fakeOverrideFunction) != 2) return "Fail 2-4"

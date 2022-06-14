@@ -8,10 +8,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrFragmentAndBinaryAst
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
@@ -238,6 +238,16 @@ class CacheUpdater(
         return exportedSymbols
     }
 
+    private fun resolveFakeOverrideInlineFunction(symbol: IrSymbol): IdSignature? {
+        return (symbol.owner as? IrSimpleFunction)?.let { overridable ->
+            if (overridable.isFakeOverride && overridable.isInline) {
+                overridable.resolveFakeOverride()?.symbol?.signature
+            } else {
+                null
+            }
+        }
+    }
+
     private fun rebuildDirtySourceMetadata(
         jsIrLinker: JsIrLinker,
         loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
@@ -253,12 +263,15 @@ class CacheUpdater(
                 val libSrcFile = KotlinSourceFile(fileDeserializer.file)
 
                 val reachableSignatures = fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
-                val allImplementedSignatures = fileDeserializer.symbolDeserializer.deserializedSymbols.keys
+                val allImplementedSymbols = fileDeserializer.symbolDeserializer.deserializedSymbols
                 val maybeImportedSignatures = reachableSignatures.keys.toMutableSet()
-                for (signature in allImplementedSignatures) {
+                for ((signature, symbol) in allImplementedSymbols) {
                     if (signature in reachableSignatures) {
                         idSignatureToFile[signature] = lib to libSrcFile
                         maybeImportedSignatures.remove(signature)
+
+                        val resolvedSignature = resolveFakeOverrideInlineFunction(symbol) ?: continue
+                        maybeImportedSignatures.add(resolvedSignature)
                     }
                 }
 

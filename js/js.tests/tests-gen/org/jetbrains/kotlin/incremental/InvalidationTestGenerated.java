@@ -80,9 +80,24 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
     }
 
-    @TestMetadata("fakeOverride")
-    public void testFakeOverride() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/fakeOverride/");
+    @TestMetadata("fakeOverrideInheritance")
+    public void testFakeOverrideInheritance() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
+    }
+
+    @TestMetadata("fakeOverrideInlineExtension")
+    public void testFakeOverrideInlineExtension() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineExtension/");
+    }
+
+    @TestMetadata("fakeOverrideInlineFunction")
+    public void testFakeOverrideInlineFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineFunction/");
+    }
+
+    @TestMetadata("fakeOverrideInlineProperty")
+    public void testFakeOverrideInlineProperty() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineProperty/");
     }
 
     @TestMetadata("fastPath1")

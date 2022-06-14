@@ -165,10 +165,10 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
     private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
         kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
             val signatureToIndexMapping = signatureToIndexMappingFromMetadata.getOrPut(srcFile) { mutableMapOf() }
-            fun IdSignatureDeserializer.deserializeIdSignatureAndSave(index: Int): IdSignature {
-                val signature = deserializeIdSignature(index)
+            fun CodedInputStream.deserializeIdSignatureAndSave(deserializer: IdSignatureDeserializer) = readIdSignature { index ->
+                val signature = deserializer.deserializeIdSignature(index)
                 signatureToIndexMapping[signature] = index
-                return signature
+                signature
             }
 
             val deserializer: IdSignatureDeserializer by lazy {
@@ -181,9 +181,9 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
                     val depends = buildMapUntil(readInt32()) {
                         val dependencySrcFile = KotlinSourceFile.fromProtoStream(this@useCodedInputIfExists)
                         val dependencySignatures = if (loadSignatures) {
-                            buildSetUntil(readInt32()) { add(deserializer.deserializeIdSignatureAndSave(readInt32())) }
+                            buildSetUntil(readInt32()) { add(deserializeIdSignatureAndSave(deserializer)) }
                         } else {
-                            repeat(readInt32()) { readInt32() }
+                            repeat(readInt32()) { skipIdSignature() }
                             emptySet()
                         }
                         put(dependencySrcFile, dependencySignatures)
@@ -196,7 +196,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
                 val importedInlineFunctions = if (loadSignatures) {
                     buildMapUntil(readInt32()) {
-                        val signature = deserializer.deserializeIdSignatureAndSave(readInt32())
+                        val signature = deserializeIdSignatureAndSave(deserializer)
                         val transitiveHash = ICHash.fromProtoStream(this@useCodedInputIfExists)
                         put(signature, transitiveHash)
                     }
@@ -220,10 +220,8 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
         }
 
         val signatureToIndexMappingSaved = signatureToIndexMappingFromMetadata[srcFile] ?: emptyMap()
-        fun serializeSignature(signature: IdSignature): Int {
-            val index = signatureToIndexMapping[signature] ?: signatureToIndexMappingSaved[signature]
-            return index ?: notFoundIcError("signature $signature", libraryFile, srcFile)
-        }
+        fun CodedOutputStream.serializeIdSignature(signature: IdSignature) =
+            writeIdSignature(signature) { signatureToIndexMapping[it] ?: signatureToIndexMappingSaved[it] }
 
         headerCacheFile.useCodedOutput {
             fun writeDepends(depends: KotlinSourceFileMap<Set<IdSignature>>) {
@@ -235,7 +233,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
                         dependencySrcFile.toProtoStream(this)
                         writeInt32NoTag(signatures.size)
                         for (signature in signatures) {
-                            writeInt32NoTag(serializeSignature(signature))
+                            serializeIdSignature(signature)
                         }
                     }
                 }
@@ -246,7 +244,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
             writeInt32NoTag(sourceFileMetadata.importedInlineFunctions.size)
             for ((signature, transitiveHash) in sourceFileMetadata.importedInlineFunctions) {
-                writeInt32NoTag(serializeSignature(signature))
+                serializeIdSignature(signature)
                 transitiveHash.toProtoStream(this)
             }
         }
