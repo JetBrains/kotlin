@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.copyWithOffsets
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -396,7 +397,7 @@ open class LiveLiteralTransformer(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun <T> visitConst(expression: IrConst<T>): IrExpression {
+    override fun visitConst(expression: IrConst<*>): IrExpression {
         when (expression.kind) {
             IrConstKind.Null -> return expression
             else -> {

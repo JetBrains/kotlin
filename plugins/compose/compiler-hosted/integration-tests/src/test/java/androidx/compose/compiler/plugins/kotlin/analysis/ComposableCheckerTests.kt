@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 
 class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     override fun setUp() {
@@ -26,6 +27,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         val classPath = createClasspath()
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
+        configuration.configureJdkClasspathRoots()
 
         val environment =
             KotlinCoreEnvironment.createForTests(
