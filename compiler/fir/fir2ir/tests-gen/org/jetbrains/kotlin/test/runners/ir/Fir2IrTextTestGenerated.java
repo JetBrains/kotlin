@@ -338,6 +338,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("delegationInSealed.kt")
+            public void testDelegationInSealed() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/delegationInSealed.kt");
+            }
+
+            @Test
             @TestMetadata("kt31649.kt")
             public void testKt31649() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/kt31649.kt");

@@ -264,6 +264,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/dataClassesGeneric.kt");
             }
 
+            @TestMetadata("delegationInSealed.kt")
+            public void testDelegationInSealed() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/delegationInSealed.kt");
+            }
+
             @TestMetadata("kt31649.kt")
             public void testKt31649() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/kt31649.kt");
