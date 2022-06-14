@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.Runner
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
@@ -157,13 +159,13 @@ internal sealed interface CacheMode {
     }
 
     class WithStaticCache(
-        kotlinNativeHome: KotlinNativeHome,
+        distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode,
         override val staticCacheRequiredForEveryLibrary: Boolean
     ) : CacheMode {
-        override val staticCacheRootDir: File = kotlinNativeHome.dir
-            .resolve("klib/cache")
+        override val staticCacheRootDir: File = File(distribution.klib)
+            .resolve("cache")
             .resolve(
                 computeCacheDirName(
                     testTarget = kotlinNativeTargets.testTarget,
@@ -184,6 +186,15 @@ internal sealed interface CacheMode {
     enum class Alias { NO, STATIC_ONLY_DIST, STATIC_EVERYWHERE }
 
     companion object {
+        fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {
+            val cacheableTargets = distribution.properties
+                .resolvablePropertyList("cacheableTargets", kotlinNativeTargets.hostTarget.name)
+                .map { KonanTarget.predefinedTargets.getValue(it) }
+                .toSet()
+
+            return if (kotlinNativeTargets.testTarget in cacheableTargets) Alias.STATIC_ONLY_DIST else Alias.NO
+        }
+
         private fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
             "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }

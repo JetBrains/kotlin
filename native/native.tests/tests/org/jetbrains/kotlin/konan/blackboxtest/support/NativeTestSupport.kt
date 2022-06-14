@@ -167,10 +167,11 @@ private object NativeTestSupport {
 
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
 
-        val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
+        val distribution = Distribution(nativeHome.dir.path)
+        val hostManager = HostManager(distribution, experimental = false)
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
-        val cacheMode = computeCacheMode(enforcedProperties, nativeHome, nativeTargets, optimizationMode)
+        val cacheMode = computeCacheMode(enforcedProperties, distribution, nativeTargets, optimizationMode)
         if (cacheMode != CacheMode.WithoutCache) {
             assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
                 "Thread state checker can not be used with cache"
@@ -228,14 +229,14 @@ private object NativeTestSupport {
 
     private fun computeCacheMode(
         enforcedProperties: EnforcedProperties,
-        kotlinNativeHome: KotlinNativeHome,
+        distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
     ): CacheMode {
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),
-            default = CacheMode.Alias.STATIC_ONLY_DIST
+            default = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         )
         val staticCacheRequiredForEveryLibrary = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
@@ -243,7 +244,7 @@ private object NativeTestSupport {
             CacheMode.Alias.STATIC_EVERYWHERE -> true
         }
 
-        return CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
+        return CacheMode.WithStaticCache(distribution, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
