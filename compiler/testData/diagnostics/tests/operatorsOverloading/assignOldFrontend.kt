@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !LANGUAGE:+AssignOperatorOverloadForJvmOldFrontend
+
 import kotlin.reflect.KProperty
 
 var result = ""
