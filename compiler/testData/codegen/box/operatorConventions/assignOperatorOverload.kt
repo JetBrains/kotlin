@@ -72,16 +72,16 @@ fun box(): String {
     foo.x[1] = 2L
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
-    // TODO Fix these tests
-    // Test assign() on null is not called
-//    val nullCheck: NullCheck? = null
-//    nullCheck?.x = "Fail"
-//    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
-
     // Test operator String.assign is selected over Foo.String.assign
-//    result = "Fail"
-//    SelectAssignTest().test()
-//    if (result != "OK.operator.String.assign") return "Fail: ${result}"
+    result = "Fail"
+    SelectAssignTest().test()
+    if (result != "OK.operator.String.assign") return "Fail: ${result}"
+
+    // TODO Fix this test
+    // Test assign() on null is not called
+    //    val nullCheck: NullCheck? = null
+    //    nullCheck?.x = "Fail"
+    //    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
 
     return "OK"
 }

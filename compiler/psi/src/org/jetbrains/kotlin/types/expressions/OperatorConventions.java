@@ -72,7 +72,7 @@ public class OperatorConventions {
 
     public static final ImmutableSet<KtSingleValueToken> NOT_OVERLOADABLE =
             ImmutableSet.of(KtTokens.ANDAND, KtTokens.OROR, KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
-    
+
     public static final ImmutableSet<KtSingleValueToken> INCREMENT_OPERATIONS =
             ImmutableSet.of(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS);
 
@@ -140,6 +140,7 @@ public class OperatorConventions {
         if (COMPARISON_OPERATIONS.contains(token)) return COMPARE_TO;
         if (EQUALS_OPERATIONS.contains(token)) return EQUALS;
         if (IN_OPERATIONS.contains(token)) return CONTAINS;
+        if (KtTokens.EQ == token) return ASSIGN;
         return null;
     }
 
