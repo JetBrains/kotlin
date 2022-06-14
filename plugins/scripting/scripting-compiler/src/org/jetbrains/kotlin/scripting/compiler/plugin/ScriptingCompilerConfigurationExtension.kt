@@ -67,16 +67,21 @@ class ScriptingCompilerConfigurationExtension(
                 )
             }
 
-            configuration.addAll(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
-                listOf(
+            val definitionsFromClasspath =
+                if (configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION)) null
+                else
                     ScriptDefinitionsFromClasspathDiscoverySource(
                         configuration.jvmClasspathRoots,
                         hostConfiguration,
                         messageCollector.reporter
-                    ),
-                    AutoloadedScriptDefinitions(hostConfiguration, this::class.java.classLoader, messageCollector.reporter)
-                )
+                    )
+            val autoloadedScriptDefinitions =
+                if (configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION)) null
+                else AutoloadedScriptDefinitions(hostConfiguration, this::class.java.classLoader, messageCollector.reporter)
+
+            configuration.addAll(
+                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
+                listOfNotNull(definitionsFromClasspath, autoloadedScriptDefinitions)
             )
 
             val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider

@@ -15,23 +15,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import java.io.File
 
-object ScriptingConfigurationKeys {
-    val DISABLE_SCRIPTING_PLUGIN_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Disable scripting plugin")
-
-    val SCRIPT_DEFINITIONS: CompilerConfigurationKey<List<String>> =
-        CompilerConfigurationKey.create("Script definition classes")
-
-    val SCRIPT_DEFINITIONS_CLASSPATH: CompilerConfigurationKey<List<File>> =
-        CompilerConfigurationKey.create("Additional classpath for the script definitions")
-
-    val DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Do not extract script definitions from the compilation classpath")
-
-    val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
-        CompilerConfigurationKey.create("Script resolver environment")
-}
-
 class ScriptingCommandLineProcessor : CommandLineProcessor {
     companion object {
         val DISABLE_SCRIPTING_PLUGIN_OPTION = CliOption(
@@ -54,6 +37,10 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "disable-script-definitions-from-classpath", "true/false", "Do not extract script definitions from the compilation classpath",
             required = false, allowMultipleOccurrences = false
         )
+        val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION = CliOption(
+            "disable-script-definitions-autoloading", "true/false", "Do not automatically load compiler-supplied script definitions, like main-kts",
+            required = false, allowMultipleOccurrences = false
+        )
         val LEGACY_SCRIPT_TEMPLATES_OPTION = CliOption(
             "script-templates", "<fully qualified class name[,]>", "Script definition template classes",
             required = false, allowMultipleOccurrences = true
@@ -73,6 +60,7 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             SCRIPT_DEFINITIONS_CLASSPATH_OPTION,
             DISABLE_STANDARD_SCRIPT_DEFINITION_OPTION,
             DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION,
+            DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION,
             LEGACY_SCRIPT_TEMPLATES_OPTION,
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION
         )
@@ -104,6 +92,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
         DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION -> {
             configuration.put(
                 ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: true
+            )
+        }
+        DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION -> {
+            configuration.put(
+                ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION,
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: true
             )
         }
