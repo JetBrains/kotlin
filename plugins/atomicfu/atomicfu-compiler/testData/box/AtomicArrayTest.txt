@@ -15,13 +15,13 @@ public final class ARef {
 @kotlin.Metadata
 public final class AtomicArrayClass {
     // source: 'AtomicArrayTest.kt'
-    public final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field a: java.lang.Object
-    public final @org.jetbrains.annotations.NotNull field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
-    public final @org.jetbrains.annotations.NotNull field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
-    public final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
-    public final @org.jetbrains.annotations.NotNull field longArr: java.util.concurrent.atomic.AtomicLongArray
-    public final @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private final @org.jetbrains.annotations.NotNull field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private final @org.jetbrains.annotations.NotNull field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private final @org.jetbrains.annotations.NotNull field longArr: java.util.concurrent.atomic.AtomicLongArray
+    private final @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     public method <init>(): void
     public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater

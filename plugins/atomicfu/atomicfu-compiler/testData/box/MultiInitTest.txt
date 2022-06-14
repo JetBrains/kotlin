@@ -17,10 +17,6 @@ public final class MultiInit {
     private volatile volatile @kotlin.jvm.Volatile field b: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
-    public final static @org.jetbrains.annotations.NotNull method getB$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getB(): int
     public final method incA(): int
     public final method incB(): int
     public final inner class MultiInit$Companion

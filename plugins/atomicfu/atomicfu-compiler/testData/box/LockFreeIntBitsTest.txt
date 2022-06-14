@@ -9,8 +9,6 @@ public final class LockFreeIntBits {
     public final method bitSet(p0: int): boolean
     private final method bitUpdate(p0: kotlin.jvm.functions.Function1, p1: kotlin.jvm.functions.Function1): boolean
     public final method get(p0: int): boolean
-    public final static @org.jetbrains.annotations.NotNull method getBits$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getBits(): int
     private final method mask(p0: int): int
     public final method update$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
 }

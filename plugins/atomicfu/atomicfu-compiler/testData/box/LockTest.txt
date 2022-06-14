@@ -5,8 +5,6 @@ public final class LockTest {
     private volatile volatile @kotlin.jvm.Volatile field inProgressLock: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getInProgressLock$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getInProgressLock(): int
     public final method testLock(): void
 }
 

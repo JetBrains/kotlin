@@ -56,14 +56,6 @@ public final class DelegatedProperties {
     public final method getVInt(): int
     public final method getVLong(): int
     public final @org.jetbrains.annotations.NotNull method getVRef(): DelegatedProperties$A
-    public final static @org.jetbrains.annotations.NotNull method get_a$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_a(): int
-    public final static @org.jetbrains.annotations.NotNull method get_b$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_b(): int
-    public final static @org.jetbrains.annotations.NotNull method get_l$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method get_l(): long
-    public final static @org.jetbrains.annotations.NotNull method get_ref$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method get_ref(): java.lang.Object
     public final method setA(p0: int): void
     public final method setB(p0: boolean): void
     public final method setL(p0: long): void
@@ -94,7 +86,6 @@ public final class DelegatedPropertiesTestKt {
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getTopLevelInt(): int
-    public final static @org.jetbrains.annotations.NotNull method get_topLevelInt$DelegatedPropertiesTest$VolatileWrapper(): _topLevelInt$DelegatedPropertiesTest$VolatileWrapper
     public final static method setTopLevelInt(p0: int): void
     public final static method testTopLevelDelegatedProperties(): void
 }
@@ -106,8 +97,7 @@ public final class _topLevelInt$DelegatedPropertiesTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile field _topLevelInt: int
     static method <clinit>(): void
     public method <init>(): void
+    public synthetic final static method access$get_topLevelInt$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     public synthetic final static method access$get_topLevelInt$p(p0: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper): int
     public synthetic final static method access$set_topLevelInt$p(p0: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper, p1: int): void
-    public final static @org.jetbrains.annotations.NotNull method get_topLevelInt$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_topLevelInt(): int
 }

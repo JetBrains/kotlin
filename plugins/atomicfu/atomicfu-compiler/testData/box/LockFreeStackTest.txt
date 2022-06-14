@@ -18,8 +18,6 @@ public final class LockFreeStack {
     public method <init>(): void
     public final method clear(): void
     public final @org.jetbrains.annotations.Nullable method getAndUpdate$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method getTop$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getTop(): java.lang.Object
     public final method isEmpty(): boolean
     public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
     public final @org.jetbrains.annotations.Nullable method popLoop(): java.lang.Object

@@ -23,6 +23,20 @@ class ReferenceArithmetic {
     val _x = atomic<String?>(null)
 }
 
+class VisibilitiesTest {
+    val a = atomic(0)
+    public val b = atomic(1)
+    private val c = atomic(2)
+    internal val d = atomic(3)
+
+    fun test() {
+        a.lazySet(45)
+        b.lazySet(56)
+        c.lazySet(46)
+        d.lazySet(67)
+    }
+}
+
 class ArithmeticTest {
     val local = atomic(0)
 

@@ -300,36 +300,22 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
     }
 }
 
-internal fun IrPluginContext.addProperty(field: IrField, parent: IrDeclarationContainer, isStatic: Boolean): IrProperty =
+internal fun IrPluginContext.addProperty(
+    field: IrField,
+    parent: IrDeclarationContainer,
+    visibility: DescriptorVisibility,
+    isStatic: Boolean
+): IrProperty =
     irFactory.buildProperty {
         name = field.name
+        this.visibility = visibility // equal to the atomic property visibility
     }.apply {
         backingField = field
         this.parent = parent
         if (!isStatic) {
             addDefaultGetter(this, field.parent as IrClass)
         } else {
-            addGetter {
-                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                returnType = field.type
-            }.apply {
-                dispatchReceiverParameter = null
-                body = factory.createBlockBody(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                        IrReturnImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            irBuiltIns.nothingType,
-                            symbol,
-                            IrGetFieldImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                symbol = field.symbol,
-                                type = field.type,
-                                receiver = null
-                            )
-                        )
-                    )
-                )
-            }
+            addStaticGetter(this)
         }
         parent.declarations.add(this)
     }
@@ -338,6 +324,7 @@ internal fun IrPluginContext.addDefaultGetter(property: IrProperty, parentClass:
     val field = property.backingField!!
     property.addGetter {
         origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        visibility = property.visibility
         returnType = field.type
     }.apply {
         dispatchReceiverParameter = (parentClass as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
@@ -358,6 +345,32 @@ internal fun IrPluginContext.addDefaultGetter(property: IrProperty, parentClass:
                                 it.symbol
                             )
                         }
+                    )
+                )
+            )
+        )
+    }
+}
+
+internal fun IrPluginContext.addStaticGetter(property: IrProperty) {
+    val field = property.backingField!!
+    property.addGetter {
+        origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        visibility = property.visibility
+        returnType = field.type
+    }.apply {
+        dispatchReceiverParameter = null
+        body = factory.createBlockBody(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                IrReturnImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    irBuiltIns.nothingType,
+                    symbol,
+                    IrGetFieldImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        symbol = field.symbol,
+                        type = field.type,
+                        receiver = null
                     )
                 )
             )

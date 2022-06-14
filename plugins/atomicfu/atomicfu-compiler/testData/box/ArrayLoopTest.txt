@@ -21,8 +21,6 @@ public final class ArrayInlineFunctionTest {
     public method <init>(): void
     private final method action(p0: ArrayInlineFunctionTest$Box): ArrayInlineFunctionTest$Box
     public final @org.jetbrains.annotations.Nullable method getAndUpdate$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public final @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
     public final method testArrayElementGetAndUpdate(): void
     public final method testArrayElementUpdate(): void

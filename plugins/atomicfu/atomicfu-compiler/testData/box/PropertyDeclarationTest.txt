@@ -9,12 +9,6 @@ public final class PropertyDeclarationTest {
     private final @org.jetbrains.annotations.NotNull field lateRefArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
-    public final static @org.jetbrains.annotations.NotNull method getHead$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getHead(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method getLateIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
-    public final @org.jetbrains.annotations.NotNull method getLateRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public final method test(): void
 }
 

@@ -1,8 +1,8 @@
 @kotlin.Metadata
 public final class IndexArrayElementGetterTest$AtomicArrayClass {
     // source: 'IndexArrayElementGetterTest.kt'
-    public final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
-    public final @org.jetbrains.annotations.NotNull field longArr: java.util.concurrent.atomic.AtomicLongArray
+    private final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private final @org.jetbrains.annotations.NotNull field longArr: java.util.concurrent.atomic.AtomicLongArray
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
     public final @org.jetbrains.annotations.NotNull method getLongArr(): java.util.concurrent.atomic.AtomicLongArray

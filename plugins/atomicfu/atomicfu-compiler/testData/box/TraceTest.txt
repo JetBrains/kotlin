@@ -27,16 +27,6 @@ public final class TraceTest {
     private volatile volatile @kotlin.jvm.Volatile field s: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
-    public final static @org.jetbrains.annotations.NotNull method getA1$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA1(): int
-    public final static @org.jetbrains.annotations.NotNull method getA2$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA2(): int
-    public final static @org.jetbrains.annotations.NotNull method getA3$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA3(): int
-    public final static @org.jetbrains.annotations.NotNull method getS$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getS(): int
     public final method test(): void
     public final method testDefaultTrace(): void
     public final method testMultipleAppend(): void

@@ -248,7 +248,7 @@ class AtomicfuJvmIrTransformer(
                     context.irFactory.buildField {
                         name = atomicProperty.name
                         type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
-                        visibility = backingField.visibility
+                        visibility = backingField.visibility // private
                         isFinal = false
                         isStatic = false
                     }.apply {
@@ -269,7 +269,7 @@ class AtomicfuJvmIrTransformer(
                 val fuField = context.irFactory.buildField {
                     name = Name.identifier(mangleFUName(fieldName))
                     type = fuClass.defaultType
-                    visibility = atomicProperty.visibility
+                    visibility = volatileField.visibility // private
                     isFinal = true
                     isStatic = true
                 }.apply {
@@ -280,7 +280,7 @@ class AtomicfuJvmIrTransformer(
                     )
                     parent = parentClass
                 }
-                return context.addProperty(fuField, parentClass, true)
+                return context.addProperty(fuField, parentClass, atomicProperty.visibility, true)
             } ?: error("Atomic property ${atomicProperty.render()} should have a non-null generated volatile backingField")
 
         private fun buildJucaArrayField(atomicfuArrayProperty: IrProperty, parent: IrDeclarationContainer) =
@@ -291,7 +291,7 @@ class AtomicfuJvmIrTransformer(
                     context.irFactory.buildField {
                         name = atomicfuArray.name
                         type = atomicArrayClass.defaultType
-                        visibility = atomicfuArrayProperty.visibility
+                        visibility = atomicfuArray.visibility // private
                         isFinal = atomicfuArray.isFinal
                         isStatic = atomicfuArray.isStatic
                     }.apply {
@@ -315,6 +315,7 @@ class AtomicfuJvmIrTransformer(
                 context.addProperty(
                     field = context.buildClassInstance(it, parentFile),
                     parent = parentFile,
+                    visibility = atomicProperty.visibility,
                     isStatic = true
                 )
             }

@@ -5,8 +5,6 @@ public final class SimpleLock {
     private volatile volatile @kotlin.jvm.Volatile field _locked: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method get_locked$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method get_locked(): int
     public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
     public final method withLock(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
 }

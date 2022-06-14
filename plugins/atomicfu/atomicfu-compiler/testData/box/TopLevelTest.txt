@@ -5,8 +5,7 @@ public final class A$TopLevelTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile field a: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getA$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getA(): int
+    public synthetic final static method access$getA$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
 }
 
 @kotlin.Metadata
@@ -30,8 +29,7 @@ public final class AbcNode$TopLevelTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field abcNode: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getAbcNode$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getAbcNode(): java.lang.Object
+    public synthetic final static method access$getAbcNode$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 }
 
 @kotlin.Metadata
@@ -41,8 +39,7 @@ public final class Any$TopLevelTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field any: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getAny$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    public final @org.jetbrains.annotations.Nullable method getAny(): java.lang.Object
+    public synthetic final static method access$getAny$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 }
 
 @kotlin.Metadata
@@ -52,8 +49,7 @@ public final class B$TopLevelTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile field b: long
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getB$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
-    public final method getB(): long
+    public synthetic final static method access$getB$FU$p(): java.util.concurrent.atomic.AtomicLongFieldUpdater
 }
 
 @kotlin.Metadata
@@ -77,8 +73,7 @@ public final class C$TopLevelTest$VolatileWrapper {
     private volatile volatile @kotlin.jvm.Volatile field c: int
     static method <clinit>(): void
     public method <init>(): void
-    public final static @org.jetbrains.annotations.NotNull method getC$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    public final method getC(): int
+    public synthetic final static method access$getC$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
 }
 
 @kotlin.Metadata
@@ -131,16 +126,10 @@ public final class TopLevelTestKt {
     private final static @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     private final static @org.jetbrains.annotations.NotNull field stringAtomicNullArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
+    public synthetic final static method access$getBooleanArr$p(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method access$getIntArr$p(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final static method access$getLongArr$p(): java.util.concurrent.atomic.AtomicLongArray
+    public synthetic final static method access$getRefArr$p(): java.util.concurrent.atomic.AtomicReferenceArray
+    public synthetic final static method access$getStringAtomicNullArr$p(): java.util.concurrent.atomic.AtomicReferenceArray
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getA$TopLevelTest$VolatileWrapper(): A$TopLevelTest$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method getAbcNode$TopLevelTest$VolatileWrapper(): AbcNode$TopLevelTest$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method getAny$TopLevelTest$VolatileWrapper(): Any$TopLevelTest$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method getAnyRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public final static @org.jetbrains.annotations.NotNull method getB$TopLevelTest$VolatileWrapper(): B$TopLevelTest$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
-    public final static @org.jetbrains.annotations.NotNull method getC$TopLevelTest$VolatileWrapper(): C$TopLevelTest$VolatileWrapper
-    public final static @org.jetbrains.annotations.NotNull method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
-    public final static @org.jetbrains.annotations.NotNull method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
-    public final static @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    public final static @org.jetbrains.annotations.NotNull method getStringAtomicNullArr(): java.util.concurrent.atomic.AtomicReferenceArray
 }
