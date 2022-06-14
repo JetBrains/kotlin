@@ -1867,8 +1867,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
         map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
         map.put(VARIABLE_NEVER_READ, "Variable is never read")
-        map.put(VALUE_CANNOT_BE_PROMOTED, "Uninitialized value cannot be promoted ''{0}''", STRING)
-        map.put(INVOKE_METHOD_ON_COLD_OBJECT, "Invoke methods on an uninitialized object is not possible ''{0}''", STRING)
-        map.put(ACCESS_TO_UNINITIALIZED_VALUE, "Access to a value that has not yet been initialized ''{0}''\n''{1}''", SYMBOL, STRING)
+        map.put(VALUE_CANNOT_BE_PROMOTED, "Uninitialized value cannot be promoted ''{0}''", SYMBOLS)
+        map.put(INVOKE_METHOD_ON_COLD_OBJECT, "Invoke methods on an uninitialized object is not possible ''{0}''", SYMBOLS)
+        map.put(ACCESS_TO_UNINITIALIZED_VALUE, "Access to a value that has not yet been initialized ''{0}''", SYMBOLS)
     }
 }

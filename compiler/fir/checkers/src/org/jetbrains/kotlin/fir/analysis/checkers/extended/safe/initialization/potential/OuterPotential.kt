@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Promote
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.outerSelection
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -26,7 +25,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
                 //  if (firClass != this.firClass) rec: findParent(firClass)
                 //  просто вверх по цепочке наследования если inner от кого-то наследуется
             }
-            is Root.Cold -> EffectsAndPotentials(Promote(potential))  // or exception or empty list
+            is Root.Cold -> EffectsAndPotentials(potential)  // or exception or empty list
             is Super -> TODO()
             is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Out3

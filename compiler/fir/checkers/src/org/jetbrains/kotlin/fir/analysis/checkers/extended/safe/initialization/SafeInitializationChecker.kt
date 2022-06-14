@@ -25,18 +25,18 @@ object SafeInitialisationChecker : FirRegularClassChecker() {
             when (error) {
                 is Error.AccessError -> {
                     val (_, field) = error.effect
-                    reporter.reportOn(field.source, FirErrors.ACCESS_TO_UNINITIALIZED_VALUE, field.symbol, error.toString(), context)
+                    reporter.reportOn(field.source, FirErrors.ACCESS_TO_UNINITIALIZED_VALUE, error.traceToSymbols(), context)
                 }
                 is Error.InvokeError -> {
                     val (_, method) = error.effect
-                    reporter.reportOn(method.source, FirErrors.INVOKE_METHOD_ON_COLD_OBJECT, error.toString(), context)
+                    reporter.reportOn(method.source, FirErrors.INVOKE_METHOD_ON_COLD_OBJECT, error.traceToSymbols(), context)
                 }
                 is Error.PromoteError -> {
                     val pot = error.effect.potential
                     reporter.reportOn(
                         pot.firElement.source,
                         FirErrors.VALUE_CANNOT_BE_PROMOTED,
-                        error.toString(),
+                        error.traceToSymbols(),
                         context
                     )
                 }

@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.select
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.viewChange
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 data class FieldPotential(override val potential: Potential, val field: FirVariable) : WithPrefix(potential, field) {
@@ -25,7 +28,7 @@ data class FieldPotential(override val potential: Potential, val field: FirVaria
                 val potentials = potential.potentialsOf(state, field)
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }
-            is Root.Cold -> EffectsAndPotentials(Promote(potential)) // or exception or empty list
+            is Root.Cold -> EffectsAndPotentials(potential) // or exception or empty list
             is Super -> {
                 val state = potential.getRightStateOfClass()
                 val potentials = potential.potentialsOf(state, field)

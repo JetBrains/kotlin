@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 
 typealias Potentials = List<Potential>
 
@@ -30,14 +34,19 @@ fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotential
     return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { outerSelection(clazz) } }
 }
 
-fun promote(potentials: Potentials): Effects = potentials.map(::Promote)
+fun promote(potentials: Potentials): Effects = potentials.map { Promote(it) }
 
 fun init(
     potentials: Potentials,
-    clazz: FirClass,
+    firConstructorSymbol: FirConstructorSymbol,
 ): EffectsAndPotentials {
+    @OptIn(LookupTagInternals::class)
+    fun FirConstructorSymbol.getClassFromConstructor() =
+        containingClass()?.toFirRegularClass(moduleData.session)
+
+    val clazz = firConstructorSymbol.getClassFromConstructor() ?: return emptyEffsAndPots
     val prefixPotentials = potentials.map { pot -> Warm(clazz, pot) }
-    val initEffects = prefixPotentials.map { warm -> Init(warm, clazz) }
+    val initEffects = prefixPotentials.map { warm -> Init(warm, clazz, firConstructorSymbol) }
 
     return EffectsAndPotentials(initEffects, prefixPotentials)
 }

@@ -25,7 +25,7 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
                 val potentials = potential.potentialsOf(state, method)  // find real state
                 potentials.viewChange(potential).toEffectsAndPotentials()
             }
-            is Root.Cold -> EffectsAndPotentials(Promote(potential))
+            is Root.Cold -> EffectsAndPotentials(potential)
             is Super -> {
                 val state = potential.getRightStateOfClass()
                 val potentials = potential.potentialsOf(state, method)

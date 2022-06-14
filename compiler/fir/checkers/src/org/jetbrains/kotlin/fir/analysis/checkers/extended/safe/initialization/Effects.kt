@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.dfa.DfaInternals
+import org.jetbrains.kotlin.fir.resolve.dfa.symbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 typealias Effects = List<Effect>
 
 fun Effects.viewChange(root: Potential): Effects = map { eff -> eff.viewChange(root) }
 
-data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential) {
+data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential, field.symbol) {
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
             is Root.This, is Super -> {                                     // C-Acc1
@@ -35,7 +38,7 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
     }
 }
 
-data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential) {
+data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential, method.symbol) {
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
             is Root.This -> {                                     // C-Inv1
@@ -69,7 +72,8 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
     }
 }
 
-data class Promote(override val potential: Potential) : Effect(potential) {
+@OptIn(DfaInternals::class)
+data class Promote(override val potential: Potential) : Effect(potential, potential.firElement.symbol) {
     override fun Checker.StateOfClass.check(): Errors = // C-Up2
         when (potential) {
             is Warm -> {                                     // C-Up1
@@ -96,7 +100,7 @@ data class Promote(override val potential: Potential) : Effect(potential) {
     }
 }
 
-data class Init(override val potential: Warm, val clazz: FirClass) : Effect(potential) {
+data class Init(override val potential: Warm, val clazz: FirClass, override val symbol: FirBasedSymbol<*>?) : Effect(potential, symbol) {
     override fun Checker.StateOfClass.check(): Errors {                                                     // C-Init
         val effects = potential.effectsOf(this, clazz)
         return effects.flatMap { eff ->
@@ -106,14 +110,14 @@ data class Init(override val potential: Warm, val clazz: FirClass) : Effect(pote
         // ???
     }
 
-    override fun createEffectForPotential(pot: Potential) = Init(pot as Warm, clazz)
+    override fun createEffectForPotential(pot: Potential) = Init(pot as Warm, clazz, symbol)
 
     override fun toString(): String {
         return "$potential.init(${clazz.symbol.classId.shortClassName})"
     }
 }
 
-sealed class Effect(open val potential: Potential) {
+sealed class Effect(open val potential: Potential, open val symbol: FirBasedSymbol<*>?) {
     protected abstract fun Checker.StateOfClass.check(): Errors
 
     protected abstract fun createEffectForPotential(pot: Potential): Effect

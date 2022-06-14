@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -148,6 +149,8 @@ typealias Errors = List<Error<*>>
 
 sealed class Error<T : Effect>(val effect: T) {
     val trace = mutableListOf<Effect>()
+
+    fun traceToSymbols(): List<FirBasedSymbol<*>> = trace.mapNotNull(Effect::symbol)
 
     class AccessError(effect: FieldAccess) : Error<FieldAccess>(effect) {
         override fun toString(): String {

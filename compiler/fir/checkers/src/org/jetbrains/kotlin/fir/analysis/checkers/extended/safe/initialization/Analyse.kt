@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.E
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -77,7 +75,7 @@ object Analyser {
             val (stateOfClass, prefPots) = data
             return when (val symbol = resolvedNamedReference.resolvedSymbol) {
                 is FirVariableSymbol<*> -> stateOfClass.select(prefPots, symbol.fir)
-                is FirConstructorSymbol -> symbol.getClassFromConstructor()?.let { init(prefPots, it) } ?: emptyEffsAndPots
+                is FirConstructorSymbol -> init(prefPots, symbol)
                 is FirAnonymousFunctionSymbol -> TODO()
                 is FirFunctionSymbol<*> -> stateOfClass.call(prefPots, symbol.fir)
                 else -> emptyEffsAndPots
@@ -278,10 +276,6 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials {
     val visitor = Analyser.ExpressionVisitor(this)
     return firElement.accept(visitor, null)
 }
-
-@OptIn(LookupTagInternals::class)
-private fun FirConstructorSymbol.getClassFromConstructor() =
-    containingClass()?.toFirRegularClass(moduleData.session)
 
 fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
     val effsAndPots = when (dec) {
