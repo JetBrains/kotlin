@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/redundantEnablingFeatures.kt
+-d
+$TEMP_DIR$
+-XXLanguage\:+NewInference
+-XXLanguage\:+EliminateAmbiguitiesWithExternalTypeParameters
+-XXLanguage\:+TypeAliases

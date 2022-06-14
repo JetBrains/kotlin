@@ -884,6 +884,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/recordAsSingleFileRoot.args");
         }
 
+        @TestMetadata("redundantEnablingFeatures.args")
+        public void testRedundantEnablingFeatures() throws Exception {
+            runTest("compiler/testData/cli/jvm/redundantEnablingFeatures.args");
+        }
+
         @TestMetadata("reportInternalDiagnosticNames.args")
         public void testReportInternalDiagnosticNames() throws Exception {
             runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");

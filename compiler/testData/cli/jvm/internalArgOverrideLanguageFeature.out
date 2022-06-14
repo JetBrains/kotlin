@@ -7,6 +7,9 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: the following features are already enabled by default, explicit enabling of them is redundant
+InlineClasses (enabled since 1.3)
+
 compiler/testData/cli/jvm/inlineClass.kt:1:1: warning: 'inline' modifier is deprecated. Use 'value' instead
 inline class Foo(val x: Int)
 ^

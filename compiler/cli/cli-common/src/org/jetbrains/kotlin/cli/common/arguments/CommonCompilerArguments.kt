@@ -513,6 +513,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
         val unsupportedDisablingFeatures = mutableListOf<LanguageFeature>()
+        val redundantlyEnabledFeatures = mutableListOf<LanguageFeature>()
 
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
@@ -526,6 +527,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (feature.unsupportedDisabling && state == LanguageFeature.State.DISABLED) {
                 unsupportedDisablingFeatures += feature
+            }
+
+            val sinceVersion = feature.sinceVersion
+
+            if (
+                sinceVersion != null &&
+                sinceVersion <= LanguageVersion.LATEST_STABLE &&
+                state == LanguageFeature.State.ENABLED &&
+                feature.defaultState != LanguageFeature.State.DISABLED
+            ) {
+                redundantlyEnabledFeatures += feature
             }
         }
 
@@ -549,6 +561,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 CompilerMessageSeverity.ERROR,
                 "The following features are enabled by default and couldn't be disabled explicitly anymore, " +
                         "because the corresponding language version is no longer supported:\n${unsupportedDisablingFeatures.joinToString { "${it.name} (enabled since ${it.sinceVersion})" }}"
+            )
+        }
+
+        if (redundantlyEnabledFeatures.isNotEmpty()) {
+            collector.report(
+                WARNING,
+                "The following features are already enabled by default, explicit enabling of them is redundant" +
+                        "\n${redundantlyEnabledFeatures.joinToString { "${it.name} (enabled since ${it.sinceVersion})" }}\n"
             )
         }
     }

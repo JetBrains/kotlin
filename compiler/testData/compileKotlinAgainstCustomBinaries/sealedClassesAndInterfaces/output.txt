@@ -8,6 +8,9 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: the following features are already enabled by default, explicit enabling of them is redundant
+AllowSealedInheritorsInDifferentFilesOfSamePackage (enabled since 1.5), SealedInterfaces (enabled since 1.5)
+
 compiler/testData/compileKotlinAgainstCustomBinaries/sealedClassesAndInterfaces/main.kt:4:9: warning: variable 'x' is never used
     val x = when (base) {
         ^
