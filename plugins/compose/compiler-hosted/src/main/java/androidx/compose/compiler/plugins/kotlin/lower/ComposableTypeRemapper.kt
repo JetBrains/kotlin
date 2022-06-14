@@ -428,7 +428,7 @@ class ComposerTypeRemapper(
         return IrSimpleTypeImpl(
             null,
             functionCls,
-            type.hasQuestionMark,
+            type.nullability,
             newIrArguments.map { remapTypeArgument(it) },
             type.annotations.filter { !it.isComposableAnnotation() }.map {
                 it.transform(deepCopy, null) as IrConstructorCall
@@ -441,7 +441,7 @@ class ComposerTypeRemapper(
         return IrSimpleTypeImpl(
             null,
             symbolRemapper.getReferencedClassifier(type.classifier),
-            type.hasQuestionMark,
+            type.nullability,
             type.arguments.map { remapTypeArgument(it) },
             type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall },
             type.abbreviation?.remapTypeAbbreviation()
