@@ -36,6 +36,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 internal val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
 open class SerializationPluginDeclarationChecker : DeclarationChecker {
+    private var useLegacyEnumSerializerCached: Boolean? = null
+
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
@@ -139,8 +141,13 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 
+    private fun ClassDescriptor.useLegacyGeneratedEnumSerializer(): Boolean {
+        return useLegacyEnumSerializerCached ?: useGeneratedEnumSerializer.also { useLegacyEnumSerializerCached = it }
+    }
+
     private fun canBeSerializedInternally(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace): Boolean {
-        if (descriptor.isSerializableEnumWithMissingSerializer()) {
+        // if enum has meta or SerialInfo annotation on a class or entries and used plugin-generated serializer
+        if (descriptor.isSerializableEnumWithMissingSerializer() && descriptor.useLegacyGeneratedEnumSerializer()) {
             val declarationToReport = declaration.modifierList ?: declaration
             trace.report(SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED.on(declarationToReport))
             return false
@@ -187,7 +194,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
 
         // check that we can instantiate supertype
-        if (!descriptor.isSerializableEnum()) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
+        if (descriptor.kind != ClassKind.ENUM_CLASS) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
             val superClass = descriptor.getSuperClassOrAny()
             if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
                 trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
@@ -429,4 +436,4 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 }
 
 internal val ClassDescriptor.serializableAnnotationIsUseless: Boolean
-    get() = hasSerializableOrMetaAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum() && !isSealedSerializableInterface
+    get() = hasSerializableOrMetaAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && kind != ClassKind.ENUM_CLASS && !isSealedSerializableInterface

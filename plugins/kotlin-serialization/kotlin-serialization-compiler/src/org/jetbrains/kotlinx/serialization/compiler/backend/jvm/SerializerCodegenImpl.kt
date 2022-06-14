@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
@@ -37,7 +36,7 @@ open class SerializerCodegenImpl(
     companion object {
         fun generateSerializerExtensions(codegen: ImplementationBodyCodegen, metadataPlugin: SerializationDescriptorSerializerPlugin?) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
-            val serializerCodegen = if (serializableClass.isInternallySerializableEnum()) {
+            val serializerCodegen = if (serializableClass.isEnumWithLegacyGeneratedSerializer()) {
                 SerializerForEnumsCodegen(codegen, serializableClass)
             } else {
                 SerializerCodegenImpl(codegen, serializableClass, metadataPlugin)
@@ -144,30 +143,6 @@ open class SerializerCodegenImpl(
         expr.generateSerialDescriptor(0, true)
     }
 
-    private fun ExpressionCodegen.generateSyntheticAnnotationOnStack(
-        annotationClass: ClassDescriptor,
-        args: List<ValueArgument>,
-        ctorParams: List<ValueParameterDescriptor>
-    ) {
-        val implType =
-            codegen.typeMapper.mapType(annotationClass).internalName + "\$" + SerialEntityNames.IMPL_NAME.identifier
-        with(v) {
-            // new Annotation$Impl(...)
-            anew(Type.getObjectType(implType))
-            dup()
-            val sb = StringBuilder("(")
-            for (i in ctorParams.indices) {
-                val decl = args[i]
-                val desc = ctorParams[i]
-                val valAsmType = codegen.typeMapper.mapType(desc.type)
-                this@generateSyntheticAnnotationOnStack.gen(decl.getArgumentExpression(), valAsmType)
-                sb.append(valAsmType.descriptor)
-            }
-            sb.append(")V")
-            invokespecial(implType, "<init>", sb.toString(), false)
-        }
-    }
-
     // use null to put value on stack, use number to store it to var
     protected fun InstructionAdapter.stackSerialClassDesc(classDescVar: Int?) {
         if (staticDescriptor)
@@ -192,7 +167,7 @@ open class SerializerCodegenImpl(
     }
 
     override fun generateChildSerializersGetter(function: FunctionDescriptor) {
-        codegen.generateMethod(function) { _, _ ->
+        codegen.generateMethod(function) { _, expressionCodegen ->
             val size = serializableProperties.size
             iconst(size)
             newarray(kSerializerType)
@@ -202,6 +177,7 @@ open class SerializerCodegenImpl(
                 val prop = serializableProperties[i]
                 assert(
                     stackValueSerializerInstanceFromSerializerWithoutSti(
+                        expressionCodegen,
                         codegen,
                         prop,
                         this@SerializerCodegenImpl
@@ -335,7 +311,7 @@ open class SerializerCodegenImpl(
             propVar = propsStartVar
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
-                callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
+                callReadProperty(expressionCodegen, property, propertyType, index, inputVar, descVar, propVar)
                 propVar += propertyType.size
             }
             // set all bit masks to true
@@ -373,7 +349,7 @@ open class SerializerCodegenImpl(
                 if (!property.transient) {
                     // labelI:
                     visitLabel(labels[labelNum + 1])
-                    callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
+                    callReadProperty(expressionCodegen, property, propertyType, index, inputVar, descVar, propVar)
 
                     // mark read bit in mask
                     // bitMask = bitMask | 1 << index
@@ -449,6 +425,7 @@ open class SerializerCodegenImpl(
     }
 
     private fun InstructionAdapter.callReadProperty(
+        expressionCodegen: ExpressionCodegen,
         property: SerializableProperty,
         propertyType: Type,
         index: Int,
@@ -462,7 +439,7 @@ open class SerializerCodegenImpl(
         iconst(index)
 
         val sti = getSerialTypeInfo(property, propertyType)
-        val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti, this@SerializerCodegenImpl)
+        val useSerializer = stackValueSerializerInstanceFromSerializer(expressionCodegen, codegen, sti, this@SerializerCodegenImpl)
         val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
         if (unknownSer) {
             aconst(codegen.typeMapper.mapType(property.type))

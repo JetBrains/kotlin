@@ -373,7 +373,7 @@ open class SerializerJsTranslator(
             metadataPlugin: SerializationDescriptorSerializerPlugin?
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(descriptor) ?: return
-            if (serializableDesc.isInternallySerializableEnum()) {
+            if (serializableDesc.isEnumWithLegacyGeneratedSerializer()) {
                 SerializerForEnumsTranslator(descriptor, translator, context).generate()
             } else {
                 SerializerJsTranslator(descriptor, translator, context, metadataPlugin).generate()

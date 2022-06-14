@@ -57,7 +57,11 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
 
         // create singleton lambda class
         val lambdaType =
-            createSingletonLambda("serializer\$1", classCodegen, companionDescriptor.getKSerializer().defaultType) { lambdaCodegen ->
+            createSingletonLambda(
+                "serializer\$1",
+                classCodegen,
+                companionDescriptor.getKSerializer().defaultType
+            ) { lambdaCodegen, expressionCodegen ->
                 val serializerDescriptor = requireNotNull(
                     findTypeSerializer(
                         serializableDescriptor.module,
@@ -65,6 +69,7 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
                     )
                 )
                 stackValueSerializerInstance(
+                    expressionCodegen,
                     lambdaCodegen,
                     serializableDescriptor.module,
                     serializableDescriptor.defaultType,
@@ -106,8 +111,9 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
                 serializableDescriptor.toSimpleType()
             )
         )
-        classCodegen.generateMethod(methodDescriptor) { _, _ ->
+        classCodegen.generateMethod(methodDescriptor) { _, expressionCodegen ->
             stackValueSerializerInstance(
+                expressionCodegen,
                 classCodegen,
                 serializableDescriptor.module,
                 serializableDescriptor.defaultType,

@@ -52,6 +52,12 @@ interface IrBuilderExtension {
     private val throwMissedFieldExceptionArrayFunc
         get() = compilerContext.referenceFunctions(SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_FQ).singleOrNull()
 
+    private val enumSerializerFactoryFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_FQ).singleOrNull()
+
+    private val markedEnumSerializerFactoryFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_FQ).singleOrNull()
+
     private inline fun <reified T : IrDeclaration> IrClass.searchForDeclaration(descriptor: DeclarationDescriptor): T? {
         return declarations.singleOrNull { it.descriptor == descriptor } as? T
     }
@@ -1041,13 +1047,55 @@ interface IrBuilderExtension {
             }
             enumSerializerId -> {
                 serializerClass = module.getClassFromInternalSerializationPackage(SpecialBuiltins.enumSerializer)
-                args = kType.toClassDescriptor!!.let { enumDesc ->
-                    listOf(
-                        irString(enumDesc.serialName()),
-                        irCall(findEnumValuesMethod(enumDesc))
-                    )
-                }
+                val enumDescriptor = kType.toClassDescriptor!!
                 typeArgs = listOf(thisIrType)
+                // instantiate serializer only inside enum Companion
+                if (enclosingGenerator !is SerializableCompanionIrGenerator) {
+                    // otherwise call Companion.serializer()
+                    callSerializerFromCompanion(thisIrType, typeArgs, emptyList())?.let { return it }
+                }
+
+                val enumArgs = mutableListOf(
+                    irString(enumDescriptor.serialName()),
+                    irCall(findEnumValuesMethod(enumDescriptor)),
+                )
+
+                val enumSerializerFactoryFunc = enumSerializerFactoryFunc
+                val markedEnumSerializerFactoryFunc = markedEnumSerializerFactoryFunc
+                if (enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null) {
+                    // runtime contains enum serializer factory functions
+                    val factoryFunc: IrSimpleFunctionSymbol = if (enumDescriptor.isEnumWithSerialInfoAnnotation()) {
+                        // need to store SerialInfo annotation in descriptor
+                        val enumEntries = enumDescriptor.enumEntries()
+                        val entriesNames = enumEntries.map { it.annotations.serialNameValue?.let { n -> irString(n) } ?: irNull() }
+                        val entriesAnnotations = enumEntries.map {
+                            val annotationConstructors = it.annotations.mapNotNull { a ->
+                                compilerContext.typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(a)
+                            }
+                            val annotationsConstructors = copyAnnotationsFrom(annotationConstructors)
+                            if (annotationsConstructors.isEmpty()) {
+                                irNull()
+                            } else {
+                                createArrayOfExpression(compilerContext.irBuiltIns.annotationType, annotationsConstructors)
+                            }
+                        }
+                        val annotationArrayType =
+                            compilerContext.irBuiltIns.arrayClass.typeWith(compilerContext.irBuiltIns.annotationType.makeNullable())
+
+                        enumArgs += createArrayOfExpression(compilerContext.irBuiltIns.stringType.makeNullable(), entriesNames)
+                        enumArgs += createArrayOfExpression(annotationArrayType, entriesAnnotations)
+
+                        markedEnumSerializerFactoryFunc
+                    } else {
+                        enumSerializerFactoryFunc
+                    }
+
+                    val factoryReturnType = factoryFunc.owner.returnType.substitute(factoryFunc.owner.typeParameters, typeArgs)
+                    return irInvoke(null, factoryFunc, typeArgs, enumArgs, factoryReturnType)
+                } else {
+                    // support legacy serializer instantiation by constructor for old runtimes
+                    args = enumArgs
+                }
             }
             else -> {
                 args = kType.arguments.map {

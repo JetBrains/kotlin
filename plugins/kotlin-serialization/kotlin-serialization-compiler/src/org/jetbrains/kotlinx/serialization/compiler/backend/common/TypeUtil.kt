@@ -225,7 +225,7 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
 
 fun findEnumTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
     val classDescriptor = kType.toClassDescriptor ?: return null
-    return if (classDescriptor.kind == ClassKind.ENUM_CLASS && !classDescriptor.isInternallySerializableEnum())
+    return if (classDescriptor.kind == ClassKind.ENUM_CLASS && !classDescriptor.isEnumWithLegacyGeneratedSerializer())
         module.findClassAcrossModuleDependencies(enumSerializerId)
     else null
 }

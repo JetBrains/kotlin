@@ -566,7 +566,7 @@ open class SerializerIrGenerator(
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             val generator = when {
-                serializableDesc.isInternallySerializableEnum() -> SerializerForEnumsGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
+                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
                 serializableDesc.isInlineClass() -> SerializerForInlineClassGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
                 else -> SerializerIrGenerator(irClass, context, bindingContext, metadataPlugin, serialInfoJvmGenerator)
             }

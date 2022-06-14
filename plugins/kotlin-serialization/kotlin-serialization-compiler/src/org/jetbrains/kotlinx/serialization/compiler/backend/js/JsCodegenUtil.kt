@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
+import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtExpression
@@ -165,18 +166,65 @@ internal fun AbstractSerialGenerator.serializerInstance(
         serializerClass.classId == contextSerializerId || serializerClass.classId == polymorphicSerializerId -> listOf(
             ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!)
         )
-        serializerClass.classId == enumSerializerId -> listOf(
-            JsStringLiteral(kType.serialName()),
-            // EnumClass.values() invocation
-            JsInvocation(
-                context.getInnerNameForDescriptor(
-                    DescriptorUtils.getFunctionByName(
-                        kType.toClassDescriptor!!.staticScope,
-                        StandardNames.ENUM_VALUES
-                    )
-                ).makeRef()
+        serializerClass.classId == enumSerializerId -> {
+            val enumDescriptor = kType.toClassDescriptor!!
+
+            val enumArgs = mutableListOf(
+                JsStringLiteral(enumDescriptor.serialName()),
+                // EnumClass.values() invocation
+                JsInvocation(
+                    context.getInnerNameForDescriptor(
+                        DescriptorUtils.getFunctionByName(
+                            enumDescriptor.staticScope,
+                            StandardNames.ENUM_VALUES
+                        )
+                    ).makeRef()
+                )
             )
-        )
+
+            val packageScope = context.currentModule.getPackage(SerializationPackages.internalPackageFqName).memberScope
+            val enumSerializerFactoryFunc = DescriptorUtils.getFunctionByNameOrNull(
+                packageScope,
+                SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
+            )
+            val markedEnumSerializerFactoryFunc = DescriptorUtils.getFunctionByNameOrNull(
+                packageScope,
+                SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+            )
+            if (enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null) {
+                // runtime contains enum serializer factory functions
+                val factoryFunc = if (enumDescriptor.isEnumWithSerialInfoAnnotation()) {
+                    val enumEntries = enumDescriptor.enumEntries()
+                    val entriesNames =
+                        enumEntries.map { it.annotations.serialNameValue?.let { n -> JsStringLiteral(n) } ?: JsNullLiteral() }
+
+                    val entriesAnnotations = enumEntries.map {
+                        val annotationsConstructors = it.annotationsWithArguments().map { (annotationClass, args, _) ->
+                            val argExprs = args.map { arg ->
+                                Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
+                            }
+                            val classRef = context.translateQualifiedReference(annotationClass)
+                            JsNew(classRef, argExprs)
+                        }
+
+                        if (annotationsConstructors.isEmpty()) {
+                            JsNullLiteral()
+                        } else {
+                            JsArrayLiteral(annotationsConstructors)
+                        }
+                    }
+                    enumArgs += JsArrayLiteral(entriesNames)
+                    enumArgs += JsArrayLiteral(entriesAnnotations)
+                    markedEnumSerializerFactoryFunc
+                } else {
+                    enumSerializerFactoryFunc
+                }
+                return JsInvocation(context.getInnerReference(factoryFunc), enumArgs)
+            } else {
+                // support legacy serializer instantiation by constructor for old runtimes
+                enumArgs
+            }
+        }
         serializerClass.classId == objectSerializerId -> listOf(
             JsStringLiteral(kType.serialName()),
             context.serializerObjectGetter(kType.toClassDescriptor!!)
