@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirImportOptimizer(
@@ -323,11 +324,14 @@ private sealed interface TypeQualifier {
 
         private val dotQualifier: KtDotQualifiedExpression? = qualifier as? KtDotQualifiedExpression
 
-        private val typeNameReference: KtNameReferenceExpression = when (qualifier) {
-            is KtDotQualifiedExpression -> qualifier.selectorExpression as? KtNameReferenceExpression
-            is KtNameReferenceExpression -> qualifier
-            else -> null
-        } ?: error("Cannot get referenced name from '${qualifier.text}'")
+        private val typeNameReference: KtNameReferenceExpression = run {
+            require(qualifier is KtNameReferenceExpression || qualifier is KtDotQualifiedExpression || qualifier is KtCallExpression) {
+                "Unexpected qualifier '${qualifier.text}' of type '${qualifier::class}'"
+            }
+
+            qualifier.getCalleeExpressionIfAny() as? KtNameReferenceExpression
+                ?: error("Cannot get referenced name from '${qualifier.text}'")
+        }
 
         override val referencedByName: Name
             get() = typeNameReference.getReferencedNameAsName()
