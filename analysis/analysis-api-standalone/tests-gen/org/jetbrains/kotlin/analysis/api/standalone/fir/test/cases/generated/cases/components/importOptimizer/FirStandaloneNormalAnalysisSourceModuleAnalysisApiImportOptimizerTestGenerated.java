@@ -59,6 +59,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     }
 
     @Test
+    @TestMetadata("unusedGenericTypeQualifier.kt")
+    public void testUnusedGenericTypeQualifier() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedGenericTypeQualifier.kt");
+    }
+
+    @Test
     @TestMetadata("unusedInvokeOperatorImport.kt")
     public void testUnusedInvokeOperatorImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedInvokeOperatorImport.kt");
@@ -80,6 +86,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
     @TestMetadata("usedFunctionImport.kt")
     public void testUsedFunctionImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedGenericTypeQualifier.kt")
+    public void testUsedGenericTypeQualifier() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedGenericTypeQualifier.kt");
     }
 
     @Test
