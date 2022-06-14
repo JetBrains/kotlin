@@ -78,7 +78,6 @@ import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.module
@@ -280,7 +279,7 @@ class ComposerParamTransformer(
         endOffset: Int = UNDEFINED_OFFSET
     ): IrExpression {
         val classSymbol = classOrNull
-        if (this !is IrSimpleType || hasQuestionMark || !isInlineClassType()) {
+        if (this !is IrSimpleType || hasQuestionMark || classSymbol?.owner?.isInline != true) {
             return if (isMarkedNullable()) {
                 IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
             } else {
@@ -296,8 +295,8 @@ class ComposerParamTransformer(
                 this
             )
         } else {
-            val ctor = classSymbol!!.constructors.first()
-            val underlyingType = getInlineClassUnderlyingType(classSymbol.owner)
+            val ctor = classSymbol.constructors.first()
+            val underlyingType = getUnderlyingType(classSymbol.owner)
 
             // TODO(lmr): We should not be calling the constructor here, but this seems like a
             //  reasonable interim solution.
