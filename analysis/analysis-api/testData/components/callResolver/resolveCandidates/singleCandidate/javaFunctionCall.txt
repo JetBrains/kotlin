@@ -5,6 +5,7 @@ KtApplicableCallCandidateInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = javaClass
         isSafeNavigation = false
+        type = JavaClass
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

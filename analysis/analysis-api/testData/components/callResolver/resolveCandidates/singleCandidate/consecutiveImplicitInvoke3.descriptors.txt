@@ -6,6 +6,7 @@ KtApplicableCallCandidateInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = i()()
         isSafeNavigation = false
+        type = kotlin.Double
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Double
         returnType = kotlin.Unit
@@ -24,6 +25,7 @@ KtInapplicableCallCandidateInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = i()()
         isSafeNavigation = false
+        type = kotlin.Double
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Long
@@ -42,6 +44,7 @@ KtInapplicableCallCandidateInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = i()()
         isSafeNavigation = false
+        type = kotlin.Double
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Long
         returnType = kotlin.Double

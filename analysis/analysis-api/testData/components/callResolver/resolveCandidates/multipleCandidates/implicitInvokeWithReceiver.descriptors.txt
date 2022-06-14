@@ -6,6 +6,7 @@ KtInapplicableCallCandidateInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
+        type = A
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null
@@ -38,6 +39,7 @@ KtApplicableCallCandidateInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = x
         isSafeNavigation = false
+        type = kotlin.Int
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit

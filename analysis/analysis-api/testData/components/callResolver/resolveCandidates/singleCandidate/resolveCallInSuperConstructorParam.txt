@@ -6,6 +6,7 @@ KtApplicableCallCandidateInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
+        type = kotlin.Int
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int

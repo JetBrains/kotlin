@@ -5,6 +5,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = m
         isSafeNavigation = false
+        type = MyMap<kotlin.String, A>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

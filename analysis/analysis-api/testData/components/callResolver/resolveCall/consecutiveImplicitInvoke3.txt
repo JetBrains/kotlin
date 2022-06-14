@@ -6,6 +6,7 @@ KtSuccessCallInfo:
       extensionReceiver = KtExplicitReceiverValue:
         expression = i()()
         isSafeNavigation = false
+        type = kotlin.Double
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Double
         returnType = kotlin.Unit

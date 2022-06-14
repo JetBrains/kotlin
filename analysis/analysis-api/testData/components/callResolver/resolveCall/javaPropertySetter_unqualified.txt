@@ -5,6 +5,7 @@ KtSuccessCallInfo:
         symbol = KtReceiverParameterSymbol:
           origin: SOURCE
           type: JavaClass
+        type = JavaClass
       extensionReceiver = null
       signature = KtVariableLikeSignature:
         name = foo

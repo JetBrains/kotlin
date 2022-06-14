@@ -6,6 +6,7 @@ KtSuccessCallInfo:
         symbol = KtReceiverParameterSymbol:
           origin: SOURCE
           type: test/Target<kotlin/String>
+        type = test.Target<kotlin.String>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

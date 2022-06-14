@@ -7,6 +7,7 @@ KtSuccessCallInfo:
         dispatchReceiver = KtExplicitReceiverValue:
           expression = m["a"]
           isSafeNavigation = false
+          type = kotlin.Int
         extensionReceiver = null
         signature = KtFunctionLikeSignature:
           receiverType = null
@@ -25,6 +26,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = m
         isSafeNavigation = false
+        type = MyMap<kotlin.String, kotlin.Int>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null
@@ -46,6 +48,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = m
         isSafeNavigation = false
+        type = MyMap<kotlin.String, kotlin.Int>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

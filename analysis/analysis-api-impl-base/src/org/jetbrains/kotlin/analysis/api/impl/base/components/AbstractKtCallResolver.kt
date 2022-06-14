@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KtExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -36,8 +37,8 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
         return incOrDecOperationKind
     }
 
-    protected fun KtExpression.toExplicitReceiverValue(): KtExplicitReceiverValue =
-        KtExplicitReceiverValue(this, isReceiverOfKtSafeQualifiedExpression(), token)
+    protected fun KtExpression.toExplicitReceiverValue(type: KtType): KtExplicitReceiverValue =
+        KtExplicitReceiverValue(this, type, isReceiverOfKtSafeQualifiedExpression(), token)
 
     private fun KtExpression.isReceiverOfKtSafeQualifiedExpression(): Boolean {
         val safeQualifiedExpression = parentOfType<KtSafeQualifiedExpression>() ?: return false

@@ -5,6 +5,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtExplicitReceiverValue:
         expression = serializer
         isSafeNavigation = false
+        type = test.Serializer
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null
