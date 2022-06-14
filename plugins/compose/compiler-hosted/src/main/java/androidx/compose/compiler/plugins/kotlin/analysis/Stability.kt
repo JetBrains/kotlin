@@ -498,7 +498,7 @@ class StabilityInferencer(val context: IrPluginContext) {
 
 private fun IrType.getInlinedClass(): IrClass? {
     val erased = erase(this) ?: return null
-    if (this is IrSimpleType && erased.isInline) {
+    if (this is IrSimpleType && isInlineClassType()) {
         val fieldType = getInlineClassUnderlyingType(erased)
         return fieldType.getInlinedClass()
     }

@@ -530,7 +530,8 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               }
               else -> {
                 val tmp0_group = tmp0_safe_receiver.let { it: Function2<Composer, Int, Unit?> ->
-                  it(%composer, 0)
+                  val tmp0_return = it(%composer, 0)
+                  tmp0_return
                 }
                 tmp0_group
               }
