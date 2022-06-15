@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -56,6 +57,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         with(kotlin) {
             js("nodeJs", KotlinJsCompilerType.IR)
             js("browser", KotlinJsCompilerType.IR)
+            @OptIn(ExperimentalWasmDsl::class)
             wasm()
 
             val allJs = sourceSets.create("allJs")
