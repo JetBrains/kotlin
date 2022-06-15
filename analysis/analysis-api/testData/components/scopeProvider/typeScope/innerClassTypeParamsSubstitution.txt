@@ -29,6 +29,12 @@ KtVariableLikeSignature:
   callableIdIfNonLocal = /Outer.A.map
 KtFunctionLikeSignature:
   receiverType = null
+  returnType = kotlin.String
+  symbol = /Outer.A.fromSuper(<dispatch receiver>: Outer.A<X, O>): O
+  valueParameters = []
+  callableIdIfNonLocal = /Outer.A.fromSuper
+KtFunctionLikeSignature:
+  receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
@@ -106,6 +112,28 @@ KtKotlinPropertySymbol:
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /Outer.A.fromSuper
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: fromSuper
+  origin: SOURCE
+  receiverType: null
+  returnType: O
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
