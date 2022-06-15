@@ -163,4 +163,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirEnumCompanionInEnumConstructorCallChecker,
         )
+
+    override val valueParameterCheckers: Set<FirValueParameterChecker>
+        get() = setOf(
+            FirUnsupportedDefaultValueInFunctionTypeChecker
+        )
 }
