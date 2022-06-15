@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledL
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -54,7 +55,9 @@ abstract class AbstractSymbolLightClassesTestBase(
         if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
-        val testDataFile = module.files.first { it.name.endsWith(".kt") }.originalFile.toPath()
+        val testDataFile = module.files.first {
+            it.originalFile.extension in DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+        }.originalFile.toPath()
 
         val ktFile = ktFiles.first()
         val project = ktFile.project

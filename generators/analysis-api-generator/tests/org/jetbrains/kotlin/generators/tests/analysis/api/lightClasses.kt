@@ -38,21 +38,21 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
 
         run {
             testClass<AbstractSymbolLightClassesLoadingForSourceTest> {
-                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT)
+                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSymbolLightClassesLoadingForLibraryTest> {
-                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT)
+                model("asJava/ultraLightClasses", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
 
         run {
             testClass<AbstractSymbolLightClassesFacadeForSourceTest> {
-                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT)
+                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSymbolLightClassesFacadeForLibraryTest> {
-                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT)
+                model("asJava/ultraLightFacades", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
     }

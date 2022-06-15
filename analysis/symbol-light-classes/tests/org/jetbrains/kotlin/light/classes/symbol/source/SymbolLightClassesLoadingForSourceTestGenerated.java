@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesLoadingForSourceTestGenerated extends AbstractSymbolLightClassesLoadingForSourceTest {
     @Test
     public void testAllFilesPresentInUltraLightClasses() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
