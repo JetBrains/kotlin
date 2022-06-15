@@ -61,3 +61,30 @@ FILE: flowFromTwoInplaceLambdas.kt
         R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
         R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
     }
+    public abstract interface I1 : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract interface I2 : R|kotlin/Any| {
+        public abstract val y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun test4(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|<local>/x|.<Unresolved name: x>#
+        R|<local>/x|.<Unresolved name: y>#
+        R|/run2|<R|kotlin/Int?|>(run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            (R|<local>/x| as R|I1|)
+            R|<local>/x|.<Unresolved name: y>#
+            ^ R|/n|<R|kotlin/Int?|>()
+        }
+        , run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            (R|<local>/x| as R|I2|)
+            R|<local>/x|.<Unresolved name: x>#
+            ^ Int(123)
+        }
+        )
+        R|<local>/x|.R|/I1.x|
+        R|<local>/x|.R|/I2.y|
+    }

@@ -339,4 +339,114 @@ digraph flowFromTwoInplaceLambdas_kt {
     120 -> {94} [color=red];
     120 -> {97} [color=green];
 
+    subgraph cluster_25 {
+        color=red
+        121 [label="Enter class I1" style="filled" fillcolor=red];
+        122 [label="Exit class I1" style="filled" fillcolor=red];
+    }
+    121 -> {122} [color=green];
+
+    subgraph cluster_26 {
+        color=red
+        123 [label="Enter class I2" style="filled" fillcolor=red];
+        124 [label="Exit class I2" style="filled" fillcolor=red];
+    }
+    123 -> {124} [color=green];
+
+    subgraph cluster_27 {
+        color=red
+        125 [label="Enter function test4" style="filled" fillcolor=red];
+        subgraph cluster_28 {
+            color=blue
+            126 [label="Enter block"];
+            127 [label="Access variable R|<local>/x|"];
+            128 [label="Access variable <Unresolved name: x>#"];
+            129 [label="Access variable R|<local>/x|"];
+            130 [label="Access variable <Unresolved name: y>#"];
+            131 [label="Postponed enter to lambda"];
+            subgraph cluster_29 {
+                color=blue
+                143 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_30 {
+                    color=blue
+                    144 [label="Enter block"];
+                    145 [label="Access variable R|<local>/x|"];
+                    146 [label="Type operator: (R|<local>/x| as R|I1|)"];
+                    147 [label="Access variable R|<local>/x|"];
+                    148 [label="Access variable <Unresolved name: y>#"];
+                    149 [label="Function call: R|/n|<R|kotlin/Int?|>()"];
+                    150 [label="Exit block"];
+                }
+                151 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            133 [label="Postponed exit from lambda"];
+            134 [label="Postponed enter to lambda"];
+            subgraph cluster_31 {
+                color=blue
+                152 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_32 {
+                    color=blue
+                    153 [label="Enter block"];
+                    154 [label="Access variable R|<local>/x|"];
+                    155 [label="Type operator: (R|<local>/x| as R|I2|)"];
+                    156 [label="Access variable R|<local>/x|"];
+                    157 [label="Access variable <Unresolved name: x>#"];
+                    158 [label="Const: Int(123)"];
+                    159 [label="Exit block"];
+                }
+                160 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            132 [label="Call arguments union" style="filled" fillcolor=yellow];
+            135 [label="Postponed exit from lambda"];
+            136 [label="Function call: R|/run2|<R|kotlin/Int?|>(...)"];
+            137 [label="Access variable R|<local>/x|"];
+            138 [label="Access variable R|/I1.x|"];
+            139 [label="Access variable R|<local>/x|"];
+            140 [label="Access variable R|/I2.y|"];
+            141 [label="Exit block"];
+        }
+        142 [label="Exit function test4" style="filled" fillcolor=red];
+    }
+    125 -> {126};
+    126 -> {127};
+    127 -> {128};
+    128 -> {129};
+    129 -> {130};
+    130 -> {131};
+    131 -> {143};
+    131 -> {133} [color=red];
+    131 -> {143} [style=dashed];
+    132 -> {136} [color=red];
+    133 -> {134};
+    134 -> {152};
+    134 -> {135} [color=red];
+    134 -> {152} [style=dashed];
+    135 -> {136} [color=green];
+    136 -> {137};
+    137 -> {138};
+    138 -> {139};
+    139 -> {140};
+    140 -> {141};
+    141 -> {142};
+    143 -> {144};
+    144 -> {145};
+    145 -> {146};
+    146 -> {147};
+    147 -> {148};
+    148 -> {149};
+    149 -> {150};
+    150 -> {151};
+    151 -> {132} [color=red];
+    151 -> {133} [color=green];
+    152 -> {153};
+    153 -> {154};
+    154 -> {155};
+    155 -> {156};
+    156 -> {157};
+    157 -> {158};
+    158 -> {159};
+    159 -> {160};
+    160 -> {132} [color=red];
+    160 -> {135} [color=green];
+
 }
