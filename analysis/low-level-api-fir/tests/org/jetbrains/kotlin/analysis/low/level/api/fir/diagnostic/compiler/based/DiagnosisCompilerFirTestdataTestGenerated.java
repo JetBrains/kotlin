@@ -489,6 +489,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("reifiedTypeOverload.kt")
+        public void testReifiedTypeOverload() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/reifiedTypeOverload.kt");
+        }
+
+        @Test
         @TestMetadata("sealedClass.kt")
         public void testSealedClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/sealedClass.kt");
