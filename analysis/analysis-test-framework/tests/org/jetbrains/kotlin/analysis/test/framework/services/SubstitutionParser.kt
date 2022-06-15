@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
 object SubstitutionParser {
     context(KtAnalysisSession)
@@ -35,16 +34,11 @@ object SubstitutionParser {
         check(directivesAsString.startsWith(SUBSTITUTOR_PREFIX))
         val substitutorAsMap = parseSubstitutions(directivesAsString.removePrefix(SUBSTITUTOR_PREFIX))
 
-        val allTypeParameterSymbols = scopeForTypeParameters
-            .collectDescendantsOfType<KtTypeParameter>()
-            .map { it.getTypeParameterSymbol() }
-            .groupBy { it.name.asString() }
-            .mapValues { it.value.single() }
-
         return buildSubstitutor {
             substitutorAsMap.forEach { (typeParameterName, typeString) ->
-                val typeParameterSymbol = allTypeParameterSymbols.getValue(typeParameterName)
-                val type = TypeParser.parseTypeFromString(typeString, scopeForTypeParameters, allTypeParameterSymbols)
+                val typeParameterSymbol = getSymbolByNameSafe<KtTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)
+                    ?: error("Type parameter with name $typeParameterName was not found")
+                val type = TypeParser.parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)
                 substitution(typeParameterSymbol, type)
             }
         }

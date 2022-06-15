@@ -14,17 +14,6 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
-    @Suppress("UNCHECKED_CAST")
-    override fun <S : KtCallableSymbol> substitute(signature: KtCallableSignature<S>, substitutor: KtSubstitutor): KtCallableSignature<S> {
-        return when (signature) {
-            is KtFunctionLikeSignature -> {
-                substitute(signature as KtFunctionLikeSignature<KtFunctionLikeSymbol>, substitutor) as KtCallableSignature<S>
-            }
-            is KtVariableLikeSignature -> {
-                substitute(signature as KtVariableLikeSignature<KtVariableLikeSymbol>, substitutor) as KtCallableSignature<S>
-            }
-        }
-    }
 
     override fun <S : KtVariableLikeSymbol> substitute(
         signature: KtVariableLikeSignature<S>,
@@ -49,16 +38,6 @@ abstract class AbstractKtSignatureSubstitutorImpl : KtSignatureSubstitutor() {
             signature.receiverType?.let { substitutor.substitute(it) },
             signature.valueParameters.map { substitute(it, substitutor) }
         )
-    }
-
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> {
-        return when (symbol) {
-            is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
-            is KtVariableLikeSymbol -> substitute(symbol, substitutor)
-            else -> unexpectedElementError("symbol", symbol)
-        }
     }
 
     override fun <S : KtFunctionLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtFunctionLikeSignature<S> {

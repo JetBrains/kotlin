@@ -11,9 +11,14 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
-inline fun <reified S : KtSymbol> KtAnalysisSession.getSymbolByName(scope: KtElement, name: String): S {
+inline fun <reified S : KtSymbol> KtAnalysisSession.getSymbolByNameSafe(scope: KtElement, name: String): S? {
     return scope.collectDescendantsOfType<KtDeclaration> { it.name == name }
         .map { it.getSymbol() }
         .filterIsInstance<S>()
-        .single()
+        .singleOrNull()
+}
+
+inline fun <reified S : KtSymbol> KtAnalysisSession.getSymbolByName(scope: KtElement, name: String): S {
+    return getSymbolByNameSafe(scope, name)
+        ?: error("Symbol with $name was not found in scope")
 }
