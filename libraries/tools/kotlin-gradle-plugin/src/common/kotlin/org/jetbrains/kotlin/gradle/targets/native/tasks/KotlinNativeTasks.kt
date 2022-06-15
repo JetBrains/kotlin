@@ -885,7 +885,7 @@ internal class CacheBuilder(
         val kotlinOptions: KotlinCommonToolOptions,
         val externalDependenciesArgs: List<String>
     ) {
-        val rootCacheDirectory by lazy(rootCacheDirectoryProvider)
+        val rootCacheDirectory by UnserializableLazy(rootCacheDirectoryProvider)
 
         companion object {
             operator fun invoke(

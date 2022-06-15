@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
@@ -27,14 +28,14 @@ internal const val INTRANSITIVE = "intransitive"
  */
 internal class ResolvedDependencyGraph
 private constructor (
-    val files: FileCollection,
     private val graphRootProvider: Provider<ResolvedComponentResult>,
-    private val artifactsProvider: Provider<Set<ResolvedArtifactResult>>
+    private val artifactCollection: ArtifactCollection
 ) {
     val root get() = graphRootProvider.get()
-    val artifacts get() = artifactsProvider.get()
+    val files: FileCollection get() = artifactCollection.artifactFiles
+    val artifacts get() = artifactCollection.artifacts
 
-    val artifactsByComponentId by lazy { artifacts.groupBy { it.id.componentIdentifier } }
+    private val artifactsByComponentId by TransientLazy { artifacts.groupBy { it.id.componentIdentifier } }
 
     val allDependencies: List<DependencyResult> get() {
         fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> =
@@ -54,9 +55,8 @@ private constructor (
 
     companion object {
         operator fun invoke(project: Project, configuration: Configuration) = ResolvedDependencyGraph(
-            files = project.files(configuration),
             graphRootProvider = configuration.incoming.resolutionResult.let { rr -> project.provider { rr.root } },
-            artifactsProvider = configuration.incoming.artifacts.let { collection -> project.provider { collection.artifacts } }
+            artifactCollection = configuration.incoming.artifacts
         )
     }
 }
