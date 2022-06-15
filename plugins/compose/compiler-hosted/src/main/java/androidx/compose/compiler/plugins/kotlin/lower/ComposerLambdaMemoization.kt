@@ -33,9 +33,11 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
@@ -64,6 +66,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -73,12 +76,14 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -88,10 +93,10 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -909,25 +914,45 @@ class ComposerLambdaMemoization(
                 1
             }
 
-            val substitutedLambdaType = rememberFunction.valueParameters.last().type.substitute(
-                rememberFunction.typeParameters,
-                (0 until typeArgumentsCount).map {
-                    getTypeArgument(it) as IrType
-                }
-            )
             putValueArgument(
-                lambdaArgumentIndex,
-                irBuilder.irLambdaExpression(
-                    descriptor = irBuilder.createFunctionDescriptor(
-                        substitutedLambdaType
-                    ),
-                    type = substitutedLambdaType,
-                    body = {
-                        +irReturn(expression)
-                    }
+                index = lambdaArgumentIndex,
+                valueArgument = irBuilder.calculationExpressionForRemember(
+                    expression = expression
                 )
             )
         }.patchDeclarationParents(declaration).markAsSynthetic(mark = true)
+    }
+
+    private fun IrBuilderWithScope.calculationExpressionForRemember(
+        expression: IrExpression
+    ): IrExpression {
+        return IrFunctionExpressionImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = expression.type,
+            origin = IrStatementOrigin.LAMBDA,
+            function = IrFunctionImpl(
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
+                origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+                symbol = IrSimpleFunctionSymbolImpl(),
+                name = SpecialNames.ANONYMOUS,
+                visibility = DescriptorVisibilities.LOCAL,
+                modality = Modality.FINAL,
+                returnType = expression.type,
+                isInline = false,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
+                isExpect = false,
+            ).apply {
+                body = irBlockBody {
+                    +irReturn(target = symbol, value = expression)
+                }
+            }
+        )
     }
 
     private fun <T : IrFunctionAccessExpression> T.markAsSynthetic(mark: Boolean): T {
