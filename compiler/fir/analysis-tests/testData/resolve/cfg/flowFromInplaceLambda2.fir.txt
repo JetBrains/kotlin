@@ -127,7 +127,7 @@ FILE: flowFromInplaceLambda2.kt
                     ^ R|/n|<R|kotlin/Nothing?|>()
                 }
                 )), Int(1), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    R|<local>/p|.R|kotlin/String.length|
+                    R|<local>/p|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
                     ^ Int(123)
                 }
                 ))

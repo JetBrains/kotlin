@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer.C
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 /**
  *  Helper that checks if an access to a local variable access is stable.
@@ -37,7 +38,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
      * From the call, it's nondeterministic whether `l1` runs before `l2` or vice versa. So when handling `l1`, we must mark all variables
      * touched in `l2` unstable.
      */
-    private val concurrentLambdaArgsStack: MutableList<Set<FirAnonymousFunction>> = mutableListOf()
+    private val concurrentLambdaArgsStack: MutableList<MutableSet<FirAnonymousFunction>> = mutableListOf()
 
     /**
      * Stack whose element tracks all concurrently modified variables in execution paths other than this one. It's a stack because after
@@ -85,11 +86,13 @@ internal class FirLocalVariableAssignmentAnalyzer(
         val concurrentlyAssignedLocalVariables = concurrentlyAssignedLocalVariablesStack.last().toMutableSet()
         concurrentlyAssignedLocalVariablesStack.add(concurrentlyAssignedLocalVariables)
 
-        val concurrentLambdasInCurrentCall = concurrentLambdaArgsStack.lastOrNull()
-        if (concurrentLambdasInCurrentCall != null && function in concurrentLambdasInCurrentCall) {
-            for (otherLambda in concurrentLambdasInCurrentCall) {
-                // As mentioned in the comment above, we don't know whether other lambda arguments passed to the same call will be
-                // called before or after this lambda, so their assignments might have executed. Unless they're not called at all.
+        // 1. As mentioned in the comment above, we don't know whether other lambda arguments passed to the same call will be
+        //    called before or after this lambda, so their assignments might have executed. Unless they're not called at all.
+        // 2. While lambdas from outer calls are not concurrent from control flow point of view, they are concurrent in data flow
+        //    because the way this lambda resolves may affect the way those lambdas resolve, thus we need to forbid dependencies
+        //    from smartcasts in this lambda to statements in these other lambdas.
+        for (concurrentLambdas in concurrentLambdaArgsStack) {
+            for (otherLambda in concurrentLambdas) {
                 if (otherLambda != function && otherLambda.invocationKind != EventOccurrencesRange.ZERO) {
                     assignedLocalVariablesByFunction[otherLambda.symbol]?.insideLocalFunction?.let {
                         concurrentlyAssignedLocalVariables += it
@@ -117,6 +120,18 @@ internal class FirLocalVariableAssignmentAnalyzer(
             EventOccurrencesRange.UNKNOWN, null ->
                 // The function may be stored and then called later, so any access to the variables it touches
                 // is no longer smartcastable ever.
+                //
+                // TODO: this incorrectly affects separate branches that are visited after this one:
+                //    if (p is Something) {
+                //        if (condition)) {
+                //            foo { p = whatever }
+                //            p.memberOfSomething // Bad
+                //        } else {
+                //            p.memberOfSomething // Marked as an error, but actually OK
+                //        }
+                //        p.memberOfSomething // Bad
+                //    }
+                //   FE1.0 has the same behavior.
                 assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let {
                     for (outerScope in concurrentlyAssignedLocalVariablesStack) {
                         outerScope += it
@@ -126,12 +141,34 @@ internal class FirLocalVariableAssignmentAnalyzer(
         }
     }
 
-    fun enterFunctionCallWithMultipleLambdaArgs(lambdaArgs: List<FirAnonymousFunction>) {
-        concurrentLambdaArgsStack.add(lambdaArgs.toSet())
+    fun enterFunctionCall(lambdaArgs: MutableSet<FirAnonymousFunction>, level: Int) {
+        while (concurrentLambdaArgsStack.size < level) {
+            // This object is only created on first local anonymous function, so we might have missed some
+            // `enterFunctionCall`s. None of them have lambda arguments.
+            concurrentLambdaArgsStack.add(mutableSetOf())
+        }
+        concurrentLambdaArgsStack.add(lambdaArgs)
     }
 
-    fun exitFunctionCallWithMultipleLambdaArgs() {
-        concurrentLambdaArgsStack.removeLast()
+    fun exitFunctionCall(callCompleted: Boolean) {
+        // If we had anonymous functions but no calls with lambdas, the stack might have never been initialized.
+        if (concurrentLambdaArgsStack.isEmpty()) return
+
+        val lambdasInCall = concurrentLambdaArgsStack.popLast()
+        if (!callCompleted) {
+            // TODO: this has the same problem as above:
+            //   if (p is Something) {
+            //       foo(
+            //           if (condition)
+            //               someNotCompletedCall { p = whatever }
+            //           else
+            //               someNotCompletedCall { p.memberOfSomething }, // Marked as an error, but actually OK
+            //           someCall { p.memberOfSomething } // Bad
+            //       )
+            //   }
+            //  And also as above, FE1.0 produces the same error.
+            concurrentLambdaArgsStack.lastOrNull()?.addAll(lambdasInCall)
+        }
     }
 
     companion object {

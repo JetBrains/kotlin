@@ -71,7 +71,7 @@ fun test7(x: String?) {
         foo(
             id(run { p = null; n() }),
             1,
-            run { p.length; 123 } // Bad (p = null)
+            run { <!SMARTCAST_IMPOSSIBLE!>p<!>.length; 123 } // Bad (p = null)
         )
         p<!UNSAFE_CALL!>.<!>length // Bad (p = null)
     }
