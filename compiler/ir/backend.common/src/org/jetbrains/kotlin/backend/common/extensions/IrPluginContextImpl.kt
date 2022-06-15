@@ -43,7 +43,7 @@ open class IrPluginContextImpl constructor(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val moduleDescriptor: ModuleDescriptor = module
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+
     override val symbolTable: ReferenceSymbolTable = st
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {
@@ -95,6 +95,7 @@ open class IrPluginContextImpl constructor(
         return symbols
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         assert(!fqName.isRoot)
         return resolveSymbol(fqName.parent()) { scope ->
@@ -105,6 +106,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
         assert(!fqName.isRoot)
         return resolveSymbol(fqName.parent()) { scope ->
@@ -120,6 +122,7 @@ open class IrPluginContextImpl constructor(
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->
@@ -128,6 +131,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->

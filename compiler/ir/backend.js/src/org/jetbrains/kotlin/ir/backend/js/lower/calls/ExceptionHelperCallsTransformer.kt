@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.irCall
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.Name
 class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
 
     // TODO: move symbol resolve into context
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun referenceFunction(fqn: FqName) =
         context.getFunctions(fqn).singleOrNull()?.let {
             context.symbolTable.referenceSimpleFunction(it)

@@ -29,7 +29,6 @@ interface IrPluginContext : IrGeneratorContext {
     @ObsoleteDescriptorBasedAPI
     val bindingContext: BindingContext
 
-    @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable
 
     @ObsoleteDescriptorBasedAPI

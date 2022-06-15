@@ -486,7 +486,6 @@ class Fir2IrConverter(
         override val symbols: BuiltinSymbolsBase,
         override val platform: TargetPlatform?,
         override val irBuiltIns: IrBuiltIns,
-        @property:ObsoleteDescriptorBasedAPI
         override val symbolTable: SymbolTable
     ) : IrPluginContext {
         @ObsoleteDescriptorBasedAPI
