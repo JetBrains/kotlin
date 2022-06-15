@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesFacadeForSourceTestGenerated extends AbstractSymbolLightClassesFacadeForSourceTest {
     @Test
     public void testAllFilesPresentInUltraLightFacades() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightFacades"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/ultraLightFacades"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -82,6 +82,12 @@ public class SymbolLightClassesFacadeForSourceTestGenerated extends AbstractSymb
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
         runTest("compiler/testData/asJava/ultraLightFacades/properties.kt");
+    }
+
+    @Test
+    @TestMetadata("script.kts")
+    public void testScript() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightFacades/script.kts");
     }
 
     @Test

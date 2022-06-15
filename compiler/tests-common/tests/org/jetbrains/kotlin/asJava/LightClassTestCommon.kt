@@ -14,7 +14,7 @@ import java.util.regex.Pattern
 
 object LightClassTestCommon {
     private val SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE)
-    private const val NOT_GENERATED_DIRECTIVE = "// NOT_GENERATED"
+    const val NOT_GENERATED_DIRECTIVE = "// NOT_GENERATED"
 
     fun getActualLightClassText(
         testDataFile: File,

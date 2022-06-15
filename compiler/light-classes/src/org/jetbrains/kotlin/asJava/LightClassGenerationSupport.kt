@@ -61,16 +61,19 @@ abstract class LightClassGenerationSupport {
 
     abstract val useUltraLightClasses: Boolean
 
+    internal fun canCreateUltraLightClassForFacade(
+        files: Collection<KtFile>,
+    ): Boolean {
+        return useUltraLightClasses && files.none { it.isScript() }
+    }
+
     fun createUltraLightClassForFacade(
         manager: PsiManager,
         facadeClassFqName: FqName,
         lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         files: Collection<KtFile>,
     ): KtUltraLightClassForFacade? {
-
-        if (!useUltraLightClasses) return null
-
-        if (files.any { it.isScript() }) return null
+        if (!canCreateUltraLightClassForFacade(files)) return null
 
         val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
             it to getUltraLightClassSupport(it)
