@@ -10101,6 +10101,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("extendingExternalEnumDirectly.kt")
+            public void testExtendingExternalEnumDirectly() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/extendingExternalEnumDirectly.kt");
+            }
+
+            @Test
             @TestMetadata("extensionNamedAsEnumEntry.kt")
             public void testExtensionNamedAsEnumEntry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/extensionNamedAsEnumEntry.kt");

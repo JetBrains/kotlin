@@ -124,12 +124,14 @@ object FirSupertypesChecker : FirClassChecker() {
     ) {
         if (
             symbol is FirRegularClassSymbol &&
-            symbol.classId == StandardClassIds.Enum &&
-            child.classKind != ClassKind.ENUM_CLASS &&
-            !child.isExternal
+            (symbol.classId == StandardClassIds.ExternalEnum || symbol.classId == StandardClassIds.Enum && !child.isExternalEnum())
         ) {
             reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
         }
+    }
+
+    private fun FirClass.isExternalEnum(): Boolean {
+        return classKind == ClassKind.ENUM_CLASS && isExternal
     }
 
     private fun checkProjectionInImmediateArgumentToSupertype(
