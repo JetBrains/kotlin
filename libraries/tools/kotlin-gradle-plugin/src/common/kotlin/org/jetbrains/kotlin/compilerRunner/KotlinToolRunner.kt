@@ -25,6 +25,13 @@ import java.util.concurrent.ConcurrentHashMap
 abstract class KotlinToolRunner(
     private val executionContext: GradleExecutionContext
 ) {
+    @Deprecated(
+        "Using Project object is not compatible with Gradle Configuration Cache",
+        ReplaceWith("KotlinToolRunner(GradleExecutionContext.fromTaskContext())"),
+        DeprecationLevel.WARNING
+    )
+    constructor(project: Project): this(GradleExecutionContext.fromProject(project))
+
     /**
      * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
      */
