@@ -286,6 +286,18 @@ public class CallMaker {
     }
 
     @NotNull
+    public static Call makeAssignOperatorCall(@NotNull ReceiverValue leftAsReceiver, KtBinaryExpression expression) {
+        return makeCallWithExpressions(
+                expression,
+                leftAsReceiver,
+                null,
+                expression.getOperationReference(),
+                Collections.singletonList(expression.getRight()),
+                CallType.ASSIGN
+        );
+    }
+
+    @NotNull
     public static Call makeArraySetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull KtArrayAccessExpression arrayAccessExpression,
             @NotNull KtExpression rightHandSide, @NotNull CallType callType) {
         List<KtExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());

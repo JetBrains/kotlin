@@ -1,0 +1,69 @@
+package
+
+public fun test(): kotlin.Unit
+public operator fun B.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun C.assign(/*0*/ a: kotlin.Int): kotlin.Unit
+public operator fun C.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun NullCheckContainer.assign(/*0*/ value: kotlin.String): kotlin.Unit
+public operator fun kotlin.Int.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun kotlin.String.assign(/*0*/ a: kotlin.String): kotlin.String
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ByDelegate {
+    public constructor ByDelegate()
+    public final val v: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C {
+    public constructor C()
+    public final fun assign(/*0*/ a: A): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Delegate {
+    public constructor Delegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class NullCheck {
+    public constructor NullCheck(/*0*/ x: NullCheckContainer)
+    public final val x: NullCheckContainer
+    public final operator /*synthesized*/ fun component1(): NullCheckContainer
+    public final /*synthesized*/ fun copy(/*0*/ x: NullCheckContainer = ...): NullCheck
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class NullCheckContainer {
+    public constructor NullCheckContainer(/*0*/ value: kotlin.String)
+    public final var value: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ value: kotlin.String = ...): NullCheckContainer
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+

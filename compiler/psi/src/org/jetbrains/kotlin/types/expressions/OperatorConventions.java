@@ -140,7 +140,6 @@ public class OperatorConventions {
         if (COMPARISON_OPERATIONS.contains(token)) return COMPARE_TO;
         if (EQUALS_OPERATIONS.contains(token)) return EQUALS;
         if (IN_OPERATIONS.contains(token)) return CONTAINS;
-        if (KtTokens.EQ == token) return ASSIGN;
         return null;
     }
 

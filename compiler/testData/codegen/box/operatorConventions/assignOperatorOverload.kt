@@ -26,7 +26,7 @@ data class Container(var value: String)
 var nullCheckResult: String = "OK"
 data class NullCheck(val x: NullCheckContainer)
 data class NullCheckContainer(var value: String)
-operator fun NullCheckContainer.assign(value: String) {
+operator fun NullCheckContainer?.assign(value: String) {
     nullCheckResult = value
 }
 
@@ -43,6 +43,21 @@ class SelectAssignTest {
         val s = "hello"
         s = 1
     }
+}
+
+class SelectAssignTest2 {
+    fun assign(value: Int) {
+        result = "Fail.SelectAssignTest2.assign"
+    }
+
+    fun test() {
+        val s = SelectAssignTest2()
+        s = 1
+    }
+}
+
+operator fun SelectAssignTest2.assign(i: Int) {
+    result = "OK.operator.SelectAssignTest2.assign"
 }
 
 fun box(): String {
@@ -72,16 +87,20 @@ fun box(): String {
     foo.x[1] = 2L
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
-    // Test operator String.assign is selected over Foo.String.assign
+    // Test operator String.assign is selected over SelectAssignTest.String.assign
     result = "Fail"
     SelectAssignTest().test()
     if (result != "OK.operator.String.assign") return "Fail: ${result}"
 
-    // TODO Fix this test
+    // Test operator SelectAssignTest2.assign is selected over SelectAssignTest2.assign
+    result = "Fail"
+    SelectAssignTest2().test()
+    if (result != "OK.operator.SelectAssignTest2.assign") return "Fail: ${result}"
+
     // Test assign() on null is not called
-//    val nullCheck: NullCheck? = null
-//    nullCheck?.x = "Fail"
-//    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
+    val nullCheck: NullCheck? = null
+    nullCheck?.x = "Fail"
+    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
 
     return "OK"
 }

@@ -22263,21 +22263,21 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("assignOldFrontend.kt")
-            public void testAssignOldFrontend() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOldFrontend.kt");
-            }
-
-            @Test
-            @TestMetadata("assignOldFrontendDisabled.kt")
-            public void testAssignOldFrontendDisabled() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOldFrontendDisabled.kt");
-            }
-
-            @Test
             @TestMetadata("AssignOperatorAmbiguity.kt")
             public void testAssignOperatorAmbiguity() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignOperatorAmbiguity.kt");
+            }
+
+            @Test
+            @TestMetadata("assignOperatorOverload.kt")
+            public void testAssignOperatorOverload() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverload.kt");
+            }
+
+            @Test
+            @TestMetadata("assignOperatorOverloadDisabled.kt")
+            public void testAssignOperatorOverloadDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverloadDisabled.kt");
             }
 
             @Test

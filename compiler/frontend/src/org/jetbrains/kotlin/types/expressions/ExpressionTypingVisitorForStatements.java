@@ -65,7 +65,6 @@ import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE_REASSIGNMENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
-import static org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGN;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
@@ -497,23 +496,21 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             ExpressionTypingContext context
     ) {
         KotlinType leftType = leftInfo.getType();
-        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
-        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
         KotlinType assignmentOperationType = null;
         TemporaryTraceAndCache temporaryForAssignmentOperation = null;
+        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
         boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
         if (descriptor != null && !descriptor.isVar() && !isDelegated) {
             ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
             temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
-            assignmentOperationDescriptors = components.callResolver.resolveBinaryCall(
-                    context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
-                    receiver, expression, ASSIGN
-            );
+            ExpressionTypingContext temporaryContext = context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope);
+            assignmentOperationDescriptors = components.callResolver.resolveAssignOperatorCall(temporaryContext, receiver, expression);
             assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
         }
 
-        boolean isResolvedAssignOverload = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
-        if (isResolvedAssignOverload) {
+        boolean isAssignOperatorResolved = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
+        if (isAssignOperatorResolved) {
             temporaryForAssignmentOperation.commit();
             if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
                 KtSimpleNameExpression operationSign = expression.getOperationReference();
@@ -521,11 +518,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             }
             KotlinTypeInfo rightInfo = leftInfo;
             return rightInfo.replaceType(checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType));
-        } else {
-            return null;
         }
+        return null;
     }
-
 
     private void checkPropertyInTypeWithWarnings(
             @NotNull ResolutionContext<?> context,
