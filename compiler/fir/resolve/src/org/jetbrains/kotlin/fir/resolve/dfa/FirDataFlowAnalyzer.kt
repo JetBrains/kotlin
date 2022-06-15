@@ -1047,19 +1047,26 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.enterCall()
     }
 
+    private tailrec fun FirExpression.getAnonymousFunction(): FirAnonymousFunction? = when (this) {
+        is FirAnonymousFunctionExpression -> anonymousFunction
+        is FirLambdaArgumentExpression -> expression.getAnonymousFunction()
+        else -> null
+    }
+
+    private var functionCallLevel = 0
+
     fun enterFunctionCall(functionCall: FirFunctionCall) {
-        val lambdaArgs = functionCall.arguments.mapNotNull { (it as? FirAnonymousFunctionExpression)?.anonymousFunction }
-        if (lambdaArgs.size > 1) {
-            getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.enterFunctionCallWithMultipleLambdaArgs(lambdaArgs)
-        }
+        val lambdaArgs = functionCall.arguments.mapNotNullTo(mutableSetOf()) { it.getAnonymousFunction() }
+        val localVariableAssignmentAnalyzer = context.firLocalVariableAssignmentAnalyzer
+            ?: if (lambdaArgs.isNotEmpty()) getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first()) else null
+        localVariableAssignmentAnalyzer?.enterFunctionCall(lambdaArgs, functionCallLevel)
+        functionCallLevel++
     }
 
     @OptIn(PrivateForInline::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
-        val lambdaArgs = functionCall.arguments.mapNotNull { (it as? FirAnonymousFunctionExpression)?.anonymousFunction }
-        if (lambdaArgs.size > 1) {
-            getOrCreateLocalVariableAssignmentAnalyzer(lambdaArgs.first())?.exitFunctionCallWithMultipleLambdaArgs()
-        }
+        functionCallLevel--
+        context.firLocalVariableAssignmentAnalyzer?.exitFunctionCall(callCompleted)
         if (ignoreFunctionCalls) {
             graphBuilder.exitIgnoredCall(functionCall)
             return
