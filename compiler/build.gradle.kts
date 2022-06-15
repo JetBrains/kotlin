@@ -24,7 +24,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(projectTests(":compiler:fir:fir2ir"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(projectTests(":generators:test-generator"))
     testApi(project(":compiler:ir.ir2cfg"))

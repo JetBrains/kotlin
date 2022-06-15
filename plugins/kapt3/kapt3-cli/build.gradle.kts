@@ -8,6 +8,7 @@ dependencies {
 
     compileOnly(intellijCore())
 
+    testImplementation(intellijCore())
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler"))
     testApi(commonDependency("junit:junit"))
