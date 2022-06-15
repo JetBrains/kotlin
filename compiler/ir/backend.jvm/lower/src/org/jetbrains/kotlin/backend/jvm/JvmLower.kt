@@ -167,7 +167,7 @@ private val defaultArgumentStubPhase = makeIrFilePhase(
     prerequisite = setOf(localDeclarationsPhase)
 )
 
-private val defaultArgumentCleanerPhase = makeIrFilePhase(
+val defaultArgumentCleanerPhase = makeIrFilePhase(
     { context: JvmBackendContext -> DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true) },
     name = "DefaultParameterCleaner",
     description = "Replace default values arguments with stubs",
@@ -423,13 +423,13 @@ private fun buildLoweringsPhase(
 
 
 val jvmFragmentLoweringPhases = run {
-    val localDeclarationsIndex = jvmFilePhases.indexOf(localDeclarationsPhase)
-    val loweringsUpToLocalDeclarations = jvmFilePhases.subList(0, localDeclarationsIndex + 1)
-    val remainingLowerings = jvmFilePhases.subList(localDeclarationsIndex + 1, jvmFilePhases.size)
+    val defaultArgsPhase = jvmFilePhases.indexOf(defaultArgumentCleanerPhase)
+    val loweringsUpToAndIncludingDefaultArgsPhase = jvmFilePhases.subList(0, defaultArgsPhase + 1)
+    val remainingLowerings = jvmFilePhases.subList(defaultArgsPhase + 1, jvmFilePhases.size)
     buildJvmLoweringPhases(
         "IrFragmentLowering",
         listOf(
-            "PrefixOfIRPhases" to loweringsUpToLocalDeclarations,
+            "PrefixOfIRPhases" to loweringsUpToAndIncludingDefaultArgsPhase,
             "FragmentLowerings" to listOf(
                 fragmentLocalFunctionPatchLowering,
                 reflectiveAccessLowering,
