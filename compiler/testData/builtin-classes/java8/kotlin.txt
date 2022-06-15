@@ -370,8 +370,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E>, jav
     /*primary*/ public constructor ExtensionFunctionType()
 }
 
-public abstract external class ExternalEnum {
-    /*primary*/ public constructor ExternalEnum()
+public external interface ExternalEnum {
 }
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.io.Serializable {

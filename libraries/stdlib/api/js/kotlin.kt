@@ -1507,14 +1507,7 @@ public final annotation class ExtensionFunctionType : kotlin.Annotation {
     public constructor ExtensionFunctionType()
 }
 
-public abstract external class ExternalEnum {
-    public constructor ExternalEnum()
-
-    public final override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-    public final override fun hashCode(): kotlin.Int
-
-    public open override fun toString(): kotlin.String
+public external interface ExternalEnum {
 }
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
