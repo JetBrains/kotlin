@@ -55,7 +55,7 @@ fun test(b: Boolean) {
     else -> d2
   }
   k.#f = 42
-  ksuper.#f /*~> Unit */
+  k(super<JFieldOwner>).#f /*~> Unit */
   val md1: DerivedThroughMid1 = DerivedThroughMid1()
   val md2: DerivedThroughMid2 = DerivedThroughMid2()
   val mk: Mid = when {
@@ -63,5 +63,6 @@ fun test(b: Boolean) {
     else -> md2
   }
   mk.#f = 44
-  mksuper.#f /*~> Unit */
+  mk(super<JFieldOwner>).#f /*~> Unit */
 }
+

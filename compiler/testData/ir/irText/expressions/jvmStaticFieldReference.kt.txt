@@ -1,14 +1,14 @@
 fun testFun() {
-  super.#out /*!! PrintStream */.println(p0 = "testFun")
+  super<System>.#out /*!! PrintStream */.println(p0 = "testFun")
 }
 
 var testProp: Any
   get(): Any {
-    super.#out /*!! PrintStream */.println(p0 = "testProp/get")
+    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/get")
     return 42
   }
   set(value: Any) {
-    super.#out /*!! PrintStream */.println(p0 = "testProp/set")
+    super<System>.#out /*!! PrintStream */.println(p0 = "testProp/set")
   }
 
 class TestClass {
@@ -21,14 +21,15 @@ class TestClass {
   val test: Int
     field = when {
       else -> { // BLOCK
-        super.#out /*!! PrintStream */.println(p0 = "TestClass/test")
+        super<System>.#out /*!! PrintStream */.println(p0 = "TestClass/test")
         42
       }
     }
     get
 
   init {
-    super.#out /*!! PrintStream */.println(p0 = "TestClass/init")
+    super<System>.#out /*!! PrintStream */.println(p0 = "TestClass/init")
   }
 
 }
+

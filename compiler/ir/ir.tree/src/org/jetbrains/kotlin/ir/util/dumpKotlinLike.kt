@@ -966,9 +966,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         superQualifierSymbol?.let {
-            // TODO should we print super classifier somehow?
             // TODO which supper? smart mode?
-            p.printWithNoIndent("super")
+            p.printWithNoIndent("super<${it.owner.name}>")
         }
 
         dispatchReceiver?.let {
@@ -1109,12 +1108,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // it's not valid kotlin
         receiver?.accept(this@KotlinLikeDumper, data)
         superQualifierSymbol?.let {
-            // TODO should we print super classifier somehow?
             // TODO which supper? smart mode?
-            // TODO super and receiver at the same time:
-            //  compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt
             // it's not valid kotlin
-            p.printWithNoIndent("super")
+            if (receiver != null) p.printWithNoIndent("(")
+            p.printWithNoIndent("super<${it.owner.name}>")
+            if (receiver != null) p.printWithNoIndent(")")
         }
 
         if (receiver != null || superQualifierSymbol != null) {

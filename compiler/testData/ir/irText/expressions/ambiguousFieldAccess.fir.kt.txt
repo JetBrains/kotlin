@@ -13,16 +13,17 @@ class C : B {
 
   fun f(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>super.#x
+      return <this>(super<A>).#x
     }
 )
   }
 
   fun g(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>super.#y
+      return <this>(super<B>).#y
     }
 )
   }
 
 }
+

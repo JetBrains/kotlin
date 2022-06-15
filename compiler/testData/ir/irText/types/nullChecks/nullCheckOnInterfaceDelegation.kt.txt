@@ -15,7 +15,7 @@ class Derived : A, IFoo {
   }
 
   override fun foo(): @FlexibleNullability String? {
-    return super.foo()
+    return super<A>.foo()
   }
 
 }

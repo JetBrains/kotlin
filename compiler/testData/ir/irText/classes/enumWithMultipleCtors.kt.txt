@@ -10,7 +10,7 @@ open enum class A : Enum<A> {
     }
 
     override fun f(): String {
-      return super.f().plus(other = "#Y")
+      return super<A>.f().plus(other = "#Y")
     }
 
   }

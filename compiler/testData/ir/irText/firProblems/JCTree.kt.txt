@@ -14,10 +14,11 @@ class Owner<out T : JCTree> {
       var tree: JCTree = <this>.<get-tree>()
       when {
         tree is JCTypeApply -> { // BLOCK
-          return tree /*as JCTypeApply */super.#clazz /*!! String */
+          return tree /*as JCTypeApply */(super<JCTypeApply>).#clazz /*!! String */
         }
       }
       return ""
     }
 
 }
+
