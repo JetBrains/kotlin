@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 // Note: this class is public because it is used in the K/N build infrastructure.
@@ -88,7 +89,10 @@ abstract class KotlinToolRunner(
     private fun runViaExec(args: List<String>) {
         val transformedArgs = transformArgs(args)
         val classpath = project.files(classpath)
-        val systemProperties = System.getProperties().asSequence()
+        val systemProperties = System.getProperties()
+            /* Capture 'System.getProperties()' as List to avoid potential 'ConcurrentModificationException' */
+            .toListSynchronized()
+            .asSequence()
             .map { (k, v) -> k.toString() to v.toString() }
             .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
             .escapeQuotesForWindows()
@@ -173,5 +177,10 @@ abstract class KotlinToolRunner(
                 any { it == '"' || it.isWhitespace() } -> '"' + escapeStringCharacters(this) + '"'
                 else -> this
             }
+
+        /**
+         * Safely enter the [Properties] monitor and capture the current values
+         */
+        private fun Properties.toListSynchronized(): List<Pair<Any, Any>> = synchronized(this) { toList() }
     }
 }
