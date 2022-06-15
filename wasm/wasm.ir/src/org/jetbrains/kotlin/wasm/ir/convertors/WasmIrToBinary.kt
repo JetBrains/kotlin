@@ -168,15 +168,14 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
             // Experimental fields name section
             // https://github.com/WebAssembly/gc/issues/193
             appendSection(10u) {
-                appendVectorSize(module.gcTypes.size)
-                module.gcTypes.forEach {
-                    if (it is WasmStructDeclaration) {
-                        appendModuleFieldReference(it)
-                        appendVectorSize(it.fields.size)
-                        it.fields.forEachIndexed { index, field ->
-                            b.writeVarUInt32(index)
-                            b.writeString(field.name)
-                        }
+                val structDeclarations = module.gcTypes.filterIsInstance<WasmStructDeclaration>()
+                appendVectorSize(structDeclarations.size)
+                structDeclarations.forEach {
+                    appendModuleFieldReference(it)
+                    appendVectorSize(it.fields.size)
+                    it.fields.forEachIndexed { index, field ->
+                        b.writeVarUInt32(index)
+                        b.writeString(field.name)
                     }
                 }
             }
