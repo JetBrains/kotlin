@@ -965,7 +965,7 @@ public actual fun max(a: Float, b: Float): Float = when {
 @SinceKotlin("1.7")
 @ExperimentalStdlibApi
 @GCUnsafeCall("Kotlin_math_cbrtf")
-external public actual fun cbrt(x: Float): Float
+public external actual fun cbrt(x: Float): Float
 
 
 // extensions
