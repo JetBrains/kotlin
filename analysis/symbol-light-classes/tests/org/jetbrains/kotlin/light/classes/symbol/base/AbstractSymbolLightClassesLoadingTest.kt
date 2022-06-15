@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.light.classes.symbol.base.service.withExtendedTypeRenderer
@@ -25,6 +26,7 @@ abstract class AbstractSymbolLightClassesLoadingTest(
 
     override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
         val lightClasses = getLightClassesFromFile(ktFile, project)
+        if (lightClasses.isEmpty()) return LightClassTestCommon.NOT_GENERATED_DIRECTIVE
         return withExtendedTypeRenderer(testDataFile) {
             lightClasses.joinToString("\n\n") { it.renderClass() }
         }
