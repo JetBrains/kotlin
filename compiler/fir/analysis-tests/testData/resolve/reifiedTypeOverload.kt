@@ -1,5 +1,3 @@
-// ISSUE: KT-41984
-
 // FILE: classes.kt
 package classes
 
