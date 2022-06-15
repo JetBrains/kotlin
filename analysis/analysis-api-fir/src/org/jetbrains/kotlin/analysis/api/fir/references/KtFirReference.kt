@@ -15,14 +15,20 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 
 interface KtFirReference : KtReference, KtSymbolBasedReference {
-    fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> = with(analysisSession) {
-        resolveToSymbols().flatMap { symbol ->
-            when (symbol) {
-                is KtFirSymbol<*> -> getPsiDeclarations(symbol)
-                else -> listOfNotNull(symbol.psi)
+    fun getResolvedToPsi(analysisSession: KtAnalysisSession, referenceTargetSymbols: Collection<KtSymbol>): Collection<PsiElement> =
+        with(analysisSession) {
+            referenceTargetSymbols.flatMap { symbol ->
+                when (symbol) {
+                    is KtFirSymbol<*> -> getPsiDeclarations(symbol)
+                    else -> listOfNotNull(symbol.psi)
+                }
             }
         }
-    }
+
+    fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> =
+        with(analysisSession) {
+            getResolvedToPsi(analysisSession, resolveToSymbols())
+        }
 
     private fun KtAnalysisSession.getPsiDeclarations(symbol: KtFirSymbol<*>): Collection<PsiElement> {
         val intersectionOverriddenSymbolsOrSingle = when {
