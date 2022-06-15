@@ -419,6 +419,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/recursiveTypeAlias.kt");
     }
 
+    @TestMetadata("reifiedTypeOverload.kt")
+    public void testReifiedTypeOverload() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/reifiedTypeOverload.kt");
+    }
+
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/sealedClass.kt");
