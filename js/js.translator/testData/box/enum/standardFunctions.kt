@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1555
+// INGORE_BACKEND_FIR: JS_IR, JS
 package foo
 
 enum class EmptyEnum
