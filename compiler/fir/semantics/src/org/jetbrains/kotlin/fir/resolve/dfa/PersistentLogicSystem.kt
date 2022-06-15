@@ -108,22 +108,20 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
-        return foldFlow(
-            flows,
-            mergeOperation = { statements -> this.or(statements).takeIf { it.isNotEmpty } },
-        )
+        return foldFlow(flows) { variable -> or(flows.map { it.getApprovedTypeStatements(variable) }).takeIf { it.isNotEmpty } }
     }
 
     override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
-        return foldFlow(
-            flows,
-            this::and,
-        )
+        return foldFlow(flows) { variable ->
+            or(flows.groupBy { it.assignmentIndex[variable] ?: -1 }.values.map { flowSubset ->
+                and(flowSubset.map { it.getApprovedTypeStatements(variable) })
+            })
+        }
     }
 
     private inline fun foldFlow(
         flows: Collection<PersistentFlow>,
-        mergeOperation: (Collection<TypeStatement>) -> MutableTypeStatement?,
+        mergeOperation: (RealVariable) -> MutableTypeStatement?,
     ): PersistentFlow {
         if (flows.isEmpty()) return createEmptyFlow()
         flows.singleOrNull()?.let { return it }
@@ -134,7 +132,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
         val variables = flows.flatMap { it.approvedTypeStatements.keys }.toSet()
         for (variable in variables) {
-            val info = mergeOperation(flows.map { it.getApprovedTypeStatements(variable) }) ?: continue
+            val info = mergeOperation(variable) ?: continue
             commonFlow.approvedTypeStatements -= variable
             commonFlow.approvedTypeStatementsDiff -= variable
             val thereWereReassignments = variable.hasDifferentReassignments(flows)

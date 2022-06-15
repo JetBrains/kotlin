@@ -847,16 +847,16 @@ digraph flowFromInplaceLambda2_kt {
                     300 [label="Postponed enter to lambda"];
                     subgraph cluster_71 {
                         color=blue
-                        318 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        317 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_72 {
                             color=blue
-                            319 [label="Enter block"];
-                            320 [label="Const: Null(null)"];
-                            321 [label="Assignment: R|<local>/p|"];
-                            322 [label="Function call: R|/n|<R|kotlin/Nothing?|>()"];
-                            323 [label="Exit block"];
+                            318 [label="Enter block"];
+                            319 [label="Const: Null(null)"];
+                            320 [label="Assignment: R|<local>/p|"];
+                            321 [label="Function call: R|/n|<R|kotlin/Nothing?|>()"];
+                            322 [label="Exit block"];
                         }
-                        324 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        323 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     301 [label="Postponed exit from lambda"];
                     302 [label="Function call: R|kotlin/run|<R|kotlin/Nothing?|>(...)"];
@@ -865,32 +865,31 @@ digraph flowFromInplaceLambda2_kt {
                     305 [label="Postponed enter to lambda"];
                     subgraph cluster_73 {
                         color=blue
-                        325 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        324 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                         subgraph cluster_74 {
                             color=blue
-                            326 [label="Enter block"];
-                            327 [label="Access variable R|<local>/p|"];
-                            328 [label="Access variable R|kotlin/String.length|"];
-                            329 [label="Const: Int(123)"];
-                            330 [label="Exit block"];
+                            325 [label="Enter block"];
+                            326 [label="Access variable R|<local>/p|"];
+                            327 [label="Access variable R|kotlin/String.length|"];
+                            328 [label="Const: Int(123)"];
+                            329 [label="Exit block"];
                         }
-                        331 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                        330 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     306 [label="Postponed exit from lambda"];
                     307 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)"];
                     308 [label="Call arguments union" style="filled" fillcolor=yellow];
                     309 [label="Function call: R|/foo|<R|kotlin/Int|>(...)"];
                     310 [label="Access variable R|<local>/p|"];
-                    311 [label="Stub" style="filled" fillcolor=gray];
-                    312 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
-                    313 [label="Exit block" style="filled" fillcolor=gray];
+                    311 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    312 [label="Exit block"];
                 }
-                314 [label="Exit when branch result" style="filled" fillcolor=gray];
-                315 [label="Exit when"];
+                313 [label="Exit when branch result"];
+                314 [label="Exit when"];
             }
-            316 [label="Exit block"];
+            315 [label="Exit block"];
         }
-        317 [label="Exit function test7" style="filled" fillcolor=red];
+        316 [label="Exit function test7" style="filled" fillcolor=red];
     }
     287 -> {288};
     288 -> {289};
@@ -902,46 +901,44 @@ digraph flowFromInplaceLambda2_kt {
     294 -> {295};
     295 -> {296};
     296 -> {298 297};
-    297 -> {315};
+    297 -> {314};
     298 -> {299};
     299 -> {300};
-    300 -> {318};
+    300 -> {317};
     300 -> {301} [color=red];
-    300 -> {318} [style=dashed];
+    300 -> {317} [style=dashed];
     301 -> {302};
     302 -> {303};
     303 -> {304};
     304 -> {305};
-    305 -> {325};
+    305 -> {324};
     305 -> {306} [color=red];
-    305 -> {325} [style=dashed];
+    305 -> {324} [style=dashed];
     306 -> {307};
     307 -> {308};
     308 -> {309};
     309 -> {310};
-    310 -> {317}    [label=onUncaughtException];
-    310 -> {311} [style=dotted];
-    311 -> {312} [style=dotted];
-    312 -> {313} [style=dotted];
-    313 -> {314} [style=dotted];
-    314 -> {315} [style=dotted];
+    310 -> {311};
+    311 -> {312};
+    312 -> {313};
+    313 -> {314};
+    314 -> {315};
     315 -> {316};
-    316 -> {317};
+    317 -> {318};
     318 -> {319};
     319 -> {320};
     320 -> {321};
     321 -> {322};
     322 -> {323};
-    323 -> {324};
-    324 -> {308} [color=red];
-    324 -> {301} [color=green];
+    323 -> {308} [color=red];
+    323 -> {301} [color=green];
+    324 -> {325};
     325 -> {326};
     326 -> {327};
     327 -> {328};
     328 -> {329};
     329 -> {330};
-    330 -> {331};
-    331 -> {308} [color=red];
-    331 -> {306} [color=green];
+    330 -> {308} [color=red];
+    330 -> {306} [color=green];
 
 }
