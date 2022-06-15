@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
@@ -24,13 +21,11 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -39,14 +34,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
-import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -63,7 +54,6 @@ class Fir2IrConverter(
         irModuleFragment: IrModuleFragmentImpl,
         irGenerationExtensions: Collection<IrGenerationExtension>,
         fir2irVisitor: Fir2IrVisitor,
-        languageVersionSettings: LanguageVersionSettings,
         fir2IrExtensions: Fir2IrExtensions,
     ) {
         for (firFile in allFirFiles) {
@@ -106,13 +96,7 @@ class Fir2IrConverter(
         evaluateConstants(irModuleFragment)
 
         if (irGenerationExtensions.isNotEmpty()) {
-            val pluginContext = Fir2IrPluginContext(
-                languageVersionSettings,
-                BuiltinSymbolsBase(irBuiltIns, symbolTable),
-                session.moduleData.platform,
-                irBuiltIns,
-                symbolTable
-            )
+            val pluginContext = Fir2IrPluginContext(components)
             for (extension in irGenerationExtensions) {
                 extension.generate(irModuleFragment, pluginContext)
             }
@@ -474,62 +458,10 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, languageVersionSettings, fir2IrExtensions
+                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions
             )
 
             return Fir2IrResult(irModuleFragment, components)
-        }
-    }
-
-    private class Fir2IrPluginContext(
-        override val languageVersionSettings: LanguageVersionSettings,
-        override val symbols: BuiltinSymbolsBase,
-        override val platform: TargetPlatform?,
-        override val irBuiltIns: IrBuiltIns,
-        override val symbolTable: SymbolTable
-    ) : IrPluginContext {
-        @ObsoleteDescriptorBasedAPI
-        override val moduleDescriptor: ModuleDescriptor
-            get() = error("Should not be called")
-
-        @ObsoleteDescriptorBasedAPI
-        override val bindingContext: BindingContext
-            get() = error("Should not be called")
-
-        @ObsoleteDescriptorBasedAPI
-        override val typeTranslator: TypeTranslator
-            get() = error("Should not be called")
-
-        override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {
-            error("Should not be called")
-        }
-
-        override fun referenceClass(fqName: FqName): IrClassSymbol? {
-            error("Should not be called")
-        }
-
-        override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
-            error("Should not be called")
-        }
-
-        override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
-            error("Should not be called")
-        }
-
-        override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
-            error("Should not be called")
-        }
-
-        override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
-            error("Should not be called")
-        }
-
-        override fun referenceTopLevel(
-            signature: IdSignature,
-            kind: IrDeserializer.TopLevelSymbolKind,
-            moduleDescriptor: ModuleDescriptor
-        ): IrSymbol? {
-            error("Should not be called")
         }
     }
 }
