@@ -11,8 +11,8 @@ fun main() {
     Foo.values()
     Foo.valueOf("A")
 
-    // enumValues<Foo>()
-    // enumValueOf<Foo>("A")
+    enumValues<Foo>()
+    enumValueOf<Foo>("A")
 
     Foo.A.<!UNRESOLVED_REFERENCE!>name<!>
     Foo.B.<!UNRESOLVED_REFERENCE!>ordinal<!>
