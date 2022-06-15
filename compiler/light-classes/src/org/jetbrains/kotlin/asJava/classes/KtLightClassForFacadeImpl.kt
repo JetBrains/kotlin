@@ -245,7 +245,7 @@ open class KtLightClassForFacadeImpl constructor(
 
             return LightClassGenerationSupport.getInstance(project).run {
                 if (useUltraLightClasses) createUltraLightClassForFacade(manager, fqName, stubValue, sources)
-                    ?: error { "Unable to create UL class for facade" }
+                    ?: error("Unable to create UL class for facade: $fqName for ${sources.joinToString { it.virtualFilePath }}")
                 else KtLightClassForFacadeImpl(manager, fqName, stubValue, sources)
             }
         }
