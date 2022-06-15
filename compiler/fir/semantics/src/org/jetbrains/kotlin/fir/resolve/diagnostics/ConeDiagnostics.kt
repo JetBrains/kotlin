@@ -212,8 +212,6 @@ class ConeUnresolvedParentInImport(val parentClassId: ClassId) : ConeDiagnostic 
         get() = "unresolved import"
 }
 
-class ConeUnsupportedDynamicType : ConeUnsupported("Dynamic types are not supported in this context")
-
 class ConeDeprecated(
     val source: KtSourceElement?,
     override val symbol: FirBasedSymbol<*>,
