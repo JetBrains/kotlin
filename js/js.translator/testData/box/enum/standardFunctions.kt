@@ -1,6 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1555
-// INGORE_BACKEND_FIR: JS_IR, JS
+// IGNORE_FIR
+// Because there is a bug inside FIR related to `enumValues` and `enumValueOf` resolution
 package foo
 
 enum class EmptyEnum

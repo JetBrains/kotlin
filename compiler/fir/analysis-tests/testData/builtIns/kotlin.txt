@@ -607,7 +607,7 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-public abstract class ExternalEnum : R|kotlin/Any| {
+public abstract external class ExternalEnum : R|kotlin/Any| {
     public final operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final fun hashCode(): R|kotlin/Int|

@@ -1689,6 +1689,16 @@ public abstract external class ExternalEnum {
     public open override fun toString(): kotlin.String
 }
 
+/*∆*/ public abstract external class ExternalEnum {
+/*∆*/     public constructor ExternalEnum()
+/*∆*/
+/*∆*/     public final override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+/*∆*/
+/*∆*/     public final override fun hashCode(): kotlin.Int
+/*∆*/
+/*∆*/     public open override fun toString(): kotlin.String
+/*∆*/ }
+/*∆*/
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 /*∆*/     @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
