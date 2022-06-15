@@ -18,7 +18,7 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
 
     fun whenD8Configured(body: KotlinWasmD8Dsl.() -> Unit)
 
-    fun whenBinaryenApplied(body: () -> Unit)
+    fun whenBinaryenApplied(body: (BinaryenExec.() -> Unit) -> Unit)
 }
 
 interface KotlinWasmTargetDsl : KotlinJsTargetDsl {
@@ -30,7 +30,13 @@ interface KotlinWasmTargetDsl : KotlinJsTargetDsl {
         }
     }
 
-    fun applyBinaryen()
+    fun applyBinaryen() = applyBinaryen { }
+    fun applyBinaryen(body: BinaryenExec.() -> Unit)
+    fun applyBinaryen(fn: Closure<*>) {
+        applyBinaryen {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
 }
 
 interface KotlinWasmD8Dsl : KotlinJsSubTargetDsl {

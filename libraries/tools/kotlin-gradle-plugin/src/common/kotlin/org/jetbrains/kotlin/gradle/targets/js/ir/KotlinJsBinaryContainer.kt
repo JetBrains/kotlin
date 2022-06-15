@@ -40,7 +40,7 @@ constructor(
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-    private fun configureBinaryen(binary: JsIrBinary) {
+    private fun configureBinaryen(binary: JsIrBinary, binaryenDsl: BinaryenExec.() -> Unit) {
         val linkTask = binary.linkTask
 
         val compiledMjsFile = linkTask.map { link ->
@@ -56,6 +56,7 @@ constructor(
         val binaryenTask = BinaryenExec.create(binary.compilation, "${linkTask.name}Optimize") {
             inputFileProperty.fileProvider(compiledWasmFile)
             outputFileProperty.fileProvider(compiledWasmFile)
+            binaryenDsl()
         }
 
         binary.compilation.compileKotlinTask.finalizedBy(binaryenTask)
@@ -203,7 +204,7 @@ constructor(
 
         if (compilation.platformType == KotlinPlatformType.wasm && target is KotlinJsIrTarget && binary is JsIrBinary) {
             target.whenBinaryenApplied {
-                configureBinaryen(binary)
+                configureBinaryen(binary, it)
             }
         }
 

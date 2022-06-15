@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -149,22 +150,23 @@ constructor(
     }
 
     //Binaryen
-    private val applyBinaryenHandlers = mutableListOf<() -> Unit>()
+    private val applyBinaryenHandlers = mutableListOf<(BinaryenExec.() -> Unit) -> Unit>()
 
-    private var binaryenApplied: Boolean = false
+    private var binaryenApplied: (BinaryenExec.() -> Unit)? = null
 
-    override fun whenBinaryenApplied(body: () -> Unit) {
-        if (binaryenApplied) {
-            body()
+    override fun whenBinaryenApplied(body: (BinaryenExec.() -> Unit) -> Unit) {
+        val binaryenApplied = binaryenApplied
+        if (binaryenApplied != null) {
+            body(binaryenApplied)
         } else {
             applyBinaryenHandlers += body
         }
     }
 
-    override fun applyBinaryen() {
-        binaryenApplied = true
+    override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
+        binaryenApplied = body
         applyBinaryenHandlers.forEach { handler ->
-            handler()
+            handler(body)
         }
         browserConfiguredHandlers.clear()
     }
