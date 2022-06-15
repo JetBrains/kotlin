@@ -280,7 +280,7 @@ internal class ReflectiveAccessLowering(
         methodName: String,
         parameterTypes: List<IrType>,
         receiver: IrExpression?, // null => static method on `declaringClass`
-        arguments: List<IrExpression>,
+        arguments: List<IrExpression?>,
         returnType: IrType,
         symbol: IrSymbol
     ): IrExpression =
@@ -296,11 +296,11 @@ internal class ReflectiveAccessLowering(
                     irType = reflectSymbols.javaLangReflectMethod.defaultType
                 )
             +methodSetAccessible(irGet(methodVar))
-            +methodInvoke(irGet(methodVar), receiver ?: irNull(), arguments)
+            +methodInvoke(irGet(methodVar), receiver ?: irNull(), arguments.map { it ?: irNull() })
         }
 
-    private fun IrFunctionAccessExpression.getValueArguments(): List<IrExpression> =
-        (0 until valueArgumentsCount).map { getValueArgument(it)!! }
+    private fun IrFunctionAccessExpression.getValueArguments(): List<IrExpression?> =
+        (0 until valueArgumentsCount).map { getValueArgument(it) }
 
     private fun IrFunctionAccessExpression.valueParameterTypes(): List<IrType> =
         symbol.owner.valueParameters.map { it.type }
@@ -314,7 +314,7 @@ internal class ReflectiveAccessLowering(
                 addAll(call.valueParameterTypes())
             },
             call.dispatchReceiver,
-            mutableListOf<IrExpression>().apply {
+            mutableListOf<IrExpression?>().apply {
                 call.extensionReceiver?.let { add(it) }
                 addAll(call.getValueArguments())
             },
@@ -348,7 +348,7 @@ internal class ReflectiveAccessLowering(
                         irType = reflectSymbols.javaLangReflectConstructor.defaultType
                     )
                 +constructorSetAccessible(irGet(constructorVar))
-                +constructorNewInstance(irGet(constructorVar), call.getValueArguments())
+                +constructorNewInstance(irGet(constructorVar), call.getValueArguments().map { it ?: irNull() })
             }
 
     private fun generateReflectiveFieldGet(
@@ -476,7 +476,7 @@ internal class ReflectiveAccessLowering(
                     addAll(call.valueParameterTypes())
                 },
                 call.dispatchReceiver,
-                mutableListOf<IrExpression>().apply {
+                mutableListOf<IrExpression?>().apply {
                     call.extensionReceiver?.let { add(it) }
                     addAll(call.getValueArguments())
                 },
