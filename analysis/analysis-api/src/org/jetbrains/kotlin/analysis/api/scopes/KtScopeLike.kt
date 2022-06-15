@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.Name
 
 public interface KtScopeLike : KtLifetimeOwner {
     /**
-     * Returns a **subset** of names which current scope may contain.
+     * Returns a **superset** of names which current scope may contain.
      * In other words `ALL_NAMES(scope)` is a subset of `scope.getAllNames()`
      */
     public fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
@@ -19,13 +19,13 @@ public interface KtScopeLike : KtLifetimeOwner {
     }
 
     /**
-     * Returns a **subset** of callable names which current scope may contain.
+     * Returns a **superset** of callable names which current scope may contain.
      * In other words `ALL_CALLABLE_NAMES(scope)` is a subset of `scope.getCallableNames()`
      */
     public fun getPossibleCallableNames(): Set<Name>
 
     /**
-     * Returns a **subset** of classifier names which current scope may contain.
+     * Returns a **superset** of classifier names which current scope may contain.
      * In other words `ALL_CLASSIFIER_NAMES(scope)` is a subset of `scope.getClassifierNames()`
      */
     public fun getPossibleClassifierNames(): Set<Name>
