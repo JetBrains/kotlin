@@ -119,13 +119,6 @@ class ConeConstraintSystemHasContradiction(
     override val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
 }
 
-class ConeArgumentTypeMismatchCandidateError(
-    val expectedType: ConeKotlinType, val actualType: ConeKotlinType
-) : ConeDiagnostic {
-    override val reason: String
-        get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
-}
-
 class ConeAmbiguityError(
     val name: Name,
     val applicability: CandidateApplicability,
