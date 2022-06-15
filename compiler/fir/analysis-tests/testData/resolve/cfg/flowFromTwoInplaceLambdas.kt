@@ -28,7 +28,7 @@ fun test2(x: Any?) {
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
     run2({ p = null; n() }, { p as String; 123 })
     p<!UNSAFE_CALL!>.<!>length // Bad: p can be null
-    p?.length // OK: p is either null or String
+    p?.length // OK: p is String | Nothing? = String?
 }
 
 fun test3(x: Any?) {
@@ -36,5 +36,19 @@ fun test3(x: Any?) {
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
     run2({ p = null; n() }, { p = ""; 123 })
     p<!UNSAFE_CALL!>.<!>length // Bad: p can be null
-    p?.length // OK: p is either null or String
+    p?.length // OK: p is String | Nothing? = String?
+}
+
+interface I1 { val x: Int }
+interface I2 { val y: Int }
+
+fun test4(x: Any?) {
+    x.<!UNRESOLVED_REFERENCE!>x<!> // Bad
+    x.<!UNRESOLVED_REFERENCE!>y<!> // Bad
+    run2(
+        { x as I1; x.<!UNRESOLVED_REFERENCE!>y<!>; n() }, // Bad: may or may not be called first
+        { x as I2; x.<!UNRESOLVED_REFERENCE!>x<!>; 123 } // Bad: may or may not be called first
+    )
+    x.x // OK: x is I1 & I2
+    x.y // OK: x is I1 & I2
 }
