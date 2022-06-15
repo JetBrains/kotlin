@@ -9,14 +9,27 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 public abstract class KtSignatureSubstitutor : KtAnalysisSessionComponent() {
-    public abstract fun <S : KtCallableSymbol> substitute(
+    @Suppress("UNCHECKED_CAST")
+    public open fun <S : KtCallableSymbol> substitute(
         signature: KtCallableSignature<S>,
         substitutor: KtSubstitutor
-    ): KtCallableSignature<S>
+    ): KtCallableSignature<S> {
+        return when (signature) {
+            is KtFunctionLikeSignature -> {
+                substitute(signature as KtFunctionLikeSignature<KtFunctionLikeSymbol>, substitutor) as KtCallableSignature<S>
+            }
+            is KtVariableLikeSignature -> {
+                substitute(signature as KtVariableLikeSignature<KtVariableLikeSymbol>, substitutor) as KtCallableSignature<S>
+            }
+        }
+    }
 
     public abstract fun <S : KtFunctionLikeSymbol> substitute(
         signature: KtFunctionLikeSignature<S>,
@@ -28,17 +41,27 @@ public abstract class KtSignatureSubstitutor : KtAnalysisSessionComponent() {
         substitutor: KtSubstitutor
     ): KtVariableLikeSignature<S>
 
-    public abstract fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S>
+    @Suppress("UNCHECKED_CAST")
+    public open fun <S : KtCallableSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtCallableSignature<S> {
+        return when (symbol) {
+            is KtFunctionLikeSymbol -> substitute(symbol, substitutor)
+            is KtVariableLikeSymbol -> substitute(symbol, substitutor)
+            else -> unexpectedElementError("symbol", symbol)
+        }
+    }
 
     public abstract fun <S : KtFunctionLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtFunctionLikeSignature<S>
 
     public abstract fun <S : KtVariableLikeSymbol> substitute(symbol: S, substitutor: KtSubstitutor): KtVariableLikeSignature<S>
 
-    public abstract fun <S : KtCallableSymbol> asSignature(symbol: S): KtCallableSignature<S>
+    public open fun <S : KtCallableSymbol> asSignature(symbol: S): KtCallableSignature<S> =
+        substitute(symbol, KtSubstitutor.Empty(token))
 
-    public abstract fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S>
+    public open fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> =
+        substitute(symbol, KtSubstitutor.Empty(token))
 
-    public abstract fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S>
+    public open fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> =
+        substitute(symbol, KtSubstitutor.Empty(token))
 }
 
 public interface KtSignatureSubstitutorMixIn : KtAnalysisSessionMixIn {

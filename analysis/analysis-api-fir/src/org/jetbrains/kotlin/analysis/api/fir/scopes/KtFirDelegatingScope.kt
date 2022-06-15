@@ -27,7 +27,7 @@ internal open class KtFirDelegatingScope(
         getPossibleCallableNames() + getPossibleClassifierNames()
     }
 
-    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { withValidityAssertion { allNamesCached } }
+    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         firScope.getCallableNames()

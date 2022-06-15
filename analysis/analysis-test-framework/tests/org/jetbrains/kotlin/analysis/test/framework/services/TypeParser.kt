@@ -19,24 +19,28 @@ object TypeParser {
     fun parseTypeFromString(
         stringType: String,
         contextElement: KtElement,
-        typeParameterByName: Map<String, KtTypeParameterSymbol>
+        scopeForTypeParameters: KtElement,
     ): KtType {
         val type = KtPsiFactory(contextElement).createType(stringType)
-        return convertType(type.typeElement ?: incorrectType(type), typeParameterByName)
+        return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
     context (KtAnalysisSession)
-            private fun convertType(type: KtTypeElement, typeParameterByName: Map<String, KtTypeParameterSymbol>): KtType =
+    private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KtType =
         when (type) {
             is KtUserType -> {
                 val qualifier = fullQualifier(type)
-                if (qualifier in typeParameterByName) {
-                    buildTypeParameterType(typeParameterByName.getValue(qualifier))
-                } else {
-                    buildClassType(ClassId.topLevel(FqName(qualifier))) {
-                        type.typeArguments.forEach { argument ->
-                            argument(convertType(argument.typeReference?.typeElement ?: incorrectType(type), typeParameterByName))
+                when (val typeParameter = getSymbolByNameSafe<KtTypeParameterSymbol>(scopeForTypeParameters, qualifier)) {
+                    null -> {
+                        buildClassType(ClassId.topLevel(FqName(qualifier))) {
+                            type.typeArguments.forEach { argument ->
+                                argument(convertType(argument.typeReference?.typeElement ?: incorrectType(type), scopeForTypeParameters))
+                            }
                         }
+                    }
+                    else -> {
+                        buildTypeParameterType(typeParameter)
+
                     }
                 }
             }
