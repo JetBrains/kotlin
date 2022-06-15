@@ -23,11 +23,10 @@ operator fun Container.set(i: Int, v: Long) {
 data class Foo(val x: Container)
 data class Container(var value: String)
 
-var nullCheckResult: String = "OK"
 data class NullCheck(val x: NullCheckContainer)
 data class NullCheckContainer(var value: String)
 operator fun NullCheckContainer?.assign(value: String) {
-    nullCheckResult = value
+    result = value
 }
 
 operator fun String.assign(value: Int) {
@@ -97,10 +96,17 @@ fun box(): String {
     SelectAssignTest2().test()
     if (result != "OK.operator.SelectAssignTest2.assign") return "Fail: ${result}"
 
-    // Test assign() on null is not called
+    // Test reference on null is not called
+    result = "OK"
     val nullCheck: NullCheck? = null
     nullCheck?.x = "Fail"
-    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
+    if (result != "OK") return "Fail: $result"
+
+    // Test direct null is called
+    result = "Fail"
+    val nullCheckContainer: NullCheckContainer? = null
+    nullCheckContainer = "OK"
+    if (result != "OK") return "Fail: $result"
 
     return "OK"
 }
