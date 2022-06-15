@@ -37,7 +37,7 @@ enum class DirtyFileState(val str: String) {
     ADDED_FILE("added file"),
     MODIFIED_IR("modified ir"),
     UPDATED_EXPORTS("updated exports"),
-    UPDATED_INLINE_IMPORTS("updated inline imports"),
+    UPDATED_IMPORTS("updated imports"),
     REMOVED_INVERSE_DEPENDS("removed inverse depends"),
     REMOVED_DIRECT_DEPENDS("removed direct depends"),
     REMOVED_FILE("removed file")
@@ -52,9 +52,7 @@ class CacheUpdater(
     private val mainArguments: List<String>?,
     private val executor: CacheExecutor
 ) {
-    private val hashCalculator = InlineFunctionTransitiveHashCalculator()
-    private val transitiveHashes
-        get() = hashCalculator.transitiveHashes
+    private val signatureHashCalculator = IdSignatureHashCalculator()
 
     private val libraries = loadLibraries(allModules)
     private val dependencyGraph = buildDependenciesGraph(libraries)
@@ -117,26 +115,29 @@ class CacheUpdater(
         val oldDirectDependencies: KotlinSourceFileMap<*>,
 
         override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap(),
-        override val directDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap(),
-
-        override val importedInlineFunctions: MutableMap<IdSignature, ICHash> = mutableMapOf()
+        override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap(),
     ) : KotlinSourceFileMetadata() {
         fun addInverseDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
-            inverseDependencies.addSignature(lib, src, signature)
+            when (val signatures = inverseDependencies[lib, src]) {
+                null -> inverseDependencies[lib, src] = mutableSetOf(signature)
+                else -> signatures += signature
+            }
 
-        fun addDirectDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
-            directDependencies.addSignature(lib, src, signature)
+        fun addDirectDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature, hash: ICHash) =
+            when (val signatures = directDependencies[lib, src]) {
+                null -> directDependencies[lib, src] = mutableMapOf(signature to hash)
+                else -> signatures[signature] = hash
+            }
     }
 
     private class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata) : KotlinSourceFileMetadata() {
         private val oldInverseDependencies = oldMetadata.inverseDependencies
         private val newExportedSignatures: Set<IdSignature> by lazy { inverseDependencies.flatSignatures() }
 
-        var importedInlineFunctionsModified = false
+        var importedSignaturesModified = false
 
         override val inverseDependencies = oldMetadata.inverseDependencies.toMutable()
         override val directDependencies = oldMetadata.directDependencies.toMutable()
-        override val importedInlineFunctions = oldMetadata.importedInlineFunctions
 
         override fun getExportedSignatures(): Set<IdSignature> = newExportedSignatures
 
@@ -223,8 +224,8 @@ class CacheUpdater(
                         if (dependentFile !in dirtyLibFiles) {
                             val dependentSrcFileMetadata = dependentCache.fetchSourceFileFullMetadata(dependentFile)
                             dependentSrcFileMetadata.directDependencies[libFile, srcFile]?.let {
-                                loadingFileExports.inverseDependencies[dependentLib, dependentFile] = it
-                                loadingFileExports.allExportedSignatures += it
+                                loadingFileExports.inverseDependencies[dependentLib, dependentFile] = it.keys
+                                loadingFileExports.allExportedSignatures += it.keys
                             }
                         }
                     }
@@ -267,6 +268,7 @@ class CacheUpdater(
                 val maybeImportedSignatures = reachableSignatures.keys.toMutableSet()
                 for ((signature, symbol) in allImplementedSymbols) {
                     if (signature in reachableSignatures) {
+                        signatureHashCalculator.addHashForSignatureIfNotExist(signature, symbol)
                         idSignatureToFile[signature] = lib to libSrcFile
                         maybeImportedSignatures.remove(signature)
 
@@ -295,8 +297,9 @@ class CacheUpdater(
 
                 for (importedSignature in internalHeader.maybeImportedSignatures) {
                     val (dependencyLib, dependencyFile) = idSignatureToFile[importedSignature] ?: continue
-                    internalHeader.addDirectDependency(dependencyLib, dependencyFile, importedSignature)
-                    transitiveHashes[importedSignature]?.let { internalHeader.importedInlineFunctions[importedSignature] = it }
+                    signatureHashCalculator[importedSignature]?.also { signatureHash ->
+                        internalHeader.addDirectDependency(dependencyLib, dependencyFile, importedSignature, signatureHash)
+                    } ?: notFoundIcError("signature $importedSignature hash", dependencyLib, dependencyFile)
 
                     updatedMetadata[dependencyLib, dependencyFile]?.also { dependencyMetadata ->
                         dependencyMetadata.addInverseDependency(libFile, srcFile, importedSignature)
@@ -339,7 +342,7 @@ class CacheUpdater(
                     continue
                 }
                 val newMetadata = addNewMetadata(dependencyLibFile, dependencySrcFile, dependencySrcMetadata)
-                newMetadata.inverseDependencies[libFile, srcFile] = newSignatures
+                newMetadata.inverseDependencies[libFile, srcFile] = newSignatures.keys
             }
         }
     }
@@ -367,21 +370,25 @@ class CacheUpdater(
     private fun KotlinSourceFileMutableMap<UpdatedDependenciesMetadata>.addDependentsWithUpdatedImports(
         libFile: KotlinLibraryFile, srcFile: KotlinSourceFile, srcFileMetadata: DirtyFileMetadata
     ) {
-        // go through dependent files and check if their inline imports were modified
+        // go through dependent files and check if their imports were modified
         for ((dependentLibFile, dependentSrcFiles) in srcFileMetadata.inverseDependencies) {
             val dependentCache = incrementalCaches[dependentLibFile] ?: continue
             for ((dependentSrcFile, newSignatures) in dependentSrcFiles) {
                 val dependentSrcMetadata = dependentCache.fetchSourceFileFullMetadata(dependentSrcFile)
-                val dependentSignatures = dependentSrcMetadata.directDependencies[libFile, srcFile] ?: emptySet()
-                val importedInlineModified = dependentSrcMetadata.importedInlineFunctions.any {
-                    transitiveHashes[it.key]?.let { newHash -> newHash != it.value } ?: (it.key in dependentSignatures)
-                }
-                if (importedInlineModified) {
-                    val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
-                    newMetadata.importedInlineFunctionsModified = true
-                } else if (dependentSignatures != newSignatures) {
-                    val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
-                    newMetadata.directDependencies[libFile, srcFile] = newSignatures
+                val dependentSignatures = dependentSrcMetadata.directDependencies[libFile, srcFile] ?: emptyMap()
+                when {
+                    dependentSrcMetadata is DirtyFileMetadata -> continue
+                    this[dependentLibFile, dependentSrcFile]?.importedSignaturesModified == true -> continue
+                    dependentSignatures.any { signatureHashCalculator[it.key] != it.value } -> {
+                        val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
+                        newMetadata.importedSignaturesModified = true
+                    }
+                    dependentSignatures.keys != newSignatures -> {
+                        val newMetadata = addNewMetadata(dependentLibFile, dependentSrcFile, dependentSrcMetadata)
+                        newMetadata.directDependencies[libFile, srcFile] = newSignatures.associateWith {
+                            signatureHashCalculator[it] ?: notFoundIcError("signature $it hash", libFile, srcFile)
+                        }
+                    }
                 }
             }
         }
@@ -412,15 +419,15 @@ class CacheUpdater(
             val cache = getLibIncrementalCache(libFile)
 
             for ((srcFile, srcFileMetadata) in srcFiles) {
-                val isSignatureUpdated = srcFileMetadata.isExportedSignaturesUpdated()
-                if (isSignatureUpdated || srcFileMetadata.importedInlineFunctionsModified) {
+                val isExportedSignatureUpdated = srcFileMetadata.isExportedSignaturesUpdated()
+                if (isExportedSignatureUpdated || srcFileMetadata.importedSignaturesModified) {
                     // if exported signatures or imported inline functions were modified - rebuild
                     filesToRebuild[srcFile] = srcFileMetadata
-                    if (isSignatureUpdated) {
+                    if (isExportedSignatureUpdated) {
                         fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_EXPORTS)
                     }
-                    if (srcFileMetadata.importedInlineFunctionsModified) {
-                        fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_INLINE_IMPORTS)
+                    if (srcFileMetadata.importedSignaturesModified) {
+                        fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_IMPORTS)
                     }
                 } else {
                     // if signatures and inline functions are the same - just update cache metadata
@@ -486,7 +493,7 @@ class CacheUpdater(
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports
 
         while (true) {
-            hashCalculator.updateTransitiveHashes(loadedIr.loadedFragments.values)
+            signatureHashCalculator.updateInlineFunctionTransitiveHashes(loadedIr.loadedFragments.values)
 
             val dirtyHeaders = rebuildDirtySourceMetadata(loadedIr.linker, loadedIr.loadedFragments, lastDirtyFiles)
 

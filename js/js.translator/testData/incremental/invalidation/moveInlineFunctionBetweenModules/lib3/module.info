@@ -3,4 +3,4 @@ STEP 0:
     added file: l3.kt
 STEP 1:
     dependencies: lib1, lib2
-    updated inline imports: l3.kt
+    updated imports: l3.kt

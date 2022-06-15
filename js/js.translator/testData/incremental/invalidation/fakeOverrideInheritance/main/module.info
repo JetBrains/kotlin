@@ -3,4 +3,4 @@ STEP 0:
     added file: m.kt, classABC.kt
 STEP 1..5:
     dependencies: lib1
-    updated inline imports: m.kt, classABC.kt
+    updated imports: m.kt, classABC.kt

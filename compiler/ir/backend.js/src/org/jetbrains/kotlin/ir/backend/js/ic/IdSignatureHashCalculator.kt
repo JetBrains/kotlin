@@ -6,32 +6,33 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 
-class InlineFunctionTransitiveHashCalculator {
+class IdSignatureHashCalculator {
     private val flatHashes = mutableMapOf<IrFunction, ICHash>()
     private val inlineFunctionCallGraph: MutableMap<IrFunction, Set<IrFunction>> = mutableMapOf()
     private val processingFunctions = mutableSetOf<IrFunction>()
     private val functionTransitiveHashes = mutableMapOf<IrFunction, ICHash>()
-    private val idSignatureTransitiveHashes = mutableMapOf<IdSignature, ICHash>()
 
-    val transitiveHashes: Map<IdSignature, ICHash>
-        get() = idSignatureTransitiveHashes
+    private val allIdSignatureHashes = mutableMapOf<IdSignature, ICHash>()
+
 
     private inner class FlatHashCalculator : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             if (declaration.isInline) {
@@ -47,11 +48,11 @@ class InlineFunctionTransitiveHashCalculator {
                 }
             }
             // go deeper since local inline special declarations (like a reference adaptor) may appear
-            declaration.acceptChildren(this, null)
+            declaration.acceptChildrenVoid(this)
         }
     }
 
-    private inner class CallGraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>> {
+    private inner class InlineFunctionCallGraphBuilder : IrElementVisitor<Unit, MutableSet<IrFunction>> {
         var inlineFunctionCallDepth: Int = 0
 
         override fun visitElement(element: IrElement, data: MutableSet<IrFunction>) = element.acceptChildren(this, data)
@@ -103,7 +104,7 @@ class InlineFunctionTransitiveHashCalculator {
             functionInlineHash = functionInlineHash.combineWith(getInlineFunctionTransitiveHash(callee))
         }
         processingFunctions.remove(f)
-        f.symbol.signature?.let { idSignatureTransitiveHashes[it] = functionInlineHash }
+        f.symbol.signature?.let { allIdSignatureHashes[it] = functionInlineHash }
         functionInlineHash
     }
 
@@ -117,9 +118,17 @@ class InlineFunctionTransitiveHashCalculator {
         }
     }
 
-    fun updateTransitiveHashes(fragments: Collection<IrModuleFragment>) {
+    fun updateInlineFunctionTransitiveHashes(fragments: Collection<IrModuleFragment>) {
         fragments.forEach { it.acceptVoid(FlatHashCalculator()) }
-        fragments.forEach { it.acceptChildren(CallGraphBuilder(), mutableSetOf()) }
+        fragments.forEach { it.acceptChildren(InlineFunctionCallGraphBuilder(), mutableSetOf()) }
         updateTransitiveHashesByCallGraph()
     }
+
+    fun addHashForSignatureIfNotExist(signature: IdSignature, symbol: IrSymbol) {
+        if (signature !in allIdSignatureHashes) {
+            allIdSignatureHashes[signature] = symbol.irSymbolHashForIC()
+        }
+    }
+
+    operator fun get(signature: IdSignature) = allIdSignatureHashes[signature]
 }

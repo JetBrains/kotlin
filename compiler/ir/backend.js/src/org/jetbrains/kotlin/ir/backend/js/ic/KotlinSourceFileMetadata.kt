@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import java.io.File
 
 @JvmInline
 value class KotlinLibraryFile(val path: String) {
@@ -20,6 +21,9 @@ value class KotlinLibraryFile(val path: String) {
     companion object {
         fun fromProtoStream(input: CodedInputStream) = KotlinLibraryFile(input.readString())
     }
+
+    // for debugging purposes only
+    override fun toString(): String = File(path).name
 }
 
 @JvmInline
@@ -31,6 +35,9 @@ value class KotlinSourceFile(val path: String) {
     companion object {
         fun fromProtoStream(input: CodedInputStream) = KotlinSourceFile(input.readString())
     }
+
+    // for debugging purposes only
+    override fun toString(): String = File(path).name
 }
 
 open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSourceFile, T>>) :
@@ -94,9 +101,7 @@ abstract class KotlinSourceFileExports {
 }
 
 abstract class KotlinSourceFileMetadata : KotlinSourceFileExports() {
-    abstract val directDependencies: KotlinSourceFileMap<Set<IdSignature>>
-
-    abstract val importedInlineFunctions: Map<IdSignature, ICHash>
+    abstract val directDependencies: KotlinSourceFileMap<Map<IdSignature, ICHash>>
 }
 
-fun KotlinSourceFileMetadata.isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty() && importedInlineFunctions.isEmpty()
+fun KotlinSourceFileMetadata.isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty()

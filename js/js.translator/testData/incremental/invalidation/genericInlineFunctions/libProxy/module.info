@@ -10,13 +10,13 @@ STEP 8:
     added file: proxy.kt
 STEP 9:
     dependencies: lib1
-    updated inline imports: proxy.kt
+    updated imports: proxy.kt
 STEP 10..14:
     dependencies: lib1
     modified ir: proxy.kt
 STEP 15:
     dependencies: lib1
-    updated inline imports: proxy.kt
+    updated imports: proxy.kt
 STEP 16:
     dependencies: lib1
     modifications:
@@ -24,10 +24,10 @@ STEP 16:
     modified ir: proxy.kt
 STEP 17:
     dependencies: lib1
-    updated inline imports: proxy.kt
+    updated imports: proxy.kt
 STEP 18..22:
     dependencies: lib1
     modified ir: proxy.kt
 STEP 23:
     dependencies: lib1
-    updated inline imports: proxy.kt
+    updated imports: proxy.kt

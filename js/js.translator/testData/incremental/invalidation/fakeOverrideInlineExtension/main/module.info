@@ -3,4 +3,4 @@ STEP 0:
     added file: m.kt, classA.kt
 STEP 1..4:
     dependencies: lib1
-    updated inline imports: m.kt, classA.kt
+    updated imports: m.kt, classA.kt

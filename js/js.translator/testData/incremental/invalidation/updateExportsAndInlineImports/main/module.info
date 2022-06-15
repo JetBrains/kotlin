@@ -3,7 +3,7 @@ STEP 0:
     added file: m.kt
 STEP 1..3:
     dependencies: lib1, lib2
-    updated inline imports: m.kt
+    updated imports: m.kt
 STEP 4:
     dependencies: lib1, lib2
 STEP 5:
@@ -11,4 +11,4 @@ STEP 5:
     removed direct depends: m.kt
 STEP 6..8:
     dependencies: lib1, lib2
-    updated inline imports: m.kt
+    updated imports: m.kt

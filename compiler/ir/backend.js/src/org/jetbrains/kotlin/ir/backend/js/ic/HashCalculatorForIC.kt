@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -83,6 +87,17 @@ internal fun IrElement.irElementHashForIC() = HashCalculatorForIC().also {
             }
         ), data = ""
     )
+}.finalize()
+
+internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
+    it.update(toString())
+    // symbol rendering prints very little information about type parameters
+    // TODO may be it make sense to update rendering?
+    (owner as? IrTypeParametersContainer)?.let { typeParameters ->
+        typeParameters.typeParameters.forEach { typeParameter ->
+            it.update(typeParameter.symbol.toString())
+        }
+    }
 }.finalize()
 
 internal fun String.stringHashForIC() = HashCalculatorForIC().also { it.update(this) }.finalize()

@@ -12,7 +12,7 @@ STEP 1:
     modified ir: l2a.kt
 STEP 2:
     dependencies: lib1
-    updated inline imports: l2b.kt, l2a.kt
+    updated imports: l2b.kt, l2a.kt
 STEP 3:
     dependencies: lib1
     modifications:
@@ -28,7 +28,7 @@ STEP 5:
     modified ir: l2b.kt
 STEP 6:
     dependencies: lib1
-    updated inline imports: l2b.kt
+    updated imports: l2b.kt
 STEP 7:
     dependencies: lib1
     modifications:
@@ -38,4 +38,4 @@ STEP 7:
     modified ir: l2b.kt
 STEP 8:
     dependencies: lib1
-    updated inline imports: l2a.kt, l2b.kt
+    updated imports: l2a.kt, l2b.kt

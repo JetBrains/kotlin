@@ -17,7 +17,7 @@ STEP 3:
     modifications:
         U : l1.3.kt -> l1.kt
     modified ir: l1.kt
-    updated inline imports: l2.kt
+    updated imports: l2.kt
 STEP 4:
     modifications:
         U : l2.1.kt -> l2.kt
@@ -35,5 +35,5 @@ STEP 7:
     modifications:
         U : l2.0.kt -> l2.kt
     modified ir: l2.kt
-    updated inline imports: l1.kt
+    updated imports: l1.kt
     updated exports: l1.kt
