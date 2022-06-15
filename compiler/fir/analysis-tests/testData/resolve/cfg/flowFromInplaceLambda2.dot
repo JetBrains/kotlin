@@ -870,7 +870,7 @@ digraph flowFromInplaceLambda2_kt {
                             color=blue
                             325 [label="Enter block"];
                             326 [label="Access variable R|<local>/p|"];
-                            327 [label="Access variable R|kotlin/String.length|"];
+                            327 [label="Access variable <Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#"];
                             328 [label="Const: Int(123)"];
                             329 [label="Exit block"];
                         }

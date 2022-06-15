@@ -31,6 +31,24 @@ FILE: flowFromTwoInplaceLambdas.kt
         }
 
     }
+    public final fun test1_tail(x: R|kotlin/String?|): R|kotlin/Unit| {
+        lvar p: R|kotlin/String?| = R|<local>/x|
+        when () {
+            !=(R|<local>/p|, Null(null)) ->  {
+                R|/run2|<R|kotlin/Int?|>(run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+                    R|<local>/p| = Null(null)
+                    ^ R|/n|<R|kotlin/Int?|>()
+                }
+                , <L> = run2@fun <anonymous>(): R|kotlin/Int?| <inline=NoInline, kind=EXACTLY_ONCE>  {
+                    R|<local>/p|.<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#
+                    ^ Int(123)
+                }
+                )
+                R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+        }
+
+    }
     public final fun test2(x: R|kotlin/Any?|): R|kotlin/Unit| {
         lvar p: R|kotlin/Any?| = R|<local>/x|
         R|<local>/p|.<Unresolved name: length>#

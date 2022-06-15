@@ -23,6 +23,17 @@ fun test1(x: String?) {
     }
 }
 
+fun test1_tail(x: String?) {
+    var p = x
+    if (p != null) {
+        run2({ p = null; n() }) {
+            <!SMARTCAST_IMPOSSIBLE!>p<!>.length // Bad: may or may not not be called first
+            123
+        }
+        p<!UNSAFE_CALL!>.<!>length // Bad: p = null
+    }
+}
+
 fun test2(x: Any?) {
     var p: Any? = x
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
