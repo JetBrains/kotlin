@@ -1,3 +1,7 @@
+@file:Suppress("HasPlatformType")
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
 }
@@ -8,17 +12,31 @@ kotlin {
     }
 }
 
-publish()
-javadocJar()
-sourcesJar()
+val shadows by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = false
+    isTransitive = false
+    configurations.getByName("compileOnly").extendsFrom(this)
+    configurations.getByName("testImplementation").extendsFrom(this)
+}
+
+val shadowsRuntime by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    isTransitive = false
+    extendsFrom(shadows)
+    attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+}
 
 dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
-    implementation("com.google.protobuf:protobuf-java:3.19.4")
-    implementation("com.google.protobuf:protobuf-kotlin:3.19.4")
+    shadows("com.google.protobuf:protobuf-java:3.19.4")
+    shadows("com.google.protobuf:protobuf-kotlin:3.19.4")
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
+
 
 configureKotlinCompileTasksGradleCompatibility()
 
@@ -26,6 +44,17 @@ sourceSets.main.configure {
     java.srcDir("src/generated/java")
     java.srcDir("src/generated/kotlin")
 }
+
+javadocJar()
+sourcesJar()
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
+    exclude("**/*.proto")
+    from(mainSourceSet.output)
+    configurations = listOf(shadowsRuntime)
+    relocate("com.google.protobuf", "org.jetbrains.kotlin.kpm.idea.proto.com.google.protobuf")
+}
+
+publish()
 
 tasks.register<Exec>("protoc") {
     val protoSources = file("src/main/proto")

@@ -37,7 +37,6 @@ internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
         outputs.upToDateWhen { false }
     }
 
-    @OptIn(ExperimentalTime::class)
     @TaskAction
     protected fun buildIdeaKpmProjectModel() {
         outputDirectory.mkdirs()
@@ -47,32 +46,20 @@ internal open class IdeaKpmBuildProjectModelTask : DefaultTask() {
         val textFile = outputDirectory.resolve("model.txt")
         textFile.writeText(model.toString())
 
-        val javaIoSerializableDuration = measureTime {
-            val javaIoSerializableBinaryFile = outputDirectory.resolve("model.java.bin")
-            javaIoSerializableBinaryFile.writeBytes(ByteArrayOutputStream().use { byteArrayOutputStream ->
-                ObjectOutputStream(byteArrayOutputStream).use { objectOutputStream -> objectOutputStream.writeObject(model) }
-                byteArrayOutputStream.toByteArray()
-            })
+        val javaIoSerializableBinaryFile = outputDirectory.resolve("model.java.bin")
+        javaIoSerializableBinaryFile.writeBytes(ByteArrayOutputStream().use { byteArrayOutputStream ->
+            ObjectOutputStream(byteArrayOutputStream).use { objectOutputStream -> objectOutputStream.writeObject(model) }
+            byteArrayOutputStream.toByteArray()
+        })
+
+        val protoBinaryFile = outputDirectory.resolve("model.proto.bin")
+        if (protoBinaryFile.exists()) protoBinaryFile.delete()
+        protoBinaryFile.outputStream().use { stream ->
+            model.writeTo(stream, serializationContext)
         }
 
-        val protoDuration = measureTime {
-            val protoBinaryFile = outputDirectory.resolve("model.proto.bin")
-            if (protoBinaryFile.exists()) protoBinaryFile.delete()
-            protoBinaryFile.outputStream().use { stream ->
-                model.writeTo(stream, serializationContext)
-            }
-        }
-
-        val gsonDuration = measureTime {
-            val jsonFile = outputDirectory.resolve("model.json")
-            jsonFile.writeText(GsonBuilder().setLenient().setPrettyPrinting().create().toJson(model))
-        }
-
-        logger.quiet(
-            "java.io.Serializable took $javaIoSerializableDuration\n" +
-                    "protobuf took $protoDuration\n" +
-                    "Gson took $gsonDuration"
-        )
+        val jsonFile = outputDirectory.resolve("model.json")
+        jsonFile.writeText(GsonBuilder().setLenient().setPrettyPrinting().create().toJson(model))
     }
 
     companion object {
