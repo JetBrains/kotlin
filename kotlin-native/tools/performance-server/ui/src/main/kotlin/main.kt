@@ -336,41 +336,53 @@ fun main(args: Array<String>) {
 
     unstableBenchmarksPromise.then { unstableBenchmarks ->
         // Collect information for charts library.
-        val valuesToShow = mapOf("EXECUTION_TIME" to listOf(mapOf(
-                        "normalize" to "true"
+        val valuesToShow = mapOf(
+            "EXECUTION_TIME" to listOf(
+                mapOf(
+                    "normalize" to "true"
                 ),
                 mapOf(
-                        "normalize" to "true",
-                        "exclude" to unstableBenchmarks.joinToString(",")
+                    "normalize" to "true",
+                    "exclude" to unstableBenchmarks.joinToString(",")
                 ),
                 mapOf(
-                        "normalize" to "true",
-                        "buildSuffix" to "(NewMM)"
+                    "normalize" to "true",
+                    "buildSuffix" to "(NewMM)"
                 )
+            ),
+            "COMPILE_TIME" to listOf(
+                mapOf(
+                    "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
+                    "agr" to "samples"
+                )
+            ),
+            "CODE_SIZE" to listOfNotNull(
+                mapOf(
+                    "normalize" to "true",
+                    "exclude" to when (parameters["target"]) {
+                        "Linux" -> "kotlinx.coroutines"
+                        "Mac_OS_X" -> "SpaceFramework_iosX64"
+                        else -> ""
+                    }
                 ),
-                "COMPILE_TIME" to listOf(mapOf(
-                        "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
-                        "agr" to "samples"
-                )),
-                "CODE_SIZE" to listOf(mapOf(
-                        "normalize" to "true",
-                        "exclude" to if (parameters["target"] == "Linux")
-                            "kotlinx.coroutines"
-                        else if (parameters["target"] == "Mac_OS_X")
-                            "SpaceFramework_iosX64"
-                        else ""
-                ), if (platformSpecificBenchs.isNotEmpty()) mapOf(
-                        "normalize" to "true",
-                        "agr" to "samples",
-                        "samples" to platformSpecificBenchs.removePrefix(",")
-                ) else null).filterNotNull(),
-                "EXECUTION_TIME_DEBUG" to listOf(mapOf(
-                        "normalize" to "true",
-                        "buildSuffix" to "(Debug)"
-                    )
-                ),
-                "BUNDLE_SIZE" to listOf(mapOf("samples" to "KotlinNative",
-                        "agr" to "samples"))
+                mapOf(
+                    "normalize" to "true",
+                    "agr" to "samples",
+                    "samples" to platformSpecificBenchs.removePrefix(",")
+                ).takeIf { platformSpecificBenchs.isNotEmpty() }
+            ),
+            "EXECUTION_TIME_DEBUG" to listOf(
+                mapOf(
+                    "normalize" to "true",
+                    "buildSuffix" to "(DebugNewMM)"
+                )
+            ),
+            "BUNDLE_SIZE" to listOf(
+                mapOf(
+                    "samples" to "KotlinNative",
+                    "agr" to "samples"
+                )
+            )
         )
         // Send requests to get all needed metric values.
         valuesToShow.map { (metric, listOfSettings) ->
