@@ -23,7 +23,8 @@ public interface KtTypeScope : KtScopeLike {
     public fun getCallableSignatures(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSignature<*>>
 
     /**
-     * Return a sequence of [KtClassifierSymbol] which current scope contain if declaration name matches [nameFilter]
+     * Return a sequence of [KtClassifierSymbol] which current scope contain if classifier name matches [nameFilter]. The sequence includes:
+     * nested classes, inner classes, nested type aliases for the class scope, and top-level classes and top-level type aliases for file scope.
      */
     public fun getClassifierSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtClassifierSymbol>
 
