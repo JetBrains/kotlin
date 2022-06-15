@@ -137,6 +137,7 @@ import org.jetbrains.kotlin.ir.types.isDouble
 import org.jetbrains.kotlin.ir.types.isFloat
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isNullableNothing
@@ -4311,7 +4312,7 @@ inline fun <A, B, C> forEachWith(a: List<A>, b: List<B>, c: List<C>, fn: (A, B, 
 
 private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
-    if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
+    if (hasQuestionMark != null && this.isMarkedNullable() == hasQuestionMark) return false
     return classifier.isClassWithFqName(fqName)
 }
 private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) =
