@@ -9,10 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression
@@ -41,6 +42,23 @@ internal class KtFirSimpleNameReference(
         val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
         //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
         return fixUpAnnotationCallResolveToCtor(results)
+    }
+
+    override fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> = with(analysisSession) {
+        val referenceTargetSymbols = resolveToSymbols()
+        val psiOfReferenceTarget = super.getResolvedToPsi(analysisSession, referenceTargetSymbols)
+        if (psiOfReferenceTarget.isNotEmpty()) return psiOfReferenceTarget
+        referenceTargetSymbols.flatMap { symbol ->
+            when (symbol) {
+                is KtFirSyntheticJavaPropertySymbol ->
+                    when (expression.readWriteAccess(useResolveForReadWrite = true)) {
+                        ReferenceAccess.READ -> listOfNotNull(symbol.javaGetterSymbol.psi)
+                        ReferenceAccess.WRITE -> listOfNotNull(symbol.javaSetterSymbol?.psi)
+                        ReferenceAccess.READ_WRITE -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+                    }
+                else -> listOfNotNull(symbol.psi)
+            }
+        }
     }
 
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
