@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -198,14 +200,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         // For static field, we shouldn't unwrap fake override in any case
         if (dispatchReceiverParameter == null) return ownContainingClass
         val originalContainingClass = resolveFakeOverride().containingDeclaration as? ClassDescriptor ?: return ownContainingClass
-        // This means own containing class exposes original containing class, which is possible only in Java (Kotlin forbids it)
-        // In this case we take own containing class as qualifier symbol to avoid visibility problems (see testKt48954 as an example)
-        // Otherwise we should take original containing class to avoid possible clash with Kotlin backing field
-        if (ownContainingClass.visibility.compareTo(
-                originalContainingClass.visibility
-            ).let { it == null || it > 0 }
-        ) return ownContainingClass
-        return originalContainingClass
+        // Find first Java super class to avoid possible visibility exposure & separate compilation problems
+        var containingClassForField = ownContainingClass
+        while (context.extensions.computeExternalDeclarationOrigin(containingClassForField) != IR_EXTERNAL_JAVA_DECLARATION_STUB &&
+            containingClassForField !== originalContainingClass
+        ) {
+            containingClassForField = containingClassForField.getSuperClassNotAny() ?: break
+        }
+        return containingClassForField
     }
 
     private fun generatePropertyGetterCall(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -265,14 +266,15 @@ class CallAndReferenceGenerator(
         val ownContainingClass = typeRef.toIrType().classifierOrNull?.owner as? IrClass ?: return null
         // For static field, we shouldn't unwrap fake override in any case
         if (fieldSymbol.owner.isStatic) return ownContainingClass.symbol
-        // This means own containing class exposes original containing class, which is possible only in Java (Kotlin forbids it)
-        // In this case we take own containing class as qualifier symbol to avoid visibility problems (see testKt48954 as an example)
-        // Otherwise we should take original containing class to avoid possible clash with Kotlin backing field
-        if (ownContainingClass.visibility.compareTo(
-                originalContainingClass.visibility
-            ).let { it == null || it > 0 }
-        ) return ownContainingClass.symbol
-        return originalContainingClass.symbol
+        // Find first Java super class to avoid possible visibility exposure & separate compilation problems
+        var superQualifierClass = ownContainingClass
+        while (!superQualifierClass.isFromJava() && superQualifierClass !== originalContainingClass) {
+            superQualifierClass = superQualifierClass.superTypes.find {
+                val kind = it.getClass()?.kind
+                kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS
+            }?.getClass() ?: break
+        }
+        return superQualifierClass.symbol
     }
 
     private fun FirExpression.superQualifierSymbol(): IrClassSymbol? {
