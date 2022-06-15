@@ -73,6 +73,6 @@ fun test7(x: String?) {
             1,
             run { p.length; 123 } // Bad (p = null)
         )
-        p.length // Bad (p = null)
+        p<!UNSAFE_CALL!>.<!>length // Bad (p = null)
     }
 }

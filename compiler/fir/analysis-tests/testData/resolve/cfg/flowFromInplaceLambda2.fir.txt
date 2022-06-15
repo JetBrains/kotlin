@@ -131,7 +131,7 @@ FILE: flowFromInplaceLambda2.kt
                     ^ Int(123)
                 }
                 ))
-                R|<local>/p|.R|kotlin/String.length|
+                R|<local>/p|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
             }
         }
 
