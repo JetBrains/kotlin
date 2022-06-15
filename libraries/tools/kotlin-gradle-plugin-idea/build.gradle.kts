@@ -32,11 +32,27 @@ dependencies {
     testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
 }
 
+
 publish(moduleMetadata = true) {
-    val kotlinLibraryComponent = components[ADHOC_COMPONENT_NAME] as AdhocComponentWithVariants
-    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesApiElements.get()) { mapToMavenScope("compile") }
-    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesRuntimeElements.get()) { mapToMavenScope("runtime") }
+    fun ConfigurationVariantDetails.skipUnpublishable() {
+        if (configurationVariant.artifacts.any { JavaBasePlugin.UNPUBLISHABLE_VARIANT_ARTIFACTS.contains(it.type) }) {
+            skip()
+        }
+    }
+
     suppressAllPomMetadataWarnings()
+
+    val kotlinLibraryComponent = components[ADHOC_COMPONENT_NAME] as AdhocComponentWithVariants
+
+    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesApiElements.get()) {
+        mapToMavenScope("compile")
+        skipUnpublishable()
+    }
+
+    kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesRuntimeElements.get()) {
+        mapToMavenScope("runtime")
+        skipUnpublishable()
+    }
 }
 
 javadocJar()
