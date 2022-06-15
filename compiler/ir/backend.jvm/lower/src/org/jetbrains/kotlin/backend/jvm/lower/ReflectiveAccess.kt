@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.defaultArgumentCleanerPhase
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -30,7 +31,7 @@ val reflectiveAccessLowering = makeIrFilePhase(
     ::ReflectiveAccessLowering,
     name = "ReflectiveCalls",
     description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection",
-    prerequisite = setOf()
+    prerequisite = setOf(defaultArgumentCleanerPhase)
 )
 
 // This lowering replaces member accesses that are illegal according to JVM
