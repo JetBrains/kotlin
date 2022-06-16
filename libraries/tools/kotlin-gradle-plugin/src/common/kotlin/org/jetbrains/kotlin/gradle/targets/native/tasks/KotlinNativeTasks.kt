@@ -878,14 +878,18 @@ internal class CacheBuilder(
         val runnerSettings: KotlinNativeCompilerRunner.Settings,
         val konanCacheKind: NativeCacheKind,
         val libraries: FileCollection,
-        rootCacheDirectoryProvider: () -> File,
         val gradleUserHomeDir: File,
         val binary: NativeBinary,
         val konanTarget: KonanTarget,
         val kotlinOptions: KotlinCommonToolOptions,
         val externalDependenciesArgs: List<String>
     ) {
-        val rootCacheDirectory by UnserializableLazy(rootCacheDirectoryProvider)
+        val rootCacheDirectory get() = getRootCacheDirectory(
+            File(runnerSettings.parent.konanHome),
+            konanTarget,
+            binary.debuggable,
+            konanCacheKind
+        )
 
         companion object {
             operator fun invoke(
@@ -900,7 +904,6 @@ internal class CacheBuilder(
                     runnerSettings = KotlinNativeCompilerRunner.Settings(project),
                     konanCacheKind = konanCacheKind,
                     libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
-                    rootCacheDirectoryProvider = { getRootCacheDirectory(File(project.konanHome), konanTarget, binary.debuggable, konanCacheKind) },
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
                     binary, konanTarget, kotlinOptions, externalDependenciesArgs
                 )
