@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -89,6 +90,10 @@ fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErr
     return buildErrorLoop {
         this.source = source
         this.diagnostic = diagnostic
+    }.also {
+        it.block.replaceTypeRef(buildErrorTypeRef {
+            this.diagnostic = diagnostic
+        })
     }
 }
 
