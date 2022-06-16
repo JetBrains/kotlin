@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -284,6 +285,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: questionable
         postponedLambdaEnterNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = true)
+        when (anonymousFunction.invocationKind) {
+            EventOccurrencesRange.AT_LEAST_ONCE,
+            EventOccurrencesRange.MORE_THAN_ONCE,
+            EventOccurrencesRange.UNKNOWN, null ->
+                enterCapturingStatement(functionEnterNode, anonymousFunction)
+            else -> {}
+        }
         logicSystem.updateAllReceivers(functionEnterNode.flow)
     }
 
@@ -292,6 +300,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             anonymousFunction
         )
         val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(anonymousFunction)
+        when (anonymousFunction.invocationKind) {
+            EventOccurrencesRange.AT_LEAST_ONCE,
+            EventOccurrencesRange.MORE_THAN_ONCE,
+            EventOccurrencesRange.UNKNOWN, null ->
+                exitCapturingStatement(anonymousFunction)
+            else -> {}
+        }
         // TODO: questionable
         postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()

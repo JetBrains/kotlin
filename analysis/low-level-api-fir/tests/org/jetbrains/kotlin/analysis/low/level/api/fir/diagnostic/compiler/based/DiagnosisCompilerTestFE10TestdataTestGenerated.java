@@ -30474,6 +30474,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("leakingLambdaInCalledInPlace.kt")
+                public void testLeakingLambdaInCalledInPlace() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/leakingLambdaInCalledInPlace.kt");
+                }
+
+                @Test
                 @TestMetadata("nestedDoWhile.kt")
                 public void testNestedDoWhile() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/nestedDoWhile.kt");
