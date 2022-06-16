@@ -22,6 +22,20 @@ fun assertAlmostEquals(expected: Float, actual: Float, tolerance: Double? = null
     }
 }
 
+// For Kotlin JS tests
+private val Float.ulpCommon: Float
+    get() = when {
+        isNaN() -> Float.NaN
+        isInfinite() -> Float.POSITIVE_INFINITY
+        this == Float.MAX_VALUE || this == -Float.MAX_VALUE -> 2.0f.pow(104)
+        else -> {
+            val d = absoluteValue
+            // Ensure we never have -0.0f
+            val valueOrPositiveZero = (this + 0.0f).toBits();
+            Float.fromBits(valueOrPositiveZero + (if (valueOrPositiveZero >= 0) 1 else -1)) - d
+        }
+    }
+
 class DoubleMathTest {
 
     @Test fun trigonometric() {
@@ -118,6 +132,30 @@ class DoubleMathTest {
 
         for (invalid in listOf(-1.00001, 1.00001, Double.NaN, Double.MAX_VALUE, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)) {
             assertTrue(atanh(invalid).isNaN())
+        }
+    }
+
+    @Test fun cubeRoots() {
+        val testingPairs = mapOf(
+            Double.NaN to Double.NaN,
+            Double.POSITIVE_INFINITY to Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY to Double.NEGATIVE_INFINITY,
+            Double.fromBits(0x0010000000000000) to 2.812644285236262E-103, // smallest normal value
+            Double.fromBits(0x1L) to 1.7031839360032603E-108, // smallest value (denormal)
+            Double.MAX_VALUE to 5.643803094122362E102,
+            0.0 to 0.0,
+            0.9 to 0.9654893846056297,
+            9.9 to 2.1472291690189413,
+            27.0 to 3.0,
+            399.1289 to 7.362710510208026,
+            8123.452 to 20.102351976782558,
+            21717.639 to 27.9,
+            392890.22 to 73.24147345684439
+        )
+
+        for ((x, result) in testingPairs) {
+            assertEquals(result, cbrt(x), if (result.isFinite()) 2.0 * result.ulp else 0.0)
+            assertEquals(cbrt(-x), -cbrt(x))
         }
     }
 
@@ -465,6 +503,30 @@ class FloatMathTest {
 
         for (invalid in listOf(-1.00001F, 1.00001F, Float.NaN, Float.MAX_VALUE, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)) {
             assertTrue(atanh(invalid).isNaN())
+        }
+    }
+
+    @Test fun cubeRoots() {
+        val testingPairs = mapOf(
+            Float.NaN to Float.NaN,
+            Float.POSITIVE_INFINITY to Float.POSITIVE_INFINITY,
+            Float.NEGATIVE_INFINITY to Float.NEGATIVE_INFINITY,
+            Float.fromBits(0x00800000) to 2.2737368E-13f, // smallest normal value
+            Float.fromBits(0x1) to 1.1190347E-15f, // smallest value (denormal)
+            Float.MAX_VALUE to 6.9814636E12f,
+            0.0f to 0.0f,
+            0.9f to 0.9654894f,
+            9.9f to 2.1472292f,
+            27.0f to 3.0f,
+            399.1289f to 7.3627105f,
+            8123.452f to 20.102352f,
+            21717.639f to 27.9f,
+            392890.22f to 73.24147f
+        )
+
+        for ((x, result) in testingPairs) {
+            assertEquals(result, cbrt(x), if (result.isFinite()) 2.0f * result.ulpCommon else 0.0f)
+            assertEquals(cbrt(-x), -cbrt(x))
         }
     }
 
