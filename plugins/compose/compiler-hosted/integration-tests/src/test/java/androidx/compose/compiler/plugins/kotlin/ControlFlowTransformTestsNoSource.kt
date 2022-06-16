@@ -33,9 +33,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
@@ -46,9 +43,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -66,9 +60,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             private fun Test(%composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               if (%changed !== 0 || !%composer.skipping) {
                 A(a, %composer, 0)
@@ -78,9 +69,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -99,9 +87,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
@@ -111,9 +96,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -141,9 +123,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
@@ -159,9 +138,6 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
