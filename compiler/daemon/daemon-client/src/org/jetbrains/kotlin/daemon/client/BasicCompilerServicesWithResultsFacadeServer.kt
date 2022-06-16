@@ -63,7 +63,6 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                 ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
                 ReportSeverity.INFO -> CompilerMessageSeverity.INFO
                 ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
-                else -> throw IllegalStateException("Unexpected compiler message report severity $severity")
             }
             if (message != null) {
                 report(compilerSeverity, message, attachment as? CompilerMessageSourceLocation)
@@ -92,7 +91,7 @@ private fun MessageCollector.reportUnexpected(category: Int, severity: Int, mess
         ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
         ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
         ReportSeverity.INFO -> CompilerMessageSeverity.INFO
-        else -> CompilerMessageSeverity.LOGGING
+        ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
 
     report(compilerMessageSeverity, "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment")

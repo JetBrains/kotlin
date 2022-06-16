@@ -20,6 +20,8 @@ import kotlin.jvm.functions.Function0;
 import org.apache.maven.plugin.logging.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.build.report.ICReporter;
+import org.jetbrains.kotlin.build.report.ICReporterKt;
 import org.jetbrains.kotlin.build.report.ICReporterBase;
 
 import java.io.File;
@@ -69,23 +71,28 @@ public class MavenICReporter extends ICReporterBase {
     }
 
     @Override
-    public void report(@NotNull Function0<String> getMessage) {
+    public void report(@NotNull Function0<String> getMessage, @NotNull ICReporter.ReportSeverity severity) {
         switch (logLevel) {
             case NONE:
                 break;
             case INFO:
-                log.info(getMessage.invoke());
+                if (severity == ICReporter.ReportSeverity.WARNING) {
+                    log.warn(getMessage.invoke());
+                } else if (severity == ICReporter.ReportSeverity.INFO) {
+                    log.info(getMessage.invoke());
+                } else if (severity == ICReporter.ReportSeverity.DEBUG) {
+                    // Don't log
+                } else throw new IllegalArgumentException(severity.toString() + " is not yet handled");
                 break;
             case DEBUG:
-                log.debug(getMessage.invoke());
+                if (severity == ICReporter.ReportSeverity.WARNING) {
+                    log.warn(getMessage.invoke());
+                } else if (severity == ICReporter.ReportSeverity.INFO) {
+                    log.info(getMessage.invoke());
+                } else if (severity == ICReporter.ReportSeverity.DEBUG) {
+                    log.debug(getMessage.invoke());
+                } else throw new IllegalArgumentException(severity.toString() + " is not yet handled");
                 break;
-        }
-    }
-
-    @Override
-    public void reportVerbose(@NotNull Function0<String> getMessage) {
-        if (logLevel == LogLevel.DEBUG) {
-            log.debug(getMessage.invoke());
         }
     }
 
@@ -97,7 +104,7 @@ public class MavenICReporter extends ICReporterBase {
     @Override
     public void reportCompileIteration(boolean b, @NotNull Collection<? extends File> sourceFiles, @NotNull ExitCode exitCode) {
         compiledKotlinFiles.addAll(sourceFiles);
-        report(() -> "Kotlin compile iteration: " + pathsAsString(sourceFiles));
-        report(() -> "Exit code: " + exitCode.toString());
+        ICReporterKt.info(this, () -> "Kotlin compile iteration: " + pathsAsString(sourceFiles));
+        ICReporterKt.info(this, () -> "Exit code: " + exitCode.toString());
     }
 }

@@ -18,7 +18,7 @@ internal fun DaemonMessageReporterAsync(
     compilationOptions: CompilationOptions
 ): DaemonMessageReporter =
     if (ReportCategory.DAEMON_MESSAGE.code in compilationOptions.reportCategories) {
-        val mySeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)!!
+        val mySeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)
         DaemonMessageReporterAsyncAsyncImpl(servicesFacade, mySeverity)
     } else {
         DummyDaemonMessageReporterAsync

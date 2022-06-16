@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.daemon.report
 
+import com.google.common.annotations.VisibleForTesting
+import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
+import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity.DEBUG
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
-import org.jetbrains.kotlin.build.report.ICReporterBase
-import org.jetbrains.kotlin.build.report.RemoteICReporter
 import java.io.File
-import java.util.*
 
 // todo: sync BuildReportICReporterAsync
-internal class BuildReportICReporter(
+@VisibleForTesting
+class BuildReportICReporter(
     private val compilationResults: CompilationResults,
     rootDir: File,
     private val isVerbose: Boolean = false
@@ -22,14 +25,10 @@ internal class BuildReportICReporter(
     private val icLogLines = arrayListOf<String>()
     private val recompilationReason = HashMap<File, String>()
 
-    override fun report(message: () -> String) {
-        icLogLines.add(message())
-    }
+    override fun report(message: () -> String, severity: ReportSeverity) {
+        if (severity == DEBUG && !isVerbose) return
 
-    override fun reportVerbose(message: () -> String) {
-        if (isVerbose) {
-            report(message)
-        }
+        icLogLines.add(message())
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {

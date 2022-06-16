@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
@@ -385,7 +383,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun reportCategories(verbose: Boolean): Array<Int> =
         if (!verbose) {
-            arrayOf(ReportCategory.COMPILER_MESSAGE.code)
+            arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code)
         } else {
             ReportCategory.values().map { it.code }.toTypedArray()
         }

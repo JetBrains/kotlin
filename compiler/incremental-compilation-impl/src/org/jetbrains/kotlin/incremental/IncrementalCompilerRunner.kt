@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.suffixIfNot
 import java.io.File
 
 abstract class IncrementalCompilerRunner<
@@ -179,8 +180,9 @@ abstract class IncrementalCompilerRunner<
                         }
                         return exitCode
                     } catch (e: Throwable) {
-                        reporter.report {
-                            "Incremental compilation failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+                        reporter.warn {
+                            "Incremental compilation failed: ${e.stackTraceToString().suffixIfNot("\n")}" +
+                                    "Falling back to non-incremental compilation"
                         }
                         rebuildReason = BuildAttribute.INCREMENTAL_COMPILATION_FAILED
                     }
@@ -188,8 +190,9 @@ abstract class IncrementalCompilerRunner<
                 is CompilationMode.Rebuild -> rebuildReason = compilationMode.reason
             }
         } catch (e: Exception) {
-            reporter.report {
-                "Incremental compilation analysis failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+            reporter.warn {
+                "Incremental compilation analysis failed: ${e.stackTraceToString().suffixIfNot("\n")}" +
+                        "Falling back to non-incremental compilation"
             }
         } finally {
             if (!caches.close(flush = true)) {

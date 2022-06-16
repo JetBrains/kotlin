@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.daemon.report
 
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.daemon.common.*
-import java.util.*
 
 fun getBuildReporter(
     servicesFacade: CompilerServicesFacadeBase,
@@ -32,8 +32,14 @@ fun getBuildReporter(
     val reporters = ArrayList<RemoteICReporter>()
 
     if (ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories) {
-        val isVerbose = compilationOptions.reportSeverity == ReportSeverity.DEBUG.code
-        reporters.add(DebugMessagesICReporter(servicesFacade, root, isVerbose = isVerbose))
+        reporters.add(
+            DebugMessagesICReporter(
+                servicesFacade = servicesFacade,
+                rootDir = root,
+                reportSeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)
+                    .getSeverity(mapErrorToWarning = true, mapInfoToWarning = true)
+            )
+        )
     }
 
     val requestedResults = compilationOptions
@@ -62,4 +68,44 @@ fun getBuildReporter(
             .let { RemoteBuildMetricsReporterAdapter(it, areBuildMetricsNeeded, compilationResults) }
 
     return RemoteBuildReporter(CompositeICReporter(reporters), metricsReporter)
+}
+
+internal fun ReportSeverity.getSeverity(
+
+    /**
+     * If true, [ReportSeverity.ERROR] will be mapped to [ICReporter.ReportSeverity.WARNING] (i.e., when [ReportSeverity.ERROR] is
+     * specified, [ICReporter.ReportSeverity.WARNING] messages will also be shown).
+     *
+     * NOTE: This parameter exists only because we don't have `ICReporter.ReportSeverity.ERROR` yet. Once that we create that enum, we can
+     * remove this parameter.
+     */
+    mapErrorToWarning: Boolean,
+
+    /**
+     * If true, [ReportSeverity.INFO] will be mapped to [ICReporter.ReportSeverity.WARNING] (i.e., when [ReportSeverity.INFO] is specified,
+     * only messages with severity [ICReporter.ReportSeverity.WARNING] and above will be shown).
+     *
+     * NOTE: This parameter exists only to preserve the previous behavior (`mapInfoToWarning = true`). If `mapInfoToWarning` is never set
+     * to `true`, we can remove this parameter.
+     */
+    mapInfoToWarning: Boolean
+
+): ICReporter.ReportSeverity {
+    return when (this) {
+        ReportSeverity.ERROR -> if (mapErrorToWarning) {
+            ICReporter.ReportSeverity.WARNING
+        } else {
+            throw IllegalArgumentException(
+                "No mapping exists for `ReportSeverity.ERROR`." +
+                        " Add `ICReporter.ReportSeverity.ERROR` and remove mapErrorToWarning, or set mapErrorToWarning = true."
+            )
+        }
+        ReportSeverity.WARNING -> ICReporter.ReportSeverity.WARNING
+        ReportSeverity.INFO -> if (mapInfoToWarning) {
+            ICReporter.ReportSeverity.WARNING
+        } else {
+            ICReporter.ReportSeverity.INFO
+        }
+        ReportSeverity.DEBUG -> ICReporter.ReportSeverity.DEBUG
+    }
 }
