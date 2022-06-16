@@ -57,7 +57,10 @@ object MissingDependencyClassChecker : CallChecker {
                 return INCOMPATIBLE_CLASS.on(reportOn, source.presentableString, incompatibility)
             }
             if (source.isPreReleaseInvisible) {
-                return PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
+                return if (source.metadataVersion != null)
+                    PRE_RELEASE_CLASS_WITH_VERSION_INFO.on(reportOn, source.presentableString, source.metadataVersion.toString())
+                else
+                    PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
             }
             if (source.abiStability == DeserializedContainerAbiStability.FIR_UNSTABLE) {
                 return FIR_COMPILED_CLASS.on(reportOn, source.presentableString)

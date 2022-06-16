@@ -9,6 +9,7 @@ dependencies {
     api(project(":core:util.runtime"))
     api(kotlinStdlib())
     api(project(":kotlin-annotations-jvm"))
+    implementation(project(":core:metadata"))
 }
 
 sourceSets {

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.ClassId
@@ -100,5 +101,8 @@ class KotlinJavascriptPackageFragment(
 
         override val presentableString: String
             get() = "Package '$fqName'"
+
+        override val metadataVersion: BinaryVersion?
+            get() = null
     }
 }

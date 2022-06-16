@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 interface DeserializedContainerSource : SourceElement {
@@ -21,6 +22,8 @@ interface DeserializedContainerSource : SourceElement {
 
     // This string should only be used in error messages
     val presentableString: String
+
+    val metadataVersion: BinaryVersion?
 }
 
 enum class DeserializedContainerAbiStability {

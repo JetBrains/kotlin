@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
@@ -31,6 +32,8 @@ class FacadeClassSourceShimForFragmentCompilation(private val containingFile: Ps
         get() = DeserializedContainerAbiStability.STABLE
     override val presentableString: String
         get() = "Fragment for $containingFile"
+    override val metadataVersion: BinaryVersion?
+        get() = null
 
     override fun getContainingFile(): SourceFile {
         return containingFile

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
+import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS
+import org.jetbrains.kotlin.diagnostics.Errors.PRE_RELEASE_CLASS_WITH_VERSION_INFO
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
 import org.jetbrains.kotlin.psi.KtFile
@@ -190,7 +192,7 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (diagnostics.any { it.factory == PRE_RELEASE_CLASS || it.factory == PRE_RELEASE_CLASS_WITH_VERSION_INFO }) {
                 messageCollector.report(
                     ERROR,
                     "Pre-release classes were found in dependencies. " +

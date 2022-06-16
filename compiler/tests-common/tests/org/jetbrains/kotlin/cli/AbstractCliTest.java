@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -98,7 +100,19 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
                 .replaceAll("log4j:WARN.*\n", "");
 
+        normalizedOutputWithoutExitCode = replaceFirstNonStable(normalizedOutputWithoutExitCode);
+
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
+    }
+
+    @NotNull
+    private static String replaceFirstNonStable(@NotNull String compilerOutput) {
+        if (compilerOutput.isEmpty() || LanguageVersion.FIRST_NON_STABLE == null) {
+            return compilerOutput;
+        }
+
+        JvmMetadataVersion mv = GenerationState.Companion.getLANGUAGE_TO_METADATA_VERSION().get(LanguageVersion.FIRST_NON_STABLE);
+        return compilerOutput.replace(mv.toString(), "$FIRST_NON_STABLE$");
     }
 
     private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {

@@ -112,7 +112,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     ) {
         // Compiles the library with some non-stable language version, then compiles a usage of this library with stable LV.
         // If there's no non-stable language version yet, the test does nothing.
-        val someNonStableVersion = LanguageVersion.values().firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        val someNonStableVersion = LanguageVersion.FIRST_NON_STABLE ?: return
 
         val libraryOptions = listOf(
             "-language-version", someNonStableVersion.versionString,

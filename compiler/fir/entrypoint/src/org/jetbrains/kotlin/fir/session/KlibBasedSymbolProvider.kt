@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -105,7 +106,8 @@ class KlibBasedSymbolProvider(
                     deserializationConfiguration.reportErrorsOnPreReleaseDependencies && (moduleHeader.flags and 1) != 0
                 override val abiStability = DeserializedContainerAbiStability.STABLE
                 override val presentableString = "Package '${classId.packageFqName}'"
-
+                override val metadataVersion: BinaryVersion?
+                    get() = null
                 override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
             }
 

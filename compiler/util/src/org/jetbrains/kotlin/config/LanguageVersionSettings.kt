@@ -431,6 +431,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
 
         @JvmField
         val LATEST_STABLE = KOTLIN_1_8
+
+        @JvmField
+        val FIRST_NON_STABLE = LanguageVersion.values().firstOrNull { it > LATEST_STABLE }
     }
 }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -63,4 +64,7 @@ class JvmPackagePartSource(
     override fun toString() = "${this::class.java.simpleName}: $className"
 
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+
+    override val metadataVersion: BinaryVersion?
+        get() = knownJvmBinaryClass?.classHeader?.metadataVersion
 }
