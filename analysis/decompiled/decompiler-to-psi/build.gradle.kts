@@ -11,9 +11,19 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(intellijCore())
+
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
 }
+
+projectTest {
+    dependsOn(":dist")
+    workingDir = rootDir
+}
+
+testsJar()

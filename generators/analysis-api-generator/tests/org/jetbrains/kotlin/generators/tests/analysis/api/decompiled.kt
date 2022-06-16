@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
 
@@ -14,6 +15,15 @@ internal fun TestGroupSuite.generateDecompiledTests() {
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractClsStubBuilderTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/decompiler-to-psi/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/testData",
+    ) {
+        testClass<AbstractByDecompiledPsiStubBuilderTest> {
             model("clsFileStubBuilder", extension = null, recursive = false)
         }
     }
