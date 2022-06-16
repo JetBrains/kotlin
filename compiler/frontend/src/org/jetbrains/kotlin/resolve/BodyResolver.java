@@ -683,14 +683,14 @@ public class BodyResolver {
                 else if (ModalityUtilsKt.isFinalOrEnum(classDescriptor)) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
-                else if (KotlinBuiltIns.isExternalEnum(classDescriptor) || KotlinBuiltIns.isEnum(classDescriptor) && !isEnumClass(supertypeOwner)) {
+                else if (KotlinBuiltIns.isExternalEnum(classDescriptor) || KotlinBuiltIns.isEnum(classDescriptor) && !isExternalEnumClass(supertypeOwner)) {
                     trace.report(CLASS_CANNOT_BE_EXTENDED_DIRECTLY.on(typeReference, classDescriptor));
                 }
             }
         }
     }
 
-    private boolean isEnumClass(ClassDescriptor descriptor) {
+    private boolean isExternalEnumClass(ClassDescriptor descriptor) {
        return descriptor.getKind() == ClassKind.ENUM_CLASS && descriptor.isExternal();
     }
 
