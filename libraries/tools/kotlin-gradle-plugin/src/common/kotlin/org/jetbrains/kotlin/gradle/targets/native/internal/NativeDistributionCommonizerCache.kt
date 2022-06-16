@@ -12,37 +12,35 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import java.io.File
 import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.Serializable
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-internal class NativeDistributionCommonizationCache(
+class NativeDistributionCommonizerCache(
+    private val outputDirectory: File,
+    private val konanHome: File,
     private val logger: Logger,
-    private val isCachingEnabled: Boolean,
-    private val commonizer: NativeDistributionCommonizer
-) : NativeDistributionCommonizer {
-
+    private val isCachingEnabled: Boolean
+) : Serializable {
     fun isUpToDate(
-        konanHome: File, outputDirectory: File, outputTargets: Set<SharedCommonizerTarget>
-    ): Boolean = lock.withLock(outputDirectory) {
-        todoTargets(konanHome, outputDirectory, outputTargets)
+        outputTargets: Set<SharedCommonizerTarget>
+    ): Boolean = lock.withLock {
+        todoTargets(outputTargets)
     }.isEmpty()
 
-    override fun commonizeNativeDistribution(
-        konanHome: File,
-        outputDirectory: File,
+    /**
+     * Calls [writeCacheAction] for uncached targets and marks them as cached if it succeeds
+     */
+    fun writeCacheForUncachedTargets(
         outputTargets: Set<SharedCommonizerTarget>,
-        logLevel: CommonizerLogLevel,
-        additionalSettings: List<AdditionalCommonizerSetting<*>>,
-    ): Unit = lock.withLock(outputDirectory) {
-        val todoOutputTargets = todoTargets(konanHome, outputDirectory, outputTargets)
+        writeCacheAction: (todoTargets: Set<SharedCommonizerTarget>) -> Unit
+    ) = lock.withLock {
+        val todoOutputTargets = todoTargets(outputTargets)
         if (todoOutputTargets.isEmpty()) return@withLock
 
-        /* Invoke commonizer with only 'to do' targets */
-        commonizer.commonizeNativeDistribution(
-            konanHome, outputDirectory, todoOutputTargets, logLevel, additionalSettings
-        )
+        writeCacheAction(todoOutputTargets)
 
-        /* Mark targets as successfully commonized */
         todoOutputTargets
             .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
             .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
@@ -50,14 +48,14 @@ internal class NativeDistributionCommonizationCache(
     }
 
     private fun todoTargets(
-        konanHome: File, outputDirectory: File, outputTargets: Set<SharedCommonizerTarget>
+        outputTargets: Set<SharedCommonizerTarget>
     ): Set<SharedCommonizerTarget> {
         lock.checkLocked(outputDirectory)
         logInfo("Calculating cache state for $outputTargets")
 
         if (!isCachingEnabled) {
             logInfo("Cache disabled")
-            return if (isMissingPlatformLibraries(konanHome, outputTargets)) return emptySet()
+            return if (isMissingPlatformLibraries(outputTargets)) return emptySet()
             else outputTargets
         }
 
@@ -68,7 +66,7 @@ internal class NativeDistributionCommonizationCache(
 
         val todoOutputTargets = outputTargets - cachedOutputTargets
 
-        if (todoOutputTargets.isEmpty() || isMissingPlatformLibraries(konanHome, todoOutputTargets)) {
+        if (todoOutputTargets.isEmpty() || isMissingPlatformLibraries(todoOutputTargets)) {
             logInfo("All available targets are commonized already - Nothing to do")
             if (todoOutputTargets.isNotEmpty()) {
                 logInfo("Platforms cannot be commonized, because of missing platform libraries: $todoOutputTargets")
@@ -80,13 +78,8 @@ internal class NativeDistributionCommonizationCache(
         return todoOutputTargets
     }
 
-    private fun isCached(directory: File): Boolean {
-        val successMarkerFile = directory.resolve(".success")
-        return successMarkerFile.isFile
-    }
-
     private fun isMissingPlatformLibraries(
-        konanHome: File, missingOutputTargets: Set<CommonizerTarget>
+        missingOutputTargets: Set<CommonizerTarget>
     ): Boolean {
         // If all platform lib dirs are missing, we can also return fast from the cache without invoking
         //  the commonizer
@@ -96,15 +89,26 @@ internal class NativeDistributionCommonizationCache(
             .none { platformLibsDir -> platformLibsDir.exists() }
     }
 
+    private fun isCached(directory: File): Boolean {
+        val successMarkerFile = directory.resolve(".success")
+        return successMarkerFile.isFile
+    }
+
     /**
      * Re-entrant lock implementation capable of locking a given output directory
      * even between multiple process (Gradle Daemons)
      */
-    private val lock = object {
+    @Transient
+    private var lock = Lock()
+
+    private fun logInfo(message: String) =
+        logger.info("Native Distribution Commonization: $message")
+
+    private inner class Lock {
         private val reentrantLock = ReentrantLock()
         private val lockedOutputDirectories = mutableSetOf<File>()
 
-        fun <T> withLock(outputDirectory: File, action: () -> T): T {
+        fun <T> withLock(action: () -> T): T {
             /* Enter intra-process wide lock */
             reentrantLock.withLock {
                 if (outputDirectory in lockedOutputDirectories) {
@@ -143,6 +147,8 @@ internal class NativeDistributionCommonizationCache(
         }
     }
 
-    private fun logInfo(message: String) =
-        logger.info("Native Distribution Commonization: $message")
+    private fun readObject(input: ObjectInputStream) {
+        input.defaultReadObject()
+        lock = Lock()
+    }
 }
