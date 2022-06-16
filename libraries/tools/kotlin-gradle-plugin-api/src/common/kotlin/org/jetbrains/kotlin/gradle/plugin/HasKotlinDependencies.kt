@@ -167,6 +167,8 @@ interface KotlinDependencyHandler {
         name: String,
         version: String
     ): Dependency
+
+    fun cinterop(name: String)
 }
 
 interface HasKotlinDependencies {

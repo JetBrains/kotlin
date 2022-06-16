@@ -13,7 +13,9 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop.declareCinteropDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
@@ -279,4 +281,9 @@ class DefaultKotlinDependencyHandler(
             scope = scope,
             generateExternals = generateExternals
         )
+
+    override fun cinterop(name: String) {
+        if (parent !is GradleKpmFragment) return
+        parent.declareCinteropDependency(name)
+    }
 }
