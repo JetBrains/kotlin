@@ -64,6 +64,15 @@ class PowerAssertTest {
   }
 
   @Test
+  fun excludedRequire() {
+    val error = assertFailsWith<IllegalArgumentException> { Person("", "") }
+    assertEquals(
+      actual = error.message,
+      expected = "Failed requirement."
+    )
+  }
+
+  @Test
   fun softAssert() {
     val unknown: List<Person>? = Person.UNKNOWN
     assert(unknown != null)

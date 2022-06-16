@@ -18,4 +18,5 @@ package com.bnorm.power
 
 open class PowerAssertGradleExtension {
   var functions: List<String> = listOf("kotlin.assert")
+  var excludedSourceSets: List<String> = listOf()
 }

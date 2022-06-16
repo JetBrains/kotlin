@@ -28,7 +28,11 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     extensions.create("kotlinPowerAssert", PowerAssertGradleExtension::class.java)
   }
 
-  override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+  override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+    val project = kotlinCompilation.target.project
+    val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
+    return extension.excludedSourceSets.none { it == kotlinCompilation.defaultSourceSet.name }
+  }
 
   override fun getCompilerPluginId(): String = "com.bnorm.kotlin-power-assert"
 

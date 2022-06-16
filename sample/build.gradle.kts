@@ -66,4 +66,10 @@ configure<com.bnorm.power.PowerAssertGradleExtension> {
     "com.bnorm.power.assert",
     "com.bnorm.power.dbg"
   )
+  excludedSourceSets = listOf(
+    "commonMain",
+    "jvmMain",
+    "jsMain",
+    "nativeMain"
+  )
 }
