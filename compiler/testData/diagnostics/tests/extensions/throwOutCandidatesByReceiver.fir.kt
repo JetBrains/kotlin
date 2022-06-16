@@ -40,7 +40,7 @@ fun test5() {
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>()
+    l.sure<<!UPPER_BOUND_VIOLATED!>T<!>>()
 }
 
 

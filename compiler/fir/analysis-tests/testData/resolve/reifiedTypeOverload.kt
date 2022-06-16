@@ -32,6 +32,6 @@ import classes.foo.*
 fun <T> foo() {}
 
 fun test() {
-   <!OVERLOAD_RESOLUTION_AMBIGUITY!>nameOf<!><Bar>()
-   <!OVERLOAD_RESOLUTION_AMBIGUITY!>nameOf<!><Foo>()
+   nameOf<Bar>()
+   nameOf<Foo>()
 }
