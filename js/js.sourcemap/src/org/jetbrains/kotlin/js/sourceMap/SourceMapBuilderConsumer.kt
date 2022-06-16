@@ -2,124 +2,92 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.js.sourceMap
 
-package org.jetbrains.kotlin.js.sourceMap;
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
+import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource
+import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import java.io.*
+import java.nio.charset.StandardCharsets
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.SourceLocationConsumer;
-import org.jetbrains.kotlin.js.backend.ast.JsLocation;
-import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
+class SourceMapBuilderConsumer(
+    private val sourceBaseDir: File,
+    private val mappingConsumer: SourceMapMappingConsumer,
+    private val pathResolver: SourceFilePathResolver,
+    private val provideCurrentModuleContent: Boolean,
+    private val provideExternalModuleContent: Boolean
+) : SourceLocationConsumer {
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
+    private val sourceStack = mutableListOf<Any?>()
 
-public class SourceMapBuilderConsumer implements SourceLocationConsumer {
-    @NotNull
-    private final File sourceBaseDir;
-
-    @NotNull
-    private final SourceMapMappingConsumer mappingConsumer;
-
-    @NotNull
-    private final SourceFilePathResolver pathResolver;
-
-    private final boolean provideCurrentModuleContent;
-
-    private final boolean provideExternalModuleContent;
-
-    @NotNull
-    private final List<Object> sourceStack = new ArrayList<>();
-
-    public SourceMapBuilderConsumer(
-            @NotNull File sourceBaseDir,
-            @NotNull SourceMapMappingConsumer mappingConsumer,
-            @NotNull SourceFilePathResolver pathResolver,
-            boolean provideCurrentModuleContent, boolean provideExternalModuleContent
-    ) {
-        this.sourceBaseDir = sourceBaseDir;
-        this.mappingConsumer = mappingConsumer;
-        this.pathResolver = pathResolver;
-        this.provideCurrentModuleContent = provideCurrentModuleContent;
-        this.provideExternalModuleContent = provideExternalModuleContent;
+    override fun newLine() {
+        mappingConsumer.newLine()
     }
 
-    @Override
-    public void newLine() {
-        mappingConsumer.newLine();
+    override fun pushSourceInfo(info: Any?) {
+        sourceStack.add(info)
+        addMapping(info)
     }
 
-    @Override
-    public void pushSourceInfo(@Nullable Object info) {
-        sourceStack.add(info);
-        addMapping(info);
+    override fun popSourceInfo() {
+        sourceStack.popLast()
+        addMapping(sourceStack.lastOrNull())
     }
 
-    @Override
-    public void popSourceInfo() {
-        sourceStack.remove(sourceStack.size() - 1);
-        Object sourceInfo = !sourceStack.isEmpty() ? sourceStack.get(sourceStack.size() - 1) : null;
-        addMapping(sourceInfo);
-    }
-
-    private void addMapping(@Nullable Object sourceInfo) {
-        if (sourceInfo == null) {
-            mappingConsumer.addEmptyMapping();
-        }
-        if (sourceInfo instanceof PsiElement) {
-            PsiElement element = (PsiElement) sourceInfo;
-            if (CallUtilKt.isFakePsiElement(element)) return;
-            try {
-                JsLocation location = PsiUtils.extractLocationFromPsi(element, pathResolver);
-                PsiFile psiFile = element.getContainingFile();
-                File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
-                Supplier<Reader> contentSupplier;
-                if (provideCurrentModuleContent) {
-                    contentSupplier = () -> {
-                        try {
-                            return new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"));
-                        }
-                        catch (IOException e) {
-                            return null;
-                        }
-                    };
-                }
-                else {
-                    contentSupplier = () -> null;
-                }
-                mappingConsumer.addMapping(location.getFile(), null, contentSupplier, location.getStartLine(), location.getStartChar());
-            }
-            catch (IOException e) {
-                throw new RuntimeException("IO error occurred generating source maps", e);
-            }
-        }
-        else if (sourceInfo instanceof JsLocationWithSource) {
-            JsLocationWithSource location = (JsLocationWithSource) sourceInfo;
-            Supplier<Reader> contentSupplier = provideExternalModuleContent ? location.getSourceProvider()::invoke : () -> null;
-            String path;
-
-            File absFile = new File(location.getFile()).isAbsolute() ?
-                           new File(location.getFile()) :
-                           new File(sourceBaseDir, location.getFile());
-            if (absFile.isAbsolute()) {
+    private fun addMapping(sourceInfo: Any?) {
+        when (sourceInfo) {
+            null -> mappingConsumer.addEmptyMapping()
+            is PsiElement -> {
+                // This branch is only taken on the legacy backend
+                if (sourceInfo.isFakePsiElement) return
                 try {
-                    path = pathResolver.getPathRelativeToSourceRoots(absFile);
-                }
-                catch (IOException e) {
-                    path = location.getFile();
+                    val (sourceFilePath, startLine, startChar) = PsiUtils.extractLocationFromPsi(sourceInfo, pathResolver)
+                    val psiFile = sourceInfo.containingFile
+                    val file = File(psiFile.viewProvider.virtualFile.path)
+                    val contentSupplier = if (provideCurrentModuleContent) {
+                        {
+                            try {
+                                InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
+                            } catch (e: IOException) {
+                                null
+                            }
+                        }
+                    } else {
+                        { null }
+                    }
+                    mappingConsumer.addMapping(sourceFilePath, null, contentSupplier, startLine, startChar)
+                } catch (e: IOException) {
+                    throw RuntimeException("IO error occurred generating source maps", e)
                 }
             }
-            else {
-                path = location.getFile();
+            is JsLocationWithSource -> {
+                val contentSupplier = if (provideExternalModuleContent) sourceInfo.sourceProvider else {
+                    { null }
+                }
+                val sourceFile = File(sourceInfo.file)
+                val absFile = if (sourceFile.isAbsolute) sourceFile else File(sourceBaseDir, sourceInfo.file)
+                val path = if (absFile.isAbsolute) {
+                    try {
+                        pathResolver.getPathRelativeToSourceRoots(absFile)
+                    } catch (e: IOException) {
+                        sourceInfo.file
+                    }
+                } else {
+                    sourceInfo.file
+                }
+                mappingConsumer.addMapping(
+                    path,
+                    sourceInfo.identityObject,
+                    contentSupplier,
+                    sourceInfo.startLine,
+                    sourceInfo.startChar
+                )
             }
-            mappingConsumer.addMapping(path, location.getIdentityObject(), contentSupplier,
-                               location.getStartLine(), location.getStartChar());
+            is JsNode -> { /* Can occur on legacy BE, not sure if it's a bug or not. */ }
+            else -> error("Unexpected sourceInfo: $sourceInfo")
         }
     }
 }
