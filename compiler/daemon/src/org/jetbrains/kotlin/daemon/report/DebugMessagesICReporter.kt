@@ -5,33 +5,41 @@
 
 package org.jetbrains.kotlin.daemon.report
 
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.daemon.common.*
+import com.google.common.annotations.VisibleForTesting
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.RemoteICReporter
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.ReportCategory
+import org.jetbrains.kotlin.daemon.common.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.report
 import java.io.File
 
-internal class DebugMessagesICReporter(
+@VisibleForTesting
+class DebugMessagesICReporter(
     private val servicesFacade: CompilerServicesFacadeBase,
     rootDir: File,
-    private val isVerbose: Boolean
+    private val reportSeverity: ICReporter.ReportSeverity
 ) : ICReporterBase(rootDir), RemoteICReporter {
-    override fun report(message: () -> String) {
-        servicesFacade.report(
-            ReportCategory.IC_MESSAGE,
-            ReportSeverity.DEBUG, message()
-        )
-    }
 
-    override fun reportVerbose(message: () -> String) {
-        if (isVerbose) {
-            report(message)
-        }
+    override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
+        if (severity.level < reportSeverity.level) return
+
+        servicesFacade.report(ReportCategory.IC_MESSAGE, severity.getSeverity(), message())
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
     }
 
     override fun flush() {
+    }
+}
+
+internal fun ICReporter.ReportSeverity.getSeverity(): ReportSeverity {
+    return when (this) {
+        ICReporter.ReportSeverity.WARNING -> ReportSeverity.WARNING
+        ICReporter.ReportSeverity.INFO -> ReportSeverity.INFO
+        ICReporter.ReportSeverity.DEBUG -> ReportSeverity.DEBUG
     }
 }

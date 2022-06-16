@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter) :
     ICReporter by buildReporter, BuildMetricsReporter by buildReporter {
 
-    override fun reportVerbose(message: () -> String) {
-        buildReporter.reportVerbose { "[ClasspathSnapshot] ${message()}" }
+    override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
+        buildReporter.report({ "[ClasspathSnapshot] ${message()}" }, severity)
     }
 
     fun reportVerboseWithLimit(maxLength: Int = 1000, message: () -> String) {

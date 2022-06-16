@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.daemon.report
 
+import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.CompileIterationResult
-import org.jetbrains.kotlin.build.report.ICReporterBase
-import org.jetbrains.kotlin.build.report.RemoteICReporter
 import java.io.File
 
 internal class CompileIterationICReporter(
@@ -23,10 +24,7 @@ internal class CompileIterationICReporter(
         )
     }
 
-    override fun report(message: () -> String) {
-    }
-
-    override fun reportVerbose(message: () -> String) {
+    override fun report(message: () -> String, severity: ReportSeverity) {
     }
 
     override fun flush() {

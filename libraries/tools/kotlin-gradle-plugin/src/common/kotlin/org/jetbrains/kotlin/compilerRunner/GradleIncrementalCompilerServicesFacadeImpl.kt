@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.logging.GradleBufferingMessageCollector
-import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.daemon.common.ReportSeverity.*
+import org.jetbrains.kotlin.gradle.logging.*
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.server.UnicastRemoteObject
@@ -27,7 +27,13 @@ internal open class GradleCompilerServicesFacadeImpl(
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         when (ReportCategory.fromCode(category)) {
             ReportCategory.IC_MESSAGE -> {
-                log.kotlinDebug { "[IC] $message" }
+                @Suppress("UNUSED_VARIABLE")
+                val unusedValueForExhaustiveWhen = when (ReportSeverity.fromCode(severity)) {
+                    ERROR -> log.kotlinError { "[IC] $message" }
+                    WARNING -> log.kotlinWarn { "[IC] $message" }
+                    INFO -> log.kotlinInfo { "[IC] $message" }
+                    DEBUG -> log.kotlinDebug { "[IC] $message" }
+                }
             }
             ReportCategory.DAEMON_MESSAGE -> {
                 log.kotlinDebug { "[DAEMON] $message" }
