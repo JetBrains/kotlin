@@ -97,6 +97,24 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     }
 
     @Test
+    @TestMetadata("ContextReceiversCallableMembers")
+    public void testContextReceiversCallableMembers() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
+    }
+
+    @Test
+    @TestMetadata("ContextReceiversOnClass")
+    public void testContextReceiversOnClass() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
+    }
+
+    @Test
+    @TestMetadata("ContextReceiversOnTopLevelCallables")
+    public void testContextReceiversOnTopLevelCallables() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
+    }
+
+    @Test
     @TestMetadata("Contracts")
     public void testContracts() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Contracts/");

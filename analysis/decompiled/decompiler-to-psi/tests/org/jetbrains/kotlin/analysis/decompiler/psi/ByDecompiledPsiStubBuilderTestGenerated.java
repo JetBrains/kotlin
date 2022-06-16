@@ -97,9 +97,21 @@ public class ByDecompiledPsiStubBuilderTestGenerated extends AbstractByDecompile
     }
 
     @Test
-    @TestMetadata("ContextReceivers")
-    public void testContextReceivers() throws Exception {
-        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceivers/");
+    @TestMetadata("ContextReceiversCallableMembers")
+    public void testContextReceiversCallableMembers() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversCallableMembers/");
+    }
+
+    @Test
+    @TestMetadata("ContextReceiversOnClass")
+    public void testContextReceiversOnClass() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnClass/");
+    }
+
+    @Test
+    @TestMetadata("ContextReceiversOnTopLevelCallables")
+    public void testContextReceiversOnTopLevelCallables() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
     }
 
     @Test
