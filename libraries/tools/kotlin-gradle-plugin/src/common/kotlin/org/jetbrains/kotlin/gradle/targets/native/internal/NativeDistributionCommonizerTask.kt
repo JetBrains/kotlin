@@ -39,21 +39,24 @@ internal open class NativeDistributionCommonizerTask
 
     private val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
 
-    private val isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
-
     private val logLevel = project.commonizerLogLevel
 
     private val additionalSettings = project.additionalCommonizerSettings
 
-    private val kotlinVersion by lazy { project.getKotlinPluginVersion() }
-
     @get:Internal
     internal val rootOutputDirectory: File = project.file {
-        project.file(konanHome)
+        project.file(project.konanHome)
             .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
             .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
     }
+
+    private val commonizerCache = NativeDistributionCommonizerCache(
+        outputDirectory = rootOutputDirectory,
+        konanHome = konanHome,
+        logger = logger,
+        isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
+    )
 
     @TaskAction
     protected fun run() {
@@ -62,27 +65,20 @@ internal open class NativeDistributionCommonizerTask
             settings = runnerSettings
         )
 
-        val commonizer = NativeDistributionCommonizationCache(
-            isCachingEnabled = isCachingEnabled,
-            logger = logger,
-            commonizer = GradleCliCommonizer(commonizerRunner)
-        )
-
-        commonizer.commonizeNativeDistribution(
-            konanHome = konanHome,
-            outputDirectory = rootOutputDirectory,
-            outputTargets = commonizerTargets,
-            logLevel = logLevel,
-            additionalSettings = additionalSettings,
-        )
+        commonizerCache.writeCacheForUncachedTargets(commonizerTargets) { todoOutputTargets ->
+            val commonizer = GradleCliCommonizer(commonizerRunner)
+            /* Invoke commonizer with only 'to do' targets */
+            commonizer.commonizeNativeDistribution(
+                konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalSettings
+            )
+        }
     }
 
     init {
         project.registerCommonizerClasspathConfigurationIfNecessary()
-        // TODO(alakotka): Support upToDate checks
-//        outputs.upToDateWhen {
-//            commonizer.isUpToDate(konanHome, rootOutputDirectory, commonizerTargets)
-//        }
+        outputs.upToDateWhen {
+            commonizerCache.isUpToDate(commonizerTargets)
+        }
     }
 }
 
