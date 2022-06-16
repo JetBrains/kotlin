@@ -9,8 +9,14 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 interface ICReporter {
-    fun report(message: () -> String)
-    fun reportVerbose(message: () -> String)
+    enum class ReportSeverity { WARNING, INFO, DEBUG }
+
+    fun report(message: () -> String, severity: ReportSeverity)
+
+    // TODO: Move these 3 functions outside of this interface and make them extension functions so they can't be overridden
+    fun warn(message: () -> String) = report(message, severity = ReportSeverity.WARNING)
+    fun report(message: () -> String) = report(message, severity = ReportSeverity.INFO)
+    fun reportVerbose(message: () -> String) = report(message, severity = ReportSeverity.DEBUG)
 
     fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode)
     fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String)
@@ -18,9 +24,14 @@ interface ICReporter {
     fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String)
 }
 
+fun ICReporter.ReportSeverity.level(): Int = when (this) {
+    ICReporter.ReportSeverity.WARNING -> 3
+    ICReporter.ReportSeverity.INFO -> 2
+    ICReporter.ReportSeverity.DEBUG -> 1
+}
+
 object DoNothingICReporter : ICReporter {
-    override fun report(message: () -> String) {}
-    override fun reportVerbose(message: () -> String) {}
+    override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
     override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}

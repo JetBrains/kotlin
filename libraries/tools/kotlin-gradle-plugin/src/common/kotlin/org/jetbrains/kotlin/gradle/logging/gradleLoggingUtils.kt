@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
-import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 
@@ -27,10 +26,21 @@ internal inline fun Logger.kotlinDebug(message: () -> String) {
     }
 }
 
-internal inline fun KotlinLogger.kotlinDebug(fn: () -> String) {
+internal inline fun KotlinLogger.kotlinError(message: () -> String) {
+    error("[KOTLIN] ${message()}")
+}
+
+internal inline fun KotlinLogger.kotlinWarn(message: () -> String) {
+    warn("[KOTLIN] ${message()}")
+}
+
+internal inline fun KotlinLogger.kotlinInfo(message: () -> String) {
+    info("[KOTLIN] ${message()}")
+}
+
+internal inline fun KotlinLogger.kotlinDebug(message: () -> String) {
     if (isDebugEnabled) {
-        val msg = fn()
-        debug("[KOTLIN] $msg")
+        debug("[KOTLIN] ${message()}")
     }
 }
 

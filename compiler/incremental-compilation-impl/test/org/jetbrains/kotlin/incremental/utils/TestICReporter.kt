@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.utils
 
+import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import java.io.File
@@ -29,10 +30,7 @@ class TestICReporter : ICReporterBase() {
     var exitCode: ExitCode = ExitCode.OK
         private set
 
-    override fun report(message: () -> String) {
-    }
-
-    override fun reportVerbose(message: () -> String) {
+    override fun report(message: () -> String, severity: ReportSeverity) {
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
