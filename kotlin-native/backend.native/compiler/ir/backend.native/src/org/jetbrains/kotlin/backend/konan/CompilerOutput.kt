@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
+import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -75,35 +77,72 @@ internal fun produceCStubs(context: Context) {
     }
 }
 
-private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<String>) {
+private val BaseKotlinLibrary.isStdlib: Boolean
+    get() = uniqueName == KONAN_STDLIB_NAME
+
+
+private data class LlvmModules(
+        val runtimeModules: List<LLVMModuleRef>,
+        val additionalModules: List<LLVMModuleRef>
+)
+
+/**
+ * Deserialize, generate, patch all bitcode dependencies and classify them into two sets:
+ * - Runtime modules. These may be used as an input for a separate LTO (e.g. for debug builds).
+ * - Everything else.
+ */
+private fun collectLlvmModules(context: Context, generatedBitcodeFiles: List<String>): LlvmModules {
     val config = context.config
 
-    // TODO: Possibly slow, maybe to a separate phase?
-    val runtimeModules = RuntimeLinkageStrategy.pick(context).run()
+    val (bitcodePartOfStdlib, bitcodeLibraries) = context.llvm.bitcodeToLink
+            .partition { it.isStdlib && context.producedLlvmModuleContainsStdlib }
+            .toList()
+            .map { libraries ->
+                libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
+            }
 
-    val launcherNativeLibraries = config.launcherNativeLibraries
+    val nativeLibraries = config.nativeLibraries + config.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
-
-    linkObjC(context)
-
-    val nativeLibraries = config.nativeLibraries + launcherNativeLibraries
-
-    val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
-    val exceptionsSupportNativeLibrary = config.exceptionsSupportNativeLibrary
-    val bitcodeFiles = (nativeLibraries + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toMutableSet()
-    if (config.produce == CompilerOutputKind.DYNAMIC_CACHE)
-        bitcodeFiles += exceptionsSupportNativeLibrary
+    val exceptionsSupportNativeLibrary = listOf(config.exceptionsSupportNativeLibrary)
+            .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
+    val additionalBitcodeFiles = nativeLibraries +
+            generatedBitcodeFiles +
+            additionalBitcodeFilesToLink +
+            bitcodeLibraries +
+            exceptionsSupportNativeLibrary
+
+    val runtimeNativeLibraries = context.config.runtimeNativeLibraries
+            .takeIf { context.producedLlvmModuleContainsStdlib }.orEmpty()
+
+
+    fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
+        val parsedModule = parseBitcodeFile(bitcodeFile)
+        if (!context.shouldUseDebugInfoFromNativeLibs()) {
+            LLVMStripModuleDebugInfo(parsedModule)
+        }
+        parsedModule
+    }
+
+    val runtimeModules = parseBitcodeFiles(runtimeNativeLibraries + bitcodePartOfStdlib)
+    val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
+    return LlvmModules(
+            runtimeModules.ifNotEmpty { this + context.generateRuntimeConstantsModule() } ?: emptyList(),
+            additionalModules + listOfNotNull(patchObjCRuntimeModule(context))
+    )
+}
+
+private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<String>) {
+    val (runtimeModules, additionalModules) = collectLlvmModules(context, generatedBitcodeFiles)
+    // TODO: Possibly slow, maybe to a separate phase?
+    val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(context, runtimeModules).run()
 
     val llvmModule = context.llvmModule!!
-    runtimeModules.forEach {
+    (optimizedRuntimeModules + additionalModules).forEach {
         val failed = llvmLinkModules2(context, llvmModule, it)
         if (failed != 0) {
             error("Failed to link ${it.getName()}")
         }
-    }
-    bitcodeFiles.forEach {
-        parseAndLinkBitcodeFile(context, llvmModule, it)
     }
 }
 

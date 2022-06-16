@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
-internal fun linkObjC(context: Context) {
+internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     val config = context.config
-    if (!(config.produce.isFinalBinary && config.target.family.isAppleFamily)) return
+    if (!(config.produce.isFinalBinary && config.target.family.isAppleFamily)) return null
 
     val patchBuilder = PatchBuilder(context)
     patchBuilder.addObjCPatches()
@@ -24,15 +24,7 @@ internal fun linkObjC(context: Context) {
     val parsedModule = parseBitcodeFile(bitcodeFile)
 
     patchBuilder.buildAndApply(parsedModule)
-
-    if (!context.shouldUseDebugInfoFromNativeLibs()) {
-        LLVMStripModuleDebugInfo(parsedModule)
-    }
-
-    val failed = llvmLinkModules2(context, context.llvmModule!!, parsedModule)
-    if (failed != 0) {
-        throw Error("failed to link $bitcodeFile")
-    }
+    return parsedModule
 }
 
 private class PatchBuilder(val context: Context) {
