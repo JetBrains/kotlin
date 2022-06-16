@@ -52,7 +52,7 @@ abstract class KotlinToolRunner(
                 logger: Logger
             ) = GradleExecutionContext(
                 filesProvider = objectFactory.fileCollection()::from,
-                javaexec = execOperations::javaexec,
+                javaexec = { spec -> execOperations.javaexec(spec) }, // execOperations::javaexec won't work due to different Classloaders
                 logger = logger
             )
         }
