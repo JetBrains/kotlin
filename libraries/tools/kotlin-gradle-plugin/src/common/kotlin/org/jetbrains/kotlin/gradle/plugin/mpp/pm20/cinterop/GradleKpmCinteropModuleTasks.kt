@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop
 
-import org.apache.tools.ant.types.PropertySet
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -30,13 +28,8 @@ import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-abstract class DefaultTaskWithOutputFile : DefaultTask() {
-    @get:OutputFile
-    abstract val outputFile: Provider<File>
-}
-
 @Suppress("LeakingThis")
-abstract class CinteropTask : DefaultTaskWithOutputFile() {
+abstract class CinteropTask : DefaultTask() {
 
     @get:Input
     abstract val interopName: Property<String>
@@ -90,7 +83,7 @@ abstract class CinteropTask : DefaultTaskWithOutputFile() {
     abstract val artifactName: Property<String>
 
     @get:OutputFile
-    override val outputFile: Provider<File> = outputDir.map { it.asFile.resolve(artifactName.get() + ".klib") }
+    val outputFile: Provider<File> = outputDir.map { it.asFile.resolve(artifactName.get() + ".klib") }
 
     init {
         //default values
@@ -124,7 +117,7 @@ abstract class CinteropTask : DefaultTaskWithOutputFile() {
 }
 
 @Suppress("LeakingThis")
-abstract class CommonizerTask : DefaultTaskWithOutputFile() {
+abstract class ModuleCommonizerTask : DefaultTask() {
 
     @get:Input
     abstract val libraryName: Property<String>
@@ -135,17 +128,11 @@ abstract class CommonizerTask : DefaultTaskWithOutputFile() {
     @get:Input
     abstract val dependencies: SetProperty<CommonizerDependency>
 
-    private val commonizerTarget: Provider<SharedCommonizerTarget> = libraries.keySet().map { SharedCommonizerTarget(it) }
-
-    @get:Internal
-    abstract val outputDir: DirectoryProperty
+    @get:Input
+    abstract val targets: SetProperty<SharedCommonizerTarget>
 
     @get:OutputDirectory
-    override val outputFile: Provider<File> = outputDir.map {
-        //based on GradleCliCommonizer inner logic
-        val inputLibName = libraries.get().values.firstOrNull()?.nameWithoutExtension.orEmpty()
-        it.asFile.resolve(commonizerTarget.get().identityString + "/" + inputLibName)
-    }
+    abstract val outputDir: DirectoryProperty
 
     init {
         //default values
@@ -157,19 +144,30 @@ abstract class CommonizerTask : DefaultTaskWithOutputFile() {
         GradleCliCommonizer(project).commonizeLibraries(
             konanHome = project.file(project.konanHome),
             inputLibraries = libraries.get().values.toSet(),
-            outputTargets = setOf(commonizerTarget.get()),
+            outputTargets = targets.get(),
             dependencyLibraries = dependencies.get() + getNativeDistributionDependencies(),
             outputDirectory = outputDir.get().asFile,
             logLevel = project.commonizerLogLevel,
             additionalSettings = project.additionalCommonizerSettings
         )
-        logger.info("Common library was generated: " + outputFile.get().absolutePath)
     }
 
     private fun getNativeDistributionDependencies(): Set<TargetedCommonizerDependency> {
-        val allTargets = libraries.get().keys.map { LeafCommonizerTarget(it) } + commonizerTarget.get()
+        val allTargets = libraries.get().keys.map { LeafCommonizerTarget(it) } + targets.get()
         return allTargets.flatMap { target ->
             project.getNativeDistributionDependencies(target).map { TargetedCommonizerDependency(target, it) }
         }.toSet()
+    }
+}
+
+internal abstract class DumbCommonizerTask : DefaultTask() {
+
+    @get:OutputDirectory
+    abstract val outputFile: Property<File>
+
+    @TaskAction
+    fun run() {
+        //NOTE! Commonization should be invoked via ModuleCommonizerTask due performance optimization
+        logger.info("Common library was generated: " + outputFile.get().absolutePath)
     }
 }
