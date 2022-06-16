@@ -20,16 +20,6 @@ import org.jetbrains.kotlin.gradle.utils.named
 
 private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
 
-/**
- * Creates an instance of [CliCommonizer] that is backed by [KotlinNativeCommonizerToolRunner] to adhere to user defined settings
- * when executing the commonizer (like jvm arguments, running in separate process, etc)
- */
-internal fun GradleCliCommonizer(project: Project): CliCommonizer {
-    return GradleCliCommonizer(
-        KotlinNativeCommonizerToolRunner(project)
-    )
-}
-
 internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToolRunner): CliCommonizer {
     return CliCommonizer(CliCommonizer.Executor { arguments ->
         commonizerToolRunner.run(arguments)
