@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.jsLibraryProvider
@@ -37,18 +38,19 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
 
                 val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
-                    allTestFiles.find { it.name == path }?.originalFile?.absolutePath?.let {
-                        return@replaceSources it
-                    }
-
-                    tryToMapLibrarySourceFile(dependencies, path)?.let {
-                        return@replaceSources it
-                    }
-
-                    path
+                    tryToMapTestFile(allTestFiles, path)
+                        ?: tryToMapLibrarySourceFile(dependencies, path)
+                        ?: path
                 }
             }
         }
+    }
+
+    private fun tryToMapTestFile(allTestFiles: Iterable<TestFile>, sourceMapPath: String): String? {
+        val testFile = allTestFiles.find { it.name == sourceMapPath }
+            ?: allTestFiles.find { "/${it.name}" == sourceMapPath }
+            ?: return null
+        return testFile.originalFile.absolutePath
     }
 
     /**
