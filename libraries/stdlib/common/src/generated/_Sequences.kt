@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1194,8 +1194,6 @@ public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
  * Returns `true` if all elements match the given [predicate].
  *
  * The operation is _terminal_.
- * 
- * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false

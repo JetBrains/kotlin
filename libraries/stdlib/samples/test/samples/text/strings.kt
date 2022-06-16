@@ -510,26 +510,17 @@ class Strings {
 
     @Sample
     fun all() {
-        val name = "fatima"
-        val containsWhiteSpace: Boolean = name.any{
-            it.isWhitespace()
-        }
-        assertFalse(containsWhiteSpace)
+        assertPrints("fatima".any(Char::isWhitespace), "false")
+        assertPrints("Ariya".all(Char::isLowerCase), "false")
 
-        val isLowerCase: (Char) -> Boolean = Char::isLowerCase
-        val charSequence = "Ariya"
-        assertFalse(charSequence.all(isLowerCase))
+        fun String.containsAllCharsOf(other: String): Boolean =
+            other.all { this.contains(it) }
 
-        val containsAllCharsOf: String.(String) -> Boolean = { bigger ->
-            bigger.all { this.contains(it) }
-        }
         val sentence = "This is a short string."
-        val line = "This is a long string with lot's of characters."
-        assertTrue(line.containsAllCharsOf(sentence))
-
-        val allSentenceCharsInsideLine = sentence.all {
-            line.contains(it)
-        }
-        assertTrue(allSentenceCharsInsideLine)
+        val line = "This is a long string with lots of characters."
+        assertPrints(line.containsAllCharsOf(sentence), "true")
+        assertPrints(sentence.containsAllCharsOf(line), "false")
     }
+
+
 }
