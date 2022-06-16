@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
@@ -57,6 +54,7 @@ private class ClassClsStubBuilder(
     private val c = outerContext.child(
         classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
     )
+    private val contextReceiversListStubBuilder = ContextReceiversListStubBuilder(c)
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -85,6 +83,7 @@ private class ClassClsStubBuilder(
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
+        contextReceiversListStubBuilder.createContextReceiverStubs(classOrObjectStub, classProto.contextReceiverTypes(c.typeTable))
         val modifierList = createModifierListForClass(classOrObjectStub)
         if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
             createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)

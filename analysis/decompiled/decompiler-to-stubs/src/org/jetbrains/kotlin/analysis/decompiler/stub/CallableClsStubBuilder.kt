@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.hasReceiver
-import org.jetbrains.kotlin.metadata.deserialization.receiverType
-import org.jetbrains.kotlin.metadata.deserialization.returnType
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
@@ -89,10 +86,12 @@ abstract class CallableClsStubBuilder(
 ) {
     protected val c = outerContext.child(typeParameters)
     protected val typeStubBuilder = TypeClsStubBuilder(c)
+    private val contextReceiversListStubBuilder = ContextReceiversListStubBuilder(c)
     protected val isTopLevel: Boolean get() = protoContainer is ProtoContainer.Package
     protected val callableStub: StubElement<out PsiElement> by lazy(LazyThreadSafetyMode.NONE) { doCreateCallableStub(parent) }
 
     fun build() {
+        contextReceiversListStubBuilder.createContextReceiverStubs(callableStub, contextReceiverTypes)
         createModifierListStub()
         val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameters)
         createReceiverTypeReferenceStub()
@@ -105,6 +104,7 @@ abstract class CallableClsStubBuilder(
     abstract val receiverAnnotations: List<ClassIdWithTarget>
 
     abstract val returnType: ProtoBuf.Type?
+    abstract val contextReceiverTypes: List<ProtoBuf.Type>
 
     private fun createReceiverTypeReferenceStub() {
         receiverType?.let {
@@ -143,6 +143,9 @@ private class FunctionClsStubBuilder(
 
     override val returnType: ProtoBuf.Type
         get() = functionProto.returnType(c.typeTable)
+
+    override val contextReceiverTypes: List<ProtoBuf.Type>
+        get() = functionProto.contextReceiverTypes(c.typeTable)
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, functionProto, functionProto.valueParameterList, protoContainer)
@@ -199,6 +202,9 @@ private class PropertyClsStubBuilder(
 
     override val returnType: ProtoBuf.Type
         get() = propertyProto.returnType(c.typeTable)
+
+    override val contextReceiverTypes: List<ProtoBuf.Type>
+        get() = propertyProto.contextReceiverTypes(c.typeTable)
 
     override fun createValueParameterList() {
     }
@@ -260,6 +266,9 @@ private class ConstructorClsStubBuilder(
 
     override val returnType: ProtoBuf.Type?
         get() = null
+
+    override val contextReceiverTypes: List<ProtoBuf.Type>
+        get() = emptyList()
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, constructorProto, constructorProto.valueParameterList, protoContainer)
