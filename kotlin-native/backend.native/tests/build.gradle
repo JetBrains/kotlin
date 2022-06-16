@@ -5417,7 +5417,7 @@ if (isAppleTarget(project)) {
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbundle-id=foo.bar"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbinary=bundleId=foo.bar"]
         }
         swiftSources = ['objcexport']
         if (isNoopGC) {
@@ -5684,7 +5684,7 @@ if (isAppleTarget(project)) {
 
         framework("Foo") {
             sources = ["framework/bundle_id/main.kt", "framework/bundle_id/lib.kt"]
-            opts = ["-Xbundle-version=FooBundleVersion", "-Xbundle-short-version-string=FooBundleShortVersionString"]
+            opts = ["-Xbinary=bundleVersion=FooBundleVersion", "-Xbinary=bundleShortVersionString=FooBundleShortVersionString"]
         }
         swiftSources = []
 

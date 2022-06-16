@@ -31,6 +31,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val gcSchedulerType by option<GCSchedulerType>()
 
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
+
+    val bundleId by stringOption()
+    val bundleShortVersionString by stringOption()
+    val bundleVersion by stringOption()
 }
 
 open class BinaryOption<T : Any>(
@@ -66,6 +70,15 @@ open class BinaryOptionRegistry {
                 }
             }
 
+    protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
+            PropertyDelegateProvider { _, property ->
+                val option = BinaryOption(property.name, StringValueParser)
+                register(option)
+                ReadOnlyProperty { _, _ ->
+                    option.compilerConfigurationKey
+                }
+            }
+
     protected inline fun <reified T : Enum<T>> option(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
             PropertyDelegateProvider { _, property ->
                 val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList()))
@@ -81,6 +94,12 @@ private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
 
     override val validValuesHint: String?
         get() = "true|false"
+}
+
+private object StringValueParser : BinaryOption.ValueParser<String> {
+    override fun parse(value: String) = value
+    override val validValuesHint: String?
+        get() = null
 }
 
 @PublishedApi
