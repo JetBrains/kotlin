@@ -253,7 +253,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     ConeUnresolvedQualifierError(typeRef.render())
                 }
             }
-            return ConeErrorType(diagnostic)
+            return ConeErrorType(diagnostic, attributes = typeRef.annotations.computeTypeAttributes(session))
         }
         if (symbol is FirTypeParameterSymbol) {
             for (part in typeRef.qualifier) {

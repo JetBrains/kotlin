@@ -39,7 +39,11 @@ sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
 
 class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
 
-class ConeErrorType(val diagnostic: ConeDiagnostic, val isUninferredParameter: Boolean = false) : ConeClassLikeType() {
+class ConeErrorType(
+    val diagnostic: ConeDiagnostic,
+    val isUninferredParameter: Boolean = false,
+    override val attributes: ConeAttributes = ConeAttributes.Empty
+) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
@@ -48,9 +52,6 @@ class ConeErrorType(val diagnostic: ConeDiagnostic, val isUninferredParameter: B
 
     override val nullability: ConeNullability
         get() = ConeNullability.UNKNOWN
-
-    override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
 
     override fun equals(other: Any?) = this === other
     override fun hashCode(): Int = System.identityHashCode(this)
