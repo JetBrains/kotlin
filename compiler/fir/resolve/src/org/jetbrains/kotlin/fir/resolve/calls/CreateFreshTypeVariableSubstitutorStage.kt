@@ -79,6 +79,12 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 }
             }
         }
+        if (csBuilder.hasContradiction) {
+            for (error in csBuilder.errors) {
+                sink.reportDiagnostic(InferenceError(error))
+            }
+            sink.yieldIfNeed()
+        }
     }
 }
 
