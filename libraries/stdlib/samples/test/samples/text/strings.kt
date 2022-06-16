@@ -521,6 +521,4 @@ class Strings {
         assertPrints(line.containsAllCharsOf(sentence), "true")
         assertPrints(sentence.containsAllCharsOf(line), "false")
     }
-
-
 }
