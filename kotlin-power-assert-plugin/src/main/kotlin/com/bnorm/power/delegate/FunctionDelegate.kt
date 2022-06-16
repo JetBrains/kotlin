@@ -52,7 +52,7 @@ interface FunctionDelegate {
       for ((i, argument) in arguments.withIndex()) {
         putValueArgument(i, argument?.deepCopyWithSymbols(parent))
       }
-      putValueArgument(arguments.size, expression)
+      putValueArgument(arguments.size, expression.deepCopyWithSymbols(parent))
     }
   }
 }
