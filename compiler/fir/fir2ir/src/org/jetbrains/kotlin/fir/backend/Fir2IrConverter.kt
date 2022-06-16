@@ -91,10 +91,6 @@ class Fir2IrConverter(
             firFile.accept(fir2irVisitor, null)
         }
 
-        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
-
-        evaluateConstants(irModuleFragment)
-
         if (irGenerationExtensions.isNotEmpty()) {
             val pluginContext = Fir2IrPluginContext(components)
             for (extension in irGenerationExtensions) {
@@ -102,6 +98,9 @@ class Fir2IrConverter(
             }
         }
 
+        irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
+
+        evaluateConstants(irModuleFragment)
     }
 
     fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
