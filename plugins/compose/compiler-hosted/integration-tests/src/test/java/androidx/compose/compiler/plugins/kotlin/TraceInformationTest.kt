@@ -44,9 +44,6 @@ class TraceInformationTest : ComposeIrTransformTest() {
             class A {
               @Composable
               fun B(x: Int, %composer: Composer?, %changed: Int) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, -1, -1, "A.B (Test.kt:4)")
-                }
                 %composer = %composer.startRestartGroup(<>)
                 sourceInformation(%composer, "C(B):Test.kt")
                 if (%changed and 0b0001 !== 0 || !%composer.skipping) {
@@ -57,17 +54,11 @@ class TraceInformationTest : ComposeIrTransformTest() {
                 %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                   tmp0_rcvr.B(x, %composer, %changed or 0b0001)
                 }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
               }
               static val %stable: Int = 0
             }
             @Composable
             fun C(%composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>, -1, -1, "C (Test.kt:8)")
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
@@ -77,9 +68,6 @@ class TraceInformationTest : ComposeIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 C(%composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """,

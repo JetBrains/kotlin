@@ -153,7 +153,6 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
@@ -611,35 +610,6 @@ class ComposableFunctionBodyTransformer(
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKERSTART)
         ).map { it.owner }.first()
-    }
-
-    private val isTraceInProgressFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.IS_TRACE_IN_PROGRESS)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.isEmpty()
-        }
-    }
-
-    private val traceEventStartFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_START)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.map { p -> p.type } == listOf(
-                context.irBuiltIns.intType,
-                context.irBuiltIns.intType,
-                context.irBuiltIns.intType,
-                context.irBuiltIns.stringType
-            )
-        }
-    }
-
-    private val traceEventEndFunction by guardedLazy {
-        getTopLevelFunctions(
-            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_END)
-        ).map { it.owner }.singleOrNull {
-            it.valueParameters.isEmpty()
-        }
     }
 
     private val sourceInformationMarkerEndFunction by guardedLazy {
@@ -1206,7 +1176,6 @@ class ComposableFunctionBodyTransformer(
             body.startOffset,
             body.endOffset,
             listOfNotNull(
-                irTraceEventStart(irFunctionSourceKey(), declaration),
                 irStartRestartGroup(
                     body,
                     scope,
@@ -1750,7 +1719,6 @@ class ComposableFunctionBodyTransformer(
                     updateScopeFunction.symbol,
                     irLambda(lambda, updateScopeBlockType)
                 ),
-                irTraceEventEnd()
             )
         )
     }
@@ -1973,42 +1941,6 @@ class ComposableFunctionBodyTransformer(
             recordSourceParameter(it, 2, scope)
         }
     }
-
-    private fun irIsTraceInProgress(): IrExpression? =
-        isTraceInProgressFunction?.let { irCall(it) }
-
-    private fun irIfTraceInProgress(body: IrExpression): IrExpression? =
-        irIsTraceInProgress()?.let { isTraceInProgress ->
-            irIf(isTraceInProgress, body)
-        }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun irTraceEventStart(key: IrExpression, declaration: IrFunction): IrExpression? =
-        traceEventStartFunction?.let { traceEventStart ->
-            val startOffset = declaration.body!!.startOffset
-            val endOffset = declaration.body!!.endOffset
-
-            val name = declaration.kotlinFqName
-            val file = declaration.file.name
-            val line = declaration.file.fileEntry.getLineNumber(declaration.startOffset)
-            val traceInfo = "$name ($file:$line)" // TODO(174715171) decide on what to log
-            val dirty1 = irConst(-1) // placeholder TODO(228314276): implement
-            val dirty2 = irConst(-1) // placeholder TODO(228314276): implement
-
-            irIfTraceInProgress(
-                irCall(traceEventStart, startOffset, endOffset).also {
-                    it.putValueArgument(0, key)
-                    it.putValueArgument(1, dirty1)
-                    it.putValueArgument(2, dirty2)
-                    it.putValueArgument(3, irConst(traceInfo))
-                }
-            )
-        }
-
-    private fun irTraceEventEnd(): IrExpression? =
-        traceEventEndFunction?.let {
-            irIfTraceInProgress(irCall(it))
-        }
 
     private fun irSourceInformationMarkerEnd(
         element: IrElement,
