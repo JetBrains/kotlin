@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
@@ -61,6 +62,8 @@ internal class FirLocalVariableAssignmentAnalyzer(
      */
     private val ephemeralConcurrentlyAssignedLocalVariables: MutableSet<FirProperty> = mutableSetOf()
 
+    private val functionStack = mutableListOf<AssignedLocalVariables>()
+
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     fun isAccessToUnstableLocalVariable(qualifiedAccessExpression: FirQualifiedAccessExpression): Boolean {
         val property = qualifiedAccessExpression.referredPropertySymbol?.fir ?: return false
@@ -101,23 +104,27 @@ internal class FirLocalVariableAssignmentAnalyzer(
             }
         }
 
-        when ((function as? FirAnonymousFunction)?.invocationKind) {
-            EventOccurrencesRange.AT_LEAST_ONCE,
-            EventOccurrencesRange.MORE_THAN_ONCE ->
-                // The function may be called repeatedly so the assignments may have already executed before we enter it again.
-                assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let { concurrentlyAssignedLocalVariables += it }
-            EventOccurrencesRange.UNKNOWN, null ->
-                // The function may not only be called repeatedly, but also stored and called later, so assignments done outside
-                // its scope after the definition might also have executed.
-                assignedLocalVariablesByFunction[function.symbol]?.all?.let { concurrentlyAssignedLocalVariables += it }
-            else -> {} // The function is called at most once so its assignments have not executed yet.
+        assignedLocalVariablesByFunction[function.symbol]?.let {
+            functionStack.add(it)
+            if (function !is FirAnonymousFunction || !function.invocationKind.isInPlace) {
+                // The function may be called twice concurrently in an SMT environment, which means any assignment it executes
+                // might in theory happen in between any check it does and a subsequent use of the variable. So if this function
+                // does any assignments, it cannot smartcast the target variables.
+                concurrentlyAssignedLocalVariables += it.insideLocalFunction
+                // The function may also stored and called later, so assignments done outside its scope after the definition
+                // might also have executed.
+                for (outerScope in functionStack) {
+                    concurrentlyAssignedLocalVariables += outerScope.outsideLocalFunction
+                }
+            }
         }
     }
 
     fun exitLocalFunction(function: FirFunction) {
         concurrentlyAssignedLocalVariablesStack.removeLast()
-        when ((function as? FirAnonymousFunction)?.invocationKind) {
-            EventOccurrencesRange.UNKNOWN, null ->
+        assignedLocalVariablesByFunction[function.symbol]?.let {
+            functionStack.popLast()
+            if (function !is FirAnonymousFunction || !function.invocationKind.isInPlace) {
                 // The function may be stored and then called later, so any access to the variables it touches
                 // is no longer smartcastable ever.
                 //
@@ -132,12 +139,10 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 //        p.memberOfSomething // Bad
                 //    }
                 //   FE1.0 has the same behavior.
-                assignedLocalVariablesByFunction[function.symbol]?.insideLocalFunction?.let {
-                    for (outerScope in concurrentlyAssignedLocalVariablesStack) {
-                        outerScope += it
-                    }
+                for (outerScope in concurrentlyAssignedLocalVariablesStack) {
+                    outerScope += it.insideLocalFunction
                 }
-            else -> {} // The function is only called inline; this is handled by CFG construction by visiting the function body.
+            }
         }
     }
 
@@ -266,9 +271,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
             return data.localFunctionToAssignedLocalVariables
         }
 
-        class AssignedLocalVariables(val outsideLocalFunction: Set<FirProperty>, val insideLocalFunction: Set<FirProperty>) {
-            val all get() = outsideLocalFunction + insideLocalFunction
-        }
+        class AssignedLocalVariables(val outsideLocalFunction: Set<FirProperty>, val insideLocalFunction: Set<FirProperty>)
 
         private class MiniFlow(val parents: Set<MiniFlow>) {
             val assignedLocalVariables: MutableSet<FirProperty> = mutableSetOf()
@@ -304,7 +307,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 // Only retain local variables declared above the current scope. This way, any local variables declared inside the
                 // function will effectively be treated as distinct variables and, hence, stable (Of course, for nested lambda, things would
                 // just work because inside the lambda assigned local variables are tracked by different nodes).
-                functionFork.assignedLocalVariables.retainAll(data.variableDeclarations.flatMap { it.values })
+                functionFork.assignedLocalVariables.retainAll(data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values })
                 // Create another fork for the normal execution
                 val normalExecution = currentFlow.fork()
                 data.localFunctionToAssignedLocalVariables[function.symbol] =

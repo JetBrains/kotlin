@@ -28,7 +28,7 @@ fun test() {
     var s: String? = null
     s = ""
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>s<!>.length // unstable since lambda can be called twice
+        s<!UNSAFE_CALL!>.<!>length // unstable since lambda can be called twice
         s = null
         var s2: String? = null
         s2 = ""
