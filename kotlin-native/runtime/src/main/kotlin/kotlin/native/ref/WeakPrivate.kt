@@ -37,6 +37,7 @@ import kotlin.native.internal.Escapes
 // Clear holding the counter object, which refers to the actual object.
 @NoReorderFields
 @Frozen
+@OptIn(FreezingIsDeprecated::class)
 internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferenceImpl() {
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0

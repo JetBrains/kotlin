@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(FreezingIsDeprecated::class)
 package runtime.workers.lazy4
 
 import kotlin.test.*

@@ -27,6 +27,7 @@ import kotlinx.cinterop.*
  * Class representing worker.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@OptIn(FreezingIsDeprecated::class)
 public value class Worker @PublishedApi internal constructor(val id: Int) {
     companion object {
         /**

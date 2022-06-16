@@ -8,11 +8,13 @@ package kotlin.native.concurrent
 import kotlin.native.internal.Frozen
 
 @ThreadLocal
+@OptIn(FreezingIsDeprecated::class)
 private object CurrentThread {
     val id = Any().freeze()
 }
 
 @Frozen
+@OptIn(FreezingIsDeprecated::class)
 internal class Lock {
     private val locker_ = AtomicInt(0)
     private val reenterCount_ = AtomicInt(0)

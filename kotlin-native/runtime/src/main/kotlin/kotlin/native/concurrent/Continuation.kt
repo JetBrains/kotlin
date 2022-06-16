@@ -8,6 +8,7 @@ package kotlin.native.concurrent
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
+@OptIn(FreezingIsDeprecated::class)
 public class Continuation0(block: () -> Unit,
                     private val invoker: CPointer<CFunction<(COpaquePointer?) -> Unit>>,
                     private val singleShot: Boolean = false): Function0<Unit> {
@@ -31,6 +32,7 @@ public class Continuation0(block: () -> Unit,
     }
 }
 
+@OptIn(FreezingIsDeprecated::class)
 public class Continuation1<T1>(
         block: (p1: T1) -> Unit,
         private val invoker: CPointer<CFunction<(COpaquePointer?) -> Unit>>,
@@ -62,6 +64,7 @@ public class Continuation1<T1>(
     }
 }
 
+@OptIn(FreezingIsDeprecated::class)
 public class Continuation2<T1, T2>(
         block: (p1: T1, p2: T2) -> Unit,
         private val invoker: CPointer<CFunction<(COpaquePointer?) -> Unit>>,

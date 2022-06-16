@@ -69,6 +69,7 @@ public interface Cleaner
 // by function name in the compiler.
 @ExperimentalStdlibApi
 @ExportForCompiler
+@OptIn(FreezingIsDeprecated::class)
 fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner {
     if (!argument.isShareable())
         throw IllegalArgumentException("$argument must be shareable")

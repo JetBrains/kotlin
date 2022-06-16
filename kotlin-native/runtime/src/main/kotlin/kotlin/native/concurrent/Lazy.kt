@@ -7,6 +7,7 @@ package kotlin.native.concurrent
 
 import kotlin.native.internal.Frozen
 
+@FreezingIsDeprecated
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
     // This cannot be made atomic because of the legacy MM. See https://github.com/JetBrains/kotlin-native/pull/3944
@@ -67,6 +68,7 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         value.toString() else "Lazy value not initialized yet"
 }
 
+@OptIn(FreezingIsDeprecated::class)
 internal object UNINITIALIZED {
     // So that single-threaded configs can use those as well.
     init {
@@ -74,6 +76,7 @@ internal object UNINITIALIZED {
     }
 }
 
+@OptIn(FreezingIsDeprecated::class)
 internal object INITIALIZING {
     // So that single-threaded configs can use those as well.
     init {
@@ -81,6 +84,7 @@ internal object INITIALIZING {
     }
 }
 
+@FreezingIsDeprecated
 @Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val initializer_ = AtomicReference<Function0<T>?>(initializer.freeze())
@@ -120,9 +124,11 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
  * leak memory, so it is recommended to use `atomicLazy` in cases of objects living forever,
  * such as object signletons, or in cases where it's guaranteed not to have cyclical garbage.
  */
+@FreezingIsDeprecated
 public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
 
 @Suppress("UNCHECKED_CAST")
+@OptIn(FreezingIsDeprecated::class)
 internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
     private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)
@@ -162,6 +168,7 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
 
 @Suppress("UNCHECKED_CAST")
+@OptIn(FreezingIsDeprecated::class)
 internal class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private var initializer = FreezableAtomicReference<(() -> T)?>(initializer)
     private var valueRef = FreezableAtomicReference<Any?>(UNINITIALIZED)

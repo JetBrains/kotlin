@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(FreezingIsDeprecated::class)
 package codegen.objectDeclaration.isFrozen
 
 import kotlin.test.*

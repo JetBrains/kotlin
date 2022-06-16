@@ -22,6 +22,7 @@ internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
  */
 @Frozen
 @NoReorderFields
+@FreezingIsDeprecated
 public class MutableData constructor(capacity: Int = 16) {
     init {
         if (capacity <= 0) throw IllegalArgumentException()

@@ -1,3 +1,5 @@
+@file:OptIn(FreezingIsDeprecated::class)
+
 import kotlin.native.concurrent.*
 
 fun main() {

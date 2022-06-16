@@ -60,7 +60,7 @@ If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enable
 To improve the performance, please also consider enabling a concurrent implementation
 for the sweep phase of the garbage collector. See more details
 [here](https://kotlinlang.org/docs/whatsnew1620.html#concurrent-implementation-for-the-sweep-phase-in-new-memory-manager).
-It will be switched on by default in Kotlin 1.7.0.
+Since 1.7.0 this is the default GC implementation for the new MM.
 
 ### Update the libraries
 
@@ -91,10 +91,52 @@ Other libraries might also have compatibility issues. If you encounter any, repo
 Known issues:
 * SQLDelight: https://github.com/cashapp/sqldelight/issues/2556
 
+## Freezing deprecation
+
+Starting with 1.7.20 freezing API is deprecated.
+
+To temporarily support code for both new and legacy MM, ignore deprecation warnings by:
+* either annotating usages of deprecated API with `@OptIn(FreezingIsDeprecated::class)`,
+* or applying `languageSettings.optIn("kotlin.native.FreezingIsDeprecated")` to all kotlin source sets in gradle,
+* or passing compiler flag `-opt-in=kotlin.native.FreezingIsDeprecated`.
+
+See [Opt-in requirements](https://kotlinlang.org/docs/opt-in-requirements.html) for more details.
+
+To support new MM only, remove usages of the affected API:
+* [`@SharedImmutable`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-shared-immutable/):
+  remove usages. Its usage does not trigger any warning.
+* [`class FreezableAtomicReference`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-freezable-atomic-reference/):
+  use [`class AtomicReference`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-atomic-reference/) instead.
+* [`class FreezingException`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-freezing-exception/):
+  remove usages.
+* [`class InvalidMutabilityException`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-invalid-mutability-exception/):
+  remove usages.
+* [`class IncorrectDereferenceException`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-incorrect-dereference-exception/):
+  remove usages.
+* [`fun <T> T.freeze()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/freeze.html):
+  remove usages.
+* [`val Any?.isFrozen`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/is-frozen.html):
+  remove usages assuming it always returns `false`.
+* [`fun Any.ensureNeverFrozen()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/ensure-never-frozen.html):
+  remove usages.
+* [`fun <T> atomicLazy(…)`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/atomic-lazy.html):
+  use [`fun <T> lazy(…)`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/lazy.html) instead.
+* [`class MutableData`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-mutable-data/):
+  use any regular collection instead.
+* [`class WorkerBoundReference<out T : Any>`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-worker-bound-reference/):
+  use `T` directly.
+* [`class DetachedObjectGraph<T>`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native.concurrent/-detached-object-graph/):
+  use `T` directly. To pass the value through the C interop, use [`class StableRef<T>`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlinx.cinterop/-stable-ref/).
+
+Additionally, setting `freezing` binary option to anything but `disabled` with the new MM is deprecated. Currently, usage causes a diagnostics message - not a warning.
+
 ## Performance issues
 
 For the first preview, we're using the simplest scheme for garbage collection: single-threaded stop-the-world
 mark-and-sweep algorithm, which is triggered after enough functions, loop iterations, and allocations were executed. This greatly hinders the performance, and one of our top priorities now is addressing these performance issues.
+
+> Starting with 1.7.0 we use stop-the-world mark & concurrent sweep GC with a conventional GC scheduler that tracks alive heap size. This significantly
+improves performance.
 
 We don't have nice instruments to monitor the GC performance yet. So far, diagnosing requires looking at GC logs. To enable the logs, add the compilation flag `-Xruntime-logs=gc=info` in a Gradle build script:
 ```kotlin
@@ -111,7 +153,7 @@ Currently, the logs are only printed to stderr. _Note that the exact contents of
 
 The list of known performance issues:
 
-* Since the collector is single-threaded stop-the-world, the pause time of every thread linearly depends on the number of objects in the heap. The more objects that are kept alive, the longer the pauses are. Long pauses on the main thread can result in laggy UI event handling. Both the pause time and the number of objects in the heap are printed to the logs for each GC cycle.
+* Since the collector has stop-the-world mark phase, the pause time of every thread linearly depends on the number of objects in the heap. The more objects that are kept alive, the longer the pauses are. Long pauses on the main thread can result in laggy UI event handling. Both the pause time and the number of objects in the heap are printed to the logs for each GC cycle.
 * Being stop-the-world also means that all threads with Kotlin/Native runtime active on them need to synchronize simultaneously for the collection to begin. This also affects the pause time.
 * There is a complicated relationship between Swift/ObjC objects and their Kotlin/Native counterparts, which causes Swift/ObjC objects to linger longer than necessary. It means that their Kotlin/Native counterparts are kept in the heap longer, contributing to the slower collection time. This typically doesn't happen, but in some corner cases, for example, when a long loop creates several temporary objects that cross the Swift/ObjC interop boundary on each iteration (for example, calling a Kotlin callback from a loop in Swift or vice versa).
   In the logs, there's a number of stable refs in the root set. If this number keeps growing, it may indicate that the Swift/ObjC objects are not being freed when they should. Try putting `autoreleasepool` around loop bodies (both in Swift/ObjC and Kotlin) that do interop calls.
@@ -119,6 +161,7 @@ The list of known performance issues:
   This manifests in time between cycles being close (or even less) than the pause time. Both of these numbers are printed to the logs.
   Try increasing `kotlin.native.internal.GC.threshold` and `kotlin.native.internal.GC.thresholdAllocations` to force GC to happen less often. Note that the exact meaning of `threshold` and `thresholdAllocations` may change in the future.
 * Freezing is currently implemented suboptimally: internally, a separate memory allocation may occur for each frozen object (this recursively includes the object subgraph), which puts unnecessary pressure on the heap.
+  Won't be fixed, because [freezing is deprecated](#freezing-deprecation) since 1.7.20.
 * Unterminated `Worker`s and unconsumed `Future`s have objects pinned to the heap, contributing to the pause time. Like Swift/ObjC interop, this also manifests in a growing number of stable refs in the root set.
   To mitigate:
     * Look for calls to `Worker.execute` with the resulting `Future` objects that are never consumed using `Future.consume` or `Future.result`.
@@ -131,17 +174,21 @@ If you observe regressions more significant than 5x, please report to [this perf
 
 ## Known bugs
 
-* Compiler caches are not supported, so the compilation of debug binaries will be slower.
+* Compiler caches are only supported since 1.7.20, so the compilation of debug binaries will be slower with previous compiler versions.
 * Freezing machinery is not thread-safe: if an object is being frozen on one thread, and its subgraph is being modified on another, by the end, the object will be frozen, but some subgraph of it might be not.
+  This will not be fixed, because [freezing is deprecated](#freezing-deprecation) since 1.7.20.
 * Documentation is not updated to reflect changes for the new MM.
 * There's no application state handling on iOS: the collector will not be throttled down if the application goes into the background.
   However, the collection is not forced upon going into the background, which leaves the application with a larger memory footprint than necessary, making it a more likely target to be terminated by the OS.
 * WASM (or any target that doesn't have pthreads) is not supported with the new MM.
 
-
 ## Workarounds
 
 ### Unexpected object freezing
+
+> Since 1.7.20 [freezing is deprecated](#freezing-deprecation). Setting `freezing` to anything but `disabled` is deprecated.
+
+> Since 1.6.20 freezing is disabled by default with the new MM.
 
 Some libraries might not be ready for the new MM and freeze-transparency of `kotlinx.coroutines`, so unexpected `InvalidMutabilityException` or `FreezingException` might appear.
 

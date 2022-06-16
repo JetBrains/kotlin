@@ -8,6 +8,7 @@ package kotlin.native.internal
 import kotlinx.cinterop.*
 
 @Frozen
+@OptIn(FreezingIsDeprecated::class)
 class NativePtrBox(val value: NativePtr) {
     override fun equals(other: Any?): Boolean {
         if (other !is NativePtrBox) {
@@ -25,6 +26,7 @@ class NativePtrBox(val value: NativePtr) {
 fun boxNativePtr(value: NativePtr) = NativePtrBox(value)
 
 @Frozen
+@OptIn(FreezingIsDeprecated::class)
 class NativePointedBox(val value: NativePointed) {
     override fun equals(other: Any?): Boolean {
         if (other !is NativePointedBox) {
@@ -46,6 +48,7 @@ fun boxNativePointed(value: NativePointed?) = if (value != null) NativePointedBo
 fun unboxNativePointed(box: NativePointedBox?) = box?.value
 
 @Frozen
+@OptIn(FreezingIsDeprecated::class)
 class CPointerBox(val value: CPointer<CPointed>) : CValuesRef<CPointed>() {
     override fun equals(other: Any?): Boolean {
         if (other !is CPointerBox) {

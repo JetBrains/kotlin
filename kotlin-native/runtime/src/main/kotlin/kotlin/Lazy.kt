@@ -19,7 +19,7 @@ import kotlin.native.isExperimentalMM
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-@OptIn(kotlin.ExperimentalStdlibApi::class)
+@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
         if (isExperimentalMM())
             SynchronizedLazyImpl(initializer)
@@ -38,7 +38,7 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
  * Also this behavior can be changed in the future.
  */
 @FixmeConcurrency
-@OptIn(kotlin.ExperimentalStdlibApi::class)
+@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
             LazyThreadSafetyMode.SYNCHRONIZED -> if (isExperimentalMM()) SynchronizedLazyImpl(initializer) else throw UnsupportedOperationException()

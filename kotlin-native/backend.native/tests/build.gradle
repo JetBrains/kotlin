@@ -106,6 +106,12 @@ if (project.globalTestArgs.contains("-g")) {
     }
 }
 
+if (!isExperimentalMM) {
+    tasks.withType(KonanCompileNativeBinary.class).configureEach {
+        extraOpts "-opt-in=kotlin.native.FreezingIsDeprecated"
+    }
+}
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     // backend.native/tests

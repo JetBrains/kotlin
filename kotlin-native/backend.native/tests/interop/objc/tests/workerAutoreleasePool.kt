@@ -1,3 +1,5 @@
+@file:OptIn(FreezingIsDeprecated::class)
+
 import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
 import kotlin.test.*

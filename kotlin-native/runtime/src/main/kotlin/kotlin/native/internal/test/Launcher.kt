@@ -37,6 +37,7 @@ fun main(args: Array<String>) {
     }
 }
 
+@OptIn(FreezingIsDeprecated::class)
 fun worker(args: Array<String>) {
     val worker = Worker.start()
     val exitCode = worker.execute(TransferMode.SAFE, { args.freeze() }) {

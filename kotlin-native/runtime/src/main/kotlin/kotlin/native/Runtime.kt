@@ -28,6 +28,7 @@ external public fun deinitRuntimeIfNeeded(): Unit
 /**
  * Exception thrown when top level variable is accessed from incorrect execution context.
  */
+@FreezingIsDeprecated
 public class IncorrectDereferenceException : RuntimeException {
     constructor() : super()
 
@@ -55,6 +56,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * i.e. top level main(), or when Objective-C to Kotlin call not marked with @Throws throws an exception.
  * Hook must be a frozen lambda, so that it could be called from any thread/worker.
  */
+@OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
     try {
         return UnhandledExceptionHookHolder.hook.swap(hook)
@@ -68,6 +70,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): Report
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.6")
+@OptIn(FreezingIsDeprecated::class)
 public fun getUnhandledExceptionHook(): ReportUnhandledExceptionHook? {
     return UnhandledExceptionHookHolder.hook.value
 }

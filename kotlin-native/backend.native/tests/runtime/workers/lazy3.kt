@@ -1,3 +1,5 @@
+@file:OptIn(FreezingIsDeprecated::class)
+
 import kotlin.native.concurrent.*
 import kotlin.native.ref.*
 import kotlin.test.*

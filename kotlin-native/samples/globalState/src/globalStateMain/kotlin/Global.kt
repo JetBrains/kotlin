@@ -20,9 +20,9 @@ data class SharedDataMember(val double: Double)
 
 data class SharedData(val string: String, val int: Int, val member: SharedDataMember)
 
-// Here we access the same shared frozen Kotlin object from multiple threads.
+// Here we access the same shared Kotlin object from multiple threads.
 val globalObject: SharedData?
-    get() = sharedData.frozenKotlinObject?.asStableRef<SharedData>()?.get()
+    get() = sharedData.kotlinObject?.asStableRef<SharedData>()?.get()
 
 fun dumpShared(prefix: String) {
     println("""
@@ -39,16 +39,11 @@ fun main() {
     sharedData.f = 0.5f
     sharedData.string = "Hello Kotlin!".cstr.getPointer(arena)
 
-    // Here we create detached mutable object, which could be later reattached by another thread.
-    sharedData.kotlinObject = DetachedObjectGraph {
-        SharedData("A string", 42, SharedDataMember(2.39))
-    }.asCPointer()
-
-    // Here we create shared frozen object reference,
-    val stableRef = StableRef.create(SharedData("Shared", 239, SharedDataMember(2.71)).freeze())
-    sharedData.frozenKotlinObject = stableRef.asCPointer()
+    // Here we create shared object reference,
+    val stableRef = StableRef.create(SharedData("Shared", 239, SharedDataMember(2.71)))
+    sharedData.kotlinObject = stableRef.asCPointer()
     dumpShared("thread1")
-    println("frozen is $globalObject")
+    println("shared is $globalObject")
 
     // Start a new thread, that sees the variable.
     // memScoped is needed to pass thread's local address to pthread_create().
@@ -57,12 +52,12 @@ fun main() {
         pthread_create(thread.ptr, null, staticCFunction { argC ->
             initRuntimeIfNeeded()
             dumpShared("thread2")
-            val kotlinObject = DetachedObjectGraph<SharedData>(sharedData.kotlinObject).attach()
-            val arg = DetachedObjectGraph<SharedDataMember>(argC).attach()
-            println("thread arg is $arg Kotlin object is $kotlinObject frozen is $globalObject")
+            val arg = argC!!.asStableRef<SharedDataMember>()
+            println("thread arg is ${arg.get()} shared is $globalObject")
+            arg.dispose()
             // Workaround for compiler issue.
             null as COpaquePointer?
-        }, DetachedObjectGraph { SharedDataMember(3.14)}.asCPointer() ).ensureUnixCallResult("pthread_create")
+        }, StableRef.create(SharedDataMember(3.14)).asCPointer() ).ensureUnixCallResult("pthread_create")
         pthread_join(thread.value, null).ensureUnixCallResult("pthread_join")
     }
 

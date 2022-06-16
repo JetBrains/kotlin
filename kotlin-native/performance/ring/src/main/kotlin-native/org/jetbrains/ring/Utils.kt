@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// We benchmark both new and legacy MM.
+@file:OptIn(FreezingIsDeprecated::class)
 
 package org.jetbrains.ring
 

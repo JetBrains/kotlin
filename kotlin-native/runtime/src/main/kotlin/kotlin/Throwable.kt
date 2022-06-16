@@ -19,6 +19,7 @@ import kotlin.native.internal.NativePtrArray
  * @param cause the cause of this throwable.
  */
 @ExportTypeInfo("theThrowableTypeInfo")
+@OptIn(FreezingIsDeprecated::class)
 public open class Throwable(open val message: String?, open val cause: Throwable?) {
 
     constructor(message: String?) : this(message, null)
@@ -173,6 +174,7 @@ public actual inline fun Throwable.printStackTrace(): Unit = printStackTrace()
  * Does nothing if this [Throwable] is frozen.
  */
 @SinceKotlin("1.4")
+@OptIn(FreezingIsDeprecated::class)
 public actual fun Throwable.addSuppressed(exception: Throwable) {
     if (this !== exception && !this.isFrozen) {
         val suppressed = suppressedExceptionsList
