@@ -15,8 +15,5 @@ object KtxNameConventions {
     val UPDATE_SCOPE = Name.identifier("updateScope")
     val SOURCEINFORMATION = "sourceInformation"
     val SOURCEINFORMATIONMARKERSTART = "sourceInformationMarkerStart"
-    val IS_TRACE_IN_PROGRESS = "isTraceInProgress"
-    val TRACE_EVENT_START = "traceEventStart"
-    val TRACE_EVENT_END = "traceEventEnd"
     val SOURCEINFORMATIONMARKEREND = "sourceInformationMarkerEnd"
 }

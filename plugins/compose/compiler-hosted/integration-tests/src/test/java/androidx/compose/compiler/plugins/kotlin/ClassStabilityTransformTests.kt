@@ -726,9 +726,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
               val %dirty = %changed
@@ -763,9 +760,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001, %default)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -864,9 +858,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
               used(y)
@@ -875,9 +866,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -905,18 +893,12 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(y: Any, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<A(Wrap...>:Test.kt")
               used(y)
               A(Wrapper(Foo()), %composer, Wrapper.%stable)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -950,9 +932,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun <V> B(value: V, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B)<A(Wrap...>:Test.kt")
               val %dirty = %changed
@@ -967,16 +946,10 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(value, %composer, %changed or 0b0001)
               }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
             @Composable
             @ComposableInferredTarget(scheme = "[0[0]]")
             fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(X)P(1)*<itemCo...>:Test.kt")
               val %dirty = %changed
@@ -988,23 +961,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 X(items, itemContent, %composer, %changed or 0b0001)
               }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
             @Composable
             fun C(items: List<String>, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<X(item...>:Test.kt")
               X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00111000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 C(items, %composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
             internal object ComposableSingletons%TestKt {
@@ -1064,9 +1028,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Int, x: Any, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
               used(y)
@@ -1074,23 +1035,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
               }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
@@ -1117,9 +1069,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
               used(y)
@@ -1127,23 +1076,14 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
               }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
             @Composable
             fun B(x: Any, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>)
-              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               used(x)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
               }
             }
         """
