@@ -22,6 +22,7 @@ object GradleKpmDefaultFragmentDependencyConfigurationsFactory : GradleKpmFragme
         val transitiveApiConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveApi"))
         val transitiveImplementationConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveImplementation"))
         val transitiveRuntimeOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveRuntimeOnly"))
+        val cinteropConfiguration = configurations.maybeCreate(names.disambiguateName("cinterop"))
 
         listOf(
             apiConfiguration,
@@ -36,6 +37,11 @@ object GradleKpmDefaultFragmentDependencyConfigurationsFactory : GradleKpmFragme
             configuration.isCanBeResolved = false
         }
 
+        cinteropConfiguration.apply {
+            isCanBeConsumed = false
+            isCanBeConsumed = true
+        }
+
         transitiveApiConfiguration.extendsFrom(apiConfiguration)
         transitiveImplementationConfiguration.extendsFrom(implementationConfiguration)
         transitiveRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
@@ -47,7 +53,8 @@ object GradleKpmDefaultFragmentDependencyConfigurationsFactory : GradleKpmFragme
             runtimeOnlyConfiguration = runtimeOnlyConfiguration,
             transitiveApiConfiguration = transitiveApiConfiguration,
             transitiveImplementationConfiguration = transitiveImplementationConfiguration,
-            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration
+            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration,
+            cinteropConfiguration = cinteropConfiguration
         )
     }
 }

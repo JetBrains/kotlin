@@ -123,6 +123,9 @@ internal abstract class GradleKpmLegacyMappedVariant @Inject constructor(
     override val transitiveRuntimeOnlyConfiguration: Configuration
         get() = TODO("Not yet implemented")
 
+    override val cinteropConfiguration: Configuration
+        get() = TODO("Not yet implemented")
+
     override val apiConfiguration: Configuration
         get() = project.configurations.getByName(apiConfigurationName)
     override val implementationConfiguration: Configuration

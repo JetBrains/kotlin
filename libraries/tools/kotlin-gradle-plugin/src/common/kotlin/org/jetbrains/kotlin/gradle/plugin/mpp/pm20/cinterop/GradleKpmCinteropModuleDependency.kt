@@ -23,15 +23,15 @@ internal fun GradleKpmFragment.declareCinteropDependency(cinteropName: String) {
 
     val allRequestingFragments = containingModule.findRefiningFragments(this) + this
     allRequestingFragments.forEach {
-        (it as GradleKpmFragment).addCinteropDependencyToApiConfiguration(cinteropModule)
+        (it as GradleKpmFragment).addCinteropArtifactDependency(cinteropModule)
     }
 }
 
-private fun GradleKpmFragment.addCinteropDependencyToApiConfiguration(
+private fun GradleKpmFragment.addCinteropArtifactDependency(
     cinteropModule: GradleKpmCinteropModule
 ) {
     val corresponding = cinteropModule.fragments.first { it.fragmentName == fragmentName }
-    project.dependencies.add(apiConfigurationName, CinteropDependency(corresponding))
+    project.dependencies.add(cinteropConfiguration.name, CinteropDependency(corresponding))
 }
 
 private class CinteropDependency(

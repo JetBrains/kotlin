@@ -70,7 +70,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
                 }
             },
             metadataResolutionProviders = resolvedMetadataFiles
-        )
+        ) + fragment.cinteropConfiguration
     }
 
     override val output: KotlinCompilationOutput = DefaultKotlinCompilationOutput(

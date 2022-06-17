@@ -17,6 +17,8 @@ interface GradleKpmFragmentDependencyConfigurations : GradleKpmDependencyConfigu
     /** This configuration includes the dependencies from the refines-parents */
     val transitiveRuntimeOnlyConfiguration: Configuration
 
+    val cinteropConfiguration: Configuration
+
     private class Impl(
         override val apiConfiguration: Configuration,
         override val implementationConfiguration: Configuration,
@@ -24,7 +26,8 @@ interface GradleKpmFragmentDependencyConfigurations : GradleKpmDependencyConfigu
         override val runtimeOnlyConfiguration: Configuration,
         override val transitiveApiConfiguration: Configuration,
         override val transitiveImplementationConfiguration: Configuration,
-        override val transitiveRuntimeOnlyConfiguration: Configuration
+        override val transitiveRuntimeOnlyConfiguration: Configuration,
+        override val cinteropConfiguration: Configuration
     ) : GradleKpmFragmentDependencyConfigurations
 
     companion object {
@@ -35,7 +38,8 @@ interface GradleKpmFragmentDependencyConfigurations : GradleKpmDependencyConfigu
             runtimeOnlyConfiguration: Configuration,
             transitiveApiConfiguration: Configuration,
             transitiveImplementationConfiguration: Configuration,
-            transitiveRuntimeOnlyConfiguration: Configuration
+            transitiveRuntimeOnlyConfiguration: Configuration,
+            cinteropConfiguration: Configuration
         ): GradleKpmFragmentDependencyConfigurations = Impl(
             apiConfiguration = apiConfiguration,
             implementationConfiguration = implementationConfiguration,
@@ -43,7 +47,8 @@ interface GradleKpmFragmentDependencyConfigurations : GradleKpmDependencyConfigu
             runtimeOnlyConfiguration = runtimeOnlyConfiguration,
             transitiveApiConfiguration = transitiveApiConfiguration,
             transitiveImplementationConfiguration = transitiveImplementationConfiguration,
-            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration
+            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration,
+            cinteropConfiguration = cinteropConfiguration
         )
     }
 }

@@ -27,7 +27,9 @@ abstract class GradleKpmVariantInternal(
     override val variantAttributes: Map<KotlinAttributeKey, String>
         get() = mapOf(KotlinPlatformTypeAttribute to kotlinPlatformTypeAttributeFromPlatform(platformType)) // TODO user attributes
 
-    override var compileDependencyFiles: FileCollection = project.files({ compileDependenciesConfiguration })
+    override var compileDependencyFiles: FileCollection = project.files(
+        { compileDependenciesConfiguration + cinteropConfiguration }
+    )
 
     internal abstract val compilationData: GradleKpmVariantCompilationDataInternal<*>
 
