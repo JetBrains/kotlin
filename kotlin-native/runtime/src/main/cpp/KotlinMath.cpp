@@ -412,7 +412,7 @@ KFloat Kotlin_math_absf(KFloat x)   { return (KFloat)Kotlin_math_abs   (x); }
 KFloat Kotlin_math_atan2f(KFloat y, KFloat x) { return (KFloat)Kotlin_math_atan2(y, x); }
 KFloat Kotlin_math_hypotf(KFloat x, KFloat y) { return (KFloat)Kotlin_math_hypot(x, y); }
 
-KDouble Kotlin_math_cbrtf(KFloat x) { return (KFloat)Kotlin_math_cbrt(x); }
+KFloat Kotlin_math_cbrtf(KFloat x) { return (KFloat)Kotlin_math_cbrt(x); }
 
 // extensions
 
