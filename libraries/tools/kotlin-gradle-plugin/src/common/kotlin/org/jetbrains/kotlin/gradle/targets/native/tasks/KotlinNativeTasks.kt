@@ -561,7 +561,7 @@ constructor(
     val exportLibraries: FileCollection get() = exportLibrariesResolvedGraph?.files ?: objectFactory.fileCollection()
 
     private val exportLibrariesResolvedGraph = if (binary is AbstractNativeLibrary) {
-        ResolvedDependencyGraph(project, project.configurations.getByName(binary.exportConfigurationName))
+        ResolvedDependencyGraph.fromConfiguration(project.configurations.getByName(binary.exportConfigurationName))
     } else {
         null
     }
@@ -640,8 +640,7 @@ constructor(
     @get:Internal
     internal abstract val konanPropertiesService: Property<KonanPropertiesBuildService>
 
-    private val resolvedDependencyGraph = ResolvedDependencyGraph(
-        project,
+    private val resolvedDependencyGraph = ResolvedDependencyGraph.fromConfiguration(
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )
 
