@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
@@ -48,9 +45,9 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
 
     ByteArrayOutputStream().use { outputStream ->
         PrintStream(outputStream).use { printStream ->
-            messageCollector = GroupingMessageCollector(
-                PrintingMessageCollector(printStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
-                false
+            messageCollector = NativeTestGroupingMessageCollector(
+                compilerArgs = compilerArgs,
+                delegate = PrintingMessageCollector(printStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, /*verbose =*/ true),
             )
             processCompilerOutput(
                 messageCollector,
