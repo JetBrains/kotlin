@@ -745,8 +745,7 @@ class CallAndReferenceGenerator(
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         for ((index, typeParameter) in function.typeParameters.withIndex()) {
             val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
-            val type = typeProjection.typeRef.coneTypeSafe<ConeKotlinType>() ?: continue
-            map[typeParameter.symbol] = type
+            map[typeParameter.symbol] = typeProjection.typeRef.coneType
         }
         return ConeSubstitutorByMap(map, session)
     }

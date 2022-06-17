@@ -223,7 +223,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
+            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
             val variableForInvokeType = variableForInvoke.typeRef.coneType

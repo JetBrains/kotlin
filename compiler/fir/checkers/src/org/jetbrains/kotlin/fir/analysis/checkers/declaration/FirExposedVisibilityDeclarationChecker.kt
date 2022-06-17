@@ -113,8 +113,8 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
 
         if (functionVisibility == EffectiveVisibility.Local) return
         if (declaration !is FirConstructor && declaration !is FirPropertyAccessor) {
-            declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                ?.findVisibilityExposure(context, functionVisibility)?.let { (restricting, restrictingVisibility) ->
+            declaration.returnTypeRef.coneType
+                .findVisibilityExposure(context, functionVisibility)?.let { (restricting, restrictingVisibility) ->
                     reporter.reportOn(
                         declaration.source,
                         FirErrors.EXPOSED_FUNCTION_RETURN_TYPE,
@@ -128,8 +128,8 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         if (declaration !is FirPropertyAccessor) {
             declaration.valueParameters.forEachIndexed { i, valueParameter ->
                 if (i < declaration.valueParameters.size) {
-                    val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-                        ?.findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
+                    val (restricting, restrictingVisibility) = valueParameter.returnTypeRef.coneType
+                        .findVisibilityExposure(context, functionVisibility) ?: return@forEachIndexed
                     reporter.reportOn(
                         valueParameter.source,
                         FirErrors.EXPOSED_PARAMETER_TYPE,
@@ -149,8 +149,8 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         val propertyVisibility = declaration.effectiveVisibility
 
         if (propertyVisibility == EffectiveVisibility.Local) return
-        declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-            ?.findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility) ->
+        declaration.returnTypeRef.coneType
+            .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility) ->
                 if (declaration.fromPrimaryConstructor == true) {
                     reporter.reportOn(
                         declaration.source,

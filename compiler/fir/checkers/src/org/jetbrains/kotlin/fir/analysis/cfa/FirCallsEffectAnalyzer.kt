@@ -31,13 +31,10 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -301,7 +298,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
     }
 
     private fun FirTypeRef?.isFunctionalTypeRef(session: FirSession): Boolean {
-        return this?.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
+        return this?.coneType?.isBuiltinFunctionalType(session) == true
     }
 
     private fun FirContractDescription?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {

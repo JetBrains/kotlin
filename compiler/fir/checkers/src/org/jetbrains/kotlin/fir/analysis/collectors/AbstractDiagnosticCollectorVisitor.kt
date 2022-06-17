@@ -235,7 +235,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
             withLabelAndReceiverType(
                 labelName,
                 declaration,
-                receiverTypeRef?.coneTypeSafe()
+                receiverTypeRef?.coneType
             ) {
                 visitNestedElements(declaration)
             }

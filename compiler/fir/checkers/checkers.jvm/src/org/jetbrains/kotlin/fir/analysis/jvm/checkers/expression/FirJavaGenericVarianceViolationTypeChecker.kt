@@ -55,7 +55,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         val argumentMapping = expression.argumentMapping ?: return
         val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         for (i in 0 until expression.typeArguments.size) {
-            val type = expression.typeArguments[i].safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneTypeSafe<ConeKotlinType>()
+            val type = expression.typeArguments[i].safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneType
             if (type != null) {
                 typeArgumentMap[calleeFunction.typeParameterSymbols[i]] = type
             }

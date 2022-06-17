@@ -265,7 +265,7 @@ object ConeTypeCompatibilityChecker {
 
     private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
-        return resolvedBounds.flatMap { it.coneTypeSafe<ConeKotlinType>().collectUpperBounds() }.toSet()
+        return resolvedBounds.flatMap { it.coneType.collectUpperBounds() }.toSet()
     }
 
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
