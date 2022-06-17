@@ -18,5 +18,6 @@ object DiagnosticClassGenerator {
         KtDiagnosticClassRenderer.render(path.resolve("KtFirDiagnostics.kt"), diagnosticList, packageName, emptySet())
         KtDiagnosticClassImplementationRenderer.render(path.resolve("KtFirDiagnosticsImpl.kt"), diagnosticList, packageName, emptySet())
         FirDiagnosticToKtDiagnosticConverterRenderer.render(path.resolve("KtFirDataClassConverters.kt"), diagnosticList, packageName, emptySet())
+        ArgumentsConverterGenerator.render(path.resolve("KtFirArgumentsConverter.kt"), packageName)
     }
 }

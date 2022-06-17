@@ -32,8 +32,7 @@ internal fun interface KtFirDiagnostic4Creator<A, B, C, D> : KtFirDiagnosticCrea
 
 internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiagnosticFactory, KtFirDiagnosticCreator>) {
     fun convert(analysisSession: KtFirAnalysisSession, diagnostic: KtDiagnostic): KtFirDiagnostic<*> {
-        val creator = conversions[diagnostic.factory]
-            ?: error("No conversion was found for ${diagnostic.factory}")
+        val creator = conversions[diagnostic.factory] ?: buildCreatorForPluginDiagnostic(diagnostic.factory)
 
         @Suppress("UNCHECKED_CAST")
         return with(analysisSession) {
@@ -54,6 +53,49 @@ internal class KtDiagnosticConverter(private val conversions: Map<AbstractKtDiag
                     create(diagnostic as KtDiagnosticWithParameters4<Any?, Any?, Any?, Any?>)
                 }
                 else -> error("Invalid KtFirDiagnosticCreator ${creator::class.simpleName}")
+            }
+        }
+    }
+
+    @Suppress("RemoveExplicitTypeArguments") // See KT-52838
+    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KtFirDiagnosticCreator {
+        return when (factory) {
+            is KtDiagnosticFactory0 -> KtFirDiagnostic0Creator {
+                KtCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
+            }
+            is KtDiagnosticFactory1<*> -> KtFirDiagnostic1Creator {
+                KtCompilerPluginDiagnostic1Impl(
+                    it as KtPsiDiagnosticWithParameters1<*>,
+                    token,
+                    convertArgument(it.a, this)
+                )
+            }
+            is KtDiagnosticFactory2<*, *> -> KtFirDiagnostic2Creator<Any?, Any?> {
+                KtCompilerPluginDiagnostic2Impl(
+                    it as KtPsiDiagnosticWithParameters2<*, *>,
+                    token,
+                    convertArgument(it.a, this),
+                    convertArgument(it.b, this)
+                )
+            }
+            is KtDiagnosticFactory3<*, *, *> -> KtFirDiagnostic3Creator<Any?, Any?, Any?> {
+                KtCompilerPluginDiagnostic3Impl(
+                    it as KtPsiDiagnosticWithParameters3<*, *, *>,
+                    token,
+                    convertArgument(it.a, this),
+                    convertArgument(it.b, this),
+                    convertArgument(it.c, this)
+                )
+            }
+            is KtDiagnosticFactory4<*, *, *, *> -> KtFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
+                KtCompilerPluginDiagnostic4Impl(
+                    it as KtPsiDiagnosticWithParameters4<*, *, *, *>,
+                    token,
+                    convertArgument(it.a, this),
+                    convertArgument(it.b, this),
+                    convertArgument(it.c, this),
+                    convertArgument(it.d, this)
+                )
             }
         }
     }
