@@ -131,6 +131,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)
             DUMP_PROCESSOR_STATS -> processorsStatsReportFile = File(value)
+            DUMP_FILE_ACCESS_HISTORY -> fileAccessHistoryReportFile = File(value)
             INCLUDE_COMPILE_CLASSPATH -> setFlag(KaptFlag.INCLUDE_COMPILE_CLASSPATH, value)
 
             DETECT_MEMORY_LEAKS_OPTION -> setSelector(enumValues<DetectMemoryLeaksMode>(), value) { detectMemoryLeaks = it }
