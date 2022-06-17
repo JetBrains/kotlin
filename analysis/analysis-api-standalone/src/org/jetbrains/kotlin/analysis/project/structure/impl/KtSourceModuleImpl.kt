@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -23,7 +23,7 @@ internal class KtSourceModuleImpl(
     override val project: Project,
     override val moduleName: String,
     override val languageVersionSettings: LanguageVersionSettings,
-    internal val sourceRoots: List<PsiFile>,
+    internal val sourceRoots: List<PsiFileSystemItem>,
 ) : KtSourceModule, KtModuleWithPlatform {
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 }
