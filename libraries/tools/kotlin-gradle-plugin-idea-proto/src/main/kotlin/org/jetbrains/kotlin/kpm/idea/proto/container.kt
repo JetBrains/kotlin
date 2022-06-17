@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.kpm.idea.proto
 
-import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
@@ -21,10 +20,6 @@ fun IdeaKpmSerializationContext.IdeaKpmProject(data: ByteArray): IdeaKpmProject?
 }
 
 fun IdeaKpmSerializationContext.IdeaKpmProject(data: ByteBuffer): IdeaKpmProject? {
-    return IdeaKpmProject(data) { IdeaKpmContainerProto.parseFrom(data) }
-}
-
-fun IdeaKpmSerializationContext.IdeaKpmProject(data: ByteString): IdeaKpmProject? {
     return IdeaKpmProject(data) { IdeaKpmContainerProto.parseFrom(data) }
 }
 
@@ -45,10 +40,6 @@ internal fun <T> IdeaKpmSerializationContext.IdeaKpmProject(data: T, proto: (T) 
 
 fun IdeaKpmProject.toByteArray(context: IdeaKpmSerializationContext): ByteArray {
     return context.IdeaKpmContainerProto(this).toByteArray()
-}
-
-fun IdeaKpmProject.toByteString(context: IdeaKpmSerializationContext): ByteString {
-    return context.IdeaKpmContainerProto(this).toByteString()
 }
 
 fun IdeaKpmProject.writeTo(output: OutputStream, context: IdeaKpmSerializationContext) {
