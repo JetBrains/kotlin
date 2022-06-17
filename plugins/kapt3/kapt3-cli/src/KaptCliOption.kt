@@ -187,6 +187,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-dump-processor-stats", VALUE)
     ),
 
+    DUMP_FILE_READ_HISTORY(
+        "dumpFileReadHistory",
+        "<path>",
+        "Dump list of files read by processors to the specified file",
+        cliToolOption = CliToolOption("-Kapt-dump-file-read-history", VALUE)
+    ),
+
     STRICT_MODE_OPTION(
         "strict",
         "true | false",

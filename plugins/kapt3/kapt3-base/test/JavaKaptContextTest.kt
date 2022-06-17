@@ -58,7 +58,12 @@ class JavaKaptContextTest {
         )
     }
 
-    private fun doAnnotationProcessing(javaSourceFile: File, processor: IncrementalProcessor, outputDir: File) {
+    private fun doAnnotationProcessing(
+        javaSourceFile: File,
+        processor: IncrementalProcessor,
+        outputDir: File,
+        fileReadOutput: File? = null
+    ) {
         val options = KaptOptions.Builder().apply {
             projectBaseDir = javaSourceFile.parentFile
 
@@ -66,6 +71,8 @@ class JavaKaptContextTest {
             classesOutputDir = outputDir
             stubsOutputDir = outputDir
             incrementalDataOutputDir = outputDir
+
+            fileReadHistoryReportFile = fileReadOutput
 
             flags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
@@ -83,6 +90,26 @@ class JavaKaptContextTest {
             assertTrue(myMethodFile.exists())
         } finally {
             sourceOutputDir.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testDumpFileReadHistory() {
+        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+        val fileReadOutputFile = File.createTempFile("kapt_read_history", ".txt")
+        try {
+            doAnnotationProcessing(
+                File(TEST_DATA_DIR, "Simple.java"),
+                simpleProcessor(),
+                sourceOutputDir,
+                fileReadOutput = fileReadOutputFile
+            )
+            assertTrue(fileReadOutputFile.exists())
+            assertTrue(fileReadOutputFile.readText().contains("generated/MyMethodMyAnnotation.java"))
+            assertTrue(fileReadOutputFile.readText().contains("java/lang/Enum.class"))
+        } finally {
+            sourceOutputDir.deleteRecursively()
+            fileReadOutputFile.delete()
         }
     }
 
