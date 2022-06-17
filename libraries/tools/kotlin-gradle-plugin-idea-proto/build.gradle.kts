@@ -56,6 +56,21 @@ runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
 
 publish()
 
+/* Setup configuration for binary compatibility tests */
+run {
+    val binaryValidationApiElements by configurations.creating {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+
+    val binaryValidationApiJar = tasks.register<Jar>("binaryValidationApiJar") {
+        this.archiveBaseName.set(project.name + "-api")
+        from(mainSourceSet.output)
+    }
+
+    artifacts.add(binaryValidationApiElements.name, binaryValidationApiJar)
+}
+
 tasks.register<Exec>("protoc") {
     val protoSources = file("src/main/proto")
     val javaOutput = file("src/generated/java/")
