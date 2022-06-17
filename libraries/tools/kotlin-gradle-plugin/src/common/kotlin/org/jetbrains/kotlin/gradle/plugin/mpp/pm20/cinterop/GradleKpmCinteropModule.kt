@@ -166,10 +166,11 @@ internal fun GradleKpmCinteropModule.applyFragmentRequirements(requestingFragmen
 
     fragments.forEach { fragment ->
         if (fragment !is GradleKpmCinteropVariant) {
-            val commonizedKlib = commonizerTask.map {
+            val commonizedKlib = commonizerTask.map { task ->
                 val identityString = fragment.toSharedCommonizerTarget()?.identityString.orEmpty()
-                val cinteropKlibName = it.libraries.get().values.first().nameWithoutExtension
-                it.outputDir.asFile.get().resolve("$identityString/$cinteropKlibName")
+                val group = project.group.toString().takeIf { it.isNotEmpty() }?.let { it + "_" }.orEmpty()
+                val cinteropKlibName = task.libraries.get().values.first().nameWithoutExtension
+                task.outputDir.asFile.get().resolve("$identityString/$group$cinteropKlibName")
             }
             (fragment.task as TaskProvider<DumbCommonizerTask>).configure { it.outputFile.set(commonizedKlib) }
         }
