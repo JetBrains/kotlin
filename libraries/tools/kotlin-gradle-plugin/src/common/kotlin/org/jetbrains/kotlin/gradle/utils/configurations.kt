@@ -31,6 +31,14 @@ private constructor(
     private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
     private val artifactCollection: ArtifactCollection
 ) {
+    constructor(configuration: Configuration) : this(
+        // Calling resolutionResult doesn't actually trigger resolution. But accessing its root ResolvedComponentResult
+        // via ResolutionResult::root does. ResolutionResult can't be serialised for Configuration Cache
+        // but ResolvedComponentResult can. Wrapping it in `lazy` makes it resolve upon serialisation.
+        resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
+        artifactCollection = configuration.incoming.artifacts // lazy ArtifactCollection
+    )
+
     val root get() = resolvedComponentsRootProvider.value
     val files: FileCollection get() = artifactCollection.artifactFiles
     val artifacts get() = artifactCollection.artifacts
@@ -51,12 +59,5 @@ private constructor(
     fun dependencyArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
         val componentId = dependency.selected.id
         return artifactsByComponentId[componentId] ?: emptyList()
-    }
-
-    companion object {
-        fun fromConfiguration(configuration: Configuration) = ResolvedDependencyGraph(
-            resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
-            artifactCollection = configuration.incoming.artifacts
-        )
     }
 }
