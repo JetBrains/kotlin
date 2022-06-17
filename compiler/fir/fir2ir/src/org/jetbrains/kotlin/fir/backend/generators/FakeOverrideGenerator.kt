@@ -391,13 +391,13 @@ class FakeOverrideGenerator(
             declarationStorage.classifierStorage.getIrClassSymbol(overriddenContainingClass.symbol).owner as? IrClass
                 ?: return emptyList()
 
-        return if (overriddenContainingIrClass in superClasses) {
-            // `overridden` was a FIR declaration in some of the supertypes
-            listOf(irProducer(overridden))
-        } else {
-            // There were no FIR declaration in supertypes, but we know that we have fake overrides in some of them
-            superClasses.mapNotNull {
-                declarationStorage.getFakeOverrideInClass(it, overridden.fir)?.let { fakeOverrideInClass ->
+        return superClasses.mapNotNull { superClass ->
+            if (superClass == overriddenContainingIrClass) {
+                // `overridden` was a FIR declaration in some of the supertypes
+                irProducer(overridden)
+            } else {
+                // There were no FIR declaration in supertypes, but we know that we have fake overrides in some of them
+                declarationStorage.getFakeOverrideInClass(superClass, overridden.fir)?.let { fakeOverrideInClass ->
                     @Suppress("UNCHECKED_CAST")
                     irProducer(fakeOverrideInClass.symbol as F)
                 }

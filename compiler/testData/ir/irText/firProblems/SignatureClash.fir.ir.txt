@@ -92,6 +92,7 @@ FILE fqName:<root> fileName:/SignatureClash.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataClass modality:FINAL visibility:public [data] superTypes:[<root>.Derived; <root>.Delegate]'
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Unit
       overridden:
+        public abstract fun bar (): kotlin.Unit [fake_override] declared in <root>.Derived
         public abstract fun bar (): kotlin.Unit declared in <root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY

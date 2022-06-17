@@ -16,6 +16,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.A; kotlin.CharSequence]'
       FUN DELEGATED_MEMBER name:get visibility:public modality:OPEN <> ($this:<root>.A.B, index:kotlin.Int) returnType:kotlin.Char [operator]
         overridden:
+          public abstract fun get (index: kotlin.Int): kotlin.Char [fake_override,operator] declared in <root>.A
           public abstract fun get (index: kotlin.Int): kotlin.Char [operator] declared in kotlin.CharSequence
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         VALUE_PARAMETER name:index index:0 type:kotlin.Int
@@ -27,6 +28,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               index: GET_VAR 'index: kotlin.Int declared in <root>.A.B.get' type=kotlin.Int origin=null
       FUN DELEGATED_MEMBER name:subSequence visibility:public modality:OPEN <> ($this:<root>.A.B, startIndex:kotlin.Int, endIndex:kotlin.Int) returnType:kotlin.CharSequence
         overridden:
+          public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence [fake_override] declared in <root>.A
           public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in kotlin.CharSequence
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         VALUE_PARAMETER name:startIndex index:0 type:kotlin.Int
@@ -40,10 +42,12 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               endIndex: GET_VAR 'endIndex: kotlin.Int declared in <root>.A.B.subSequence' type=kotlin.Int origin=null
       PROPERTY DELEGATED_MEMBER name:length visibility:public modality:OPEN [val]
         overridden:
+          public abstract length: kotlin.Int [fake_override,val]
           public abstract length: kotlin.Int [val]
         FUN DELEGATED_MEMBER name:<get-length> visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
           correspondingProperty: PROPERTY DELEGATED_MEMBER name:length visibility:public modality:OPEN [val]
           overridden:
+            public abstract fun <get-length> (): kotlin.Int [fake_override] declared in <root>.A
             public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence
           $this: VALUE_PARAMETER name:<this> type:<root>.A.B
           BLOCK_BODY

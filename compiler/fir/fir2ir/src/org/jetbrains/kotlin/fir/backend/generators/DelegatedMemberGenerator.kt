@@ -194,6 +194,10 @@ class DelegatedMemberGenerator(
                     declaration.overriddenSymbols = basePropertySymbols[declaration]?.flatMap {
                         fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
                     }?.filter { it.owner != declaration }.orEmpty()
+                    declaration.getter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
+                    if (declaration.isVar) {
+                        declaration.setter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull { it.owner.setter?.symbol }
+                    }
                 }
                 else -> continue
             }
@@ -301,18 +305,9 @@ class DelegatedMemberGenerator(
         annotationGenerator.generate(delegateProperty, firDelegateProperty)
 
         val getter = delegateProperty.getter!!
-        getter.overriddenSymbols =
-            firDelegateProperty.generateOverriddenAccessorSymbols(
-                firSubClass,
-                isGetter = true
-            )
         annotationGenerator.generate(getter, firDelegateProperty)
         if (delegateProperty.isVar) {
             val setter = delegateProperty.setter!!
-            setter.overriddenSymbols =
-                firDelegateProperty.generateOverriddenAccessorSymbols(
-                    firSubClass, isGetter = false
-                )
             annotationGenerator.generate(setter, firDelegateProperty)
         }
 
