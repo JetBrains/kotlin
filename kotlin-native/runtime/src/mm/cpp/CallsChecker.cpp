@@ -90,6 +90,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "cosh",
         "coshf",
         "coshf",
+        "cbrt",
+        "cbrtf",
         "exit",
         "exp",
         "expf",
