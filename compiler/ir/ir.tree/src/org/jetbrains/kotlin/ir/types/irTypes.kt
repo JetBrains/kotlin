@@ -88,7 +88,6 @@ val IrType.classifierOrFail: IrClassifierSymbol
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = when (this) {
         is IrSimpleType -> classifier
-        is IrErrorType -> symbol
         else -> null
     }
 

@@ -89,8 +89,7 @@ val IrType.erasedUpperBound: IrClass
             is IrClassSymbol -> classifier.owner
             is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
             is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-            is IrErrorType -> classifier.symbol.owner
-            else -> error(render())
+            else -> if (this is IrErrorType) symbol.owner else error(render())
         }
 
 /**
