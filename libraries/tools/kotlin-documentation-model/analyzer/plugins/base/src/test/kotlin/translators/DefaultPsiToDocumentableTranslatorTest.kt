@@ -1,15 +1,14 @@
 package translators
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.Annotations
-import org.jetbrains.dokka.model.TypeConstructor
+import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.plugability.DokkaPlugin
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import utils.assertNotNull
 
@@ -256,6 +255,78 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                     "String",
                     (kotlinSubclassFunction.parameters.firstOrNull()?.type as? TypeConstructor)?.dri?.classNames
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `should preserve regular functions that look like accessors, but are not accessors`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |    public int a = 1;
+            |    public void setA() { } // no arg
+            |    public String getA() { return "s"; } // wrong return type
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val setterLookalike = testClass.functions.firstOrNull { it.name == "setA" }
+                assertNotNull(setterLookalike) {
+                    "Expected regular function not found, wrongly categorized as setter?"
+                }
+
+                val getterLookalike = testClass.functions.firstOrNull { it.name == "getA" }
+                assertNotNull(getterLookalike) {
+                    "Expected regular function not found, wrongly categorized as getter?"
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `should not associate accessors with field because field is public api`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PROTECTED
+                    )
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/test/A.java
+            |package test;
+            |public class A {
+            |   protected int a = 1;
+            |   public int getA() { return a; }
+            |   public void setA(int a) { this.a = a; }
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val property = testedClass.properties.single { it.name == "a" }
+                assertEquals(JavaVisibility.Protected, property.visibility.values.single())
+                assertNull(property.getter)
+                assertNull(property.setter)
+
+                assertEquals(2, testedClass.functions.size)
+
+                assertEquals("getA", testedClass.functions[0].name)
+                assertEquals("setA", testedClass.functions[1].name)
             }
         }
     }
