@@ -423,7 +423,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 
     private fun booleanProperty(propName: String): Boolean? =
-        property(propName)?.toBoolean()
+        property(propName)?.toBooleanStrict()
 
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
