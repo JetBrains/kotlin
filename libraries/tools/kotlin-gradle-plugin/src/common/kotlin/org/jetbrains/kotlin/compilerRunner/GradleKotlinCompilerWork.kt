@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
-import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.util.suffixIfNot
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -147,12 +147,13 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
-            val daemonExitCode = compileWithDaemon(messageCollector)
-
-            if (daemonExitCode != null) {
-                return daemonExitCode to KotlinCompilerExecutionStrategy.DAEMON
-            } else {
-                log.warn("Could not connect to kotlin daemon. Using fallback strategy.")
+            try {
+                compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
+            } catch (e: Throwable) {
+                log.warn(
+                    "Failed to compile with Kotlin compile daemon: ${e.stackTraceToString().suffixIfNot("\n")}" +
+                            "Using fallback strategy: Compile without using Kotlin compile daemon"
+                )
             }
         }
 
@@ -164,7 +165,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
     }
 
-    private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode? {
+    private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode {
         val isDebugEnabled = log.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBoolean() ?: true
         val daemonMessageCollector =
             if (isDebugEnabled) messageCollector else MessageCollector.NONE
@@ -180,19 +181,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                         daemonJvmArgs = daemonJvmArgs
                     )
                 } catch (e: Throwable) {
-                    log.error("Caught an exception trying to connect to Kotlin Daemon:")
-                    log.error(e.stackTraceAsString())
-                    null
+                    throw RuntimeException("Failed to connect to Kotlin compile daemon", e)
                 }
-            }
-        if (connection == null) {
-            if (isIncremental) {
-                log.warn("Could not perform incremental compilation: $COULD_NOT_CONNECT_TO_DAEMON_MESSAGE")
-            } else {
-                log.warn(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
-            }
-            return null
-        }
+            } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
         val (daemon, sessionId) = connection
 
@@ -218,19 +209,18 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
-            log.error("Compilation with Kotlin compile daemon was not successful")
-            log.error(e.stackTraceAsString())
-            null
-        }
-        // todo: can we clear cache on the end of session?
-        // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
-        // TODO: implement a proper logic to avoid remote calls in such cases
-        try {
-            metrics.measure(BuildTime.CLEAR_JAR_CACHE) {
-                daemon.clearJarCache()
+            throw RuntimeException("Failed to compile with Kotlin compile daemon (incremental mode = $isIncremental)", e)
+        } finally {
+            // todo: can we clear cache on the end of session?
+            // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
+            // TODO: implement a proper logic to avoid remote calls in such cases
+            try {
+                metrics.measure(BuildTime.CLEAR_JAR_CACHE) {
+                    daemon.clearJarCache()
+                }
+            } catch (e: RemoteException) {
+                log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
             }
-        } catch (e: RemoteException) {
-            log.warn("Unable to clear jar cache after compilation, maybe daemon is already down: $e")
         }
         log.logFinish(KotlinCompilerExecutionStrategy.DAEMON)
         return exitCode
