@@ -11,6 +11,7 @@ import org.junit.Assert
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import kotlin.test.assertNotNull
 
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
@@ -18,6 +19,16 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/kotlin")
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION") // for includeNonPublic
+    val javaConfiguration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/main/java")
+                includeNonPublic = true
             }
         }
     }
@@ -152,33 +163,6 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
                 assertEquals(expected, description?.root?.children)
             }
         }
-    }
-
-    private sealed class TestSuite {
-        abstract val propertyName: String
-
-        data class PropertyDoesntExist(
-            override val propertyName: String
-        ) : TestSuite()
-
-
-        data class PropertyExists(
-            override val propertyName: String,
-            val modifier: KotlinModifier,
-            val visibility: KotlinVisibility,
-            val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
-        ) : TestSuite()
-
-        data class FunctionDoesntExist(
-            override val propertyName: String,
-        ) : TestSuite()
-
-        data class FunctionExists(
-            override val propertyName: String,
-            val modifier: KotlinModifier,
-            val visibility: KotlinVisibility,
-            val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
-        ) : TestSuite()
     }
 
     private fun runTestSuitesAgainstGivenClasses(classlikes: List<DClasslike>, testSuites: List<List<TestSuite>>) {
@@ -669,16 +653,6 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         }
     }
 
-    @Suppress("DEPRECATION") // for includeNonPublic
-    val javaConfiguration = dokkaConfiguration {
-        sourceSets {
-            sourceSet {
-                sourceRoots = listOf("src/main/java")
-                includeNonPublic = true
-            }
-        }
-    }
-
     @Disabled // The compiler throws away annotations on unresolved types upstream
     @Test
     fun `Can annotate unresolved type`() {
@@ -730,4 +704,62 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `should preserve regular functions that look like accessors, but are not accessors`() {
+        testInline(
+            """
+            |/src/main/kotlin/A.kt
+            |package test
+            |class A {
+            |    private var v: Int = 0
+            |    
+            |    // not accessors because declared separately, just functions
+            |    fun setV(new: Int) { v = new }
+            |    fun getV(): Int = v
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testClass = module.packages.single().classlikes.single { it.name == "A" }
+                val setterLookalike = testClass.functions.firstOrNull { it.name == "setV" }
+                assertNotNull(setterLookalike) {
+                    "Expected regular function not found, wrongly categorized as setter?"
+                }
+
+                val getterLookalike = testClass.functions.firstOrNull { it.name == "getV" }
+                assertNotNull(getterLookalike) {
+                    "Expected regular function not found, wrongly categorized as getter?"
+                }
+            }
+        }
+    }
+}
+
+private sealed class TestSuite {
+    abstract val propertyName: String
+
+    data class PropertyDoesntExist(
+        override val propertyName: String
+    ) : TestSuite()
+
+
+    data class PropertyExists(
+        override val propertyName: String,
+        val modifier: KotlinModifier,
+        val visibility: KotlinVisibility,
+        val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
+    ) : TestSuite()
+
+    data class FunctionDoesntExist(
+        override val propertyName: String,
+    ) : TestSuite()
+
+    data class FunctionExists(
+        override val propertyName: String,
+        val modifier: KotlinModifier,
+        val visibility: KotlinVisibility,
+        val additionalModifiers: Set<ExtraModifiers.KotlinOnlyModifiers>
+    ) : TestSuite()
 }
