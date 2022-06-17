@@ -283,7 +283,7 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun cinterop(name: String) {
-        if (parent !is GradleKpmFragment) return
+        if (parent !is GradleKpmFragment) error("cinterop dependency is supported only for GradleKpmFragment")
         parent.declareCinteropDependency(name)
     }
 }

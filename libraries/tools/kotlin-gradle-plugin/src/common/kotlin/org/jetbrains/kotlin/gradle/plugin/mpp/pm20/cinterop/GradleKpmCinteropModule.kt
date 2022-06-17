@@ -45,19 +45,6 @@ internal open class GradleKpmCinteropModule @Inject constructor(
 
     override fun toString(): String = "$moduleIdentifier (Gradle)"
     override fun getName(): String = cinteropName
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is GradleKpmCinteropModule) return false
-
-        if (moduleIdentifier != other.moduleIdentifier) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return moduleIdentifier.hashCode()
-    }
 }
 
 internal open class GradleKpmCinteropFragment(
@@ -74,22 +61,6 @@ internal open class GradleKpmCinteropFragment(
     override val declaredModuleDependencies: Iterable<KpmModuleDependency> = emptyList()
 
     override fun toString(): String = "fragment $fragmentName in $containingModule"
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is GradleKpmCinteropFragment) return false
-
-        if (containingModule != other.containingModule) return false
-        if (fragmentName != other.fragmentName) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = containingModule.hashCode()
-        result = 31 * result + fragmentName.hashCode()
-        return result
-    }
 }
 
 internal class GradleKpmCinteropVariant(
@@ -99,11 +70,10 @@ internal class GradleKpmCinteropVariant(
     task: TaskProvider<out DefaultTask>,
     val konanTarget: KonanTarget
 ) : GradleKpmCinteropFragment(containingModule, fragmentName, languageSettings, task), KpmVariant {
-    override val variantAttributes: Map<KotlinAttributeKey, String>
-        get() = mapOf(
-            KotlinPlatformTypeAttribute to KotlinPlatformTypeAttribute.NATIVE,
-            KotlinNativeTargetAttribute to konanTarget.name
-        )
+    override val variantAttributes = mapOf(
+        KotlinPlatformTypeAttribute to KotlinPlatformTypeAttribute.NATIVE,
+        KotlinNativeTargetAttribute to konanTarget.name
+    )
 
     override fun toString(): String = "variant $fragmentName in $containingModule"
 }
@@ -178,6 +148,7 @@ internal fun GradleKpmCinteropModule.applyFragmentRequirements(requestingFragmen
 
     //setup commonizer tasks at the end of construction CinteropModule structure
     //because we can several times add FragmentRequirements to the CinteropModule
+    //and set of variants for intermediate fragment can change
     val sharedTargets = fragments.mapNotNull { it.toSharedCommonizerTarget() }
     commonizerTask.configure { it.targets.set(sharedTargets) }
 }
