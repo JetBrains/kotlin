@@ -1274,6 +1274,11 @@ internal class NamedParameterNotFoundImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NamedParameterNotFound(), KtAbstractFirDiagnostic<KtValueArgument>
 
+internal class NameForAmbiguousParameterImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NameForAmbiguousParameter(), KtAbstractFirDiagnostic<KtValueArgument>
+
 internal class AssignmentTypeMismatchImpl(
     override val expectedType: KtType,
     override val actualType: KtType,

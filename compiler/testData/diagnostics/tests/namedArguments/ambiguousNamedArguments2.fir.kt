@@ -14,11 +14,11 @@ interface C : A, B { // Warning here, this is correct
 }
 
 fun test(c: C) {
-    c.foo(<!NAMED_PARAMETER_NOT_FOUND!>b1<!> = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
-    c.foo(a1 = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0<!NO_VALUE_FOR_PARAMETER!>)<!>
-    c.foo(a1 = 1, a2 = 1.0)
-    c.foo(a1 = 1, a2 = 1.0)
-    c.bar(a1 = 1, a2 = 1.0, <!NAMED_PARAMETER_NOT_FOUND!>b3<!>= ""<!NO_VALUE_FOR_PARAMETER!>)<!>
-    c.baz(a1 = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0, a3 = "", <!NAMED_PARAMETER_NOT_FOUND!>b4<!> = 2, a5 = ""<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
-    c.baz(a1 = 1, a2 = 1.0, a3 = "", <!NAMED_PARAMETER_NOT_FOUND!>b4<!> = 2, a5 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0)
+    c.bar(a1 = 1, a2 = 1.0, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b3<!>= "")
+    c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
+    c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
 }

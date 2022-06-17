@@ -1063,6 +1063,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class NameForAmbiguousParameter : KtFirDiagnostic<KtValueArgument>() {
+        override val diagnosticClass get() = NameForAmbiguousParameter::class
+    }
+
     abstract class AssignmentTypeMismatch : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = AssignmentTypeMismatch::class
         abstract val expectedType: KtType

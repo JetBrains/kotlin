@@ -338,6 +338,7 @@ object FirErrors {
     val TOO_MANY_ARGUMENTS by error1<PsiElement, FirCallableSymbol<*>>()
     val NO_VALUE_FOR_PARAMETER by error1<KtElement, FirValueParameterSymbol>(SourceElementPositioningStrategies.VALUE_ARGUMENTS)
     val NAMED_PARAMETER_NOT_FOUND by error1<KtValueArgument, String>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
+    val NAME_FOR_AMBIGUOUS_PARAMETER by error0<KtValueArgument>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
     val ASSIGNMENT_TYPE_MISMATCH by error3<KtExpression, ConeKotlinType, ConeKotlinType, Boolean>()
     val RESULT_TYPE_MISMATCH by error2<KtExpression, ConeKotlinType, ConeKotlinType>()
     val MANY_LAMBDA_EXPRESSION_ARGUMENTS by error0<KtValueArgument>()

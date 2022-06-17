@@ -34,8 +34,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -493,7 +496,12 @@ fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularCl
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
-fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): ForbiddenNamedArgumentsTarget? {
+fun FirFunction.getAsForbiddenNamedArgumentsTarget(
+    session: FirSession,
+    // NB: with originScope given this function will try to find overridden declaration with allowed parameter names
+    // for intersection/substitution overrides
+    originScope: FirTypeScope? = null
+): ForbiddenNamedArgumentsTarget? {
     if (this is FirConstructor && this.isPrimary) {
         this.getContainingClass(session)?.let { containingClass ->
             if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
@@ -506,15 +514,21 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
         FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
         FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
-        // For intersection overrides, the logic in
-        // org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope#selectMostSpecificMember picks the most specific one and store
-        // it in originalForIntersectionOverrideAttr. This follows from FE1.0 behavior which selects the most specific function
-        // (org.jetbrains.kotlin.resolve.OverridingUtil#selectMostSpecificMember), from which the `hasStableParameterNames` status is
-        // copied.
-        FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr?.getAsForbiddenNamedArgumentsTarget(session)
         is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
         FirDeclarationOrigin.SamConstructor -> null
-        FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.getAsForbiddenNamedArgumentsTarget(session)
+        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
+            var result: ForbiddenNamedArgumentsTarget? =
+                originalIfFakeOverride()?.getAsForbiddenNamedArgumentsTarget(session) ?: return null
+            originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
+                if (it.fir.getAsForbiddenNamedArgumentsTarget(session) == null) {
+                    result = null
+                    ProcessorAction.STOP
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+            result
+        }
         // referenced function of a Kotlin function type
         FirDeclarationOrigin.BuiltIns -> {
             if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {

@@ -70,6 +70,12 @@ class NameNotFound(
     val function: FirFunction
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
+class NameForAmbiguousParameter(
+    val argument: FirNamedArgumentExpression,
+    val matchedParameter: FirValueParameter,
+    val anotherParameter: FirValueParameter
+) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
+
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
