@@ -53,7 +53,7 @@ class KotlinToolingVersion(
             classifier.matches(Regex("""beta(\d*)?(-release)?-?\d*""")) -> Maturity.BETA
             classifier.matches(Regex("""alpha(\d*)?(-release)?-?\d*""")) -> Maturity.ALPHA
             classifier.matches(Regex("""m\d+(-release)?(-\d*)?""")) -> Maturity.MILESTONE
-            classifier.matches(Regex("""dev-?\d*""")) -> Maturity.DEV
+            classifier.matches(Regex("""(dev|pub)-?\d*""")) -> Maturity.DEV
             classifier == "snapshot" -> Maturity.SNAPSHOT
             else -> throw IllegalArgumentException("Can't infer maturity of KotlinVersion $this")
         }

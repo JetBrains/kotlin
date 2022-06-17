@@ -82,6 +82,10 @@ class KotlinToolingVersionTest {
         assertTrue(
             KotlinToolingVersion("1.7.0-dev") > KotlinToolingVersion("1.7.0-snapshot")
         )
+
+        assertEquals(
+            0, KotlinToolingVersion("1.7.20-dev").compareTo(KotlinToolingVersion("1.7.20-pub"))
+        )
     }
 
     @Test
@@ -183,6 +187,26 @@ class KotlinToolingVersionTest {
         assertEquals(
             KotlinToolingVersion.Maturity.MILESTONE,
             KotlinToolingVersion("1.6.20-M2411-1901").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.DEV,
+            KotlinToolingVersion("1.6.20-dev-2411").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.DEV,
+            KotlinToolingVersion("1.6.20-DeV").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.DEV,
+            KotlinToolingVersion("1.6.20-pub-2411").maturity
+        )
+
+        assertEquals(
+            KotlinToolingVersion.Maturity.DEV,
+            KotlinToolingVersion("1.6.20-pUb").maturity
         )
     }
 
