@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -32,17 +33,21 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginContext {
+    companion object {
+        private const val ERROR_MESSAGE = "This API is not supported for K2"
+    }
+
     @ObsoleteDescriptorBasedAPI
     override val moduleDescriptor: ModuleDescriptor
-        get() = error("Should not be called")
+        get() = error(ERROR_MESSAGE)
 
     @ObsoleteDescriptorBasedAPI
     override val bindingContext: BindingContext
-        get() = error("Should not be called")
+        get() = error(ERROR_MESSAGE)
 
     @ObsoleteDescriptorBasedAPI
     override val typeTranslator: TypeTranslator
-        get() = error("Should not be called")
+        get() = error(ERROR_MESSAGE)
 
     override val languageVersionSettings: LanguageVersionSettings
         get() = components.session.languageVersionSettings
@@ -94,7 +99,7 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
             getCallablesFromScope = { getFunctions(callableId.callableName) },
             getCallablesFromProvider = { getTopLevelFunctionSymbols(callableId.packageName, callableId.callableName) },
             Fir2IrDeclarationStorage::getIrFunctionSymbol
-        ).filterIsInstance<IrSimpleFunctionSymbol>()
+        )
     }
 
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
@@ -103,15 +108,15 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
             getCallablesFromScope = { getProperties(callableId.callableName).filterIsInstance<FirPropertySymbol>() },
             getCallablesFromProvider = { getTopLevelPropertySymbols(callableId.packageName, callableId.callableName) },
             Fir2IrDeclarationStorage::getIrPropertySymbol
-        ).filterIsInstance<IrPropertySymbol>()
+        )
     }
 
-    private inline fun <F, S> referenceCallableSymbols(
+    private inline fun <F : FirCallableSymbol<*>, S : IrSymbol, reified R : S> referenceCallableSymbols(
         classId: ClassId?,
         getCallablesFromScope: FirTypeScope.() -> Collection<F>,
         getCallablesFromProvider: FirSymbolProvider.() -> Collection<F>,
         irExtractor: Fir2IrDeclarationStorage.(F) -> S?,
-    ): Collection<S> {
+    ): Collection<R> {
         val callables = if (classId != null) {
             val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
                 ?.fullyExpandedClass(components.session)
@@ -123,33 +128,31 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
             symbolProvider.getCallablesFromProvider()
         }
 
-        return callables.mapNotNull {
-            components.declarationStorage.irExtractor(it)
-        }
+        return callables.mapNotNull { components.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
     }
 
     override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 
     override fun referenceTopLevel(
@@ -157,6 +160,6 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
         kind: IrDeserializer.TopLevelSymbolKind,
         moduleDescriptor: ModuleDescriptor
     ): IrSymbol? {
-        error("Should not be called")
+        error(ERROR_MESSAGE)
     }
 }
