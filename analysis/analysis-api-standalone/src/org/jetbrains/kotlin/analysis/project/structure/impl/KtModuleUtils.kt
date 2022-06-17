@@ -9,7 +9,7 @@ import com.google.common.io.Files.getNameWithoutExtension
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
@@ -55,6 +55,7 @@ internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServ
 
 internal fun getSourceFilePaths(
     compilerConfig: CompilerConfiguration,
+    includeDirectoryRoot: Boolean = false,
 ): Set<String> {
     return buildSet {
         compilerConfig.javaSourceRoots.forEach { srcRoot ->
@@ -64,6 +65,9 @@ internal fun getSourceFilePaths(
                 Files.walk(path)
                     .filter(java.nio.file.Files::isRegularFile)
                     .forEach { add(it.toString()) }
+                if (includeDirectoryRoot) {
+                    add(srcRoot)
+                }
             } else {
                 // E.g., project/app/src/some/pkg/main.kt
                 add(srcRoot)
@@ -72,7 +76,7 @@ internal fun getSourceFilePaths(
     }
 }
 
-internal inline fun <reified T : PsiFile> getPsiFilesFromPaths(
+internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
     project: Project,
     paths: Collection<String>,
 ): List<T> {
@@ -81,8 +85,12 @@ internal inline fun <reified T : PsiFile> getPsiFilesFromPaths(
     return buildList {
         for (path in paths) {
             val vFile = fs.findFileByPath(path) ?: continue
-            val psiFile = psiManager.findFile(vFile) as? T ?: continue
-            add(psiFile)
+            val psiFileSystemItem =
+                if (vFile.isDirectory)
+                    psiManager.findDirectory(vFile) as? T
+                else
+                    psiManager.findFile(vFile) as? T
+            psiFileSystemItem?.let { add(it) }
         }
     }
 }
@@ -150,7 +158,12 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
             this.platform = platform
             this.project = project
             this.moduleName = moduleName
-            addSourceRoots(getPsiFilesFromPaths(project, getSourceFilePaths(compilerConfig)))
+            addSourceRoots(
+                getPsiFilesFromPaths(
+                    project,
+                    getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
+                )
+            )
         }
     )
 }
