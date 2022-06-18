@@ -128,9 +128,12 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
-    (it.extension == "klib" || it.isDirectory) && it.exists()
-}
+private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDirectory) && exists()
+
+private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
+
+/* Returned FileCollection is lazy */
+private fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filter(File::canKlibBePassedToCompiler)
 
 // endregion
 abstract class AbstractKotlinNativeCompile<
@@ -577,9 +580,7 @@ constructor(
     }
 
     @get:Internal
-    val apiFiles by lazy {
-        project.files(project.configurations.getByName(compilation.apiConfigurationName)).files.filterKlibsPassedToCompiler()
-    }
+    val apiFiles = project.files(project.configurations.getByName(compilation.apiConfigurationName)).filterKlibsPassedToCompiler()
 
     private val localKotlinOptions get() =
         object : KotlinCommonToolOptions {
@@ -612,7 +613,7 @@ constructor(
             .filterIsInstance<ResolvedDependencyResult>()
             .forEach {
                 val dependencyFiles = exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
-                if (!apiFiles.containsAll(dependencyFiles)) {
+                if (!apiFiles.files.containsAll(dependencyFiles)) {
                     failed.add(it)
                 }
             }
