@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Runnable.java
 public interface Runnable {
     void run();

@@ -15,7 +15,7 @@ class C2(val v2: Int)
 
 fun _is_l(e: Either<Foo<C1>, C2>): Any {
     if (e is <!NO_TYPE_ARGUMENTS_ON_RHS!>Left<!>) {
-        return e.value.<!UNRESOLVED_REFERENCE!>v1<!>
+        return e.<!UNRESOLVED_REFERENCE!>value<!>.v1
     }
     return e
 }

@@ -174,18 +174,17 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "Derived_T<Int>");
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "DDerived1_T<Int>");
 
-        assertCommonSupertype("Comparable<*>", "Comparable<Int>", "Comparable<Boolean>");
         assertCommonSupertype("Base_T<out I>", "Base_T<AI>", "Base_T<BI>");
         assertCommonSupertype("Base_T<in Int>", "Base_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<in Int>", "Base_T<Int>");
-        assertCommonSupertype("Base_T<out Any?>", "Base_T<Int>", "Base_T<*>");
+        assertCommonSupertype("Base_T<*>", "Base_T<Int>", "Base_T<*>");
 
         assertCommonSupertype("Base_T<out Parent>", "Base_T<A>", "Base_T<B>");
     }
 
     public void testCommonSupertypesForRecursive() {
-        assertCommonSupertype("Rec<out Rec<out Rec<out Rec<out Rec<*>>>>>", "ARec", "BRec");
+        assertCommonSupertype("Rec<*>", "ARec", "BRec");
     }
 
     public void testIntersect() {
