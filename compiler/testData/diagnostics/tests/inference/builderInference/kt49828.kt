@@ -201,7 +201,7 @@ interface Foo2<K, V> {
     fun entries(): MutableSet<MutableMap.MutableEntry<K, V>>
 }
 
-fun <L, K, V> twoBuilderLambdas(@BuilderInference block: Foo<L>.() -> Unit, @BuilderInference block2: Foo2<K, V>.() -> Unit) {}
+fun <L, K, V> twoBuilderLambdas(block: Foo<L>.() -> Unit, block2: Foo2<K, V>.() -> Unit) {}
 
 fun test() {
     twoBuilderLambdas(
