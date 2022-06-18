@@ -73,7 +73,7 @@ internal fun writeWasmUnitTestRunner(compiledFile: File): File {
     val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
     testRunnerFile.writeText(
         """
-        import exports from '${compiledFile.absolutePath}';
+        import exports from './${compiledFile.name}';
         exports.startUnitTests?.();
         """.trimIndent()
     )
