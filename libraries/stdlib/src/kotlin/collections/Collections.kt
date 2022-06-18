@@ -169,6 +169,7 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("DEPRECATION")
 public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(builderAction)
@@ -197,6 +198,7 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("DEPRECATION")
 public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(capacity, builderAction)
