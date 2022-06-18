@@ -1,6 +1,6 @@
 package
 
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> myCallbackFlow(/*0*/ @kotlin.BuilderInference block: MyProducerScope<T>.() -> kotlin.Unit): MyFlow<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> myCallbackFlow(/*0*/ block: MyProducerScope<T>.() -> kotlin.Unit): MyFlow<T>
 public fun </*0*/ T> myEmptyFlow(): MyFlow<T>
 public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
 public fun test(): MyFlow<kotlin.Int>

@@ -13,8 +13,8 @@ public val test5: kotlin.Int
 public val test6: [ERROR : Type for generateSpecific {
     stringBase()
 }]
-public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
-public fun </*0*/ S> generateSpecific(/*0*/ @kotlin.BuilderInference g: suspend SpecificController<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generateSpecific(/*0*/ g: suspend SpecificController<S>.() -> kotlin.Unit): S
 public fun Base<*>.starBase(): kotlin.Unit
 public fun Base<kotlin.String>.stringBase(): kotlin.Unit
 

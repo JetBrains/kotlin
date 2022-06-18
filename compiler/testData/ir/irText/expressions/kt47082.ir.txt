@@ -2,8 +2,6 @@ FILE fqName:<root> fileName:/kt47082.kt
   FUN name:produce visibility:public modality:FINAL <E> (block:@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>) returnType:E of <root>.produce
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>
-      annotations:
-        BuilderInference
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.Function1<<root>.Derived<E of <root>.produce>, kotlin.Unit>): E of <root>.produce declared in <root>'
         TYPE_OP type=E of <root>.produce origin=CAST typeOperand=E of <root>.produce

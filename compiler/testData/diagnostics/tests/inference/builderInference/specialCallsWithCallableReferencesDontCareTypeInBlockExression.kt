@@ -30,7 +30,7 @@ fun foo7() = null as Foo7<Int>
 
 interface FlowCollector<in T> {}
 
-fun <L> flow(@BuilderInference block: suspend FlowCollector<L>.() -> Unit) = Flow(block)
+fun <L> flow(block: suspend FlowCollector<L>.() -> Unit) = Flow(block)
 
 class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 

@@ -11,7 +11,7 @@ interface ProducerScope<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <E> produce(@BuilderInference block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
+fun <E> produce(block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
 
 fun <K> filter(e: K, predicate: (K) -> Boolean) =
     produce {

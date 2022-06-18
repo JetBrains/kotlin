@@ -14,12 +14,11 @@ class Builder<T> {
     fun add(t: T) {}
 }
 
-fun <S> build(@BuilderInference g: Builder<S>.() -> Unit): List<S> = TODO()
+fun <S> build(g: Builder<S>.() -> Unit): List<S> = TODO()
 fun <S> wrongBuild(g: Builder<S>.() -> Unit): List<S> = TODO()
 
 fun <S> Builder<S>.extensionAdd(s: S) {}
 
-@BuilderInference
 fun <S> Builder<S>.safeExtensionAdd(s: S) {}
 
 val member = build {

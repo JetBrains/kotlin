@@ -20,7 +20,7 @@ class Foo<T>
 fun <T> f1(f: Foo<T>.() -> Unit) {}
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> f2(@BuilderInference f: Foo<T>.() -> Unit) {
+fun <T> f2(f: Foo<T>.() -> Unit) {
 }
 
 fun test3() {

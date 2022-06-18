@@ -28,7 +28,7 @@ interface Scope<T> {
     fun yield(t: T) {}
 }
 
-fun <S> generate(@BuilderInference g: Scope<S>.() -> Unit): S = TODO()
+fun <S> generate(g: Scope<S>.() -> Unit): S = TODO()
 
 val test2 = generate {
     { yield("foo") }::class

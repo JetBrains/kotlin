@@ -7,10 +7,10 @@ class Foo<T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K1> myBuilder1(@BuilderInference builder: Foo<K1>.() -> Foo<K1>): Foo<K1> = Foo<K1>().apply { builder() }
+fun <K1> myBuilder1(builder: Foo<K1>.() -> Foo<K1>): Foo<K1> = Foo<K1>().apply { builder() }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K2> myBuilder2(@BuilderInference builder: Foo<K2>.() -> Unit): Foo<K2> = Foo<K2>().apply(builder)
+fun <K2> myBuilder2(builder: Foo<K2>.() -> Unit): Foo<K2> = Foo<K2>().apply(builder)
 
 val result1 = myBuilder1 {
     add(null)

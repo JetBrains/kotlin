@@ -1,6 +1,6 @@
 package
 
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public inline fun </*0*/ T> builder(/*0*/ @kotlin.BuilderInference block: Builder<T>.() -> kotlin.Unit): Buildee<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public inline fun </*0*/ T> builder(/*0*/ block: Builder<T>.() -> kotlin.Unit): Buildee<T>
 private fun </*0*/ T> Builder<T>.consumer(/*0*/ builder: Builder<T>): kotlin.Unit
 public fun </*0*/ T> Builder<T>.foo(): Buildee<T>
 

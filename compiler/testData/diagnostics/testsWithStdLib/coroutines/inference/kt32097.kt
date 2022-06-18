@@ -14,7 +14,7 @@ interface Flow<out T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> channelFlow(@BuilderInference block: suspend ProducerScope<T>.() -> Unit): Flow<T> = TODO()
+fun <T> channelFlow(block: suspend ProducerScope<T>.() -> Unit): Flow<T> = TODO()
 
 interface ProducerScope<in E>
 

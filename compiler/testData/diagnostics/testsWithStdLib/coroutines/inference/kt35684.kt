@@ -26,7 +26,7 @@ fun test_3() {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <U> sequence(@BuilderInference block: suspend Inv<U>.() -> Unit): U = null!!
+fun <U> sequence(block: suspend Inv<U>.() -> Unit): U = null!!
 
 interface Inv<T> {
     fun yield(element: T)

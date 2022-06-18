@@ -11,7 +11,6 @@ fun main(args: Array<String>) {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-@BuilderInference
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
 // JVM_IR_TEMPLATES

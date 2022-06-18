@@ -5,7 +5,7 @@
 
 import kotlin.experimental.ExperimentalTypeInference
 
-fun <E> produce(@BuilderInference block: Derived<E>.() -> Unit): E = null as E
+fun <E> produce(block: Derived<E>.() -> Unit): E = null as E
 
 interface Derived<in E> : Base<E>
 

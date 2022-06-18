@@ -17,8 +17,8 @@ interface SpecificController<T> : Base<String> {
     suspend fun yield(t: T) {}
 }
 
-fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TODO()
-fun <S> generateSpecific(@BuilderInference g: suspend SpecificController<S>.() -> Unit): S = TODO()
+fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
+fun <S> generateSpecific(g: suspend SpecificController<S>.() -> Unit): S = TODO()
 
 fun Base<*>.starBase() {}
 fun Base<String>.stringBase() {}

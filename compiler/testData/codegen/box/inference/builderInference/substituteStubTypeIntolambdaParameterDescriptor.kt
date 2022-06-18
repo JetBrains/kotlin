@@ -8,7 +8,7 @@ class TypeDefinition<K : Any> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T : Any> defineType(@BuilderInference definition: TypeDefinition<T>.() -> Unit): Unit {}
+fun <T : Any> defineType(definition: TypeDefinition<T>.() -> Unit): Unit {}
 
 fun test() {
     defineType {

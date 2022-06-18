@@ -12,10 +12,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1> build(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R2> build2(@BuilderInference block: TestInterface<R2>.() -> Unit): R2 = TODO()
+fun <R2> build2(block: TestInterface<R2>.() -> Unit): R2 = TODO()
 
 class Inv<K>
 

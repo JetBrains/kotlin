@@ -13,10 +13,10 @@ class Test {
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit) {}
+fun <R1> build(block: TestInterface<R1>.() -> Unit) {}
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R2> build2(@BuilderInference block: TestInterface<R2>.() -> Unit) {}
+fun <R2> build2(block: TestInterface<R2>.() -> Unit) {}
 
 class In<in K>
 

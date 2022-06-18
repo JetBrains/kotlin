@@ -4,10 +4,10 @@ public val extension: kotlin.collections.List<kotlin.String>
 public val member: kotlin.collections.List<kotlin.Int>
 public val memberWithoutAnn: kotlin.collections.List<kotlin.Int>
 public val safeExtension: kotlin.collections.List<kotlin.String>
-public fun </*0*/ S> build(/*0*/ @kotlin.BuilderInference g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public fun </*0*/ S> build(/*0*/ g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 public fun </*0*/ S> wrongBuild(/*0*/ g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 public fun </*0*/ S> Builder<S>.extensionAdd(/*0*/ s: S): kotlin.Unit
-@kotlin.BuilderInference public fun </*0*/ S> Builder<S>.safeExtensionAdd(/*0*/ s: S): kotlin.Unit
+public fun </*0*/ S> Builder<S>.safeExtensionAdd(/*0*/ s: S): kotlin.Unit
 
 public final class Builder</*0*/ T> {
     public constructor Builder</*0*/ T>()

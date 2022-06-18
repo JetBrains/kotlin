@@ -1,4 +1,4 @@
-fun <E : Any?> produce(@BuilderInference block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E {
+fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E {
   return null as E
 }
 

@@ -32,7 +32,7 @@ interface Inv<T> {
     fun emit(e: T)
 }
 
-fun <T> invBuilder(@BuilderInference block: Inv<T>.() -> Unit) {}
+fun <T> invBuilder(block: Inv<T>.() -> Unit) {}
 
 fun test() {
     invBuilder {

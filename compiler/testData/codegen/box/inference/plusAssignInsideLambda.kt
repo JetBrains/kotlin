@@ -7,7 +7,7 @@ interface SendChannel<in T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-public fun <T> flux(@BuilderInference block: suspend SendChannel<T>.() -> Unit) {}
+public fun <T> flux(block: suspend SendChannel<T>.() -> Unit) {}
 
 suspend inline fun <T> T.collect(action: (T) -> Unit) { action(this) }
 

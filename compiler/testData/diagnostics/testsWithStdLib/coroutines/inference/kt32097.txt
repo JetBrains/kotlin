@@ -1,7 +1,7 @@
 package
 
 public fun aFlow(): Flow<kotlin.Unit>
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> channelFlow(/*0*/ @kotlin.BuilderInference block: suspend ProducerScope<T>.() -> kotlin.Unit): Flow<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> channelFlow(/*0*/ block: suspend ProducerScope<T>.() -> kotlin.Unit): Flow<T>
 public suspend fun ProducerScope<*>.awaitClose(/*0*/ block: () -> kotlin.Unit = ...): kotlin.Unit
 
 public interface Flow</*0*/ out T> {

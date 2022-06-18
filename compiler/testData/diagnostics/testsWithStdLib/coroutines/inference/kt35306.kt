@@ -8,7 +8,7 @@ import kotlin.experimental.ExperimentalTypeInference
 interface Build<T>
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> build(@BuilderInference fn: Builder<T>.() -> Unit): Build<T> = TODO()
+fun <T> build(fn: Builder<T>.() -> Unit): Build<T> = TODO()
 
 // Works completely
 val build = build {

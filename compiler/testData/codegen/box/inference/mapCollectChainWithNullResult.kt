@@ -20,7 +20,7 @@ fun <T> Flow<T>.collect(action: (value: T) -> Unit): Unit =
         override fun emit(value: T) = action(value)
     })
 
-fun <T, R> Flow<T>.transform(@BuilderInference transform: FlowCollector<R>.(T) -> Unit): Flow<R> =
+fun <T, R> Flow<T>.transform(transform: FlowCollector<R>.(T) -> Unit): Flow<R> =
     flow { collect { transform(it) } }
 
 fun <T, R> Flow<T>.map(transform: (T) -> R): Flow<R> =

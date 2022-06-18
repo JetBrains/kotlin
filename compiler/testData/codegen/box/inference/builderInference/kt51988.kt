@@ -3,12 +3,12 @@
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <AB1, BB1> build(@BuilderInference block: BuilderScope<AB1>.() -> BB1): ResultProvider<AB1, BB1> = object : ResultProvider<AB1, BB1> {
+fun <AB1, BB1> build(block: BuilderScope<AB1>.() -> BB1): ResultProvider<AB1, BB1> = object : ResultProvider<AB1, BB1> {
     override fun provideResult(): AB1 = "OK" as AB1
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <AB2, BB2> build2(@BuilderInference block: BuilderScope<AB2>.() -> BB2): ResultProvider<AB2, BB2> = object : ResultProvider<AB2, BB2> {
+fun <AB2, BB2> build2(block: BuilderScope<AB2>.() -> BB2): ResultProvider<AB2, BB2> = object : ResultProvider<AB2, BB2> {
     override fun provideResult(): AB2 = "OK" as AB2
 }
 

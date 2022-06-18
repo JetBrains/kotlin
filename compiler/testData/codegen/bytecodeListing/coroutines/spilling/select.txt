@@ -56,7 +56,7 @@ final class SelectKt$produceNumbers$1 {
 public final class SelectKt {
     // source: 'select.kt'
     inner (anonymous) class SelectKt$produceNumbers$1
-    public final static @org.jetbrains.annotations.NotNull method produce(@org.jetbrains.annotations.NotNull p0: CoroutineScope, @kotlin.BuilderInference @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): ReceiveChannel
+    public final static @org.jetbrains.annotations.NotNull method produce(@org.jetbrains.annotations.NotNull p0: CoroutineScope, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): ReceiveChannel
     public final static @org.jetbrains.annotations.NotNull method produceNumbers(@org.jetbrains.annotations.NotNull p0: CoroutineScope, @org.jetbrains.annotations.NotNull p1: SendChannel): ReceiveChannel
     private final static @org.jetbrains.annotations.Nullable method select$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method select(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object

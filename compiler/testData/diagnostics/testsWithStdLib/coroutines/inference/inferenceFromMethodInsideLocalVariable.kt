@@ -9,7 +9,7 @@ interface Inv<T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> foo(@BuilderInference block: Inv<K>.() -> Unit) {}
+fun <K> foo(block: Inv<K>.() -> Unit) {}
 
 fun test(i: Int) {
     foo {

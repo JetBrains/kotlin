@@ -1,7 +1,7 @@
 package
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun main(): kotlin.Unit
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> myBuildList(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableList<E>.() -> kotlin.Unit): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> myBuildList(/*0*/ builderAction: kotlin.collections.MutableList<E>.() -> kotlin.Unit): kotlin.Unit
 
 public final class Foo {
     public constructor Foo(/*0*/ notNullProp: kotlin.String)

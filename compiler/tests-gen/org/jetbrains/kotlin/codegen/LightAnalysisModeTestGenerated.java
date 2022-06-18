@@ -15743,6 +15743,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/builderInferenceLeakingVariable.kt");
         }
 
+        @TestMetadata("builderInferenceWithAnnotation.kt")
+        public void testBuilderInferenceWithAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/builderInferenceWithAnnotation.kt");
+        }
+
         @TestMetadata("capturedStarProjection.kt")
         public void testCapturedStarProjection() throws Exception {
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");

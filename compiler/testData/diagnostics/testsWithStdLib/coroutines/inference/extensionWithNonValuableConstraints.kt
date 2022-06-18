@@ -12,7 +12,7 @@ interface Controller<T> : Base {
     suspend fun yield(t: T) {}
 }
 
-fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TODO()
+fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
 fun Base.baseExtension() {}
 fun Controller<out Any?>.outNullableAnyExtension() {}
@@ -20,7 +20,6 @@ fun Controller<out Any>.outAnyExtension() {}
 fun Controller<Any?>.invNullableAnyExtension() {}
 fun <S> Controller<S>.genericExtension() {}
 
-@BuilderInference
 fun Controller<String>.safeExtension() {}
 
 val test1 = generate {

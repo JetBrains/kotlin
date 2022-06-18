@@ -4,10 +4,10 @@
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> flow(@BuilderInference block: suspend FlowCollector<T>.() -> Unit) = Flow<T>()
+fun <T> flow(block: suspend FlowCollector<T>.() -> Unit) = Flow<T>()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <E> produce(@BuilderInference block: suspend SendChannel<E>.() -> Unit) {}
+fun <E> produce(block: suspend SendChannel<E>.() -> Unit) {}
 
 interface SendChannel<in E> {
     val onSend: SelectClause2<E, SendChannel<E>>

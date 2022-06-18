@@ -12,7 +12,7 @@ class GenericController<T> {
     suspend fun yieldVararg(vararg t: T) {}
 }
 
-fun <S> generate(@BuilderInference g: suspend GenericController<S>.() -> Unit): S = TODO()
+fun <S> generate(g: suspend GenericController<S>.() -> Unit): S = TODO()
 
 val test1 = generate {
     yield(4)

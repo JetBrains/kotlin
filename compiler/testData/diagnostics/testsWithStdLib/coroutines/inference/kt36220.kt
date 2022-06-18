@@ -10,7 +10,7 @@ class TypeDefinition<KotlinType : Any> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <KotlinType : Any> defineType(@BuilderInference definition: TypeDefinition<KotlinType>.() -> Unit): Unit = TODO()
+fun <KotlinType : Any> defineType(definition: TypeDefinition<KotlinType>.() -> Unit): Unit = TODO()
 
 fun main() {
     defineType {

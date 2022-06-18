@@ -1,6 +1,6 @@
 package
 
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> foo(/*0*/ x: T, /*1*/ @kotlin.BuilderInference builder: T.() -> kotlin.Unit): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> foo(/*0*/ x: T, /*1*/ builder: T.() -> kotlin.Unit): kotlin.Unit
 public fun test(): kotlin.Unit
 
 public final class Bar</*0*/ T> {

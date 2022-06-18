@@ -10,7 +10,7 @@ interface FlowCollector<in T> {
 
 interface Flow<T>
 
-public fun <T> flow(@BuilderInference block: suspend FlowCollector<T>.() -> Unit) = materialize<Flow<T>>()
+public fun <T> flow(block: suspend FlowCollector<T>.() -> Unit) = materialize<Flow<T>>()
 
 fun foo(total: Int, next: Int) = 10
 fun foo(total: Int, next: Float) = 10

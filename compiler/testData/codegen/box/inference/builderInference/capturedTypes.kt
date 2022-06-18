@@ -5,10 +5,10 @@
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R> build(@BuilderInference block: TestInterface<R>.() -> Unit) {}
+fun <R> build(block: TestInterface<R>.() -> Unit) {}
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R> build2(@BuilderInference block: TestInterface<R>.() -> Unit) {}
+fun <R> build2(block: TestInterface<R>.() -> Unit) {}
 
 interface TestInterface<R> {
     fun emit(r: R)

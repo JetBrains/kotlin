@@ -15,7 +15,7 @@ class Builder<T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> build(@BuilderInference configure: Builder<T>.() -> Unit) =
+fun <T> build(configure: Builder<T>.() -> Unit) =
     Builder<T>().apply(configure).build()
 
 fun box(): String {

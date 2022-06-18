@@ -16,7 +16,7 @@ var foo4: Float
 
 interface FlowCollector<in T> {}
 
-fun <L> flow(@BuilderInference block: suspend FlowCollector<L>.() -> Unit) = Flow(block)
+fun <L> flow(block: suspend FlowCollector<L>.() -> Unit) = Flow(block)
 
 class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 

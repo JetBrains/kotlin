@@ -28,7 +28,7 @@ class ConversionBuilder<Value> {
 }
 class DefinitionBuilder<Transaction> {
     @OptIn(ExperimentalTypeInference::class)
-    fun <Value> conversion(@BuilderInference configure: ConversionBuilder<Value>.() -> Unit): Unit {}
+    fun <Value> conversion(configure: ConversionBuilder<Value>.() -> Unit): Unit {}
 }
 interface ArgumentDefinition<Value> {
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): ArgumentReference<Value>

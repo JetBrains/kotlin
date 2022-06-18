@@ -10,7 +10,7 @@ class Foo<K11, K22>(val key: K11) {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K1, K2> build(@kotlin.BuilderInference builder: Foo<K1, K2>.() -> Unit) {}
+fun <K1, K2> build(builder: Foo<K1, K2>.() -> Unit) {}
 
 fun run(x: Int) {
     build {

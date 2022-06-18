@@ -23,22 +23,22 @@ class B: A
 class C: A
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build1(@BuilderInference builderAction1: In<K>.() -> Unit, @BuilderInference builderAction2: In<K>.() -> Unit): K = 1 as K
+fun <K> build1(builderAction1: In<K>.() -> Unit, builderAction2: In<K>.() -> Unit): K = 1 as K
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build2(@BuilderInference builderAction1: In<K>.() -> Unit, @BuilderInference builderAction2: In<K>.() -> Unit): K = B() as K
+fun <K> build2(builderAction1: In<K>.() -> Unit, builderAction2: In<K>.() -> Unit): K = B() as K
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build3(@BuilderInference builderAction1: Out<K>.() -> Unit, @BuilderInference builderAction2: Out<K>.() -> Unit): K = 1 as K
+fun <K> build3(builderAction1: Out<K>.() -> Unit, builderAction2: Out<K>.() -> Unit): K = 1 as K
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build4(@BuilderInference builderAction1: Out<K>.() -> Unit, @BuilderInference builderAction2: Out<K>.() -> Unit): K = B() as K
+fun <K> build4(builderAction1: Out<K>.() -> Unit, builderAction2: Out<K>.() -> Unit): K = B() as K
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build5(@BuilderInference builderAction1: Inv<K>.() -> Unit, @BuilderInference builderAction2: Inv<K>.() -> Unit): K = 1 as K
+fun <K> build5(builderAction1: Inv<K>.() -> Unit, builderAction2: Inv<K>.() -> Unit): K = 1 as K
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> build6(@BuilderInference builderAction1: Inv<K>.() -> Unit, @BuilderInference builderAction2: Inv<K>.() -> Unit): K = B() as K
+fun <K> build6(builderAction1: Inv<K>.() -> Unit, builderAction2: Inv<K>.() -> Unit): K = B() as K
 
 @OptIn(ExperimentalStdlibApi::class)
 fun box(): String {

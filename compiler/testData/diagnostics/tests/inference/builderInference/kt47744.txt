@@ -1,7 +1,7 @@
 package
 
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: suspend SendChannel<E>.() -> kotlin.Unit): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ block: suspend SendChannel<E>.() -> kotlin.Unit): kotlin.Unit
 public inline fun </*0*/ R> select(/*0*/ crossinline builder: SelectBuilder<R>.() -> kotlin.Unit): R
 public fun test(): kotlin.Unit
 

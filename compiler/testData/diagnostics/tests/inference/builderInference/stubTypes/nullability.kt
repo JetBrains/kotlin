@@ -11,16 +11,16 @@ interface TestInterface<R> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1> build(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1> build(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1 : Any> build2(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1 : Any> build2(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1 : R2, R2 : Any> build3(@BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1 : R2, R2 : Any> build3(block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <R1 : R2, R2> build4(x: R2, @BuilderInference block: TestInterface<R1>.() -> Unit): R1 = TODO()
+fun <R1 : R2, R2> build4(x: R2, block: TestInterface<R1>.() -> Unit): R1 = TODO()
 
 fun test(a: String?) {
     val ret1 = build {

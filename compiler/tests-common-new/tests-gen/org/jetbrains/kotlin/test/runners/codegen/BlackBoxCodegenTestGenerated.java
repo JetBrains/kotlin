@@ -18924,6 +18924,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("builderInferenceWithAnnotation.kt")
+        public void testBuilderInferenceWithAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/builderInferenceWithAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("capturedStarProjection.kt")
         public void testCapturedStarProjection() throws Exception {
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");

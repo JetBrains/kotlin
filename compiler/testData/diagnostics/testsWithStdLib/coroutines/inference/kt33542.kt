@@ -13,7 +13,7 @@ class InImpl<E> : In<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-public fun <T> builder(@BuilderInference block: In<T>.() -> Unit) {
+public fun <T> builder(block: In<T>.() -> Unit) {
     InImpl<T>().block()
 }
 

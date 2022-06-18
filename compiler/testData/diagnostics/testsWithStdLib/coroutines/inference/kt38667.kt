@@ -19,7 +19,7 @@ class TransitionDefinition<T> {
     fun transition(fromState: T? = null, toState: T? = null, init: TransitionSpec<T>.() -> Unit) {}
 }
 @OptIn(ExperimentalTypeInference::class)
-fun <T> transitionDefinition(@BuilderInference init: TransitionDefinition<T>.() -> Unit) = TransitionDefinition<T>().apply(init)
+fun <T> transitionDefinition(init: TransitionDefinition<T>.() -> Unit) = TransitionDefinition<T>().apply(init)
 
 fun main() {
     val intProp = IntPropKey()

@@ -4,7 +4,7 @@ public val build: Build<kotlin.Int>
 public val buildWithFn: Build<kotlin.Int>
 public val buildWithFnWrapped: Build<kotlin.Int>
 public val buildWithWrappedValue: Build<kotlin.Int>
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> build(/*0*/ @kotlin.BuilderInference fn: Builder<T>.() -> kotlin.Unit): Build<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> build(/*0*/ fn: Builder<T>.() -> kotlin.Unit): Build<T>
 
 public interface Build</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
