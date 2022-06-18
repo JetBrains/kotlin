@@ -138,6 +138,9 @@ object Analyser {
             return EffectsAndPotentials(lambdaPot)
         }
 
+        override fun visitThrowExpression(throwExpression: FirThrowExpression, data: Nothing?): EffectsAndPotentials =
+            throwExpression.exception.accept()
+
         @OptIn(SymbolInternals::class)
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): EffectsAndPotentials {
             val firThisReference = thisReceiverExpression.calleeReference
@@ -211,7 +214,10 @@ object Analyser {
         }
 
         override fun visitTryExpression(tryExpression: FirTryExpression, data: Nothing?): EffectsAndPotentials {
-            TODO()
+            return tryExpression.run {
+                tryBlock.accept() + catches.fold(emptyEffsAndPots) { sum, cache -> sum + cache.accept() } + (finallyBlock?.accept()
+                    ?: emptyEffsAndPots)
+            }
         }
 
         override fun visitClassReferenceExpression(
@@ -288,7 +294,7 @@ fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
         }
         is FirPropertyAccessor -> TODO()
         //                is FirSimpleFunction -> checkBody(dec)
-        is FirField -> TODO()
+        is FirField -> dec.initializer?.let(::analyser) ?: emptyEffsAndPots
         is FirProperty -> dec.initializer?.let(::analyser) ?: emptyEffsAndPots
         else -> emptyEffsAndPots
     }

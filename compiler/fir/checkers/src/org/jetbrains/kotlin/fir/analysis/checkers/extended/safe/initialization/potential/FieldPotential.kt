@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.select
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.viewChange
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 data class FieldPotential(override val potential: Potential, val field: FirVariable) : WithPrefix(potential, field) {
@@ -36,9 +33,12 @@ data class FieldPotential(override val potential: Potential, val field: FirVaria
             }
             is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Acc3
-                val state = Checker.resolve(field)
                 val (effects, potentials) = potential.propagate()
-                val select = state.select(potentials, field)
+                val select = if (potentials.isNotEmpty()) {
+                    val state = Checker.resolve(field)
+                    state.select(potentials, field)
+                } else emptyEffsAndPots
+
                 select + effects
             }
         }
