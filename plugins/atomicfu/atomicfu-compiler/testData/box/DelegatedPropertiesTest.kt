@@ -4,6 +4,8 @@ import kotlin.test.*
 private val _topLevelInt = atomic(42)
 var topLevelInt: Int by _topLevelInt
 
+private var topLevelVolatile by atomic(56)
+
 class DelegatedProperties {
     private val _a = atomic(42)
     var a: Int by _a
@@ -135,9 +137,16 @@ fun testTopLevelDelegatedProperties() {
     assertEquals(66, topLevelInt)
 }
 
+fun testTopLevelVolatileProperties() {
+    assertEquals(56, topLevelVolatile)
+    topLevelVolatile = 55
+    assertEquals(110, topLevelVolatile * 2)
+}
+
 fun box(): String {
     val testClass = DelegatedProperties()
     testClass.test()
     testTopLevelDelegatedProperties()
+    testTopLevelVolatileProperties()
     return "OK"
 }

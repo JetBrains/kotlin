@@ -160,7 +160,7 @@ class AtomicfuJvmIrTransformer(
             registerAtomicHandler(this)
         }
 
-        private fun IrProperty.transformDelegatedProperty(parentClass: IrDeclarationContainer) {
+        private fun IrProperty.transformDelegatedProperty(parent: IrDeclarationContainer) {
             backingField?.let {
                 it.initializer?.let {
                     val initializer = it.expression as IrCall
@@ -170,8 +170,10 @@ class AtomicfuJvmIrTransformer(
                         // 2. transform getter/setter
                         // var a by atomic(0) ->
                         // volatile var a: Int = 0
-                        val volatileField = buildVolatileRawField(this, parentClass)
-                        backingField = volatileField
+                        val volatileField = buildVolatileRawField(this, parent).also {
+                            parent.declarations.add(it)
+                        }
+                        backingField = null
                         getter?.transformAccessor(volatileField, getter?.dispatchReceiverParameter?.capture())
                         setter?.transformAccessor(volatileField, setter?.dispatchReceiverParameter?.capture())
                     } else {
@@ -187,9 +189,9 @@ class AtomicfuJvmIrTransformer(
                         backingField = null
                         if (atomicProperty.isTopLevel()) {
                             with(atomicSymbols.createBuilder(symbol)) {
-                                val parent = getStaticVolatileWrapperInstance(atomicProperty)
-                                getter?.transformAccessor(volatileField, getProperty(parent, null))
-                                setter?.transformAccessor(volatileField, getProperty(parent, null))
+                                val wrapper = getStaticVolatileWrapperInstance(atomicProperty)
+                                getter?.transformAccessor(volatileField, getProperty(wrapper, null))
+                                setter?.transformAccessor(volatileField, getProperty(wrapper, null))
                             }
                         } else {
                             if (this.parent == atomicProperty.parent) {
@@ -235,28 +237,29 @@ class AtomicfuJvmIrTransformer(
             propertyToAtomicHandler[this] = atomicHandlerProperty
         }
 
-        private fun buildVolatileRawField(atomicProperty: IrProperty, parent: IrDeclarationContainer): IrField =
+        private fun buildVolatileRawField(property: IrProperty, parent: IrDeclarationContainer): IrField =
             // Generate a new backing field for the given property:
             // a volatile variable of the atomic value type
             // val a = atomic(0)
             // volatile var a: Int = 0
-            atomicProperty.backingField?.let { backingField ->
+            property.backingField?.let { backingField ->
                 getPropertyInitializer(backingField, parent)?.let {
                     val value = (it as IrCall).getValueArgument(0)?.deepCopyWithSymbols()
-                        ?: error("Atomic factory should take at least one argument: ${atomicProperty.render()}")
+                        ?: error("Atomic factory should take at least one argument: ${property.render()}")
                     val valueType = backingField.type.atomicToValueType()
                     context.irFactory.buildField {
-                        name = atomicProperty.name
+                        name = property.name
                         type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
                         visibility = backingField.visibility // private
                         isFinal = false
-                        isStatic = false
+                        isStatic = parent is IrFile
                     }.apply {
                         initializer = IrExpressionBodyImpl(value)
                         annotations = backingField.annotations + atomicSymbols.volatileAnnotationConstructorCall
+                        this.parent = parent
                     }
-                } ?: error("Atomic property ${atomicProperty.render()} should be initialized either directly or in the init { } block")
-            } ?: error("Backing field of the atomic property ${atomicProperty.render()} is null")
+                } ?: error("Atomic property ${property.render()} should be initialized either directly or in the init { } block")
+            } ?: error("Backing field of the atomic property ${property.render()} is null")
 
         private fun addJucaAFUProperty(atomicProperty: IrProperty, parentClass: IrClass): IrProperty =
             // Generate an atomic field updater for the volatile backing field of the given property:

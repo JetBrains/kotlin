@@ -83,11 +83,15 @@ public final class DelegatedProperties {
 public final class DelegatedPropertiesTestKt {
     // source: 'DelegatedPropertiesTest.kt'
     public final static @org.jetbrains.annotations.NotNull field _topLevelInt$DelegatedPropertiesTest$VolatileWrapper: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper
+    private volatile static volatile @kotlin.jvm.Volatile field topLevelVolatile: int
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getTopLevelInt(): int
+    private final static method getTopLevelVolatile(): int
     public final static method setTopLevelInt(p0: int): void
+    private final static method setTopLevelVolatile(p0: int): void
     public final static method testTopLevelDelegatedProperties(): void
+    public final static method testTopLevelVolatileProperties(): void
 }
 
 @kotlin.Metadata
