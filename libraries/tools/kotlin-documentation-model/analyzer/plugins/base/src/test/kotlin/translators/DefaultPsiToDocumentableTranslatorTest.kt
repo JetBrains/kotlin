@@ -330,4 +330,91 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `should add IsVar extra for field with getter and setter`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |   private int a = 1;
+            |   public int getA() { return a; }
+            |   public void setA(int a) { this.a = a; }
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val property = testedClass.properties.single { it.name == "a" }
+                assertNotNull(property.extra[IsVar])
+            }
+        }
+    }
+
+    @Test
+    fun `should not add IsVar extra if field does not have a setter`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |   private int a = 1;
+            |   public int getA() { return a; }
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val property = testedClass.properties.single { it.name == "a" }
+                assertNull(property.extra[IsVar])
+            }
+        }
+    }
+
+    @Test
+    fun `should add IsVar for non-final java field without any accessors`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |   private int a = 1;
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val property = testedClass.properties.single { it.name == "a" }
+                assertNotNull(property.extra[IsVar])
+            }
+        }
+    }
+
+    @Test
+    fun `should not add IsVar for final java field`() {
+        testInline(
+            """
+            |/src/main/java/test/A.java
+            |package test;
+            |public class A {
+            |   public final int a = 2;
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "A" }
+
+                val publicFinal = testedClass.properties.single { it.name == "a" }
+                assertNull(publicFinal.extra[IsVar])
+            }
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import org.junit.Assert
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
@@ -732,6 +733,34 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
                 assertNotNull(getterLookalike) {
                     "Expected regular function not found, wrongly categorized as getter?"
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `should correctly add IsVar extra for properties`() {
+        testInline(
+            """
+            |/src/main/kotlin/A.kt
+            |package test
+            |class A {
+            |    public var mutable: Int = 0
+            |    public val immutable: Int = 0
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testClass = module.packages.single().classlikes.single { it.name == "A" }
+                assertEquals(2, testClass.properties.size)
+
+                val mutable = testClass.properties[0]
+                assertEquals("mutable", mutable.name)
+                assertNotNull(mutable.extra[IsVar])
+
+                val immutable = testClass.properties[1]
+                assertEquals("immutable", immutable.name)
+                assertNull(immutable.extra[IsVar])
             }
         }
     }
