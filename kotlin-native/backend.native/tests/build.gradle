@@ -6154,6 +6154,7 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
 
 fileCheckTest("filecheck_redundant_boxing_unboxing") {
     annotatedSource = project.file('filecheck/redundant_boxing_unboxing.kt')
+    enabled = project.globalTestArgs.contains('-opt')
 }
 
 fileCheckTest("filecheck_intrinsics") {

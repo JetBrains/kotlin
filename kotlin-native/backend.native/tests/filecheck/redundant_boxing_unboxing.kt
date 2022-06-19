@@ -5,14 +5,16 @@
 
 fun plus1(x: Int) = x + 1
 
+// CHECK: define void @"kfun:#main(){}"()
 // CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
 // CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK: ret
 fun main() {
     val ref = ::plus1
     var y = 0
     repeat(100000) {
         y += ref(it)  // Should be devirtualized and invoked without boxing/unboxing (`Int-box`/`Int-unbox`)
     }
-    if (y > 100000)
-        println("y > 100000")
+    if (y > 999999)
+        println("y > 999999")
 }
