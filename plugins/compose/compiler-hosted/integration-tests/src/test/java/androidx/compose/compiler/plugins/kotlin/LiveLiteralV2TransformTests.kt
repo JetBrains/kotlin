@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.junit.Test
 
 class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
@@ -566,7 +565,6 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
         context: IrPluginContext
     ) {
         @Suppress("DEPRECATION")
-        val bindingTrace = DelegatingBindingTrace(context.bindingContext, "test trace")
         val symbolRemapper = DeepCopySymbolRemapper()
         val keyVisitor = DurableKeyVisitor(builtKeys)
         val transformer = object : LiveLiteralTransformer(
@@ -575,7 +573,6 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
             keyVisitor,
             context,
             symbolRemapper,
-            bindingTrace,
             ModuleMetricsImpl("temp", context)
         ) {
             override fun makeKeySet(): MutableSet<String> {

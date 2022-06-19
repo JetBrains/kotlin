@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 enum class StabilityBits(val bits: Int) {
     UNSTABLE(0b100),
@@ -60,9 +59,8 @@ enum class StabilityBits(val bits: Int) {
 class ClassStabilityTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace,
     metrics: ModuleMetrics,
-) : AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics),
+) : AbstractComposeLowering(context, symbolRemapper, metrics),
     ClassLoweringPass,
     ModuleLoweringPass {
 

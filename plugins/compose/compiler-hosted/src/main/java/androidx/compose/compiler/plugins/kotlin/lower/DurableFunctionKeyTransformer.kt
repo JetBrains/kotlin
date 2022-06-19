@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 class KeyInfo(
     val name: String,
@@ -102,13 +101,11 @@ class KeyInfo(
 class DurableFunctionKeyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace,
     metrics: ModuleMetrics,
 ) : DurableKeyTransformer(
     DurableKeyVisitor(),
     context,
     symbolRemapper,
-    bindingTrace,
     metrics
 ) {
     fun removeKeyMetaClasses(moduleFragment: IrModuleFragment) {
