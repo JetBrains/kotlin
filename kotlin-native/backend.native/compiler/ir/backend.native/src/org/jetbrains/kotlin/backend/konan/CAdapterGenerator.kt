@@ -214,20 +214,22 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 val llvmCallable = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
-                val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
-                        irFunction.isOverridable) {
-                    generateFunction(owner.codegen, llvmCallable.functionType, cname) {
+                val bridge = generateFunction(owner.codegen, llvmCallable.functionType, cname) {
+                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
+                            irFunction.isOverridable) {
                         val receiver = param(0)
-                        val numParams = LLVMCountParams(llvmCallable.llvmValue)
-                        val args = (0..numParams - 1).map { index -> param(index) }
-                        val callee = lookupVirtualImpl(receiver, irFunction)
-                        callee.attributeProvider.addFunctionAttributes(this.function)
-                        val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
-                        ret(result)
+                        lookupVirtualImpl(receiver, irFunction)
+                    } else {
+                        // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
+                        // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
+                        llvmCallable
                     }
-                } else {
-                    val aliasType = pointerType(llvmCallable.functionType)
-                    LLVMAddAlias(context.llvmModule, aliasType, llvmCallable.llvmValue, cname)!!
+
+                    val numParams = LLVMCountParams(llvmCallable.llvmValue)
+                    val args = (0..numParams - 1).map { index -> param(index) }
+                    callee.attributeProvider.addFunctionAttributes(this.function)
+                    val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                    ret(result)
                 }
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }
