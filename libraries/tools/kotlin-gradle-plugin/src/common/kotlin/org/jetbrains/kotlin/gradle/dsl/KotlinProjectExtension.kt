@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -72,6 +73,17 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
      */
     fun jvmToolchain(action: Action<JavaToolchainSpec>) {
         toolchainSupport.applyToolchain(action)
+    }
+
+    /**
+     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.
+     *
+     * @param jdkVersion - jdk version as number. For example, 17 for Java 17.
+     */
+    fun jvmToolchain(jdkVersion: Int) {
+        jvmToolchain {
+            it.languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+        }
     }
 
     /**

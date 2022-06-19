@@ -605,6 +605,40 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Toolchain simplified method with JDK version in extension is working")
+    @GradleTest
+    internal fun toolchainSimplifiedConfiguration(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildJdk = getJdk11().javaHome
+        ) {
+            //language=Groovy
+            buildGradle.append(
+                """
+                 import org.gradle.api.plugins.JavaPluginExtension
+                 import org.gradle.jvm.toolchain.JavaToolchainService
+                 
+                 kotlin {
+                     jvmToolchain(8)
+                 }
+                 
+                 afterEvaluate {
+                     def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+                     def service = project.extensions.getByType(JavaToolchainService.class)
+                     //noinspection GroovyUnusedAssignment
+                     def defaultLauncher = service.launcherFor(toolchain)
+                     logger.info("Toolchain jdk path: ${'$'}{defaultLauncher.get().metadata.installationPath.asFile.absolutePath}")
+                 }
+                 """.trimIndent()
+            )
+
+            build("assemble") {
+                assertJdkHomeIsUsingJdk(getToolchainExecPathFromLogs())
+            }
+        }
+    }
+
     private fun BuildResult.assertJdkHomeIsUsingJdk(
         javaexecPath: String
     ) = assertOutputContains("[KOTLIN] Kotlin compilation 'jdkHome' argument: $javaexecPath")
