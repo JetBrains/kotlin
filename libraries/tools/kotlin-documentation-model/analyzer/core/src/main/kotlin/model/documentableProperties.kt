@@ -39,6 +39,16 @@ object ObviousMember : ExtraProperty<Documentable>, ExtraProperty.Key<Documentab
     override val key: ExtraProperty.Key<Documentable, *> = this
 }
 
+/**
+ * Whether this [DProperty] is `var` or `val`, should be present both in Kotlin and in Java properties
+ *
+ * In case of properties that came from `Java`, [IsVar] is added if
+ * the java field has no accessors at all (plain field) or has a setter
+ */
+object IsVar : ExtraProperty<DProperty>, ExtraProperty.Key<DProperty, IsVar> {
+    override val key: ExtraProperty.Key<DProperty, *> = this
+}
+
 data class CheckedExceptions(val exceptions: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
     companion object : ExtraProperty.Key<Documentable, CheckedExceptions> {
         override fun mergeStrategyFor(left: CheckedExceptions, right: CheckedExceptions) =

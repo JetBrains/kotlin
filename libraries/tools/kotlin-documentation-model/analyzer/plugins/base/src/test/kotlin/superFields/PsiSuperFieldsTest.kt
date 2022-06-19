@@ -1,10 +1,10 @@
 package superFields
 
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.InheritedMember
+import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.isJvmField
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -58,6 +58,7 @@ class PsiSuperFieldsTest : BaseAbstractTest() {
             |package test
             |open class A {
             |    var a: Int = 1
+            |    val b: Int = 2
             |}
             |
             |/src/test/B.java
@@ -68,13 +69,25 @@ class PsiSuperFieldsTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 val inheritorProperties = module.packages.single().classlikes.single { it.name == "B" }.properties
-                val property = inheritorProperties.single { it.name == "a" }
+                inheritorProperties.single { it.name == "a" }.let { mutableProperty ->
+                    assertNotNull(mutableProperty.getter)
+                    assertNotNull(mutableProperty.setter)
 
-                assertNotNull(property.getter)
-                assertNotNull(property.setter)
+                    val inheritedFrom = mutableProperty.extra[InheritedMember]?.inheritedFrom?.values?.single()
+                    assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
 
-                val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+                    assertNotNull(mutableProperty.extra[IsVar])
+                }
+
+                inheritorProperties.single { it.name == "b" }.let { immutableProperty ->
+                    assertNotNull(immutableProperty.getter)
+                    assertNull(immutableProperty.setter)
+
+                    val inheritedFrom = immutableProperty.extra[InheritedMember]?.inheritedFrom?.values?.single()
+                    assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                    assertNull(immutableProperty.extra[IsVar])
+                }
             }
         }
     }
@@ -107,6 +120,8 @@ class PsiSuperFieldsTest : BaseAbstractTest() {
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
             }
         }
     }
@@ -151,6 +166,8 @@ class PsiSuperFieldsTest : BaseAbstractTest() {
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
             }
         }
     }

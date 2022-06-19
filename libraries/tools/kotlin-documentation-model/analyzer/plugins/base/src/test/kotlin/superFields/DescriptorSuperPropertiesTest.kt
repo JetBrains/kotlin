@@ -4,6 +4,7 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.InheritedMember
+import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -51,6 +52,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 val getterInheritedFrom = property.getter?.extra?.get(InheritedMember)?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), getterInheritedFrom)
+
+                assertNull(property.extra[IsVar])
             }
         }
     }
@@ -129,6 +132,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertEquals("setA", setter.name)
                 val setterInheritedFrom = setter.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), setterInheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
             }
         }
     }
@@ -162,6 +167,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 val setter = boolProperty.setter
                 assertNotNull(setter)
                 assertEquals("setBool", setter.name)
+
+                assertNotNull(boolProperty.extra[IsVar])
             }
         }
     }
@@ -211,6 +218,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
             }
         }
     }
@@ -267,6 +276,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
             }
         }
     }
@@ -315,6 +326,33 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
+            }
+        }
+    }
+
+    @Test
+    fun `should mark final property inherited from java as val`() {
+        testInline(
+            """
+            |/src/test/A.java
+            |package test;
+            |public class A {
+            |   public final int a = 1;
+            |}
+            |
+            |/src/test/B.kt
+            |package test
+            |class B : A {}
+        """.trimIndent(),
+            commonTestConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val kotlinProperties = module.packages.single().classlikes.single { it.name == "B" }.properties
+                val property = kotlinProperties.single { it.name == "a" }
+
+                assertNull(property.extra[IsVar])
             }
         }
     }
