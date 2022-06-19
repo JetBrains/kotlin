@@ -88,7 +88,6 @@ import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 /**
  * This transformer walks the IR tree to infer the applier annotations such as ComposableTarget,
@@ -97,9 +96,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 class ComposableTargetAnnotationsTransformer(
     context: IrPluginContext,
     symbolRemapper: ComposableSymbolRemapper,
-    bindingTrace: BindingTrace,
     metrics: ModuleMetrics
-) : AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics) {
+) : AbstractComposeLowering(context, symbolRemapper, metrics) {
     private val ComposableTargetClass = getTopLevelClassOrNull(ComposeFqNames.ComposableTarget)
     private val ComposableOpenTargetClass =
         getTopLevelClassOrNull(ComposeFqNames.ComposableOpenTarget)
