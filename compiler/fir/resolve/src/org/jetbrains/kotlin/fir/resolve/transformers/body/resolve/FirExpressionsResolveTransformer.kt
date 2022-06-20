@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -857,7 +858,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 transformer,
                 withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             )
-            when (val resolvedAssignCall = resolveAssignOperatorFunctionCall(completedAssignment)) {
+            when (val resolvedAssignCall = resolveAssignOperatorFunctionCallIfSupported(completedAssignment)) {
                 null -> completedAssignment.updateOperatorDataflow()
                 else -> resolvedAssignCall.updateFunctionCallDataflow()
             }
@@ -867,7 +868,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
     }
 
-    private fun resolveAssignOperatorFunctionCall(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
+    private fun resolveAssignOperatorFunctionCallIfSupported(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+            return null
+        }
         val leftArgument = resolvedAssignment.lValue
         val leftSymbol = leftArgument.resolvedSymbol as? FirVariableSymbol<*>
         if (leftSymbol?.fir?.isVal != true) {

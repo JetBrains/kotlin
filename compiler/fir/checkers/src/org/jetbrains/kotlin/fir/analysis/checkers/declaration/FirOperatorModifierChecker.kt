@@ -10,22 +10,25 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.Returns
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.ValueParametersCount
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.isKProperty
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.isSupportedLanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.member
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.memberOrExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.noDefaultAndVarargs
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGN
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
@@ -67,7 +71,7 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker() {
         }
 
         if (checks == null) {
-            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "illegal function name", context)
+            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, Checks.ILLEGAL_FUNCTION_NAME_ERROR, context)
             return
         }
 
@@ -90,12 +94,19 @@ private interface Check : (CheckerContext, FirSimpleFunction) -> String? {
 }
 
 private object Checks {
+
+    const val ILLEGAL_FUNCTION_NAME_ERROR = "illegal function name"
+
     fun simple(message: String, predicate: (FirSimpleFunction) -> Boolean) = object : Check {
         override fun check(context: CheckerContext, function: FirSimpleFunction): String? = message.takeIf { !predicate(function) }
     }
 
     fun full(message: String, predicate: (CheckerContext, FirSimpleFunction) -> Boolean) = object : Check {
         override fun check(context: CheckerContext, function: FirSimpleFunction): String? = message.takeIf { !predicate(context, function) }
+    }
+
+    fun isSupportedLanguageFeature(languageFeature: LanguageFeature) = full(ILLEGAL_FUNCTION_NAME_ERROR) { ctx, _ ->
+        ctx.session.languageVersionSettings.supportsFeature(languageFeature)
     }
 
     val memberOrExtension = simple("must be a member or an extension function") {
@@ -203,6 +214,14 @@ private object OperatorFunctionChecks {
             }
         )
         checkFor(ASSIGNMENT_OPERATIONS, memberOrExtension, Returns.unit, ValueParametersCount.single, noDefaultAndVarargs)
+        checkFor(
+            ASSIGN,
+            memberOrExtension,
+            Returns.unit,
+            ValueParametersCount.single,
+            noDefaultAndVarargs,
+            isSupportedLanguageFeature(LanguageFeature.AssignOperatorOverloadForJvm)
+        )
     }
 
     val regexChecks: List<Pair<Regex, List<Check>>> = buildList {
