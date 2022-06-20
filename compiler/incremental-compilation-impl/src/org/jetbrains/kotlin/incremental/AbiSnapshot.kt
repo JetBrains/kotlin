@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -152,14 +150,9 @@ class AbiSnapshotImpl(override val protos: MutableMap<FqName, ProtoData>) : AbiS
             }
         }
 
-        fun read(file: File, reporter: BuildReporter): AbiSnapshot? {
-            if (!file.exists()) {
-                reporter.info { "jar snapshot $file is found for jar" }
-                return null
-            }
-
-            ObjectInputStream(FileInputStream(file)).use {
-                return it.readAbiSnapshot()
+        fun read(file: File): AbiSnapshot {
+            return ObjectInputStream(FileInputStream(file)).use {
+                it.readAbiSnapshot()
             }
         }
     }
