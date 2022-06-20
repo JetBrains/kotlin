@@ -20,16 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
         OverloadResolutionResultsImpl<D> results = new OverloadResolutionResultsImpl<>(
                 Code.NAME_NOT_FOUND, Collections.emptyList());
-        results.setAllCandidates(Collections.emptyList());
+        results.setAllCandidates(Collections.emptyMap());
         return results;
     }
 
@@ -48,7 +51,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     private final Collection<ResolvedCall<D>> results;
     private final Code resultCode;
     private DelegatingBindingTrace trace;
-    private Collection<ResolvedCall<D>> allCandidates;
+    private Map<ResolutionCandidate, AbstractResolvedCall<?>> allCandidates;
 
     private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCall<D>> results) {
         this.results = results;
@@ -114,13 +117,13 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return this;
     }
 
-    public void setAllCandidates(@Nullable Collection<ResolvedCall<D>> allCandidates) {
+    public void setAllCandidates(@Nullable Map<ResolutionCandidate, AbstractResolvedCall<?>> allCandidates) {
         this.allCandidates = allCandidates;
     }
 
     @Nullable
     @Override
-    public Collection<ResolvedCall<D>> getAllCandidates() {
+    public Map<ResolutionCandidate, AbstractResolvedCall<?>> getAllCandidates() {
         return allCandidates;
     }
 }

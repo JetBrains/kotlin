@@ -221,12 +221,12 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
-            val resolvedCalls = result.allCandidates.map { (candidate, diagnostics) ->
+            val resolvedCalls = result.allCandidates.associate { (candidate, diagnostics) ->
                 val system = candidate.getSystem()
                 val resultingSubstitutor =
                     system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)
 
-                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(
+                candidate to kotlinToResolvedCallTransformer.transformToResolvedCall<D>(
                     candidate.resolvedCall, null, resultingSubstitutor, diagnostics
                 )
             }

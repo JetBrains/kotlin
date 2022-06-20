@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.resolve.calls.results;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface OverloadResolutionResults<D extends CallableDescriptor> {
     enum Code {
@@ -46,7 +49,7 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
 
     /* All candidates are collected only if ResolutionContext.collectAllCandidates is set to true */
     @Nullable
-    Collection<ResolvedCall<D>> getAllCandidates();
+    Map<ResolutionCandidate, AbstractResolvedCall<?>> getAllCandidates();
 
     @NotNull
     Collection<? extends ResolvedCall<D>> getResultingCalls();

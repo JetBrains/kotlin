@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code
+import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall
 
 abstract class AbstractOverloadResolutionResults<D : CallableDescriptor> : OverloadResolutionResults<D> {
     override fun isSuccess() = resultCode.isSuccess
@@ -29,7 +31,7 @@ abstract class AbstractOverloadResolutionResults<D : CallableDescriptor> : Overl
 }
 
 class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: ResolvedCall<D>) : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = listOf(result)
     override fun getResultingCall() = result
 
@@ -44,7 +46,7 @@ class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: Resolve
 }
 
 open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = emptyList()
     override fun getResultingCall() = error("No candidates")
     override fun getResultingDescriptor() = error("No candidates")
@@ -54,7 +56,7 @@ open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverlo
 class ManyCandidates<D : CallableDescriptor>(
     val candidates: Collection<ResolvedCall<D>>
 ) : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Collection<ResolvedCall<D>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = candidates
     override fun getResultingCall() = error("Many candidates")
     override fun getResultingDescriptor() = error("Many candidates")
@@ -67,6 +69,7 @@ class ManyCandidates<D : CallableDescriptor>(
         }
 }
 
-class AllCandidates<D : CallableDescriptor>(private val allCandidates: Collection<ResolvedCall<D>>) : NameNotFoundResolutionResult<D>() {
-    override fun getAllCandidates() = allCandidates
+class AllCandidates<D : CallableDescriptor>(private val allCandidates: Map<ResolutionCandidate, AbstractResolvedCall<*>>) :
+    NameNotFoundResolutionResult<D>() {
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>> = allCandidates
 }

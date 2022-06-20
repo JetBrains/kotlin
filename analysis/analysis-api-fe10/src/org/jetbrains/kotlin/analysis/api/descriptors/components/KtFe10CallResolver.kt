@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.AbstractResolvedCall
@@ -58,13 +57,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.asSimpleType
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.contains
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isTypeVariable
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -215,7 +208,11 @@ internal class KtFe10CallResolver(
             ).replaceCollectAllCandidates(true)
 
             val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)
-            val candidates = result.allCandidates ?: error("allCandidates is null even when collectAllCandidates = true")
+            val candidates = result.allCandidates?.let { candidatesAndResolvedCalls ->
+                val filteredCandidates =
+                    analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(candidatesAndResolvedCalls.keys)
+                candidatesAndResolvedCalls.filterKeys { it in filteredCandidates }.values
+            } ?: error("allCandidates is null even when collectAllCandidates = true")
 
             candidates.flatMap { candidate ->
                 // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
