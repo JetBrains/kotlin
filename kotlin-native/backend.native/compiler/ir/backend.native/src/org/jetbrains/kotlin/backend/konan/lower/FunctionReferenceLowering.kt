@@ -460,9 +460,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
 
-                valueParameters += unboundFunctionParameters.mapIndexed { index, parameter ->
+                valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = parameter.type.substitute(typeArgumentsMap))
+                            type = unboundFunctionParameters[index].type.substitute(typeArgumentsMap))
                 }
 
                 overriddenSymbols += superFunction.symbol
