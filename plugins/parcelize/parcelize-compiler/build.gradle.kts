@@ -49,7 +49,7 @@ dependencies {
     testApi(commonDependency("junit:junit"))
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
-    robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")
+    robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-r2")
     robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
