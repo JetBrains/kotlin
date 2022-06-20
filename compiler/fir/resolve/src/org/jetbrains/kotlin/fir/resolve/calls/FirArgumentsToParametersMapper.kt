@@ -383,8 +383,7 @@ private class FirCallArgumentsProcessor(
                 addDiagnostic(NameNotFound(argument, function))
             }
         } else {
-            // TODO: should we check also substitution overrides? Performance!
-            if (symbol != null && function.isIntersectionOverride) {
+            if (symbol != null && function.isSubstitutionOrIntersectionOverride) {
                 matchedIndex = parameters.indexOfFirst { originalParameter ->
                     originalParameter.name == argument.name
                 }
