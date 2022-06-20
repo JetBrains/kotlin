@@ -2011,6 +2011,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/assignOperatorOverload.kt");
             }
 
+            @TestMetadata("assignOperatorOverloadDisabled.kt")
+            public void testAssignOperatorOverloadDisabled() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/assignOperatorOverloadDisabled.kt");
+            }
+
             @TestMetadata("plus.kt")
             public void testPlus() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");

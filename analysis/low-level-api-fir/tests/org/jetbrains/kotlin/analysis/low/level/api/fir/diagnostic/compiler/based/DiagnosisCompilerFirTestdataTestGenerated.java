@@ -2305,6 +2305,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 }
 
                 @Test
+                @TestMetadata("assignOperatorOverloadDisabled.kt")
+                public void testAssignOperatorOverloadDisabled() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/assignOperatorOverloadDisabled.kt");
+                }
+
+                @Test
                 @TestMetadata("plus.kt")
                 public void testPlus() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
