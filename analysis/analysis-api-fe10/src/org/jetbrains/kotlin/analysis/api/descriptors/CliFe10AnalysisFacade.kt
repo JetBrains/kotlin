@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
@@ -19,11 +21,25 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
+import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.inference.components.ClassicConstraintSystemUtilContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
+import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.util.CancellationChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
@@ -43,6 +59,10 @@ class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
 
     override fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer {
         return handler.kotlinToResolvedCallTransformer ?: error("Resolution is not performed")
+    }
+
+    override fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolutionCandidate> {
+        return handler.overloadingConflictResolver ?: error("Resolution is not performed")
     }
 
     override fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner {
@@ -78,6 +98,9 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
     var kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer? = null
         private set
 
+    var overloadingConflictResolver: OverloadingConflictResolver<ResolutionCandidate>? = null
+        private set
+
     var kotlinTypeRefiner: KotlinTypeRefiner? = null
         private set
 
@@ -94,6 +117,18 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
         callResolver = componentProvider.get()
         kotlinToResolvedCallTransformer = componentProvider.get()
         kotlinTypeRefiner = componentProvider.get()
+
+        val builtIns = resolveSession!!.moduleDescriptor.builtIns
+        val specificityComparator = componentProvider.get<TypeSpecificityComparator>()
+        val platformOverloadsSpecificityComparator = componentProvider.get<PlatformOverloadsSpecificityComparator>()
+        val cancellationChecker = componentProvider.get<CancellationChecker>()
+        val constraintInjector = componentProvider.get<ConstraintInjector>()
+        val resolutionCallbacks = componentProvider.get<KotlinResolutionStatelessCallbacksImpl>()
+
+        overloadingConflictResolver = NewOverloadingConflictResolver(
+            builtIns, module, specificityComparator, platformOverloadsSpecificityComparator,
+            cancellationChecker, resolutionCallbacks, constraintInjector, kotlinTypeRefiner!!
+        )
 
         return super.doAnalysis(project, module, projectContext, files, bindingTrace, componentProvider)
     }
