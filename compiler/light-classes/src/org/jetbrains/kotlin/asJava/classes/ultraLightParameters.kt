@@ -44,7 +44,6 @@ internal class KtUltraLightSuspendContinuationParameter(
 
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
     override val kotlinOrigin: KtParameter? = null
-    override val clsDelegate: PsiParameter get() = invalidAccess()
 
     private val ktType: KotlinType?
         get() {
@@ -93,8 +92,6 @@ internal abstract class KtUltraLightParameter(
 ), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
-
-    override val clsDelegate: PsiParameter get() = invalidAccess()
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 

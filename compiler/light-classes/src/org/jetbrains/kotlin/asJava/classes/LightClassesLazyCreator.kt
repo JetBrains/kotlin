@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,11 +16,10 @@ class LightClassesLazyCreator(private val project: Project) : KotlinClassInnerSt
     override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>) = object : Lazy<T> {
         private val lock = ReentrantLock()
         private val holder = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(project),
-                               CachedValueProvider<T> {
-                                   val v = initializer()
-                                   CachedValueProvider.Result.create(v, dependencies)
-                               })
+            PsiCachedValueImpl(PsiManager.getInstance(project)) {
+                val v = initializer()
+                CachedValueProvider.Result.create(v, dependencies)
+            }
         }
 
         private fun computeValue(): T = holder.value.value ?: error("holder has not null in initializer")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,8 +34,6 @@ internal class FirLightTypeParameter(
     private val typeParameterSymbol: KtTypeParameterSymbol
 ) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiTypeParameter,
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
-
-    override val clsDelegate: PsiTypeParameter get() = invalidAccess()
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>? get() = invalidAccess()
 

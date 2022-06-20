@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 internal abstract class FirLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
-
-    override val clsDelegate: PsiModifierListOwner
-        get() = invalidAccess()
 
     override val kotlinOrigin: KtModifierList?
         get() = owner.kotlinOrigin?.modifierList

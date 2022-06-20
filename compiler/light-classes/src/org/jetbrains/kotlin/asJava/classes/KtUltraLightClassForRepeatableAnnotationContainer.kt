@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
     override fun getParent() = containingClass
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject, jvmDefaultMode)
+    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject)
     override fun getScope(): PsiElement? = containingClass
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnFields(): List<KtLightField> = emptyList()

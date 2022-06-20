@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForAnonymousDeclaration.Companion.getFirstSupertypeFQNameForAnonymousDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 open class KtUltraLightClassForAnonymousDeclaration(classOrObject: KtClassOrObject, support: KtUltraLightSupport) :
     KtUltraLightClassForLocalDeclaration(classOrObject, support), PsiAnonymousClass {
@@ -18,7 +18,6 @@ open class KtUltraLightClassForAnonymousDeclaration(classOrObject: KtClassOrObje
         JavaPsiFacade.getElementFactory(classOrObject.project).createReferenceElementByType(baseClassType)
 
     private val _baseClassType by lazyPub {
-
         val firstSupertypeFQName = getFirstSupertypeFQNameForAnonymousDeclaration()
 
         if (firstSupertypeFQName == CommonClassNames.JAVA_LANG_OBJECT) {
@@ -64,4 +63,22 @@ open class KtUltraLightClassForAnonymousDeclaration(classOrObject: KtClassOrObje
     override fun isEnum() = false
 
     override fun copy() = KtUltraLightClassForAnonymousDeclaration(classOrObject, support)
+}
+
+private fun KtLightClassForSourceDeclaration.getFirstSupertypeFQNameForAnonymousDeclaration(): String {
+    val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
+
+    val superTypes = descriptor.typeConstructor.supertypes
+
+    if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT
+
+    val superType = superTypes.iterator().next()
+    val superClassDescriptor = superType.constructor.declarationDescriptor
+
+    if (superClassDescriptor === null) {
+        // return java.lang.Object for recovery
+        return CommonClassNames.JAVA_LANG_OBJECT
+    }
+
+    return DescriptorUtils.getFqName(superClassDescriptor).asString()
 }

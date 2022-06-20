@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,15 +11,9 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
-import com.intellij.psi.impl.compiled.ClsClassImpl
-import com.intellij.psi.impl.compiled.InnerClassSourceStrategy
-import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.java.stubs.PsiClassStub
-import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.light.*
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.*
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
@@ -31,10 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class KotlinClassInnerStuffCache(
     private val myClass: KtExtensibleLightClass,
@@ -200,8 +191,6 @@ private class KotlinEnumSyntheticMethod(
             val nameParameter = object : LightParameter("name", stringType, this, language, false), KtLightParameter {
                 override val method: KtLightMethod get() = this@KotlinEnumSyntheticMethod
                 override val kotlinOrigin: KtParameter? get() = null
-                override val clsDelegate: PsiParameter get() = this@KotlinEnumSyntheticMethod.clsDelegate.parameterList.parameters.single()
-
                 override fun getParent(): PsiElement = this@KotlinEnumSyntheticMethod
                 override fun getContainingFile(): PsiFile = this@KotlinEnumSyntheticMethod.containingFile
 
@@ -285,52 +274,7 @@ private class KotlinEnumSyntheticMethod(
     override fun getText(): String = ""
     override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
 
-    // As you can see, the implementation is quite dumb, yet it is still better than throwing an exception,
-    // as 'clsDelegate' is used for verifying light class consistency.
-    // See 'org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.LazinessInfo#checkConsistency' for more information.
-    override val clsDelegate: PsiMethod by lazy {
-        val emptyStrategy = object : InnerClassSourceStrategy<PsiClass> {
-            override fun findInnerClass(innerName: String, outerClass: PsiClass): PsiClass? = null
-            override fun accept(innerClass: PsiClass, visitor: StubBuildingVisitor<PsiClass>) {}
-        }
-
-        val containingFile = enumClass.containingFile as PsiJavaFile
-        var parent = PsiJavaFileStubImpl(containingFile, containingFile.packageName, null, true) as StubElement<*>
-
-        fun process(clazz: PsiClass): PsiClassStub<*> {
-            clazz.containingClass?.let { process(it) }
-
-            val access = getAccess(clazz)
-            val superName = clazz.superClass?.let { ClassUtil.getJVMClassName(it) } ?: "java/lang/Object"
-            val interfaceNames = clazz.interfaces.mapNotNull { ClassUtil.getJVMClassName(it) }.toTypedArray()
-
-            val stub = StubBuildingVisitor(clazz, emptyStrategy, parent, access, clazz.name).apply {
-                visit(Opcodes.V1_8, access, ClassUtil.getJVMClassName(clazz), null, superName, interfaceNames)
-                visitEnd()
-            }.result
-
-            parent = stub
-            return stub
-        }
-
-        ClsClassImpl(process(enumClass)).methods.single { it.name == name }
-    }
-
     private companion object {
-        private fun getAccess(clazz: PsiClass): Int {
-            var result = 0
-            if (clazz.hasModifierProperty(PsiModifier.PUBLIC)) result = result or Opcodes.ACC_PUBLIC
-            if (clazz.hasModifierProperty(PsiModifier.PROTECTED)) result = result or Opcodes.ACC_PROTECTED
-            if (clazz.hasModifierProperty(PsiModifier.PRIVATE)) result = result or Opcodes.ACC_PRIVATE
-            if (clazz.hasModifierProperty(PsiModifier.FINAL)) result = result or Opcodes.ACC_FINAL
-            if (clazz.hasModifierProperty(PsiModifier.ABSTRACT)) result = result or Opcodes.ACC_ABSTRACT
-            if (clazz.isDeprecated) result = result or Opcodes.ACC_DEPRECATED
-            if (clazz.isEnum) result = result or Opcodes.ACC_ENUM
-            if (clazz.isAnnotationType) result = result or Opcodes.ACC_ANNOTATION
-            if (clazz.isInterface) result = result or Opcodes.ACC_INTERFACE
-            return result
-        }
-
         private fun makeNotNullAnnotation(context: PsiClass): PsiAnnotation {
             return PsiElementFactory.getInstance(context.project).createAnnotationFromText("@" + NotNull::class.java.name, context)
         }

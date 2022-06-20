@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 
@@ -28,7 +28,7 @@ internal class FirLightParameterList(
     override val kotlinOrigin: KtParameterList?
         get() = (parent.kotlinOrigin as? KtFunction)?.valueParameterList
 
-    override val clsDelegate: PsiParameterList by lazyPub {
+    private val clsDelegate: PsiParameterList by lazyPub {
         val builder = LightParameterListBuilder(manager, language)
 
         callableSymbol?.let {
