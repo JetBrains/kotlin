@@ -76,7 +76,7 @@ val commonTestSources by task<Sync> {
 
 kotlin {
     wasm {
-        nodejs()
+        d8()
     }
 
     sourceSets {
