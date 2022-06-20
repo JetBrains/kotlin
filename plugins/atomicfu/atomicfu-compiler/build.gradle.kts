@@ -53,7 +53,7 @@ dependencies {
     compileOnly(project(":compiler:backend.js"))
 
     compileOnly(project(":compiler:backend.jvm"))
-    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:ir.tree"))
 
     compileOnly(kotlinStdlib())
 
