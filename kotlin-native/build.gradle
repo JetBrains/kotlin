@@ -748,6 +748,11 @@ compilationDatabase {
     allTargets {
         mergeFrom(provider { project("common") })
         mergeFrom(provider { project("runtime") })
+
+        // TODO: Reconsider this
+        task.configure {
+            dependsOn(":kotlin-native:runtime:downloadGoogleTest")
+        }
     }
 }
 

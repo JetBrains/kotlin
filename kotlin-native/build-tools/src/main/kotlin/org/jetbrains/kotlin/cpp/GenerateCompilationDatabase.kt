@@ -129,7 +129,12 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
                 serialized.addAll(gson.fromJson(it, Array<SerializedEntry>::class.java))
             }
         }
-        serialized.addAll(entries.get().flatMap { SerializedEntry.fromEntry(it) })
+        entries.get().forEach {
+            // TODO: Reconsider when we use source directory for this.
+            // Make sure directories actually exist.
+            it.directory.asFile.get().mkdirs()
+            serialized.addAll(SerializedEntry.fromEntry(it))
+        }
         FileWriter(outputFile.asFile.get()).use {
             gson.toJson(serialized, it)
         }
