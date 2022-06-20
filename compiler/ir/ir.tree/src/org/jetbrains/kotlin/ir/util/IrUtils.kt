@@ -596,6 +596,10 @@ fun IrExpression.isTrivial() =
             this is IrGetObjectValue ||
             this is IrErrorExpressionImpl
 
+val IrExpression.isConstantLike: Boolean
+    get() = this is IrConst<*> || this is IrGetSingletonValue
+            || this is IrGetValue && this.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER
+
 fun IrExpression.shallowCopy(): IrExpression =
     shallowCopyOrNull()
         ?: error("Not a copyable expression: ${render()}")

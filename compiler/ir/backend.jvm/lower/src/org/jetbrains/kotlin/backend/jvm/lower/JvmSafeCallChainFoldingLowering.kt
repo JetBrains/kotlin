@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isTrivial
+import org.jetbrains.kotlin.ir.util.isConstantLike
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -121,7 +121,7 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
     private fun irValNotNull(startOffset: Int, endOffset: Int, irVariable: IrVariable): IrExpression =
-        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isTrivial() != true)
+        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isConstantLike != true)
             IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
         else
             irTrue(startOffset, endOffset)
