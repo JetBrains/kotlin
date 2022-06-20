@@ -9,12 +9,12 @@ package kotlin.js
  * Returns an external enum entry with specified name.
  */
 public inline fun <reified T: ExternalEnum> enumValueOf(name: String): T {
-    return js("Kotlin").defaultEnumValueOf(T::class, name)
+    return js("Kotlin").defaultEnumValueOf(T::class.js, name)
 }
 
 /**
  * Returns an array containing external enum entries.
  */
 public inline fun <reified T: ExternalEnum> enumValues(): Array<T> {
-    return js("Kotlin").defaultEnumValues(T::class)
+    return js("Kotlin").defaultEnumValues(T::class.js)
 }

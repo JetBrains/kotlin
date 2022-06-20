@@ -1,7 +1,7 @@
-// EXPECTED_REACHABLE_NODES: 1285
+// EXPECTED_REACHABLE_NODES: 1571
 // KJS_WITH_FULL_RUNTIME
 // IGNORE_FIR
-// Because there is a bug inside FIR related to `enumValues` and `enumValueOf` resolution
+// Because there is a bug inside FIR related to `enumValues` and `enumValueOf` resolution
 package foo
 
 external enum class JsEnum {

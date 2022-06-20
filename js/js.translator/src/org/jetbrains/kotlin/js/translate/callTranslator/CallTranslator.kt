@@ -133,6 +133,9 @@ private fun translateFunctionCall(
     val rangeCheck = RangeCheckTranslator(context).translateAsRangeCheck(resolvedCall, explicitReceivers)
     if (rangeCheck != null) return rangeCheck
 
+    val externalEnumMethodCall = ExternalEnumMethodsTranslator(context).translateAsEnumMethodCall(resolvedCall, explicitReceivers)
+    if (externalEnumMethodCall != null) return externalEnumMethodCall
+
     val callInfo = context.getCallInfo(resolvedCall, explicitReceivers)
     var callExpression = callInfo.translateFunctionCall()
 
