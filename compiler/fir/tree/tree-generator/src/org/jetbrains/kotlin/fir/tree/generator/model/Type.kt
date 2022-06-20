@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-data class Type(override val packageName: String?, override val type: String) : Importable {
+data class Type(override val packageName: String?, override val type: String, val firType: Boolean = false) : Importable {
     val arguments = mutableListOf<String>()
 }

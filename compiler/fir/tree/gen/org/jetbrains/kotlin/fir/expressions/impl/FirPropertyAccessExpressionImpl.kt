@@ -39,6 +39,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)
+        contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -53,6 +54,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)
+        contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {

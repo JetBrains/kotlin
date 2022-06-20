@@ -93,16 +93,16 @@ abstract class AbstractFirTreeBuilder {
     }
 }
 
-fun generatedType(type: String): Type = generatedType("", type)
+fun generatedType(type: String, firType: Boolean = false): Type = generatedType("", type, firType)
 
-fun generatedType(packageName: String, type: String): Type {
+fun generatedType(packageName: String, type: String, firType: Boolean = false): Type {
     val realPackage = BASE_PACKAGE + if (packageName.isNotBlank()) ".$packageName" else ""
-    return type(realPackage, type, exactPackage = true)
+    return type(realPackage, type, exactPackage = true, firType)
 }
 
-fun type(packageName: String?, type: String, exactPackage: Boolean = false): Type {
+fun type(packageName: String?, type: String, exactPackage: Boolean = false, firType: Boolean = false): Type {
     val realPackage = if (exactPackage) packageName else packageName?.let { "org.jetbrains.kotlin.$it" }
-    return Type(realPackage, type)
+    return Type(realPackage, type, firType)
 }
 
 fun type(type: String): Type = type(null, type)

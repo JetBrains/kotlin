@@ -351,7 +351,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "whenRef.value.subject!!.typeRef"
                 withGetter = true
             }
-            useTypes(whenExpressionType)
+            useTypes(whenExpression)
         }
 
         impl(wrappedDelegateExpression) {
@@ -471,11 +471,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(simpleFunction)
 
         impl(safeCallExpression) {
-            useTypes(safeCallCheckedSubjectType)
+            useTypes(checkedSafeCallSubject)
         }
 
         impl(checkedSafeCallSubject) {
-            useTypes(expressionType)
+            useTypes(expression)
         }
 
         impl(resolvedQualifier) {

@@ -41,6 +41,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -56,6 +57,7 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
+        contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {

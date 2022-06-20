@@ -38,6 +38,7 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
+        contextReceiverArguments.forEach { it.accept(visitor, data) }
         constructedTypeRef.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
@@ -45,6 +46,7 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
+        contextReceiverArguments.transformInplace(transformer, data)
         constructedTypeRef = constructedTypeRef.transform(transformer, data)
         transformCalleeReference(transformer, data)
         return this

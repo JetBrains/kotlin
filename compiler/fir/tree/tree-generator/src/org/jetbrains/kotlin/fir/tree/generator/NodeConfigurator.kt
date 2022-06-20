@@ -192,7 +192,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         contextReceiverArgumentListOwner.configure {
-            +fieldList("contextReceiverArguments", expressionType, withReplace = true)
+            +fieldList("contextReceiverArguments", expression, withReplace = true)
         }
 
         qualifiedAccess.configure {

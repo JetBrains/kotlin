@@ -47,6 +47,7 @@ internal class FirComponentCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
@@ -62,6 +63,7 @@ internal class FirComponentCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
+        contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
