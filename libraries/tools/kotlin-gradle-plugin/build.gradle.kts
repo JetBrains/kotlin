@@ -55,7 +55,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-reflect"))
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.9")
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.10.2")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly(commonDependency("com.google.guava:guava"))
     commonCompileOnly("de.undercouch:gradle-download-task:4.1.1")
