@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
-import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -125,7 +125,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
 
-            throwGradleExceptionIfError(exitCode, executionStrategy)
+            throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,

@@ -141,7 +141,7 @@ abstract class KotlinJsDce @Inject constructor(
             buildDir.get().asFile,
             jvmArgs
         )
-        throwGradleExceptionIfError(exitCode, KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
+        throwExceptionIfCompilationFailed(exitCode, KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     }
 
     private fun isDceCandidate(file: File): Boolean {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
@@ -33,11 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.IsolatedKotlinClasspathClassCastException
-import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
-import org.jetbrains.kotlin.gradle.utils.findByType
-import org.jetbrains.kotlin.gradle.utils.newTmpFile
-import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -223,8 +218,9 @@ internal open class GradleCompilerRunner(
         try {
             val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
             kotlinCompilerRunnable.run()
-        } catch (e: GradleException) {
-            if (taskOutputsBackup != null) {
+        } catch (e: FailedCompilationException) {
+            // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
+            if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
                 buildMetrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
                     taskOutputsBackup.restoreOutputs()
                 }
