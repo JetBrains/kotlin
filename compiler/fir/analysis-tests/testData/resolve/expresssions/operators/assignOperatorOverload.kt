@@ -38,11 +38,17 @@ data class NullCheck(val x: NullCheckContainer)
 data class NullCheckContainer(var value: String)
 operator fun NullCheckContainer.assign(value: String) {
 }
+operator fun NullCheckContainer.plusAssign(value: String) {
+}
 
 /**
  * Test that if return type is not Unit then method has an error
  */
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.assign(a: String): String {
+    return ""
+}
+
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.plusAssign(a: String): String {
     return ""
 }
 
@@ -60,14 +66,14 @@ fun test() {
 
     // Test delegate
     val delegate: ByDelegate = ByDelegate()
-    delegate.v = "OK"
+    delegate.v = <!ASSIGNMENT_TYPE_MISMATCH!>"OK"<!>
 
     // Test "operator fun assign" return type diagnostics
     val x = ""
-    <!VAL_REASSIGNMENT!>x<!> <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>=<!> ""
+    x <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>=<!> ""
 
     // Test unsafe call diagnostics
     val nullCheck: NullCheck? = null
-    nullCheck<!UNSAFE_CALL!>.<!>x = "Fail"
-    <!VAL_REASSIGNMENT!>nullCheck?.x<!> = <!TYPE_MISMATCH!>"Fail"<!>
+    nullCheck<!UNSAFE_CALL!>.<!>x = <!ASSIGNMENT_TYPE_MISMATCH!>"Fail"<!>
+    nullCheck?.x = "Fail"
 }

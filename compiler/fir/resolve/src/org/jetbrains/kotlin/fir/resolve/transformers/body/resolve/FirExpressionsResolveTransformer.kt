@@ -874,7 +874,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         val leftArgument = resolvedAssignment.lValue
         val leftSymbol = leftArgument.resolvedSymbol as? FirVariableSymbol<*>
-        if (leftSymbol?.fir?.isVal != true) {
+        if (leftSymbol?.fir?.isVal != true || leftSymbol.fir.delegate != null) {
             return null
         }
         val leftResolvedType = leftSymbol.fir.returnTypeRef
