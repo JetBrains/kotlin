@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -86,6 +87,18 @@ internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class
             else -> null
         }
     }
+
+fun IrFunction.getFirstNonInterfaceOverridden(): IrFunction {
+    if (this !is IrSimpleFunction) return this
+
+    return generateSequence(listOf(this)) {
+        it.firstOrNull()?.overriddenSymbols?.map { overriddenSymbol -> overriddenSymbol.owner }
+    }.flatten().first { overriddenFunction ->
+        if (overriddenFunction.isFakeOverride) return@first false
+        val kind = overriddenFunction.parentClassOrNull?.kind
+        kind != ClassKind.INTERFACE
+    }
+}
 
 fun IrFunction.getLastOverridden(): IrFunction {
     if (this !is IrSimpleFunction) return this
