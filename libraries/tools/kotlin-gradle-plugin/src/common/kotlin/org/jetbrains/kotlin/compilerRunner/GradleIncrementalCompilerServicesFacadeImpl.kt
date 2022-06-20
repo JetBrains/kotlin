@@ -28,7 +28,7 @@ internal open class GradleCompilerServicesFacadeImpl(
         when (ReportCategory.fromCode(category)) {
             ReportCategory.IC_MESSAGE -> {
                 @Suppress("UNUSED_VARIABLE")
-                val unusedValueForExhaustiveWhen = when (ReportSeverity.fromCode(severity)!!) {
+                val unusedValueForExhaustiveWhen = when (ReportSeverity.fromCode(severity)) {
                     ERROR -> log.kotlinError { "[IC] $message" }
                     WARNING -> log.kotlinWarn { "[IC] $message" }
                     INFO -> log.kotlinInfo { "[IC] $message" }

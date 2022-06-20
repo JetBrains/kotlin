@@ -36,7 +36,7 @@ fun getBuildReporter(
             DebugMessagesICReporter(
                 servicesFacade = servicesFacade,
                 rootDir = root,
-                reportSeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)!!
+                reportSeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)
                     .getSeverity(mapErrorToWarning = true, mapInfoToWarning = true)
             )
         )
