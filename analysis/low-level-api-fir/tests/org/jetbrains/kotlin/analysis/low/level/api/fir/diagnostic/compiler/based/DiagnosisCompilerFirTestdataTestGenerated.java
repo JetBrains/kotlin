@@ -1027,6 +1027,22 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfa")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Cfa {
+            @Test
+            public void testAllFilesPresentInCfa() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("initializationInTry.kt")
+            public void testInitializationInTry() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfa/initializationInTry.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
         @TestDataPath("$PROJECT_ROOT")
         public class Cfg {

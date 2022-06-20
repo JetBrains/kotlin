@@ -44,7 +44,6 @@ class ControlFlowGraphBuilder {
         get() = lastNodes.top()
 
     var levelCounter: Int = 0
-        private set
 
     private val modes: Stack<Mode> = stackOf(Mode.TopLevel)
     private val mode: Mode get() = modes.top()
@@ -1147,6 +1146,7 @@ class ControlFlowGraphBuilder {
         checkNotNullCall: FirCheckNotNullCall,
         callCompleted: Boolean
     ): Pair<CheckNotNullCallNode, UnionFunctionCallArgumentsNode?> {
+        levelCounter--
         val node = createCheckNotNullCallNode(checkNotNullCall)
         if (checkNotNullCall.resultType.isNothing) {
             addNodeThatReturnsNothing(node)
