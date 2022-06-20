@@ -20,6 +20,17 @@ internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File,
         ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
             entries.forEach { sourceEntry ->
                 val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
+
+                sourceEntry.lastAccessTime?.let { destinationEntry.lastAccessTime = it }
+                sourceEntry.lastModifiedTime?.let { destinationEntry.lastModifiedTime = it }
+                sourceEntry.creationTime?.let { destinationEntry.creationTime = it }
+                destinationEntry.crc = sourceEntry.crc
+                destinationEntry.comment = sourceEntry.comment
+                destinationEntry.size = sourceEntry.size
+                destinationEntry.compressedSize = sourceEntry.compressedSize
+                destinationEntry.extra = sourceEntry.extra
+                destinationEntry.method = sourceEntry.method
+
                 destinationZipOutputStream.putNextEntry(destinationEntry)
 
                 if (!sourceEntry.isDirectory) {

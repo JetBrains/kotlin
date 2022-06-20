@@ -7,8 +7,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.util.io.Compressor
 import org.gradle.kotlin.dsl.support.unzipTo
-import org.gradle.kotlin.dsl.support.zipTo
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import org.junit.Rule
@@ -33,34 +33,43 @@ class ZipUtilsTest {
             resolve("stub0.txt").apply {
                 parentFile.mkdirs()
                 writeText("stub0 content")
+                setLastModified(2411)
             }
 
             resolve("a/stub1.txt").apply {
                 parentFile.mkdirs()
                 writeText("stub1 content")
+                setLastModified(2412)
             }
 
             resolve("a/b/stub2.txt").apply {
                 parentFile.mkdirs()
                 writeText("stub2 content")
+                setLastModified(2413)
             }
 
             resolve("a/b/stub3.txt").apply {
                 parentFile.mkdirs()
                 writeText("stub3 content")
+                setLastModified(2414)
             }
 
             resolve("c/stub4.txt").apply {
                 parentFile.mkdirs()
                 writeText("stub4 content")
+                setLastModified(2415)
             }
         }
     }
 
-    private val zipFile by lazy {
-        temporaryFolder.newFile().apply {
-            zipTo(this, zipContentFolder)
+    private fun zipDirectory(directory: File): File {
+        return temporaryFolder.newFile().apply {
+            Compressor.Zip(this).use { compressor -> compressor.addDirectory(directory) }
         }
+    }
+
+    private val zipFile by lazy {
+        zipDirectory(zipContentFolder)
     }
 
     @Test
@@ -169,6 +178,72 @@ class ZipUtilsTest {
             )
         }
     }
+
+    @Test
+    fun `test copyZipFilePartially - creates exact same output file`() {
+        val root1 = temporaryFolder.newFile()
+        val root2 = temporaryFolder.newFile()
+
+        copyZipFilePartially(zipFile, root1, "")
+        copyZipFilePartially(zipFile, root2, "")
+
+        assertTrue(
+            root1.readBytes().contentEquals(root2.readBytes()),
+            "Expected output zip files to be identical"
+        )
+
+        ZipFile(zipFile).use { original ->
+            ZipFile(root1).use { copy ->
+                original.entries().toList().forEach { originalEntry ->
+                    val copyEntry = copy.getEntry(originalEntry.name) ?: fail("Missing entry in copy: ${originalEntry.name}")
+                    assertEquals(
+                        originalEntry.comment, copyEntry.comment,
+                        "Expected same comment on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.compressedSize, copyEntry.compressedSize,
+                        "Expected same compressedSize on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.size, copyEntry.size,
+                        "Expected same size on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.crc, copyEntry.crc,
+                        "Expected same crc on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.creationTime, copyEntry.creationTime,
+                        "Expected same creationTime on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.time, copyEntry.time,
+                        "Expected same time on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.lastAccessTime, copyEntry.lastAccessTime,
+                        "Expected same lastAccessTime on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.lastModifiedTime, copyEntry.lastModifiedTime,
+                        "Expected same lastModifiedTime on entry ${originalEntry.name}"
+                    )
+
+                    assertEquals(
+                        originalEntry.method, copyEntry.method,
+                        "Expected same method on entry ${originalEntry.name}"
+                    )
+                }
+            }
+        }
+    }
 }
 
 fun assertZipContentEquals(
@@ -206,3 +281,4 @@ fun assertDirectoryContentEquals(expected: File, actual: File, message: String) 
         }
     }
 }
+
