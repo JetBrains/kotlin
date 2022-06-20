@@ -15,17 +15,21 @@ fun g() = f()
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#h(kotlin.Boolean){}kotlin.Any"
 @Retain
 fun h(cond: Boolean): Any {
-    // CHECK: Kotlin_mm_safePointFunctionPrologue
-    // CHECK-NOT: Kotlin_mm_safePointFunctionPrologue
+    // CHECK: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+    // CHECK-ARM: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+    // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     // CHECK: br
+    // CHECK-ARM: br
     if (cond) {
-        // CHECK: Kotlin_mm_safePointFunctionPrologue
-        // CHECK-NOT: Kotlin_mm_safePointFunctionPrologue
+        // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+        // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
         // CHECK: br
+        // CHECK-ARM: br
         return listOf(C(), C())
     } else {
-        // CHECK: Kotlin_mm_safePointFunctionPrologue
-        // CHECK-NOT: Kotlin_mm_safePointFunctionPrologue
+        // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+        // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
         return listOf(C(), C(), C())
     }
 // CHECK: }
@@ -34,8 +38,10 @@ fun h(cond: Boolean): Any {
 // CHECK-LABEL: define void @"kfun:#main(){}"()
 @Retain
 fun main() {
-    // CHECK: Kotlin_mm_safePointFunctionPrologue
-    // CHECK-NOT: Kotlin_mm_safePointFunctionPrologue
+    // CHECK: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+    // CHECK-ARM: {{call .*Kotlin_mm_safePointFunctionPrologue}}
+    // CHECK-NOT: _ZN6kotlin2mm8internal20gSuspensionRequestedE
+    // CHECK-NOT: {{call .*Kotlin_mm_safePointFunctionPrologue}}
     println(g())
     println(h(true))
 // CHECK: }
