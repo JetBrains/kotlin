@@ -173,4 +173,10 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     public void testUncheckedCastTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/UncheckedCastTest.kt");
     }
+
+    @Test
+    @TestMetadata("ComplexLoopTest.kt")
+    public void testComplexLoopTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/ComplexLoopTest.kt");
+    }
 }
