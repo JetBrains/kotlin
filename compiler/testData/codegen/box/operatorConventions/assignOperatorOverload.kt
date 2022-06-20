@@ -1,6 +1,6 @@
 
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE:+AssignOperatorOverloadForJvmOldFrontend
+// !LANGUAGE:+AssignOperatorOverloadForJvm
 
 var result: String = "Fail"
 

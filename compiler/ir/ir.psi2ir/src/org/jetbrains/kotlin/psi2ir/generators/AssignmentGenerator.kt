@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
-        val operatorCall = when (LanguageFeature.AssignOperatorOverloadForJvmOldFrontend.isSupported()) {
+        val operatorCall = when (LanguageFeature.AssignOperatorOverloadForJvm.isSupported()) {
             true -> generateAssignOperatorCall(ktExpression, origin)
             else -> null
         }

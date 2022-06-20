@@ -443,7 +443,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
         // Resolve assign operator overload
-        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvmOldFrontend)) {
+        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
             KotlinTypeInfo assignOperatorOverload = resolveAssignOperatorOverload(bindingContext, expression, contextWithExpectedType, leftOperand, left, leftInfo, context);
             if (assignOperatorOverload != null) {
                 return assignOperatorOverload;

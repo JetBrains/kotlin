@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.REM_TO_MOD_OPERATION_NAMES
@@ -96,7 +94,7 @@ object OperatorModifierChecker {
         checkResult: CheckResult,
         modifier: PsiElement
     ) {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvmOldFrontend)) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
             reportInapplicableOperatorModifier(diagnosticHolder, checkResult, modifier)
         }
     }
