@@ -18149,6 +18149,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             public void testLiteralsInInference() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/literalsInInference.kt");
             }
+
+            @Test
+            @TestMetadata("typealiasOnLong.kt")
+            public void testTypealiasOnLong() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/typealiasOnLong.kt");
+            }
         }
 
         @Nested

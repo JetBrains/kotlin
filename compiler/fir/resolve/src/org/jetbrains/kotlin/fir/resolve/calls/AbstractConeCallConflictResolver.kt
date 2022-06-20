@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -173,18 +174,19 @@ abstract class AbstractConeCallConflictResolver(
         called: FirCallableDeclaration
     ): List<TypeWithConversion> {
         return buildList {
-            addIfNotNull(called.receiverTypeRef?.coneType?.let { TypeWithConversion(it) })
+            val session = inferenceComponents.session
+            addIfNotNull(called.receiverTypeRef?.coneType?.fullyExpandedType(session)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
-                        TypeWithConversion((it as ConeKotlinType).removeTypeVariableTypes(inferenceComponents.session.typeContext))
+                        TypeWithConversion((it as ConeKotlinType).fullyExpandedType(session).removeTypeVariableTypes(session.typeContext))
                     }
             } else {
-                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType) }
+                called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.fullyExpandedType(session)) }
                 call.argumentMapping?.mapTo(this) { (_, parameter) ->
-                    val argumentType = parameter.argumentType()
+                    val argumentType = parameter.argumentType().fullyExpandedType(session)
                     if (!call.usesSAM) {
                         TypeWithConversion(argumentType)
                     } else {
