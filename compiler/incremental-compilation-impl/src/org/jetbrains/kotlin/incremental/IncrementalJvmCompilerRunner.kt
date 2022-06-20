@@ -136,7 +136,7 @@ open class IncrementalJvmCompilerRunner(
     workingDir,
     "caches-jvm",
     reporter,
-    additionalOutputFiles = outputFiles,
+    outputDirs = outputFiles,
     buildHistoryFile = buildHistoryFile,
     withAbiSnapshot = withAbiSnapshot
 ) {
@@ -181,7 +181,7 @@ open class IncrementalJvmCompilerRunner(
         else
             null
 
-    override fun calculateSourcesToCompileImpl(
+    override fun calculateSourcesToCompile(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
@@ -199,9 +199,8 @@ open class IncrementalJvmCompilerRunner(
     //TODO can't use the same way as for build-history files because abi-snapshot for all dependencies should be stored into last-build
     // and not only changed one
     // (but possibly we dont need to read it all and may be it is possible to update only those who was changed)
-    override fun setupJarDependencies(args: K2JVMCompilerArguments, withSnapshot: Boolean, reporter: BuildReporter): Map<String, AbiSnapshot> {
+    override fun setupJarDependencies(args: K2JVMCompilerArguments, reporter: BuildReporter): Map<String, AbiSnapshot> {
         //fill abiSnapshots
-        if (!withSnapshot) return emptyMap()
         val abiSnapshots = HashMap<String, AbiSnapshot>()
         args.classpathAsList
             .filter { it.extension.equals("jar", ignoreCase = true) }
@@ -209,7 +208,12 @@ open class IncrementalJvmCompilerRunner(
                 modulesApiHistory.abiSnapshot(it).let { result ->
                     if (result is Either.Success<Set<File>>) {
                         result.value.forEach { file ->
-                            AbiSnapshotImpl.read(file, reporter)?.also { abiSnapshot -> abiSnapshots[it.absolutePath] = abiSnapshot }
+                            if (file.exists()) {
+                                abiSnapshots[it.absolutePath] = AbiSnapshotImpl.read(file)
+                            } else {
+                                // FIXME: We should throw an exception here
+                                reporter.warn { "Snapshot file does not exist: ${file.path}. Continue anyway." }
+                            }
                         }
                     }
                 }
@@ -228,7 +232,7 @@ open class IncrementalJvmCompilerRunner(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
-        abiSnapshots: Map<String, AbiSnapshot> = HashMap(),
+        abiSnapshots: Map<String, AbiSnapshot>,
         withAbiSnapshot: Boolean
     ): CompilationMode {
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
@@ -479,6 +483,8 @@ open class IncrementalJvmCompilerRunner(
     }
 
     override fun performWorkAfterSuccessfulCompilation(caches: IncrementalJvmCachesManager, wasIncremental: Boolean) {
+        super.performWorkAfterSuccessfulCompilation(caches, wasIncremental)
+
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             reporter.measure(BuildTime.SHRINK_AND_SAVE_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
                 shrinkAndSaveClasspathSnapshot(

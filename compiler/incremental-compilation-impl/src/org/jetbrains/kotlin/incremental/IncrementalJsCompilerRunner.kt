@@ -115,7 +115,7 @@ class IncrementalJsCompilerRunner(
             outputFile.parentFile
     }
 
-    override fun calculateSourcesToCompileImpl(
+    override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JSCompilerArguments,
