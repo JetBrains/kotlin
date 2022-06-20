@@ -13,6 +13,82 @@ val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = rootProject.ideaHomePathForTests().absolutePath
 
+fun updateCompilerXml() {
+    val modulesExcludedFromJps = listOf(
+        "buildSrc",
+        "native/commonizer",
+        "libraries/tools/atomicfu",
+        "libraries/tools/binary-compatibility-validator",
+        "libraries/tools/dukat",
+        "libraries/tools/gradle",
+        "libraries/tools/kotlin-allopen",
+        "libraries/tools/kotlin-annotation-processing",
+        "libraries/tools/kotlin-annotation-processing-maven",
+        "libraries/tools/kotlin-bom",
+        "libraries/tools/kotlin-gradle-build-metrics",
+        "libraries/tools/kotlin-gradle-plugin",
+        "libraries/tools/kotlin-gradle-plugin-api",
+        "libraries/tools/kotlin-gradle-plugin-dsl-codegen",
+        "libraries/tools/kotlin-gradle-plugin-idea",
+        "libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests",
+        "libraries/tools/kotlin-gradle-plugin-integration-tests",
+        "libraries/tools/kotlin-gradle-plugin-kpm-android",
+        "libraries/tools/kotlin-gradle-plugin-model",
+        "libraries/tools/kotlin-gradle-plugin-npm-versions-codegen",
+        "libraries/tools/kotlin-gradle-plugin-test-utils-embeddable",
+        "libraries/tools/kotlin-gradle-statistics",
+        "libraries/tools/kotlin-lombok",
+        "libraries/tools/kotlin-main-kts",
+        "libraries/tools/kotlin-main-kts-test",
+        "libraries/tools/kotlin-maven-allopen",
+        "libraries/tools/kotlin-maven-lombok",
+        "libraries/tools/kotlin-maven-noarg",
+        "libraries/tools/kotlin-maven-plugin",
+        "libraries/tools/kotlin-maven-plugin-test",
+        "libraries/tools/kotlin-maven-sam-with-receiver",
+        "libraries/tools/kotlin-maven-serialization",
+        "libraries/tools/kotlin-noarg",
+        "libraries/tools/kotlin-osgi-bundle",
+        "libraries/tools/kotlin-prepush-hook",
+        "libraries/tools/kotlin-project-model",
+        "libraries/tools/kotlin-sam-with-receiver",
+        "libraries/tools/kotlin-script-util",
+        "libraries/tools/kotlin-serialization",
+        "libraries/tools/kotlin-serialization-unshaded",
+        "libraries/tools/kotlin-stdlib-docs",
+        "libraries/tools/kotlin-stdlib-gen",
+        "libraries/tools/kotlin-test-js-runner",
+        "libraries/tools/kotlin-tooling-core",
+        "libraries/tools/kotlin-tooling-metadata",
+        "libraries/tools/kotlinp",
+        "libraries/tools/maven-archetypes",
+        "libraries/tools/mutability-annotations-compat",
+        "libraries/tools/script-runtime",
+        "libraries/tools/stdlib-compiler-classpath",
+        "native/commonizer-api",
+        "libraries/examples",
+        "libraries/tools/kotlin-gradle-plugin-idea-proto",
+    )
+
+    val d = '$'
+    val excludeEntries = modulesExcludedFromJps.joinToString("\n      ") {
+        """      <directory url="file://${d}PROJECT_DIR${d}/$it" includeSubdirectories="true" />"""
+    }
+
+    val xmlContent = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project version="4">
+      <component name="CompilerConfiguration">
+        <option name="BUILD_PROCESS_HEAP_SIZE" value="2000" />
+        <excludeFromCompile>
+          ${excludeEntries}
+        </excludeFromCompile>
+      </component>
+    </project>
+    """.trimIndent()
+    rootDir.resolve(".idea/compiler.xml").writeText(xmlContent)
+}
+
 fun JUnit.configureForKotlin(xmx: String = "1600m") {
     vmParameters = listOf(
         "-ea",
@@ -140,6 +216,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
         setupFirRunConfiguration()
         setupGenerateAllTestsRunConfiguration()
+        updateCompilerXml()
 
         rootProject.allprojects {
             idea {
