@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 /**
  * Copies each IR declaration that won't match descriptors after Compose transforms (see [shouldBeRemapped]).
@@ -90,13 +89,11 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 class CreateDecoysTransformer(
     pluginContext: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace,
     signatureBuilder: IdSignatureSerializer,
     metrics: ModuleMetrics,
 ) : AbstractDecoysLowering(
     pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
-    bindingTrace = bindingTrace,
     metrics = metrics,
     signatureBuilder = signatureBuilder
 ), ModuleLoweringPass {
