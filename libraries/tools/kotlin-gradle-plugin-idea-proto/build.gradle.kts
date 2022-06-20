@@ -12,31 +12,19 @@ kotlin {
     }
 }
 
-val shadows by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = false
+val embedded by configurations.getting {
     isTransitive = false
     configurations.getByName("compileOnly").extendsFrom(this)
     configurations.getByName("testImplementation").extendsFrom(this)
 }
 
-val shadowsRuntime by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    isTransitive = false
-    extendsFrom(shadows)
-    attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-    attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-}
-
 dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
-    shadows("com.google.protobuf:protobuf-java:3.19.4")
-    shadows("com.google.protobuf:protobuf-kotlin:3.19.4")
+    embedded("com.google.protobuf:protobuf-java:3.19.4")
+    embedded("com.google.protobuf:protobuf-kotlin:3.19.4")
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
-
 
 configureKotlinCompileTasksGradleCompatibility()
 
@@ -47,10 +35,9 @@ sourceSets.main.configure {
 
 javadocJar()
 sourcesJar()
-runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    exclude("**/*.proto")
+runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     from(mainSourceSet.output)
-    configurations = listOf(shadowsRuntime)
+    exclude("**/*.proto")
     relocate("com.google.protobuf", "org.jetbrains.kotlin.kpm.idea.proto.com.google.protobuf")
 }
 
