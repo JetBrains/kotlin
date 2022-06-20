@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 /**
  * Record signatures of the functions created by the [CreateDecoysTransformer] to match them from
@@ -41,14 +40,12 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 class RecordDecoySignaturesTransformer(
     pluginContext: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace,
     override val signatureBuilder: IdSignatureSerializer,
     metrics: ModuleMetrics,
     val mangler: KotlinMangler.IrMangler
 ) : AbstractDecoysLowering(
     pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
-    bindingTrace = bindingTrace,
     metrics = metrics,
     signatureBuilder = signatureBuilder
 ), ModuleLoweringPass {

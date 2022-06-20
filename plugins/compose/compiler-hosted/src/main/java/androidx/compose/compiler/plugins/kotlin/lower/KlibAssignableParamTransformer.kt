@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.BindingTrace
 
 /**
  * This transformer is a workaround for https://youtrack.jetbrains.com/issue/KT-44945 on non-JVM
@@ -60,9 +59,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 class KlibAssignableParamTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace,
     metrics: ModuleMetrics,
-) : AbstractComposeLowering(context, symbolRemapper, bindingTrace, metrics), ModuleLoweringPass {
+) : AbstractComposeLowering(context, symbolRemapper, metrics), ModuleLoweringPass {
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
     }

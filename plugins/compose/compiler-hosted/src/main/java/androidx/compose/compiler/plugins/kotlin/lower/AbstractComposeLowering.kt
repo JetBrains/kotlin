@@ -149,7 +149,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -161,7 +160,6 @@ import org.jetbrains.kotlin.utils.DFS
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
-    val bindingTrace: BindingTrace,
     val metrics: ModuleMetrics
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     @ObsoleteDescriptorBasedAPI
