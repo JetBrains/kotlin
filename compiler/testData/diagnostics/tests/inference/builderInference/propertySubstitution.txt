@@ -1,0 +1,54 @@
+package
+
+public val ConeKotlinType2.classId: ClassId2?
+public val FirTypeRef2.coneType: ConeKotlinType2
+public inline fun buildResolvedTypeRef2(/*0*/ init: FirResolvedTypeRefBuilder2.() -> kotlin.Unit): FirResolvedTypeRef2
+public fun foo(/*0*/ firJavaClass: FirJavaClass2, /*1*/ enhancement: FirSignatureEnhancement2): kotlin.Unit
+private fun FirJavaClass2.getPurelyImplementedSupertype(): ConeKotlinType2?
+
+public final class ClassId2 {
+    public constructor ClassId2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ConeKotlinType2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FirJavaClass2 {
+    public abstract val superTypeRefs: kotlin.collections.MutableList<FirTypeRef2>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FirResolvedTypeRef2 : FirTypeRef2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class FirResolvedTypeRefBuilder2 {
+    public constructor FirResolvedTypeRefBuilder2()
+    public final lateinit var type: ConeKotlinType2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FirSignatureEnhancement2 {
+    public open fun enhanceSuperType(/*0*/ type: FirTypeRef2): FirTypeRef2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FirTypeRef2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

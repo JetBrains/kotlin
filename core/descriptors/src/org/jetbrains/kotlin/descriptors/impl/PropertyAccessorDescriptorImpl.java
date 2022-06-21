@@ -119,7 +119,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     @Override
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+        return this; // no substitution since we work with originals of accessors in the backend anyway
     }
 
     @NotNull

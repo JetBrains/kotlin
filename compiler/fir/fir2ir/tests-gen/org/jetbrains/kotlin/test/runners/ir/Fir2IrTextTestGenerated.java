@@ -3007,6 +3007,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("dontLeaveStubTypesInSetter.kt")
+        public void testDontLeaveStubTypesInSetter() throws Exception {
+            runTest("compiler/testData/ir/irText/types/dontLeaveStubTypesInSetter.kt");
+        }
+
+        @Test
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
