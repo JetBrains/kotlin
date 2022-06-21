@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBui
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeOrReturnDefaultValueOnPCE
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -39,9 +40,11 @@ internal class LLFirProviderHelper(
                     ?: return@computeIfAbsent Optional.empty()
                 if (ktClass.getClassId() == null) return@computeIfAbsent Optional.empty()
                 val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-                val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration>(firFile) { classifier ->
-                    classifier.symbol.classId == classId
-                }
+                val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration>(
+                    firFile,
+                    canGoInside = { it is FirRegularClass },
+                    predicate = { it.symbol.classId == classId },
+                )
                     ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
                 Optional.of(classifier)
             }.getOrNull()

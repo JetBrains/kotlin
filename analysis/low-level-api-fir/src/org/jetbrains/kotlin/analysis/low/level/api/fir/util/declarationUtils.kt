@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -63,7 +62,7 @@ private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTre
 ): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
     val originalDeclaration = originalDeclaration
-    return FirElementFinder.findElementIn(firFile, goInside = { it is FirRegularClass }) { firDeclaration ->
+    return FirElementFinder.findElementIn(firFile, canGoInside = { it is FirRegularClass }) { firDeclaration ->
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
     }
 }
