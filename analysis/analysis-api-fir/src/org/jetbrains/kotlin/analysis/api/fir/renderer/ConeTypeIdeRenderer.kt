@@ -48,7 +48,6 @@ internal class ConeTypeIdeRenderer(
             is ConeErrorType -> {
                 renderErrorType(type)
             }
-            //is Dynamic??? -> append("dynamic")
             is ConeClassLikeType -> {
                 if (options.renderFunctionType && shouldRenderAsPrettyFunctionType(type)) {
                     renderAnnotationList(type)
@@ -70,9 +69,11 @@ internal class ConeTypeIdeRenderer(
                 }
                 renderNullability(type.type)
             }
+            is ConeDynamicType -> {
+                append("dynamic")
+            }
             is ConeFlexibleType -> {
-                renderAnnotationList(type)
-                append(renderFlexibleType(renderType(type.lowerBound), renderType(type.upperBound)))
+                renderFlexibleType(type)
             }
             is ConeCapturedType -> {
                 renderAnnotationList(type)
@@ -86,6 +87,11 @@ internal class ConeTypeIdeRenderer(
             }
             else -> appendError("Unexpected cone type ${type::class.qualifiedName}")
         }
+    }
+
+    private fun StringBuilder.renderFlexibleType(type: ConeFlexibleType) {
+        renderAnnotationList(type)
+        append(renderFlexibleType(renderType(type.lowerBound), renderType(type.upperBound)))
     }
 
     private fun StringBuilder.renderErrorType(type: ConeErrorType) {
