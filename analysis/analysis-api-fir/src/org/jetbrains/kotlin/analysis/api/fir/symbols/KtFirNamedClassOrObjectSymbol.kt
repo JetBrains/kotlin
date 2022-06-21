@@ -51,9 +51,6 @@ internal class KtFirNamedClassOrObjectSymbol(
             firSymbol.fir.modality
                 ?: when (classKind) { // default modality
                     KtClassKind.INTERFACE -> Modality.ABSTRACT
-                    // Enum class should not be `final`, since its entries extend it.
-                    // It could be either `abstract` w/o ctor, or empty modality w/ private ctor.
-                    KtClassKind.ENUM_CLASS -> Modality.OPEN
                     else -> Modality.FINAL
                 }
         }
