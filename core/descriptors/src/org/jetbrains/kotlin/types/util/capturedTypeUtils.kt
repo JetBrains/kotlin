@@ -18,18 +18,24 @@ import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.ArrayList
 
 fun createCapturedType(typeProjection: TypeProjection): CapturedType {
+    val lowerType = if (typeProjection.projectionKind == Variance.IN_VARIANCE) typeProjection.type.unwrap() else null
     val capturedTypeConstructor = CapturedTypeConstructor(
         typeProjection,
-        if (typeProjection.isStarProjection) listOf() else listOf(typeProjection.type.unwrap()),
+        buildList {
+            if (!typeProjection.isStarProjection && typeProjection.projectionKind == Variance.OUT_VARIANCE) {
+                add(typeProjection.type.unwrap())
+            }
+        },
         original = null
     )
     return CapturedType(
         CaptureStatus.FROM_EXPRESSION,
         capturedTypeConstructor,
-        lowerType = null
+        lowerType
     )
 }
 

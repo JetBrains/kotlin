@@ -14534,6 +14534,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("captruingAfterRemovingOldCapturedTypes.kt")
+                public void testCaptruingAfterRemovingOldCapturedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captruingAfterRemovingOldCapturedTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("captureForNullableTypes.kt")
                 public void testCaptureForNullableTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captureForNullableTypes.kt");

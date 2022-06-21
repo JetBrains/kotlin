@@ -1,0 +1,16 @@
+package
+
+internal inline fun </*0*/ reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S>
+
+public interface Task {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface TaskCollection</*0*/ T : Task> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun </*0*/ S : T> withType(/*0*/ type: java.lang.Class<S>): TaskCollection<S>
+}
