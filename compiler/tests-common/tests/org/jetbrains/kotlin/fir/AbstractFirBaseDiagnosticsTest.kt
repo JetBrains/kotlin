@@ -105,9 +105,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 needRegisterJavaElementFinder = true
             ) {
                 configureSession()
-                getFirExtensions()?.let {
-                    registerExtensions(it)
-                }
             }
         }
 
@@ -125,10 +122,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
         runAnalysis(testDataFile, files, firFilesPerSession)
-    }
-
-    protected open fun getFirExtensions(): BunchOfRegisteredExtensions? {
-        return null
     }
 
     private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
