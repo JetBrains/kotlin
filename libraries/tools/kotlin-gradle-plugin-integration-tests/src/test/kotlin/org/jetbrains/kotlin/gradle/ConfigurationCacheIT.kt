@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.TransformKotlinGranularMetadata
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -64,11 +66,63 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             // KT-49933: Support Gradle Configuration caching with HMPP
-            val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs")
+            val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
 
             testConfigurationCacheOf(
                 ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
+                checkUpToDateOnRebuild = false
+            )
+        }
+    }
+
+    @NativeGradlePluginTests
+    @DisplayName("works with native tasks in complex project")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTest
+    fun testNativeTasks(gradleVersion: GradleVersion) {
+        project("native-configuration-cache", gradleVersion) {
+            //testConfigurationCacheOf("assemble", checkUpToDateOnRebuild = false)
+            val buildOptions = buildOptions.copy(
+                configurationCache = true,
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+            )
+            // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
+            val configCacheIncompatibleTaskTypes = listOf(
+                GenerateProjectStructureMetadata::class,
+                @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+                org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask::class,
+                TransformKotlinGranularMetadata::class
+            ).map { it.java.name.replace(".", "\\.") }
+
+            build("assemble", buildOptions = buildOptions) {
+                // Reduce the problem numbers when a Task become compatible with GCC.
+                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
+                assertOutputContains("17 problems were found storing the configuration cache, 6 of which seem unique.")
+                configCacheIncompatibleTaskTypes.forEach { taskType ->
+                    assertOutputContains(
+                        """Task `\S+` of type `$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                            .toRegex()
+                    )
+                }
+            }
+        }
+    }
+
+    @NativeGradlePluginTests
+    @DisplayName("works with commonizer")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTest
+    fun testCommonizer(gradleVersion: GradleVersion) {
+        project("native-configuration-cache", gradleVersion) {
+            val buildOptions = buildOptions.copy(freeArgs = listOf("--rerun-tasks"))
+            testConfigurationCacheOf(
+                ":lib:commonizeCInterop",
+                ":commonizeNativeDistribution",
+                buildOptions = buildOptions,
+                // TODO(alakotka): Report will be still generated due to incorrect consumption of properties and environmental variables.
+                //  https://docs.gradle.org/7.4.2/userguide/configuration_cache.html#config_cache:requirements:reading_sys_props_and_env_vars
+                checkConfigurationCacheFileReport = false,
                 checkUpToDateOnRebuild = false
             )
         }
@@ -208,12 +262,14 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         checkUpToDateOnRebuild: Boolean = true,
+        checkConfigurationCacheFileReport: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions
     ) {
         assertSimpleConfigurationCacheScenarioWorks(
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
+            checkConfigurationCacheFileReport = checkConfigurationCacheFileReport,
             buildOptions = buildOptions,
         )
     }
