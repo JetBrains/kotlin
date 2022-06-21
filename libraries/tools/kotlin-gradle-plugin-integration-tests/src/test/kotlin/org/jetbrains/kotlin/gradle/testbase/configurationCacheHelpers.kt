@@ -20,6 +20,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     buildOptions: BuildOptions,
     executedTaskNames: List<String>? = null,
     checkUpToDateOnRebuild: Boolean = true,
+    checkConfigurationCacheFileReport: Boolean = true,
 ) {
     // First, run a build that serializes the tasks state for configuration cache in further builds
 
@@ -30,7 +31,10 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
         assertOutputContains(
             "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
         )
-        assertConfigurationCacheSucceeded()
+
+        //assertOutputContains("0 problems were found storing the configuration cache.")
+        assertOutputContains("Configuration cache entry stored.")
+        if (checkConfigurationCacheFileReport) assertConfigurationCacheReportNotCreated()
     }
 
     build("clean", buildOptions = buildOptions)
@@ -73,7 +77,7 @@ private val GradleProject.configurationCacheReportFile
 private val Path.asClickableFileUrl
     get() = URI("file", "", toUri().path, null, null).toString()
 
-private fun GradleProject.assertConfigurationCacheSucceeded() {
+private fun GradleProject.assertConfigurationCacheReportNotCreated() {
     configurationCacheReportFile?.let { htmlReportFile ->
         fail("Configuration cache problems were found, check ${htmlReportFile.asClickableFileUrl} for details.")
     }
