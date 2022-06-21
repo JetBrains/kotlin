@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.plugins
+package org.jetbrains.kotlin.util
 
 import java.io.File
 import java.io.IOError
@@ -63,6 +63,10 @@ object ServiceLoaderLite {
         return loadImplementations(Service::class.java, classLoader)
     }
 
+    inline fun <reified Service : Any> loadImplementations(files: List<File>, classLoader: ClassLoader): List<Service> {
+        return loadImplementations(Service::class.java, files, classLoader)
+    }
+
     fun findImplementations(service: Class<*>, files: List<File>): Set<String> {
         return files.flatMapTo(linkedSetOf()) { findImplementations(service, it) }
     }
@@ -72,7 +76,7 @@ object ServiceLoaderLite {
 
         return when {
             file.isDirectory -> findImplementationsInDirectory(classIdentifier, file)
-            file.isFile && file.extension.toLowerCase() == "jar" -> findImplementationsInJar(classIdentifier, file)
+            file.isFile && file.extension.lowercase() == "jar" -> findImplementationsInJar(classIdentifier, file)
             else -> emptySet()
         }
     }

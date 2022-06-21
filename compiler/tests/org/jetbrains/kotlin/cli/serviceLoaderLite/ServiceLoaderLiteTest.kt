@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.cli.serviceLoaderLite
 
-import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
-import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite.ServiceLoadingException
+import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.jetbrains.kotlin.util.ServiceLoaderLite.ServiceLoadingException
 import java.io.File
 import javax.annotation.processing.Processor
 

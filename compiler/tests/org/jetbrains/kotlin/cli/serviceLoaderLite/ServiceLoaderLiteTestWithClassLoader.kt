@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.serviceLoaderLite
 
-import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
+import org.jetbrains.kotlin.util.ServiceLoaderLite
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
