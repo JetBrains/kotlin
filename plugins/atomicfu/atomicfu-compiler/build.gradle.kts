@@ -97,10 +97,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xphases-to-dump=JvmLocalDeclarations"
-}
-
 runtimeJar()
 sourcesJar()
 javadocJar()
