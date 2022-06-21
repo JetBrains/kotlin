@@ -34,13 +34,14 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     var baseName: String = project.name
 
-    private val defaultDestinationDir: File
-        get() {
-            val kind = outputKind.visibleName
-            val target = konanTarget.visibleName
-            val type = if (debuggable) "debug" else "release"
-            return project.buildDir.resolve("out/$kind/$target/$type")
-        }
+    private val buildDir = project.buildDir
+
+    private val defaultDestinationDir: File get() {
+        val kind = outputKind.visibleName
+        val target = konanTarget.visibleName
+        val type = if (debuggable) "debug" else "release"
+        return buildDir.resolve("out/$kind/$target/$type")
+    }
 
     private var customDestinationDir: File? = null
 
@@ -109,6 +110,8 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     var binaryOptions: Map<String, String> = emptyMap()
 
+    private val nativeBinaryOptions = PropertiesProvider(project).nativeBinaryOptions
+
     @get:Internal
     val kotlinOptions = object : KotlinCommonToolOptions {
         override var allWarningsAsErrors: Boolean = false
@@ -158,7 +161,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
 
         fun FileCollection.klibs() = files.filter { it.extension == "klib" }
 
-        val localBinaryOptions = PropertiesProvider(project).nativeBinaryOptions + binaryOptions
+        val localBinaryOptions = nativeBinaryOptions + binaryOptions
 
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             outFile = outFile,
