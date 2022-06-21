@@ -398,10 +398,13 @@ context(KtAnalysisSession)
         // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
         if (isEnum && this.classId == StandardClassIds.Enum) return false
 
-        val isInterfaceType =
-            (this.classSymbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE
+        // Interfaces have only extends lists
+        if (isInterface) return forExtendsList
 
-        return forExtendsList == !isInterfaceType
+        val classKind = (classSymbol as? KtClassOrObjectSymbol)?.classKind
+        val isJvmInterface = classKind == KtClassKind.INTERFACE || classKind == KtClassKind.ANNOTATION_CLASS
+
+        return forExtendsList == !isJvmInterface
     }
 
     //TODO Add support for kotlin.collections.

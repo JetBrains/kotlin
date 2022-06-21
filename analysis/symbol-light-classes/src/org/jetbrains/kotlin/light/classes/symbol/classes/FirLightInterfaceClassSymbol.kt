@@ -64,7 +64,7 @@ internal open class FirLightInterfaceClassSymbol(
         FirLightInterfaceClassSymbol(classOrObjectSymbol, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
-        createInheritanceList(forExtendsList = false, classOrObjectSymbol.superTypes)
+        createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes)
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
