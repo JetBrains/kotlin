@@ -2,7 +2,7 @@
 public final class LockFreeIntBits {
     // source: 'LockFreeIntBitsTest.kt'
     private final static @org.jetbrains.annotations.NotNull field bits$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field bits: int
+    private volatile @kotlin.jvm.Volatile field bits: int
     static method <clinit>(): void
     public method <init>(): void
     public final method bitClear(p0: int): boolean

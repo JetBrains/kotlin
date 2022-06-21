@@ -11,7 +11,7 @@ final class LockFreeLongCounter$Inner {
 public final class LockFreeLongCounter {
     // source: 'LockFreeLongCounterTest.kt'
     private final static @org.jetbrains.annotations.NotNull field counter$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field counter: long
+    private volatile @kotlin.jvm.Volatile field counter: long
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getCounter$FU$p(): java.util.concurrent.atomic.AtomicLongFieldUpdater

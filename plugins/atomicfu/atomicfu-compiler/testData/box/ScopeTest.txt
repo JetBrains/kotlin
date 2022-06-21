@@ -16,7 +16,7 @@ public final class AA {
 public final class AtomicState {
     // source: 'ScopeTest.kt'
     private final static @org.jetbrains.annotations.NotNull field state$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field state: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field state: java.lang.Object
     static method <clinit>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static @org.jetbrains.annotations.NotNull method getState$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater

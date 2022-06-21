@@ -17,14 +17,14 @@ public final class TraceTest {
     // source: 'TraceTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private final static @org.jetbrains.annotations.NotNull field a1$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a1: int
+    private volatile @kotlin.jvm.Volatile field a1: int
     private final static @org.jetbrains.annotations.NotNull field a2$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a2: int
+    private volatile @kotlin.jvm.Volatile field a2: int
     private final static @org.jetbrains.annotations.NotNull field a3$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a3: int
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a3: int
+    private volatile @kotlin.jvm.Volatile field a: int
     private final static @org.jetbrains.annotations.NotNull field s$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field s: int
+    private volatile @kotlin.jvm.Volatile field s: int
     static method <clinit>(): void
     public method <init>(): void
     public final method test(): void

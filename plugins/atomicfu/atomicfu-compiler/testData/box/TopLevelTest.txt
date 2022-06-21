@@ -2,7 +2,7 @@
 public final class A$TopLevelTest$VolatileWrapper {
     // source: 'TopLevelTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a: int
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getA$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
@@ -26,7 +26,7 @@ public final class ANode {
 public final class AbcNode$TopLevelTest$VolatileWrapper {
     // source: 'TopLevelTest.kt'
     private final static @org.jetbrains.annotations.NotNull field abcNode$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field abcNode: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field abcNode: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getAbcNode$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -36,7 +36,7 @@ public final class AbcNode$TopLevelTest$VolatileWrapper {
 public final class Any$TopLevelTest$VolatileWrapper {
     // source: 'TopLevelTest.kt'
     private final static @org.jetbrains.annotations.NotNull field any$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field any: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field any: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getAny$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -46,7 +46,7 @@ public final class Any$TopLevelTest$VolatileWrapper {
 public final class B$TopLevelTest$VolatileWrapper {
     // source: 'TopLevelTest.kt'
     private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field b: long
+    private volatile @kotlin.jvm.Volatile field b: long
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getB$FU$p(): java.util.concurrent.atomic.AtomicLongFieldUpdater
@@ -70,7 +70,7 @@ public final class BNode {
 public final class C$TopLevelTest$VolatileWrapper {
     // source: 'TopLevelTest.kt'
     private final static @org.jetbrains.annotations.NotNull field c$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field c: int
+    private volatile @kotlin.jvm.Volatile field c: int
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getC$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater

@@ -2,9 +2,9 @@
 public final class PropertyDeclarationTest {
     // source: 'PropertyDeclarationTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a: int
     private final static @org.jetbrains.annotations.NotNull field head$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field head: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field head: java.lang.Object
     private final @org.jetbrains.annotations.NotNull field lateIntArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final @org.jetbrains.annotations.NotNull field lateRefArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void

@@ -2,7 +2,7 @@
 public final class SimpleLock {
     // source: 'SimpleLockTest.kt'
     private final static @org.jetbrains.annotations.NotNull field _locked$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field _locked: int
+    private volatile @kotlin.jvm.Volatile field _locked: int
     static method <clinit>(): void
     public method <init>(): void
     public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void

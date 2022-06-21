@@ -239,7 +239,6 @@ class BytecodeListingTextCollectingVisitor(
         val fieldDeclaration = Declaration("field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
         handleModifiers(ModifierTarget.FIELD, access)
-        if (access and Opcodes.ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
         return object : FieldVisitor(Opcodes.API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =

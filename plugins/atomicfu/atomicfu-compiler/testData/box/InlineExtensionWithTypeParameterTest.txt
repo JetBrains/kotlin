@@ -18,7 +18,7 @@ public final class InlineExtensionWithTypeParameterTest$SemaphoreSegment {
 public final class InlineExtensionWithTypeParameterTest {
     // source: 'InlineExtensionWithTypeParameterTest.kt'
     private final static @org.jetbrains.annotations.NotNull field sref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field sref: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field sref: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public final method foo$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: InlineExtensionWithTypeParameterTest$Segment): int

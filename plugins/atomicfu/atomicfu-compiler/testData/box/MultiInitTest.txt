@@ -12,9 +12,9 @@ public final class MultiInit {
     // source: 'MultiInitTest.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: MultiInit$Companion
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a: int
     private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field b: int
+    private volatile @kotlin.jvm.Volatile field b: int
     static method <clinit>(): void
     public method <init>(): void
     public final method incA(): int

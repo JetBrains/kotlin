@@ -2,7 +2,7 @@
 public final class TopLevelS$UncheckedCastTest$VolatileWrapper {
     // source: 'UncheckedCastTest.kt'
     private final static @org.jetbrains.annotations.NotNull field topLevelS$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field topLevelS: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field topLevelS: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$getTopLevelS$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -28,9 +28,9 @@ public final class UncheckedCastTest {
     // source: 'UncheckedCastTest.kt'
     private final @org.jetbrains.annotations.NotNull field a: java.util.concurrent.atomic.AtomicReferenceArray
     private final static @org.jetbrains.annotations.NotNull field bs$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field bs: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field bs: java.lang.Object
     private final static @org.jetbrains.annotations.NotNull field s$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field s: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field s: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getString$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int): java.lang.String

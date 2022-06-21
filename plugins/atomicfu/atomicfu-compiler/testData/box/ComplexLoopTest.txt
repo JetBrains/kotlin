@@ -8,14 +8,14 @@ public final class ComplexLoopTestKt {
 public final class LoopTest {
     // source: 'ComplexLoopTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a: int
     private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field b: int
+    private volatile @kotlin.jvm.Volatile field b: int
     private final static @org.jetbrains.annotations.NotNull field c$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field c: int
+    private volatile @kotlin.jvm.Volatile field c: int
     private final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final static @org.jetbrains.annotations.NotNull field r$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field r: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field r: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     private final method embeddedLoops(p0: int): int

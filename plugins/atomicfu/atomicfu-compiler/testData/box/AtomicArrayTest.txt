@@ -16,7 +16,7 @@ public final class ARef {
 public final class AtomicArrayClass {
     // source: 'AtomicArrayTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field a: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field a: java.lang.Object
     private final @org.jetbrains.annotations.NotNull field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
     private final @org.jetbrains.annotations.NotNull field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
     private final @org.jetbrains.annotations.NotNull field intArr: java.util.concurrent.atomic.AtomicIntegerArray

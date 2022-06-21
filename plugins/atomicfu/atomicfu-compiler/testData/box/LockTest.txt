@@ -2,7 +2,7 @@
 public final class LockTest {
     // source: 'LockTest.kt'
     private final static @org.jetbrains.annotations.NotNull field inProgressLock$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field inProgressLock: int
+    private volatile @kotlin.jvm.Volatile field inProgressLock: int
     static method <clinit>(): void
     public method <init>(): void
     public final method testLock(): void

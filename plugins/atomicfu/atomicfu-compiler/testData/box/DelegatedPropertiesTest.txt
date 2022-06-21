@@ -19,7 +19,7 @@ public final class DelegatedProperties$B {
 @kotlin.Metadata
 public final class DelegatedProperties$D {
     // source: 'DelegatedPropertiesTest.kt'
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field c: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field c: java.lang.Object
     synthetic final field this$0: DelegatedProperties
     public method <init>(p0: DelegatedProperties): void
     public final method getB(): int
@@ -33,17 +33,17 @@ public final class DelegatedProperties$D {
 public final class DelegatedProperties {
     // source: 'DelegatedPropertiesTest.kt'
     private final static @org.jetbrains.annotations.NotNull field _a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field _a: int
+    private volatile @kotlin.jvm.Volatile field _a: int
     private final static @org.jetbrains.annotations.NotNull field _b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field _b: int
+    private volatile @kotlin.jvm.Volatile field _b: int
     private final static @org.jetbrains.annotations.NotNull field _l$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field _l: long
+    private volatile @kotlin.jvm.Volatile field _l: long
     private final static @org.jetbrains.annotations.NotNull field _ref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field _ref: java.lang.Object
-    private volatile volatile @kotlin.jvm.Volatile field vBoolean: int
-    private volatile volatile @kotlin.jvm.Volatile field vInt: int
-    private volatile volatile @kotlin.jvm.Volatile field vLong: int
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field vRef: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field _ref: java.lang.Object
+    private volatile @kotlin.jvm.Volatile field vBoolean: int
+    private volatile @kotlin.jvm.Volatile field vInt: int
+    private volatile @kotlin.jvm.Volatile field vLong: int
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field vRef: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$get_a$p(p0: DelegatedProperties): int
@@ -83,7 +83,7 @@ public final class DelegatedProperties {
 public final class DelegatedPropertiesTestKt {
     // source: 'DelegatedPropertiesTest.kt'
     public final static @org.jetbrains.annotations.NotNull field _topLevelInt$DelegatedPropertiesTest$VolatileWrapper: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper
-    private volatile static volatile @kotlin.jvm.Volatile field topLevelVolatile: int
+    private volatile static @kotlin.jvm.Volatile field topLevelVolatile: int
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method getTopLevelInt(): int
@@ -98,7 +98,7 @@ public final class DelegatedPropertiesTestKt {
 public final class _topLevelInt$DelegatedPropertiesTest$VolatileWrapper {
     // source: 'DelegatedPropertiesTest.kt'
     private final static @org.jetbrains.annotations.NotNull field _topLevelInt$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field _topLevelInt: int
+    private volatile @kotlin.jvm.Volatile field _topLevelInt: int
     static method <clinit>(): void
     public method <init>(): void
     public synthetic final static method access$get_topLevelInt$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater

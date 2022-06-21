@@ -18,16 +18,16 @@ public final class LoopTest {
     // source: 'ExtensionLoopTest.kt'
     private final static @org.jetbrains.annotations.NotNull field a$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private final static @org.jetbrains.annotations.NotNull field a1$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field a1: int
-    private volatile volatile @kotlin.jvm.Volatile field a: int
+    private volatile @kotlin.jvm.Volatile field a1: int
+    private volatile @kotlin.jvm.Volatile field a: int
     private final static @org.jetbrains.annotations.NotNull field b$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field b: int
+    private volatile @kotlin.jvm.Volatile field b: int
     private final static @org.jetbrains.annotations.NotNull field l$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile field l: long
+    private volatile @kotlin.jvm.Volatile field l: long
     private final static @org.jetbrains.annotations.NotNull field r$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field r: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field r: java.lang.Object
     private final static @org.jetbrains.annotations.NotNull field rs$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-    private volatile volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field rs: java.lang.Object
+    private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field rs: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
     public final method bar$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
