@@ -43,9 +43,17 @@ internal open class FirLightClassForSymbol(
     private val _modifierList: PsiModifierList? by lazyPub {
 
         val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel))
-        classOrObjectSymbol.computeSimpleModality()?.run {
-            modifiers.add(this)
+
+        if (
+            // TODO UAST considers that enum classes should not have modality, but their modality is FINAL in the bytecode.
+            // Should be fixex properly on the UAST side
+            classOrObjectSymbol.classKind != KtClassKind.ENUM_CLASS
+        ) {
+            classOrObjectSymbol.computeSimpleModality()?.run {
+                modifiers.add(this)
+            }
         }
+
         if (!isTopLevel && !classOrObjectSymbol.isInner) {
             modifiers.add(PsiModifier.STATIC)
         }
