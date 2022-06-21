@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
 
+// Contains IR declarations needed by the atomicfu plugin.
 class AtomicSymbols(
     val irBuiltIns: IrBuiltIns,
     private val moduleFragment: IrModuleFragment
