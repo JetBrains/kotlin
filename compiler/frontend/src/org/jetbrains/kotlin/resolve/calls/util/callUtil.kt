@@ -151,7 +151,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
     if (element is KtWhenExpression) {
         val subjectVariable = element.subjectVariable
         if (subjectVariable != null) {
-            return subjectVariable.getCall(context)
+            return subjectVariable.getCall(context) ?: context[CALL, element]
         }
     }
 
