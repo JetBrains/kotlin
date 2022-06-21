@@ -54,6 +54,22 @@ internal open class CInteropCommonizerTask
     @get:Nested
     internal val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
 
+    private val konanHome = project.file(project.konanHome)
+    private val commonizerLogLevel = project.commonizerLogLevel
+    private val additionalCommonizerSettings = project.additionalCommonizerSettings
+
+    /**
+     * For Gradle Configuration Cache support the Group-to-Dependencies relation should be pre-cached.
+     * It is used during execution phase.
+     */
+    private val nativeDistributionDependenciesMap: Map<CInteropCommonizerGroup, Set<CommonizerDependency>> by lazy {
+        getAllInteropsGroups().associateWith { group ->
+            (group.targets + group.targets.allLeaves()).flatMapTo(mutableSetOf()) { target ->
+                project.getNativeDistributionDependencies(target).map { dependency -> TargetedCommonizerDependency(target, dependency) }
+            }
+        }
+    }
+
     @get:Nested
     internal var cinterops = setOf<CInteropGist>()
         private set
@@ -99,25 +115,26 @@ internal open class CInteropCommonizerTask
         )
 
         GradleCliCommonizer(commonizerRunner).commonizeLibraries(
-            konanHome = project.file(project.konanHome),
+            konanHome = konanHome,
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getNativeDistributionDependencies(group),
             outputDirectory = outputDirectory(group),
-            logLevel = project.commonizerLogLevel,
-            additionalSettings = project.additionalCommonizerSettings,
+            logLevel = commonizerLogLevel,
+            additionalSettings = additionalCommonizerSettings,
         )
     }
 
     private fun getNativeDistributionDependencies(group: CInteropCommonizerGroup): Set<CommonizerDependency> {
-        return (group.targets + group.targets.allLeaves()).flatMapTo(mutableSetOf()) { target ->
-            project.getNativeDistributionDependencies(target).map { dependency -> TargetedCommonizerDependency(target, dependency) }
-        }
+        val dependencies = nativeDistributionDependenciesMap[group]
+        requireNotNull(dependencies) { "Unexpected $group" }
+
+        return dependencies
     }
 
     @Nested
     internal fun getAllInteropsGroups(): Set<CInteropCommonizerGroup> {
-        val dependents = getAllDependents()
+        val dependents = allDependents
         val allScopeSets = dependents.map { it.scopes }.toSet()
         val rootScopeSets = allScopeSets.filter { scopeSet ->
             allScopeSets.none { otherScopeSet -> otherScopeSet != scopeSet && otherScopeSet.containsAll(scopeSet) }
@@ -147,9 +164,9 @@ internal open class CInteropCommonizerTask
         return suitableGroups.firstOrNull()
     }
 
-    @Internal
-    internal fun getAllDependents(): Set<CInteropCommonizerDependent> {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return emptySet()
+    //@Internal
+    private val allDependents: Set<CInteropCommonizerDependent> by lazy {
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptySet()
 
         val fromSharedNativeCompilations = multiplatformExtension
             .targets.flatMap { target -> target.compilations }
@@ -165,7 +182,7 @@ internal open class CInteropCommonizerTask
             .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(project, sourceSet) }
             .toSet()
 
-        return (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
+        return@lazy (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
     }
 }
 
