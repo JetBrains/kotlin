@@ -68,7 +68,7 @@ kotlin {
 
         fromPreset(presets.linuxX64, 'linux64')
 
-        configure([linux64]) {
+        configure([findByName('linux64')]) {
             binaries.executable("main", [DEBUG]) {
                 entryPoint = "com.example.app.native.main"
             }

@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
+import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.logging.Logger
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import javax.inject.Inject
 
 open class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
@@ -19,14 +24,36 @@ open class KotlinMultiplatformExtension(project: Project) :
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
-    override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
-        internal set
+    override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
-    override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
-        internal set
+    final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
-    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
-        internal set
+    override val defaultJsCompilerType: KotlinJsCompilerType = project.kotlinPropertiesProvider.jsCompiler
+
+    private val presetExtension = project.objects.newInstance(
+        DefaultTargetsFromPresetExtension::class.java,
+        { this },
+        targets
+    )
+
+    init {
+        val presetExtensionWithDeprecation = project.objects.newInstance(
+            TargetsFromPresetExtensionWithDeprecation::class.java,
+            project.logger,
+            project.path,
+            presetExtension
+        )
+        @Suppress("DEPRECATION")
+        DslObject(targets).addConvention("fromPreset", presetExtensionWithDeprecation)
+    }
+
+    fun targets(configure: Action<TargetsFromPresetExtension>) {
+        configure.execute(presetExtension)
+    }
+
+    fun targets(configure: TargetsFromPresetExtension.() -> Unit) {
+        configure(presetExtension)
+    }
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
@@ -53,6 +80,86 @@ open class KotlinMultiplatformExtension(project: Project) :
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
+    }
+}
+
+interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
+
+    fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: T.() -> Unit = {}
+    ): T
+
+    fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String
+    ): T = fromPreset(preset, name, {})
+
+    fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: Action<T>
+    ): T
+}
+
+internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
+    private val targetsContainer: () -> KotlinTargetsContainerWithPresets,
+    val targets: NamedDomainObjectCollection<KotlinTarget>
+) : TargetsFromPresetExtension,
+    NamedDomainObjectCollection<KotlinTarget> by targets {
+
+    override fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: T.() -> Unit
+    ): T = targetsContainer().configureOrCreate(name, preset, configureAction)
+
+    override fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: Action<T>
+    ) = fromPreset(preset, name) {
+        configureAction.execute(this)
+    }
+}
+
+internal abstract class TargetsFromPresetExtensionWithDeprecation @Inject constructor(
+    private val logger: Logger,
+    private val projectPath: String,
+    private val parentExtension: DefaultTargetsFromPresetExtension
+) : TargetsFromPresetExtension,
+    NamedDomainObjectCollection<KotlinTarget> by parentExtension.targets {
+
+    override fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: T.() -> Unit
+    ): T {
+        printDeprecationMessage(preset, name)
+        return parentExtension.fromPreset(preset, name, configureAction)
+    }
+
+    override fun <T : KotlinTarget> fromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configureAction: Action<T>
+    ): T {
+        printDeprecationMessage(preset, name)
+        return parentExtension.fromPreset(preset, name, configureAction)
+    }
+
+    private fun <T : KotlinTarget> printDeprecationMessage(
+        preset: KotlinTargetPreset<T>,
+        targetName: String
+    ) {
+        logger.warn(
+            """
+            Creating Kotlin target ${preset.name}:${targetName} via convention 'target.fromPreset()' in $projectPath project is deprecated!"
+            
+            Check https://kotlinlang.org/docs/multiplatform-set-up-targets.html documentation how to create MPP target.
+            """.trimIndent()
+        )
     }
 }
 
