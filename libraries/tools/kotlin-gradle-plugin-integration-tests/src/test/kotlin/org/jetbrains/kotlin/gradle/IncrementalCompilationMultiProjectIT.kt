@@ -55,6 +55,19 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
 
     override val defaultProjectName: String = "incrementalMultiproject"
 
+    @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
+    @GradleTest
+    open fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(
+                    ":lib:inspectClassesForKotlinIC",
+                    ":app:inspectClassesForKotlinIC"
+                )
+            }
+        }
+    }
+
     // todo: do the same for js backend
     @DisplayName("Duplicated class")
     @GradleTest
@@ -179,6 +192,18 @@ class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMult
 class IncrementalCompilationClasspathSnapshotJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
+
+    @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
+    override fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble") {
+                assertTasksSkipped(
+                    ":lib:inspectClassesForKotlinIC",
+                    ":app:inspectClassesForKotlinIC"
+                )
+            }
+        }
+    }
 
     @DisplayName("Lib: Non ABI change in method body")
     @GradleTest

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -388,10 +389,58 @@ internal abstract class AbstractKotlinPlugin(
         rewriteMppDependenciesInPom(target)
 
         configureProjectGlobalSettings(project)
+        configureClassInspectionForIC(project)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
 
         project.components.addAll(target.components)
 
+    }
+
+    protected open fun configureClassInspectionForIC(project: Project) {
+        // Check if task was already added by one of plugin implementations
+        if (project.tasks.names.contains(INSPECT_IC_CLASSES_TASK_NAME)) return
+
+        val classesTask = project.locateTask<Task>(JavaPlugin.CLASSES_TASK_NAME)
+        val jarTask = project.locateTask<Jar>(JavaPlugin.JAR_TASK_NAME)
+
+        if (classesTask == null || jarTask == null) {
+            project.logger.info(
+                "Could not configure class inspection task " +
+                        "(classes task = ${classesTask?.javaClass?.canonicalName}, " +
+                        "jar task = ${classesTask?.javaClass?.canonicalName}"
+            )
+            return
+        }
+
+        val inspectTask = project.registerTask<InspectClassesForMultiModuleIC>(INSPECT_IC_CLASSES_TASK_NAME) { inspectTask ->
+            inspectTask.archivePath.set(jarTask.map { it.archivePathCompatible.canonicalPath })
+            inspectTask.archivePath.disallowChanges()
+
+            inspectTask.sourceSetName.set(SourceSet.MAIN_SOURCE_SET_NAME)
+            inspectTask.sourceSetName.disallowChanges()
+
+            inspectTask.classesListFile.set(
+                project.layout.file(
+                    (project.kotlinExtension as KotlinSingleJavaTargetExtension)
+                        .target
+                        .defaultArtifactClassesListFile
+                )
+            )
+            inspectTask.classesListFile.disallowChanges()
+
+            val sourceSetClassesDir = project.gradle
+                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                .getInstance(project)
+                .sourceSetsIfAvailable
+                ?.findByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                ?.output
+                ?.classesDirs
+                ?: project.objects.fileCollection()
+            inspectTask.sourceSetOutputClassesDir.from(sourceSetClassesDir).disallowChanges()
+
+            inspectTask.dependsOn(classesTask)
+        }
+        classesTask.configure { it.finalizedBy(inspectTask) }
     }
 
     private fun rewritePom(pom: MavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
@@ -424,9 +473,10 @@ internal abstract class AbstractKotlinPlugin(
     }
 
     companion object {
+        private const val INSPECT_IC_CLASSES_TASK_NAME = "inspectClassesForKotlinIC"
+
         fun configureProjectGlobalSettings(project: Project) {
             customizeKotlinDependencies(project)
-            configureClassInspectionForIC(project)
             project.setupGeneralKotlinExtensionParameters()
         }
 
@@ -437,49 +487,6 @@ internal abstract class AbstractKotlinPlugin(
             setUpJavaSourceSets(target)
             configureSourceSetDefaults(target, buildSourceSetProcessor)
             configureAttributes(target)
-        }
-
-        private fun configureClassInspectionForIC(project: Project) {
-            val classesTask = project.locateTask<Task>(JavaPlugin.CLASSES_TASK_NAME)
-            val jarTask = project.locateTask<Jar>(JavaPlugin.JAR_TASK_NAME)
-
-            if (classesTask == null || jarTask == null) {
-                project.logger.info(
-                    "Could not configure class inspection task " +
-                            "(classes task = ${classesTask?.javaClass?.canonicalName}, " +
-                            "jar task = ${classesTask?.javaClass?.canonicalName}"
-                )
-                return
-            }
-            val inspectTask = project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") { inspectTask ->
-                inspectTask.archivePath.set(jarTask.map { it.archivePathCompatible.canonicalPath })
-                inspectTask.archivePath.disallowChanges()
-
-                inspectTask.sourceSetName.set(SourceSet.MAIN_SOURCE_SET_NAME)
-                inspectTask.sourceSetName.disallowChanges()
-
-                inspectTask.classesListFile.set(
-                    project.layout.file(
-                        (project.kotlinExtension as KotlinSingleJavaTargetExtension)
-                            .target
-                            .defaultArtifactClassesListFile
-                    )
-                )
-                inspectTask.classesListFile.disallowChanges()
-
-                val sourceSetClassesDir = project.gradle
-                    .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                    .getInstance(project)
-                    .sourceSetsIfAvailable
-                    ?.findByName(SourceSet.MAIN_SOURCE_SET_NAME)
-                    ?.output
-                    ?.classesDirs
-                    ?: project.objects.fileCollection()
-                inspectTask.sourceSetOutputClassesDir.from(sourceSetClassesDir).disallowChanges()
-
-                inspectTask.dependsOn(classesTask)
-            }
-            classesTask.configure { it.finalizedBy(inspectTask) }
         }
 
         internal fun setUpJavaSourceSets(
@@ -612,6 +619,13 @@ internal open class KotlinPlugin(
         super.apply(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
+    }
+
+    override fun configureClassInspectionForIC(project: Project) {
+        // For new IC this task is not needed
+        if (!project.kotlinPropertiesProvider.useClasspathSnapshot) {
+            super.configureClassInspectionForIC(project)
+        }
     }
 }
 
