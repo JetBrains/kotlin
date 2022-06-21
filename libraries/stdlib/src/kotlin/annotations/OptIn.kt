@@ -18,8 +18,6 @@ import kotlin.reflect.KClass
  * Call sites of any declaration annotated with that marker should opt in to the API either by using [OptIn],
  * or by being annotated with that marker themselves, effectively causing further propagation of the opt-in requirement.
  *
- * This class requires opt-in itself and can only be used with the compiler argument `-opt-in=kotlin.RequiresOptIn`.
- *
  * @property message message to be reported on usages of API without an explicit opt-in, or empty string for the default message.
  *                   The default message is: "This declaration is experimental and its usage should be marked with 'Marker'
  *                   or '@OptIn(Marker::class)'", where `Marker` is the opt-in requirement marker.
