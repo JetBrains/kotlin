@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
@@ -99,24 +97,13 @@ abstract class KtLightClassForSourceDeclaration(
     abstract override fun getParent(): PsiElement?
     abstract override fun getQualifiedName(): String?
 
-    private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
-
     fun getDescriptor() =
         LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
-
-    protected fun getLightClassDataHolder(): LightClassDataHolder.ForClass {
-        val lightClassData = getLightClassDataHolder(classOrObject)
-        if (lightClassData is InvalidLightClassDataHolder) {
-            LOG.error("Invalid light class data for existing light class:\n$lightClassData\n${classOrObject.getElementTextWithContext()}")
-        }
-        return lightClassData
-    }
 
     private val _containingFile: PsiFile by lazyPub {
         object : FakeFileForLightClass(
             classOrObject.containingKtFile,
             { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
-            { getJavaFileStub() }
         ) {
             override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 

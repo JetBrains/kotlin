@@ -15,6 +15,3 @@ class Test(@get:MyAnnotation @set:MyAnnotation2 @setparam:MyAnnotation3 @propert
         get() = Unit
         set(value) {}
 }
-
-// SKIP_SANITY_TEST
-// SKIP_IDE_TEST

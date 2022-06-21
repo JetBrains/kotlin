@@ -69,9 +69,6 @@ internal class KtUltraLightFieldForSourceDeclaration(
     private val lightIdentifier = KtLightIdentifier(this, declaration)
 
     override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
-    override fun getText(): String? = kotlinOrigin.text
-    override fun getTextRange(): TextRange = kotlinOrigin.textRange
-    override fun getTextOffset(): Int = kotlinOrigin.textOffset
     override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
     override fun isWritable(): Boolean = kotlinOrigin.isWritable
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement ?: this
@@ -106,6 +103,10 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
+    override fun getText(): String? = kotlinOrigin.text
+    override fun getTextRange(): TextRange? = kotlinOrigin.textRange
+    override fun getTextOffset(): Int = kotlinOrigin.textOffset
+
     private val variableDescriptor: VariableDescriptor?
         get() = declaration.resolve()
             ?.let { it as? PropertyDescriptor ?: it as? ValueParameterDescriptor }
@@ -116,11 +117,14 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 declaration.delegateExpression?.let {
                     LightClassGenerationSupport.getInstance(project).analyze(it).getType(it)
                 }
+
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType
+
             declaration is KtEnumEntry -> {
                 (containingClass.kotlinOrigin?.resolve() as? ClassDescriptor)?.defaultType
             }
+
             else -> {
                 declaration.getKotlinType()
             }
@@ -145,6 +149,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 kotlinType?.asPsiType(support, TypeMappingMode.DEFAULT, this)
                     ?.let(TypeConversionUtil::erasure)
                     ?: nonExistent()
+
             else -> {
                 val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
                 val descriptor = variableDescriptor ?: return@lazyPub PsiType.NULL

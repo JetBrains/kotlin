@@ -90,8 +90,9 @@ internal abstract class KtUltraLightParameter(
     ultraLightMethod,
     ultraLightMethod.language
 ), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
-
-    override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return another is KtParameter && kotlinOrigin?.isEquivalentTo(another) == true || this == another
+    }
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 
@@ -99,6 +100,10 @@ internal abstract class KtUltraLightParameter(
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
     override fun getUseScope(): SearchScope = kotlinOrigin?.useScope ?: LocalSearchScope(this)
+
+    override fun getText(): String? = kotlinOrigin?.text.orEmpty()
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
+    override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: super.getTextOffset()
 
     override fun isValid() = parent.isValid
 
@@ -198,9 +203,6 @@ internal class KtUltraLightParameterForSource(
             }
         }
 
-    override fun getText(): String? = kotlinOrigin.text
-    override fun getTextRange(): TextRange = kotlinOrigin.textRange
-    override fun getTextOffset(): Int = kotlinOrigin.textOffset
     override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
     override fun isWritable(): Boolean = kotlinOrigin.isWritable
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement

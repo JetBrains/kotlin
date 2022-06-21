@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.asJava.builder
 
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
 interface LightClassDataHolder {
-    val javaFileStub: PsiJavaFileStub
     val extraDiagnostics: Diagnostics
 
     interface ForClass : LightClassDataHolder
@@ -18,16 +16,11 @@ interface LightClassDataHolder {
 }
 
 object InvalidLightClassDataHolder : LightClassDataHolder.ForClass {
-    override val javaFileStub: PsiJavaFileStub
-        get() = shouldNotBeCalled()
-
-    override val extraDiagnostics: Diagnostics
-        get() = shouldNotBeCalled()
+    override val extraDiagnostics: Diagnostics get() = shouldNotBeCalled()
 
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 }
 
 class LightClassDataHolderImpl(
-    override val javaFileStub: PsiJavaFileStub,
     override val extraDiagnostics: Diagnostics
 ) : LightClassDataHolder.ForClass, LightClassDataHolder.ForFacade, LightClassDataHolder.ForScript
