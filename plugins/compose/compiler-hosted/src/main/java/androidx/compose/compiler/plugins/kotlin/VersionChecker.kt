@@ -26,8 +26,8 @@ class VersionChecker(val context: IrPluginContext) {
 
     companion object {
         /**
-         * A table of version ints to version strings. This should be updated every time
-         * ComposeVersion.kt is updated.
+         * A table of runtime version ints to version strings. This should be
+         * updated every time ComposeVersion.kt is updated.
          */
         private val versionTable = mapOf(
             1600 to "0.1.0-dev16",
@@ -80,6 +80,8 @@ class VersionChecker(val context: IrPluginContext) {
             6900 to "1.2.0-beta02",
             7000 to "1.2.0-beta03",
             7100 to "1.2.0-rc01",
+            7101 to "1.2.0-rc02",
+            7102 to "1.2.0-rc03",
             8000 to "1.3.0-alpha01",
         )
 
@@ -93,7 +95,7 @@ class VersionChecker(val context: IrPluginContext) {
          * The maven version string of this compiler. This string should be updated before/after every
          * release.
          */
-        const val compilerVersion: String = "1.2.0"
+        const val compilerVersion: String = "1.3.0-beta01"
         private val minimumRuntimeVersion: String
             get() = versionTable[minimumRuntimeVersionInt] ?: "unknown"
     }
