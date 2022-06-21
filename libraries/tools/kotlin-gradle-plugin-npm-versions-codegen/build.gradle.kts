@@ -17,6 +17,6 @@ val generateNpmVersions by generator(
 listOf(generateNpmVersions).forEach {
     it.systemProperty(
         "org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot",
-        project(":kotlin-gradle-plugin").projectDir.resolve("src/main/kotlin").absolutePath
+        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
     )
 }
