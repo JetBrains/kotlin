@@ -113,6 +113,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("dynamic.kt")
+    public void testDynamic() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/dynamic.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enum.kt");
