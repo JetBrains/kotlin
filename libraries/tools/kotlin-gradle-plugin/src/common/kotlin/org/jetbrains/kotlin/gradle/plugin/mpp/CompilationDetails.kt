@@ -153,7 +153,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
 
     override val ownModuleName: String
         get() {
-            val baseName = project.archivesName
+            val baseName = project.archivesName.orNull
                 ?: project.name
             val suffix = if (isMainCompilationData()) "" else "_$compilationPurpose"
             return filterModuleName("$baseName$suffix")

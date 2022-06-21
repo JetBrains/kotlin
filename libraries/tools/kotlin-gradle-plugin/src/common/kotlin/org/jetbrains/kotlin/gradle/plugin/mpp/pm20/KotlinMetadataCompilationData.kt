@@ -85,7 +85,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
     override val moduleName: String
         get() { // FIXME deduplicate with ownModuleName
-            val baseName = project.archivesName
+            val baseName = project.archivesName.orNull
                 ?: project.name
             val suffix = if (module.moduleClassifier == null) "" else "_${module.moduleClassifier}"
             return filterModuleName("$baseName$suffix")

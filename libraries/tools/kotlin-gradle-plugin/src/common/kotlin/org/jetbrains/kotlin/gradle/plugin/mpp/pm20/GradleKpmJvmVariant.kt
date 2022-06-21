@@ -46,7 +46,7 @@ class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : Gra
 
 internal fun GradleKpmVariant.ownModuleName(): String {
     val project = containingModule.project
-    val baseName = project.archivesName
+    val baseName = project.archivesName.orNull
         ?: project.name
     val suffix = if (containingModule.moduleClassifier == null) "" else "_${containingModule.moduleClassifier}"
     return filterModuleName("$baseName$suffix")

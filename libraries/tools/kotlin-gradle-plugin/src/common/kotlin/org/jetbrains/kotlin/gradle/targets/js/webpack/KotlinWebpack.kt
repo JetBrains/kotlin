@@ -129,7 +129,7 @@ constructor(
 
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
-        library = project.archivesName,
+        library = project.archivesName.orNull,
         libraryTarget = KotlinWebpackOutput.Target.UMD,
         globalObject = "this"
     )
@@ -154,7 +154,7 @@ constructor(
         }
 
     private val defaultOutputFileName by lazy {
-        project.archivesName + ".js"
+        project.archivesName.orNull + ".js"
     }
 
     @get:Internal

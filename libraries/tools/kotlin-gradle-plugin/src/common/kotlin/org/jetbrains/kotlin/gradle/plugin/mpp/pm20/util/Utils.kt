@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.internal.build.BuildState
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.project.model.KpmModule
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 
@@ -26,19 +25,19 @@ fun Project.currentBuildId(): BuildIdentifier =
 /**
  * The base name to use for archive files.
  */
-val Project.archivesName get() = if (isGradleVersionAtLeast(7, 1)) {
-        extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
-    } else {
-        convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
-    }
+val Project.archivesName
+    get() = gradle
+        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+        .getInstance(this)
+        .archivesName
 
 /**
  * Returns the directory to generate TAR and ZIP archives into.
  *
  * @return The directory. Never returns null.
  */
-val Project.distsDirectory get() = if (isGradleVersionAtLeast(7, 1)) {
-        extensions.getByType(BasePluginExtension::class.java).distsDirectory
-    } else {
-        convention.getPlugin(BasePluginConvention::class.java).distsDirectory
-    }
+val Project.distsDirectory
+    get() = gradle
+        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+        .getInstance(this)
+        .distsDirectory
