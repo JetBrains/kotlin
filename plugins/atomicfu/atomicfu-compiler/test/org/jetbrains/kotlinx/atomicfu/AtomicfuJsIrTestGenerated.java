@@ -50,6 +50,12 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
     }
 
     @Test
+    @TestMetadata("ComplexLoopTest.kt")
+    public void testComplexLoopTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/ComplexLoopTest.kt");
+    }
+
+    @Test
     @TestMetadata("DelegatedPropertiesTest.kt")
     public void testDelegatedPropertiesTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/DelegatedPropertiesTest.kt");

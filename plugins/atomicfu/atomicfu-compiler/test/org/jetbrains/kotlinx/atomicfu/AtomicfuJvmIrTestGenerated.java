@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -46,6 +47,12 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     @TestMetadata("AtomicArrayTest.kt")
     public void testAtomicArrayTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/AtomicArrayTest.kt");
+    }
+
+    @Test
+    @TestMetadata("ComplexLoopTest.kt")
+    public void testComplexLoopTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/ComplexLoopTest.kt");
     }
 
     @Test
@@ -172,11 +179,5 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     @TestMetadata("UncheckedCastTest.kt")
     public void testUncheckedCastTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/UncheckedCastTest.kt");
-    }
-
-    @Test
-    @TestMetadata("ComplexLoopTest.kt")
-    public void testComplexLoopTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/ComplexLoopTest.kt");
     }
 }
