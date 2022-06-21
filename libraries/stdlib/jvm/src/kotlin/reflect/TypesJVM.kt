@@ -36,7 +36,14 @@ public val KType.javaType: Type
 @ExperimentalStdlibApi
 private fun KType.computeJavaType(forceWrapper: Boolean = false): Type {
     when (val classifier = classifier) {
-        is KTypeParameter -> return TypeVariableImpl(classifier)
+        is KTypeParameter -> {
+            val type = TypeVariableImpl(classifier)
+            return when (classifier.variance) {
+                KVariance.INVARIANT -> type
+                KVariance.IN -> WildcardTypeImpl(upperBound = null, lowerBound = type)
+                KVariance.OUT -> WildcardTypeImpl(upperBound = type, lowerBound = null)
+            }
+        }
         is KClass<*> -> {
             val jClass = if (forceWrapper) classifier.javaObjectType else classifier.java
             val arguments = arguments
