@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
-import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -25,21 +24,14 @@ import java.io.File
 abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private val producedKlibs = linkedMapOf<KLIB, Collection<File>>() // IMPORTANT: The order makes sense!
 
-    protected fun runTest(@TestDataFile testPath: String) {
-        assumeFalse(
-            (testPath == "compiler/testData/klibABI/removeProperty/" || testPath == "compiler/testData/klibABI/removeFunction/")
-                    && testRunSettings.get<CacheMode>().staticCacheRequiredForEveryLibrary
-        )
-
-        AbstractKlibABITestCase.doTest(
-            testDir = getAbsoluteFile(testPath),
-            buildDir = buildDir,
-            stdlibFile = stdlibFile,
-            buildKlib = ::buildKlib,
-            buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) },
-            onNonEmptyBuildDirectory = ::backupDirectoryContents
-        )
-    }
+    protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibABITestCase.doTest(
+        testDir = getAbsoluteFile(testPath),
+        buildDir = buildDir,
+        stdlibFile = stdlibFile,
+        buildKlib = ::buildKlib,
+        buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) },
+        onNonEmptyBuildDirectory = ::backupDirectoryContents
+    )
 
     private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
         val module = createModule(moduleName)
