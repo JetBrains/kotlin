@@ -98,6 +98,7 @@ ext.isExperimentalMM = !(project.globalTestArgs.contains("-memory-model") &&
                          project.testTarget != 'wasm32'
 ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
 ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=aggressive")
+ext.isCmsGC = project.globalTestArgs.contains("-Xgc=cms") || !project.globalTestArgs.any { it.startsWith("-Xgc=") }
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
 if (project.globalTestArgs.contains("-g")) {
@@ -6065,7 +6066,7 @@ if (HostManager.@Companion.hostIsMac) {
 }
 
 fileCheckTest("filecheck_redundant_safepoints_removal") {
-    enabled = isExperimentalMM &&
+    enabled = isExperimentalMM && isCmsGC &&
             project.globalTestArgs.contains("-opt") &&
             project.testTarget != "watchos_arm32" &&
             project.testTarget != "ios_arm32"
