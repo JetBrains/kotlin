@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
+import org.gradle.api.file.*
+import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
@@ -25,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.createExecutionContext
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -124,6 +120,13 @@ abstract class ModuleCommonizerTask : DefaultTask() {
 
     @get:Input
     abstract val libraries: MapProperty<KonanTarget, File>
+
+    //'libraries' input checks only file paths but content makes sense too
+    @get:IgnoreEmptyDirectories
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val inputLibraryFiles: Collection<File>
+        get() = libraries.get().values
 
     @get:Input
     abstract val dependencies: SetProperty<CommonizerDependency>
