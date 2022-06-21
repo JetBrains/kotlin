@@ -1,0 +1,113 @@
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /Foo.p
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KtConstantInitializerValue(null)
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: p
+  origin: SOURCE
+  receiverType: null
+  returnType: ft<kotlin/Nothing, kotlin/Any?>
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): Foo
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getP
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: p
+  origin: SOURCE
+  receiverType: null
+  returnType: ft<kotlin/Nothing, kotlin/Any?>
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtAnonymousFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasStableParameterNames: true
+  isExtension: false
+  origin: SOURCE
+  receiverType: null
+  returnType: ft<kotlin/Nothing, kotlin/Any?>
+  symbolKind: LOCAL
+  typeParameters: []
+  valueParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /Foo.f
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: f
+  origin: SOURCE
+  receiverType: null
+  returnType: ft<kotlin/Nothing, kotlin/Any?>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(p)
+  ]
+  visibility: Public
+  getDispatchReceiver(): Foo
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: Foo
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Foo
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

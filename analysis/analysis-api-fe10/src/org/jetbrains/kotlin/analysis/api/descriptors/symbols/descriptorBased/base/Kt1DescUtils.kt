@@ -232,6 +232,7 @@ private fun <T : CallableDescriptor> T.unwrapUseSiteSubstitutionOverride(): T {
 
 internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
     return when (val unwrappedType = unwrap()) {
+        is DynamicType -> KtFe10DynamicType(unwrappedType, analysisContext)
         is FlexibleType -> KtFe10FlexibleType(unwrappedType, analysisContext)
         is DefinitelyNotNullType -> KtFe10DefinitelyNotNullType(unwrappedType, analysisContext)
         is ErrorType -> KtFe10ClassErrorType(unwrappedType, analysisContext)

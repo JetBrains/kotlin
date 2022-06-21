@@ -109,3 +109,13 @@ public abstract class KtIntegerLiteralType : KtType {
 
     override fun toString(): String = asStringForDebugging()
 }
+
+/**
+ * A special dynamic type, which is used to support interoperability with dynamically typed libraries, platforms or languages.
+ *
+ * Although this can be viewed as a flexible type (kotlin.Nothing..kotlin.Any?), a platform may assign special meaning to the
+ * values of dynamic type, and handle differently from the regular flexible type.
+ */
+public abstract class KtDynamicType : KtType {
+    override fun toString(): String = asStringForDebugging()
+}
