@@ -54,6 +54,7 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
             }
         }
         when (val unwrappedType = type.unwrap()) {
+            is DynamicType -> append("dynamic")
             is FlexibleType -> renderFlexibleType(unwrappedType)
             is DefinitelyNotNullType -> renderDefinitelyNotNullType(unwrappedType)
             is ErrorType -> renderErrorType()

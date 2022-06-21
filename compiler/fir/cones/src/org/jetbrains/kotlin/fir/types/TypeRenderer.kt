@@ -30,20 +30,8 @@ fun ConeKotlinType.render(): String {
         is ConeLookupTagBasedType -> {
             "${renderAttributes()}${lookupTag.name.asString()}"
         }
-        is ConeDynamicType -> {
-            buildString {
-                append("dynamic")
-            }
-        }
-        is ConeFlexibleType -> {
-            buildString {
-                append("ft<")
-                append(lowerBound.render())
-                append(", ")
-                append(upperBound.render())
-                append(">")
-            }
-        }
+        is ConeDynamicType -> "dynamic"
+        is ConeFlexibleType -> this.render()
         is ConeIntersectionType -> {
             intersectedTypes.joinToString(
                 separator = " & ",
@@ -58,6 +46,15 @@ fun ConeKotlinType.render(): String {
         is ConeIntegerConstantOperatorType -> "${renderAttributes()}IOT"
     } + nullabilitySuffix
 }
+
+private fun ConeFlexibleType.render(): String =
+    buildString {
+        append("ft<")
+        append(lowerBound.render())
+        append(", ")
+        append(upperBound.render())
+        append(">")
+    }
 
 private fun ConeKotlinType.renderAttributes(): String {
     if (!attributes.any()) return ""
