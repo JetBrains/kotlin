@@ -1,0 +1,5 @@
+class Foo {
+  val p: (kotlin.Nothing..kotlin.Any?)
+
+  fun f(p: (kotlin.Nothing..kotlin.Any?)): (kotlin.Nothing..kotlin.Any?)
+}
