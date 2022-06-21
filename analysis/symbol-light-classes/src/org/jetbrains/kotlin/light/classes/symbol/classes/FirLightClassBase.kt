@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
@@ -104,8 +106,21 @@ abstract class FirLightClassBase protected constructor(
         return if (baseClassOrigin != null && thisClassOrigin != null) {
             thisClassOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
         } else {
-            InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+            hasSuper(baseClass, checkDeep) ||
+                    InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
         }
+    }
+
+    private fun PsiClass.hasSuper(
+        baseClass: PsiClass,
+        checkDeep: Boolean,
+        visitedSupers: MutableSet<PsiClass> = mutableSetOf<PsiClass>()
+    ): Boolean {
+        visitedSupers.add(this)
+        val notVisitedSupers = supers.filterNot { visitedSupers.contains(it) }
+        if (notVisitedSupers.any { it == baseClass }) return true
+        if (!checkDeep) return false
+        return notVisitedSupers.any { it.hasSuper(baseClass, true, visitedSupers) }
     }
 
     override fun getText(): String = kotlinOrigin?.text ?: ""
