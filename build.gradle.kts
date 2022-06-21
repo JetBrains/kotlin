@@ -146,6 +146,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:frontend.common",
     ":compiler:util",
     ":compiler:config.jvm",
+    ":compiler:cli-common",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":core:metadata",
