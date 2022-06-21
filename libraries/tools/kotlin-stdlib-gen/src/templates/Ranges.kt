@@ -176,7 +176,7 @@ object RangeOps : TemplateGroupBase() {
         body { "return until(to)" }
     }
 
-    val f_contains = fn("contains(value: Primitive)").byTwoPrimitives {
+    val f_containsMixedClosed = fn("contains(value: Primitive)").byTwoPrimitives {
         include(Ranges, numericCombinations)
         filter { _, (rangeType, itemType) -> rangeType != itemType }
     } builderWith { (rangeType, itemType) ->
@@ -197,6 +197,40 @@ object RangeOps : TemplateGroupBase() {
                 "return value.to${rangeType}ExactOrNull().let { if (it != null) contains(it) else false }"
             else
                 "return contains(value.to$rangeType())"
+        }
+    }
+
+    val f_containsMixedOpenAndPrimitive = fn("contains(value: Primitive)").byTwoPrimitives {
+        include(OpenRanges, numericCombinations)
+        include(RangesOfPrimitives, numericCombinations.filter { (rangeType, _) -> rangeType in rangePrimitives })
+        filter { _, (rangeType, itemType) ->
+            rangeType != itemType && rangeType.isIntegral() == itemType.isIntegral() &&
+                    rangeType != PrimitiveType.Float
+        }
+    } builderWith { (rangeType, itemType) ->
+        operator()
+        specialFor(OpenRanges) {
+            since("1.7")
+            annotation("@ExperimentalStdlibApi")
+        }
+        signature("contains(value: $itemType)")
+
+        check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
+
+        platformName("${rangeType.name.decapitalize()}RangeContains")
+        returns("Boolean")
+        doc { "Checks if the specified [value] belongs to this range." }
+        body {
+            if (shouldCheckForConversionOverflow(fromType = itemType, toType = rangeType))
+                "return value.to${rangeType}ExactOrNull().let { if (it != null) contains(it) else false }"
+            else
+                "return contains(value.to$rangeType())"
+        }
+        specialFor(RangesOfPrimitives) {
+            inlineOnly()
+            body {
+                "return (this as ClosedRange<$rangeType>).contains(value)"
+            }
         }
     }
 
