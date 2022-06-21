@@ -29,8 +29,11 @@ open class GradleArgumentsProvider : ArgumentsProvider {
     ): Stream<out Arguments> {
         val versionsAnnotation = findAnnotation<GradleTestVersions>(context)
 
+        fun max(a: GradleVersion, b: GradleVersion) = if (a >= b) a else b
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
-        val maxGradleVersion = GradleVersion.version(versionsAnnotation.maxVersion)
+        // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
+        val maxGradleVersion = max(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
+
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
             .map(GradleVersion::version)
