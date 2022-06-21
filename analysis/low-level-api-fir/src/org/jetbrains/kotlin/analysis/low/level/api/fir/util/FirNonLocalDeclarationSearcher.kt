@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtElement
 object FirElementFinder {
     inline fun <reified E : FirElement> findElementIn(
         container: FirElement,
-        crossinline goInside: (E) -> Boolean = { true },
+        crossinline canGoInside: (E) -> Boolean = { true },
         crossinline predicate: (E) -> Boolean,
     ): E? {
         var result: E? = null
@@ -31,7 +30,7 @@ object FirElementFinder {
                     predicate(element) -> {
                         result = element
                     }
-                    goInside(element) -> {
+                    canGoInside(element) -> {
                         element.acceptChildren(this)
                     }
                 }
@@ -61,7 +60,4 @@ object FirElementFinder {
         })
         return result
     }
-
-    inline fun <reified E : FirElement> findElementByPsiIn(container: FirElement, ktElement: KtElement): E? =
-        findElementIn(container) { it.psi === ktElement }
 }
