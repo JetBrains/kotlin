@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
+// An IR builder with access to AtomicSymbols and convenience methods to build IR constructions for atomicfu JVM/IR transformation.
 class AtomicfuIrBuilder internal constructor(
     val atomicSymbols: AtomicSymbols,
     symbol: IrSymbol,
@@ -24,16 +25,18 @@ class AtomicfuIrBuilder internal constructor(
             this.dispatchReceiver = dispatchReceiver?.deepCopyWithSymbols()
         }
 
+    // a$FU.get(obj)
     fun atomicGetValue(valueType: IrType, receiver: IrExpression, obj: IrExpression) =
         irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicSymbols.getJucaAFUClass(valueType), "get")).apply {
             dispatchReceiver = receiver
             putValueArgument(0, obj)
         }
 
+    // atomicArr.get(index)
     fun atomicGetArrayElement(atomicArrayClass: IrClassSymbol, receiver: IrExpression, index: IrExpression) =
         irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicArrayClass, "get")).apply {
-            putValueArgument(0, index)
             dispatchReceiver = receiver
+            putValueArgument(0, index)
         }
 
     fun irCallWithArgs(symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression?, valueArguments: List<IrExpression?>) =
@@ -44,6 +47,7 @@ class AtomicfuIrBuilder internal constructor(
             }
         }
 
+    // atomicArr.compareAndSet(index, expect, update)
     fun callAtomicArray(
         arrayClassSymbol: IrClassSymbol,
         functionName: String,
@@ -62,6 +66,7 @@ class AtomicfuIrBuilder internal constructor(
         return if (isBooleanReceiver && irCall.type.isInt()) irCall.toBoolean() else irCall
     }
 
+    // a$FU.compareAndSet(obj, expect, update)
     fun callFieldUpdater(
         fieldUpdaterSymbol: IrClassSymbol,
         functionName: String,
@@ -81,6 +86,8 @@ class AtomicfuIrBuilder internal constructor(
         if (functionName == "<get-value>" && castType != null) {
             return irAs(irCall, castType)
         }
+        // j.u.c.a AtomicIntegerFieldUpdater is used to update boolean values,
+        // so cast return value to boolean if necessary
         return if (isBooleanReceiver && irCall.type.isInt()) irCall.toBoolean() else irCall
     }
 
@@ -93,6 +100,7 @@ class AtomicfuIrBuilder internal constructor(
         valueArguments: List<IrExpression?>
     ) = irCallWithArgs(symbol, dispatchReceiver, syntheticValueArguments + valueArguments)
 
+    // val a$FU = j.u.c.a.AtomicIntegerFieldUpdater.newUpdater(A::class, "a")
     fun newUpdater(
         fieldUpdaterClass: IrClassSymbol,
         parentClass: IrClass,
@@ -108,6 +116,7 @@ class AtomicfuIrBuilder internal constructor(
         }
     }
 
+    // val atomicArr = j.u.c.a.AtomicIntegerArray(size)
     fun newJucaAtomicArray(
         atomicArrayClass: IrClassSymbol,
         size: IrExpression,
