@@ -2182,6 +2182,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/definitelyNotNullWithIntersection1.kt");
         }
 
+        @TestMetadata("dontLeaveStubTypesInSetter.kt")
+        public void testDontLeaveStubTypesInSetter() throws Exception {
+            runTest("compiler/testData/ir/irText/types/dontLeaveStubTypesInSetter.kt");
+        }
+
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");

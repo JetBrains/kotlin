@@ -14394,6 +14394,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("propertySubstitution.kt")
+                public void testPropertySubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
+                }
+
+                @Test
                 @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
                 public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
