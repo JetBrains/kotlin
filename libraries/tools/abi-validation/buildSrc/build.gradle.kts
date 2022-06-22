@@ -38,3 +38,10 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs += "-Xskip-runtime-version-check"
     }
 }
+
+// Silence the following warning:
+// 'compileJava' task (current target is 17) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version.
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
