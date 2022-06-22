@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
-import java.io.File
 
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
@@ -68,13 +67,6 @@ class AnalyzerWithCompilerReport(
                 message.append("    class ").append(fqName)
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
-                val outModuleFolder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
-                if(outModuleFolder.exists()) {
-                    message.append("!!!>>>Folder exists\n")
-                    outModuleFolder.walkTopDown().forEach { message.append("!!!===>$it\n") }
-                } else {
-                    message.append("!!!out folder for intellij.platform.buildScripts is empty\n")
-                }
             }
             if (!languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
                 message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")

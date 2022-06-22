@@ -415,19 +415,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
 
-        val isBuildScriptsModule = targets.firstOrNull()?.presentableName.toString() == "Module 'intellij.platform.buildScripts' production"
-        if(isBuildScriptsModule) {
-            LOG.info("!!!>>>I'm going to build intellij.platform.buildScripts")
-            LOG.info("!!!>>>Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
-        }
-        val outModuleFolder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
-        if(outModuleFolder.exists()) {
-            LOG.info(">>>Folder exists")
-            outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
-        } else {
-            LOG.info(">>>out folder for intellij.platform.buildScripts is empty")
-        }
-
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
             kotlinChunk,
@@ -440,16 +427,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             incrementalCaches
         )
 
-        if(isBuildScriptsModule) {
-            LOG.info("!!!>>>intellij.platform.buildScripts was built")
-            val outModuleFolder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
-            if(outModuleFolder.exists()) {
-                LOG.info(">>>Folder exists")
-                outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
-            } else {
-                LOG.info(">>>out folder for intellij.platform.buildScripts is empty")
-            }
-        }
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
 
         if (outputItemCollector == null) {
