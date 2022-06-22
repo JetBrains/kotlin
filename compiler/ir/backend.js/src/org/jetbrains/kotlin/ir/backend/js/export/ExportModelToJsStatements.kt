@@ -86,17 +86,22 @@ class ExportModelToJsStatements(
 
             is ExportedProperty -> {
                 require(namespace != null) { "Only namespaced properties are allowed" }
-                val underlying: List<JsStatement> = declaration.exportedObject?.let {
-                    generateDeclarationExport(it, null, esModules)
-                } ?: emptyList()
                 val getter = declaration.irGetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
                 val setter = declaration.irSetter?.let { JsNameRef(namer.getNameForStaticDeclaration(it)) }
-                listOf(defineProperty(namespace, declaration.name, getter, setter).makeStmt()) + underlying
+                listOf(defineProperty(namespace, declaration.name, getter, setter).makeStmt())
             }
 
             is ErrorDeclaration -> emptyList()
 
-            is ExportedClass -> {
+            is ExportedObject -> {
+                require(namespace != null) { "Only namespaced properties are allowed" }
+                val newNameSpace = jsElementAccess(declaration.name, namespace)
+                val getter = JsNameRef(namer.getNameForStaticDeclaration(declaration.irGetter))
+                val staticsExport = declaration.nestedClasses.flatMap { generateDeclarationExport(it, newNameSpace, esModules) }
+                listOf(defineProperty(namespace, declaration.name, getter, null).makeStmt()) + staticsExport
+            }
+
+            is ExportedRegularClass -> {
                 if (declaration.isInterface) return emptyList()
                 val newNameSpace = if (namespace != null)
                     jsElementAccess(declaration.name, namespace)
@@ -120,16 +125,13 @@ class ExportModelToJsStatements(
                     .filter { it is ExportedFunction && it.isStatic }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
-                // Nested objects are exported as static properties
-                val staticProperties = declaration.members.mapNotNull {
-                    (it as? ExportedProperty)?.takeIf { it.isStatic }
-                }
+                val enumEntries = declaration.members.filter { it is ExportedProperty && it.isStatic }
 
                 val innerClassesAssignments = declaration.nestedClasses
                     .filter { it.ir.isInner }
                     .map { it.generateInnerClassAssignment(declaration) }
 
-                val staticsExport = (staticFunctions + staticProperties + declaration.nestedClasses)
+                val staticsExport = (staticFunctions + enumEntries + declaration.nestedClasses)
                     .flatMap { generateDeclarationExport(it, newNameSpace, esModules) }
 
                 listOfNotNull(klassExport) + staticsExport + innerClassesAssignments

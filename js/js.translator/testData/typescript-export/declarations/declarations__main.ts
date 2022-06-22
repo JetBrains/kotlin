@@ -32,6 +32,11 @@ import processInterface = JS_TESTS.foo.processInterface;
 import OuterClass = JS_TESTS.foo.OuterClass;
 import KT38262 = JS_TESTS.foo.KT38262;
 import JsNameTest = JS_TESTS.foo.JsNameTest;
+import Parent = JS_TESTS.foo.Parent;
+import getParent = JS_TESTS.foo.getParent;
+import createNested1 = JS_TESTS.foo.createNested1;
+import createNested2 = JS_TESTS.foo.createNested2;
+import createNested3 = JS_TESTS.foo.createNested3;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -166,5 +171,16 @@ function box(): string {
 
     assert(jsNameNestedTest.value === 42)
 
+    // Do not strip types from those test cases (it is a check of nested objects types usability)
+    const parent: typeof Parent = Parent
+    const nested1: typeof Parent.Nested1 = Parent.Nested1
+    const nested2: Parent.Nested1.Nested2 = new Parent.Nested1.Nested2()
+    const nested3: Parent.Nested1.Nested2.Companion.Nested3 = new Parent.Nested1.Nested2.Companion.Nested3()
+
+    assert(nested1.value === "Nested1")
+    assert(getParent() === parent)
+    assert(createNested1() === nested1)
+    assert(createNested2() !== nested2)
+    assert(createNested3() !== nested3)
     return "OK";
 }

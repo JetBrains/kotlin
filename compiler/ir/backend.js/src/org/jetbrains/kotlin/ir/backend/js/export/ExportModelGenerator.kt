@@ -270,9 +270,7 @@ class ExportModelGenerator(
             listOf(privateConstructor) + members,
             nestedClasses
         ).let {
-            (it as ExportedClass).copy(
-                isAbstract = true,
-            )
+            (it as ExportedRegularClass).copy(isAbstract = true)
         }
     }
 
@@ -352,43 +350,29 @@ class ExportModelGenerator(
 
         val name = klass.getExportedIdentifier()
 
-        val exportedClass = ExportedClass(
-            name = name,
-            isInterface = klass.isInterface,
-            isAbstract = klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED,
-            superClass = superType,
-            superInterfaces = superInterfaces,
-            typeParameters = typeParameters,
-            members = members,
-            nestedClasses = nestedClasses,
-            ir = klass
-        )
-
-        if (klass.kind == ClassKind.OBJECT) {
-            var t: ExportedType = ExportedType.InlineInterfaceType(members + nestedClasses)
-            if (superType != null)
-                t = ExportedType.IntersectionType(t, superType)
-
-            for (superInterface in superInterfaces) {
-                t = ExportedType.IntersectionType(t, superInterface)
-            }
-
-            return ExportedProperty(
+        return if (klass.kind == ClassKind.OBJECT) {
+            return ExportedObject(
+                ir = klass,
                 name = name,
-                type = t,
-                mutable = false,
-                isMember = klass.parent is IrClass,
-                isStatic = !klass.isInner,
-                isAbstract = false,
-                isProtected = klass.visibility == DescriptorVisibilities.PROTECTED,
-                irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
-                irSetter = null,
-                exportedObject = exportedClass,
-                isField = false,
+                members = members,
+                superClass = superType,
+                nestedClasses = nestedClasses,
+                superInterfaces = superInterfaces,
+                irGetter = context.mapping.objectToGetInstanceFunction[klass]!!
+            )
+        } else {
+            ExportedRegularClass(
+                name = name,
+                isInterface = klass.isInterface,
+                isAbstract = klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED,
+                superClass = superType,
+                superInterfaces = superInterfaces,
+                typeParameters = typeParameters,
+                members = members,
+                nestedClasses = nestedClasses,
+                ir = klass
             )
         }
-
-        return exportedClass
     }
 
     private fun exportAsEnumMember(

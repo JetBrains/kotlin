@@ -13,13 +13,13 @@ declare namespace JS_TESTS {
         constructor();
         protected get protectedVal(): number;
         protected protectedFun(): number;
+        get publicVal(): number;
+        publicFun(): number;
         protected static get protectedNestedObject(): {
         };
         protected static get Companion(): {
             get companionObjectProp(): number;
         };
-        get publicVal(): number;
-        publicFun(): number;
     }
     namespace Class {
         class protectedClass {

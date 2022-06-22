@@ -257,3 +257,35 @@ data class KT39423(
     val a: String,
     val b: Int? = null
 )
+
+@JsExport
+object Parent {
+    object Nested1 {
+        val value: String = "Nested1"
+        class Nested2 {
+            companion object {
+                class Nested3
+            }
+        }
+    }
+}
+
+@JsExport
+fun getParent(): Parent {
+    return Parent
+}
+
+@JsExport
+fun createNested1(): Parent.Nested1 {
+    return Parent.Nested1
+}
+
+@JsExport
+fun createNested2(): Parent.Nested1.Nested2 {
+    return Parent.Nested1.Nested2()
+}
+
+@JsExport
+fun createNested3(): Parent.Nested1.Nested2.Companion.Nested3 {
+    return Parent.Nested1.Nested2.Companion.Nested3()
+}
