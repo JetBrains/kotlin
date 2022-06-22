@@ -2,6 +2,7 @@ description = "Runtime library for the Atomicfu compiler plugin"
 
 plugins {
     kotlin("js")
+    `maven-publish`
 }
 
 group = "org.jetbrains.kotlin"
@@ -21,6 +22,16 @@ kotlin {
             dependencies {
                 compileOnly(kotlin("stdlib-js"))
             }
+        }
+    }
+}
+
+configureCommonPublicationSettingsForGradle()
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["kotlin"])
         }
     }
 }
