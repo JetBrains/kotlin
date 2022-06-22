@@ -16,7 +16,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializerCodegen(
     protected val serializerDescriptor: ClassDescriptor,
-    bindingContext: BindingContext,
+    bindingContext: BindingContext?,
     metadataPlugin: SerializationDescriptorSerializerPlugin?
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!

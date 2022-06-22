@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -41,6 +42,7 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
     override val moduleDescriptor: ModuleDescriptor
         get() = error(ERROR_MESSAGE)
 
+    @Suppress("OVERRIDE_DEPRECATION")
     @ObsoleteDescriptorBasedAPI
     override val bindingContext: BindingContext
         get() = error(ERROR_MESSAGE)
@@ -67,7 +69,8 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
         get() = components.session.symbolProvider
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
-        return referenceClassLikeSymbol(classId, symbolProvider::getClassLikeSymbolByClassId, symbolTable::referenceClass)
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null
+        return components.classifierStorage.getIrClassSymbol(firSymbol)
     }
 
     override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
@@ -135,6 +138,8 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
         error(ERROR_MESSAGE)
     }
 
+
+    @Deprecated("Use classId overload instead")
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         error(ERROR_MESSAGE)
     }
@@ -147,10 +152,12 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("Use callableId overload instead")
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("Use callableId overload instead")
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         error(ERROR_MESSAGE)
     }
