@@ -74,6 +74,14 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
 
+    private val hasTCProjectProperty = if (isConfigurationCacheAvailable(project.gradle)) {
+        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+    } else {
+        project.hasProperty(TC_PROJECT_PROPERTY)
+    }
+
+    private val konanVersion = project.konanVersion
+
     @Suppress("unused")
     @get:Input
     val trackedEnvironment
@@ -136,18 +144,14 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = if (isConfigurationCacheAvailable(project.gradle)) {
-                project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
-            } else {
-                project.hasProperty(TC_PROJECT_PROPERTY)
-            }
+            escapeTCMessagesInLog = hasTCProjectProperty
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
         // In this case it can check exit code and distinguish test failures from crashes.
         // But K/N allows forcing a zero exit code only since 1.3 (which was included in Kotlin 1.3.40).
         // Thus we check the exit code only for newer versions.
-        val checkExitCode = project.konanVersion.isAtLeast(1, 3, 0)
+        val checkExitCode = konanVersion.isAtLeast(1, 3, 0)
 
         val cliArgs = testCommand.cliArgs("TEAMCITY", checkExitCode, includePatterns, excludePatterns, args)
 
