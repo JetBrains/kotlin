@@ -134,6 +134,8 @@ class KotlinMetadataTargetConfigurator :
 
         val result = target.project.registerTask<Jar>(target.artifactsTaskName) {
             it.group = BasePlugin.BUILD_GROUP
+            it.isReproducibleFileOrder = true
+            it.isPreserveFileTimestamps = false
             /** The content is added to this JAR in [KotlinMetadataTargetConfigurator.configureTarget]. */
         }
 

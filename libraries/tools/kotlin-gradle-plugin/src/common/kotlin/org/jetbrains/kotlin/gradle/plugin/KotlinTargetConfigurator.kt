@@ -413,6 +413,8 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
             it.description = "Assembles an archive containing the main classes."
             it.group = BasePlugin.BUILD_GROUP
             it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+            it.isPreserveFileTimestamps = false
+            it.isReproducibleFileOrder = true
         }
     }
 
