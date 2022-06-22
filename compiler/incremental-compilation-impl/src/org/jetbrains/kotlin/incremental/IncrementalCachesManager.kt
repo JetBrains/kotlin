@@ -34,6 +34,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     private val caches = arrayListOf<BasicMapsOwner>()
 
     var isClosed = false
+    var isSuccessfulyClosed = false
 
     @Synchronized
     protected fun <T : BasicMapsOwner> T.registerCache() {
@@ -52,15 +53,15 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     @Synchronized
     fun close(flush: Boolean = false): Boolean {
         if (isClosed) {
-            return true
+            return isSuccessfulyClosed
         }
-        var successful = true
+        isSuccessfulyClosed = true
         for (cache in caches) {
             if (flush) {
                 try {
                     cache.flush(false)
                 } catch (e: Throwable) {
-                    successful = false
+                    isSuccessfulyClosed = false
                     reporter.report { "Exception when flushing cache ${cache.javaClass}: $e" }
                 }
             }
@@ -68,13 +69,13 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
             try {
                 cache.close()
             } catch (e: Throwable) {
-                successful = false
+                isSuccessfulyClosed = false
                 reporter.report { "Exception when closing cache ${cache.javaClass}: $e" }
             }
         }
 
         isClosed = true
-        return successful
+        return isSuccessfulyClosed
     }
 }
 
