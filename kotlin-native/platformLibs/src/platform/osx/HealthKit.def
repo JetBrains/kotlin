@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit Security UniformTypeIdentifiers darwin libkern osx posix
+language = Objective-C
+package = platform.HealthKit
+
+modules = HealthKit
+compilerOpts = -framework HealthKit
+linkerOpts = -framework HealthKit

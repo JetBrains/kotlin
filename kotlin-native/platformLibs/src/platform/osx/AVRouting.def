@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit Network Security darwin libkern osx posix
+language = Objective-C
+package = platform.AVRouting
+
+modules = AVRouting
+compilerOpts = -framework AVRouting
+linkerOpts = -framework AVRouting
