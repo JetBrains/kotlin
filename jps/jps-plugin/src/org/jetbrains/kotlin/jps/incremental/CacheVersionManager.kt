@@ -35,7 +35,7 @@ class CacheVersionManager(
             null
         }
         else try {
-            val cacheVersion = CacheVersion(Files.readAllBytes(versionFile).toString().toInt())
+            val cacheVersion = CacheVersion(Files.readAllBytes(versionFile).decodeToString().toInt())
             LOG.info(">>>ok: $cacheVersion")
             cacheVersion
         } catch (e: NumberFormatException) {
@@ -52,7 +52,7 @@ class CacheVersionManager(
         else {
             Files.createDirectories(versionFile.parent)
             Files.write(versionFile, values.intValue.toString().toByteArray())
-            LOG.info(">>>wrote ${Files.readAllBytes(versionFile).toString().toInt()}")
+            LOG.info(">>>wrote ${Files.readAllBytes(versionFile).decodeToString().toInt()}")
         }
     }
 
