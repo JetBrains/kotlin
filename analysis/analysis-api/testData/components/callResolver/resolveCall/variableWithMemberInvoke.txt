@@ -20,6 +20,9 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /Foo.invoke
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
     argumentMapping = {
       "" -> (KtVariableLikeSignature:
         name = t

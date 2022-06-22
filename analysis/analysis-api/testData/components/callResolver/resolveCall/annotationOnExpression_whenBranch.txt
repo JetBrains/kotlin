@@ -16,6 +16,7 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {
       "DEPRECATION" -> (KtVariableLikeSignature:
         name = names

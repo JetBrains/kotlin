@@ -17,6 +17,7 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {
       "v1" -> (KtVariableLikeSignature:
         name = strings

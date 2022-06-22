@@ -17,6 +17,7 @@ KtApplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {
       42 -> (KtVariableLikeSignature:
         name = i

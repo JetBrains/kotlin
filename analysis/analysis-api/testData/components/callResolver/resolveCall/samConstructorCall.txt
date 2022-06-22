@@ -17,6 +17,9 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = java/util/Comparator
+    typeArgumentsMapping = {
+      T -> (ft<kotlin.Int, kotlin.Int?>)
+    }
     argumentMapping = {
       {x: Int, y: Int -> 1} -> (KtVariableLikeSignature:
         name = function

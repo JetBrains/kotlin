@@ -15,3 +15,4 @@ KtSuccessCallInfo:
         callableIdIfNonLocal = /A.i
     simpleAccess = Write:
       value = 1
+    typeArgumentsMapping = {}

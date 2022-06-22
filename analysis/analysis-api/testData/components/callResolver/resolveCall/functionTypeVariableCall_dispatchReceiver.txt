@@ -23,4 +23,5 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
     argumentMapping = {}

@@ -24,6 +24,9 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = t
@@ -60,6 +63,9 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      U -> (kotlin.Int)
+    }
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = u
@@ -96,6 +102,9 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /function
+    typeArgumentsMapping = {
+      V -> (kotlin.Int)
+    }
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = v

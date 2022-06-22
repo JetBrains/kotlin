@@ -17,6 +17,9 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = elements

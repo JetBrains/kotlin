@@ -10,4 +10,5 @@ KtSuccessCallInfo:
         symbol = <constructor>(): A
         valueParameters = []
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {}

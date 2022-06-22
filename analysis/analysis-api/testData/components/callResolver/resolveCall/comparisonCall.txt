@@ -20,6 +20,7 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = kotlin/Int.compareTo
+    typeArgumentsMapping = {}
     argumentMapping = {
       j -> (KtVariableLikeSignature:
         name = other

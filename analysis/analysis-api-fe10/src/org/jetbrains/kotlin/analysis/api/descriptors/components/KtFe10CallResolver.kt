@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
@@ -58,7 +60,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.asSimpleType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.contains
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isTypeVariable
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -283,7 +291,11 @@ internal class KtFe10CallResolver(
                 resolvedCalls += resolvedCall
                 val partiallyAppliedSymbol =
                     resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
-                KtSimpleVariableAccessCall(partiallyAppliedSymbol, KtSimpleVariableAccess.Write(right))
+                KtSimpleVariableAccessCall(
+                    partiallyAppliedSymbol,
+                    resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                    KtSimpleVariableAccess.Write(right)
+                )
             }
             in KtTokens.AUGMENTED_ASSIGNMENTS -> {
                 if (right == null) return null
@@ -307,7 +319,11 @@ internal class KtFe10CallResolver(
                     val resolvedCall = left.getResolvedCall(context) ?: return null
                     resolvedCalls += resolvedCall
                     val variableAppliedSymbol = resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
-                    KtCompoundVariableAccessCall(variableAppliedSymbol, compoundAccess)
+                    KtCompoundVariableAccessCall(
+                        variableAppliedSymbol,
+                        resolvedCall.toTypeArgumentsMapping(variableAppliedSymbol),
+                        compoundAccess
+                    )
                 }
             }
             else -> null
@@ -330,8 +346,9 @@ internal class KtFe10CallResolver(
         return if (baseExpression is KtArrayAccessExpression) {
             createCompoundArrayAccessCall(context, baseExpression, compoundAccess, resolvedCalls)
         } else {
-            val variableAppliedSymbol = baseExpression.getResolvedCall(context)?.toPartiallyAppliedVariableSymbol(context) ?: return null
-            KtCompoundVariableAccessCall(variableAppliedSymbol, compoundAccess)
+            val resolvedCall = baseExpression.getResolvedCall(context)
+            val variableAppliedSymbol = resolvedCall?.toPartiallyAppliedVariableSymbol(context) ?: return null
+            KtCompoundVariableAccessCall(variableAppliedSymbol, resolvedCall.toTypeArgumentsMapping(variableAppliedSymbol), compoundAccess)
         }?.let { createCallInfo(context, unaryExpression, it, resolvedCalls) }
     }
 
@@ -411,7 +428,11 @@ internal class KtFe10CallResolver(
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KtVariableAccessCall? {
         val partiallyAppliedSymbol = toPartiallyAppliedVariableSymbol(context) ?: return null
-        return KtSimpleVariableAccessCall(partiallyAppliedSymbol, KtSimpleVariableAccess.Read)
+        return KtSimpleVariableAccessCall(
+            partiallyAppliedSymbol,
+            toTypeArgumentsMapping(partiallyAppliedSymbol),
+            KtSimpleVariableAccess.Read
+        )
     }
 
     private fun ResolvedCall<*>.toFunctionKtCall(context: BindingContext): KtFunctionCall<*>? {
@@ -430,7 +451,12 @@ internal class KtFe10CallResolver(
             }
         }
         @Suppress("UNCHECKED_CAST")
-        return KtSimpleFunctionCall(partiallyAppliedSymbol, argumentMapping, call.callType == Call.CallType.INVOKE)
+        return KtSimpleFunctionCall(
+            partiallyAppliedSymbol,
+            argumentMapping,
+            toTypeArgumentsMapping(partiallyAppliedSymbol),
+            call.callType == Call.CallType.INVOKE
+        )
     }
 
     private fun ResolvedCall<*>.toPartiallyAppliedVariableSymbol(context: BindingContext): KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>? {
@@ -644,5 +670,25 @@ internal class KtFe10CallResolver(
                     ktCall is KtSimpleFunctionCall && (reportedPsiParent as? KtBinaryExpression)?.right == reportedPsi -> true
             else -> false
         }
+    }
+
+    private fun ResolvedCall<*>.toTypeArgumentsMapping(
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+    ): Map<KtTypeParameterSymbol, KtType> {
+        if (typeArguments.isEmpty()) return emptyMap()
+
+        val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
+
+        val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
+        for ((parameter, type) in typeArguments) {
+            val ktParameter = typeParameters.getOrNull(parameter.index) ?: return emptyMap()
+
+            // i.e. we were not able to infer some types
+            if (type.contains { it: UnwrappedType -> it.constructor is TypeVariableTypeConstructor }) return emptyMap()
+
+            result[ktParameter] = type.toKtType(analysisContext)
+        }
+
+        return result
     }
 }

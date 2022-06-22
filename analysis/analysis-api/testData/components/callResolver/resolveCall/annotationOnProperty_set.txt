@@ -9,4 +9,5 @@ KtSuccessCallInfo:
         symbol = <constructor>(): Anno
         valueParameters = []
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {}

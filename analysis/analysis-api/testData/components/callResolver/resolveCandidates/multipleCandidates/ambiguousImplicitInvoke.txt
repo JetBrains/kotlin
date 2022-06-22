@@ -21,6 +21,7 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true
 
@@ -47,6 +48,7 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true
 
@@ -70,5 +72,6 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /x
+    typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false

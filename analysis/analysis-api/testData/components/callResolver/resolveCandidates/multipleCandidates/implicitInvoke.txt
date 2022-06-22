@@ -21,6 +21,7 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /invoke
+    typeArgumentsMapping = {}
     argumentMapping = {
       true -> (KtVariableLikeSignature:
         name = i
@@ -51,6 +52,7 @@ KtInapplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /x
+    typeArgumentsMapping = {}
     argumentMapping = {
       true -> (KtVariableLikeSignature:
         name = c
@@ -80,6 +82,7 @@ KtApplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {
       true -> (KtVariableLikeSignature:
         name = b
