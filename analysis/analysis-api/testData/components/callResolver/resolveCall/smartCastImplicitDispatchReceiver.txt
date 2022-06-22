@@ -5,6 +5,7 @@ KtSuccessCallInfo:
         original = KtImplicitReceiverValue:
           symbol = KtReceiverParameterSymbol:
             origin: SOURCE
+            owningCallableSymbol: KtFunctionSymbol(/test)
             type: kotlin/Any
           type = kotlin.Any
         type = kotlin.String

@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
@@ -29,4 +27,10 @@ public sealed class KtCallableSymbol : KtSymbolWithKind, KtPossibleMemberSymbol,
  */
 public abstract class KtReceiverParameterSymbol : KtSymbol {
     public abstract val type: KtType
+
+    /**
+     * Link to the corresponding function or property.
+     * In terms of the example above -- this is link to the function foo.
+     */
+    public abstract val owningCallableSymbol: KtCallableSymbol
 }
