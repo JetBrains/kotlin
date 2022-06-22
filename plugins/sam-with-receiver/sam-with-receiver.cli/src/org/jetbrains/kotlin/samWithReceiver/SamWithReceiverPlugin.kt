@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.SUPPORTED_PRESETS
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.PRESET
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.ANNOTATION_OPTION_NAME
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PLUGIN_ID
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PRESET_OPTION_NAME
 
 object SamWithReceiverConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
@@ -27,19 +30,15 @@ object SamWithReceiverConfigurationKeys {
 
 class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = emptyMap<String, List<String>>()
-
         val ANNOTATION_OPTION = CliOption(
-            "annotation", "<fqname>", "Annotation qualified names",
+            ANNOTATION_OPTION_NAME, "<fqname>", "Annotation qualified names",
             required = false, allowMultipleOccurrences = true
         )
 
         val PRESET_OPTION = CliOption(
-            "preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
+            PRESET_OPTION_NAME, "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
             required = false, allowMultipleOccurrences = true
         )
-
-        val PLUGIN_ID = "org.jetbrains.kotlin.samWithReceiver"
     }
 
     override val pluginId = PLUGIN_ID
