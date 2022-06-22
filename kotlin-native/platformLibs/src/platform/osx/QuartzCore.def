@@ -1,7 +1,68 @@
 depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security darwin libkern osx posix
 language = Objective-C
 package = platform.QuartzCore
-modules = QuartzCore
+# Use headers instead of module to workaround inclusion of QuartzCore/CoreImage.h and QuartzCore/CoreVideo.h
+# modules = QuartzCore
+headers = \
+    QuartzCore/CATransformLayer.h \
+    QuartzCore/CIContext.h \
+    QuartzCore/QuartzCore.h \
+    QuartzCore/CAScrollLayer.h \
+    QuartzCore/CIFilter.h \
+    QuartzCore/CALayer.h \
+    QuartzCore/CIImageAccumulator.h \
+    QuartzCore/CVOpenGLTextureCache.h \
+    QuartzCore/CIVector.h \
+    QuartzCore/CAMediaTimingFunction.h \
+    QuartzCore/CARemoteLayerServer.h \
+    QuartzCore/CVBuffer.h \
+    QuartzCore/CIFilterShape.h \
+    QuartzCore/CoreImage.h \
+    QuartzCore/CAReplicatorLayer.h \
+    QuartzCore/CIPlugInInterface.h \
+    QuartzCore/CATextLayer.h \
+    QuartzCore/CATiledLayer.h \
+    QuartzCore/CVBase.h \
+    QuartzCore/CAEmitterLayer.h \
+    QuartzCore/CIColor.h \
+    QuartzCore/CIKernel.h \
+    QuartzCore/CVImageBuffer.h \
+    QuartzCore/CVPixelBufferPool.h \
+    QuartzCore/CVOpenGLTexture.h \
+    QuartzCore/CADisplayLink.h \
+    QuartzCore/CVPixelFormatDescription.h \
+    QuartzCore/CAMediaTiming.h \
+    QuartzCore/CVPixelBuffer.h \
+    QuartzCore/CVOpenGLBufferPool.h \
+    QuartzCore/CIFilterGenerator.h \
+    QuartzCore/CISampler.h \
+    QuartzCore/CoreAnimation.h \
+    QuartzCore/CAEDRMetadata.h \
+    QuartzCore/CoreVideo.h \
+    QuartzCore/CARenderer.h \
+    QuartzCore/CAOpenGLLayer.h \
+    QuartzCore/CATransform3D.h \
+    QuartzCore/CAFrameRateRange.h \
+    QuartzCore/CAEmitterCell.h \
+    QuartzCore/CAShapeLayer.h \
+    QuartzCore/CVOpenGLBuffer.h \
+    QuartzCore/CAValueFunction.h \
+    QuartzCore/CAMetalLayer.h \
+    QuartzCore/CATransaction.h \
+    QuartzCore/CABase.h \
+    QuartzCore/CAGradientLayer.h \
+    QuartzCore/CVDisplayLink.h \
+    QuartzCore/CIImage.h \
+    QuartzCore/CIRAWFilter.h \
+    QuartzCore/CAConstraintLayoutManager.h \
+    QuartzCore/CARemoteLayerClient.h \
+    QuartzCore/CVReturn.h \
+    QuartzCore/CIPlugIn.h \
+    QuartzCore/CVHostTime.h \
+    QuartzCore/CAAnimation.h \
+    QuartzCore/CIImageProvider.h
+
+headerFilter = QuartzCore/**
 
 compilerOpts = -framework QuartzCore
 linkerOpts = -framework QuartzCore
