@@ -28,9 +28,6 @@ internal class KtFe10DescEnumEntrySymbol(
     private val enumDescriptor: ClassDescriptor
         get() = descriptor.containingDeclaration as ClassDescriptor
 
-    override val containingEnumClassIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { enumDescriptor.classId }
-
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion {
             val enumClassId = enumDescriptor.classId ?: return null

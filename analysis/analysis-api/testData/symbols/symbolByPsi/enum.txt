@@ -1,7 +1,6 @@
 KtEnumEntrySymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.Y
-  containingEnumClassIdIfNonLocal: X
   isExtension: false
   name: Y
   origin: SOURCE
@@ -15,7 +14,6 @@ KtEnumEntrySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.Z
-  containingEnumClassIdIfNonLocal: X
   isExtension: false
   name: Z
   origin: SOURCE

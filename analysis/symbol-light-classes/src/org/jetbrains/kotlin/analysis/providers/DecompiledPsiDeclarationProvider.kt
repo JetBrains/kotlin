@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.providers
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 
 public object DecompiledPsiDeclarationProvider {
@@ -71,7 +72,7 @@ public object DecompiledPsiDeclarationProvider {
         enumEntrySymbol: KtEnumEntrySymbol,
         project: Project
     ): PsiElement? {
-        val classId = enumEntrySymbol.containingEnumClassIdIfNonLocal ?: return null
+        val classId = enumEntrySymbol.callableIdIfNonLocal?.classId ?: return null
         val psiClass = project.createPsiDeclarationProvider(enumEntrySymbol.scope(project))
             ?.getClassesByClassId(classId)
             ?.firstOrNull() ?: return null

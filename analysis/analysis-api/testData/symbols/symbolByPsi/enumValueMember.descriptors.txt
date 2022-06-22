@@ -91,7 +91,6 @@ KtKotlinPropertySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableIdIfNonLocal: /Style.SHEET
-  containingEnumClassIdIfNonLocal: Style
   isExtension: false
   name: SHEET
   origin: SOURCE

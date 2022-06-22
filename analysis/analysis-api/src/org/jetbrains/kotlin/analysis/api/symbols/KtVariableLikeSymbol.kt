@@ -62,9 +62,6 @@ public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMe
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    //todo reduntant, remove
-    public abstract val containingEnumClassIdIfNonLocal: ClassId?
-
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
