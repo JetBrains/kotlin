@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.PushToTalk
+
+modules = PushToTalk
+compilerOpts = -framework PushToTalk
+linkerOpts = -framework PushToTalk
+#Disabled: Not officially available for osx

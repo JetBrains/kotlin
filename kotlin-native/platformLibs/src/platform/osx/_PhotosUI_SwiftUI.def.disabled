@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._PhotosUI_SwiftUI
+
+modules = _PhotosUI_SwiftUI
+compilerOpts = -framework _PhotosUI_SwiftUI
+linkerOpts = -framework _PhotosUI_SwiftUI
+#Disabled: Unavailable
