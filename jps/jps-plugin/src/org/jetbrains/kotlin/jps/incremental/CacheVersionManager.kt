@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -23,25 +24,35 @@ class CacheVersionManager(
     private val versionFile: Path,
     expectedOwnVersion: Int?
 ) : CacheAttributesManager<CacheVersion> {
+    val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     override val expected: CacheVersion? =
         if (expectedOwnVersion == null) null
         else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
-        if (Files.notExists(versionFile)) null
+        if (Files.notExists(versionFile)) {
+            LOG.info(">>>! $versionFile does not exist -> null")
+            null
+        }
         else try {
-            CacheVersion(Files.readAllBytes(versionFile).toString().toInt())
+            val cacheVersion = CacheVersion(Files.readAllBytes(versionFile).toString().toInt())
+            LOG.info(">>>ok: $cacheVersion")
+            cacheVersion
         } catch (e: NumberFormatException) {
+            LOG.info(">>>e: $e -> null")
             null
         } catch (e: IOException) {
+            LOG.info(">>>e: $e -> null")
             null
         }
 
     override fun writeVersion(values: CacheVersion?) {
+        LOG.info(">>>write ${values.toString()}")
         if (values == null) Files.deleteIfExists(versionFile)
         else {
             Files.createDirectories(versionFile.parent)
             Files.write(versionFile, values.intValue.toString().toByteArray())
+            LOG.info(">>>wrote ${Files.readAllBytes(versionFile).toString().toInt()}")
         }
     }
 
