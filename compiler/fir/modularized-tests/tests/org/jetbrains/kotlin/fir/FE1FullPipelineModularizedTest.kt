@@ -28,6 +28,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     }
 
     fun testTotalKotlin() {
+        isolate()
         for (i in 0 until PASSES) {
             println("Pass $i")
             runTestOnce(i)
