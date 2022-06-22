@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 private val JAVA_API_STUB_FOR_SCRIPT = Key.create<CachedValue<LightClassDataHolder.ForScript>>("JAVA_API_STUB_FOR_SCRIPT")
 private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder.ForClass>>("JAVA_API_STUB")
@@ -50,22 +51,23 @@ class CliExtraDiagnosticsProvider : KotlinExtraDiagnosticsProvider {
             .findFilesForFacade(facadeFqName, moduleScope)
             .ifEmpty { return Diagnostics.EMPTY }
 
-        return LightClassGenerationSupport.getInstance(project).createDataHolderForFacade(files) { constructionContext ->
-            buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@{ state, files ->
-                val representativeFile = files.first()
-                val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(representativeFile)
-                if (!fileClassInfo.withJvmMultifileClass) {
-                    val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
+        return LightClassGenerationSupport.getInstance(project).cast<CliLightClassGenerationSupport>()
+            .createDataHolderForFacade { constructionContext ->
+                buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@{ state, files ->
+                    val representativeFile = files.first()
+                    val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(representativeFile)
+                    if (!fileClassInfo.withJvmMultifileClass) {
+                        val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
+                        codegen.generate()
+                        state.factory.done()
+                        return@generate
+                    }
+
+                    val codegen = state.factory.forMultifileClass(facadeFqName, files)
                     codegen.generate()
                     state.factory.done()
-                    return@generate
                 }
-
-                val codegen = state.factory.forMultifileClass(facadeFqName, files)
-                codegen.generate()
-                state.factory.done()
-            }
-        }.extraDiagnostics
+            }.extraDiagnostics
     }
 }
 

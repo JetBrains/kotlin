@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class LightClassDataProviderForClassOrObject(
@@ -27,7 +28,7 @@ internal class LightClassDataProviderForClassOrObject(
     private fun computeLightClassData(): LightClassDataHolder.ForClass {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
-        return LightClassGenerationSupport.getInstance(classOrObject.project)
+        return LightClassGenerationSupport.getInstance(classOrObject.project).cast<CliLightClassGenerationSupport>()
             .createDataHolderForClass(classOrObject) { constructionContext ->
                 buildLightClass(
                     packageFqName,
@@ -44,7 +45,7 @@ internal class LightClassDataProviderForClassOrObject(
             }
     }
 
-    override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForClass>? {
+    override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForClass> {
         val trackerService = KotlinModificationTrackerService.getInstance(classOrObject.project)
         return CachedValueProvider.Result.create(
             computeLightClassData(),
@@ -52,9 +53,7 @@ internal class LightClassDataProviderForClassOrObject(
         )
     }
 
-    override fun toString(): String {
-        return this::class.java.name + " for " + classOrObject.name
-    }
+    override fun toString(): String = this::class.java.name + " for " + classOrObject.name
 }
 
 private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrObject) : GenerationState.GenerateClassFilter() {
@@ -102,19 +101,21 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
 
 internal class LightClassDataProviderForScript(private val script: KtScript) : CachedValueProvider<LightClassDataHolder.ForScript> {
     private fun computeLightClassData(): LightClassDataHolder.ForScript {
-        return LightClassGenerationSupport.getInstance(script.project).createDataHolderForScript(script) { constructionContext ->
-            buildLightClass(
-                script.fqName.parent(),
-                listOf(script.containingKtFile),
-                ClassFilterForScript(script),
-                constructionContext
-            ) generate@{ state, files ->
-                val scriptFile = files.first()
-                val codegen = state.factory.forPackage(scriptFile.packageFqName, files)
-                codegen.generate()
-                state.factory.done()
+        return LightClassGenerationSupport.getInstance(script.project)
+            .cast<CliLightClassGenerationSupport>()
+            .createDataHolderForScript { constructionContext ->
+                buildLightClass(
+                    script.fqName.parent(),
+                    listOf(script.containingKtFile),
+                    ClassFilterForScript(script),
+                    constructionContext
+                ) generate@{ state, files ->
+                    val scriptFile = files.first()
+                    val codegen = state.factory.forPackage(scriptFile.packageFqName, files)
+                    codegen.generate()
+                    state.factory.done()
+                }
             }
-        }
     }
 
     override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForScript> =
