@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
+import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptNewDefTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -224,10 +225,11 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
-            testClass<AbstractSamWithReceiverTest> {
-                model("diagnostics")
-            }
             testClass<AbstractSamWithReceiverScriptTest> {
+                model("script", extension = "kts")
+            }
+
+            testClass<AbstractSamWithReceiverScriptNewDefTest> {
                 model("script", extension = "kts")
             }
         }
@@ -446,6 +448,12 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractFirDiagnosticTestForLombok> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
+            testClass<AbstractSamWithReceiverTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
