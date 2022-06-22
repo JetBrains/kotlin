@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
+language = Objective-C
+package = platform.BackgroundAssets
+
+modules = BackgroundAssets
+compilerOpts = -framework BackgroundAssets
+linkerOpts = -framework BackgroundAssets
+
+# Not available in Xcode 14 RC.

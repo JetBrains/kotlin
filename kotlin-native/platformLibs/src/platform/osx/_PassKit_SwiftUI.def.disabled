@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._PassKit_SwiftUI
+
+modules = _PassKit_SwiftUI
+compilerOpts = -framework _PassKit_SwiftUI
+linkerOpts = -framework _PassKit_SwiftUI
+#Disabled: Unavailable
