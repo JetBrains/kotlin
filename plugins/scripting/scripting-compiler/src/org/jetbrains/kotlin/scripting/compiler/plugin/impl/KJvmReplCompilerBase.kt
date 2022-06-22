@@ -104,7 +104,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
                     val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
-                        ?.getScriptConfiguration(snippetKtFile)?.configuration
+                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,
@@ -166,7 +166,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     sourceFiles.first(),
                     sourceDependencies
                 ) { ktFile ->
-                    dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration
+                    dependenciesProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }.onSuccess { compiledScript ->
 

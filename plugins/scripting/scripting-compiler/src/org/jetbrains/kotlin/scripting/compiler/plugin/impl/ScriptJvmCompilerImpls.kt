@@ -135,23 +135,25 @@ private fun compileImpl(
 
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->
-        (dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration ?: context.baseScriptCompilationConfiguration)
-            .with {
-                // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
-                // performed with the expected classpath
-                // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
-                val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
-                val depsFromCompiler = context.environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
-                    .mapNotNull { if (it is JvmClasspathRoot && !it.isSdkRoot) it.file else null }
-                if (!depsFromConfiguration.isNullOrEmpty()) {
-                    val missingDeps = depsFromCompiler.filter { !depsFromConfiguration.contains(it) }
-                    if (missingDeps.isNotEmpty()) {
-                        dependencies.append(JvmDependency(missingDeps))
-                    }
-                } else {
-                    dependencies.append(JvmDependency(depsFromCompiler))
+        val refinedConfiguration =
+            dependenciesProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)
+                ?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration
+        refinedConfiguration.with {
+            // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
+            // performed with the expected classpath
+            // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
+            val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
+            val depsFromCompiler = context.environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+                .mapNotNull { if (it is JvmClasspathRoot && !it.isSdkRoot) it.file else null }
+            if (!depsFromConfiguration.isNullOrEmpty()) {
+                val missingDeps = depsFromCompiler.filter { !depsFromConfiguration.contains(it) }
+                if (missingDeps.isNotEmpty()) {
+                    dependencies.append(JvmDependency(missingDeps))
                 }
+            } else {
+                dependencies.append(JvmDependency(depsFromCompiler))
             }
+        }
     }
 
     return doCompile(context, script, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration)

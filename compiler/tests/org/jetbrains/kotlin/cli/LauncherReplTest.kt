@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.cli
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.*
@@ -19,7 +21,8 @@ class LauncherReplTest : TestCaseWithTmpdir() {
     private fun runInteractive(
         vararg inputsToExpectedOutputs: Pair<String?, String>,
         expectedExitCode: Int = 0,
-        workDirectory: File? = null
+        workDirectory: File? = null,
+        compilationClasspath: List<File> = emptyList()
     ) {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
 
@@ -31,8 +34,13 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         if (workDirectory != null) {
             processBuilder.directory(workDirectory)
         }
+        if (compilationClasspath.isNotEmpty()) {
+            with(processBuilder.command()) {
+                add("-cp")
+                add(compilationClasspath.joinToString(File.pathSeparator) { it.absolutePath })
+            }
+        }
         val process = processBuilder.start()
-
         data class ExceptionContainer(
             var value: Throwable? = null
         )
@@ -168,6 +176,17 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             "10.nanoseconds" to "res3: kotlin.time.Duration = 10ns",
             "@JvmInline value class Z(val x: Int)" to "",
             "Z(42)" to "res5: Line_4\\.Z = Z\\(x=42\\)",
+        )
+    }
+
+    fun testReplWithClasspath() {
+        runInteractive(
+            *replOutHeader,
+            // access to any non-inlined object from the jarr passed to classpath shows that the classpath is supplied correctly
+            // both on compilation and on evaluation
+            "println(org.jetbrains.kotlin.allopen.AllOpenPluginNames.SUPPORTED_PRESETS.size >= 0)" to "true",
+            compilationClasspath = KotlinPathsFromHomeDir(PathUtil.kotlinPathsForDistDirectory.homePath)
+                .classPath(KotlinPaths.Jar.AllOpenPlugin)
         )
     }
 }

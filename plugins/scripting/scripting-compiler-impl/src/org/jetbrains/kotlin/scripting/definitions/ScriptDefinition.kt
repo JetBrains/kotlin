@@ -216,7 +216,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) =
-            object : FromLegacy(hostConfiguration, StandardScriptDefinition) {
+            object : FromConfigurations(
+                hostConfiguration,
+                ScriptCompilationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition),
+                ScriptEvaluationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition)
+            ) {
                 override val isDefault = true
             }
     }
