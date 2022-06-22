@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -58,6 +59,7 @@ class FirSamResolverImpl(
 ) : FirSamResolver() {
     private val resolvedFunctionType: NullableMap<FirRegularClass, SAMInfo<ConeLookupTagBasedType>?> = NullableMap()
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
+    private val samConversionTransformers = session.extensionService.samConversionTransformers
 
     override fun getSamInfoForPossibleSamType(type: ConeKotlinType): SAMInfo<ConeKotlinType>? {
         return when (type) {
@@ -243,7 +245,11 @@ class FirSamResolverImpl(
             val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(session, scopeSession) ?: return@getOrPut null
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
-            SAMInfo(abstractMethod.symbol, abstractMethod.getFunctionTypeForAbstractMethod())
+            val typeFromExtension = samConversionTransformers.firstNotNullOfOrNull {
+                it.getCustomFunctionalTypeForSamConversion(abstractMethod)
+            }
+
+            SAMInfo(abstractMethod.symbol, typeFromExtension ?: abstractMethod.getFunctionTypeForAbstractMethod())
         }
     }
 

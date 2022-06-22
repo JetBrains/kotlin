@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
@@ -31,6 +32,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirTypeAttributeExtension::class,
             FirExpressionResolutionExtension::class,
             FirExtensionSessionComponent::class,
+            FirSamConversionTransformerExtension::class,
         )
     }
 
@@ -74,6 +76,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirExtensionSessionComponent::class, this)
         }
 
+        @JvmName("plusSamConversionTransformerExtension")
+        operator fun (FirSamConversionTransformerExtension.Factory).unaryPlus() {
+            registerExtension(FirSamConversionTransformerExtension::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -109,6 +116,23 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusExtensionSessionComponent")
         operator fun ((FirSession) -> FirExtensionSessionComponent).unaryPlus() {
             FirExtensionSessionComponent.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusSamConversionTransformerExtension")
+        operator fun ((FirSession) -> FirSamConversionTransformerExtension).unaryPlus() {
+            FirSamConversionTransformerExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        // ------------------ utilities ------------------
+
+        @JvmName("bindLeft")
+        fun <T, R> ((T, FirSession) -> R).bind(value: T): (FirSession) -> R {
+            return { this.invoke(value, it) }
+        }
+
+        @JvmName("bindRight")
+        fun <T, R> ((FirSession, T) -> R).bind(value: T): (FirSession) -> R {
+            return { this.invoke(it, value) }
         }
     }
 
