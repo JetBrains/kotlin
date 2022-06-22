@@ -14,7 +14,6 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
@@ -122,10 +121,7 @@ internal abstract class KtUltraLightMethod(
 
     abstract val checkNeedToErasureParametersTypes: Boolean
 
-    override val memberIndex: MemberIndex? = null
-
-    override val psiTypeForNullabilityAnnotation: PsiType?
-        get() = returnType
+    override val psiTypeForNullabilityAnnotation: PsiType? get() = returnType
 
     // These two overrides are necessary because ones from KtLightMethodImpl suppose that clsDelegate.returnTypeElement is valid
     // While here we only set return type for LightMethodBuilder (see org.jetbrains.kotlin.asJava.classes.KtUltraLightClass.asJavaMethod)

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -20,8 +18,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-
-typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
 
 abstract class LightClassGenerationSupport {
     abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?

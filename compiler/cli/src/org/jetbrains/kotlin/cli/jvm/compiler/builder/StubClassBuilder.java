@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava.builder;
+package org.jetbrains.kotlin.cli.jvm.compiler.builder;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.InnerClassSourceStrategy;
@@ -26,6 +15,9 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory;
+import org.jetbrains.kotlin.asJava.builder.LightElementOrigin;
+import org.jetbrains.kotlin.asJava.builder.LightElementOriginKt;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -54,7 +46,6 @@ public class StubClassBuilder extends AbstractClassBuilder {
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
-    private int memberIndex = 0;
 
     public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
         this.parentStack = parentStack;
@@ -199,7 +190,6 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
-        last.putUserData(MemberIndex.KEY, new MemberIndex(memberIndex++));
     }
 
     @Override
