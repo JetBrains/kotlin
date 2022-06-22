@@ -21,6 +21,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {},
     KtSimpleFunctionCall:
       isImplicitInvoke = true
@@ -43,6 +44,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {}
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:

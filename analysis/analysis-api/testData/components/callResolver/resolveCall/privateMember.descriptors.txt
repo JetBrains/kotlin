@@ -14,6 +14,7 @@ KtErrorCallInfo:
           symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit
           valueParameters = []
           callableIdIfNonLocal = /A.foo
+      typeArgumentsMapping = {}
       argumentMapping = {}
   ]
   diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>

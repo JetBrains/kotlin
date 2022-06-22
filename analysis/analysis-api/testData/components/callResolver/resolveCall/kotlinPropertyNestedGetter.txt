@@ -13,3 +13,5 @@ KtSuccessCallInfo:
         symbol = val instance: KtSubClass
         callableIdIfNonLocal = /KtClass.instance
     simpleAccess = Read:
+
+    typeArgumentsMapping = {}

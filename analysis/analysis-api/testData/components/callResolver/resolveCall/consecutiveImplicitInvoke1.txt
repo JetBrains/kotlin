@@ -13,4 +13,5 @@ KtSuccessCallInfo:
         symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
         valueParameters = []
         callableIdIfNonLocal = /invoke
+    typeArgumentsMapping = {}
     argumentMapping = {}

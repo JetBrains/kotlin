@@ -10,5 +10,6 @@ KtApplicableCallCandidateInfo:
         symbol = <constructor>(): A
         valueParameters = []
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true

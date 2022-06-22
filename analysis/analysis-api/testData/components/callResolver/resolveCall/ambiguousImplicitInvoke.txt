@@ -21,6 +21,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {},
     KtSimpleFunctionCall:
       isImplicitInvoke = true
@@ -43,6 +44,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {}
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [local final operator fun R|kotlin/Int|.invoke(a: R|kotlin/String|): R|kotlin/Unit|, local final operator fun R|kotlin/Int|.invoke(b: R|kotlin/Boolean|): R|kotlin/Unit|]>

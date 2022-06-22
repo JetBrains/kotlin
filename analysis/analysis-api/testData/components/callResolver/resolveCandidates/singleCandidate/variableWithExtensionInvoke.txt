@@ -20,6 +20,9 @@ KtApplicableCallCandidateInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = /invoke
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
     argumentMapping = {
       "" -> (KtVariableLikeSignature:
         name = t

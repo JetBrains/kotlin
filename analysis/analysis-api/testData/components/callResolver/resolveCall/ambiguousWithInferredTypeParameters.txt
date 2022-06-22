@@ -24,6 +24,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = /function
+      typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = t
@@ -56,6 +57,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = /function
+      typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = u
@@ -88,6 +90,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = /function
+      typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = v

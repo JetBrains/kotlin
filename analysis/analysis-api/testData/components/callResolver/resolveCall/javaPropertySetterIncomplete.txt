@@ -14,3 +14,4 @@ KtSuccessCallInfo:
         callableIdIfNonLocal = /JavaClass.foo
     simpleAccess = Write:
       value = null
+    typeArgumentsMapping = {}

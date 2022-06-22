@@ -14,3 +14,4 @@ KtSuccessCallInfo:
         callableIdIfNonLocal = /KtClass.foo
     simpleAccess = Write:
       value = 42
+    typeArgumentsMapping = {}

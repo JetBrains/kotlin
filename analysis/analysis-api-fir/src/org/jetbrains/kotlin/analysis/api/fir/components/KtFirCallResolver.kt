@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.fir.FirElement
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -404,6 +406,7 @@ internal class KtFirCallResolver(
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KtSimpleVariableAccessCall(
                     partiallyAppliedSymbol as KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     KtSimpleVariableAccess.Write(rhs)
                 )
             }
@@ -412,6 +415,7 @@ internal class KtFirCallResolver(
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KtSimpleVariableAccessCall(
                     partiallyAppliedSymbol as KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     KtSimpleVariableAccess.Read
                 )
             }
@@ -434,6 +438,7 @@ internal class KtFirCallResolver(
                     argumentMappingWithoutExtensionReceiver
                         ?.createArgumentMapping(partiallyAppliedSymbol.signature as KtFunctionLikeSignature<*>)
                         ?: LinkedHashMap(),
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     isImplicitInvoke
                 )
             }
@@ -458,7 +463,12 @@ internal class KtFirCallResolver(
                 }
 
                 return if (resolveFragmentOfCall) {
-                    KtSimpleFunctionCall(getPartiallyAppliedSymbol, getAccessArgumentMapping, false)
+                    KtSimpleFunctionCall(
+                        getPartiallyAppliedSymbol,
+                        getAccessArgumentMapping,
+                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
+                        false
+                    )
                 } else {
                     KtCompoundArrayAccessCall(
                         KtCompoundAccess.CompoundAssign(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
@@ -477,10 +487,15 @@ internal class KtFirCallResolver(
                 val operationPartiallyAppliedSymbol =
                     getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(fir, leftOperandPsi) ?: return null
                 return if (resolveFragmentOfCall) {
-                    KtSimpleVariableAccessCall(variablePartiallyAppliedSymbol, KtSimpleVariableAccess.Read)
+                    KtSimpleVariableAccessCall(
+                        variablePartiallyAppliedSymbol,
+                        fir.toTypeArgumentsMapping(variablePartiallyAppliedSymbol),
+                        KtSimpleVariableAccess.Read
+                    )
                 } else {
                     KtCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
+                        fir.toTypeArgumentsMapping(variablePartiallyAppliedSymbol),
                         KtCompoundAccess.CompoundAssign(operationPartiallyAppliedSymbol, compoundAssignKind, rightOperandPsi),
                     )
                 }
@@ -502,7 +517,12 @@ internal class KtFirCallResolver(
                     putAll(baseExpression.indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters))
                 }
                 return if (resolveFragmentOfCall) {
-                    KtSimpleFunctionCall(getPartiallyAppliedSymbol, getAccessArgumentMapping, false)
+                    KtSimpleFunctionCall(
+                        getPartiallyAppliedSymbol,
+                        getAccessArgumentMapping,
+                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
+                        false
+                    )
                 } else {
                     KtCompoundArrayAccessCall(
                         KtCompoundAccess.IncOrDecOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
@@ -521,10 +541,15 @@ internal class KtFirCallResolver(
                 val operationPartiallyAppliedSymbol =
                     getOperationPartiallyAppliedSymbolsForCompoundVariableAccess(fir, baseExpression) ?: return null
                 return if (resolveFragmentOfCall) {
-                    KtSimpleVariableAccessCall(variablePartiallyAppliedSymbol, KtSimpleVariableAccess.Read)
+                    KtSimpleVariableAccessCall(
+                        variablePartiallyAppliedSymbol,
+                        fir.toTypeArgumentsMapping(variablePartiallyAppliedSymbol),
+                        KtSimpleVariableAccess.Read
+                    )
                 } else {
                     KtCompoundVariableAccessCall(
                         variablePartiallyAppliedSymbol,
+                        fir.toTypeArgumentsMapping(variablePartiallyAppliedSymbol),
                         KtCompoundAccess.IncOrDecOperation(operationPartiallyAppliedSymbol, incOrDecOperationKind, incDecPrecedence),
                     )
                 }
@@ -705,6 +730,33 @@ internal class KtFirCallResolver(
     private fun FirVariableSymbol<*>.toKtSignature(): KtVariableLikeSignature<KtVariableLikeSymbol> =
         firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
+    private fun FirQualifiedAccess.toTypeArgumentsMapping(
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+    ): Map<KtTypeParameterSymbol, KtType> {
+        val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
+        if (typeParameters.isEmpty()) return emptyMap()
+        if (typeParameters.size != typeArguments.size) return emptyMap()
+
+        val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
+
+        for ((index, argument) in typeArguments.withIndex()) {
+            // After resolution all type arguments should be usual types (not FirPlaceholderProjection)
+            if (argument !is FirTypeProjectionWithVariance || argument.variance != Variance.INVARIANT) return emptyMap()
+            val argumentKtType = argument.typeRef.coneType.asKtType()
+            result[typeParameters[index]] = argumentKtType
+        }
+
+        return result
+    }
+
+    private fun FirArrayOfCall.toTypeArgumentsMapping(
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+    ): Map<KtTypeParameterSymbol, KtType> {
+        val elementType = typeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.asKtType() ?: return emptyMap()
+        val typeParameter = partiallyAppliedSymbol.symbol.typeParameters.singleOrNull() ?: return emptyMap()
+        return mapOf(typeParameter to elementType)
+    }
+
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> {
         return getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             collectCallCandidates(
@@ -867,15 +919,17 @@ internal class KtFirCallResolver(
                 ?: return run {
                     val defaultArrayOfSymbol = arrayOfSymbol(arrayOf) ?: return null
                     val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
+                    val partiallyAppliedSymbol = KtPartiallyAppliedSymbol(
+                        with(analysisSession) { defaultArrayOfSymbol.substitute(substitutor) },
+                        null,
+                        null,
+                    )
                     KtErrorCallInfo(
                         listOf(
                             KtSimpleFunctionCall(
-                                KtPartiallyAppliedSymbol(
-                                    with(analysisSession) { defaultArrayOfSymbol.substitute(substitutor) },
-                                    null,
-                                    null,
-                                ),
+                                partiallyAppliedSymbol,
                                 createArgumentMapping(defaultArrayOfSymbol, substitutor),
+                                this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
                                 false,
                             )
                         ),
@@ -887,14 +941,16 @@ internal class KtFirCallResolver(
             arrayOfSymbol(call)
         } ?: return null
         val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
+        val partiallyAppliedSymbol = KtPartiallyAppliedSymbol(
+            with(analysisSession) { arrayOfSymbol.substitute(substitutor) },
+            null,
+            null,
+        )
         return KtSuccessCallInfo(
             KtSimpleFunctionCall(
-                KtPartiallyAppliedSymbol(
-                    with(analysisSession) { arrayOfSymbol.substitute(substitutor) },
-                    null,
-                    null,
-                ),
+                partiallyAppliedSymbol,
                 createArgumentMapping(arrayOfSymbol, substitutor),
+                this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
                 false
             )
         )
@@ -934,6 +990,7 @@ internal class KtFirCallResolver(
                         LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>().apply {
                             put(rightPsi, ktSignature.valueParameters.first())
                         },
+                        emptyMap(),
                         false
                     )
                 )

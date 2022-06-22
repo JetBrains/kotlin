@@ -10,3 +10,5 @@ KtSuccessCallInfo:
         symbol = l: A
         callableIdIfNonLocal = null
     simpleAccess = Read:
+
+    typeArgumentsMapping = {}

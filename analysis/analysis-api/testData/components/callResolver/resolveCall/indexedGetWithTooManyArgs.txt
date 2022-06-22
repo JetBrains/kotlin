@@ -27,6 +27,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = /C.get
+      typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
           name = a

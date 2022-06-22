@@ -20,6 +20,7 @@ KtSuccessCallInfo:
             callableIdIfNonLocal = null
         ]
         callableIdIfNonLocal = test/Serializer.serializeFirstTarget
+    typeArgumentsMapping = {}
     argumentMapping = {
       target -> (KtVariableLikeSignature:
         name = x

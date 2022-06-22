@@ -31,3 +31,4 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = var i: kotlin.Int
         callableIdIfNonLocal = null
+    typeArgumentsMapping = {}

@@ -24,6 +24,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {
         i -> (KtVariableLikeSignature:
           name = i
@@ -56,6 +57,7 @@ KtErrorCallInfo:
               callableIdIfNonLocal = null
           ]
           callableIdIfNonLocal = null
+      typeArgumentsMapping = {}
       argumentMapping = {
         i -> (KtVariableLikeSignature:
           name = p
