@@ -5,6 +5,7 @@ KtApplicableCallCandidateInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtReceiverParameterSymbol:
           origin: SOURCE
+          owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
           type: test/Target<kotlin/String>
         type = test.Target<Stub (chain inference): TypeVariable(T)>
       extensionReceiver = null

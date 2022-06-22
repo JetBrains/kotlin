@@ -4,6 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtReceiverParameterSymbol:
           origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
           type: A
         type = A
       extensionReceiver = null

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
@@ -35,6 +36,8 @@ internal class KtFirReceiverParameterSymbol(
         firSymbol.receiverType(builder)
             ?: error("$firSymbol doesn't have an extension receiver.")
     }
+
+    override val owningCallableSymbol: KtCallableSymbol by cached { builder.callableBuilder.buildCallableSymbol(firSymbol) }
 
     override val origin: KtSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 

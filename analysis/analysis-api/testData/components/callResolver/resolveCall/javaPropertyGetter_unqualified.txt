@@ -4,6 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtReceiverParameterSymbol:
           origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/call)
           type: JavaClass
         type = JavaClass
       extensionReceiver = null
