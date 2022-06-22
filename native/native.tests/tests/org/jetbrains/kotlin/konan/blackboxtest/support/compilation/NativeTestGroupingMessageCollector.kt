@@ -51,6 +51,10 @@ internal class NativeTestGroupingMessageCollector(
         null
     }
 
+    private val partialLinkageEnabled: Boolean by lazy {
+        "-Xpartial-linkage" in compilerArgs
+    }
+
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) =
         super.report(adjustSeverity(severity, message, location), message, location)
 
@@ -66,7 +70,8 @@ internal class NativeTestGroupingMessageCollector(
             }
             isPreReleaseBinariesWarning(message)
                     || isUnsafeCompilerArgumentsWarning(message)
-                    || isLibraryIncludedMoreThanOnceWarning(message) -> {
+                    || isLibraryIncludedMoreThanOnceWarning(message)
+                    || isPartialLinkageWarning(message) -> {
                 // These warnings are known and should not be reported as errors.
                 severity
             }
@@ -105,12 +110,21 @@ internal class NativeTestGroupingMessageCollector(
         return libraryPath == pathOfCachedLibraryWithTests
     }
 
+    private fun isPartialLinkageWarning(message: String): Boolean =
+        PARTIAL_LINKAGE_WARNING_REGEXES.any { regex -> message.matches(regex) } && partialLinkageEnabled
+
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
     companion object {
         private const val PRE_RELEASE_WARNING_PREFIX = "Following manually enabled features will force generation of pre-release binaries: "
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
+
+        private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
+            Regex("Accessing declaration with unlinked symbol .+"),
+            Regex("Expression type contains unlinked symbol"),
+            Regex("\\S+ declaration \\S+ contains unlinked symbols")
+        )
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
