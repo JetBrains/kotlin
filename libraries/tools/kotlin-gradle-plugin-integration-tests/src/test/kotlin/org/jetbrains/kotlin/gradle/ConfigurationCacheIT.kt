@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.TransformKotlinGranularMetadata
@@ -82,20 +83,22 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            //testConfigurationCacheOf("assemble", checkUpToDateOnRebuild = false)
+            // testConfigurationCacheOf("build", checkUpToDateOnRebuild = false)
+
             val buildOptions = buildOptions.copy(
                 configurationCache = true,
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+                warningMode = WarningMode.All
             )
             // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
             val configCacheIncompatibleTaskTypes = listOf(
                 GenerateProjectStructureMetadata::class,
-                @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+                @Suppress("INVISIBLE_REFERENCE")
                 org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask::class,
                 TransformKotlinGranularMetadata::class
             ).map { it.java.name.replace(".", "\\.") }
 
-            build("assemble", buildOptions = buildOptions) {
+            build("build", buildOptions = buildOptions) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
                 assertOutputContains("17 problems were found storing the configuration cache, 6 of which seem unique.")
@@ -105,6 +108,10 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                             .toRegex()
                     )
                 }
+
+                // TODO: Enable `warningMode = Fail` back and remove these asserts when KGP supports Gradle 8.0
+                assertOutputContains("The TestReport.destinationDir property has been deprecated.")
+                assertOutputContains("The TestReport.reportOn(Object...) method has been deprecated.")
             }
         }
     }
