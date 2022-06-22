@@ -8,17 +8,22 @@ package org.jetbrains.kotlinx.serialization
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
+import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.fir2IrStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
+import java.io.File
 
 abstract class AbstractSerializationFirMembersTest: AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
@@ -38,6 +43,16 @@ abstract class AbstractSerializationFirMembersTest: AbstractKotlinCompilerTest()
 open class AbstractSerializationFirBlackBoxTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
+        configureForKotlinxSerialization(listOf(getSerializationCoreLibraryJar()!!)) {
+            FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
+        }
+        useCustomRuntimeClasspathProviders({ ts ->
+                                               object : RuntimeClasspathProvider(ts) {
+                                                   override fun runtimeClassPaths(module: TestModule): List<File> {
+                                                       return listOf(getSerializationCoreLibraryJar()!!)
+                                                   }
+                                               }
+                                           })
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
         }
@@ -55,9 +70,5 @@ open class AbstractSerializationFirBlackBoxTest : AbstractKotlinCompilerWithTarg
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
-
-        configureForKotlinxSerialization(listOf(getSerializationCoreLibraryJar()!!)) {
-            FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
-        }
     }
 }

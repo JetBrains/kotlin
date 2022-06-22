@@ -29,11 +29,13 @@ interface IrPluginContext : IrGeneratorContext {
     val moduleDescriptor: ModuleDescriptor
 
     @ObsoleteDescriptorBasedAPI
+    @Deprecated("", level = DeprecationLevel.ERROR)
     val bindingContext: BindingContext
 
     val symbolTable: ReferenceSymbolTable
 
     @ObsoleteDescriptorBasedAPI
+//    @Deprecated("", level = DeprecationLevel.ERROR)
     val typeTranslator: TypeTranslator
 
     val symbols: BuiltinSymbolsBase
@@ -49,10 +51,13 @@ interface IrPluginContext : IrGeneratorContext {
     fun createDiagnosticReporter(pluginId: String): IrMessageLogger
 
     // The following API is experimental
+    @Deprecated("Use classId overload instead")
     fun referenceClass(fqName: FqName): IrClassSymbol?
     fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol?
     fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol>
+    @Deprecated("Use callableId overload instead")
     fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
+    @Deprecated("Use callableId overload instead")
     fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol>
 
     // This one is experimental too

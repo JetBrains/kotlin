@@ -212,7 +212,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return f.symbol
     }
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class) // TODO: localSerializersFieldDescriptors
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
         val owner = context?.owner ?: return emptyList()
         if (owner.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return emptyList()

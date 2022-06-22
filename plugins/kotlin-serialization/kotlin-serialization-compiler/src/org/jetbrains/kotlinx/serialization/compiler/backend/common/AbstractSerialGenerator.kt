@@ -22,9 +22,12 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotat
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
 
-abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val currentDeclaration: ClassDescriptor) {
+const val K2_ERR_MESSAGE = "K2 not supported yet.\nBindingContext is null, meaning this function is used from the K2 compiler. Please report to devs so we can support this feature."
+
+abstract class AbstractSerialGenerator(val bindingContext: BindingContext?, val currentDeclaration: ClassDescriptor) {
 
     private fun getKClassListFromFileAnnotation(annotationFqName: FqName, declarationInFile: DeclarationDescriptor): List<KotlinType> {
+        if (bindingContext == null) return emptyList()// TODO
         val annotation = AnnotationsUtils
             .getContainingFileAnnotations(bindingContext, declarationInFile)
             .find { it.fqName == annotationFqName }

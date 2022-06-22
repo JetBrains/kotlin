@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
 
-// FIXME: this has to be shared (copied from plugin example)
+// FIXME KT-53096: this has to be shared (copied from plugin example)
 @OptIn(SymbolInternals::class)
 fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
