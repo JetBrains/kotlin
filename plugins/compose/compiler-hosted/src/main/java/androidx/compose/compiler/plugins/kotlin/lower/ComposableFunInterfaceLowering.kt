@@ -27,13 +27,18 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 @Suppress("PRE_RELEASE_CLASS")
 class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
     IrElementTransformerVoidWithContext(),
     ModuleLoweringPass {
 
-    override fun lower(module: IrModuleFragment) = module.transformChildrenVoid(this)
+    override fun lower(module: IrModuleFragment) {
+        if (context.platform.isJvm()) {
+            module.transformChildrenVoid(this)
+        }
+    }
 
     private fun isFunInterfaceConversion(expression: IrTypeOperatorCall): Boolean {
         val argument = expression.argument
