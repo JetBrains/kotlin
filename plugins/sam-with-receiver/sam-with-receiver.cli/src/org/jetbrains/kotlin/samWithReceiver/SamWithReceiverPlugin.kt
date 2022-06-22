@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.SUPPORTED_PRESETS
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.PRE
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.PRESET_OPTION_NAME
+import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegistrar
 
 object SamWithReceiverConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
@@ -60,6 +62,7 @@ class SamWithReceiverComponentRegistrar : ComponentRegistrar {
         if (annotations.isEmpty()) return
 
         StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(annotations))
+        FirExtensionRegistrarAdapter.registerExtension(project, FirSamWithReceiverExtensionRegistrar(annotations))
     }
 }
 

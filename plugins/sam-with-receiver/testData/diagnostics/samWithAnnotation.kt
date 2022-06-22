@@ -1,6 +1,4 @@
-// FIR_IDENTICAL
-
-// FILE: Sam.java
+// FILE: SamConstructor.kt
 @SamWithReceiver
 public interface Sam {
     String run(String a, String b);
@@ -10,7 +8,7 @@ public interface Sam {
 annotation class SamWithReceiver
 
 fun test() {
-    Sam <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!><!> ->
+    Sam <!ARGUMENT_TYPE_MISMATCH!>{ a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> ->
         System.out.println(a)
         ""
     }<!>

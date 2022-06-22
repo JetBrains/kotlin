@@ -1,6 +1,4 @@
-// FIR_IDENTICAL
-
-// FILE: Sam.java
+// FILE: SamConstructor.kt
 public interface Sam {
     void run(String a);
 }
@@ -15,5 +13,5 @@ fun test() {
     val e = Exec()
 
     e.exec { a -> System.out.println(a) }
-    e.exec { System.out.println(<!NO_THIS!>this<!>) }
+    e.exec { System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!NO_THIS!>this<!>) }
 }
