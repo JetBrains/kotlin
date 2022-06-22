@@ -46,6 +46,13 @@ object JavaClassSnapshotter {
         abiClass.fields.sortWith(compareBy({ it.name }, { it.desc }))
         abiClass.methods.sortWith(compareBy({ it.name }, { it.desc }))
 
+        // Make compatible bytecode generated with JDK 6 and JDK 8: inner classes have or link to outer class or not contain
+        // it should not affect compilation result
+        abiClass.innerClasses.forEach {
+            if (it.outerName == abiClass.name) {
+                it.outerName = null
+            }
+        }
         // Snapshot the class
         val classAbiHash = snapshotClass(abiClass)
         val classMemberLevelSnapshot = if (granularity == CLASS_MEMBER_LEVEL) {
