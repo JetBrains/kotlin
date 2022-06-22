@@ -416,13 +416,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val isBuildScriptsModule = targets.firstOrNull()?.presentableName.toString() == "Module 'intellij.platform.buildScripts' production"
-        if (isBuildScriptsModule) {
+        if(isBuildScriptsModule) {
             LOG.info("!!!>>>I'm going to build intellij.platform.buildScripts")
             LOG.info("!!!>>>Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
-        val outModuleFolder =
-            File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
-        if (outModuleFolder.exists()) {
+        val outModuleFolder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
+        if(outModuleFolder.exists()) {
             LOG.info(">>>Folder exists")
             outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
         } else {
@@ -441,9 +440,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             incrementalCaches
         )
 
-        if (isBuildScriptsModule) {
+        if(isBuildScriptsModule) {
             LOG.info("!!!>>>intellij.platform.buildScripts was built")
-            if (outModuleFolder.exists()) {
+            val outModuleFolder = File("/mnt/agent/work/kotlin-compile-inc-kt-master/build/jps-bootstrap-work/out/production/intellij.platform.buildScripts/org/jetbrains/intellij/build")
+            if(outModuleFolder.exists()) {
                 LOG.info(">>>Folder exists")
                 outModuleFolder.walkTopDown().forEach { LOG.info("===>$it") }
             } else {
