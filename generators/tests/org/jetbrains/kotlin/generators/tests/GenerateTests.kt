@@ -223,7 +223,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {
+        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverTest> {
                 model("diagnostics")
             }
