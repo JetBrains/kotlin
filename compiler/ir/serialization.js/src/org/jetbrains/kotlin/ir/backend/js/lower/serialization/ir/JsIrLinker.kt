@@ -30,7 +30,10 @@ class JsIrLinker(
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
-    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols = false),
+    override val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(
+        builtIns,
+        allowUnboundSymbols = false
+    ),
     private val stubGenerator: DeclarationStubGenerator? = null
 ) : KotlinIrLinker(
     currentModule = currentModule,

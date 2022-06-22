@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.Companion.isUnlinked
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -27,39 +28,34 @@ import org.jetbrains.kotlin.name.Name
 
 internal class UnlinkedDeclarationsProcessor(
     private val builtIns: IrBuiltIns,
-    private val unlinkedClassifiers: Set<IrClassifierSymbol>,
+    private val usedClassifierSymbols: UsedClassifierSymbols,
     private val unlinkedMarkerTypeHandler: UnlinkedMarkerTypeHandler,
     private val messageLogger: IrMessageLogger
 ) {
-
     companion object {
-        private val errorOrigin = object : IrStatementOriginImpl("LINKAGE ERROR") {}
+        private val ERROR_ORIGIN = object : IrStatementOriginImpl("LINKAGE ERROR") {}
     }
 
     fun addLinkageErrorIntoUnlinkedClasses() {
-        for (u in unlinkedClassifiers) {
-            if (u is IrClassSymbol) {
-                val klass = u.owner
-                val anonInitializer = klass.declarations.firstOrNull { it is IrAnonymousInitializer } as IrAnonymousInitializer? ?: run {
-                    builtIns.irFactory.createAnonymousInitializer(
-                        klass.startOffset,
-                        klass.endOffset,
-                        IrDeclarationOrigin.DEFINED,
-                        IrAnonymousInitializerSymbolImpl()
-                    ).also {
-                        it.body = builtIns.irFactory.createBlockBody(klass.startOffset, klass.endOffset)
-                        it.parent = klass
-                        klass.declarations.add(it)
-                    }
+        usedClassifierSymbols.forEachClassSymbolToPatch { unlinkedSymbol ->
+            val clazz = unlinkedSymbol.owner
+            clazz.reportUnlinkedSymbolsWarning("Class", clazz.fqNameForIrSerialization)
+
+            val anonInitializer = clazz.declarations.firstNotNullOfOrNull { it as? IrAnonymousInitializer }
+                ?: builtIns.irFactory.createAnonymousInitializer(
+                    clazz.startOffset,
+                    clazz.endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    IrAnonymousInitializerSymbolImpl()
+                ).also {
+                    it.body = builtIns.irFactory.createBlockBody(clazz.startOffset, clazz.endOffset)
+                    it.parent = clazz
+                    clazz.declarations.add(it)
                 }
-                anonInitializer.body.statements.clear()
+            anonInitializer.body.statements.clear()
+            anonInitializer.body.statements.add(clazz.throwLinkageError(clazz.symbol))
 
-                klass.reportUnlinkedSymbolsWarning("Class", klass.fqNameForIrSerialization)
-
-                anonInitializer.body.statements.add(klass.throwLinkageError(klass.symbol))
-
-                klass.superTypes = klass.superTypes.filter { !it.isUnlinked() }
-            }
+            clazz.superTypes = clazz.superTypes.filter { !it.isUnlinked() }
         }
     }
 
@@ -255,7 +251,7 @@ internal class UnlinkedDeclarationsProcessor(
         return false
     }
 
-    private fun IrClassifierSymbol.isUnlinked(): Boolean = !isBound || this in unlinkedClassifiers
+    private fun IrClassifierSymbol.isUnlinked(): Boolean = !isBound || usedClassifierSymbols[this].isUnlinked
 
     private fun IrType.isUnlinked(): Boolean {
         val simpleType = this as? IrSimpleType ?: return false
@@ -287,7 +283,7 @@ internal class UnlinkedDeclarationsProcessor(
     private fun IrElement.throwLinkageError(unlinkedSymbol: IrSymbol?, message: String = "Unlinked IR symbol"): IrCall {
         val messageLiteral = message + unlinkedSymbol?.signature?.render()?.let { " $it" }.orEmpty()
 
-        val irCall = IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, errorOrigin)
+        val irCall = IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, ERROR_ORIGIN)
         irCall.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messageLiteral))
         return irCall
     }
@@ -338,7 +334,7 @@ internal class UnlinkedDeclarationsProcessor(
             if (!symbol.isUnlinked() && !expression.type.isUnlinked()) return expression
 
             reportWarning(
-                "Accessing declaration contains unlinked symbol ${symbol.signature?.render() ?: ""}",
+                "Accessing declaration with unlinked symbol ${symbol.signature?.render() ?: ""}",
                 currentFile?.location(expression.startOffset)
             )
 

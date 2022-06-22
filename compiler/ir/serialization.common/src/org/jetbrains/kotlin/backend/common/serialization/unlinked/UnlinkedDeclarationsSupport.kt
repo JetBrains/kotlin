@@ -5,11 +5,22 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 interface UnlinkedDeclarationsSupport {
     val allowUnboundSymbols: Boolean
-    fun <T : Any> whenUnboundSymbolsAllowed(action: (UnlinkedMarkerTypeHandler) -> T): T?
+
+    /** For general use in IR linker. */
+    fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder)
+
+    /** For local use only in inline lazy-IR functions. */
+    fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction)
+
+    fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>)
 
     interface UnlinkedMarkerTypeHandler {
         val unlinkedMarkerType: IrType
@@ -19,7 +30,9 @@ interface UnlinkedDeclarationsSupport {
     companion object {
         val DISABLED = object : UnlinkedDeclarationsSupport {
             override val allowUnboundSymbols get() = false
-            override fun <T : Any> whenUnboundSymbolsAllowed(action: (UnlinkedMarkerTypeHandler) -> T): T? = null
+            override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
+            override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
+            override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) = Unit
         }
     }
 }

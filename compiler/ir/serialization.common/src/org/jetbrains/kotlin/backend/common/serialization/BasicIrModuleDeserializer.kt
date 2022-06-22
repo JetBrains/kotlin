@@ -97,7 +97,7 @@ abstract class BasicIrModuleDeserializer(
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex
 
-    open fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         val topLevelSignature = idSig.topLevelSignature()
         val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
 
@@ -107,9 +107,9 @@ abstract class BasicIrModuleDeserializer(
         return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
     }
 
-    final override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
-        tryDeserializeIrSymbol(idSig, symbolKind)
-            ?: error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
+    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
+        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
+    }
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
 

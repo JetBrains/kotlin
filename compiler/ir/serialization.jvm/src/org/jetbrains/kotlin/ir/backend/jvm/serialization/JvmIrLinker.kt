@@ -134,12 +134,10 @@ class JvmIrLinker(
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
-        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor {
-            return descriptorFinder.findDescriptorBySignature(idSig) ?: error("No descriptor found for $idSig")
-        }
+        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor? = descriptorFinder.findDescriptorBySignature(idSig)
 
-        override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-            val descriptor = resolveDescriptor(idSig)
+        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+            val descriptor = resolveDescriptor(idSig) ?: return null
 
             val declaration = stubGenerator.run {
                 when (symbolKind) {
@@ -155,6 +153,8 @@ class JvmIrLinker(
 
             return declaration.symbol
         }
+
+        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         override fun declareIrSymbol(symbol: IrSymbol) {
             if (symbol is IrFieldSymbol) {

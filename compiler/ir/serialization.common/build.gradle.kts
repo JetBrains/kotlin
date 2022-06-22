@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
 
     compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 }
 
 sourceSets {

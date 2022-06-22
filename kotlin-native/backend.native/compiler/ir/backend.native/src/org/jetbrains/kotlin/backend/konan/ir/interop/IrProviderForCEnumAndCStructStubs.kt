@@ -112,6 +112,7 @@ internal class IrProviderForCEnumAndCStructStubs(
                     generateIrIfNeeded(s, file)
                     s.owner
                 }
+                // TODO: better error message?
                 else -> error("Unexpected symbol kind $symbolKind for sig $idSignature")
             }
         }
