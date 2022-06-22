@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -44,7 +45,7 @@ class SerialInfoImplJvmIrGenerator(
     override val compilerContext: SerializationPluginContext
         get() = context
 
-    private val jvmNameClass get() = context.referenceClass(DescriptorUtils.JVM_NAME)!!.owner
+    private val jvmNameClass get() = context.referenceClass(ClassId.topLevel(DescriptorUtils.JVM_NAME))!!.owner
 
     private val javaLangClass = createClass(createPackage("java.lang"), "Class", ClassKind.CLASS)
     private val javaLangType = javaLangClass.starProjectedType
@@ -54,6 +55,7 @@ class SerialInfoImplJvmIrGenerator(
 
     fun getImplClass(serialInfoAnnotationClass: IrClass): IrClass =
         annotationToImpl.getOrPut(serialInfoAnnotationClass) {
+            @Suppress("DEPRECATION") // TODO
             val implClassSymbol = context.referenceClass(serialInfoAnnotationClass.kotlinFqName.child(SerialEntityNames.IMPL_NAME))
             implClassSymbol!!.owner.apply(this::generate)
         }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 open class IrPluginContextImpl constructor(
     private val module: ModuleDescriptor,
+    @Deprecated("", level = DeprecationLevel.ERROR)
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val bindingContext: BindingContext,
     override val languageVersionSettings: LanguageVersionSettings,
@@ -97,6 +98,7 @@ open class IrPluginContextImpl constructor(
         return symbols
     }
 
+    @Deprecated("Use classId overload instead")
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         assert(!fqName.isRoot)
@@ -120,10 +122,12 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
+        @Suppress("DEPRECATION")
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
 
+    @Deprecated("Use callableId overload instead")
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         assert(!fqName.isRoot)
@@ -133,6 +137,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @Deprecated("Use callableId overload instead")
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         assert(!fqName.isRoot)
@@ -143,6 +148,7 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
+        @Suppress("DEPRECATION")
         return referenceClass(classId.asSingleFqName())
     }
 
@@ -155,10 +161,12 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+        @Suppress("DEPRECATION")
         return referenceFunctions(callableId.asSingleFqName())
     }
 
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+        @Suppress("DEPRECATION")
         return referenceProperties(callableId.asSingleFqName())
     }
 

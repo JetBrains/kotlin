@@ -56,9 +56,9 @@ private class SerializerClassLowering(
     private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
 
     override fun lower(irClass: IrClass) {
-        SerializableIrGenerator.generate(irClass, context, context.bindingContext)
-        SerializerIrGenerator.generate(irClass, context, context.bindingContext, context.metadataPlugin, serialInfoJvmGenerator)
-        SerializableCompanionIrGenerator.generate(irClass, context, context.bindingContext)
+        SerializableIrGenerator.generate(irClass, context)
+        SerializerIrGenerator.generate(irClass, context, context.metadataPlugin, serialInfoJvmGenerator)
+        SerializableCompanionIrGenerator.generate(irClass, context)
 
         if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
             serialInfoJvmGenerator.generate(irClass)
