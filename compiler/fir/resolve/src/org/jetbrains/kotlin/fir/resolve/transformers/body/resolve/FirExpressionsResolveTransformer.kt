@@ -895,6 +895,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): FirStatement {
+        getClassCall.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val arg = getClassCall.argument
         val dataForLhs = if (arg is FirConstExpression<*>) {
             withExpectedType(arg.typeRef.resolvedTypeFromPrototype(arg.kind.expectedConeType(session)))

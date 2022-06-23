@@ -33,6 +33,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("annotationOnGetClassCall.kt")
+        public void testAnnotationOnGetClassCall() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnGetClassCall.kt");
+        }
+
+        @Test
         @TestMetadata("annotationUsedAsAnnotationArgument.kt")
         public void testAnnotationUsedAsAnnotationArgument() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");

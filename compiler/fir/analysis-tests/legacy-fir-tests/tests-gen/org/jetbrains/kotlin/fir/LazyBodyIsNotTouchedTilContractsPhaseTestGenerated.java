@@ -34,6 +34,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnDeclarationWithDifferentArguments.kt");
     }
 
+    @TestMetadata("annotationOnGetClassCall.kt")
+    public void testAnnotationOnGetClassCall() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotationOnGetClassCall.kt");
+    }
+
     @TestMetadata("annotationUsedAsAnnotationArgument.kt")
     public void testAnnotationUsedAsAnnotationArgument() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotationUsedAsAnnotationArgument.kt");
