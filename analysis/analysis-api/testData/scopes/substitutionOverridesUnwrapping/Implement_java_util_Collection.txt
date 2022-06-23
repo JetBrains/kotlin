@@ -16,7 +16,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/MyList.iterator
   name: iterator
-  origin: JAVA
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.toArray
@@ -31,7 +31,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/MyList.add
   name: add
-  origin: JAVA
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.remove
@@ -46,7 +46,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/MyList.addAll
   name: addAll
-  origin: JAVA
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: java/util/Collection.removeAll

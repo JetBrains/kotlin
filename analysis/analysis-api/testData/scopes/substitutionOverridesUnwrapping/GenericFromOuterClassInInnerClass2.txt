@@ -11,7 +11,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/TopLevel.Child.withOwnAndOuter
   name: withOwnAndOuter
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals

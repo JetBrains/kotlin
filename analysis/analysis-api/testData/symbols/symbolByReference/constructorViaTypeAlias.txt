@@ -5,7 +5,7 @@ KtConstructorSymbol:
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER

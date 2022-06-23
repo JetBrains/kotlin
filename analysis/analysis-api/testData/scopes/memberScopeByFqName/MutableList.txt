@@ -377,7 +377,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: contains
-  origin: LIBRARY
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
@@ -405,7 +405,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: containsAll
-  origin: LIBRARY
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
@@ -433,7 +433,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: get
-  origin: LIBRARY
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: E
   symbolKind: CLASS_MEMBER
@@ -461,7 +461,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: indexOf
-  origin: LIBRARY
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
@@ -541,7 +541,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: lastIndexOf
-  origin: LIBRARY
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER

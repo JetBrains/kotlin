@@ -128,7 +128,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: ABSTRACT
   name: fromSuper
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
   receiverType: null
   returnType: O
   symbolKind: CLASS_MEMBER
