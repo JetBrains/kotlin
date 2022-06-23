@@ -31,10 +31,10 @@ class Exception1 : Throwable()
 class Exception2 : Throwable()
 class Exception3 : Throwable()
 
-@Throws
+<!THROWS_LIST_EMPTY!>@Throws<!>
 fun foo() {}
 
-@Throws()
+<!THROWS_LIST_EMPTY!>@Throws()<!>
 fun throwsEmptyParens() {}
 
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
@@ -43,16 +43,16 @@ fun throwsUnresolved() {}
 @Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsNamedUnresolved() {}
 
-@Throws(exceptionClasses = [])
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
 fun throwsNamedEmptyLiteral() {}
 
-@Throws(exceptionClasses = arrayOf())
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = arrayOf())<!>
 fun throwsNamedEmptyArrayOf() {}
 
-@Throws(*[])
+<!THROWS_LIST_EMPTY!>@Throws(*[])<!>
 fun throwsSpreadEmptyLiteral() {}
 
-@Throws(*arrayOf())
+<!THROWS_LIST_EMPTY!>@Throws(*arrayOf())<!>
 fun throwsSpreadEmptyArrayOf() {}
 
 @Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
@@ -77,7 +77,7 @@ interface Base0 {
 }
 
 class ThrowsOnOverride : Base0 {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception1::class)<!> override fun foo() {}
 }
 
 interface Base1 {
@@ -85,11 +85,11 @@ interface Base1 {
 }
 
 class InheritsThrowsAndNoThrows : Base0, Base1 {
-    override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
 
 class OverridesThrowsAndNoThrows : Base0, Base1 {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class) override fun foo() {}<!>
 }
 
 class SameThrowsOnOverride : Base1 {
@@ -97,11 +97,11 @@ class SameThrowsOnOverride : Base1 {
 }
 
 class DifferentThrowsOnOverride : Base1 {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception2::class)<!> override fun foo() {}
 }
 
 class HasThrowsWithEmptyListOnOverride : Base1 {
-    @Throws override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws<!> override fun foo() {}
 }
 
 interface Base2 {
@@ -109,31 +109,31 @@ interface Base2 {
 }
 
 open class InheritsDifferentThrows1 : Base1, Base2 {
-    override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
 
 open class OverridesDifferentThrows1_1 : Base1, Base2 {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class) override fun foo() {}<!>
 }
 
 open class OverridesDifferentThrows1_2 : Base1, Base2 {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception2::class) override fun foo() {}<!>
 }
 
 open class OverridesDifferentThrows1_3 : Base1, Base2 {
-    @Throws(Exception1::class, Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class, Exception2::class) override fun foo() {}<!>
 }
 
 class InheritsDifferentThrowsThroughSameClass1 : InheritsDifferentThrows1() {
-    override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
 
 class OverridesDifferentThrowsThroughSameClass1 : InheritsDifferentThrows1() {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class) override fun foo() {}<!>
 }
 
 class OverridesDifferentThrowsThroughSameClass2 : InheritsDifferentThrows1() {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception2::class) override fun foo() {}<!>
 }
 
 interface Base3 {
@@ -141,15 +141,15 @@ interface Base3 {
 }
 
 class InheritsDifferentThrows2 : InheritsDifferentThrows1(), Base3 {
-    override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
 
 class OverridesDifferentThrows2 : InheritsDifferentThrows1(), Base3 {
-    @Throws(Exception3::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception3::class) override fun foo() {}<!>
 }
 
 open class OverridesDifferentThrows3 : Base1, Base2 {
-    @Throws(Exception3::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception3::class) override fun foo() {}<!>
 }
 
 class InheritsDifferentThrows3 : OverridesDifferentThrows3() {
@@ -165,7 +165,7 @@ class OverrideDifferentThrows5 : OverridesDifferentThrows3() {
 }
 
 class OverrideDifferentThrows6 : OverridesDifferentThrows3() {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception1::class)<!> override fun foo() {}
 }
 
 interface Base4 {
@@ -181,11 +181,11 @@ class OverridesSameThrows : Base1, Base4 {
 }
 
 class OverrideDifferentThrows7 : Base1, Base4 {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception2::class)<!> override fun foo() {}
 }
 
 class OverrideDifferentThrows8 : Base1, Base3 {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception2::class) override fun foo() {}<!>
 }
 
 interface Base5 {
@@ -209,7 +209,7 @@ class OverridesSameThrowsMultiple2 : Base5, Base6 {
 }
 
 class OverridesDifferentThrowsMultiple : Base5, Base6 {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception1::class)<!> override fun foo() {}
 }
 
 fun withLocalClass() {
@@ -220,11 +220,11 @@ fun withLocalClass() {
     }
 
     class InheritsDifferentThrowsLocal : Base1, Base7() {
-        override fun foo() {}
+        <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
     }
 
     class OverridesDifferentThrowsLocal : Base1, Base7() {
-        @Throws(Exception1::class, LocalException::class) override fun foo() {}
+        <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class, LocalException::class) override fun foo() {}<!>
     }
 }
 
@@ -235,24 +235,24 @@ class InheritThrowsOnFakeOverride : ThrowsOnFakeOverride {
 }
 
 class OverrideDifferentThrowsOnFakeOverride : ThrowsOnFakeOverride {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception2::class)<!> override fun foo() {}
 }
 
 interface IncompatibleThrowsOnFakeOverride : Base1, Base2
 
 class OverrideIncompatibleThrowsOnFakeOverride1 : IncompatibleThrowsOnFakeOverride {
-    @Throws(Exception1::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception1::class) override fun foo() {}<!>
 }
 
 class OverrideIncompatibleThrowsOnFakeOverride2 : IncompatibleThrowsOnFakeOverride {
-    @Throws(Exception2::class) override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>@Throws(Exception2::class) override fun foo() {}<!>
 }
 
 class InheritIncompatibleThrowsOnFakeOverride : IncompatibleThrowsOnFakeOverride {
-    override fun foo() {}
+    <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
 
-@Throws
+<!THROWS_LIST_EMPTY!>@Throws<!>
 suspend fun suspendThrowsNothing() {}
 
 interface SuspendFun {
@@ -262,7 +262,7 @@ interface SuspendFun {
 class OverrideImplicitThrowsOnSuspendWithExplicit : SuspendFun {
     // Although `SuspendFun.foo` effectively has `@Throws(CancellationException::class)`,
     // overriding it with equal explicit `@Throws` is forbidden:
-    @Throws(CancellationException::class) override suspend fun foo() {}
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(CancellationException::class)<!> override suspend fun foo() {}
 }
 
 interface SuspendFunThrows {
@@ -273,10 +273,10 @@ class InheritExplicitThrowsOnSuspend : SuspendFunThrows {
     override suspend fun foo() {}
 }
 
-@Throws(Exception1::class)
+<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(Exception1::class)<!>
 suspend fun suspendDoesNotThrowCancellationException1() {}
 
-@Throws(Exception1::class, Exception2::class)
+<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(Exception1::class, Exception2::class)<!>
 suspend fun suspendDoesNotThrowCancellationException2() {}
 
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
@@ -285,16 +285,16 @@ suspend fun suspendThrowsUnresolved() {}
 @Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
 suspend fun suspendThrowsNamedUnresolved() {}
 
-@Throws(exceptionClasses = [])
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
 suspend fun suspendThrowsNamedEmptyLiteral() {}
 
-@Throws(exceptionClasses = arrayOf())
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = arrayOf())<!>
 suspend fun suspendThrowsNamedEmptyArrayOf() {}
 
-@Throws(*[])
+<!THROWS_LIST_EMPTY!>@Throws(*[])<!>
 suspend fun suspendThrowsSpreadEmptyLiteral() {}
 
-@Throws(*arrayOf())
+<!THROWS_LIST_EMPTY!>@Throws(*arrayOf())<!>
 suspend fun suspendThrowsSpreadEmptyArrayOf() {}
 
 @Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
@@ -309,7 +309,7 @@ suspend fun suspendThrowsSpreadLiteralWithUnresolved() {}
 @Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
 suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 
-@Throws(UEAlias::class)
+<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(UEAlias::class)<!>
 suspend fun suspendThrowsTypealiasToUnresolved() {}
 
 @Throws(Exception1::class, CancellationException::class)

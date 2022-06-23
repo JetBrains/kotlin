@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.native
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
 /*
  * This file was generated automatically
@@ -16,6 +20,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 
 object FirNativeErrors {
     // All
+    val THROWS_LIST_EMPTY by error0<KtElement>()
+    val INCOMPATIBLE_THROWS_OVERRIDE by error1<KtElement, FirRegularClassSymbol>()
+    val INCOMPATIBLE_THROWS_INHERITED by error1<KtDeclaration, Collection<FirRegularClassSymbol>>()
+    val MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND by error1<KtElement, FqName>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)
