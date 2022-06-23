@@ -14,8 +14,11 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
+import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishData
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
+import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener.Companion.prepareData
+import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService.Companion.getStartParameters
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -29,12 +32,15 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     var executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
+    val startTime = System.nanoTime()
+
     interface Parameters : BuildServiceParameters {
         var label: String?
         var uuid: String
         var projectName: String
         var httpSettings: HttpReportSettings
         var kotlinVersion: String
+        var startParameters: GradleBuildStartParameters
     }
 
     private val log = Logging.getLogger(this.javaClass)
@@ -51,6 +57,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     }
 
     override fun close() {
+        executorService.submit { reportBuildFinish() }
         executorService.shutdown()
     }
 
@@ -70,6 +77,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                     it.parameters.uuid = UUID.randomUUID().toString()
                     it.parameters.httpSettings = httpSettings
                     it.parameters.kotlinVersion = kotlinVersion
+                    it.parameters.startParameters = getStartParameters(project)
                 }!!
             }
 
@@ -77,7 +85,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     }
 
-    fun report(data: CompileStatisticsData) {
+    fun report(data: Any) {
         val elapsedTime = measureTimeMillis {
             if (invalidUrl) {
                 return
@@ -113,6 +121,16 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
             }
         }
         log.debug("Report statistic by http takes $elapsedTime ms")
+    }
+
+    private fun reportBuildFinish() {
+        val buildFinishData = BuildFinishData(
+            startParameters = parameters.startParameters,
+            buildUuid = parameters.uuid,
+            label = parameters.label,
+            totalTime = (System.nanoTime() - startTime) / 1_000_000
+        )
+        report(buildFinishData)
     }
 
     private fun checkResponseAndLog(connection: HttpURLConnection) {

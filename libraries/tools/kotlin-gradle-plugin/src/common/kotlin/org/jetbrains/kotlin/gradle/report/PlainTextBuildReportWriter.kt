@@ -74,7 +74,13 @@ internal class PlainTextBuildReportWriter(
 
     private fun printBuildInfo(build: BuildExecutionData) {
         p.withIndent("Gradle start parameters:") {
-            build.startParameters.forEach { p.println(it) }
+            build.startParameters.let {
+                p.println("tasks = ${it.tasks}")
+                p.println("excluded tasks = ${it.excludedTasks}")
+                p.println("current dir = ${it.currentDir}")
+                p.println("project properties args = ${it.projectProperties}")
+                p.println(" system properties args = ${it.systemProperties}")
+            }
         }
         p.println()
 

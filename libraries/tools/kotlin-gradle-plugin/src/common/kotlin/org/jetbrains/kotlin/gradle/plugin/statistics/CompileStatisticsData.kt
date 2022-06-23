@@ -46,4 +46,22 @@ enum class StatTag {
     KOTLIN_DEBUG
 }
 
+//Sensitive data. This object is used directly for statistic via http
+data class GradleBuildStartParameters(
+    val tasks: List<String>,
+    val excludedTasks: Set<String>,
+    val currentDir: String,
+    val projectProperties: List<String>,
+    val systemProperties: List<String>,
+) : java.io.Serializable
+
+//Sensitive data. This object is used directly for statistic via http
+data class BuildFinishData(
+    val startParameters: GradleBuildStartParameters,
+    val buildUuid: String = "Unset",
+    val label: String?,
+    val totalTime: Long,
+)
+
+
 

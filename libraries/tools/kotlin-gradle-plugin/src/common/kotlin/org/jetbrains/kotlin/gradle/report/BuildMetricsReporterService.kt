@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
@@ -31,7 +32,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
     interface Parameters : BuildServiceParameters {
         var buildDataProcessors: List<BuildExecutionDataProcessor>
-        var startParameters: List<String>
+        var startParameters: GradleBuildStartParameters
         var reportingSettings: ReportingSettings
     }
 
@@ -113,13 +114,13 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
     companion object {
 
         fun getStartParameters(project: Project) = project.gradle.startParameter.let {
-            val startParameters = arrayListOf<String>()
-            startParameters.add("tasks = ${it.taskRequests.joinToString { task -> task.args.toString() }}")
-            startParameters.add("excluded tasks = ${it.excludedTaskNames}")
-            startParameters.add("current dir = ${it.currentDir}")
-            startParameters.add("project properties args = ${it.projectProperties}")
-            startParameters.add("system properties args = ${it.systemPropertiesArgs}")
-            startParameters
+            GradleBuildStartParameters(
+                tasks = it.taskRequests.map { it.args.toString() },
+                excludedTasks = it.excludedTaskNames,
+                currentDir = it.currentDir.path,
+                projectProperties = it.projectProperties.map {(key, value) -> "$key: $value"},
+                systemProperties = it.systemPropertiesArgs.map {(key, value) -> "$key: $value"},
+            )
         }
 
         fun registerIfAbsent(project: Project): Provider<BuildMetricsReporterService>? {

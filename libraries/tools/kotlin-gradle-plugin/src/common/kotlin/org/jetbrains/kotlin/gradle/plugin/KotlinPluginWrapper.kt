@@ -93,6 +93,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         BuildMetricsReporterService.registerIfAbsent(project)?.also {
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
         }
+
         HttpReportService.registerIfAbsent(project, kotlinPluginVersion)?.also {
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
         }
