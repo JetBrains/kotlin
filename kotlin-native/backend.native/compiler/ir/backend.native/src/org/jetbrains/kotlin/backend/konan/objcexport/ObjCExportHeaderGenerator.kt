@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -235,8 +237,9 @@ internal class ObjCExportTranslatorImpl(
         val name = translateClassOrInterfaceName(descriptor)
         val members: List<Stub<*>> = buildMembers { translateInterfaceMembers(descriptor) }
         val superProtocols: List<String> = descriptor.superProtocols
+        val comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
 
-        return objCProtocol(name, descriptor, superProtocols, members)
+        return objCProtocol(name, descriptor, superProtocols, members, comment = comment)
     }
 
     private val ClassDescriptor.superProtocols: List<String>
@@ -424,7 +427,8 @@ internal class ObjCExportTranslatorImpl(
                 superClassGenerics = superClassGenerics,
                 superProtocols = superProtocols,
                 members = members,
-                attributes = attributes
+                attributes = attributes,
+                comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
         )
     }
 
@@ -610,7 +614,8 @@ internal class ObjCExportTranslatorImpl(
         val declarationAttributes = mutableListOf(swiftNameAttribute(name))
         declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
-        return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes)
+        val commentOrNull = objCCommentOrNull(mustBeDocumentedAttributeList(property.annotations))
+        return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes, commentOrNull)
     }
 
     internal fun buildMethod(
@@ -712,7 +717,7 @@ internal class ObjCExportTranslatorImpl(
             attributes.addIfNotNull(getDeprecationAttribute(method))
         }
 
-        val comment = buildComment(method, baseMethodBridge)
+        val comment = buildComment(method, baseMethodBridge, parameters)
 
         return ObjCMethod(method, isInstanceMethod, returnType, selectorParts, parameters, attributes, comment)
     }
@@ -739,16 +744,16 @@ internal class ObjCExportTranslatorImpl(
         }
     }
 
-    private fun buildComment(method: FunctionDescriptor, bridge: MethodBridge): ObjCComment? {
-        if (method.isSuspend || bridge.returnsError) {
+    private fun buildComment(method: FunctionDescriptor, bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
+        val throwsComments = if (method.isSuspend || bridge.returnsError) {
             val effectiveThrows = getEffectiveThrows(method).toSet()
-            return when {
+            when {
                 effectiveThrows.contains(throwableClassId) -> {
-                    ObjCComment("@note This method converts all Kotlin exceptions to errors.")
+                    listOf("@note This method converts all Kotlin exceptions to errors.")
                 }
 
                 effectiveThrows.isNotEmpty() -> {
-                    ObjCComment(
+                    listOf(
                             buildString {
                                 append("@note This method converts instances of ")
                                 effectiveThrows.joinTo(this) { it.relativeClassName.asString() }
@@ -760,12 +765,60 @@ internal class ObjCExportTranslatorImpl(
 
                 else -> {
                     // Shouldn't happen though.
-                    ObjCComment("@warning All uncaught Kotlin exceptions are fatal.")
+                    listOf("@warning All uncaught Kotlin exceptions are fatal.")
                 }
             }
-        }
+        } else emptyList()
 
-        return null
+        val visibilityComments = when (method.visibility) {
+            DescriptorVisibilities.PROTECTED -> listOf("@note This method has protected visibility in Kotlin source and is intended only for use by subclasses.")
+            else -> emptyList()
+        }
+        val paramComments = parameters.flatMap { parameter ->
+            parameter.descriptor?.let { mustBeDocumentedParamAttributeList(parameter, descriptor = it) } ?: emptyList()
+        }
+        val annotationsComments = mustBeDocumentedAttributeList(method.annotations)
+        return objCCommentOrNull(annotationsComments + paramComments + throwsComments + visibilityComments)
+    }
+
+    private fun mustBeDocumentedParamAttributeList(parameter: ObjCParameter, descriptor: ParameterDescriptor): List<String> {
+        val mbdAnnotations = mustBeDocumentedAnnotations(descriptor.annotations).joinToString(" ")
+        return if (mbdAnnotations.isNotEmpty()) listOf("@param ${parameter.name} annotations $mbdAnnotations") else emptyList()
+    }
+
+    private fun mustBeDocumentedAttributeList(annotations: Annotations): List<String> {
+        val mustBeDocumentedAnnotations = mustBeDocumentedAnnotations(annotations)
+        return if (mustBeDocumentedAnnotations.isNotEmpty()) {
+            listOf("@note annotations") + mustBeDocumentedAnnotations.map { "  $it" }
+        } else emptyList()
+    }
+
+    private fun objCCommentOrNull(commentLines: List<String>): ObjCComment? {
+        return if (commentLines.isNotEmpty()) ObjCComment(commentLines) else null
+    }
+
+    private fun renderAnnotation(descriptor: AnnotationDescriptor, clazz: ClassDescriptor): String {
+        return buildString {
+            append(clazz.fqNameSafe)
+            if (descriptor.allValueArguments.isNotEmpty()) {
+                append('(')
+                descriptor.allValueArguments.entries.joinTo(this)
+                append(')')
+            }
+        }
+    }
+
+    private val mustBeDocumentedAnnotationsStopList = setOf(StandardNames.FqNames.deprecated)
+    private fun mustBeDocumentedAnnotations(annotations: Annotations): List<String> {
+        return annotations.mapNotNull { it ->
+            it.annotationClass?.let { annotationClass ->
+                if (!mustBeDocumentedAnnotationsStopList.contains(annotationClass.fqNameSafe) && annotationClass.annotations.any { metaAnnotation ->
+                            metaAnnotation.fqName == StandardNames.FqNames.mustBeDocumented
+                        })
+                    renderAnnotation(it, annotationClass)
+                else null
+            }
+        }
     }
 
     private val throwableClassId = ClassId.topLevel(StandardNames.FqNames.throwable)
@@ -1279,7 +1332,8 @@ private fun objCInterface(
         superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
         superProtocols: List<String> = emptyList(),
         members: List<Stub<*>> = emptyList(),
-        attributes: List<String> = emptyList()
+        attributes: List<String> = emptyList(),
+        comment: ObjCComment? = null
 ): ObjCInterface = ObjCInterfaceImpl(
         name.objCName,
         generics,
@@ -1289,7 +1343,8 @@ private fun objCInterface(
         superProtocols,
         null,
         members,
-        attributes + name.toNameAttributes()
+        attributes + name.toNameAttributes(),
+        comment
 )
 
 private fun objCProtocol(
@@ -1297,13 +1352,15 @@ private fun objCProtocol(
         descriptor: ClassDescriptor,
         superProtocols: List<String>,
         members: List<Stub<*>>,
-        attributes: List<String> = emptyList()
+        attributes: List<String> = emptyList(),
+        comment: ObjCComment? = null
 ): ObjCProtocol = ObjCProtocolImpl(
         name.objCName,
         descriptor,
         superProtocols,
         members,
-        attributes + name.toNameAttributes()
+        attributes + name.toNameAttributes(),
+        comment
 )
 
 internal fun ObjCExportNamer.ClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(

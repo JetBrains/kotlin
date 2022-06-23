@@ -13,33 +13,53 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.findKDocString
 
 object StubRenderer {
     fun render(stub: Stub<*>): List<String> = render(stub, false)
+
+    private fun findPositionToInsertGeneratedCommentLine(kDoc: List<String>, generatedCommentLine: String): Int {
+        val generatedWords = generatedCommentLine.trim().split(" ").map { it.trim() }
+        if (generatedWords.size >= 2 && generatedWords[0] == "@param") {
+            for (i in kDoc.indices.reversed()) {
+                val kDocLineWords = kDoc[i].trim().split(" ").map { it.trim() }.filter { it.isNotEmpty() }.filterNot { it == "*" }
+                if (kDocLineWords.size >= 2 && kDocLineWords[0] == generatedWords[0] && kDocLineWords[1] == generatedWords[1]) {
+                    return i + 1  // position after last `@param` kDoc line, describing same parameter as in generatedCommentLine
+                }
+            }
+        }
+        return kDoc.size
+    }
+
     internal fun render(stub: Stub<*>, shouldExportKDoc: Boolean): List<String> = collect {
         stub.run {
+            val (kDocEnding, commentBlockEnding) = if (comment?.contentLines == null) {
+                Pair("*/", null)  // Close kDoc with `*/`, and print nothing after empty comment
+            } else {
+                Pair("", "*/")  // Don't terminate kDoc, though close comment block with `*/`
+            }
             val kDoc = if (shouldExportKDoc) {
                 descriptor?.extractKDocString()?.let {
-                    if (it.isNotEmpty()) {  // sometimes `findDoc` return empty string; is it a bug?
+                    if (it.startsWith("/**") && it.endsWith("*/")) {
                         // Nested comment is allowed inside of preformatted ``` block in kdoc but not in ObjC
-                        val kdocClean =
-                                if (it.startsWith("/**") && it.endsWith("*/"))
-                                    "/**${it.substring(3, it.length - 2).replace("*/", "**").replace("/*", "**")}*/"
+                        val kdocClean = "/**${it.substring(3, it.length - 2).replace("*/", "**").replace("/*", "**")}$kDocEnding"
+                        kdocClean.lines().map { it.trim().let {
+                                if (it.isNotEmpty() && it[0] == '*') " $it"
                                 else it
-                        +"" // Probably makes the output more readable.
-                        kdocClean.lines().forEach { it.trim().let {
-                                if (it.isNotEmpty() && it[0] == '*') +" $it"
-                                else +"$it"
                             }
                         }
                     } else null
                 }
             } else null
 
-            comment?.let { comment ->
-                kDoc ?: let { +"" } // Probably makes the output more readable.
-                +"/**"
-                comment.contentLines.forEach {
-                    +" $it"
+            val kDocAndComment = kDoc?.filterNot { it.isEmpty() }.orEmpty().toMutableList()
+            comment?.contentLines?.let { commentLine ->
+                if (!kDoc.isNullOrEmpty()) kDocAndComment.add(" *")  // Separator between nonempty kDoc and nonempty comment
+                commentLine.forEach { kDocAndComment.add(findPositionToInsertGeneratedCommentLine(kDocAndComment, it), " * $it")}
+            }
+            if (kDocAndComment.isNotEmpty()) {
+                +"" // Probably makes the output more readable.
+                if (kDoc.isNullOrEmpty()) +"/**"  // Start comment block, in case kDoc was empty
+                kDocAndComment.forEach {
+                    +it
                 }
-                +"*/"
+                commentBlockEnding?.let { +it }
             }
 
             when (this) {
