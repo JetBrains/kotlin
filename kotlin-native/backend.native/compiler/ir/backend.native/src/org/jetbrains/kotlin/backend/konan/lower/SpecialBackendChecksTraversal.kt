@@ -584,11 +584,11 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
     }
 
     override fun visitClass(declaration: IrClass) {
-        super.visitClass(declaration)
-
         if (declaration.isKotlinObjCClass()) {
             checkKotlinObjCClass(declaration)
         }
+        super.visitClass(declaration)
+
     }
 }
 
