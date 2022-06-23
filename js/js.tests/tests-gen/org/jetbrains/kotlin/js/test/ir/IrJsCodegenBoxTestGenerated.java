@@ -9757,6 +9757,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testSafeCallElvis() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/safeCallElvis.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Cleanup {
+                @Test
+                public void testAllFilesPresentInCleanup() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+            }
         }
     }
 

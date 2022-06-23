@@ -10539,6 +10539,59 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testSafeCallElvis() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/varSpilling/safeCallElvis.kt");
             }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Cleanup extends AbstractLightAnalysisModeTest {
+                @TestMetadata("backEdge.kt")
+                public void ignoreBackEdge() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/backEdge.kt");
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCleanup() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("if.kt")
+                public void testIf() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/if.kt");
+                }
+
+                @TestMetadata("nullCleanup.kt")
+                public void testNullCleanup() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/nullCleanup.kt");
+                }
+
+                @TestMetadata("nullNotSpill.kt")
+                public void testNullNotSpill() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/nullNotSpill.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/simple.kt");
+                }
+
+                @TestMetadata("twoRefs.kt")
+                public void testTwoRefs() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/twoRefs.kt");
+                }
+
+                @TestMetadata("unusedParamNotSpill.kt")
+                public void testUnusedParamNotSpill() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/unusedParamNotSpill.kt");
+                }
+
+                @TestMetadata("when.kt")
+                public void testWhen() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/when.kt");
+                }
+            }
         }
     }
 
