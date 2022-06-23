@@ -29311,6 +29311,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmName/renamedFileClass.kt");
         }
 
+        @Test
+        @TestMetadata("specialBridges.kt")
+        public void testSpecialBridges() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/specialBridges.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
         @TestDataPath("$PROJECT_ROOT")

@@ -34638,6 +34638,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("jvmNameOnSpecialBridges.kt")
+                public void testJvmNameOnSpecialBridges() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmNameOnSpecialBridges.kt");
+                }
+
+                @Test
                 @TestMetadata("multifileClassPart.kt")
                 public void testMultifileClassPart() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPart.kt");

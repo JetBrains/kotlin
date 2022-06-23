@@ -1,0 +1,72 @@
+package
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun toInt(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface J : I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toInt(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KotlinNumber : kotlin.Number {
+    public constructor KotlinNumber()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmName(name = "wrongName") public open override /*1*/ fun toByte(): kotlin.Byte
+    public abstract override /*1*/ /*fake_override*/ fun toChar(): kotlin.Char
+    public abstract override /*1*/ /*fake_override*/ fun toDouble(): kotlin.Double
+    public abstract override /*1*/ /*fake_override*/ fun toFloat(): kotlin.Float
+    @kotlin.jvm.JvmName(name = "intValue") public open override /*1*/ fun toInt(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toLong(): kotlin.Long
+    public abstract override /*1*/ /*fake_override*/ fun toShort(): kotlin.Short
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KotlinNumberDirectError : kotlin.Number, I {
+    public constructor KotlinNumberDirectError()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toByte(): kotlin.Byte
+    public abstract override /*1*/ /*fake_override*/ fun toChar(): kotlin.Char
+    public abstract override /*1*/ /*fake_override*/ fun toDouble(): kotlin.Double
+    public abstract override /*1*/ /*fake_override*/ fun toFloat(): kotlin.Float
+    @kotlin.jvm.JvmName(name = "intValue") public open override /*2*/ fun toInt(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toLong(): kotlin.Long
+    public abstract override /*1*/ /*fake_override*/ fun toShort(): kotlin.Short
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KotlinNumberIndirectError : kotlin.Number, J {
+    public constructor KotlinNumberIndirectError()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toByte(): kotlin.Byte
+    public abstract override /*1*/ /*fake_override*/ fun toChar(): kotlin.Char
+    public abstract override /*1*/ /*fake_override*/ fun toDouble(): kotlin.Double
+    public abstract override /*1*/ /*fake_override*/ fun toFloat(): kotlin.Float
+    @kotlin.jvm.JvmName(name = "intValue") public open override /*2*/ fun toInt(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toLong(): kotlin.Long
+    public abstract override /*1*/ /*fake_override*/ fun toShort(): kotlin.Short
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KotlinNumberSpecialBridge : kotlin.Number, J {
+    public constructor KotlinNumberSpecialBridge()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun toByte(): kotlin.Byte
+    public abstract override /*1*/ /*fake_override*/ fun toChar(): kotlin.Char
+    public abstract override /*1*/ /*fake_override*/ fun toDouble(): kotlin.Double
+    public abstract override /*1*/ /*fake_override*/ fun toFloat(): kotlin.Float
+    public abstract override /*2*/ /*fake_override*/ fun toInt(): kotlin.Int
+    @kotlin.jvm.JvmName(name = "longValue") public open override /*1*/ fun toLong(): kotlin.Long
+    public abstract override /*1*/ /*fake_override*/ fun toShort(): kotlin.Short
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

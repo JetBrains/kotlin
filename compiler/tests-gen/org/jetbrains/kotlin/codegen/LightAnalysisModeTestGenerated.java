@@ -24834,6 +24834,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmName/renamedFileClass.kt");
         }
 
+        @TestMetadata("specialBridges.kt")
+        public void testSpecialBridges() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/specialBridges.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

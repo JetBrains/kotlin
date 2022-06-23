@@ -25,6 +25,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.ClassicBuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -34,6 +38,7 @@ import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -153,12 +158,45 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         }
 
         if (descriptor is CallableMemberDescriptor) {
-            if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
+            if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
-                diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+            } else if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
+                // For Java methods that are renamed in Kotlin we allow the JvmName annotation to map
+                // the Kotlin declaration to the Java name. Otherwise, it is an error to use JvmName
+                // on open declarations.
+                if (value == null || !checkJvmNameOnSpecialBuiltins(descriptor, value)) {
+                    diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+                }
             }
         }
+    }
+
+    private fun checkJvmNameOnSpecialBuiltins(callableMemberDescriptor: CallableMemberDescriptor, name: String): Boolean {
+        if (callableMemberDescriptor is PropertyAccessorDescriptor) {
+            if (callableMemberDescriptor.correspondingProperty.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES)
+                return false
+            if (BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName(Name.identifier(name)).isEmpty())
+                return false
+        } else {
+            if (callableMemberDescriptor.name !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES)
+                return false
+            if (Name.identifier(name) !in SpecialGenericSignatures.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP.keys)
+                return false
+        }
+
+        return callableMemberDescriptor.firstOverridden { overridden ->
+            val jvmName = DescriptorUtils.getJvmName(overridden)
+            if (jvmName != null) {
+                jvmName != name
+            } else {
+                val specialBuiltinName = when (overridden) {
+                    is PropertyDescriptor -> overridden.getBuiltinSpecialPropertyGetterName()
+                    is SimpleFunctionDescriptor -> BuiltinMethodsWithDifferentJvmName.getJvmName(overridden)?.asString()
+                    else -> null
+                }
+                specialBuiltinName == null || specialBuiltinName != name
+            }
+        } == null
     }
 
     private fun isRenamableFunction(descriptor: FunctionDescriptor): Boolean {

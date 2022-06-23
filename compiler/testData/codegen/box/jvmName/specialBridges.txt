@@ -1,0 +1,106 @@
+@kotlin.Metadata
+public final class TestKt {
+    // source: 'test.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public class lib/JvmCharSequence {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public @kotlin.jvm.JvmName(name="charAt") method charAt(p0: int): char
+    public @kotlin.jvm.JvmName(name="length") method length(): int
+    public @org.jetbrains.annotations.NotNull method subSequence(p0: int, p1: int): java.lang.CharSequence
+}
+
+@kotlin.Metadata
+public class lib/JvmCollection {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public method add(p0: java.lang.Object): boolean
+    public method addAll(p0: java.util.Collection): boolean
+    public method clear(): void
+    public method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public @kotlin.jvm.JvmName(name="size") method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+}
+
+@kotlin.Metadata
+public class lib/JvmMap {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public method clear(): void
+    public method containsKey(p0: java.lang.Object): boolean
+    public method containsValue(p0: java.lang.Object): boolean
+    public @kotlin.jvm.JvmName(name="entrySet") @org.jetbrains.annotations.NotNull method entrySet(): java.util.Set
+    public @org.jetbrains.annotations.Nullable method get(p0: java.lang.Object): java.lang.Object
+    public method isEmpty(): boolean
+    public @kotlin.jvm.JvmName(name="keySet") @org.jetbrains.annotations.NotNull method keySet(): java.util.Set
+    public method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public method putAll(p0: java.util.Map): void
+    public method remove(p0: java.lang.Object): java.lang.Object
+    public @kotlin.jvm.JvmName(name="size") method size(): int
+    public @kotlin.jvm.JvmName(name="values") @org.jetbrains.annotations.NotNull method values(): java.util.Collection
+}
+
+@kotlin.Metadata
+public class lib/JvmNumber {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public @kotlin.jvm.JvmName(name="byteValue") method byteValue(): byte
+    public @kotlin.jvm.JvmName(name="doubleValue") method doubleValue(): double
+    public @kotlin.jvm.JvmName(name="floatValue") method floatValue(): float
+    public @kotlin.jvm.JvmName(name="intValue") method intValue(): int
+    public @kotlin.jvm.JvmName(name="longValue") method longValue(): long
+    public @kotlin.jvm.JvmName(name="shortValue") method shortValue(): short
+    public method toChar(): char
+}
+
+@kotlin.Metadata
+public final class lib/KotlinCharSequence {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public bridge final method charAt(p0: int): char
+    public method get(p0: int): char
+    public method getLength(): int
+    public bridge final method length(): int
+}
+
+@kotlin.Metadata
+public final class lib/KotlinCollection {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method contains(p0: java.lang.String): boolean
+    public method getSize(): int
+    public bridge final method size(): int
+}
+
+@kotlin.Metadata
+public final class lib/KotlinMap {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public bridge final method entrySet(): java.util.Set
+    public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
+    public @org.jetbrains.annotations.NotNull method getKeys(): java.util.Set
+    public method getSize(): int
+    public @org.jetbrains.annotations.NotNull method getValues(): java.util.Collection
+    public bridge final method keySet(): java.util.Set
+    public bridge final method size(): int
+    public bridge final method values(): java.util.Collection
+}
+
+@kotlin.Metadata
+public final class lib/KotlinNumber {
+    // source: 'lib.kt'
+    public method <init>(): void
+    public bridge final method intValue(): int
+    public method toInt(): int
+}
