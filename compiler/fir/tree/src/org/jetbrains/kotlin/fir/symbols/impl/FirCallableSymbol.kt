@@ -37,6 +37,10 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             return fir.status as FirResolvedDeclarationStatus
         }
 
+    val rawStatus: FirDeclarationStatus
+        get() = fir.status
+
+
     val typeParameterSymbols: List<FirTypeParameterSymbol>
         get() {
             return fir.typeParameters.map { it.symbol }
