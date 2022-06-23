@@ -34,7 +34,7 @@ internal class LLFirProvider(
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     private val providerHelper = LLFirProviderHelper(
-        moduleComponents.cache,
+        session,
         moduleComponents.firFileBuilder,
         declarationProvider,
         packageProvider,

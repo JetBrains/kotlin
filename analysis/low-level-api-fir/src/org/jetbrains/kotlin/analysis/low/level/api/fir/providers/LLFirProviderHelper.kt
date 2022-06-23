@@ -6,69 +6,68 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.google.common.collect.Sets
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeOrReturnDefaultValueOnPCE
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
 
 internal class LLFirProviderHelper(
-    private val cache: ModuleFileCache,
+    firSession: FirSession,
     private val firFileBuilder: LLFirFileBuilder,
     private val declarationProvider: KotlinDeclarationProvider,
     private val packageProvider: KotlinPackageProvider,
 ) {
-    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
-        if (classId.isLocal) return null
-        return executeOrReturnDefaultValueOnPCE(null) {
-            cache.classifierByClassId.computeIfAbsent(classId) {
-                val ktClass = declarationProvider.getClassLikeDeclarationByClassId(classId)
-                    ?: return@computeIfAbsent Optional.empty()
-                if (ktClass.getClassId() == null) return@computeIfAbsent Optional.empty()
-                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-                val classifier = FirElementFinder.findElementIn<FirClassLikeDeclaration>(
-                    firFile,
-                    canGoInside = { it is FirRegularClass },
-                    predicate = { it.symbol.classId == classId },
-                )
-                    ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
-                Optional.of(classifier)
-            }.getOrNull()
-        }
+    private val classifierByClassId = firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?> { classId ->
+        val ktClass = declarationProvider.getClassLikeDeclarationByClassId(classId)
+            ?: return@createCache null
+        if (ktClass.getClassId() == null) return@createCache null
+        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
+        FirElementFinder.findElementIn<FirClassLikeDeclaration>(
+            firFile,
+            canGoInside = { it is FirRegularClass },
+            predicate = { it.symbol.classId == classId },
+        )
+            ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
     }
 
 
-    fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        val callableId = CallableId(packageFqName, name)
-        return executeOrReturnDefaultValueOnPCE(emptyList()) {
-            cache.callableByCallableId.computeIfAbsent(callableId) {
-                val files = Sets.newIdentityHashSet<KtFile>().apply {
-                    declarationProvider.getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
-                    declarationProvider.getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
-                }
-                @OptIn(ExperimentalStdlibApi::class)
-                buildList {
-                    files.forEach { ktFile ->
-                        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                        firFile.collectCallableDeclarationsTo(this, name)
-                    }
-                }
+    private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
+        val files = Sets.newIdentityHashSet<KtFile>().apply {
+            declarationProvider.getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
+            declarationProvider.getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
+        }
+        buildList {
+            files.forEach { ktFile ->
+                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                firFile.collectCallableDeclarationsTo(this, callableId.callableName)
             }
         }
+    }
+
+    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
+        if (classId.isLocal) return null
+        return classifierByClassId.getValue(classId)
+    }
+
+    fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        val callableId = CallableId(packageFqName, name)
+        return callablesByCallableId.getValue(callableId)
     }
 
     fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
