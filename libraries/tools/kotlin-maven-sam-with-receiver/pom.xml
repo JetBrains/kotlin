@@ -6,8 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.5</maven.version>
-        <sam.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver-cli/src</sam.src>
-        <sam.resources>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver-cli/resources</sam.resources>
+        <sam.common.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.common/src</sam.common.src>
+        <sam.k1.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k1/src</sam.k1.src>
+        <sam.k2.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k2/src</sam.k2.src>
+        <sam.backend.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.backend/src</sam.backend.src>
+        <sam.cli.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.cli/src</sam.cli.src>
+        <sam.resources>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.cli/resources</sam.resources>
         <sam.maven.plugin.src>${basedir}/src/main/kotlin</sam.maven.plugin.src>
     </properties>
 
@@ -52,7 +56,11 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${sam.src}</source>
+                                <source>${sam.common.src}</source>
+                                <source>${sam.k1.src}</source>
+                                <source>${sam.k2.src}</source>
+                                <source>${sam.backend.src}</source>
+                                <source>${sam.cli.src}</source>
                                 <source>${sam.maven.plugin.src}</source>
                             </sources>
                         </configuration>
