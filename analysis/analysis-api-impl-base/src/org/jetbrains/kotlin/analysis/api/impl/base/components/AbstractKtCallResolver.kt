@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import org.jetbrains.kotlin.analysis.api.calls.KtCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KtExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
-import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
