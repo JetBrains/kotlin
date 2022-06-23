@@ -6,7 +6,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithInterfaceWithFun.withOuterGeneric_InterfaceWithFun
   name: withOuterGeneric_InterfaceWithFun
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/InterfaceWithFunBase.noGenerics_InterfaceWithFunBase
@@ -16,12 +16,12 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/InterfaceWithFun.withOuterGenericT1_InterfaceWithFunBase
   name: withOuterGenericT1_InterfaceWithFunBase
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithInterfaceWithFun.withOuterGenericT2_InterfaceWithFunBase
   name: withOuterGenericT2_InterfaceWithFunBase
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals

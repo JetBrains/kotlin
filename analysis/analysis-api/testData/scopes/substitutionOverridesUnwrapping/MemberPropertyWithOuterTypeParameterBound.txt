@@ -6,7 +6,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   callableIdIfNonLocal: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
   name: withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals

@@ -6,7 +6,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGeneric
   name: withOuterGeneric
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: test/Base.withOwnGeneric
@@ -16,7 +16,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGeneric
   name: withOuterAndOwnGeneric
-  origin: SOURCE
+  origin: SUBSTITUTION_OVERRIDE
 
 KtFunctionSymbol:
   callableIdIfNonLocal: kotlin/Any.equals
