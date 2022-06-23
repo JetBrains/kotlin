@@ -30,6 +30,9 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
             return fir.deprecation
         }
 
+    val rawStatus: FirDeclarationStatus
+        get() = fir.status
+
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 
