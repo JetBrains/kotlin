@@ -31,28 +31,28 @@ class CacheVersionManager(
 
     override fun loadActual(): CacheVersion? =
         if (Files.notExists(versionFile)) {
-            LOG.info(">>>! $versionFile does not exist -> null")
+            LOG.info(">>>! [$versionFile] does not exist -> null")
             null
         }
         else try {
             val cacheVersion = CacheVersion(Files.readAllBytes(versionFile).decodeToString().toInt())
-            LOG.info(">>>ok: $cacheVersion")
+            LOG.info(">>>ok: [$versionFile] $cacheVersion")
             cacheVersion
         } catch (e: NumberFormatException) {
-            LOG.info(">>>e: $e -> null")
+            LOG.info(">>>e: [$versionFile] $e -> null")
             null
         } catch (e: IOException) {
-            LOG.info(">>>e: $e -> null")
+            LOG.info(">>>e: [$versionFile] $e -> null")
             null
         }
 
     override fun writeVersion(values: CacheVersion?) {
-        LOG.info(">>>write ${values.toString()}")
+        LOG.info(">>>write [$versionFile] ${values.toString()}")
         if (values == null) Files.deleteIfExists(versionFile)
         else {
             Files.createDirectories(versionFile.parent)
             Files.write(versionFile, values.intValue.toString().toByteArray())
-            LOG.info(">>>wrote ${Files.readAllBytes(versionFile).decodeToString().toInt()}")
+            LOG.info(">>>wrote [$versionFile] ${Files.readAllBytes(versionFile).decodeToString().toInt()}")
         }
     }
 
