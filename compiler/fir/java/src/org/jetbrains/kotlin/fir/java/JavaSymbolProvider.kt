@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -44,11 +43,7 @@ class JavaSymbolProvider(
         javaFacade.getPackage(fqName)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        try {
-            if (javaFacade.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
-        } catch (e: ProcessCanceledException) {
-            null
-        }
+        if (javaFacade.hasTopLevelClassOf(classId)) getFirJavaClass(classId) else null
 
     private fun getFirJavaClass(classId: ClassId): FirRegularClassSymbol? =
         classCache.getValue(classId, classId.outerClassId?.let { getFirJavaClass(it) })

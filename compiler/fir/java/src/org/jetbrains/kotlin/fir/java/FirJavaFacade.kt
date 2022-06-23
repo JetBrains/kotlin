@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -89,11 +88,7 @@ abstract class FirJavaFacade(
             ?.takeIf { it.classId == classId && !it.hasMetadataAnnotation() }
 
     fun getPackage(fqName: FqName): FqName? =
-        try {
-            packageCache.getValue(fqName)?.fqName
-        } catch (e: ProcessCanceledException) {
-            null
-        }
+        packageCache.getValue(fqName)?.fqName
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
         val knownNames = knownClassNamesInPackage.getValue(classId.packageFqName) ?: return true
