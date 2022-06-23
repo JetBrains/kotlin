@@ -23,6 +23,7 @@ class BuildScanStatisticsListener(
     val projectName: String,
     val label: String?,
     val kotlinVersion: String,
+    val buildUuid: String
 ) : OperationCompletionListener, AutoCloseable {
     companion object {
         const val lengthLimit = 100_000
@@ -30,7 +31,6 @@ class BuildScanStatisticsListener(
 
     private val tags = LinkedHashSet<String>()
     private val log = Logging.getLogger(this.javaClass)
-    private val buildUuid: String = UUID.randomUUID().toString()
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
@@ -52,6 +52,10 @@ class BuildScanStatisticsListener(
         val elapsedTime = measureTimeMillis {
 
             readableString(data).forEach { buildScan.value(data.taskName, it) }
+
+            if (!tags.contains(buildUuid)) {
+                tags.add(buildUuid)
+            }
 
             data.label?.takeIf { !tags.contains(it) }?.also {
                 buildScan.tag(it)

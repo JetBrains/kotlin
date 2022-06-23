@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.report
 
 import com.google.gson.Gson
+import com.gradle.scan.plugin.BuildScanExtension
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
@@ -15,9 +16,11 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishData
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildScanStatisticsListener
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener.Companion.prepareData
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
@@ -33,7 +36,6 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     OperationCompletionListener, AutoCloseable {
 
     var executorService: ExecutorService = Executors.newSingleThreadExecutor()
-    val uuid = UUID.randomUUID().toString()
 
     val startTime = System.nanoTime()
 
@@ -49,7 +51,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     val log = Logging.getLogger(this.javaClass)
 
     init {
-        log.info("Http report service is registered. Unique build id: $uuid")
+        log.info("Http report service is registered. Unique build id: $buildUuid")
     }
 
     //    @Volatile for one thread executor it does not need
@@ -59,7 +61,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
             val data =
-                prepareData(event, parameters.projectName, uuid, parameters.label, parameters.kotlinVersion, parameters.additionalTags)
+                prepareData(event, parameters.projectName, buildUuid, parameters.label, parameters.kotlinVersion, parameters.additionalTags)
             data?.also { executorService.submit { report(data) } }
         }
     }
@@ -71,10 +73,14 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     companion object {
 
+        val buildUuid = UUID.randomUUID().toString()
+
         fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<HttpReportService>? {
             val gradle = project.gradle
             val rootProject = gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
+
+            addListeners(project, reportingSettings, kotlinVersion)
 
             return reportingSettings.httpReportSettings?.let { httpSettings ->
                 gradle.sharedServices.registerIfAbsent(
@@ -99,6 +105,26 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                 }!!
             }
 
+        }
+
+        fun addListeners(project: Project, reportingSettings: ReportingSettings, kotlinVersion: String) {
+            if (reportingSettings.buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
+                project.rootProject.extensions.findByName("buildScan")
+                    ?.also {
+                        val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
+                        listenerRegistryHolder.listenerRegistry.onTaskCompletion(
+                            project.provider {
+                                BuildScanStatisticsListener(
+                                    it as BuildScanExtension,
+                                    project.rootProject.name,
+                                    reportingSettings.buildReportLabel,
+                                    kotlinVersion,
+                                    buildUuid
+                                )
+                            }
+                        )
+                    }
+            }
         }
 
     }
@@ -144,7 +170,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     private fun reportBuildFinish() {
         val buildFinishData = BuildFinishData(
             startParameters = parameters.startParameters,
-            buildUuid = parameters.uuid,
+            buildUuid = buildUuid,
             label = parameters.label,
             totalTime = (System.nanoTime() - startTime) / 1_000_000
         )

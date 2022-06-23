@@ -87,7 +87,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             addGradlePluginMetadataAttributes(project)
         }
 
-        KotlinGradleBuildServices.registerIfAbsent(project, kotlinPluginVersion).get()
+        KotlinGradleBuildServices.registerIfAbsent(project).get()
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
         BuildMetricsReporterService.registerIfAbsent(project)?.also {

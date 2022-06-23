@@ -47,7 +47,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     companion object {
-        fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<KotlinGradleBuildServices> =
+        fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> =
             project.gradle.sharedServices.registerIfAbsent(
                 "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
                 KotlinGradleBuildServices::class.java
@@ -55,28 +55,9 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
                 service.parameters.rootDir = project.rootProject.rootDir
                 service.parameters.buildDir = project.rootProject.buildDir
 
-                val reportingSettings = reportingSettings(project.rootProject)
-                addListeners(project, reportingSettings, kotlinVersion)
             }
 
-        fun addListeners(project: Project, reportingSettings: ReportingSettings, kotlinVersion: String) {
-            project.rootProject.extensions.findByName("buildScan")
-                ?.also {
-                    if (reportingSettings.buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
-                        val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
-                        listenerRegistryHolder.listenerRegistry.onTaskCompletion(
-                            project.provider {
-                                BuildScanStatisticsListener(
-                                    it as BuildScanExtension,
-                                    project.rootProject.name,
-                                    reportingSettings.buildReportLabel,
-                                    kotlinVersion
-                                )
-                            }
-                        )
-                    }
-                }
-        }
+
 
         private val multipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
             trackPluginVersionsSeparately = true
