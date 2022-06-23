@@ -71,7 +71,21 @@ abstract class IncrementalCompilerRunner<
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
     ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION_DAEMON) {
-        compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
+        try {
+            compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
+        } finally {
+            reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
+                reporter.addMetric(
+                    BuildPerformanceMetric.SNAPSHOT_SIZE,
+                    buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
+                )
+                if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
+                    cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
+                        reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, it)
+                    }
+                }
+            }
+        }
     }
 
     fun rebuild(
@@ -162,17 +176,6 @@ abstract class IncrementalCompilerRunner<
                         }
                         if (exitCode == ExitCode.OK) {
                             performWorkAfterSuccessfulCompilation(caches)
-                        }
-                        reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                            reporter.addMetric(
-                                BuildPerformanceMetric.SNAPSHOT_SIZE,
-                                buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
-                            )
-                            if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
-                                cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
-                                    reporter.addMetric(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE, it)
-                                }
-                            }
                         }
                         return exitCode
                     } catch (e: Throwable) {
