@@ -48,6 +48,7 @@ object GenerateSteppedRangesCodegenTestData {
 
     private enum class Function(val infixFunctionName: String, val subdir: String) {
         RANGE_TO("..", "rangeTo"),
+        RANGE_UNTIL("..<", "rangeUntil"),
         UNTIL(" until ", "until"),
         DOWN_TO(" downTo ", "downTo")
     }
@@ -138,7 +139,9 @@ object GenerateSteppedRangesCodegenTestData {
     ) {
         generateTestsForFunction(fileName, rangeToBuilder, Function.RANGE_TO, extraCode, subdir)
         // For convenience, derive test for "until" by incrementing "last"
-        generateTestsForFunction(fileName, rangeToBuilder.copy(last = (rangeToBuilder.last as Int) + 1), Function.UNTIL, extraCode, subdir)
+        val last = rangeToBuilder.last as Int
+        generateTestsForFunction(fileName, rangeToBuilder.copy(last = last + 1), Function.UNTIL, extraCode, subdir)
+        generateTestsForFunction(fileName, rangeToBuilder.copy(last = last + 1), Function.RANGE_UNTIL, extraCode, subdir)
     }
 
     private fun generateTestsForFunction(
@@ -180,6 +183,10 @@ object GenerateSteppedRangesCodegenTestData {
                 println("// WITH_STDLIB")
                 if (asLiteral && KT_34166_AFFECTED_FILENAMES.contains(fileName)) {
                     println(KT_34166_HEADER)
+                }
+                if (function == Function.RANGE_UNTIL) { // until 1.8
+                    println("// !LANGUAGE: +RangeUntilOperator")
+                    println("@file:OptIn(ExperimentalStdlibApi::class)")
                 }
                 println("import kotlin.test.*")
                 println()
