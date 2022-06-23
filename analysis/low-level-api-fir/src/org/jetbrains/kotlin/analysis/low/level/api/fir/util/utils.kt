@@ -27,13 +27,6 @@ import java.util.concurrent.locks.Lock
 import kotlin.reflect.KProperty
 
 
-internal inline fun <T> executeOrReturnDefaultValueOnPCE(defaultValue: T, action: () -> T): T =
-    try {
-        action()
-    } catch (e: ProcessCanceledException) {
-        defaultValue
-    }
-
 internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
     var result: T? = null
     ProgressManager.getInstance().executeNonCancelableSection { result = action() }
