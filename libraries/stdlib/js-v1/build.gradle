@@ -100,11 +100,6 @@ task prepareBuiltinsSources(type: Copy) {
     from("${builtinsDir}/src/kotlin/") {
         include "annotation/Annotations.kt"
         include "Function.kt"
-        include "Iterators.kt"
-        include "Range.kt"
-        include "Progressions.kt"
-        include "ProgressionIterators.kt"
-        include "Ranges.kt"
         include "Unit.kt"
     }
     into builtinsSrcDir

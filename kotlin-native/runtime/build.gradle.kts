@@ -257,12 +257,6 @@ val commonStdlibSrcDirs = project(":kotlin-stdlib-common")
                 "../unsigned/src",
                 "../src"
         ).files
-val commonBuiltinsSrc = listOf(
-        "Progressions.kt", "ProgressionIterators.kt", "Range.kt", "Ranges.kt", "internal/progressionUtil.kt")
-        .map { "src/kotlin/$it" }
-        .let {
-            project(":core:builtins").files(it).files
-        }
 
 val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
 val interopSrcDirs = listOf(
@@ -300,7 +294,6 @@ konanArtifacts {
                 "-opt-in=kotlin.native.internal.InternalForKotlinNative",
         )
 
-        srcFiles(commonBuiltinsSrc)
         commonStdlibSrcDirs.forEach { commonSrcDir(it) }
         testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
         testCommonSrcDir.forEach { commonSrcDir(it) }

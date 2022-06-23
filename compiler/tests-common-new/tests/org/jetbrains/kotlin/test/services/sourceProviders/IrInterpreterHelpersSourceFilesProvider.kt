@@ -19,9 +19,9 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private const val HELPERS_PATH = "./compiler/testData/ir/interpreter/helpers"
         private const val UNSIGNED_PATH = "./libraries/stdlib/unsigned/src/kotlin"
         private val RUNTIME_PATHS = arrayOf(
-            "./core/builtins/src/kotlin/Progressions.kt",
-            "./core/builtins/src/kotlin/ProgressionIterators.kt",
-            "./core/builtins/src/kotlin/internal/progressionUtil.kt",
+            "./libraries/stdlib/src/kotlin/ranges/Progressions.kt",
+            "./libraries/stdlib/src/kotlin/ranges/ProgressionIterators.kt",
+            "./libraries/stdlib/src/kotlin/internal/progressionUtil.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/TypeAliases.kt",
             "./libraries/stdlib/jvm/runtime/kotlin/text/TypeAliases.kt",
             "./libraries/stdlib/jvm/src/kotlin/collections/TypeAliases.kt",
@@ -41,7 +41,7 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
             "core/builtins/src/kotlin/CompileTimeAnnotations.kt"
-        )
+        ).map(::File)
     }
 
     override val directiveContainers: List<DirectivesContainer> =
@@ -49,12 +49,13 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
         return directories.flatMap { directory ->
-            File(directory).walkTopDown().mapNotNull { file ->
-                if (file.isDirectory) return@mapNotNull null
-                if (EXCLUDES.any { file.absolutePath.endsWith(it.replace('/', File.separatorChar)) }) return@mapNotNull null
-
-                file.toTestFile()
-            }.toList()
+            File(directory)
+                .also { check(it.exists()) { "$it path is not found" } }
+                .walkTopDown().mapNotNull { file ->
+                    file.takeUnless { it.isDirectory }
+                        ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
+                        ?.toTestFile()
+                }.toList()
         }
     }
 

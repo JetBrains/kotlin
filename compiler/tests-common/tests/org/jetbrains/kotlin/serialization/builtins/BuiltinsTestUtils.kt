@@ -20,7 +20,8 @@ object BuiltinsTestUtils {
         val files = KotlinTestUtils.loadToJetFiles(
             environment, ContainerUtil.concat<File>(
                 allFilesUnder("core/builtins/native"),
-                allFilesUnder("core/builtins/src")
+                allFilesUnder("core/builtins/src"),
+                allFilesUnder("core/builtins/build/src/ranges"),
             )
         )
         return createResolveSessionForFiles(environment.project, files, false).moduleDescriptor

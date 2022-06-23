@@ -56,6 +56,17 @@ val commonMainSources by task<Sync> {
     into("$buildDir/commonMainSources")
 }
 
+val commonMainCollectionSources by task<Sync> {
+    dependsOn(":kotlin-stdlib-js-ir:commonMainSources")
+    from {
+        val fullCommonMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:commonMainSources")
+        include("libraries/stdlib/src/kotlin/collections/PrimitiveIterators.kt")
+        fullCommonMainSources.outputs.files.singleFile
+    }
+
+    into("$buildDir/commonMainCollectionSources")
+}
+
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib-js-ir:jsMainSources")
 
@@ -111,6 +122,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
+            kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
         }
         val jsMain by getting {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))

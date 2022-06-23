@@ -75,11 +75,11 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Arrays.kt")) { GenerateArrays(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Primitives.kt")) { GeneratePrimitives(it) }
-    generate(File(BUILT_INS_SRC_DIR, "kotlin/Iterators.kt")) { GenerateIterators(it) }
+    generate(File(STDLIB_DIR, "kotlin/collections/PrimitiveIterators.kt")) { GenerateIterators(it) }
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
-    generate(File(BUILT_INS_SRC_DIR, "kotlin/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
-    generate(File(BUILT_INS_SRC_DIR, "kotlin/Progressions.kt")) { GenerateProgressions(it) }
-    generate(File(BUILT_INS_SRC_DIR, "kotlin/Ranges.kt")) { GenerateRanges(it) }
+    generate(File(STDLIB_DIR, "kotlin/ranges/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
+    generate(File(STDLIB_DIR, "kotlin/ranges/Progressions.kt")) { GenerateProgressions(it) }
+    generate(File(STDLIB_DIR, "kotlin/ranges/PrimitiveRanges.kt")) { GenerateRanges(it) }
     generate(File(STDLIB_DIR, "kotlin/util/FloorDivMod.kt")) { GenerateFloorDivMod(it) }
 
     generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)

@@ -228,13 +228,7 @@
 
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/annotation/Annotations.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Function.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Iterators.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Range.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Progressions.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/ProgressionIterators.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Ranges.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/internal/InternalAnnotations.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/internal/progressionUtil.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Unit.kt"/>
 
         <!-- TODO Docs? -->

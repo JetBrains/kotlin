@@ -10,8 +10,11 @@ val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
 val kotlinReflectCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect/")
 val kotlinReflectJvm = fileFrom(rootDir, "libraries/stdlib/jvm/src/kotlin/reflect")
-val builtinsCherryPicked = fileFrom(buildDir, "src")
-val builtinsCherryPickedJvm = fileFrom(buildDir, "src-jvm")
+val kotlinRangesCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/ranges")
+val kotlinCollectionsCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/collections")
+val builtinsCherryPicked = fileFrom(buildDir, "src/reflect")
+val rangesCherryPicked = fileFrom(buildDir, "src/ranges")
+val builtinsCherryPickedJvm = fileFrom(buildDir, "src-jvm/reflect")
 
 val runtimeElements by configurations.creating {
     isCanBeResolved = false
@@ -28,6 +31,17 @@ val runtimeElementsJvm by configurations.creating {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
         attribute(Attribute.of("builtins.platform", String::class.java), "JVM")
     }
+}
+
+val prepareRangeSources by tasks.registering(Sync::class) {
+    from(kotlinRangesCommon) {
+        exclude("Ranges.kt")
+    }
+    from(kotlinCollectionsCommon) {
+        include("PrimitiveIterators.kt")
+    }
+
+    into(rangesCherryPicked)
 }
 
 val prepareSources by tasks.registering(Sync::class) {
@@ -54,7 +68,7 @@ val prepareSourcesJvm by tasks.registering(Sync::class) {
 
 fun serializeTask(name: String, sourcesTask: TaskProvider<*>, inDirs: List<File>) =
     tasks.register(name, NoDebugJavaExec::class) {
-        dependsOn(sourcesTask)
+        dependsOn(sourcesTask, prepareRangeSources)
         val outDir = buildDir.resolve(this.name)
         inDirs.forEach { inputs.dir(it).withPathSensitivity(RELATIVE) }
         outputs.dir(outDir)
@@ -72,9 +86,9 @@ fun serializeTask(name: String, sourcesTask: TaskProvider<*>, inDirs: List<File>
         )
     }
 
-val serialize = serializeTask("serialize", prepareSources, listOf(builtinsSrc, builtinsNative, builtinsCherryPicked))
+val serialize = serializeTask("serialize", prepareSources, listOf(builtinsSrc, builtinsNative, builtinsCherryPicked, rangesCherryPicked))
 
-val serializeJvm = serializeTask("serializeJvm", prepareSourcesJvm, listOf(builtinsSrc, builtinsNative, builtinsCherryPickedJvm))
+val serializeJvm = serializeTask("serializeJvm", prepareSourcesJvm, listOf(builtinsSrc, builtinsNative, builtinsCherryPickedJvm, rangesCherryPicked))
 
 val builtinsJar by task<Jar> {
     dependsOn(serialize)
