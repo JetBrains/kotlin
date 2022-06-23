@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTest {
+public class FirOldFrontendNativeDiagnosticsWithLightTreeTestGenerated extends AbstractFirNativeDiagnosticsWithLightTreeTest {
     @Test
     public void testAllFilesPresentInNativeTests() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

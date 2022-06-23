@@ -99,8 +99,8 @@ class FirFrontendFacade(
 
         val isCommonOrJvm = module.targetPlatform.isJvm() || module.targetPlatform.isCommon()
 
-        val dependencyList: DependencyListForCliModule = buildDependencyList(module, moduleName, moduleInfoProvider, analyzerServices) {
-            if (isCommonOrJvm) {
+        val dependencyList = buildDependencyList(module, moduleName, moduleInfoProvider, analyzerServices) {
+            if (isCommonOrJvm || module.targetPlatform.isNative()) {
                 configureJvmDependencies(configuration)
             } else {
                 configureJsDependencies(module, testServices)
@@ -109,35 +109,47 @@ class FirFrontendFacade(
 
         val projectEnvironment: VfsBasedProjectEnvironment?
 
-        if (isCommonOrJvm) {
-            val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
-            projectEnvironment = VfsBasedProjectEnvironment(
-                project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-            ) { packagePartProviderFactory.invoke(it) }
-            val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
-            val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
+        when {
+            isCommonOrJvm -> {
+                val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
+                projectEnvironment = VfsBasedProjectEnvironment(
+                    project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
+                ) { packagePartProviderFactory.invoke(it) }
+                val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
+                val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
-            FirSessionFactory.createLibrarySession(
-                moduleName,
-                moduleInfoProvider.firSessionProvider,
-                dependencyList,
-                projectEnvironment,
-                projectFileSearchScope,
-                packagePartProvider,
-                languageVersionSettings,
-            )
-        } else {
-            projectEnvironment = null
-
-            FirJsSessionFactory.createLibrarySession(
-                moduleName,
-                moduleInfoProvider.firSessionProvider,
-                dependencyList,
-                module,
-                testServices,
-                configuration,
-                languageVersionSettings,
-            )
+                FirSessionFactory.createLibrarySession(
+                    moduleName,
+                    moduleInfoProvider.firSessionProvider,
+                    dependencyList,
+                    projectEnvironment,
+                    projectFileSearchScope,
+                    packagePartProvider,
+                    languageVersionSettings,
+                )
+            }
+            module.targetPlatform.isJs() -> {
+                projectEnvironment = null
+                FirJsSessionFactory.createLibrarySession(
+                    moduleName,
+                    moduleInfoProvider.firSessionProvider,
+                    dependencyList,
+                    module,
+                    testServices,
+                    configuration,
+                    languageVersionSettings,
+                )
+            }
+            module.targetPlatform.isNative() -> {
+                projectEnvironment = null
+                FirNativeSessionFactory.createLibrarySession(
+                    moduleName,
+                    moduleInfoProvider.firSessionProvider,
+                    dependencyList,
+                    languageVersionSettings,
+                )
+            }
+            else -> error("Unsupported")
         }
 
         val mainModuleData = FirModuleDataImpl(
@@ -173,6 +185,15 @@ class FirFrontendFacade(
                     languageVersionSettings,
                     null,
                     sessionConfigurator,
+                )
+            }
+            module.targetPlatform.isNative() -> {
+                FirNativeSessionFactory.createModuleBasedSession(
+                    mainModuleData,
+                    moduleInfoProvider.firSessionProvider,
+                    extensionRegistrars,
+                    languageVersionSettings,
+                    init = sessionConfigurator
                 )
             }
             else -> error("Unsupported")

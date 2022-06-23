@@ -46,7 +46,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsNativeTest> {
-                model("diagnostics/nativeTests")
+                model("diagnostics/nativeTests", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest> {
@@ -216,6 +216,18 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirNativeDiagnosticsTest>(
+                suiteTestClassName = "FirOldFrontendNativeDiagnosticsTestGenerated"
+            ) {
+                model("diagnostics/nativeTests", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirNativeDiagnosticsWithLightTreeTest>(
+                suiteTestClassName = "FirOldFrontendNativeDiagnosticsWithLightTreeTestGenerated"
+            ) {
+                model("diagnostics/nativeTests", excludedPattern = excludedFirTestdataPattern)
             }
         }
 
