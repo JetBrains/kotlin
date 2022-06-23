@@ -25,15 +25,12 @@ typealias KotlinWebpackCssSupport = KotlinWebpackCssRule
 @Suppress("LeakingThis")
 abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWebpackRule(name) {
     @get:Input
-    abstract val mode: Property<String>
+    var mode: String = INLINE
 
-    init {
-        mode.convention(INLINE)
-        test.convention("/\\.css\$/")
-    }
+    override var test: String = "/\\.css\$/"
 
     override fun validate(): Boolean {
-        if (mode.get() !in arrayOf(EXTRACT, INLINE, IMPORT)) {
+        if (mode !in arrayOf(EXTRACT, INLINE, IMPORT)) {
             error(
                 """
                 Possible values for cssSupport.mode:
@@ -49,7 +46,7 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
     override fun dependencies(versions: NpmVersions): Collection<RequiredKotlinJsDependency> {
         return mutableListOf<RequiredKotlinJsDependency>().apply {
             add(versions.cssLoader)
-            when (mode.get()) {
+            when (mode) {
                 EXTRACT -> add(versions.miniCssExtractPlugin)
                 INLINE -> add(versions.styleLoader)
                 IMPORT -> add(versions.toStringLoader)
@@ -57,7 +54,7 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
         }
     }
 
-    override fun loaders(): List<Loader> = when (mode.get()) {
+    override fun loaders(): List<Loader> = when (mode) {
         EXTRACT -> listOf(
             Loader(
                 loader = "MiniCssExtractPlugin.loader",

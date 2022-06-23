@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -72,6 +70,20 @@ data class KotlinWebpackConfig(
     @Input
     val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
 ) : WebpackRulesDsl {
+    @get:Internal
+    @Deprecated("use cssSupport methods instead")
+    var cssSupport: KotlinWebpackCssRule
+        get() = rules.maybeCreate("css", KotlinWebpackCssRule::class.java)
+        set(value) {
+            rules.maybeCreate("css", KotlinWebpackCssRule::class.java).apply {
+                this.mode = value.mode
+                this.enabled = value.enabled
+                this.test = value.test
+                this.include = value.include
+                this.exclude = value.exclude
+            }
+        }
+
     @get:Input
     @get:Optional
     val entryInput: String?

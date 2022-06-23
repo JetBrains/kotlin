@@ -20,27 +20,23 @@ import javax.inject.Inject
 @Suppress("LeakingThis")
 abstract class KotlinWebpackRule @Inject constructor(private val name: String) : Named {
     @get:Input
-    abstract val enabled: Property<Boolean>
+    var enabled: Boolean = false
 
     /**
      * Raw rule `test` field value. Needs to be wrapped in quotes when using string notation.
      */
     @get:Input
-    abstract val test: Property<String>
+    abstract var test: String
 
     @get:Input
-    abstract val include: ListProperty<String>
+    var include: MutableList<String> = mutableListOf()
 
     @get:Input
-    abstract val exclude: ListProperty<String>
+    var exclude: MutableList<String> = mutableListOf()
 
     @get:Input
     protected open val description: String
         get() = (this::class.simpleName?.removeSuffix("_Decorated") ?: "KotlinWebpackRule") + "[${getName()}]"
-
-    init {
-        enabled.convention(false)
-    }
 
     /**
      * Validates the rule state just before it getting applied.
@@ -59,7 +55,7 @@ abstract class KotlinWebpackRule @Inject constructor(private val name: String) :
     protected abstract fun loaders(): List<Loader>
 
     @get:Internal
-    internal val active: Boolean get() = enabled.get() && validate()
+    internal val active: Boolean get() = enabled && validate()
     internal fun Appendable.appendToWebpackConfig() {
         appendLine(
             """
@@ -87,14 +83,14 @@ abstract class KotlinWebpackRule @Inject constructor(private val name: String) :
             """.trimIndent()
         )
 
-        val excluded = exclude.get().takeIf(List<*>::isNotEmpty)
+        val excluded = exclude.takeIf(List<*>::isNotEmpty)
             ?.joinToString(separator = ",", prefix = "[", postfix = "]") ?: "undefined"
-        val included = include.get().takeIf(List<*>::isNotEmpty)
+        val included = include.takeIf(List<*>::isNotEmpty)
             ?.joinToString(separator = ",", prefix = "[", postfix = "]") ?: "undefined"
         appendLine(
             """
             config.module.rules.push({
-                test: ${test.get()},
+                test: ${test},
                 use: use,
                 exclude: $excluded,
                 include: $included,

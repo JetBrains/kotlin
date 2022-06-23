@@ -16,7 +16,7 @@ abstract class CustomWebpackRule
 @javax.inject.Inject
 constructor(name: String) : org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule(name) {
     init {
-        test.set("none")
+        test = "none"
     }
     override fun loaders() = listOf<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule.Loader>()
 }
@@ -26,10 +26,10 @@ kotlin {
         browser {
             webpackTask {
                 cssSupport {
-                    enabled.set(true)
+                    enabled = true
                 }
                 scssSupport {
-                    enabled.set(true)
+                    enabled = true
                 }
                 rules {
                     rule<CustomWebpackRule>("custom")
