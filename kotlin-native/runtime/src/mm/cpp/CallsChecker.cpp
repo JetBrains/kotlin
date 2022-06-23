@@ -277,6 +277,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "VirtualAlloc",
         "FlsSetValue",
         "GetCurrentProcess",
+        "GetCurrentThreadId",
         "FlsFree",
         "K32GetProcessMemoryInfo",
         "VirtualFree",
