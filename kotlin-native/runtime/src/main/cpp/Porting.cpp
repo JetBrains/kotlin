@@ -258,6 +258,13 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+
+/**
+ * We can't use gettid from glibc 2.30 because it is too new for us.
+ */
+NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
+    return static_cast<int>(syscall(__NR_gettid));
+}
 #endif
 
 NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
@@ -278,7 +285,7 @@ NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
 #elif KONAN_ANDROID
     return gettid();
 #elif KONAN_LINUX
-    return syscall(__NR_gettid);
+    return gettid();
 #elif KONAN_WINDOWS
   return GetCurrentThreadId();
 #else

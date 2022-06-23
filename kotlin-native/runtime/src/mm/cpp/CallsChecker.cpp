@@ -146,6 +146,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "vsnprintf",
         "bcmp",
 
+        "gettid",
+
         "getenv",
         "setenv",
         "unsetenv",
