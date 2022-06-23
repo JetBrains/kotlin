@@ -9,10 +9,12 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 import kotlin.test.assertTrue
 
-
+/* Only supported on platforms that support the 'diff' util */
+@OsCondition(supportedOn = [OS.LINUX, OS.MAC])
 @MppGradlePluginTests
 @DisplayName("Multiplatform Build Reproducibility")
 class MPPBuildReproducibilityIT : KGPBaseTest() {
