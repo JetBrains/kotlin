@@ -1,9 +1,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata.impl
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDeserializedPackageFragmentsFactory
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -13,6 +11,8 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
@@ -69,12 +69,8 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         val aliasedPackageFragments = deserializedPackageFragments.filter { it.fqName == mainPackageFqName }
 
         val result = mutableListOf<PackageFragmentDescriptor>()
-        listOf(
-            ForwardDeclarationsFqNames.cNamesStructs,
-            ForwardDeclarationsFqNames.objCNamesClasses,
-            ForwardDeclarationsFqNames.objCNamesProtocols
-        ).mapTo(result) { fqName ->
-            ClassifierAliasingPackageFragmentDescriptor(aliasedPackageFragments, moduleDescriptor, fqName)
+        ExportedForwardDeclarationChecker.values().mapTo(result) { checker ->
+            ClassifierAliasingPackageFragmentDescriptor(aliasedPackageFragments, moduleDescriptor, checker)
         }
 
         result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(moduleDescriptor, mainPackageFqName, exportForwardDeclarations))
@@ -126,15 +122,14 @@ class ExportedForwardDeclarationsPackageFragmentDescriptor(
 class ClassifierAliasingPackageFragmentDescriptor(
     targets: List<KlibMetadataPackageFragment>,
     module: ModuleDescriptor,
-    fqName: FqName
-) : PackageFragmentDescriptorImpl(module, fqName) {
-
+    private val checker: ExportedForwardDeclarationChecker,
+) : PackageFragmentDescriptorImpl(module, checker.fqName) {
     private val memberScope = object : MemberScopeImpl() {
-
         override fun getContributedClassifier(name: Name, location: LookupLocation) =
             targets.firstNotNullOfOrNull {
                 if (it.hasTopLevelClassifier(name)) {
                     it.getMemberScope().getContributedClassifier(name, location)
+                        ?.takeIf(this@ClassifierAliasingPackageFragmentDescriptor.checker::check)
                 } else {
                     null
                 }
@@ -152,5 +147,40 @@ class ClassifierAliasingPackageFragmentDescriptor(
     }
 
     override fun getMemberScope(): MemberScope = memberScope
+}
+
+/**
+ * It is possible to have different C and Objective-C declarations with the same name. That's why
+ * we need to check declaration type before returning the result of lookup.
+ * See KT-49034.
+ */
+enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
+
+    Struct(ForwardDeclarationsFqNames.cNamesStructs) {
+        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
+            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isClass &&
+                    classifierDescriptor.isCStructVar()
+
+    },
+    ObjCClass(ForwardDeclarationsFqNames.objCNamesClasses) {
+        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
+            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isClass &&
+                    classifierDescriptor.isExternalObjCClass()
+    },
+    ObjCProtocol(ForwardDeclarationsFqNames.objCNamesProtocols) {
+        override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
+            classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isInterface &&
+                    classifierDescriptor.isExternalObjCClass()
+    }
+    ;
+
+    abstract fun check(classifierDescriptor: ClassifierDescriptor): Boolean
+
+    // We can check that there is kotlinx.cinterop.ObjCObjectBase among supertypes, but it seems slower.
+    protected fun ClassifierDescriptor.isExternalObjCClass(): Boolean =
+        annotations.hasAnnotation(FqName("kotlinx.cinterop.ExternalObjCClass"))
+
+    protected fun ClassifierDescriptor.isCStructVar(): Boolean =
+        getAllSuperClassifiers().find { it.fqNameSafe.asString() == "kotlinx.cinterop.CStructVar" } != null
 }
 
