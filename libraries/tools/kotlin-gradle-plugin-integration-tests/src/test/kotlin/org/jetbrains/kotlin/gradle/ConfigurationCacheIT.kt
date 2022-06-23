@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.TransformKotlinGranularMetadata
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -92,11 +90,10 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
             // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
             val configCacheIncompatibleTaskTypes = listOf(
-                GenerateProjectStructureMetadata::class,
-                @Suppress("INVISIBLE_REFERENCE")
-                org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask::class,
-                TransformKotlinGranularMetadata::class
-            ).map { it.java.name.replace(".", "\\.") }
+                "GenerateProjectStructureMetadata",
+                "CInteropMetadataDependencyTransformationTask",
+                "TransformKotlinGranularMetadata"
+            )
 
             build("build", buildOptions = buildOptions) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
@@ -104,7 +101,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 assertOutputContains("17 problems were found storing the configuration cache, 6 of which seem unique.")
                 configCacheIncompatibleTaskTypes.forEach { taskType ->
                     assertOutputContains(
-                        """Task `\S+` of type `$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
+                        """Task `\S+` of type `[\w.]+$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
                             .toRegex()
                     )
                 }
