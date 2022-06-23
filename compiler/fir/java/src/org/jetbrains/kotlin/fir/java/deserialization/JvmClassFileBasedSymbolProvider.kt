@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java.deserialization
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -99,11 +98,7 @@ class JvmClassFileBasedSymbolProvider(
         get() = classHeader.isPreRelease
 
     private fun loadJavaClass(classId: ClassId, content: ByteArray?): ClassMetadataFindResult? {
-        val javaClass = try {
-            javaFacade.findClass(classId, content) ?: return null
-        } catch (e: ProcessCanceledException) {
-            return null
-        }
+        val javaClass = javaFacade.findClass(classId, content) ?: return null
         return ClassMetadataFindResult.NoMetadata { symbol ->
             javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
         }
@@ -113,11 +108,7 @@ class JvmClassFileBasedSymbolProvider(
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
 
-        val result = try {
-            kotlinClassFinder.findKotlinClassOrContent(classId)
-        } catch (e: ProcessCanceledException) {
-            return null
-        }
+        val result = kotlinClassFinder.findKotlinClassOrContent(classId)
         val kotlinClass = when (result) {
             is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
             is KotlinClassFinder.Result.ClassFileContent -> return loadJavaClass(classId, result.content)

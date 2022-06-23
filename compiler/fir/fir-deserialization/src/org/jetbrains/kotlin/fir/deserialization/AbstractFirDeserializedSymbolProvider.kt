@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -116,11 +115,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     }
 
     private fun tryComputePackagePartInfos(packageFqName: FqName): List<PackagePartsCacheData> {
-        return try {
-            computePackagePartsInfos(packageFqName)
-        } catch (e: ProcessCanceledException) {
-            emptyList()
-        }
+        return computePackagePartsInfos(packageFqName)
     }
 
     private fun findAndDeserializeTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
