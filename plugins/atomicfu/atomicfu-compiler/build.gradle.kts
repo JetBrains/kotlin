@@ -68,9 +68,10 @@ dependencies {
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuClasspath("org.jetbrains.kotlinx:atomicfu-js:0.16.3") { isTransitive = false }
-    atomicfuRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
 
-    embedded(project(":kotlinx-atomicfu-runtime")) {
+    atomicfuRuntimeForTests(project(":atomicfu-runtime"))  { isTransitive = false }
+
+    embedded(project(":atomicfu-runtime")) {
         attributes {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
             attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)

@@ -798,6 +798,7 @@ project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/
 
 project(':kotlinx-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler")
 project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
+project(':kotlinx-atomicfu-runtime').name = 'atomicfu-runtime'
 project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
