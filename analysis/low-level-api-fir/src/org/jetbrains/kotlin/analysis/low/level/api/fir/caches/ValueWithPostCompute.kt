@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
+import com.intellij.openapi.progress.ProcessCanceledException
+
 /**
  * Lazily calculated value which runs postCompute in the same thread,
  * assuming that postCompute may try to read that value inside current thread,
@@ -76,7 +78,9 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     _postCompute!!(key, calculated, data)
                     calculated
                 } catch (e: Throwable) {
-                    value = ExceptionWasThrownDuringValueComputation(e)
+                    if (e !is ProcessCanceledException) {
+                        value = ExceptionWasThrownDuringValueComputation(e)
+                    }
                     throw e
                 }
                 _calculate = null
