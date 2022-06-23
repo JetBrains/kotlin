@@ -4366,6 +4366,21 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objc_kt50648") {
         it.defFile 'interop/objc/kt50648/objclib.def'
     }
+
+    createInterop("kt49034_struct") {
+        it.defFile 'interop/objc/kt49034/struct/kt49034.def'
+        it.headers "$projectDir/interop/objc/kt49034/struct/kt49034.h"
+        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/kt49034/struct/impl.c"
+    }
+
+    createInterop("kt49034_objcclass") {
+        it.defFile 'interop/objc/kt49034/objcclass/kt49034.def'
+        it.headers "$projectDir/interop/objc/kt49034/objcclass/kt49034.h"
+    }
+    createInterop("kt49034_objcprotocol") {
+        it.defFile 'interop/objc/kt49034/objcprotocol/kt49034.def'
+        it.headers "$projectDir/interop/objc/kt49034/objcprotocol/kt49034.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4887,6 +4902,35 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjctests.dylib")
             }
         }
+    }
+
+    // KT-49034 tests don't need whole compilation pipeline (only frontend) or platform libraries. Consider simplifying them when porting
+    // to the new test infra.
+    interopTest("interop_kt49034_struct") {
+        disabled = (project.testTarget == 'wasm32')
+        interop = 'kt49034_struct'
+        source = 'interop/objc/kt49034/struct/main.kt'
+
+        // The test depends on collision between kt49034.JSContext and platform.JavaScriptCore.JSContext
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
+
+    interopTest("interop_kt49034_objcclass") {
+        disabled = (project.testTarget == 'wasm32')
+        interop = 'kt49034_objcclass'
+        source = 'interop/objc/kt49034/objcclass/main.kt'
+
+        // The test depends on collision between kt49034.__darwin_fp_control and platform.darwin.__darwin_fp_control
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
+
+    interopTest("interop_kt49034_objcprotocol") {
+        disabled = (project.testTarget == 'wasm32')
+        interop = 'kt49034_objcprotocol'
+        source = 'interop/objc/kt49034/objcprotocol/main.kt'
+
+        // The test depends on collision between kt49034.__darwin_fp_control and platform.darwin.__darwin_fp_control
+        UtilsKt.dependsOnPlatformLibs(it)
     }
 
     interopTest("interop_objc_global_initializer") {
