@@ -198,7 +198,7 @@ task dist_runtime(dependsOn: "distRuntime")
 task cross_dist(dependsOn: "crossDist")
 task list_dist(dependsOn: "listDist")
 task build {
-    dependsOn ':dist', ':distPlatformLibs'
+    dependsOn 'dist', 'distPlatformLibs'
 }
 
 task distCommonSources(type: CopyCommonSources) {
