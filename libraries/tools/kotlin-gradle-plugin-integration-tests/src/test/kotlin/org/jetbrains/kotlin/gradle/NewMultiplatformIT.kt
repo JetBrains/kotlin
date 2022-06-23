@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 import java.util.jar.JarFile
@@ -1615,6 +1614,25 @@ class NewMultiplatformIT : BaseGradleIT() {
         gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
 
         build {
+            assertSuccessful()
+            assertNotContains(
+                UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
+                UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
+                UnusedSourceSetsChecker.WARNING_INTRO
+            )
+        }
+    }
+
+    // https://youtrack.jetbrains.com/issue/KT-48436
+    @Test
+    fun testUnusedSourceSetsReportAndroid() = with(Project("new-mpp-android", gradleVersion)) {
+        setupWorkingDir()
+
+        build(
+            "assembleDebug",
+            // https://issuetracker.google.com/issues/152187160
+            options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
+        ) {
             assertSuccessful()
             assertNotContains(
                 UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
