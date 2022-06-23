@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,21 +24,21 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
     public fun KtElement.resolveCall(): KtCallInfo? =
         withValidityAssertion { withValidityAssertion { analysisSession.callResolver.resolveCall(this) } }
 
-    public fun KtCallElement.resolveCall(): KtCallInfo =
-        withValidityAssertion {
-            analysisSession.callResolver.resolveCall(this)
-                ?: error("KtCallElement should always resolve to a KtCallInfo")
-        }
+    public fun KtCallElement.resolveCall(): KtCallInfo = withValidityAssertion {
+        analysisSession.callResolver.resolveCall(this)
+            ?: unresolvedKtCallError(this)
+    }
 
-    public fun KtUnaryExpression.resolveCall(): KtCallInfo =
-        withValidityAssertion {
-            analysisSession.callResolver.resolveCall(this) ?: error("KtUnaryExpression should always resolve to a KtCallInfo")
-        }
+    public fun KtUnaryExpression.resolveCall(): KtCallInfo = withValidityAssertion {
+        analysisSession.callResolver.resolveCall(this)
+            ?: unresolvedKtCallError(this)
+    }
 
-    public fun KtArrayAccessExpression.resolveCall(): KtCallInfo =
-        withValidityAssertion {
-            analysisSession.callResolver.resolveCall(this) ?: error("KtArrayAccessExpression should always resolve to a KtCallInfo")
-        }
+
+    public fun KtArrayAccessExpression.resolveCall(): KtCallInfo = withValidityAssertion {
+        analysisSession.callResolver.resolveCall(this)
+            ?: unresolvedKtCallError(this)
+    }
 
     /**
      * Returns all the candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
@@ -48,4 +49,8 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtElement.collectCallCandidates(): List<KtCallCandidateInfo> =
         withValidityAssertion { analysisSession.callResolver.collectCallCandidates(this) }
+}
+
+private inline fun <reified PSI : KtElement> unresolvedKtCallError(element: PSI): Nothing {
+    error("${PSI::class.simpleName} should always resolve to a KtCallInfo, element: ${element::class.simpleName}, text:\n${element.getElementTextInContext()}")
 }
