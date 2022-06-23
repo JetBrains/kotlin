@@ -39,7 +39,7 @@ object GradleKpmDefaultFragmentDependencyConfigurationsFactory : GradleKpmFragme
 
         cinteropConfiguration.apply {
             isCanBeConsumed = false
-            isCanBeConsumed = true
+            isCanBeResolved = true
         }
 
         transitiveApiConfiguration.extendsFrom(apiConfiguration)
