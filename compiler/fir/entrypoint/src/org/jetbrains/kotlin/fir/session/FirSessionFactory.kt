@@ -9,23 +9,14 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
-import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProviderImpl
@@ -42,43 +33,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
-@OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
+@OptIn(PrivateSessionConstructor::class)
 object FirSessionFactory : FirAbstractSessionFactory() {
-    class FirSessionConfigurator(private val session: FirSession) {
-        private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = mutableListOf(BunchOfRegisteredExtensions.empty())
-
-        fun registerExtensions(extensions: BunchOfRegisteredExtensions) {
-            registeredExtensions += extensions
-        }
-
-        fun useCheckers(checkers: ExpressionCheckers) {
-            session.checkersComponent.register(checkers)
-        }
-
-        fun useCheckers(checkers: DeclarationCheckers) {
-            session.checkersComponent.register(checkers)
-        }
-
-        fun useCheckers(checkers: TypeCheckers) {
-            session.checkersComponent.register(checkers)
-        }
-
-        @SessionConfiguration
-        fun configure() {
-            session.extensionService.registerExtensions(registeredExtensions.reduce(BunchOfRegisteredExtensions::plus))
-            session.extensionService.additionalCheckers.forEach(session.checkersComponent::register)
-        }
-    }
-
-    data class IncrementalCompilationContext(
-        // assuming that providers here do not intersect with the one being built from precompiled binaries
-        // (maybe easiest way to achieve is to delete libraries
-        // TODO: consider passing something more abstract instead of precompiler component, in order to avoid file ops here
-        val previousFirSessionsSymbolProviders: Collection<FirSymbolProvider>,
-        val precompiledBinariesPackagePartProvider: PackagePartProvider?,
-        val precompiledBinariesFileScope: AbstractProjectFileSearchScope?
-    )
-
     inline fun createSessionWithDependencies(
         moduleName: Name,
         platform: TargetPlatform,

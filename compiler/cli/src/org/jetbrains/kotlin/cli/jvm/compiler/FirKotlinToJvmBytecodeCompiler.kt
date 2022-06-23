@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionFactory.createSessionWithDependencies
+import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.types.arrayElementType
@@ -315,7 +316,7 @@ object FirKotlinToJvmBytecodeCompiler {
 
     private fun CompilationContext.createComponentsForIncrementalCompilation(
         sourceScope: AbstractProjectFileSearchScope
-    ): FirSessionFactory.IncrementalCompilationContext? {
+    ): IncrementalCompilationContext? {
         if (targetIds == null || incrementalComponents == null) return null
         val directoryWithIncrementalPartsFromPreviousCompilation =
             moduleConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]
@@ -329,7 +330,7 @@ object FirKotlinToJvmBytecodeCompiler {
             projectEnvironment.getPackagePartProvider(sourceScope),
             targetIds.map(incrementalComponents::getIncrementalCache)
         )
-        return FirSessionFactory.IncrementalCompilationContext(emptyList(), packagePartProvider, incrementalCompilationScope)
+        return IncrementalCompilationContext(emptyList(), packagePartProvider, incrementalCompilationScope)
     }
 
     private fun CompilationContext.runBackend(

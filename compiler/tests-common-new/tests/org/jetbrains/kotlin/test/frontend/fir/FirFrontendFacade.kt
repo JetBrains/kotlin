@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
@@ -59,7 +60,7 @@ class FirFrontendFacade(
     // Separate constructor is needed for creating callable references to it
     constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
 
-    fun interface SessionConfiguration : (FirSessionFactory.FirSessionConfigurator) -> Unit
+    fun interface SessionConfiguration : (FirSessionConfigurator) -> Unit
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirModuleInfoProvider))
@@ -89,7 +90,7 @@ class FirFrontendFacade(
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
 
-        val sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {
+        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
             if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 registerExtendedCommonCheckers()
             }

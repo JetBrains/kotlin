@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -427,7 +428,7 @@ private fun createContextForIncrementalCompilation(
     sourceScope: AbstractProjectFileSearchScope,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
-): FirSessionFactory.IncrementalCompilationContext? {
+): IncrementalCompilationContext? {
     val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
     val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
     if (targetIds == null || incrementalComponents == null) return null
@@ -440,7 +441,7 @@ private fun createContextForIncrementalCompilation(
         }
 
     return if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) null
-    else FirSessionFactory.IncrementalCompilationContext(
+    else IncrementalCompilationContext(
         previousStepsSymbolProviders, IncrementalPackagePartProvider(
             projectEnvironment.getPackagePartProvider(sourceScope),
             targetIds.map(incrementalComponents::getIncrementalCache)

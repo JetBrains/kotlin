@@ -109,7 +109,7 @@ abstract class FirAbstractSessionFactory {
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
 
-            FirSessionFactory.FirSessionConfigurator(this).apply {
+            FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
                 registerExtraCheckers?.invoke(this)
 
