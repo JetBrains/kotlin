@@ -104,7 +104,9 @@ task buildAnalyzer {
 }
 
 task konanRun {
-    subprojects.each {
+    subprojects.findAll {
+        !it.name.contains("videoplayer")
+    }.each {
         dependsOn "${it.path}:konanRun"
     }
 }
