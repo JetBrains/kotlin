@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile

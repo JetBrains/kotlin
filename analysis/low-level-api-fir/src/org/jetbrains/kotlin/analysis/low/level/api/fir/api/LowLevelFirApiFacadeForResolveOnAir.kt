@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
-import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
@@ -20,9 +18,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
