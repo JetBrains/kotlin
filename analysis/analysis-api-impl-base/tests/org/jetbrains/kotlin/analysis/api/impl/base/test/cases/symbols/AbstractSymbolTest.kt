@@ -90,12 +90,16 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         data: SymbolPointersData,
         testServices: TestServices,
     ) {
-        val actual = data.pointers.joinToString(separator = "\n\n") { it.rendered }
+        val actual = data.pointers.renderDeclarations()
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
 
-        val actualPretty = data.pointersForPrettyRendering.joinToString(separator = "\n\n") { it.rendered }
+        val actualPretty = data.pointersForPrettyRendering.renderDeclarations()
         testServices.assertions.assertEqualsToTestDataFileSibling(actualPretty, extension = ".pretty.txt")
     }
+
+    private fun List<PointerWithRenderedSymbol>.renderDeclarations(): String =
+        if (isEmpty()) "NO_SYMBOLS"
+        else joinToString(separator = "\n\n") { it.rendered }
 
     private fun restoreSymbolsInOtherReadActionAndCompareResults(
         ktFile: KtFile,
