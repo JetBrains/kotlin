@@ -244,22 +244,30 @@ class AtomicfuJvmIrTransformer(
             // val a = atomic(0)
             // volatile var a: Int = 0
             property.backingField?.let { backingField ->
-                getPropertyInitializer(backingField, parent)?.let {
-                    val value = (it as IrCall).getValueArgument(0)?.deepCopyWithSymbols()
-                        ?: error("Atomic factory should take at least one argument: ${property.render()}")
-                    val valueType = backingField.type.atomicToValueType()
-                    context.irFactory.buildField {
-                        name = property.name
-                        type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
-                        visibility = backingField.visibility // private
-                        isFinal = false
-                        isStatic = parent is IrFile
-                    }.apply {
+                val init = backingField.initializer?.expression
+                val valueType = backingField.type.atomicToValueType()
+                context.irFactory.buildField {
+                    name = property.name
+                    type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
+                    visibility = backingField.visibility // private
+                    isFinal = false
+                    isStatic = parent is IrFile
+                }.apply {
+                    if (init != null) {
+                        val value = (init as IrCall).getAtomicFactoryValueArgument()
                         initializer = IrExpressionBodyImpl(value)
-                        annotations = backingField.annotations + atomicSymbols.volatileAnnotationConstructorCall
-                        this.parent = parent
+                    } else {
+                        // if lateinit field -> initialize it in IrAnonymousInitializer
+                        transformLateInitializer(backingField, parent) { init ->
+                            val value = (init as IrCall).getAtomicFactoryValueArgument()
+                            with(atomicSymbols.createBuilder(this.symbol)) {
+                                irSetField((parent as? IrClass)?.thisReceiver?.capture(), this@apply, value)
+                            }
+                        }
                     }
-                } ?: error("Atomic property ${property.render()} should be initialized either directly or in the init { } block")
+                    annotations = backingField.annotations + atomicSymbols.volatileAnnotationConstructorCall
+                    this.parent = parent
+                }
             } ?: error("Backing field of the atomic property ${property.render()} is null")
 
         private fun addJucaAFUProperty(atomicProperty: IrProperty, parentClass: IrClass): IrProperty =
@@ -289,26 +297,39 @@ class AtomicfuJvmIrTransformer(
 
         private fun buildJucaArrayField(atomicfuArrayProperty: IrProperty, parent: IrDeclarationContainer) =
             atomicfuArrayProperty.backingField?.let { atomicfuArray ->
-                getPropertyInitializer(atomicfuArray, parent)?.let {
-                    val initializer = it as IrFunctionAccessExpression
-                    val atomicArrayClass = atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicfuArray.type)
-                    context.irFactory.buildField {
-                        name = atomicfuArray.name
-                        type = atomicArrayClass.defaultType
-                        visibility = atomicfuArray.visibility // private
-                        isFinal = atomicfuArray.isFinal
-                        isStatic = atomicfuArray.isStatic
-                    }.apply {
+                val init = atomicfuArray.initializer?.expression as? IrFunctionAccessExpression
+                val atomicArrayClass = atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicfuArray.type)
+                context.irFactory.buildField {
+                    name = atomicfuArray.name
+                    type = atomicArrayClass.defaultType
+                    visibility = atomicfuArray.visibility // private
+                    isFinal = atomicfuArray.isFinal
+                    isStatic = atomicfuArray.isStatic
+                }.apply {
+                    if (init != null) {
                         this.initializer = IrExpressionBodyImpl(
                             with(atomicSymbols.createBuilder(symbol)) {
-                                val size = initializer.getValueArgument(0)!!.deepCopyWithSymbols()
-                                newJucaAtomicArray(atomicArrayClass, size, initializer.dispatchReceiver)
+                                val size = init.getArraySizeArgument()
+                                newJucaAtomicArray(atomicArrayClass, size, init.dispatchReceiver)
                             }
                         )
-                        annotations = atomicfuArray.annotations
-                        this.parent = parent
+                    } else {
+                        // if lateinit field -> initialize it in IrAnonymousInitializer
+                        transformLateInitializer(atomicfuArray, parent) { init ->
+                            init as IrFunctionAccessExpression
+                            val size = init.getArraySizeArgument()
+                            with(atomicSymbols.createBuilder(this.symbol)) {
+                                irSetField(
+                                    (parent as? IrClass)?.thisReceiver?.capture(),
+                                    this@apply,
+                                    newJucaAtomicArray(atomicArrayClass, size, init.dispatchReceiver)
+                                )
+                            }
+                        }
                     }
-                } ?: error("Atomic array ${atomicfuArrayProperty.render()} should be initialized either directly or in the init{} block")
+                    annotations = atomicfuArray.annotations
+                    this.parent = parent
+                }
             } ?: error("Atomic property does not have backingField")
 
         private fun generateWrapperClass(atomicProperty: IrProperty, parentFile: IrDeclarationContainer): IrClass {
@@ -325,20 +346,33 @@ class AtomicfuJvmIrTransformer(
             }
         }
 
-        private fun getPropertyInitializer(field: IrField, parentClass: IrDeclarationContainer): IrExpression? {
-            field.initializer?.expression?.let { return it }
-            for (declaration in parentClass.declarations) {
+        private fun transformLateInitializer(
+            field: IrField,
+            parent: IrDeclarationContainer,
+            generateIrSetField: (init: IrExpression) -> IrExpression
+        ) {
+            for (declaration in parent.declarations) {
                 if (declaration is IrAnonymousInitializer) {
                     declaration.body.statements.singleOrNull {
                         it is IrSetField && it.symbol == field.symbol
                     }?.let {
                         declaration.body.statements.remove(it)
-                        return (it as IrSetField).value
+                        val init = (it as IrSetField).value
+                        declaration.body.statements.add(
+                            generateIrSetField(init)
+                        )
                     }
                 }
             }
-            return null
         }
+
+        private fun IrCall.getAtomicFactoryValueArgument() =
+            getValueArgument(0)?.deepCopyWithSymbols()
+                ?: error("Atomic factory should take at least one argument: ${this.render()}")
+
+        private fun IrFunctionAccessExpression.getArraySizeArgument() =
+            getValueArgument(0)?.deepCopyWithSymbols()
+                ?: error("Atomic array constructor should take at least one argument: ${this.render()}")
 
         private fun fromKotlinxAtomicfu(declaration: IrDeclaration): Boolean =
             declaration is IrProperty &&

@@ -91,6 +91,12 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     }
 
     @Test
+    @TestMetadata("LateinitPropertiesTest.kt")
+    public void testLateinitPropertiesTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/LateinitPropertiesTest.kt");
+    }
+
+    @Test
     @TestMetadata("LockFreeIntBitsTest.kt")
     public void testLockFreeIntBitsTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/LockFreeIntBitsTest.kt");
@@ -136,12 +142,6 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     @TestMetadata("ParameterizedInlineFunExtensionTest.kt")
     public void testParameterizedInlineFunExtensionTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/ParameterizedInlineFunExtensionTest.kt");
-    }
-
-    @Test
-    @TestMetadata("PropertyDeclarationTest.kt")
-    public void testPropertyDeclarationTest() throws Exception {
-        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/PropertyDeclarationTest.kt");
     }
 
     @Test
