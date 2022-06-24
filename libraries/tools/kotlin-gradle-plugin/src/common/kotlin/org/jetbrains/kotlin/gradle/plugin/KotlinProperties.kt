@@ -40,7 +40,7 @@ import java.util.*
 internal class PropertiesProvider private constructor(private val project: Project) {
     private val localProperties: Properties by lazy {
         Properties().apply {
-            val localPropertiesFile = project.rootProject.file("local.properties")
+            val localPropertiesFile = File(project.rootDir, "local.properties")
             if (localPropertiesFile.isFile) {
                 localPropertiesFile.inputStream().use {
                     load(it)
