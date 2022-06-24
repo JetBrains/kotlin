@@ -127,19 +127,15 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            // Compute intermediate compilation mode
-            val tmpCompilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            var compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
 
-            val abiSnapshot = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot) {
-                AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+            val abiSnapshot = if (compilationMode is CompilationMode.Incremental && withAbiSnapshot) {
+                val snapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+                if (snapshot == null) {
+                    compilationMode = CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+                }
+                snapshot
             } else null
-
-            // Compute final compilation mode depending on whether the ABI snapshot exists
-            val compilationMode = if (tmpCompilationMode is CompilationMode.Incremental && withAbiSnapshot && abiSnapshot == null) {
-                CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
-            } else {
-                tmpCompilationMode
-            }
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> try {
@@ -523,4 +519,3 @@ abstract class IncrementalCompilerRunner<
         }
     }
 }
-
