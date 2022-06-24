@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.daemon.report.experimental
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.jetbrains.kotlin.build.report.*
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.RemoteBuildReporter
+import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.RemoteBuildMetricsReporter
@@ -24,7 +27,7 @@ internal class DebugMessagesICReporterAsync(
 ) : ICReporterBase(rootDir), RemoteICReporter {
 
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
-        if (severity.level() < reportSeverity.level()) return
+        if (severity.level < reportSeverity.level) return
 
         GlobalScope.async {
             servicesFacade.report(ReportCategory.IC_MESSAGE, severity.getSeverity(), message())

@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 interface ICReporter {
-    enum class ReportSeverity { WARNING, INFO, DEBUG }
+
+    enum class ReportSeverity(val level: Int) {
+        WARNING(3),
+        INFO(2),
+        DEBUG(1);
+    }
 
     fun report(message: () -> String, severity: ReportSeverity)
 
@@ -22,12 +27,6 @@ interface ICReporter {
 fun ICReporter.warn(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.WARNING)
 fun ICReporter.info(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.INFO)
 fun ICReporter.debug(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.DEBUG)
-
-fun ICReporter.ReportSeverity.level(): Int = when (this) {
-    ICReporter.ReportSeverity.WARNING -> 3
-    ICReporter.ReportSeverity.INFO -> 2
-    ICReporter.ReportSeverity.DEBUG -> 1
-}
 
 object DoNothingICReporter : ICReporter {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}

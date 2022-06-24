@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.daemon.report
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.RemoteICReporter
-import org.jetbrains.kotlin.build.report.level
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.ReportCategory
@@ -23,7 +22,7 @@ internal class DebugMessagesICReporter(
 ) : ICReporterBase(rootDir), RemoteICReporter {
 
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
-        if (severity.level() < reportSeverity.level()) return
+        if (severity.level < reportSeverity.level) return
 
         servicesFacade.report(ReportCategory.IC_MESSAGE, severity.getSeverity(), message())
     }
