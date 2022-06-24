@@ -87,7 +87,7 @@ internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtL
 
     attributeValues ?: return null
 
-    val targetMapping = targetMappings.getValue(support.typeMapper.jvmTarget)
+    val targetMapping = targetMappings.getValue(support.jvmTarget)
     val convertedValues = attributeValues.mapNotNull { targetMapping[it] }.distinct()
 
     val targetAttributes = "value" to ArrayValue(convertedValues) { module -> module.builtIns.array.defaultType }
