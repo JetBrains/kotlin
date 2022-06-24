@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava
+package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
         val outermostClass = getOutermostClassOrObject(ktClassOrObject)
-        return KotlinExtraDiagnosticsProvider.getInstance(ktClassOrObject.project).forClassOrObject(outermostClass)
+        return CliExtraDiagnosticsProvider.forClassOrObject(outermostClass)
     }
 
     fun doGetDiagnostics(): Diagnostics? {
@@ -45,7 +45,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
 
         when (parent) {
             is KtFile -> {
-                return KotlinExtraDiagnosticsProvider.getInstance(parent.project).forFacade(parent, moduleScope)
+                return CliExtraDiagnosticsProvider.forFacade(parent, moduleScope)
             }
 
             is KtClassBody -> {

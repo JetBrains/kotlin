@@ -10,7 +10,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.KotlinExtraDiagnosticsProvider
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsLocal
@@ -31,8 +30,8 @@ private val JAVA_API_STUB_LOCK = Key.create<Any>("JAVA_API_STUB_LOCK")
 
 private val javaApiStubInitIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
-class CliExtraDiagnosticsProvider : KotlinExtraDiagnosticsProvider {
-    override fun forClassOrObject(kclass: KtClassOrObject): Diagnostics {
+object CliExtraDiagnosticsProvider {
+    fun forClassOrObject(kclass: KtClassOrObject): Diagnostics {
         if (kclass.shouldNotBeVisibleAsLightClass()) {
             return Diagnostics.EMPTY
         }
@@ -44,7 +43,7 @@ class CliExtraDiagnosticsProvider : KotlinExtraDiagnosticsProvider {
         }.extraDiagnostics
     }
 
-    override fun forFacade(file: KtFile, moduleScope: GlobalSearchScope): Diagnostics {
+    fun forFacade(file: KtFile, moduleScope: GlobalSearchScope): Diagnostics {
         val project = file.project
         val facadeFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
         val files = KotlinAsJavaSupport.getInstance(project)
