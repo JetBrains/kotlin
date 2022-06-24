@@ -1641,6 +1641,14 @@ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
     public constructor ExperimentalStdlibApi()
 }
 
+/*∆*/ @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+/*∆*/ @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
+/*∆*/ @kotlin.annotation.MustBeDocumented
+/*∆*/ @kotlin.SinceKotlin(version = "1.3")
+/*∆*/ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
+/*∆*/     public constructor ExperimentalStdlibApi()
+/*∆*/ }
+/*∆*/ 
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
