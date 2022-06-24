@@ -1,0 +1,16 @@
+warning: ATTENTION!
+ This build uses experimental K2 compiler:
+  -Xuse-k2
+compiler/testData/cli/jvm/firDeprecationJava.kt:3:12: warning: '@R|kotlin/Deprecated|(...) public final fun stop(): R|kotlin/Unit|
+' is deprecated. Deprecated in Java
+    thread.stop()
+           ^
+compiler/testData/cli/jvm/firDeprecationJava.kt:4:17: warning: '@R|kotlin/Deprecated|(...) public open fun bar(a: R|ft<kotlin/String, kotlin/String?>|, b: R|kotlin/Int|, c: R|kotlin/Double|): R|ft<kotlin/String, kotlin/String?>|
+' is deprecated. Deprecated in Java
+    JavaClass().bar("", 1, 2.0)
+                ^
+compiler/testData/cli/jvm/firDeprecationJava.kt:5:27: warning: '@R|kotlin/Deprecated|(...) public open field baz: R|ft<List, List?>|
+' is deprecated. Deprecated in Java
+    val baz = JavaClass().baz
+                          ^
+OK

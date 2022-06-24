@@ -374,6 +374,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firAllOpenPlugin.args");
         }
 
+        @TestMetadata("firDeprecationJava.args")
+        public void testFirDeprecationJava() throws Exception {
+            runTest("compiler/testData/cli/jvm/firDeprecationJava.args");
+        }
+
         @TestMetadata("firDfa.args")
         public void testFirDfa() throws Exception {
             runTest("compiler/testData/cli/jvm/firDfa.args");

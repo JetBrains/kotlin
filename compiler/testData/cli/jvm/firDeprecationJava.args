@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/firDeprecationJava.kt
+$TESTDATA_DIR$/firDeprecationJava
+-Xuse-k2
+-d
+$TEMP_DIR$
