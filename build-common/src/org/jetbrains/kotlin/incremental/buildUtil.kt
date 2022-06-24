@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -152,7 +153,7 @@ fun ChangesCollector.getDirtyData(
     val sealedParents = HashSet<FqName>()
 
     for (change in changes()) {
-        reporter.reportVerbose { "Process $change" }
+        reporter.debug { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)

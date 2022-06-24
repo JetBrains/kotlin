@@ -20,6 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import java.io.File
 import java.util.*
@@ -38,7 +39,7 @@ internal class ChangedJavaFilesProcessor(
         val removedJava = filesDiff.removed.filter(File::isJavaFile)
 
         if (removedJava.any()) {
-            reporter.report { "Some java files are removed: [${removedJava.joinToString()}]" }
+            reporter.info { "Some java files are removed: [${removedJava.joinToString()}]" }
             return ChangesEither.Unknown(BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED)
         }
 
@@ -48,7 +49,7 @@ internal class ChangedJavaFilesProcessor(
 
             val psiFile = psiFileFactory(javaFile)
             if (psiFile !is PsiJavaFile) {
-                reporter.report { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+                reporter.info { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                 return ChangesEither.Unknown(BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI)
             }
 

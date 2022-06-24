@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -750,7 +751,7 @@ private fun ChangesCollector.processChangesUsingLookups(
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
 
-    reporter.reportVerbose { "Start processing changes" }
+    reporter.debug { "Start processing changes" }
 
     val dirtyFiles = getDirtyFiles(allCaches, lookupStorageManager)
     // if list of inheritors of sealed class has changed it should be recompiled with all the inheritors
@@ -764,7 +765,7 @@ private fun ChangesCollector.processChangesUsingLookups(
         excludeFiles = excludeFiles
     )
 
-    reporter.reportVerbose { "End of processing changes" }
+    reporter.debug { "End of processing changes" }
 }
 
 data class FilesToRecompile(val dirtyFiles: Set<File>, val forceRecompileTogether: Set<File>)

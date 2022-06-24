@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -35,8 +36,6 @@ import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
-import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarHandler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
@@ -600,7 +599,7 @@ abstract class CompileServiceImplBase(
         val workingDir = incrementalCompilationOptions.workingDir
 
         val modulesApiHistory = incrementalCompilationOptions.run {
-            reporter.report { "Use module detection: ${multiModuleICSettings.useModuleDetection}" }
+            reporter.info { "Use module detection: ${multiModuleICSettings.useModuleDetection}" }
 
             if (!multiModuleICSettings.useModuleDetection) {
                 ModulesApiHistoryJvm(modulesInfo)

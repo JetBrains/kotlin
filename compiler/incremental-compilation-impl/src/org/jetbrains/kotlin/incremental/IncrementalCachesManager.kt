@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.IncrementalFileToPathConverter
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -62,7 +63,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
                     cache.flush(false)
                 } catch (e: Throwable) {
                     isSuccessfulyClosed = false
-                    reporter.report { "Exception when flushing cache ${cache.javaClass}: $e" }
+                    reporter.info { "Exception when flushing cache ${cache.javaClass}: $e" }
                 }
             }
 
@@ -70,7 +71,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
                 cache.close()
             } catch (e: Throwable) {
                 isSuccessfulyClosed = false
-                reporter.report { "Exception when closing cache ${cache.javaClass}: $e" }
+                reporter.info { "Exception when closing cache ${cache.javaClass}: $e" }
             }
         }
 
