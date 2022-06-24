@@ -12,6 +12,7 @@ val kotlinReflectCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect
 val kotlinReflectJvm = fileFrom(rootDir, "libraries/stdlib/jvm/src/kotlin/reflect")
 val kotlinRangesCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/ranges")
 val kotlinCollectionsCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/collections")
+val kotlinAnnotationsCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/annotations")
 val builtinsCherryPicked = fileFrom(buildDir, "src/reflect")
 val rangesCherryPicked = fileFrom(buildDir, "src/ranges")
 val builtinsCherryPickedJvm = fileFrom(buildDir, "src-jvm/reflect")
@@ -36,9 +37,14 @@ val runtimeElementsJvm by configurations.creating {
 val prepareRangeSources by tasks.registering(Sync::class) {
     from(kotlinRangesCommon) {
         exclude("Ranges.kt")
+        filter { line -> line.takeUnless { "@OptIn" in it } }
     }
     from(kotlinCollectionsCommon) {
         include("PrimitiveIterators.kt")
+    }
+    from(kotlinAnnotationsCommon) {
+        include("ExperimentalStdlibApi.kt")
+        filter { line -> line.takeUnless { "@RequiresOptIn" in it } }
     }
 
     into(rangesCherryPicked)
