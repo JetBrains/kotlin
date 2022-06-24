@@ -1,4 +1,4 @@
-public final enum class JavaEnum : R|kotlin/Enum<ft<test/JavaEnum, test/JavaEnum?>>| {
+public final enum class JavaEnum : R|kotlin/Enum<test/JavaEnum!>| {
     public final static enum entry ENTRY: R|@EnhancedNullability test/JavaEnum|
     public final static enum entry ANOTHER: R|@EnhancedNullability test/JavaEnum|
     public final static fun values(): R|kotlin/Array<test/JavaEnum>| {

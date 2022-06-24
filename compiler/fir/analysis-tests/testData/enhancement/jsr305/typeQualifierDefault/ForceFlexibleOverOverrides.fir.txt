@@ -5,7 +5,7 @@
 
     public open fun baz(@R|spr/UnknownNullability|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit|
 
-    public open fun foobar(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.UNKNOWN|()) x: R|ft<kotlin/String, kotlin/String?>|): R|kotlin/Unit|
+    public open fun foobar(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.UNKNOWN|()) x: R|kotlin/String!|): R|kotlin/Unit|
 
     public constructor(): R|A|
 

@@ -53,14 +53,28 @@ fun ConeKotlinType.render(renderFqNames: Boolean = true): String {
     } + nullabilitySuffix
 }
 
-private fun ConeFlexibleType.render(renderFqNames: Boolean): String =
-    buildString {
+private fun ConeFlexibleType.render(renderFqNames: Boolean): String {
+    if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
+        lowerBound.lookupTag == upperBound.lookupTag &&
+        lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE
+    ) {
+        if (lowerBound !is ConeClassLikeType || lowerBound.typeArguments.isEmpty()) {
+            if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {
+                return buildString {
+                    append(lowerBound.render(renderFqNames))
+                    append("!")
+                }
+            }
+        }
+    }
+    return buildString {
         append("ft<")
         append(lowerBound.render(renderFqNames))
         append(", ")
         append(upperBound.render(renderFqNames))
         append(">")
     }
+}
 
 private fun ConeKotlinType.renderAttributes(): String {
     if (!attributes.any()) return ""

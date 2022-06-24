@@ -10,5 +10,5 @@ FILE: test.kt
     }
     public final val generator: R|Generator| = R|/Generator.Generator|()
         public get(): R|Generator|
-    public final val y: R|Value| = (R|/generator|.R|/Generator.createValue|<R|ft<Value, Value?>|>(String(Omega)) as R|Value|)
+    public final val y: R|Value| = (R|/generator|.R|/Generator.createValue|<R|Value!|>(String(Omega)) as R|Value|)
         public get(): R|Value|

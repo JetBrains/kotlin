@@ -9,8 +9,8 @@ KtSuccessCallInfo:
       signature = KtVariableLikeSignature:
         name = sub
         receiverType = null
-        returnType = ft<JavaSubClass, JavaSubClass?>
-        symbol = val sub: ft<JavaSubClass, JavaSubClass?>
+        returnType = JavaSubClass!
+        symbol = val sub: JavaSubClass!
         callableIdIfNonLocal = /JavaClass.sub
     simpleAccess = Read:
 
