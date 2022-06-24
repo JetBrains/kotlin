@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.IOException
@@ -36,7 +37,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
 
         fun readDiffsFromFile(file: File, reporter: ICReporter?): MutableList<BuildDifference>? {
             fun reportFail(reason: String) {
-                reporter?.report { "Could not read diff from file $file: $reason" }
+                reporter?.info { "Could not read diff from file $file: $reason" }
             }
 
             if (!file.exists()) return null
@@ -77,7 +78,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
                     }
                 }
             } catch (e: IOException) {
-                reporter?.report { "Could not write diff to file $file: $e" }
+                reporter?.info { "Could not write diff to file $file: $e" }
             }
         }
 

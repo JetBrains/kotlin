@@ -18,7 +18,7 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
 
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
         affectedFiles.forEach { file ->
-            reportVerbose { "${pathsAsString(file)} is marked dirty: $reason" }
+            debug { "${pathsAsString(file)} is marked dirty: $reason" }
         }
     }
 

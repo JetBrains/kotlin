@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
@@ -308,7 +309,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
-    reporter.reportVerbose {
+    reporter.debug {
         "Shrunk current classpath snapshot after compilation (shrink mode = ${shrinkMode::class.simpleName})" + when (shrinkMode) {
             is ShrinkMode.UnchangedLookupsUnchangedClasspath -> ", no updates since previous run"
             else -> ", retained ${shrunkCurrentClasspath!!.size} / ${currentClasspath!!.size} classes"

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -140,7 +141,7 @@ class IncrementalJsCompilerRunner(
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
             is ChangesEither.Unknown -> {
-                reporter.report { "Could not get classpath's changes: ${classpathChanges.reason}" }
+                reporter.info { "Could not get classpath's changes: ${classpathChanges.reason}" }
                 return CompilationMode.Rebuild(classpathChanges.reason)
             }
             is ChangesEither.Known -> {

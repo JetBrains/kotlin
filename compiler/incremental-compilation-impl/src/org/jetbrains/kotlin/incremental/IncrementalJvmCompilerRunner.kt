@@ -26,9 +26,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.DoNothingICReporter
-import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.*
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -236,7 +234,7 @@ open class IncrementalJvmCompilerRunner(
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
-        reporter.reportVerbose { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
+        reporter.debug { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
         val classpathChanges = when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
@@ -266,7 +264,7 @@ open class IncrementalJvmCompilerRunner(
                     return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
                 }
                 val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-                reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
+                reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
                 getClasspathChanges(
@@ -280,7 +278,7 @@ open class IncrementalJvmCompilerRunner(
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
             is ChangesEither.Unknown -> {
-                reporter.report {
+                reporter.info {
                     "Could not get classpath's changes: ${classpathChanges.reason}"
                 }
                 return CompilationMode.Rebuild(classpathChanges.reason)
@@ -327,20 +325,20 @@ open class IncrementalJvmCompilerRunner(
             if (!caches.platformCache.isTrackedFile(javaFile)) {
                 if (!javaFile.exists()) {
                     // todo: can we do this more optimal?
-                    reporter.report { "Could not get changed for untracked removed java file $javaFile" }
+                    reporter.info { "Could not get changed for untracked removed java file $javaFile" }
                     return BuildAttribute.JAVA_CHANGE_UNTRACKED_FILE_IS_REMOVED
                 }
 
                 val psiFile = psiFileProvider.javaFile(javaFile)
                 if (psiFile !is PsiJavaFile) {
-                    reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+                    reporter.info { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                     return BuildAttribute.JAVA_CHANGE_UNEXPECTED_PSI
                 }
 
                 for (psiClass in psiFile.classes) {
                     val qualifiedName = psiClass.qualifiedName
                     if (qualifiedName == null) {
-                        reporter.report { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
+                        reporter.info { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
                         return BuildAttribute.JAVA_CHANGE_UNKNOWN_QUALIFIER
                     }
 
