@@ -15,6 +15,8 @@ import java.nio.file.*
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.NoSuchFileException
 import java.nio.file.attribute.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.jvm.Throws
 
 /**
@@ -1015,3 +1017,115 @@ public inline fun URI.toPath(): Path =
 @ExperimentalPathApi
 @SinceKotlin("1.7")
 public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)
+
+/**
+ * Visits this directory and all its content with the specified [visitor].
+ *
+ * The traversal is in depth-first order and starts at this directory. The specified [visitor] is invoked on each file encountered.
+ *
+ * @param visitor the [FileVisitor] that receives callbacks.
+ * @param maxDepth the maximum depth to traverse. By default, there is no limit.
+ * @param followLinks specifies whether to follow symbolic links, `false` by default.
+ *
+ * @see Files.walkFileTree
+ */
+@ExperimentalPathApi
+@SinceKotlin("1.7")
+public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MAX_VALUE, followLinks: Boolean = false): Unit {
+    val options = if (followLinks) setOf(FileVisitOption.FOLLOW_LINKS) else setOf()
+    Files.walkFileTree(this, options, maxDepth, visitor)
+}
+
+/**
+ * Visits this directory and all its content with the [FileVisitor] defined in [builderAction].
+ *
+ * This function works the same as [Path.visitFileTree]. It is introduced to streamline
+ * the cases when a [FileVisitor] is created only to be immediately used for a file tree traversal.
+ * The trailing lambda [builderAction] is passed to [fileVisitor] to get the file visitor.
+ *
+ * Example:
+ *
+ * ``` kotlin
+ * projectDirectory.visitFileTree {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.toFile().deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ * ```
+ *
+ * @param maxDepth the maximum depth to traverse. By default, there is no limit.
+ * @param followLinks specifies whether to follow symbolic links, `false` by default.
+ * @param builderAction the function that defines [FileVisitor].
+ *
+ * @see Path.visitFileTree
+ * @see fileVisitor
+ */
+@ExperimentalPathApi
+@SinceKotlin("1.7")
+public fun Path.visitFileTree(
+    maxDepth: Int = Int.MAX_VALUE,
+    followLinks: Boolean = false,
+    builderAction: FileVisitorBuilder.() -> Unit
+): Unit {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    visitFileTree(fileVisitor(builderAction), maxDepth, followLinks)
+}
+
+/**
+ * Builds a [FileVisitor] whose implementation is defined in [builderAction].
+ *
+ * By default, the returned file visitor visits all files and re-throws I/O errors, that is:
+ *   * [FileVisitor.preVisitDirectory] returns [FileVisitResult.CONTINUE].
+ *   * [FileVisitor.visitFile] returns [FileVisitResult.CONTINUE].
+ *   * [FileVisitor.visitFileFailed] re-throws the I/O exception that prevented the file from being visited.
+ *   * [FileVisitor.postVisitDirectory] returns [FileVisitResult.CONTINUE] if the directory iteration completes without an I/O exception;
+ *     otherwise it re-throws the I/O exception that caused the iteration of the directory to terminate prematurely.
+ *
+ * To override a function provide its implementation to the corresponding
+ * function of the [FileVisitorBuilder] that was passed as a receiver to [builderAction].
+ * Note that each function can be overridden only once.
+ * Repeated override of a function throws [IllegalStateException].
+ *
+ * The builder is valid only inside [builderAction] function.
+ * Using it outside the function throws [IllegalStateException].
+ *
+ * Example:
+ *
+ * ``` kotlin
+ * val cleanVisitor = fileVisitor {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.toFile().deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ * ```
+ */
+@ExperimentalPathApi
+@SinceKotlin("1.7")
+public fun fileVisitor(builderAction: FileVisitorBuilder.() -> Unit): FileVisitor<Path> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return FileVisitorBuilderImpl().apply(builderAction).build()
+}
