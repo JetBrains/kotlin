@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -98,7 +101,7 @@ abstract class IncrementalCompilerRunner<
         projectDir: File? = null,
         classpathAbiSnapshot: Map<String, AbiSnapshot>
     ): ExitCode {
-        reporter.report { "Non-incremental compilation will be performed: $reason" }
+        reporter.info { "Non-incremental compilation will be performed: $reason" }
         reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
             cleanOutputsAndLocalStateOnRebuild(args)
         }
@@ -133,7 +136,7 @@ abstract class IncrementalCompilerRunner<
 
         val classpathAbiSnapshot =
             if (withAbiSnapshot) {
-                reporter.report { "Incremental compilation with ABI snapshot enabled" }
+                reporter.info { "Incremental compilation with ABI snapshot enabled" }
                 reporter.measure(BuildTime.SET_UP_ABI_SNAPSHOTS) {
                     setupJarDependencies(args, withAbiSnapshot, reporter)
                 }
@@ -196,7 +199,7 @@ abstract class IncrementalCompilerRunner<
             }
         } finally {
             if (!caches.close(flush = true)) {
-                reporter.report { "Unable to close IC caches. Cleaning internal state" }
+                reporter.info { "Unable to close IC caches. Cleaning internal state" }
                 cleanOutputsAndLocalStateOnRebuild(args)
             }
         }
@@ -212,15 +215,15 @@ abstract class IncrementalCompilerRunner<
         // Use Set as additionalOutputFiles may already contain destinationDir and workingDir
         val outputFiles = setOf(destinationDir(args), workingDir) + additionalOutputFiles
 
-        reporter.reportVerbose { "Cleaning outputs on rebuild" }
+        reporter.debug { "Cleaning outputs on rebuild" }
         outputFiles.forEach {
             when {
                 it.isDirectory -> {
-                    reporter.reportVerbose { "  Deleting contents of directory '${it.path}'" }
+                    reporter.debug { "  Deleting contents of directory '${it.path}'" }
                     it.cleanDirectoryContents()
                 }
                 it.isFile -> {
-                    reporter.reportVerbose { "  Deleting file '${it.path}'" }
+                    reporter.debug { "  Deleting file '${it.path}'" }
                     it.deleteRecursivelyOrThrow()
                 }
             }
@@ -322,7 +325,7 @@ abstract class IncrementalCompilerRunner<
         classpathAbiSnapshot: Map<String, AbiSnapshot> = HashMap()
     ): ExitCode {
         if (compilationMode is CompilationMode.Rebuild) {
-            reporter.report { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
+            reporter.info { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
         }
 
         preBuildHook(args, compilationMode)
