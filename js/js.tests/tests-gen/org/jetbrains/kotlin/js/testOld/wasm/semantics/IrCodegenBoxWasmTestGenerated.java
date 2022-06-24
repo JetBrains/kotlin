@@ -6219,6 +6219,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt");
         }
 
+        @TestMetadata("inlineSuspendTypealias.kt")
+        public void testInlineSuspendTypealias() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineSuspendTypealias.kt");
+        }
+
         @TestMetadata("inlinedTryCatchFinally.kt")
         public void testInlinedTryCatchFinally() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt");

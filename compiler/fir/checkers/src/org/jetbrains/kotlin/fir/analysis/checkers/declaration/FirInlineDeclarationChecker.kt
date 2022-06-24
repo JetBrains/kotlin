@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorV
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
@@ -375,7 +377,10 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
 
             if (isSuspendFunctionalType && !param.isCrossinline) {
                 if (function.isSuspend) {
-                    reporter.reportOn(param.returnTypeRef.source, FirErrors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE, context)
+                    val modifier = param.returnTypeRef.getModifier(KtTokens.SUSPEND_KEYWORD)
+                    if (modifier != null) {
+                        reporter.reportOn(param.returnTypeRef.source, FirErrors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE, context)
+                    }
                 } else {
                     reporter.reportOn(param.source, FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, context)
                 }

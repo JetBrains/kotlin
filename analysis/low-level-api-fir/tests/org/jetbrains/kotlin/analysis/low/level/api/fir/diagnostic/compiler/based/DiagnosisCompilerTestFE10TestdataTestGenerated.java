@@ -6583,6 +6583,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("inlineSuspendTypealias.kt")
+            public void testInlineSuspendTypealias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/inlineSuspendTypealias.kt");
+            }
+
+            @Test
             @TestMetadata("modifierFormBuiltinSuspendFun.kt")
             public void testModifierFormBuiltinSuspendFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/coroutines/modifierFormBuiltinSuspendFun.kt");
