@@ -52,7 +52,7 @@ internal final class CharProgressionIterator : R|kotlin/collections/CharIterator
 
 }
 
-public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges/ClosedRange<kotlin/Char>| {
+public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges/ClosedRange<kotlin/Char>|, R|kotlin/ranges/OpenEndRange<kotlin/Char>| {
     public final companion object Companion : R|kotlin/Any| {
         public final val EMPTY: R|kotlin/ranges/CharRange|
             public get(): R|kotlin/ranges/CharRange|
@@ -70,6 +70,9 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
     public open fun isEmpty(): R|kotlin/Boolean|
 
     public open fun toString(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Char|
+        public get(): R|kotlin/Char|
 
     public open val endInclusive: R|kotlin/Char|
         public get(): R|kotlin/Char|
@@ -148,7 +151,7 @@ internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| 
 
 }
 
-public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/ClosedRange<kotlin/Int>| {
+public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/ClosedRange<kotlin/Int>|, R|kotlin/ranges/OpenEndRange<kotlin/Int>| {
     public final companion object Companion : R|kotlin/Any| {
         public final val EMPTY: R|kotlin/ranges/IntRange|
             public get(): R|kotlin/ranges/IntRange|
@@ -166,6 +169,9 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
     public open fun isEmpty(): R|kotlin/Boolean|
 
     public open fun toString(): R|kotlin/String|
+
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Int|
+        public get(): R|kotlin/Int|
 
     public open val endInclusive: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -231,7 +237,7 @@ internal final class LongProgressionIterator : R|kotlin/collections/LongIterator
 
 }
 
-public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges/ClosedRange<kotlin/Long>| {
+public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges/ClosedRange<kotlin/Long>|, R|kotlin/ranges/OpenEndRange<kotlin/Long>| {
     public final companion object Companion : R|kotlin/Any| {
         public final val EMPTY: R|kotlin/ranges/LongRange|
             public get(): R|kotlin/ranges/LongRange|
@@ -250,6 +256,9 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
     public open fun toString(): R|kotlin/String|
 
+    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Long|
+        public get(): R|kotlin/Long|
+
     public open val endInclusive: R|kotlin/Long|
         public get(): R|kotlin/Long|
 
@@ -257,6 +266,19 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
         public get(): R|kotlin/Long|
 
     public constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+
+}
+
+@R|kotlin/SinceKotlin|(version = String(1.7)) @R|kotlin/ExperimentalStdlibApi|() public abstract interface OpenEndRange<T : R|kotlin/Comparable<T>|> : R|kotlin/Any| {
+    public open operator fun contains(value: R|T|): R|kotlin/Boolean|
+
+    public open fun isEmpty(): R|kotlin/Boolean|
+
+    public abstract val endExclusive: R|T|
+        public get(): R|T|
+
+    public abstract val start: R|T|
+        public get(): R|T|
 
 }
 
