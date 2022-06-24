@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
+import java.util.*
 
 class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
@@ -93,9 +94,39 @@ class KotlinKarma(
         useMocha()
         useWebpack()
         useSourceMapSupport()
+        usePropBrowser()
 
         // necessary for debug as a fallback when no debuggable browsers found
         addChromeLauncher()
+    }
+
+    private fun usePropBrowser() {
+        val propKey = "kotlin.target.${compilation.target.name}.js.test.browser"
+        val localPropFile = project.projectDir.resolve("local.properties").takeIf(File::exists)
+            ?: project.rootDir.resolve("local.properties").takeIf(File::exists)
+        val propBrowser = localPropFile?.reader()?.use { Properties().apply { load(it) } }?.getProperty(propKey)
+            ?: project.findProperty(propKey)?.toString()
+        when (propBrowser?.toLowerCase()) {
+            "chrome" -> useChrome()
+            "chrome-canary" -> useChromeCanary()
+            "chrome-canary-headless" -> useChromeCanaryHeadless()
+            "chrome-headless" -> useChromeHeadless()
+            "chrome-headless-no-sandbox" -> useChromeHeadlessNoSandbox()
+            "chromium" -> useChromium()
+            "chromium-headless" -> useChromiumHeadless()
+            "firefox" -> useFirefox()
+            "firefox-aurora" -> useFirefoxAurora()
+            "firefox-aurora-headless" -> useFirefoxAuroraHeadless()
+            "firefox-developer" -> useFirefoxDeveloper()
+            "firefox-developer-headless" -> useFirefoxDeveloperHeadless()
+            "firefox-headless" -> useFirefoxHeadless()
+            "firefox-nightly" -> useFirefoxNightly()
+            "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
+            "ie" -> useIe()
+            "opera" -> useOpera()
+            "phantom-js" -> usePhantomJS()
+            "safari" -> useSafari()
+        }
     }
 
     private fun useKotlinReporter() {
