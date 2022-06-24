@@ -489,7 +489,7 @@ class AtomicfuJvmIrTransformer(
                                     }
                                     val loopCall = irCallWithArgs(
                                         symbol = loopFunc.symbol,
-                                        dispatchReceiver = data.dispatchReceiverParameter?.capture(),
+                                        dispatchReceiver = data.containingFunction.dispatchReceiverParameter?.capture(),
                                         valueArguments = if (isArrayReceiver) {
                                             val index = receiver.getArrayElementIndex(data)
                                             listOf(atomicHandler, index, action)
@@ -660,7 +660,15 @@ class AtomicfuJvmIrTransformer(
 
         private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer
             get() = parents.filterIsInstance<IrDeclarationContainer>().firstOrNull() ?:
-                error("In the sequence of parents for ${this.render()} no IrDeclarationContainer found")
+                error("In the sequence of parents for ${this.render()} no IrDeclarationContainer was found")
+
+        private val IrFunction.containingFunction: IrFunction
+            get() {
+                if (this.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return this
+                return parents.filterIsInstance<IrFunction>().firstOrNull {
+                    it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                } ?: error("In the sequence of parents for the local function ${this.render()} no containing function was found")
+            }
 
         private fun IrExpression.getArrayElementIndex(parentFunction: IrFunction?): IrExpression =
             when {

@@ -86,6 +86,12 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
     }
 
     @Test
+    @TestMetadata("LambdaTest.kt")
+    public void testLambdaTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/LambdaTest.kt");
+    }
+
+    @Test
     @TestMetadata("LockFreeIntBitsTest.kt")
     public void testLockFreeIntBitsTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/LockFreeIntBitsTest.kt");
