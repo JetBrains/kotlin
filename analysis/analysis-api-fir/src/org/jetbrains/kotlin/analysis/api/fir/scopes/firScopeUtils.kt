@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 
@@ -27,13 +25,7 @@ internal fun FirScope.getCallableSymbols(
             callables.add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol))
         }
         processPropertiesByName(name) { firSymbol ->
-            val symbol = when {
-                firSymbol is FirPropertySymbol && firSymbol.fir.isSubstitutionOverride -> {
-                    builder.variableLikeBuilder.buildVariableSymbol(firSymbol)
-                }
-                else -> builder.callableBuilder.buildCallableSymbol(firSymbol)
-            }
-            callables.add(symbol)
+            callables.add(builder.callableBuilder.buildCallableSymbol(firSymbol))
         }
         yieldAll(callables)
     }
