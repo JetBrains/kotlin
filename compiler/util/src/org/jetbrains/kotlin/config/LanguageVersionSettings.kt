@@ -262,6 +262,7 @@ enum class LanguageFeature(
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_8, kind = BUG_FIX),
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
+    GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
 
     // 1.9
 
@@ -298,7 +299,6 @@ enum class LanguageFeature(
     JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     JsAllowValueClassesInExternals(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     ContextReceivers(sinceVersion = null, defaultState = State.DISABLED),
-    GenericInlineClassParameter(sinceVersion = null, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
     ValueClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, defaultState = State.DISABLED),
