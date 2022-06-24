@@ -140,7 +140,8 @@ public final class BindingUtils {
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull KtExpression expression) {
-        return BindingContextUtils.getNotNull(context, BindingContext.VARIABLE_REASSIGNMENT, expression);
+        Boolean result = context.get(BindingContext.VARIABLE_REASSIGNMENT, expression);
+        return (result != null) ? result : false;
     }
 
     @Nullable
