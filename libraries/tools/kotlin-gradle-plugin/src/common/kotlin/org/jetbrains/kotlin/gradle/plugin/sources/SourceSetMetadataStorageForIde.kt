@@ -17,31 +17,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import java.io.File
 
 object SourceSetMetadataStorageForIde {
-    fun cleanupStaleEntries(project: Project) {
-        val projectStorageDirectories = project.rootProject.allprojects
-            .associate { projectStorage(it) to it.multiplatformExtensionOrNull?.sourceSets.orEmpty().map { it.name } }
-        cleanupStaleEntries(getStorageRoot(project), projectStorageDirectories)
-    }
+    private fun getStorageRoot(project: Project): File = project.rootDir.resolve(".gradle/kotlin/sourceSetMetadata")
 
-    fun cleanupStaleEntries(projectStorageRoot: File, projectStorageDirectories: Map<File, List<String>>) {
-        projectStorageRoot.listFiles().orEmpty().filter { it.isDirectory }.forEach { directory ->
-            // If no project corresponds to the directory, remove the directory
-            if (directory !in projectStorageDirectories) {
-                directory.deleteRecursively()
-            } else {
-                // Under the project's directory, delete subdirectories that don't correspond to any source set:
-                val sourceSetNames = projectStorageDirectories.getValue(directory)
-                directory.listFiles().orEmpty().filter { it.isDirectory }.forEach { subdirectory ->
-                    if (subdirectory.name !in sourceSetNames)
-                        subdirectory.deleteRecursively()
-                }
-            }
-        }
-    }
-
-    internal fun getStorageRoot(project: Project): File = project.rootDir.resolve(".gradle/kotlin/sourceSetMetadata")
-
-    internal fun projectStorage(project: Project): File {
+    private fun projectStorage(project: Project): File {
         val projectPathSegments = generateSequence(project) { it.parent }.map { it.name }
         return getStorageRoot(project).resolve(
             // Escape dots in project names to avoid ambiguous paths.
@@ -53,28 +31,4 @@ object SourceSetMetadataStorageForIde {
 
     internal fun sourceSetStorageWithScope(project: Project, sourceSetName: String, scope: KotlinDependencyScope) =
         sourceSetStorage(project, sourceSetName).resolve(scope.scopeName)
-}
-
-abstract class CleanupStaleSourceSetMetadataEntriesService : BuildService<CleanupStaleSourceSetMetadataEntriesService.Parameters>, AutoCloseable, OperationCompletionListener {
-    interface Parameters : BuildServiceParameters {
-        val projectStorageRoot: Property<File>
-        val projectStorageDirectories: MapProperty<File, List<String>>
-    }
-
-    override fun onFinish(event: FinishEvent?) {
-        // noop
-    }
-
-    override fun close() {
-        SourceSetMetadataStorageForIde.cleanupStaleEntries(parameters.projectStorageRoot.get(), parameters.projectStorageDirectories.get())
-    }
-
-    companion object {
-        fun configure(spec: BuildServiceSpec<Parameters>, project: Project) {
-            spec.parameters.projectStorageRoot.set(SourceSetMetadataStorageForIde.getStorageRoot(project))
-            spec.parameters.projectStorageDirectories.set(project.rootProject.allprojects.associate {
-                SourceSetMetadataStorageForIde.projectStorage(it) to it.multiplatformExtensionOrNull?.sourceSets.orEmpty().map { it.name }
-            })
-        }
-    }
 }
