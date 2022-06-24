@@ -13,6 +13,7 @@ repositories {
 
 kotlin {
     jvm()
+    js { browser() }
     linuxX64()
     linuxArm64()
 
