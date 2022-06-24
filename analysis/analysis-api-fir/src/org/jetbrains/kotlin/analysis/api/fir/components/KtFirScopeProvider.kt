@@ -71,8 +71,8 @@ internal class KtFirScopeProvider(
             }
             is KtFirEnumEntrySymbol -> {
                 firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-                val initializer = firSymbol.fir.initializer
-                check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer?.javaClass}" }
+                val initializer = firSymbol.fir.initializer ?: return null
+                check(initializer is FirAnonymousObjectExpression) { "Unexpected enum entry initializer: ${initializer.javaClass}" }
                 body(initializer.anonymousObject)
             }
             else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
