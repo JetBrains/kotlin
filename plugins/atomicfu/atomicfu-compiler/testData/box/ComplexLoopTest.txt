@@ -35,10 +35,10 @@ public final class LoopTest {
     public final @org.jetbrains.annotations.Nullable method getR(): java.lang.Object
     public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
     public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
+    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
+    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
     public final method test(): void
     public final @org.jetbrains.annotations.Nullable method updateAndGet$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): java.lang.Object
-    public final method updateAndGet$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): int
-    public final @org.jetbrains.annotations.Nullable method updateAndGet$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.Object
+    public final method updateAndGet$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): int
+    public final @org.jetbrains.annotations.Nullable method updateAndGet$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.Object
 }

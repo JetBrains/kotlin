@@ -38,7 +38,7 @@ public final class ArrayInlineExtensionTest {
     public final @org.jetbrains.annotations.NotNull method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
     public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): void
+    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
     public final method testIntExtensionLoops(): void
     public final inner class ArrayInlineExtensionTest$A
 }

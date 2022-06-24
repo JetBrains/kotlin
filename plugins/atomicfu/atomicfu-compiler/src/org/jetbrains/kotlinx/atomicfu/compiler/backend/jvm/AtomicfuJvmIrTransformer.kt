@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.*
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -474,7 +475,7 @@ class AtomicfuJvmIrTransformer(
                                     // And the invocation in place will be transformed:
                                     // a.atomicfu$loop(atomicHandler, action)
                                     require(data != null) { "Function containing loop invocation ${expression.render()} is null" }
-                                    val loopFunc = data.parentAsClass.getOrBuildInlineLoopFunction(
+                                    val loopFunc = data.parentDeclarationContainer.getOrBuildInlineLoopFunction(
                                         functionName = functionName,
                                         valueType = if (valueType.isBoolean()) irBuiltIns.intType else valueType,
                                         isArrayReceiver = isArrayReceiver
@@ -493,7 +494,7 @@ class AtomicfuJvmIrTransformer(
                                             val index = receiver.getArrayElementIndex(data)
                                             listOf(atomicHandler, index, action)
                                         } else {
-                                            listOf(atomicHandler, action)
+                                            listOf(atomicHandler, action, dispatchReceiver)
                                         }
                                     )
                                     return super.visitCall(loopCall, data)
@@ -657,6 +658,10 @@ class AtomicfuJvmIrTransformer(
             }
         }
 
+        private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer
+            get() = parents.filterIsInstance<IrDeclarationContainer>().firstOrNull() ?:
+                error("In the sequence of parents for ${this.render()} no IrDeclarationContainer found")
+
         private fun IrExpression.getArrayElementIndex(parentFunction: IrFunction?): IrExpression =
             when {
                 this is IrCall -> getValueArgument(0)!!
@@ -688,27 +693,29 @@ class AtomicfuJvmIrTransformer(
                     valueParameters[1].name.asString() == ATOMIC_HANDLER && atomicSymbols.isAtomicFieldUpdaterType(valueParameters[1].type)
         }
 
-        private fun IrClass.getOrBuildInlineLoopFunction(
+        private fun IrDeclarationContainer.getOrBuildInlineLoopFunction(
             functionName: String,
             valueType: IrType,
             isArrayReceiver: Boolean
         ): IrSimpleFunction {
-            val parentClass = this
+            val parent = this
             val mangledName = mangleFunctionName(functionName, isArrayReceiver)
             val updaterType = if (isArrayReceiver) atomicSymbols.getAtomicArrayType(valueType) else atomicSymbols.getFieldUpdaterType(valueType)
             findDeclaration<IrSimpleFunction> {
                 it.name.asString() == mangledName && it.valueParameters[0].type == updaterType
             }?.let { return it }
-            return addFunction {
+            return context.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
             }.apply {
-                dispatchReceiverParameter = parentClass.thisReceiver!!.deepCopyWithSymbols(this)
+                dispatchReceiverParameter = (parent as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
                 if (functionName == LOOP) {
                     if (isArrayReceiver) generateAtomicfuArrayLoop(valueType) else generateAtomicfuLoop(valueType)
                 } else {
                     if (isArrayReceiver) generateAtomicfuArrayUpdate(functionName, valueType) else generateAtomicfuUpdate(functionName, valueType)
                 }
+                this.parent = parent
+                parent.declarations.add(this)
             }
         }
 
@@ -723,8 +730,9 @@ class AtomicfuJvmIrTransformer(
         private fun IrSimpleFunction.generateAtomicfuLoop(valueType: IrType) {
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, irBuiltIns.unitType))
+            addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
             body = with(atomicSymbols.createBuilder(symbol)) {
-                atomicfuLoopBody(valueType, valueParameters, dispatchReceiverParameter!!.capture())
+                atomicfuLoopBody(valueType, valueParameters)
             }
             returnType = irBuiltIns.unitType
         }
@@ -743,8 +751,9 @@ class AtomicfuJvmIrTransformer(
         private fun IrSimpleFunction.generateAtomicfuUpdate(functionName: String, valueType: IrType) {
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, valueType))
+            addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
             body = with(atomicSymbols.createBuilder(symbol)) {
-                atomicfuUpdateBody(functionName, valueParameters, valueType, dispatchReceiverParameter!!.capture())
+                atomicfuUpdateBody(functionName, valueParameters, valueType)
             }
             returnType = if (functionName == UPDATE) irBuiltIns.unitType else valueType
         }

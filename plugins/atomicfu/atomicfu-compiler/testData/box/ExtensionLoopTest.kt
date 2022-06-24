@@ -73,8 +73,20 @@ class LoopTest {
     }
 }
 
+private val ref = atomic<String>("aaa")
+
+private inline fun AtomicRef<String>.topLevelExtensionLoop(to: String): String = loop { cur ->
+    lazySet(cur + to)
+    return value
+}
+
+fun testTopLevelExtensionLoop() {
+    assertEquals("aaattt", ref.topLevelExtensionLoop("ttt"))
+}
+
 fun box(): String {
     val testClass = LoopTest()
     testClass.testIntExtensionLoops()
+    testTopLevelExtensionLoop()
     return "OK"
 }

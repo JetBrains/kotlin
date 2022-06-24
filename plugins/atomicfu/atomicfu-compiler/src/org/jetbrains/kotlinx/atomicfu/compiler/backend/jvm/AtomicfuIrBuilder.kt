@@ -127,20 +127,20 @@ class AtomicfuIrBuilder internal constructor(
     }
 
     /*
-    inline fun <T> atomicfu$loop(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Unit) {
+    inline fun <T> atomicfu$loop(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Unit, dispatchReceiver: Any?) {
         while (true) {
             val cur = atomicfu$handler.get()
             atomicfu$action(cur)
         }
     }
     */
-    fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>, obj: IrExpression) =
+    fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>) =
         irBlockBody {
             +irWhile().apply {
                 condition = irTrue()
                 body = irBlock {
                     val cur = createTmpVariable(
-                        atomicGetValue(valueType, irGet(valueParameters[0]), obj.deepCopyWithSymbols()),
+                        atomicGetValue(valueType, irGet(valueParameters[0]), irGet(valueParameters[2])),
                         "atomicfu\$cur", false
                     )
                     +irCall(atomicSymbols.invoke1Symbol).apply {
@@ -177,7 +177,7 @@ class AtomicfuIrBuilder internal constructor(
         }
 
     /*
-    inline fun atomicfu$update(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int) {
+    inline fun atomicfu$update(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int, dispatchReceiver: Any?) {
         while (true) {
             val cur = atomicfu$handler.get()
             val upd = atomicfu$action(cur)
@@ -187,7 +187,7 @@ class AtomicfuIrBuilder internal constructor(
     */
 
     /*
-    inline fun atomicfu$getAndUpdate(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int) {
+    inline fun atomicfu$getAndUpdate(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int, dispatchReceiver: Any?) {
         while (true) {
             val cur = atomicfu$handler.get()
             val upd = atomicfu$action(cur)
@@ -197,7 +197,7 @@ class AtomicfuIrBuilder internal constructor(
     */
 
     /*
-    inline fun atomicfu$updateAndGet(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int) {
+    inline fun atomicfu$updateAndGet(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Int, dispatchReceiver: Any?) {
         while (true) {
             val cur = atomicfu$handler.get()
             val upd = atomicfu$action(cur)
@@ -205,13 +205,13 @@ class AtomicfuIrBuilder internal constructor(
         }
     }
     */
-    fun atomicfuUpdateBody(functionName: String, valueParameters: List<IrValueParameter>, valueType: IrType, obj: IrExpression) =
+    fun atomicfuUpdateBody(functionName: String, valueParameters: List<IrValueParameter>, valueType: IrType) =
         irBlockBody {
             +irWhile().apply {
                 condition = irTrue()
                 body = irBlock {
                     val cur = createTmpVariable(
-                        atomicGetValue(valueType, irGet(valueParameters[0]), obj.deepCopyWithSymbols()),
+                        atomicGetValue(valueType, irGet(valueParameters[0]), irGet(valueParameters[2])),
                         "atomicfu\$cur", false
                     )
                     val upd = createTmpVariable(
@@ -223,7 +223,7 @@ class AtomicfuIrBuilder internal constructor(
                     +irIfThen(
                         type = atomicSymbols.irBuiltIns.unitType,
                         condition = irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicSymbols.getJucaAFUClass(valueType), "compareAndSet")).apply {
-                            putValueArgument(0, obj.deepCopyWithSymbols())
+                            putValueArgument(0, irGet(valueParameters[2]))
                             putValueArgument(1, irGet(cur))
                             putValueArgument(2, irGet(upd))
                             dispatchReceiver = irGet(valueParameters[0])
