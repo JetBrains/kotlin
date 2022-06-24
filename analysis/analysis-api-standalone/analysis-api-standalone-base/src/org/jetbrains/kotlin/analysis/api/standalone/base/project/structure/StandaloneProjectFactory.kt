@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.core.CoreJavaFileManager
+import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFileSystemItem
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -109,8 +112,27 @@ object StandaloneProjectFactory {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
         val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
 
+        val corePackageIndex = project.getService(PackageIndex::class.java) as CorePackageIndex
+        val rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
+            addIndex(JvmDependenciesIndexImpl(roots))
+            indexedRoots.forEach { javaRoot ->
+                if (javaRoot.file.isDirectory && javaRoot.type == JavaRoot.RootType.SOURCE) {
+                    // NB: [JavaCoreProjectEnvironment#addSourcesToClasspath] calls:
+                    //   1) [CoreJavaFileManager#addToClasspath], which is used to look up Java roots;
+                    //   2) [CorePackageIndex#addToClasspath], which populates [PackageIndex]; and
+                    //   3) [FileIndexFacade#addLibraryRoot], which conflicts with this SOURCE root when generating a library scope.
+                    // Thus, here we manually call first two, which are used to:
+                    //   1) create [PsiPackage] as a package resolution result; and
+                    //   2) find directories by package name.
+                    // With both supports, annotations defined in package-info.java can be properly propagated.
+                    javaFileManager.addToClasspath(javaRoot.file)
+                    corePackageIndex.addToClasspath(javaRoot.file)
+                }
+            }
+        }
+
         javaFileManager.initialize(
-            JvmDependenciesIndexImpl(roots),
+            rootsIndex,
             listOf(
                 createPackagePartsProvider(project, libraryRoots, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
@@ -124,7 +146,7 @@ object StandaloneProjectFactory {
             CliJavaModuleResolver(JavaModuleGraph(javaModuleFinder), emptyList(), javaModuleFinder.systemModules.toList(), project)
         )
 
-        val finderFactory = CliVirtualFileFinderFactory(JvmDependenciesIndexImpl(roots), false)
+        val finderFactory = CliVirtualFileFinderFactory(rootsIndex, false)
 
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
