@@ -1,6 +1,14 @@
 public abstract interface annotation class kotlin/io/path/ExperimentalPathApi : java/lang/annotation/Annotation {
 }
 
+public final class kotlin/io/path/PathWalkOption : java/lang/Enum {
+	public static final field BREADTH_FIRST Lkotlin/io/path/PathWalkOption;
+	public static final field FOLLOW_LINKS Lkotlin/io/path/PathWalkOption;
+	public static final field INCLUDE_DIRECTORIES Lkotlin/io/path/PathWalkOption;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/path/PathWalkOption;
+	public static fun values ()[Lkotlin/io/path/PathWalkOption;
+}
+
 public final class kotlin/io/path/PathsKt {
 	public static final fun appendText (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;)V
 	public static synthetic fun appendText$default (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;ILjava/lang/Object;)V
@@ -20,6 +28,7 @@ public final class kotlin/io/path/PathsKt {
 	public static final fun relativeTo (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
 	public static final fun relativeToOrNull (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
 	public static final fun relativeToOrSelf (Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/nio/file/Path;
+	public static final fun walk (Ljava/nio/file/Path;[Lkotlin/io/path/PathWalkOption;)Lkotlin/sequences/Sequence;
 	public static final fun writeText (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;[Ljava/nio/file/OpenOption;)V
 	public static synthetic fun writeText$default (Ljava/nio/file/Path;Ljava/lang/CharSequence;Ljava/nio/charset/Charset;[Ljava/nio/file/OpenOption;ILjava/lang/Object;)V
 }

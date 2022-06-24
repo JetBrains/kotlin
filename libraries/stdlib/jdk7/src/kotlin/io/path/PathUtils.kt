@@ -996,3 +996,22 @@ public inline fun Path(base: String, vararg subpaths: String): Path =
 @kotlin.internal.InlineOnly
 public inline fun URI.toPath(): Path =
     Paths.get(this)
+
+
+/**
+ * Returns a sequence of paths for visiting this directory and all its content.
+ *
+ * By default, only files are visited, in depth-first order, and symbolic links are not followed.
+ * The combination of [options] overrides the default behavior. See [PathWalkOption].
+ *
+ * The order in which sibling files are visited is unspecified.
+ *
+ * If after calling this function new files get added or deleted from the file tree rooted at this directory,
+ * the changes may or may not appear in the returned sequence.
+ *
+ * If the file located by this path does not exist, an empty sequence is returned.
+ * if the file located by this path is not a directory, a sequence containing only this path is returned.
+ */
+@ExperimentalPathApi
+@SinceKotlin("1.7")
+public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)

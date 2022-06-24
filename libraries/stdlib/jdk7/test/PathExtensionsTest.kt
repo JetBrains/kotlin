@@ -374,7 +374,7 @@ class PathExtensionsTest : AbstractPathTest() {
             (dir / ("link-" + original.fileName)).createLinkPointingTo(original)
         } catch (e: IOException) {
             // may require a privilege
-            println("Creating a link failed with ${e.stackTraceToString()}")
+            println("Creating a link failed with $e")
             return
         }
 
@@ -395,7 +395,7 @@ class PathExtensionsTest : AbstractPathTest() {
             (dir / ("symlink-" + original.fileName)).createSymbolicLinkPointingTo(original)
         } catch (e: IOException) {
             // may require a privilege
-            println("Creating a symlink failed with ${e.stackTraceToString()}")
+            println("Creating a symlink failed with $e")
             return
         }
 

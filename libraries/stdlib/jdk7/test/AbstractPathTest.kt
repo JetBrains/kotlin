@@ -4,8 +4,12 @@
  */
 
 package kotlin.jdk7.test
-import java.nio.file.Path
+
+import java.io.IOException
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
 import kotlin.test.*
 
 abstract class AbstractPathTest {
@@ -17,8 +21,22 @@ abstract class AbstractPathTest {
     }
 
     fun Path.cleanupRecursively(): Path {
-        cleanUpActions.add(this to { it.toFile().deleteRecursively() })
+        cleanUpActions.add(this to {
+            if (it.exists(LinkOption.NOFOLLOW_LINKS)) Files.walkFileTree(it, cleanupVisitor)
+        })
         return this
+    }
+
+    private val cleanupVisitor = object : SimpleFileVisitor<Path>() {
+        override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+            file.deleteIfExists()
+            return super.visitFile(file, attrs)
+        }
+
+        override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+            dir.deleteIfExists()
+            return super.postVisitDirectory(dir, exc)
+        }
     }
 
     @AfterTest
@@ -29,6 +47,18 @@ abstract class AbstractPathTest {
             } catch (e: Throwable) {
                 println("Failed to execute cleanup action for $path")
             }
+        }
+    }
+
+    fun withRestrictedRead(vararg paths: Path, block: () -> Unit) {
+        try {
+            if (paths.all { it.toFile().setReadable(false) }) {
+                block()
+            } else {
+                System.err.println("Couldn't restrict read access")
+            }
+        } finally {
+            paths.forEach { it.toFile().setReadable(true) }
         }
     }
 }
