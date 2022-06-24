@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSupertypesWithAny
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktMod
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktSymbolKind
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.invalidClassKindError
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.invalidEnumEntryAsClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -67,10 +67,11 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
             KtFe10PsiNamedClassOrObjectSymbol(companionObject, analysisContext)
         }
 
+    @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind
         get() = withValidityAssertion {
             when (psi) {
-                is KtEnumEntry -> invalidClassKindError(ClassKind.ENUM_ENTRY)
+                is KtEnumEntry -> invalidEnumEntryAsClassKind()
                 is KtObjectDeclaration -> when {
                     psi.isCompanion() -> KtClassKind.COMPANION_OBJECT
                     psi.isObjectLiteral() -> KtClassKind.ANONYMOUS_OBJECT
