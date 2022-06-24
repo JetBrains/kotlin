@@ -4,9 +4,9 @@
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int, value_2: EmptyClass, value_3: Int, value_4: Any): String {
     when (value_1) {
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_2  -> return ""
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_3  -> return ""
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>in<!> value_4  -> return ""
+        <!NONE_APPLICABLE!>in<!> value_2  -> return ""
+        <!NONE_APPLICABLE!>in<!> value_3  -> return ""
+        <!NONE_APPLICABLE!>in<!> value_4  -> return ""
     }
 
     return ""
