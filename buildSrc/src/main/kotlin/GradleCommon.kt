@@ -289,22 +289,26 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 }
         }
 
-        plugins.withId("org.jetbrains.dokka") {
-            val dokkaTask = tasks.named<DokkaTask>("dokkaJavadoc") {
-                dokkaSourceSets {
-                    named(commonSourceSet.name) {
-                        suppress.set(false)
-                    }
+        if (kotlinBuildProperties.publishGradlePluginsJavadoc ||
+            kotlinBuildProperties.isTeamcityBuild
+        ) {
+            plugins.withId("org.jetbrains.dokka") {
+                val dokkaTask = tasks.named<DokkaTask>("dokkaJavadoc") {
+                    dokkaSourceSets {
+                        named(commonSourceSet.name) {
+                            suppress.set(false)
+                        }
 
-                    named("main") {
-                        dependsOn(commonSourceSet)
+                        named("main") {
+                            dependsOn(commonSourceSet)
+                        }
                     }
                 }
-            }
 
-            tasks.withType<Jar>().configureEach {
-                if (name == javadocJarTaskName) {
-                    from(dokkaTask.flatMap { it.outputDirectory })
+                tasks.withType<Jar>().configureEach {
+                    if (name == javadocJarTaskName) {
+                        from(dokkaTask.flatMap { it.outputDirectory })
+                    }
                 }
             }
         }
