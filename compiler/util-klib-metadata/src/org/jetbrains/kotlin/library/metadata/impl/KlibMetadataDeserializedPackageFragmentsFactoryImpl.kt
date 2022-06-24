@@ -176,11 +176,16 @@ enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
 
     abstract fun check(classifierDescriptor: ClassifierDescriptor): Boolean
 
-    // We can check that there is kotlinx.cinterop.ObjCObjectBase among supertypes, but it seems slower.
-    protected fun ClassifierDescriptor.isExternalObjCClass(): Boolean =
-        annotations.hasAnnotation(FqName("kotlinx.cinterop.ExternalObjCClass"))
+    companion object {
+        private val cStructVarFqName = FqName("kotlinx.cinterop.CStructVar")
+        private val externalObjCClassFqName = FqName("kotlinx.cinterop.ExternalObjCClass")
 
-    protected fun ClassifierDescriptor.isCStructVar(): Boolean =
-        getAllSuperClassifiers().find { it.fqNameSafe.asString() == "kotlinx.cinterop.CStructVar" } != null
+        // We can check that there is kotlinx.cinterop.ObjCObjectBase among supertypes, but it seems slower.
+        private fun ClassifierDescriptor.isExternalObjCClass(): Boolean =
+            annotations.hasAnnotation(externalObjCClassFqName)
+
+        private fun ClassifierDescriptor.isCStructVar(): Boolean =
+            getAllSuperClassifiers().any { it.fqNameSafe == cStructVarFqName }
+    }
 }
 
