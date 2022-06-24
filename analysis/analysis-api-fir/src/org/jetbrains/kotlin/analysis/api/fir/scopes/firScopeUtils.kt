@@ -20,14 +20,16 @@ internal fun FirScope.getCallableSymbols(
     builder: KtSymbolByFirBuilder
 ): Sequence<KtCallableSymbol> = sequence {
     callableNames.forEach { name ->
-        val callables = mutableListOf<KtCallableSymbol>()
-        processFunctionsByName(name) { firSymbol ->
-            callables.add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol))
+        yieldList {
+            processFunctionsByName(name) { firSymbol ->
+                add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol))
+            }
         }
-        processPropertiesByName(name) { firSymbol ->
-            callables.add(builder.callableBuilder.buildCallableSymbol(firSymbol))
+        yieldList {
+            processPropertiesByName(name) { firSymbol ->
+                add(builder.callableBuilder.buildCallableSymbol(firSymbol))
+            }
         }
-        yieldAll(callables)
     }
 }
 
@@ -36,33 +38,39 @@ internal fun FirScope.getCallableSignatures(
     builder: KtSymbolByFirBuilder
 ): Sequence<KtCallableSignature<*>> = sequence {
     callableNames.forEach { name ->
-        val signatures = mutableListOf<KtCallableSignature<*>>()
-        processFunctionsByName(name) { firSymbol ->
-            signatures.add(builder.functionLikeBuilder.buildFunctionLikeSignature(firSymbol))
+        yieldList {
+            processFunctionsByName(name) { firSymbol ->
+                add(builder.functionLikeBuilder.buildFunctionLikeSignature(firSymbol))
+            }
         }
-        processPropertiesByName(name) { firSymbol ->
-            signatures.add(builder.variableLikeBuilder.buildVariableLikeSignature(firSymbol))
+        yieldList {
+            processPropertiesByName(name) { firSymbol ->
+                add(builder.variableLikeBuilder.buildVariableLikeSignature(firSymbol))
+            }
         }
-        yieldAll(signatures)
     }
 }
 
 internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder): Sequence<KtClassifierSymbol> =
     sequence {
         classLikeNames.forEach { name ->
-            val classifierSymbols = mutableListOf<KtClassifierSymbol>()
-            processClassifiersByName(name) { firSymbol ->
-                classifierSymbols.add(builder.classifierBuilder.buildClassifierSymbol(firSymbol))
+            yieldList {
+                processClassifiersByName(name) { firSymbol ->
+                    add(builder.classifierBuilder.buildClassifierSymbol(firSymbol))
+                }
             }
-            yieldAll(classifierSymbols)
         }
     }
 
 internal fun FirScope.getConstructors(builder: KtSymbolByFirBuilder): Sequence<KtConstructorSymbol> =
     sequence {
-        val constructorSymbols = mutableListOf<KtConstructorSymbol>()
-        processDeclaredConstructors { firSymbol ->
-            constructorSymbols.add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol))
+        yieldList {
+            processDeclaredConstructors { firSymbol ->
+                add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol))
+            }
         }
-        yieldAll(constructorSymbols)
     }
+
+private suspend inline fun <T> SequenceScope<T>.yieldList(listBuilder: MutableList<T>.() -> Unit) {
+    yieldAll(buildList(listBuilder))
+}
