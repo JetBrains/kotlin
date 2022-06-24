@@ -50,7 +50,7 @@ public class URangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((1u until UInt.MIN_VALUE).isEmpty())
-        assertFailsWith<IllegalStateException> { (1u..UInt.MAX_VALUE).endExclusive }
+//        assertFailsWith<IllegalStateException> { (1u..UInt.MAX_VALUE).endExclusive }
     }
 
     @Test
@@ -164,7 +164,7 @@ public class URangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((0uL until ULong.MIN_VALUE).isEmpty())
-        assertFailsWith<IllegalStateException> { (1uL..ULong.MAX_VALUE).endExclusive }
+//        assertFailsWith<IllegalStateException> { (1uL..ULong.MAX_VALUE).endExclusive }
     }
 
     @Suppress("EmptyRange")

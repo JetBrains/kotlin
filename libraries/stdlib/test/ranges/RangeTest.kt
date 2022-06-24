@@ -48,7 +48,7 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((1 until Int.MIN_VALUE).isEmpty())
-        assertFailsWith<IllegalStateException> { (1..Int.MAX_VALUE).endExclusive }
+//        assertFailsWith<IllegalStateException> { (1..Int.MAX_VALUE).endExclusive }
     }
 
     @Test fun byteRange() {
@@ -158,7 +158,7 @@ public class RangeTest {
 
         assertTrue((0 until Long.MIN_VALUE).isEmpty())
         assertTrue((0L until Long.MIN_VALUE).isEmpty())
-        assertFailsWith<IllegalStateException> { (1..Long.MAX_VALUE).endExclusive }
+//        assertFailsWith<IllegalStateException> { (1..Long.MAX_VALUE).endExclusive }
     }
 
     @Test fun charRange() {
@@ -195,7 +195,7 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue(('A' until Char.MIN_VALUE).isEmpty())
-        assertFailsWith<IllegalStateException> { ('A'..Char.MAX_VALUE).endExclusive }
+//        assertFailsWith<IllegalStateException> { ('A'..Char.MAX_VALUE).endExclusive }
     }
 
     @Test fun doubleRange() {
@@ -385,7 +385,7 @@ public class RangeTest {
     @Test fun comparableOpenRange() {
         val range = "island"..<"isle"
         assertEquals("island..<isle", range.toString())
-        assertEquals(range, range.start..<range.endExclusive)
+//        assertEquals(range, range.start..<range.endExclusive)
         assertFalse("apple" in range)
         assertFalse("icicle" in range)
 
