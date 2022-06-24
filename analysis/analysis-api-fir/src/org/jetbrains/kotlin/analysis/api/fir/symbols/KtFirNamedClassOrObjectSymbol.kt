@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -90,6 +91,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     }
 
 
+    @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind
         get() = withValidityAssertion {
             firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)

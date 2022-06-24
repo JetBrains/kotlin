@@ -590,13 +590,13 @@ internal class KtSymbolByFirBuilder constructor(
 }
 
 
-private class BuilderCache<From, To : Any> {
+private class BuilderCache<From, To : KtSymbol> {
     private val cache = ContainerUtil.createConcurrentSoftMap<From, To>()
 
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
         val value = cache.getOrPut(key, calculation)
         return value as? S
-            ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value as KtSymbol)}")
+            ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value)}")
     }
 }
 

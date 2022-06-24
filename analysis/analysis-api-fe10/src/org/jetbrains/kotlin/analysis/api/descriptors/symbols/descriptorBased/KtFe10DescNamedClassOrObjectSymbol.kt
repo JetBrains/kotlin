@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescNamedClassOrObjectSymbolSymbol
@@ -53,6 +54,7 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
             }
         }
 
+    @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind
         get() = withValidityAssertion {
             if (DescriptorUtils.isAnonymousObject(descriptor)) {
