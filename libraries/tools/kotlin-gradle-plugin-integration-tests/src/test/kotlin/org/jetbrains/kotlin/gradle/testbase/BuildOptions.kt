@@ -34,6 +34,8 @@ data class BuildOptions(
     val buildReport: List<BuildReportType> = emptyList(),
     val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
+    val debug: Boolean = false,
+    val kotlinDaemonDebugPort: Int? = null
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -133,6 +135,14 @@ data class BuildOptions(
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
         }
+
+        if (debug) {
+            arguments.add("-Dorg.gradle.debug=true")
+        }
+        kotlinDaemonDebugPort?.let {
+            arguments.add("-Dkotlin.daemon.jvm.options=-agentlib:jdwp=transport=dt_socket\\,server=y\\,suspend=y\\,address=$it")
+        }
+
         return arguments.toList()
     }
 }

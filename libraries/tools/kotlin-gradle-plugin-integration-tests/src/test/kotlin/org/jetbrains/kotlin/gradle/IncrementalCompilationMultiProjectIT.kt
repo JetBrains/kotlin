@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
@@ -700,7 +701,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             build("assemble") {
-                assertOutputContains("Non-incremental compilation will be performed: CACHE_CORRUPTION")
+                assertOutputContains("Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
             }
 
             val lookupFile = projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/file-to-id.tab")
@@ -723,7 +724,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             buildAndFail("assemble") {
                 printBuildOutput()
-                assertOutputDoesNotContain("Possible caches corruption:")
+                assertOutputDoesNotContain(BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name)
                 assertOutputDoesNotContain("Non-incremental compilation will be performed:")
             }
         }
