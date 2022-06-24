@@ -31,7 +31,7 @@ abstract class AbstractOverloadResolutionResults<D : CallableDescriptor> : Overl
 }
 
 class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: ResolvedCall<D>) : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = listOf(result)
     override fun getResultingCall() = result
 
@@ -46,7 +46,7 @@ class SingleOverloadResolutionResult<D : CallableDescriptor>(val result: Resolve
 }
 
 open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = emptyList()
     override fun getResultingCall() = error("No candidates")
     override fun getResultingDescriptor() = error("No candidates")
@@ -56,7 +56,7 @@ open class NameNotFoundResolutionResult<D : CallableDescriptor> : AbstractOverlo
 class ManyCandidates<D : CallableDescriptor>(
     val candidates: Collection<ResolvedCall<D>>
 ) : AbstractOverloadResolutionResults<D>() {
-    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>>? = null
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<D>>? = null
     override fun getResultingCalls(): Collection<ResolvedCall<D>> = candidates
     override fun getResultingCall() = error("Many candidates")
     override fun getResultingDescriptor() = error("Many candidates")
@@ -69,7 +69,7 @@ class ManyCandidates<D : CallableDescriptor>(
         }
 }
 
-class AllCandidates<D : CallableDescriptor>(private val allCandidates: Map<ResolutionCandidate, AbstractResolvedCall<*>>) :
+class AllCandidates<D : CallableDescriptor>(private val allCandidates: Map<ResolutionCandidate, AbstractResolvedCall<D>>) :
     NameNotFoundResolutionResult<D>() {
-    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<*>> = allCandidates
+    override fun getAllCandidates(): Map<ResolutionCandidate, AbstractResolvedCall<D>> = allCandidates
 }

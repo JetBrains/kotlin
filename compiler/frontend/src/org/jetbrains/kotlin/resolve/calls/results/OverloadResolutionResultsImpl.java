@@ -51,7 +51,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     private final Collection<ResolvedCall<D>> results;
     private final Code resultCode;
     private DelegatingBindingTrace trace;
-    private Map<ResolutionCandidate, AbstractResolvedCall<?>> allCandidates;
+    private Map<ResolutionCandidate, AbstractResolvedCall<D>> allCandidates;
 
     private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCall<D>> results) {
         this.results = results;
@@ -117,13 +117,13 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return this;
     }
 
-    public void setAllCandidates(@Nullable Map<ResolutionCandidate, AbstractResolvedCall<?>> allCandidates) {
+    public void setAllCandidates(@Nullable Map<ResolutionCandidate, AbstractResolvedCall<D>> allCandidates) {
         this.allCandidates = allCandidates;
     }
 
     @Nullable
     @Override
-    public Map<ResolutionCandidate, AbstractResolvedCall<?>> getAllCandidates() {
+    public Map<ResolutionCandidate, AbstractResolvedCall<D>> getAllCandidates() {
         return allCandidates;
     }
 }

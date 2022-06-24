@@ -49,7 +49,7 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
 
     /* All candidates are collected only if ResolutionContext.collectAllCandidates is set to true */
     @Nullable
-    Map<ResolutionCandidate, AbstractResolvedCall<?>> getAllCandidates();
+    Map<ResolutionCandidate, AbstractResolvedCall<D>> getAllCandidates();
 
     @NotNull
     Collection<? extends ResolvedCall<D>> getResultingCalls();
