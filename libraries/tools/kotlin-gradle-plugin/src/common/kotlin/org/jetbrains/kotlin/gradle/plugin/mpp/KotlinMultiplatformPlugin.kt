@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactori
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.plugin.sources.CleanupStaleSourceSetMetadataEntriesService
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
@@ -126,24 +125,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         exportProjectStructureMetadataForOtherBuilds(project)
-
-        SingleActionPerBuild.run(project.rootProject, "cleanup-processed-metadata") {
-            if (isConfigurationCacheAvailable(project.gradle)) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
-                    project.gradle.sharedServices
-                        .registerIfAbsent(
-                            "cleanup-stale-sourceset-metadata",
-                            CleanupStaleSourceSetMetadataEntriesService::class.java
-                        ) {
-                            CleanupStaleSourceSetMetadataEntriesService.configure(it, project)
-                        }
-                )
-            } else {
-                project.gradle.buildFinished {
-                    SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
-                }
-            }
-        }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
