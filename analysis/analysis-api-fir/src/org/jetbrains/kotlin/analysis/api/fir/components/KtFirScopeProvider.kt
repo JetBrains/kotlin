@@ -24,24 +24,32 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
 internal class KtFirScopeProvider(
@@ -88,8 +96,8 @@ internal class KtFirScopeProvider(
                     scopeSession,
                     withForcedTypeCalculator = false
                 )
-            } ?: return@getOrPut getEmptyScope()
-
+            }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
+                ?: return@getOrPut getEmptyScope()
             KtFirDelegatingScope(firScope, builder, token)
         }
     }
@@ -242,5 +250,35 @@ internal class KtFirScopeProvider(
             is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }
+    }
+}
+
+private class EnumEntryContainingNamesAwareScope(private val originalScope: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
+    override fun getCallableNames(): Set<Name> = originalScope.getCallableNames()
+    override fun getClassifierNames(): Set<Name> = originalScope.getClassifierNames()
+    override fun mayContainName(name: Name): Boolean = originalScope.mayContainName(name)
+    override val scopeOwnerLookupNames: List<String> get() = super.scopeOwnerLookupNames
+
+    override fun processClassifiersByNameWithSubstitution(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) {
+        originalScope.processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
+            if ((classifier as? FirRegularClassSymbol)?.isCompanion != true) {
+                processor(classifier, substitutor)
+            }
+        }
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        originalScope.processFunctionsByName(name, processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        originalScope.processPropertiesByName(name, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        // enum entries does not have constructors
     }
 }
