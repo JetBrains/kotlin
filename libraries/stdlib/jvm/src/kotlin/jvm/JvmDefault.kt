@@ -29,7 +29,6 @@ import kotlin.internal.RequireKotlinVersionKind
  * @[JvmDefault] methods are excluded from interface delegation.
  */
 @SinceKotlin("1.2")
-@RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
 annotation class JvmDefault
@@ -45,7 +44,6 @@ annotation class JvmDefault
  * Used only with `-Xjvm-default=compatibility|all-compatibility`.
  */
 @SinceKotlin("1.4")
-@RequireKotlin("1.4", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.CLASS)
 annotation class JvmDefaultWithoutCompatibility
 

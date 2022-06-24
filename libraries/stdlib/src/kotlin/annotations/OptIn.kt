@@ -26,7 +26,6 @@ import kotlin.reflect.KClass
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.3")
-@RequireKotlin("1.3.70", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 public annotation class RequiresOptIn(
     val message: String = "",
     val level: Level = Level.ERROR
@@ -53,7 +52,6 @@ public annotation class RequiresOptIn(
 )
 @Retention(SOURCE)
 @SinceKotlin("1.3")
-@RequireKotlin("1.3.70", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 public annotation class OptIn(
     vararg val markerClass: KClass<out Annotation>
 )
