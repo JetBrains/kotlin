@@ -66,6 +66,8 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         val renderPackageDirective: Boolean = false,
         val renderNestedDeclarations: Boolean = true,
         val renderDefaultParameterValues: Boolean = true,
+        val renderDetailedTypeReferences: Boolean = true,
+        val renderAllModifiers: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -124,6 +126,8 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
                 renderPackageDirective = false,
                 renderNestedDeclarations = false,
                 renderDefaultParameterValues = false,
+                renderDetailedTypeReferences = false,
+                renderAllModifiers = false,
             )
 
             val WithDeclarationAttributes = RenderMode(
@@ -236,7 +240,6 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
         renderContexts(callableDeclaration.contextReceivers)
-        callableDeclaration.contextReceivers
         callableDeclaration.annotations.renderAnnotations()
         visitMemberDeclaration(callableDeclaration)
         val receiverType = callableDeclaration.receiverTypeRef
@@ -338,7 +341,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     }
 
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-        if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
+        if (mode.renderAllModifiers && (memberDeclaration !is FirProperty || !memberDeclaration.isLocal)) {
             // we can't access session.effectiveVisibilityResolver from here!
             // print(memberDeclaration.visibility.asString(memberDeclaration.getEffectiveVisibility(...)) + " ")
             print(memberDeclaration.visibility.asString() + " ")
@@ -350,11 +353,13 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         if (memberDeclaration.isActual) {
             print("actual ")
         }
-        if (memberDeclaration.isExternal) {
-            print("external ")
-        }
-        if (memberDeclaration.isOverride) {
-            print("override ")
+        if (mode.renderAllModifiers) {
+            if (memberDeclaration.isExternal) {
+                print("external ")
+            }
+            if (memberDeclaration.isOverride) {
+                print("override ")
+            }
         }
         if (memberDeclaration.isStatic) {
             print("static ")
@@ -379,26 +384,28 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
             print("fun ")
         }
 
-        if (memberDeclaration.isInline) {
-            print("inline ")
-        }
-        if (memberDeclaration.isOperator) {
-            print("operator ")
-        }
-        if (memberDeclaration.isInfix) {
-            print("infix ")
-        }
-        if (memberDeclaration.isTailRec) {
-            print("tailrec ")
-        }
-        if (memberDeclaration.isSuspend) {
-            print("suspend ")
-        }
-        if (memberDeclaration.isConst) {
-            print("const ")
-        }
-        if (memberDeclaration.isLateInit) {
-            print("lateinit ")
+        if (mode.renderAllModifiers) {
+            if (memberDeclaration.isInline) {
+                print("inline ")
+            }
+            if (memberDeclaration.isOperator) {
+                print("operator ")
+            }
+            if (memberDeclaration.isInfix) {
+                print("infix ")
+            }
+            if (memberDeclaration.isTailRec) {
+                print("tailrec ")
+            }
+            if (memberDeclaration.isSuspend) {
+                print("suspend ")
+            }
+            if (memberDeclaration.isConst) {
+                print("const ")
+            }
+            if (memberDeclaration.isLateInit) {
+                print("lateinit ")
+            }
         }
 
         visitDeclaration(memberDeclaration as FirDeclaration)
@@ -1128,10 +1135,14 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val kind = resolvedTypeRef.functionTypeKind
-        print("R|")
+        if (mode.renderDetailedTypeReferences) {
+            print("R|")
+        }
         val coneType = resolvedTypeRef.type
-        print(coneType.renderFunctionType(kind))
-        print("|")
+        print(coneType.renderFunctionType(kind, renderFqNames = mode.renderDetailedTypeReferences))
+        if (mode.renderDetailedTypeReferences) {
+            print("|")
+        }
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

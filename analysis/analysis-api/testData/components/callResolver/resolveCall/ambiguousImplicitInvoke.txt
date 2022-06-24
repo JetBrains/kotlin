@@ -47,4 +47,4 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [local final operator fun R|kotlin/Int|.invoke(a: R|kotlin/String|): R|kotlin/Unit|, local final operator fun R|kotlin/Int|.invoke(b: R|kotlin/Boolean|): R|kotlin/Unit|]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [fun Int.invoke(a: String): Unit, fun Int.invoke(b: Boolean): Unit]>

@@ -324,7 +324,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun ConeTypeProjection.tryToRenderConeAsFunctionType(): String {
             if (this !is ConeKotlinType) return localTypeRenderer()
-            val functionType = renderFunctionType(functionTypeKind) { localTypeRenderer() }
+            val functionType = renderFunctionType(functionTypeKind, renderFqNames = true) { localTypeRenderer() }
             return functionType.removeCurrentFilePackage()
         }
 
@@ -429,7 +429,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     intersectedTypes.map { it.render().replace("/", ".").replace("kotlin.", "") }.sorted()
                         .joinToString(separator = " & ", prefix = "{", postfix = "}")
                 }
-                else -> this.render()
+                else -> this.render(renderFqNames = true)
             }
         }
 

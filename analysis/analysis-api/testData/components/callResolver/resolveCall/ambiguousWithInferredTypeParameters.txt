@@ -100,4 +100,4 @@ KtErrorCallInfo:
           callableIdIfNonLocal = null)
       }
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [public final fun <T> function(t: R|T|, a: R|kotlin/Char|): R|kotlin/Unit|, public final fun <U> function(u: R|U|, b: R|kotlin/Boolean|): R|kotlin/Unit|, public final fun <V> function(v: R|V|, c: R|kotlin/String|): R|kotlin/Unit|]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [fun <T> function(t: T, a: Char): Unit, fun <U> function(u: U, b: Boolean): Unit, fun <V> function(v: V, c: String): Unit]>
