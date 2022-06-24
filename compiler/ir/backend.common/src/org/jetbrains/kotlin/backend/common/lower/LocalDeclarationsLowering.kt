@@ -883,7 +883,7 @@ class LocalDeclarationsLowering(
         }
 
         private fun collectLocalDeclarations() {
-            val enclosingFile = container.file
+            val enclosingFile by lazy { container.file }
             val enclosingClass = run {
                 var currentParent = container as? IrClass ?: container.parent
                 while (currentParent is IrDeclaration && currentParent !is IrClass) {

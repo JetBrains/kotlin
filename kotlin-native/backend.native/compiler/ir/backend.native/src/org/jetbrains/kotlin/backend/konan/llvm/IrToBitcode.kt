@@ -832,10 +832,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 || body == null)
             return
         val isNotInlinedLambda = declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-        val file = ((declaration as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.file.takeIf {
-            it ?: return@takeIf false
-            (currentCodeContext.fileScope() as FileScope).file != it && isNotInlinedLambda
-        }
+        val file = ((declaration as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)
+                .takeIf { isNotInlinedLambda }
+                ?.file
+                .takeIf { (currentCodeContext.fileScope() as FileScope).file != it }
         val scope = file?.let {
             FileScope(it)
         }
