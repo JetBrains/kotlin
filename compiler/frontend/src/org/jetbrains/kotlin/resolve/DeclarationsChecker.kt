@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -494,7 +494,7 @@ class DeclarationsChecker(
         val declaration = classOrObject.primaryConstructor ?: return
 
         for (parameter in declaration.valueParameters) {
-            trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
+            trace.get(PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
                 modifiersChecker.checkModifiersForDeclaration(parameter, it)
                 LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it)
             }
@@ -703,7 +703,7 @@ class DeclarationsChecker(
             return
         }
 
-        val backingFieldRequired = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
+        val backingFieldRequired = trace.bindingContext.get(BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
         if (inInterface && backingFieldRequired && hasAccessorImplementation) {
             trace.report(BACKING_FIELD_IN_INTERFACE.on(property))
         }
@@ -726,6 +726,15 @@ class DeclarationsChecker(
                 trace.report(EXPECTED_DELEGATED_PROPERTY.on(delegate))
             } else if (property.receiverTypeReference != null) {
                 val delegatedPropertyResolvedCall = trace.get(DELEGATED_PROPERTY_RESOLVED_CALL, propertyDescriptor.getter)
+                val provideDelegateResolvedCall = trace.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor)
+                val delegateType = provideDelegateResolvedCall?.resultingDescriptor?.returnType
+                    ?: delegate.expression?.let { trace.getType(it) } ?: return
+
+                val delegateClassDescriptor =
+                    delegateType.lowerIfFlexible().unwrap().constructor.declarationDescriptor.let {
+                        it as? ClassDescriptor ?: (it as? TypeAliasDescriptor)?.expandedType?.constructor?.declarationDescriptor
+                    } as? ClassDescriptor ?: return
+                val delegateClassScope by lazy { delegateClassDescriptor.unsubstitutedMemberScope }
                 val dispatchReceiverType = delegatedPropertyResolvedCall?.dispatchReceiver?.type
                 val extensionReceiverType = delegatedPropertyResolvedCall?.extensionReceiver?.type
                 val usedParameter = propertyDescriptor.typeParameters.find { typeParameter ->
@@ -733,6 +742,18 @@ class DeclarationsChecker(
                             extensionReceiverType?.contains { it.constructor == typeParameter.typeConstructor } == true
                 }
                 if (usedParameter != null) {
+                    var propertyWithTypeParameterTypeFound = false
+                    val names = delegateClassScope.getVariableNames()
+                    for (name in names) {
+                        delegateClassScope.getContributedVariables(name, KotlinLookupLocation(delegate))
+                            .forEach { propertyInDelegateClass ->
+                                if (propertyInDelegateClass.type.contains { it.constructor.declarationDescriptor is TypeParameterDescriptor }) {
+                                    propertyWithTypeParameterTypeFound = true
+                                    return@forEach
+                                }
+                            }
+                    }
+                    if (!propertyWithTypeParameterTypeFound) return
                     trace.report(
                         DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER.on(
                             languageVersionSettings,
@@ -743,7 +764,7 @@ class DeclarationsChecker(
                 }
             }
         } else {
-            val isUninitialized = trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false
+            val isUninitialized = trace.bindingContext.get(IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
             if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isExpect && isUninitialized && !isExternal) {
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
@@ -757,7 +778,7 @@ class DeclarationsChecker(
                 }
             } else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
                 trace.report(
-                    Errors.UNSUPPORTED_FEATURE.on(
+                    UNSUPPORTED_FEATURE.on(
                         property,
                         LanguageFeature.ShortSyntaxForPropertyGetters to languageVersionSettings
                     )
@@ -920,9 +941,9 @@ class DeclarationsChecker(
         )
         if (accessor.isGetter) {
             if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
-                reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)
+                reportVisibilityModifierDiagnostics(tokens.values, GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)
             } else {
-                reportVisibilityModifierDiagnostics(tokens.values, Errors.REDUNDANT_MODIFIER_IN_GETTER)
+                reportVisibilityModifierDiagnostics(tokens.values, REDUNDANT_MODIFIER_IN_GETTER)
             }
         } else {
             if (propertyDescriptor.isOverridable
@@ -930,14 +951,14 @@ class DeclarationsChecker(
                 && propertyDescriptor.visibility != DescriptorVisibilities.PRIVATE
             ) {
                 if (propertyDescriptor.modality == Modality.ABSTRACT) {
-                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
+                    reportVisibilityModifierDiagnostics(tokens.values, PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
                 } else {
-                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    reportVisibilityModifierDiagnostics(tokens.values, PRIVATE_SETTER_FOR_OPEN_PROPERTY)
                 }
             } else {
                 val compare = DescriptorVisibilities.compare(accessorDescriptor.visibility, propertyDescriptor.visibility)
                 if (compare == null || compare > 0) {
-                    reportVisibilityModifierDiagnostics(tokens.values, Errors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY)
+                    reportVisibilityModifierDiagnostics(tokens.values, SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY)
                 }
             }
         }

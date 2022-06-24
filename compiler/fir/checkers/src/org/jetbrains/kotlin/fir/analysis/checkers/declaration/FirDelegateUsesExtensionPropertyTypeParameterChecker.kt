@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker() {
@@ -30,17 +32,32 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
     }
 
     private fun ConeKotlinType.findUsedTypeParameterSymbol(
-        parameters: HashSet<FirTypeParameterSymbol>,
+        typeParameterSymbols: HashSet<FirTypeParameterSymbol>,
         delegate: FirFunctionCall,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ): FirTypeParameterSymbol? {
+        val expandedDelegateClassLikeType =
+            delegate.typeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(context.session)
+                .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
+        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return null
+        val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue
-            val symbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
+            val argumentAsTypeParameterSymbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
 
-            if (symbol in parameters) return symbol
-            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+            if (argumentAsTypeParameterSymbol in typeParameterSymbols) {
+                var propertyWithTypeParameterTypeFound = false
+                delegateClassScope.processAllProperties { symbol ->
+                    if (symbol.resolvedReturnType.contains { it is ConeTypeParameterType }) {
+                        propertyWithTypeParameterTypeFound = true
+                    }
+                }
+                if (propertyWithTypeParameterTypeFound) {
+                    return argumentAsTypeParameterSymbol
+                }
+            }
+            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(typeParameterSymbols, delegate, context, reporter)
             if (usedTypeParameterSymbol != null) {
                 return usedTypeParameterSymbol
             }

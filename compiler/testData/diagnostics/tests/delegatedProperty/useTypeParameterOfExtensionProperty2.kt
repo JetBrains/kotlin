@@ -11,7 +11,7 @@ fun <T, V> logged(getter: (T) -> V) =
         getter(thisRef)
     }
 
-val <T> List<T>.second: T <!DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_ERROR!>by logged { it[1] }<!>
+val <T> List<T>.second: T by logged { it[1] }
 
 class Delegate<T>(private val fn: (List<T>) -> T) {
     private var cache: T? = null
