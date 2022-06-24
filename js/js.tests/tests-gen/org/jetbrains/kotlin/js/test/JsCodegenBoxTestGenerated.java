@@ -7020,6 +7020,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineSuspendTypealias.kt")
+        public void testInlineSuspendTypealias() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineSuspendTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("inlinedTryCatchFinally.kt")
         public void testInlinedTryCatchFinally() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt");

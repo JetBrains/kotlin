@@ -44,10 +44,10 @@ object InlineParameterChecker : DeclarationChecker {
                     parameterDescriptor?.type?.isSuspendFunctionType == true
                 ) {
                     if (declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)) {
-                        val typeReference = parameter.typeReference!!
-                        val modifierList = typeReference.modifierList!!
-                        val modifier = modifierList.getModifier(KtTokens.SUSPEND_KEYWORD)!!
-                        context.trace.report(Errors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE.on(modifier))
+                        val modifier = parameter.typeReference?.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD)
+                        if (modifier != null) {
+                            context.trace.report(Errors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE.on(modifier))
+                        }
                     } else {
                         context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
                     }

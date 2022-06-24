@@ -6589,6 +6589,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("inlineSuspendTypealias.kt")
+            public void testInlineSuspendTypealias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/inlineSuspendTypealias.kt");
+            }
+
+            @Test
             @TestMetadata("modifierFormBuiltinSuspendFun.kt")
             public void testModifierFormBuiltinSuspendFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/coroutines/modifierFormBuiltinSuspendFun.kt");
