@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report
 
+import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity.DEBUG
 import org.jetbrains.kotlin.build.report.ICReporterBase
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.daemon.common.CompilationResults
 import java.io.File
 
 // todo: sync BuildReportICReporterAsync
-internal class BuildReportICReporter(
+@VisibleForTesting
+class BuildReportICReporter(
     private val compilationResults: CompilationResults,
     rootDir: File,
     private val isVerbose: Boolean = false

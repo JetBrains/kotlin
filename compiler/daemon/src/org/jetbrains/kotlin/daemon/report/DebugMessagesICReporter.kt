@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report
 
+import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.RemoteICReporter
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.common.report
 import java.io.File
 
-internal class DebugMessagesICReporter(
+@VisibleForTesting
+class DebugMessagesICReporter(
     private val servicesFacade: CompilerServicesFacadeBase,
     rootDir: File,
     private val reportSeverity: ICReporter.ReportSeverity
