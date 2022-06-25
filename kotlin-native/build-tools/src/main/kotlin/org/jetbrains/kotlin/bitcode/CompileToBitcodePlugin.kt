@@ -5,24 +5,32 @@
 
 package org.jetbrains.kotlin.bitcode
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.*
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.cpp.CompilationDatabaseExtension
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.cpp.CompileToExecutable
+import org.jetbrains.kotlin.cpp.RunGTest
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.supportedSanitizers
-import org.jetbrains.kotlin.testing.native.CompileNativeTest
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
-import org.jetbrains.kotlin.testing.native.RunNativeTest
-import org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin
+import org.jetbrains.kotlin.utils.Maybe
+import org.jetbrains.kotlin.utils.asMaybe
 import java.io.File
 import javax.inject.Inject
+
+private abstract class RunGTestSemaphore : BuildService<BuildServiceParameters.None>
+private abstract class CompileTestsSemaphore : BuildService<BuildServiceParameters.None>
 
 /**
  * A plugin creating extensions to compile
@@ -42,6 +50,21 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
     private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
     private val execClang = project.extensions.getByType<ExecClang>()
+    private val platformManager = project.extensions.getByType<PlatformManager>()
+
+    // googleTestExtension is only used if testsGroup is used.
+    private val googleTestExtension by lazy { project.extensions.getByType<GoogleTestExtension>() }
+
+    // A shared service used to limit parallel execution of test binaries.
+    private val runGTestSemaphore = project.gradle.sharedServices.registerIfAbsent("runGTestSemaphore", RunGTestSemaphore::class.java) {
+        // Probably can be made configurable if test reporting moves away from simple gtest stdout dumping.
+        maxParallelUsages.set(1)
+    }
+
+    // TODO: remove when tests compilation does not consume so much memory.
+    private val compileTestsSemaphore = project.gradle.sharedServices.registerIfAbsent("compileTestsSemaphore", CompileTestsSemaphore::class.java) {
+        maxParallelUsages.set(5)
+    }
 
     private val targetList = with(project) {
         provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
@@ -50,14 +73,20 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
     private val allMainModulesTasks by lazy {
         val name = project.name.capitalized
         targetList.get().associateBy(keySelector = { it }, valueTransform = {
-            project.tasks.register("${it}$name")
+            project.tasks.register("${it}$name") {
+                description = "Build all main modules of $name for $it"
+                group = BUILD_TASK_GROUP
+            }
         })
     }
 
     private val allTestsTasks by lazy {
         val name = project.name.capitalized
         targetList.get().associateBy(keySelector = { it }, valueTransform = {
-            project.tasks.register("${it}${name}Tests")
+            project.tasks.register("${it}${name}Tests") {
+                description = "Runs all $name tests for $it"
+                group = VERIFICATION_TASK_GROUP
+            }
         })
     }
 
@@ -79,7 +108,6 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
     fun module(name: String, srcRoot: File = project.file("src/$name"), outputGroup: String = "main", configurationBlock: CompileToBitcode.() -> Unit = {}) {
         targetList.get().forEach { targetName ->
-            val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
             val target = platformManager.targetByName(targetName)
             val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
             val allMainModulesTask = allMainModulesTasks[targetName]!!
@@ -90,13 +118,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                     headersDirs = srcDirs + project.files(srcRoot.resolve("headers"))
 
                     this.sanitizer = sanitizer
-                    group = BasePlugin.BUILD_GROUP
-                    val sanitizerDescription = when (sanitizer) {
-                        null -> ""
-                        SanitizerKind.ADDRESS -> " with ASAN"
-                        SanitizerKind.THREAD -> " with TSAN"
+                    when (outputGroup) {
+                        "test" -> group = VERIFICATION_BUILD_TASK_GROUP
+                        "main" -> group = BUILD_TASK_GROUP
                     }
-                    description = "Compiles '$name' to bitcode for $targetName$sanitizerDescription"
+                    description = "Compiles '$name' to bitcode for $targetName${sanitizer.description}"
                     dependsOn(":kotlin-native:dependencies:update")
                     configurationBlock()
                 }
@@ -110,27 +136,37 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         }
     }
 
+    abstract class TestsGroup @Inject constructor(
+            val target: KonanTarget,
+            private val _sanitizer: Maybe<SanitizerKind>,
+    ) {
+        val sanitizer
+            get() = _sanitizer.orNull
+        abstract val testedModules: ListProperty<String>
+        abstract val testSupportModules: ListProperty<String>
+        abstract val testLauncherModule: Property<String>
+    }
+
     private fun createTestTask(
-            project: Project,
-            testName: String,
-            testedTaskNames: List<String>,
-            sanitizer: SanitizerKind?,
-    ): Task {
-        val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
-        val googleTestExtension = project.extensions.getByName(RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME) as GoogleTestExtension
-        val testedTasks = testedTaskNames.map {
-            project.tasks.getByName(it) as CompileToBitcode
+            testTaskName: String,
+            testsGroup: TestsGroup,
+    ) {
+        val target = testsGroup.target
+        val sanitizer = testsGroup.sanitizer
+        val testName = fullTaskName(testTaskName, target.name, sanitizer)
+        val testedTasks = testsGroup.testedModules.get().map {
+            val name = fullTaskName(it, target.name, sanitizer)
+            project.tasks.getByName(name) as CompileToBitcode
         }
-        val target = testedTasks.map {
-            it.target
-        }.distinct().single()
-        val konanTarget = platformManager.targetByName(target)
         val compileToBitcodeTasks = testedTasks.mapNotNull {
             val name = "${it.name}TestBitcode"
             val task = project.tasks.findByName(name) as? CompileToBitcode
-                    ?: project.tasks.create(name, CompileToBitcode::class.java, "${it.folderName}Tests", target, "test").apply {
+                    ?: project.tasks.create(name, CompileToBitcode::class.java, "${it.folderName}Tests", target.name, "test").apply {
                         srcDirs = it.srcDirs
                         headersDirs = it.headersDirs + googleTestExtension.headersDirs
+
+                        group = VERIFICATION_BUILD_TASK_GROUP
+                        description = "Compiles '${it.name}' tests to bitcode for $target${sanitizer.description}"
 
                         this.sanitizer = sanitizer
                         excludeFiles = emptyList()
@@ -139,71 +175,81 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                         dependsOn("downloadGoogleTest")
                         compilerArgs.addAll(it.compilerArgs)
 
-                        addToCompdb(this, konanTarget)
+                        addToCompdb(this, target)
                     }
             if (task.inputFiles.count() == 0) null
             else task
         }
-        // TODO: Consider using sanitized versions.
-        val testFrameworkTasks = listOf(project.tasks.getByName(fullTaskName("googletest", target, null)) as CompileToBitcode, project.tasks.getByName(fullTaskName("googlemock", target, null)) as CompileToBitcode)
+        val testFrameworkTasks = testsGroup.testSupportModules.get().map {
+            val name = fullTaskName(it, target.name, sanitizer)
+            project.tasks.getByName(name) as CompileToBitcode
+        }
 
-        val testSupportTask = project.tasks.getByName(fullTaskName("test_support", target, sanitizer)) as CompileToBitcode
+        val testSupportTask = testsGroup.testLauncherModule.get().let {
+            val name = fullTaskName(it, target.name, sanitizer)
+            project.tasks.getByName(name) as CompileToBitcode
+        }
 
-        val mimallocEnabled = testedTaskNames.any { it.contains("mimalloc", ignoreCase = true) }
-        val compileTask = project.tasks.create(
-                "${testName}Compile",
-                CompileNativeTest::class.java,
-                testName,
-                konanTarget,
-                testSupportTask.outFile,
-                platformManager,
-                mimallocEnabled,
-        ).apply {
-            val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
-            this.sanitizer = sanitizer
-            this.inputFiles.setFrom(tasksToLink.map { it.outFile })
+        val compileTask = project.tasks.register<CompileToExecutable>("${testName}Compile") {
+            description = "Compile tests group '$testTaskName' for $target${sanitizer.description}"
+            group = VERIFICATION_BUILD_TASK_GROUP
+            this.target.set(target)
+            this.sanitizer.set(sanitizer)
+            this.outputFile.set(project.layout.buildDirectory.file("bin/test/${target}/$testName${target.executableExtension}"))
+            this.llvmLinkFirstStageOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName-firstStage.bc"))
+            this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))
+            this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
+            this.mimallocEnabled.set(testsGroup.testedModules.get().any { it.contains("mimalloc") })
+            this.mainFile.set(testSupportTask.outFile)
             dependsOn(testSupportTask)
+            val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
+            this.inputFiles.setFrom(tasksToLink.map { it.outFile })
             dependsOn(tasksToLink)
+
+            usesService(compileTestsSemaphore)
         }
 
-        val runTask = project.tasks.create(
-                testName,
-                RunNativeTest::class.java,
-                testName,
-                compileTask.outputFile,
-        ).apply {
-            this.sanitizer = sanitizer
+        val runTask = project.tasks.register<RunGTest>(testName) {
+            description = "Runs tests group '$testTaskName' for $target${sanitizer.description}"
+            group = VERIFICATION_TASK_GROUP
+            this.testName.set(testName)
+            executable.set(compileTask.flatMap { it.outputFile })
             dependsOn(compileTask)
+            reportFileUnprocessed.set(project.layout.buildDirectory.file("testReports/$testName/report.xml"))
+            reportFile.set(project.layout.buildDirectory.file("testReports/$testName/report-with-prefixes.xml"))
+            filter.set(project.findProperty("gtest_filter") as? String)
+            tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
+
+            usesService(runGTestSemaphore)
         }
 
-        return runTask
+        allTestsTasks[target.name]!!.configure {
+            dependsOn(runTask)
+        }
     }
 
     fun testsGroup(
             testTaskName: String,
-            testedTaskNames: List<String>,
+            action: Action<in TestsGroup>,
     ) {
-        val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
-        targetList.get().forEach { targetName ->
-            val target = platformManager.targetByName(targetName)
+        platformManager.enabled.forEach { target ->
             val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
-            val allTestsTask = allTestsTasks[targetName]!!
             sanitizers.forEach { sanitizer ->
-                val name = fullTaskName(testTaskName, targetName, sanitizer)
-                val testedNames = testedTaskNames.map {
-                    fullTaskName(it, targetName, sanitizer)
+                val instance = project.objects.newInstance(TestsGroup::class.java, target, sanitizer.asMaybe).apply {
+                    testSupportModules.convention(listOf("googletest", "googlemock"))
+                    testLauncherModule.convention("test_support")
+                    action.execute(this)
                 }
-                val task = createTestTask(project, name, testedNames, sanitizer)
-                allTestsTask.configure {
-                    dependsOn(task)
-                }
+                createTestTask(testTaskName, instance)
             }
         }
     }
 
     companion object {
 
-        private const val COMPILATION_DATABASE_TASK_NAME = "CompilationDatabase"
+        const val BUILD_TASK_GROUP = LifecycleBasePlugin.BUILD_GROUP
+        const val VERIFICATION_TASK_GROUP = LifecycleBasePlugin.VERIFICATION_GROUP
+        const val VERIFICATION_BUILD_TASK_GROUP = "verification build"
 
         @OptIn(ExperimentalStdlibApi::class)
         private val String.capitalized: String
@@ -220,5 +266,18 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                 SanitizerKind.THREAD -> "_TSAN"
             }
 
+        private val SanitizerKind?.description
+            get() = when (this) {
+                null -> ""
+                SanitizerKind.ADDRESS -> " with ASAN"
+                SanitizerKind.THREAD -> " with TSAN"
+            }
+
+        private val KonanTarget.executableExtension
+            get() = when (this) {
+                is KonanTarget.MINGW_X64 -> ".exe"
+                is KonanTarget.MINGW_X86 -> ".exe"
+                else -> ""
+            }
     }
 }

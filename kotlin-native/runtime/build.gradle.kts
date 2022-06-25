@@ -4,6 +4,7 @@
  */
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
+import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -182,28 +183,48 @@ bitcode {
         onlyIf { targetSupportsThreads(target) }
     }
 
-    testsGroup("std_alloc_runtime_tests", listOf("main", "legacy_memory_manager", "strict", "std_alloc", "objc"))
+    testsGroup("std_alloc_runtime_tests") {
+        testedModules.addAll("main", "legacy_memory_manager", "strict", "std_alloc", "objc")
+    }
 
-    testsGroup("mimalloc_runtime_tests", listOf("main", "legacy_memory_manager", "strict", "mimalloc", "opt_alloc", "objc"))
+    testsGroup("mimalloc_runtime_tests") {
+        testedModules.addAll("main", "legacy_memory_manager", "strict", "mimalloc", "opt_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_mimalloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "mimalloc", "opt_alloc", "objc"))
+    testsGroup("experimentalMM_mimalloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "mimalloc", "opt_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_std_alloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "std_alloc", "objc"))
+    testsGroup("experimentalMM_std_alloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "std_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_cms_mimalloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "mimalloc", "opt_alloc", "objc"))
+    testsGroup("experimentalMM_cms_mimalloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "mimalloc", "opt_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_cms_std_alloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "std_alloc", "objc"))
+    testsGroup("experimentalMM_cms_std_alloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "std_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_noop_mimalloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "noop_gc", "mimalloc", "opt_alloc", "objc"))
+    testsGroup("experimentalMM_noop_mimalloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "mimalloc", "opt_alloc", "objc")
+    }
 
-    testsGroup("experimentalMM_noop_std_alloc_runtime_tests", listOf("main", "experimental_memory_manager", "common_gc", "noop_gc", "std_alloc", "objc"))
+    testsGroup("experimentalMM_noop_std_alloc_runtime_tests") {
+        testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "std_alloc", "objc")
+    }
 }
 
 val hostRuntime by tasks.registering {
+    description = "Build all main runtime modules for host"
+    group = CompileToBitcodeExtension.BUILD_TASK_GROUP
     dependsOn("${hostName}Runtime")
 }
 
 val hostRuntimeTests by tasks.registering {
+    description = "Runs all runtime tests for host"
+    group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
     dependsOn("${hostName}RuntimeTests")
 }
 
