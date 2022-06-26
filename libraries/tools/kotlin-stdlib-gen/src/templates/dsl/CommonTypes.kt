@@ -20,6 +20,7 @@ enum class Family {
     Strings,
     Ranges,
     RangesOfPrimitives,
+    OpenRanges,
     ProgressionsOfPrimitives,
     Generic,
     Primitives,

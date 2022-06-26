@@ -13,7 +13,7 @@ private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
     Iterables, Collections, Lists -> SourceFile.Collections
     Sequences -> SourceFile.Sequences
     Sets -> SourceFile.Sets
-    Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
+    Ranges, OpenRanges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
     ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
     ArraysOfUnsigned -> SourceFile.UArrays
     Maps -> SourceFile.Maps
@@ -268,6 +268,7 @@ class MemberBuilder(
             Strings -> "String"
             CharSequences -> "CharSequence"
             Ranges -> "ClosedRange<$receiverT>"
+            OpenRanges -> "OpenEndRange<$receiverT>"
             ArraysOfPrimitives, ArraysOfUnsigned -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
