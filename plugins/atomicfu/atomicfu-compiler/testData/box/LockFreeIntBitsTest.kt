@@ -4,22 +4,22 @@ import kotlin.test.*
 class LockFreeIntBitsTest {
     fun testBasic() {
         val bs = LockFreeIntBits()
-        check(!bs[0])
-        check(bs.bitSet(0))
-        check(bs[0])
-        check(!bs.bitSet(0))
+        assertTrue(!bs[0])
+        assertTrue(bs.bitSet(0))
+        assertTrue(bs[0])
+        assertTrue(!bs.bitSet(0))
 
-        check(!bs[1])
-        check(bs.bitSet(1))
-        check(bs[1])
-        check(!bs.bitSet(1))
-        check(!bs.bitSet(0))
+        assertTrue(!bs[1])
+        assertTrue(bs.bitSet(1))
+        assertTrue(bs[1])
+        assertTrue(!bs.bitSet(1))
+        assertTrue(!bs.bitSet(0))
 
-        check(bs[0])
-        check(bs.bitClear(0))
-        check(!bs.bitClear(0))
+        assertTrue(bs[0])
+        assertTrue(bs.bitClear(0))
+        assertTrue(!bs.bitClear(0))
 
-        check(bs[1])
+        assertTrue(bs[1])
     }
 }
 

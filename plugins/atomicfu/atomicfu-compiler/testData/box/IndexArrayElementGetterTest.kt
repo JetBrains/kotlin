@@ -10,13 +10,13 @@ class IndexArrayElementGetterTest {
         clazz.intArr[8].value = 3
         val i = fib(4)
         val j = fib(5)
-        assertEquals(clazz.intArr[i + j].value, 3)
-        assertEquals(clazz.intArr[fib(4) + fib(5)].value, 3)
+        assertEquals(3, clazz.intArr[i + j].value)
+        assertEquals(3, clazz.intArr[fib(4) + fib(5)].value)
         clazz.longArr[3].value = 100
-        assertEquals(clazz.longArr[fib(6) - fib(5)].value, 100)
-        assertEquals(clazz.longArr[(fib(6) + fib(4)) % 8].value, 100)
-        assertEquals(clazz.longArr[(fib(6) + fib(4)) % 8].value, 100)
-        assertEquals(clazz.longArr[(fib(4) + fib(5)) % fib(5)].value, 100)
+        assertEquals(100, clazz.longArr[fib(6) - fib(5)].value)
+        assertEquals(100, clazz.longArr[(fib(6) + fib(4)) % 8].value)
+        assertEquals(100, clazz.longArr[(fib(6) + fib(4)) % 8].value)
+        assertEquals(100, clazz.longArr[(fib(4) + fib(5)) % fib(5)].value)
     }
 
     class AtomicArrayClass {

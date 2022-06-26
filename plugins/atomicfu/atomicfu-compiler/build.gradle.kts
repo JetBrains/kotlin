@@ -17,14 +17,16 @@ val testJsRuntime by configurations.creating {
     }
 }
 
-val atomicfuClasspath by configurations.creating {
+val atomicfuJsClasspath by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
-val atomicfuRuntimeForTests by configurations.creating {
+val atomicfuJvmClasspath by configurations.creating
+
+val atomicfuJsIrRuntimeForTests by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -45,9 +47,13 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
+
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
     compileOnly(project(":compiler:backend.js"))
+
+    compileOnly(project(":compiler:backend.jvm"))
+    compileOnly(project(":compiler:ir.tree"))
 
     compileOnly(kotlinStdlib())
 
@@ -60,6 +66,7 @@ dependencies {
 
     testImplementation(projectTests(":js:js.tests"))
     testApi(commonDependency("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
 
     testRuntimeOnly(kotlinStdlib())
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -67,9 +74,9 @@ dependencies {
     testRuntimeOnly(project(":compiler:backend-common"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
-    atomicfuClasspath("org.jetbrains.kotlinx:atomicfu-js:0.16.3") { isTransitive = false }
-
-    atomicfuRuntimeForTests(project(":atomicfu-runtime"))  { isTransitive = false }
+    atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
+    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.17.1") { isTransitive = false }
+    atomicfuJsIrRuntimeForTests(project(":atomicfu-runtime"))  { isTransitive = false }
 
     embedded(project(":atomicfu-runtime")) {
         attributes {
@@ -79,6 +86,8 @@ dependencies {
         }
         isTransitive = false
     }
+
+    testImplementation("org.jetbrains.kotlinx:atomicfu:0.17.1")
 
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
 }
@@ -96,10 +105,11 @@ testsJar()
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     workingDir = rootDir
-    dependsOn(atomicfuRuntimeForTests)
+    dependsOn(atomicfuJsIrRuntimeForTests)
     doFirst {
-        systemProperty("atomicfuRuntimeForTests.classpath", atomicfuRuntimeForTests.asPath)
-        systemProperty("atomicfu.classpath", atomicfuClasspath.asPath)
+        systemProperty("atomicfuJsIrRuntimeForTests.classpath", atomicfuJsIrRuntimeForTests.asPath)
+        systemProperty("atomicfuJs.classpath", atomicfuJsClasspath.asPath)
+        systemProperty("atomicfuJvm.classpath", atomicfuJvmClasspath.asPath)
     }
     setUpJsIrBoxTests()
 }

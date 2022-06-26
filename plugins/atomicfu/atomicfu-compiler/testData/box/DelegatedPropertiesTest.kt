@@ -4,7 +4,7 @@ import kotlin.test.*
 private val _topLevelInt = atomic(42)
 var topLevelInt: Int by _topLevelInt
 
-var vIntTopLevel by atomic(55)
+private var topLevelVolatile by atomic(56)
 
 class DelegatedProperties {
     private val _a = atomic(42)
@@ -30,7 +30,7 @@ class DelegatedProperties {
     class A (val b: B)
     class B (val n: Int)
 
-    fun testDelegatedAtomicInt() {
+   fun testDelegatedAtomicInt() {
         assertEquals(42, a)
         _a.compareAndSet(42, 56)
         assertEquals(56, a)
@@ -96,6 +96,7 @@ class DelegatedProperties {
 
     inner class D {
         var b: Int by _a
+        var c by atomic("aaa")
     }
 
     fun testScopedDelegatedProperties() {
@@ -107,6 +108,10 @@ class DelegatedProperties {
         _a.compareAndSet(77, 66)
         assertEquals(66, _a.value)
         assertEquals(66, clazz.b)
+
+        assertEquals("aaa", clazz.c)
+        clazz.c = "bbb"
+        assertEquals("bbb", clazz.c)
     }
 
     fun test() {
@@ -130,15 +135,18 @@ fun testTopLevelDelegatedProperties() {
     _topLevelInt.compareAndSet(77, 66)
     assertEquals(66, _topLevelInt.value)
     assertEquals(66, topLevelInt)
+}
 
-    assertEquals(55, vIntTopLevel)
-    vIntTopLevel = 70
-    assertEquals(140, vIntTopLevel * 2)
+fun testTopLevelVolatileProperties() {
+    assertEquals(56, topLevelVolatile)
+    topLevelVolatile = 55
+    assertEquals(110, topLevelVolatile * 2)
 }
 
 fun box(): String {
     val testClass = DelegatedProperties()
     testClass.test()
-    //testTopLevelDelegatedProperties()
+    testTopLevelDelegatedProperties()
+    testTopLevelVolatileProperties()
     return "OK"
 }

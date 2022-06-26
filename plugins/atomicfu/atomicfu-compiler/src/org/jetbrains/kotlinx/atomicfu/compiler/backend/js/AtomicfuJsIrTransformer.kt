@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlinx.atomicfu.compiler.extensions
+package org.jetbrains.kotlinx.atomicfu.compiler.backend.js
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.*
@@ -19,6 +19,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildCall
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildGetterType
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildSetterType
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.getBackingField
 
 private const val AFU_PKG = "kotlinx.atomicfu"
 private const val LOCKS = "locks"
@@ -38,7 +43,7 @@ private const val APPEND = "append"
 private const val ATOMIC_ARRAY_OF_NULLS_FACTORY = "atomicArrayOfNulls"
 private const val REENTRANT_LOCK_FACTORY = "reentrantLock"
 
-class AtomicfuTransformer(private val context: IrPluginContext) {
+class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
 
     private val irBuiltIns = context.irBuiltIns
 
@@ -203,7 +208,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                     receiver.getReceiverAccessors(data)?.let { accessors ->
                         val declaration = expression.symbol.owner
                         val transformedAtomicExtension = getDeclarationWithAccessorParameters(declaration, declaration.extensionReceiverParameter)
-                        return buildCall(
+                        val irCall = buildCall(
                             expression.startOffset,
                             expression.endOffset,
                             target = transformedAtomicExtension.symbol,
@@ -212,6 +217,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                         ).apply {
                             dispatchReceiver = expression.dispatchReceiver
                         }
+                        return super.visitCall(irCall, data)
                     }
                 }
             }
@@ -301,7 +307,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                         type = type,
                         typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(type) else emptyList(),
                         valueArguments = if (isSetter) listOf(expression.getValueArgument(2)!!, fieldAccessors[0], fieldAccessors[1]) else
-                                fieldAccessors
+                            fieldAccessors
                     )
                 }
                 return super.visitCall(expression)
