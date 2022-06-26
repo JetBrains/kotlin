@@ -38,11 +38,17 @@ public class RangeTest {
         assertTrue(1 as Int? in range)
         assertFalse(10 as Int? in range)
 
+        val closedRange = 1..9
         val openRange = 1 until 10
         assertTrue(9 in openRange)
         assertFalse(10 in openRange)
+        assertEquals(closedRange, openRange)
+
+        val openRange2 = 1..<10
+        assertEquals(closedRange, openRange2)
 
         assertTrue((1 until Int.MIN_VALUE).isEmpty())
+        assertFailsWith<IllegalStateException> { (1..Int.MAX_VALUE).endExclusive }
     }
 
     @Test fun byteRange() {
@@ -141,13 +147,18 @@ public class RangeTest {
         assertTrue(1L as Long? in range)
         assertFalse(10L as Long? in range)
 
+        val closedRange = 1L..9L
         val openRange = 1L until 10L
         assertTrue(9L in openRange)
         assertFalse(10L in openRange)
+        assertEquals(closedRange, openRange)
+
+        val openRange2 = 1L..<10L
+        assertEquals(closedRange, openRange2)
 
         assertTrue((0 until Long.MIN_VALUE).isEmpty())
         assertTrue((0L until Long.MIN_VALUE).isEmpty())
-
+        assertFailsWith<IllegalStateException> { (1..Long.MAX_VALUE).endExclusive }
     }
 
     @Test fun charRange() {
@@ -174,11 +185,17 @@ public class RangeTest {
         assertTrue('p' as Char? in range)
         assertFalse('z' as Char? in range)
 
+        val closedRange = 'A'..'Y'
         val openRange = 'A' until 'Z'
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
+        assertEquals(closedRange, openRange)
+
+        val openRange2 = 'A'..<'Z'
+        assertEquals(closedRange, openRange2)
 
         assertTrue(('A' until Char.MIN_VALUE).isEmpty())
+        assertFailsWith<IllegalStateException> { ('A'..Char.MAX_VALUE).endExclusive }
     }
 
     @Test fun doubleRange() {
@@ -221,6 +238,14 @@ public class RangeTest {
         assertFalse(Double.NEGATIVE_INFINITY in halfInfRange)
         assertFalse(Double.NaN in halfInfRange)
         assertTrue(Float.POSITIVE_INFINITY in halfInfRange)
+
+        val openRange = 0.0..<Double.POSITIVE_INFINITY
+        assertTrue(Double.MAX_VALUE in openRange)
+        assertFalse(Double.POSITIVE_INFINITY in openRange)
+        assertFalse(Double.NEGATIVE_INFINITY in openRange)
+        assertFalse(Double.NaN in openRange)
+        assertFalse(Float.POSITIVE_INFINITY in openRange)
+
     }
 
     @Test fun floatRange() {
@@ -264,6 +289,12 @@ public class RangeTest {
         assertFalse(Float.NaN in halfInfRange)
         assertTrue(Double.POSITIVE_INFINITY in halfInfRange)
         assertTrue(Double.MAX_VALUE in halfInfRange)
+
+        val openRange = 0.0F..<Float.POSITIVE_INFINITY
+        assertTrue(Float.MAX_VALUE in openRange)
+        assertFalse(Float.POSITIVE_INFINITY in openRange)
+        assertFalse(Float.NEGATIVE_INFINITY in openRange)
+        assertFalse(Float.NaN in openRange)
     }
 
     @Suppress("EmptyRange")
@@ -334,6 +365,9 @@ public class RangeTest {
 
     @Test fun comparableRange() {
         val range = "island".."isle"
+        assertEquals("island..isle", range.toString())
+        assertEquals(range, range.start..range.endInclusive)
+
         assertFalse("apple" in range)
         assertFalse("icicle" in range)
 
@@ -345,6 +379,25 @@ public class RangeTest {
         assertFalse("trail" in range)
 
         assertFalse(range.isEmpty())
+        assertFalse(("empty".."empty").isEmpty())
+    }
+
+    @Test fun comparableOpenRange() {
+        val range = "island"..<"isle"
+        assertEquals("island..<isle", range.toString())
+        assertEquals(range, range.start..<range.endExclusive)
+        assertFalse("apple" in range)
+        assertFalse("icicle" in range)
+
+        assertTrue("island" in range)
+        assertFalse("isle" in range)
+        assertTrue("islandic" in range)
+
+        assertFalse("item" in range)
+        assertFalse("trail" in range)
+
+        assertFalse(range.isEmpty())
+        assertTrue(("empty"..<"empty").isEmpty())
     }
 
     private fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith<IllegalArgumentException> { f() }
