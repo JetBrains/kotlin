@@ -326,6 +326,54 @@ public infix fun UShort.downTo(to: UShort): UIntProgression {
 }
 
 /**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun UByte.rangeUntil(to: UByte): UIntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun UInt.rangeUntil(to: UInt): UIntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun ULong.rangeUntil(to: ULong): ULongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun UShort.rangeUntil(to: UShort): UIntRange {
+    return until(to)
+}
+
+/**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 @SinceKotlin("1.5")

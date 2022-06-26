@@ -763,6 +763,210 @@ public infix fun Short.downTo(to: Short): IntProgression {
 }
 
 /**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Int.rangeUntil(to: Byte): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Long.rangeUntil(to: Byte): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Byte.rangeUntil(to: Byte): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Short.rangeUntil(to: Byte): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Char.rangeUntil(to: Char): CharRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Int.rangeUntil(to: Int): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Long.rangeUntil(to: Int): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Byte.rangeUntil(to: Int): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Short.rangeUntil(to: Int): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Int.rangeUntil(to: Long): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Long.rangeUntil(to: Long): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Byte.rangeUntil(to: Long): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Short.rangeUntil(to: Long): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Int.rangeUntil(to: Short): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Long.rangeUntil(to: Short): LongRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Byte.rangeUntil(to: Short): IntRange {
+    return until(to)
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value, then the returned range is empty.
+ */
+@SinceKotlin("1.7")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline operator fun Short.rangeUntil(to: Short): IntRange {
+    return until(to)
+}
+
+/**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun IntProgression.reversed(): IntProgression {

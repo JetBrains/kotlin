@@ -45,7 +45,9 @@ object RangeOps : TemplateGroupBase() {
             sourceFile(SourceFile.Ranges)
             if (primitive in PrimitiveType.unsignedPrimitives) {
                 sinceAtLeast("1.5")
-                wasExperimental("ExperimentalUnsignedTypes")
+                if (since == null || since!!.toDouble() <= 1.5) {
+                    wasExperimental("ExperimentalUnsignedTypes")
+                }
                 sourceFile(SourceFile.URanges)
             }
         }
@@ -148,6 +150,30 @@ object RangeOps : TemplateGroupBase() {
         } else {
             body { "return $fromExpr .. (to.to$elementType() - 1$u).to$elementType()" }
         }
+    }
+
+    val f_rangeUntil = fn("rangeUntil(to: Primitive)").byTwoPrimitives {
+        include(Primitives, integralCombinations + unsignedMappings)
+    } builderWith { (fromType, toType) ->
+        operator()
+        inlineOnly()
+        since("1.7")
+        annotation("@ExperimentalStdlibApi")
+        signature("rangeUntil(to: $toType)")
+
+        val elementType = rangeElementType(fromType, toType)
+        val progressionType = elementType.name + "Range"
+        returns(progressionType)
+
+        doc {
+            """
+            Returns a range from this value up to but excluding the specified [to] value.
+
+            If the [to] value is less than or equal to `this` value, then the returned range is empty.
+            """
+        }
+
+        body { "return until(to)" }
     }
 
     val f_contains = fn("contains(value: Primitive)").byTwoPrimitives {
