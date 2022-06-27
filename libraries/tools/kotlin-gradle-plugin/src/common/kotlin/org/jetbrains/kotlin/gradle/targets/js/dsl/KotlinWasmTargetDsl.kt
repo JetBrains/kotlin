@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
@@ -24,17 +23,17 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
 interface KotlinWasmTargetDsl : KotlinJsTargetDsl {
     fun d8() = d8 { }
     fun d8(body: KotlinWasmD8Dsl.() -> Unit)
-    fun d8(fn: Closure<*>) {
+    fun d8(fn: Action<KotlinWasmD8Dsl>) {
         d8 {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun applyBinaryen() = applyBinaryen { }
     fun applyBinaryen(body: BinaryenExec.() -> Unit)
-    fun applyBinaryen(fn: Closure<*>) {
+    fun applyBinaryen(fn: Action<BinaryenExec>) {
         applyBinaryen {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 }
