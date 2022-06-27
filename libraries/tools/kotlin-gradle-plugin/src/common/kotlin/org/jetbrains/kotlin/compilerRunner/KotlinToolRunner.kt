@@ -34,6 +34,11 @@ abstract class KotlinToolRunner(
         val logger: Logger,
     ) {
         companion object {
+            /**
+             * Executing [KotlinToolRunner] during Gradle Configuration Phase is undesired behaviour.
+             * Currently only [KotlinNativeLibraryGenerationRunner] used in this way.
+             * It should be fixed as part of KT-51255
+             */
             @Deprecated(
                 "Building execution context from Project object isn't compatible with Gradle Configuration Cache",
                 ReplaceWith("fromTaskContext()"),
@@ -41,7 +46,7 @@ abstract class KotlinToolRunner(
             )
             fun fromProject(project: Project) = GradleExecutionContext(
                 filesProvider = project::files,
-                javaexec = project::javaexec,
+                javaexec = { spec -> project.javaexec(spec) }, // project::javaexec won't work due to different Classloaders
                 logger = project.logger
             )
 
