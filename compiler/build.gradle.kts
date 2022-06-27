@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
 import java.io.File
 
 plugins {
@@ -45,20 +44,11 @@ dependencies {
     antLauncherJar(toolsJar())
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" {}
     "test" {
         projectDefault()
-        this.java.srcDir(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
+        generatedTestDir()
     }
 }
 
