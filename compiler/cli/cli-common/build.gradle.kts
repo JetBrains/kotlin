@@ -21,6 +21,8 @@ sourceSets {
     "test" {}
 }
 
+optInToExperimentalCompilerApi()
+
 tasks.getByName<Jar>("jar") {
     //excludes unused bunch files
     exclude("META-INF/extensions/*.xml.**")

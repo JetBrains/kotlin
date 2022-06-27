@@ -44,6 +44,8 @@ dependencies {
     testRuntimeOnly(toolsJar())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { none() }
     "test" {

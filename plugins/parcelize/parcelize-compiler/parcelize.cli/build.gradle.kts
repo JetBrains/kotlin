@@ -23,6 +23,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToExperimentalCompilerApi()
+
 runtimeJar()
 javadocJar()
 sourcesJar()

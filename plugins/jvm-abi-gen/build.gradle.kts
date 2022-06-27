@@ -46,6 +46,8 @@ dependencies {
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
 }
 
+optInToExperimentalCompilerApi()
+
 publish()
 
 noDefaultJar()

@@ -83,6 +83,9 @@
 
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
+                    <args>
+                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
+                    </args>
                 </configuration>
             </plugin>
             <plugin>

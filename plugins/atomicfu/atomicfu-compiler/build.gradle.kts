@@ -92,10 +92,14 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+optInToExperimentalCompilerApi()
 
 runtimeJar()
 sourcesJar()

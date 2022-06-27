@@ -79,6 +79,9 @@
           <annotationPaths>
             <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
           </annotationPaths>
+          <args>
+            <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
+          </args>
         </configuration>
 
         <executions>

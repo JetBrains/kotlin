@@ -24,6 +24,8 @@ dependencies {
     }
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" {}

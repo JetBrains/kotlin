@@ -36,6 +36,8 @@ dependencies {
     testImplementation(project(":kotlin-reflect"))
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }

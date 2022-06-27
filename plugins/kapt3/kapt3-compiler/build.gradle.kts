@@ -39,6 +39,8 @@ dependencies {
     embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }

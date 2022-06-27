@@ -17,6 +17,8 @@ dependencies {
     testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { none() }
     "test" { projectDefault() }

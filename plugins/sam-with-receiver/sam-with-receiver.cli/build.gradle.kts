@@ -15,6 +15,8 @@ dependencies {
     compileOnly(intellijCore())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

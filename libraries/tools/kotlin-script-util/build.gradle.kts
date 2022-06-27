@@ -30,6 +30,8 @@ dependencies {
     testApi(intellijCore())
 }
 
+optInToExperimentalCompilerApi()
+
 configurations.all {
     resolutionStrategy {
         force(commonDependency("junit:junit"))

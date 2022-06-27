@@ -77,6 +77,11 @@
                         <goals> <goal>compile</goal> </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <args>
+                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
+                    </args>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>

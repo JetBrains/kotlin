@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -65,6 +66,7 @@ private class EnabledByDirectiveConfiguratorDecorator(
         original.legacyRegisterCompilerExtensions(project, module, configuration)
     }
 
+    @OptIn(ExperimentalCompilerApi::class)
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
         configuration: CompilerConfiguration

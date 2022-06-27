@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.compiler.plugin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
+@ExperimentalCompilerApi
 interface CommandLineProcessor {
     val pluginId: String
     val pluginOptions: Collection<AbstractCliOption>

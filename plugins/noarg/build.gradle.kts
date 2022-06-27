@@ -29,6 +29,8 @@ dependencies {
     testApi(intellijCore())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { none() }
     "test" {
@@ -36,6 +38,8 @@ sourceSets {
         generatedTestDir()
     }
 }
+
+optInToExperimentalCompilerApi()
 
 runtimeJar()
 sourcesJar()

@@ -30,4 +30,6 @@ projectTest {
     dependsOn(":dist")
 }
 
+optInToExperimentalCompilerApi()
+
 runtimeJar()

@@ -81,6 +81,8 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { }
     "test" {

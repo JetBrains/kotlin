@@ -53,6 +53,10 @@ sourceSets {
     "test" { }
 }
 
+allprojects {
+    optInToExperimentalCompilerApi()
+}
+
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
         languageVersion = "1.4"

@@ -44,6 +44,8 @@ dependencies {
     antLauncherJar(toolsJar())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" {}
     "test" {

@@ -82,6 +82,8 @@ dependencies {
     testApiJUnit5()
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { }
     "test" { projectDefault() }

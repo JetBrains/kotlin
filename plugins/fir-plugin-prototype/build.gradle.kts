@@ -39,6 +39,8 @@ dependencies {
     testRuntimeOnly(toolsJar())
 }
 
+optInToExperimentalCompilerApi()
+
 val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {

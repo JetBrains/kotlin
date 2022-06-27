@@ -35,6 +35,8 @@ dependencies {
     testApi(intellijCore())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { none() }
     "test" {

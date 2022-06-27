@@ -33,6 +33,8 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { none() }
     "test" {

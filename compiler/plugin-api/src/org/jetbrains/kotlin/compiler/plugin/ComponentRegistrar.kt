@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
     replaceWith = ReplaceWith("CompilerPluginRegistrar", "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"),
     level = DeprecationLevel.WARNING
 )
+@ExperimentalCompilerApi
 interface ComponentRegistrar {
     companion object {
         @Suppress("DEPRECATION")

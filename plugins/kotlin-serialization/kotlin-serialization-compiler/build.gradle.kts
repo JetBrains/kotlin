@@ -47,6 +47,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     }
 }
 
+optInToExperimentalCompilerApi()
+
 runtimeJar()
 sourcesJar()
 javadocJar()

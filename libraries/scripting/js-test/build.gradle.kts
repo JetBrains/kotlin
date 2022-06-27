@@ -21,6 +21,8 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" {}
     "test" { projectDefault() }

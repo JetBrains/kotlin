@@ -38,6 +38,7 @@ dependencies {
 GradleCommonKt.configureCommonPublicationSettingsForGradle(project)
 GradleCommonKt.configureKotlinCompileTasksGradleCompatibility(project)
 GradleCommonKt.excludeGradleCommonDependencies(project, sourceSets.main)
+TasksKt.optInToExperimentalCompilerApi(project)
 
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
