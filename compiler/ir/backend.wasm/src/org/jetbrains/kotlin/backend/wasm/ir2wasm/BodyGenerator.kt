@@ -465,6 +465,10 @@ class BodyGenerator(
                 body.buildConstI32Symbol(context.scratchMemAddr)
             }
 
+            wasmSymbols.unsafeGetScratchRawMemorySize -> {
+                body.buildConstI32Symbol(WasmSymbol(context.scratchMemSizeInBytes))
+            }
+
             else -> {
                 return false
             }

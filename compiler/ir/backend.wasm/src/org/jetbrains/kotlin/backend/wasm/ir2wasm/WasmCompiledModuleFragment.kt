@@ -60,7 +60,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val initFunctions = mutableListOf<FunWithPriority>()
 
     val scratchMemAddr = WasmSymbol<Int>()
-    private val scratchMemSizeInBytes = 65_536
+    val scratchMemSizeInBytes = 65_536
 
     open class ReferencableElements<Ir, Wasm : Any> {
         val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()

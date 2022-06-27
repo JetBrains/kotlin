@@ -56,6 +56,12 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
     }
 
     @Test
+    @TestMetadata("longStrings.kt")
+    public void testLongStrings() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
+    }
+
+    @Test
     @TestMetadata("types.kt")
     public void testTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");

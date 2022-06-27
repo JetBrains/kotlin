@@ -6,14 +6,17 @@
 package kotlin.wasm.internal
 
 internal const val CHAR_SIZE_BYTES = 2
-internal const val INT_SIZE_BYTES = 4
 
-internal fun unsafeRawMemoryToChar(addr: Int) = wasm_i32_load16_u(addr).toChar()
-
-internal fun unsafeRawMemoryToWasmCharArray(startAddr: Int, length: Int): WasmCharArray {
-    val result = WasmCharArray(length)
-    result.fill(length) { unsafeRawMemoryToChar(startAddr + it * CHAR_SIZE_BYTES) }
-    return result
+internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLength: Int, dst: WasmCharArray) {
+    var curAddr = srcAddr
+    val srcAddrEndOffset = srcAddr + dstLength * CHAR_SIZE_BYTES
+    var dstIndex = dstOffset
+    while (curAddr < srcAddrEndOffset) {
+        val char = wasm_i32_load16_u(curAddr).toChar()
+        dst.set(dstIndex, char)
+        curAddr += CHAR_SIZE_BYTES
+        dstIndex++
+    }
 }
 
 // Returns a pointer into a temporary scratch segment in the raw wasm memory. Aligned by 4.
@@ -22,14 +25,19 @@ internal fun unsafeRawMemoryToWasmCharArray(startAddr: Int, length: Int): WasmCh
 internal fun unsafeGetScratchRawMemory(sizeBytes: Int): Int =
     implementedAsIntrinsic
 
+@ExcludedFromCodegen
+internal fun unsafeGetScratchRawMemorySize(): Int =
+    implementedAsIntrinsic
+
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
-internal fun unsafeWasmCharArrayToRawMemory(src: WasmCharArray, dstAddr: Int) {
+internal fun unsafeWasmCharArrayToRawMemory(src: WasmCharArray, srcOffset: Int, srcLength: Int, dstAddr: Int) {
     var curAddr = dstAddr
-    var i = 0
-    while (i < src.len()) {
-        wasm_i32_store16(curAddr, src.get(i))
+    val srcEndOffset = srcOffset + srcLength
+    var srcIndex = srcOffset
+    while (srcIndex < srcEndOffset) {
+        wasm_i32_store16(curAddr, src.get(srcIndex))
         curAddr += CHAR_SIZE_BYTES
-        i++
+        srcIndex++
     }
 }
 

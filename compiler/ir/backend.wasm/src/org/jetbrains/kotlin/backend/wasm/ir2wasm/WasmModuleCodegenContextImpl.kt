@@ -25,6 +25,9 @@ class WasmModuleCodegenContextImpl(
     override val scratchMemAddr: WasmSymbol<Int>
         get() = wasmFragment.scratchMemAddr
 
+    override val scratchMemSizeInBytes: Int
+        get() = wasmFragment.scratchMemSizeInBytes
+
     override fun transformType(irType: IrType): WasmType {
         return with(typeTransformer) { irType.toWasmValueType() }
     }

@@ -138,48 +138,86 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
-@JsFun("""(addr) => {
-    const mem16 = new Uint16Array(wasmExports.memory.buffer);
-    const mem32 = new Int32Array(wasmExports.memory.buffer);
-    const len = mem32[addr / 4];
-    const str_start_addr = (addr + 4) / 2;
-    const slice = mem16.slice(str_start_addr, str_start_addr + len);
-    return String.fromCharCode.apply(null, slice);
-}
-""")
-internal external fun importStringFromWasm(addr: Int): ExternalInterfaceType
-
 @JsFun("x => x.length")
 internal external fun stringLength(x: ExternalInterfaceType): Int
 
-internal fun convertJsStringToKotlinString(x: ExternalInterfaceType): String {
-    val length = stringLength(x)
-    val addr = unsafeGetScratchRawMemory(INT_SIZE_BYTES + length * CHAR_SIZE_BYTES)
-    jsWriteStringIntoMemory(x, addr)
-    return String.unsafeFromCharArray(unsafeRawMemoryToWasmCharArray(addr, length))
+// kotlin string to js string export
+// TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
+@JsFun("""(address, length, prefix) => {
+    const mem16 = new Uint16Array(wasmExports.memory.buffer, address, length);
+    const str = String.fromCharCode.apply(null, mem16);
+    return (prefix == null) ? str : prefix + str;
 }
-
-
-//language=js
-@JsFun(
-""" (str, addr) => { 
-    const memory = new DataView(wasmExports.memory.buffer);
-    for (var i = 0; i < str.length; i++) {
-        memory.setInt16(addr + i * 2, str.charCodeAt(i), true);
-    }
-}
-"""
-)
-internal external fun jsWriteStringIntoMemory(str: ExternalInterfaceType, addr: Int)
-
+""")
+internal external fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInterfaceType?): ExternalInterfaceType
 
 internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
     // Using nullable String to represent default value
     // for parameters with default values
-    if (x == null)
-        return null
-    return importStringFromWasm(exportString(x))
+    if (x == null) return null
+    if (x.isEmpty()) return jsEmptyString()
+
+    val srcArray = x.chars
+    val stringLength = srcArray.len()
+    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
+
+    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+
+    var result: ExternalInterfaceType? = null
+    var srcStartIndex = 0
+    while (srcStartIndex < stringLength - maxStringLength) {
+        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
+        result = importStringFromWasm(memBuffer, maxStringLength, result)
+        srcStartIndex += maxStringLength
+    }
+
+    unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+    return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
 }
+
+// js string to kotlin string import
+// TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
+//language=js
+@JsFun(
+    """ (src, srcOffset, srcLength, dstAddr) => {
+        const mem16 = new Uint16Array(wasmExports.memory.buffer, dstAddr, srcLength);
+        let arrayIndex = 0;
+        let srcIndex = srcOffset;
+        while (arrayIndex < srcLength) {
+            mem16.set([src.charCodeAt(srcIndex)], arrayIndex);
+            srcIndex++;
+            arrayIndex++;
+        }
+    }
+"""
+)
+internal external fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int)
+
+internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
+    val stringLength = stringLength(x)
+    val dstArray = WasmCharArray(stringLength)
+    if (stringLength == 0) {
+        return String.unsafeFromCharArray(dstArray)
+    }
+    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
+
+    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+
+    var srcStartIndex = 0
+    while (srcStartIndex < stringLength - maxStringLength) {
+        jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
+        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
+        srcStartIndex += maxStringLength
+    }
+
+    jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+    unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
+    return String.unsafeFromCharArray(dstArray)
+}
+
+
+@JsFun("() => ''")
+internal external fun jsEmptyString(): ExternalInterfaceType
 
 @JsFun("() => true")
 internal external fun jsTrue(): ExternalInterfaceType
@@ -195,9 +233,6 @@ internal fun kotlinToJsAnyAdapter(x: Any): ExternalInterfaceType =
 
 internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType): Any? =
     externRefToAny(x)
-
-internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String =
-    convertJsStringToKotlinString(x)
 
 internal fun jsToKotlinByteAdapter(x: Int): Byte = x.toByte()
 internal fun jsToKotlinShortAdapter(x: Int): Short = x.toShort()

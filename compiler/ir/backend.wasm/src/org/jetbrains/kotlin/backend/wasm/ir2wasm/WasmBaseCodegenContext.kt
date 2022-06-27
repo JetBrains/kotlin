@@ -16,6 +16,7 @@ interface WasmBaseCodegenContext {
     val backendContext: WasmBackendContext
 
     val scratchMemAddr: WasmSymbol<Int>
+    val scratchMemSizeInBytes: Int
 
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction>
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal>

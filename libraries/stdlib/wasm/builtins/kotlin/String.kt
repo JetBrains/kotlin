@@ -91,4 +91,8 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
     }
 }
 
-internal fun stringLiteral(startAddr: Int, length: Int) = String.unsafeFromCharArray(unsafeRawMemoryToWasmCharArray(startAddr, length))
+internal fun stringLiteral(startAddr: Int, length: Int): String {
+    val array = WasmCharArray(length)
+    unsafeRawMemoryToWasmCharArray(startAddr, 0, length, array)
+    return String.unsafeFromCharArray(array)
+}

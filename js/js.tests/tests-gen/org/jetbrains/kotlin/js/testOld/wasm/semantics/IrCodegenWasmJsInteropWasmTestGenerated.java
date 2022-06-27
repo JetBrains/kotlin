@@ -55,6 +55,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
     }
 
+    @TestMetadata("longStrings.kt")
+    public void testLongStrings() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
+    }
+
     @TestMetadata("nullableExternRefs.kt")
     public void testNullableExternRefs() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
