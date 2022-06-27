@@ -151,6 +151,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/ControlStructures.kt");
         }
 
+        @TestMetadata("CustomStringLiterals.kt")
+        public void testCustomStringLiterals() throws Exception {
+            runTest("compiler/testData/psi/CustomStringLiterals.kt");
+        }
+
         @TestMetadata("DefaultKeyword.kt")
         public void testDefaultKeyword() throws Exception {
             runTest("compiler/testData/psi/DefaultKeyword.kt");

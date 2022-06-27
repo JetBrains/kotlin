@@ -86,4 +86,9 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
 
         return false;
     }
+
+    public String getPrefix() {
+        KtNameReferenceExpression prefix = getStubOrPsiChild(KtStubElementTypes.REFERENCE_EXPRESSION);
+        return prefix == null ? null : prefix.getText();
+    }
 }

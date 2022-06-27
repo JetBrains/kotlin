@@ -1895,21 +1895,35 @@ open class RawFirBuilder(
             generateConstantExpressionByLiteral(expression)
 
         override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Unit): FirElement {
-            return expression.entries.toInterpolatingCall(
-                expression,
-                getElementType = { element ->
-                    when (element) {
-                        is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
-                        is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
-                        is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
-                        is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-                        else -> error("invalid node type $element")
-                    }
-                },
-                convertTemplateEntry = {
-                    (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
-                },
-            )
+            val getElementType: (PsiElement) -> IElementType  = { element ->
+                when (element) {
+                    is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
+                    is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+                    is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
+                    is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
+                    else -> error("invalid node type $element")
+                }
+            }
+
+            val convertTemplateEntry: PsiElement?.(String) -> FirExpression = {
+                (this as KtStringTemplateEntryWithExpression).expression.toFirExpression(it)
+            }
+
+            val prefix = expression.prefix
+            return if (prefix != null) {
+                expression.entries.toList().toBuildLiteralCall(
+                    expression,
+                    prefix,
+                    getElementType = getElementType,
+                    convertTemplateEntry = convertTemplateEntry
+                )
+            } else {
+                expression.entries.toInterpolatingCall(
+                    expression,
+                    getElementType = getElementType,
+                    convertTemplateEntry = convertTemplateEntry
+                )
+            }
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: Unit): FirElement {

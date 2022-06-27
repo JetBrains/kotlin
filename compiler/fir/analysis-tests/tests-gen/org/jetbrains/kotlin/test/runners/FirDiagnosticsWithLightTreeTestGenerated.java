@@ -1311,6 +1311,58 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/customStringLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CustomStringLiterals {
+            @Test
+            public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/customStringLiterals"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("classInstanceAsReceiver.kt")
+            public void testClassInstanceAsReceiver() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/classInstanceAsReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("customStringLiteralsConventions.kt")
+            public void testCustomStringLiteralsConventions() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/customStringLiteralsConventions.kt");
+            }
+
+            @Test
+            @TestMetadata("extensionFunctions.kt")
+            public void testExtensionFunctions() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/extensionFunctions.kt");
+            }
+
+            @Test
+            @TestMetadata("multiLineString.kt")
+            public void testMultiLineString() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/multiLineString.kt");
+            }
+
+            @Test
+            @TestMetadata("multipleOverloads.kt")
+            public void testMultipleOverloads() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/multipleOverloads.kt");
+            }
+
+            @Test
+            @TestMetadata("objectAsReceiver.kt")
+            public void testObjectAsReceiver() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/objectAsReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("returnType.kt")
+            public void testReturnType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/customStringLiterals/returnType.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/delegates")
         @TestDataPath("$PROJECT_ROOT")
         public class Delegates {

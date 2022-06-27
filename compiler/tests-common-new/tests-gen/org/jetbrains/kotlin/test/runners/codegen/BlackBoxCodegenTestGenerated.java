@@ -13063,6 +13063,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/customStringLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CustomStringLiterals {
+        @Test
+        public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/customStringLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {

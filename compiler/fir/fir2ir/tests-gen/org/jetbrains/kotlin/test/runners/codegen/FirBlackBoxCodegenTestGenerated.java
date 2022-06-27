@@ -13183,6 +13183,34 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/customStringLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CustomStringLiterals {
+        @Test
+        public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/customStringLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("constantBuildLiteral.kt")
+        public void testConstantBuildLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/customStringLiterals/constantBuildLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleOverloads.kt")
+        public void testMultipleOverloads() throws Exception {
+            runTest("compiler/testData/codegen/box/customStringLiterals/multipleOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("stringInterpolation.kt")
+        public void testStringInterpolation() throws Exception {
+            runTest("compiler/testData/codegen/box/customStringLiterals/stringInterpolation.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {

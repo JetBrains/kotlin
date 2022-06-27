@@ -10707,6 +10707,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/customStringLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @UseExtTestCaseGroupProvider()
+        public class CustomStringLiterals {
+            @Test
+            public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/customStringLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/dataClasses")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")

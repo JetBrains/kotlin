@@ -1,0 +1,70 @@
+KtFile: CustomStringLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('string without prefix')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('string')
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('with prefix')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('3')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('s')
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('string with prefix and args: ')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)(', ')
+        SHORT_STRING_TEMPLATE_ENTRY
+          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

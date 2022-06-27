@@ -671,13 +671,21 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             // declaration was parsed, do nothing
         }
         else if (at(IDENTIFIER)) {
-            parseSimpleNameExpression();
+            PsiBuilder.Marker templateWithPrefix = mark();
+            if (parseStringTemplate()) {
+                templateWithPrefix.done(STRING_TEMPLATE);
+            } else {
+                templateWithPrefix.rollbackTo();
+                parseSimpleNameExpression();
+            }
         }
         else if (at(LBRACE)) {
             parseFunctionLiteral();
         }
         else if (at(OPEN_QUOTE)) {
+            PsiBuilder.Marker stringTemplate = mark();
             parseStringTemplate();
+            stringTemplate.done(STRING_TEMPLATE);
         }
         else if (!parseLiteralConstant()) {
             ok = false;
@@ -690,14 +698,30 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     /*
      * stringTemplate
-     *   : OPEN_QUOTE stringTemplateElement* CLOSING_QUOTE
+     *   : identifier? OPEN_QUOTE stringTemplateElement* CLOSING_QUOTE
      *   ;
      */
-    private void parseStringTemplate() {
-        assert _at(OPEN_QUOTE);
+    private boolean parseStringTemplate() {
+        assert _at(OPEN_QUOTE) || _at(IDENTIFIER);
 
-        PsiBuilder.Marker template = mark();
+        if (at(OPEN_QUOTE)) {
+            parseStringTemplateTail();
+            return true;
+        } else {
+            parseSimpleNameExpression();
+            if (at(OPEN_QUOTE) && !myBuilder.newlineBeforeCurrentToken()) {
+                if (WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))) {
+                    return false;
+                }
+                parseStringTemplateTail();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
+    private void parseStringTemplateTail() {
         advance(); // OPEN_QUOTE
 
         while (!eof()) {
@@ -713,7 +737,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else {
             expect(CLOSING_QUOTE, "Expecting '\"'");
         }
-        template.done(STRING_TEMPLATE);
     }
 
     /*

@@ -1,0 +1,129 @@
+FILE: customStringLiteralsConventions.kt
+    public final object properReceiver1 : R|kotlin/Any| {
+        private constructor(): R|properReceiver1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun buildLiteral(body: R|ImproperBuilder1.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class ImproperBuilder1 : R|kotlin/Any| {
+        public constructor(): R|ImproperBuilder1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun appendString(s: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final object improperReceiver1 : R|kotlin/Any| {
+        private constructor(): R|improperReceiver1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun buildLiteral(body: R|kotlin/Int|): R|kotlin/Int| {
+            ^buildLiteral Int(0)
+        }
+
+    }
+    public final class ImproperBuilder2 : R|kotlin/Any| {
+        public constructor(): R|ImproperBuilder2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object properReceiver2 : R|kotlin/Any| {
+        private constructor(): R|properReceiver2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun buildLiteral(body: R|ImproperBuilder2.() -> kotlin/Unit|): R|() -> kotlin/Unit| {
+            ^buildLiteral fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+    }
+    public final class ImproperBuilder3 : R|kotlin/Any| {
+        public constructor(): R|ImproperBuilder3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun appendString(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final fun appendObject(x: R|kotlin/Any|): R|kotlin/Unit| {
+        }
+
+    }
+    public final object properReceiver3 : R|kotlin/Any| {
+        private constructor(): R|properReceiver3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun buildLiteral(body: R|ImproperBuilder3.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final object improperReceiver2 : R|kotlin/Any| {
+        private constructor(): R|improperReceiver2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun buildLiteral(body: R|ImproperBuilder3.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class ProperBuilder1 : R|kotlin/Any| {
+        public constructor(): R|ProperBuilder1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun appendString(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final operator fun appendObject(x: R|kotlin/Any|): R|kotlin/Unit| {
+        }
+
+    }
+    public final object improperReceiver3 : R|kotlin/Any| {
+        private constructor(): R|improperReceiver3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun buildLiteral(body: R|ProperBuilder1.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|properReceiver1|.R|/properReceiver1.buildLiteral|(<L> = fun R|ImproperBuilder1|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE): /ImproperBuilder1.appendString>#(String(some string))
+        }
+        )
+        Q|improperReceiver1|.<Inapplicable(INAPPLICABLE): /improperReceiver1.buildLiteral>#(<L> = fun <anonymous>(): <ERROR TYPE REF: Unresolved name: appendString> <inline=Unknown>  {
+            ^ <Unresolved name: appendString>#(String(some string))
+        }
+        )
+        Q|properReceiver2|.R|/properReceiver2.buildLiteral|(<L> = fun R|ImproperBuilder2|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            <Unresolved name: appendString>#(String(some string))
+        }
+        )
+        Q|properReceiver3|.R|/properReceiver3.buildLiteral|(<L> = fun R|ImproperBuilder3|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_MODIFIER): /ImproperBuilder3.appendString>#(String(some string))
+        }
+        )
+        Q|improperReceiver1|.<Inapplicable(INAPPLICABLE): /improperReceiver1.buildLiteral>#(<L> = fun <anonymous>(): <ERROR TYPE REF: Unresolved name: appendString> <inline=Unknown>  {
+            ^ <Unresolved name: appendString>#(String(some string))
+        }
+        )
+        Q|improperReceiver2|.<Inapplicable(INAPPLICABLE_MODIFIER): /improperReceiver2.buildLiteral>#(<L> = fun R|ImproperBuilder3|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_MODIFIER): /ImproperBuilder3.appendString>#(String(some string))
+        }
+        )
+        Q|improperReceiver3|.<Inapplicable(INAPPLICABLE_MODIFIER): /improperReceiver3.buildLiteral>#(<L> = fun R|ProperBuilder1|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            this@R|special/anonymous|.R|/ProperBuilder1.appendString|(String(some string))
+        }
+        )
+    }

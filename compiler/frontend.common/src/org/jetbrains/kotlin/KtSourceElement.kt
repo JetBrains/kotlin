@@ -198,6 +198,11 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for implicit conversion from int to long with `.toLong` function
     // e.g. val x: Long = 1 + 1 becomes val x: Long = (1 + 1).toLong()
     object IntToLongConversion : KtFakeSourceElementKind()
+
+    // object s
+    // operator fun s.buildLiteral(..) { .. }
+    // s"abc" -> s.buildLiteral { appendString("abc") }
+    object DesugaredBuildLiteralCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

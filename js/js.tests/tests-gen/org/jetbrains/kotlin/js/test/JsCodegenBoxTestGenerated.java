@@ -9735,6 +9735,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/customStringLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CustomStringLiterals {
+        @Test
+        public void testAllFilesPresentInCustomStringLiterals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/customStringLiterals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/dataClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class DataClasses {

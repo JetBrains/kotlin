@@ -669,7 +669,19 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseStringTemplate
      */
     private fun convertStringTemplate(stringTemplate: LighterASTNode): FirExpression {
-        return stringTemplate.getChildrenAsArray().toInterpolatingCall(stringTemplate) { convertShortOrLongStringTemplate(it) }
+        val children = stringTemplate.getChildrenAsArray()
+        val firstChild = stringTemplate.getFirstChild()
+        val prefix = when (firstChild?.tokenType) {
+            is KtNameReferenceExpressionElementType -> firstChild.asText
+            else -> null
+        }
+        return if (prefix == null) {
+            children.toInterpolatingCall(stringTemplate) { convertShortOrLongStringTemplate(it) }
+        } else {
+            children
+                .drop(1)
+                .toBuildLiteralCall(stringTemplate, prefix) { convertShortOrLongStringTemplate(it) }
+        }
     }
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): FirExpression {

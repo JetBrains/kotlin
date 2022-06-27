@@ -33,8 +33,11 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions.APPEND_OBJECT
+import org.jetbrains.kotlin.util.OperatorNameConventions.APPEND_STRING
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.BUILD_LITERAL
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
 import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
@@ -203,6 +206,13 @@ private object OperatorFunctionChecks {
             }
         )
         checkFor(ASSIGNMENT_OPERATIONS, memberOrExtension, Returns.unit, ValueParametersCount.single, noDefaultAndVarargs)
+        checkFor(BUILD_LITERAL, memberOrExtension, ValueParametersCount.single, noDefaultAndVarargs)
+        checkFor(
+            APPEND_STRING, memberOrExtension, ValueParametersCount.single,
+            Returns.unit, noDefaultAndVarargs, Checks.full("'appendString' argument should be string")
+            { _, fn -> fn.valueParameters[0].returnTypeRef.coneType.isString }
+        )
+        checkFor(APPEND_OBJECT, memberOrExtension, ValueParametersCount.single, Returns.unit, noDefaultAndVarargs)
     }
 
     val regexChecks: List<Pair<Regex, List<Check>>> = buildList {

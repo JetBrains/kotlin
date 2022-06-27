@@ -70,6 +70,10 @@ object OperatorNameConventions {
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
 
+    @JvmField val BUILD_LITERAL = Name.identifier("buildLiteral")
+    @JvmField val APPEND_STRING = Name.identifier("appendString")
+    @JvmField val APPEND_OBJECT = Name.identifier("appendObject")
+
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField
