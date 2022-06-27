@@ -41,6 +41,7 @@
 // also has to deal with a lot of changes to the large tree object
 // graph.
 
+import kotlin.native.concurrent.*
 import kotlin.random.Random
 
 // A splay tree is a self-balancing binary search tree with the additional
@@ -299,5 +300,22 @@ class SplayBenchmark {
                 splayTree.remove(greatest.key)
             }
         }
+    }
+}
+
+class SplayBenchmarkUsingWorkers {
+    val numberOfWorkers = 5;
+    val workers = Array(numberOfWorkers, { _ -> Worker.start() })
+    val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
+
+    fun runSplayWorkers() {
+        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.runSplay()})};
+        futures.forEach{it.consume {}};
+    }
+
+    fun splayTearDownWorkers() {
+        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.splayTearDown()})};
+        futures.forEach{it.consume {}};
+        workers.forEach { it.requestTermination().result }
     }
 }

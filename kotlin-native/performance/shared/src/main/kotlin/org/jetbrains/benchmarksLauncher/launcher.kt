@@ -50,9 +50,6 @@ abstract class Launcher {
                 while (i-- > 0) benchmark.lambda(benchmarkInstance!!)
                 cleanup()
             }
-            if (benchmark is BenchmarkEntryWithInitAndValidation) {
-                benchmark.validation(benchmarkInstance!!)
-            }
             result
         } else if (benchmark is BenchmarkEntry) {
             cleanup()
@@ -108,6 +105,9 @@ abstract class Launcher {
             val scaledTime = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
             // Save benchmark object
             recordMeasurement(RecordTimeMeasurement(BenchmarkResult.Status.PASSED, k, numWarmIterations, scaledTime))
+        }
+        if (benchmark is BenchmarkEntryWithInitAndValidation) {
+            benchmark.validation(benchmarkInstance!!)
         }
         logger.log("\n", usePrefix = false)
     }
