@@ -11,21 +11,25 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.JavaLibraryPlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.project.model.KotlinPlatformTypeAttribute
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -238,6 +242,8 @@ fun Project.wireGradleVariantToCommonGradleVariant(
     }
 }
 
+private const val FIXED_CONFIGURATION_SUFFIX = "WithFixedAttribute"
+
 /**
  * 'main' sources are used for minimal supported Gradle versions (6.7) up to Gradle 7.0.
  */
@@ -312,6 +318,67 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 }
             }
         }
+
+        val javaComponent = project.components["java"] as AdhocComponentWithVariants
+
+        // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
+        listOf(
+            runtimeElementsConfigurationName,
+            apiElementsConfigurationName
+        )
+            .map { configurations[it] }
+            .forEach { originalConfiguration ->
+                configurations.create("${originalConfiguration.name}$FIXED_CONFIGURATION_SUFFIX") {
+                    isCanBeResolved = originalConfiguration.isCanBeResolved
+                    isCanBeConsumed = originalConfiguration.isCanBeConsumed
+                    isVisible = originalConfiguration.isVisible
+                    setExtendsFrom(originalConfiguration.extendsFrom)
+
+                    artifacts {
+                        originalConfiguration.artifacts.forEach {
+                            add(name, it)
+                        }
+                    }
+
+                    // Removing 'org.jetbrains.kotlin.platform.type' attribute
+                    // as it brings issues with Gradle variant resolve on Gradle 7.6+ versions
+                    attributes {
+                        originalConfiguration.attributes.keySet()
+                            .filter { it.name != KotlinPlatformType.attribute.name }
+                            .forEach { originalAttribute ->
+                                @Suppress("UNCHECKED_CAST")
+                                attribute(
+                                    originalAttribute as Attribute<Any>,
+                                    originalConfiguration.attributes.getAttribute(originalAttribute)!!
+                                )
+                            }
+
+                        plugins.withType<JavaPlugin> {
+                            tasks.named<JavaCompile>(compileJavaTaskName) {
+                                attribute(
+                                    TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
+                                    targetCompatibility.toInt()
+                                )
+                            }
+                        }
+                    }
+
+                    javaComponent.addVariantsFromConfiguration(this) {
+                        if (originalConfiguration.name.startsWith("api")) {
+                            mapToMavenScope("compile")
+                        } else {
+                            mapToMavenScope("runtime")
+                        }
+                    }
+
+                    // Make original configuration unpublishable and not visible
+                    originalConfiguration.isCanBeConsumed = false
+                    originalConfiguration.isVisible = false
+                    javaComponent.withVariantsFromConfiguration(originalConfiguration) {
+                        skip()
+                    }
+                }
+            }
     }
 
     // Fix common sources visibility for tests
@@ -450,10 +517,6 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
             TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
             objects.named(TargetJvmEnvironment.STANDARD_JVM)
         )
-        attribute(
-            Attribute.of(KotlinPlatformTypeAttribute.uniqueName, String::class.java),
-            KotlinPlatformTypeAttribute.JVM
-        )
     }
 }
 
@@ -494,16 +557,28 @@ fun Project.publishShadowedJar(
     }
 
     // Removing artifact produced by Jar task
-    configurations[sourceSet.runtimeElementsConfigurationName]
-        .artifacts.removeAll { true }
-    configurations[sourceSet.apiElementsConfigurationName]
-        .artifacts.removeAll { true }
+    if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) {
+        configurations["${sourceSet.runtimeElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX"]
+            .artifacts.removeAll { true }
+        configurations["${sourceSet.apiElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX"]
+            .artifacts.removeAll { true }
+    } else {
+        configurations[sourceSet.runtimeElementsConfigurationName]
+            .artifacts.removeAll { true }
+        configurations[sourceSet.apiElementsConfigurationName]
+            .artifacts.removeAll { true }
+    }
 
     // Adding instead artifact from shadow jar task
     configurations {
         artifacts {
-            add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
-            add(sourceSet.apiElementsConfigurationName, shadowJarTask)
+            if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) {
+                add("${sourceSet.runtimeElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", shadowJarTask)
+                add("${sourceSet.apiElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", shadowJarTask)
+            } else {
+                add(sourceSet.apiElementsConfigurationName, shadowJarTask)
+                add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
+            }
         }
     }
 }
