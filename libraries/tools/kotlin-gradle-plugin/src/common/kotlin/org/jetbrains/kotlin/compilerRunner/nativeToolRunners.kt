@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
@@ -69,22 +70,16 @@ internal abstract class KotlinNativeToolRunner(
         val konanPropertiesFile: File,
         @get:Input
         val jvmArgs: List<String>,
-        classpathProvider: () -> Set<File>,
-    ) {
         @get:Classpath
-        val classpath by lazy(classpathProvider)
+        val classpath: FileCollection
+    ) {
 
         constructor(project: Project) : this(
             konanVersion = project.konanVersion,
             konanHome = project.konanHome,
             konanPropertiesFile = project.file("${project.konanHome}/konan/konan.properties"),
             jvmArgs = project.jvmArgs,
-            classpathProvider = {
-                project.files(
-                    project.kotlinNativeCompilerJar,
-                    "${project.konanHome}/konan/lib/trove4j.jar"
-                ).files
-            }
+            classpath = project.files(project.kotlinNativeCompilerJar, "${project.konanHome}/konan/lib/trove4j.jar")
         )
     }
 
@@ -115,7 +110,7 @@ internal abstract class KotlinNativeToolRunner(
         ).toMap()
     }
 
-    final override val classpath get() = settings.classpath
+    final override val classpath get() = settings.classpath.files
 
     final override fun checkClasspath() =
         check(classpath.isNotEmpty()) {
