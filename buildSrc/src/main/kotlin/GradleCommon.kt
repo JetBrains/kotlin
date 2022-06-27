@@ -28,7 +28,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import plugins.configureDefaultPublishing
@@ -214,7 +214,7 @@ fun Project.wireGradleVariantToCommonGradleVariant(
     wireSourceSet.runtimeClasspath += commonSourceSet.output
 
     // Allowing to use 'internal' classes/methods from common source code
-    (extensions.getByName("kotlin") as KotlinSingleTargetExtension).target.compilations.run {
+    (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target.compilations.run {
         getByName(wireSourceSet.name).associateWith(getByName(commonSourceSet.name))
     }
 
@@ -384,7 +384,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
     }
 
     // Allowing to use 'internal' classes/methods from common source code
-    (extensions.getByName("kotlin") as KotlinSingleTargetExtension).target.compilations.run {
+    (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target.compilations.run {
         getByName(SourceSet.TEST_SOURCE_SET_NAME).associateWith(getByName(commonSourceSet.name))
     }
 }

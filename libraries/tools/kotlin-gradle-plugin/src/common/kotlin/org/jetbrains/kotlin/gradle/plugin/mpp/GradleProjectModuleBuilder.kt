@@ -135,7 +135,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 
         val targets = when (extension) {
             is KotlinMultiplatformExtension -> extension.targets.filter { it.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
-            is KotlinSingleTargetExtension -> listOf(extension.target)
+            is KotlinSingleTargetExtension<*> -> listOf(extension.target)
             else -> return emptyList()
         }
 
@@ -324,7 +324,7 @@ class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
             }
             else -> {
                 val targets =
-                    project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension).target)
+                    project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension<*>).target)
 
                 val compilation =
                     targets.filterIsInstance<AbstractKotlinTarget>()

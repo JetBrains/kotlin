@@ -677,7 +677,7 @@ internal open class Kotlin2JsPlugin(
     override fun apply(project: Project) {
         val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName, { KotlinJsOptionsImpl() })
 
-        (project.kotlinExtension as Kotlin2JsProjectExtension).target = target
+        (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
         super.apply(project)
     }
 }

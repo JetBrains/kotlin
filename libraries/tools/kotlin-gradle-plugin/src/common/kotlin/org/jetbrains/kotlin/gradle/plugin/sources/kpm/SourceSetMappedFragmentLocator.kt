@@ -26,7 +26,7 @@ interface SourceSetMappedFragmentLocator {
     companion object {
         fun get(project: Project): SourceSetMappedFragmentLocator = when (project.topLevelExtensionOrNull) {
             is KotlinMultiplatformExtension -> MultiplatformSourceSetMappedFragmentLocator()
-            is KotlinSingleTargetExtension -> error("KPM model mapping is not yet supported in single-platform projects; tried to apply to $project")
+            is KotlinSingleTargetExtension<*> -> error("KPM model mapping is not yet supported in single-platform projects; tried to apply to $project")
             else -> error("couldn't provide model mapping utilities for project $project")
         }
     }
