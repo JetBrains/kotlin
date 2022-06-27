@@ -129,15 +129,6 @@ internal class KtFe10TypeRenderer(private val options: KtTypeRendererOptions, pr
     }
 
     private fun KtFe10RendererConsumer.renderFlexibleType(type: FlexibleType) {
-        if (isDebugText) {
-            append("ft<")
-            renderType(type.lowerBound)
-            append(", ")
-            renderType(type.upperBound)
-            append(">")
-            return
-        }
-
         val lowerBoundText = prettyPrint { renderType(type.lowerBound) }
         val upperBoundText = prettyPrint { renderType(type.upperBound) }
         append(DescriptorRenderer.COMPACT.renderFlexibleType(lowerBoundText, upperBoundText, type.builtIns))
