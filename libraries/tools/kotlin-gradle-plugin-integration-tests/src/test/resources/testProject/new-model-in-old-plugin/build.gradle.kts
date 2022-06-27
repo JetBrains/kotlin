@@ -42,7 +42,7 @@ kotlin.target.compilations {
 
 val runBenchmark by tasks.registering(JavaExec::class) {
     classpath = kotlin.target.compilations["benchmark"].run { runtimeDependencyFiles + output.allOutputs }
-    main = "com.example.ABenchmarkKt"
+    mainClass.set("com.example.ABenchmarkKt")
 }
 
 publishing {
