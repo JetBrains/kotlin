@@ -94,38 +94,40 @@ class KotlinKarma(
         useMocha()
         useWebpack()
         useSourceMapSupport()
-        usePropBrowser()
+        usePropBrowsers()
 
         // necessary for debug as a fallback when no debuggable browsers found
         addChromeLauncher()
     }
 
-    private fun usePropBrowser() {
-        val propKey = "kotlin.target.${compilation.target.name}.js.test.browser"
+    private fun usePropBrowsers() {
+        val propKey = "kotlin.target.${compilation.target.name}.js.test.browsers"
         val localPropFile = project.projectDir.resolve("local.properties").takeIf(File::exists)
             ?: project.rootDir.resolve("local.properties").takeIf(File::exists)
-        val propBrowser = localPropFile?.reader()?.use { Properties().apply { load(it) } }?.getProperty(propKey)
-            ?: project.findProperty(propKey)?.toString()
-        when (propBrowser?.toLowerCase()) {
-            "chrome" -> useChrome()
-            "chrome-canary" -> useChromeCanary()
-            "chrome-canary-headless" -> useChromeCanaryHeadless()
-            "chrome-headless" -> useChromeHeadless()
-            "chrome-headless-no-sandbox" -> useChromeHeadlessNoSandbox()
-            "chromium" -> useChromium()
-            "chromium-headless" -> useChromiumHeadless()
-            "firefox" -> useFirefox()
-            "firefox-aurora" -> useFirefoxAurora()
-            "firefox-aurora-headless" -> useFirefoxAuroraHeadless()
-            "firefox-developer" -> useFirefoxDeveloper()
-            "firefox-developer-headless" -> useFirefoxDeveloperHeadless()
-            "firefox-headless" -> useFirefoxHeadless()
-            "firefox-nightly" -> useFirefoxNightly()
-            "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
-            "ie" -> useIe()
-            "opera" -> useOpera()
-            "phantom-js" -> usePhantomJS()
-            "safari" -> useSafari()
+        val propBrowsers = localPropFile?.reader()?.use { Properties().apply { load(it) } }?.getProperty(propKey)
+            ?: project.findProperty(propKey)?.toString()?.split(",")
+        propBrowsers?.forEach {
+            when (it.toLowerCase()) {
+                "chrome" -> useChrome()
+                "chrome-canary" -> useChromeCanary()
+                "chrome-canary-headless" -> useChromeCanaryHeadless()
+                "chrome-headless" -> useChromeHeadless()
+                "chrome-headless-no-sandbox" -> useChromeHeadlessNoSandbox()
+                "chromium" -> useChromium()
+                "chromium-headless" -> useChromiumHeadless()
+                "firefox" -> useFirefox()
+                "firefox-aurora" -> useFirefoxAurora()
+                "firefox-aurora-headless" -> useFirefoxAuroraHeadless()
+                "firefox-developer" -> useFirefoxDeveloper()
+                "firefox-developer-headless" -> useFirefoxDeveloperHeadless()
+                "firefox-headless" -> useFirefoxHeadless()
+                "firefox-nightly" -> useFirefoxNightly()
+                "firefox-nightly-headless" -> useFirefoxNightlyHeadless()
+                "ie" -> useIe()
+                "opera" -> useOpera()
+                "phantom-js" -> usePhantomJS()
+                "safari" -> useSafari()
+            }
         }
     }
 
