@@ -389,8 +389,7 @@ constructor(
         kotlinOptions.freeCompilerArgs + ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
     }
 
-    @get:Nested
-    internal val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
     private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
 
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
@@ -483,8 +482,7 @@ constructor(
     final override val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
-    @get:Nested
-    internal val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
 
     init {
         dependsOn(project.provider { compilation.compileKotlinTaskProvider })
@@ -1183,8 +1181,7 @@ open class CInteropProcess
     val outputFile: File
         get() = outputFileProvider.get()
 
-    @get:Nested
-    internal val runnerSettings = KotlinNativeToolRunner.Settings(project)
+    private val runnerSettings = KotlinNativeToolRunner.Settings(project)
 
     // Inputs and outputs.
 
