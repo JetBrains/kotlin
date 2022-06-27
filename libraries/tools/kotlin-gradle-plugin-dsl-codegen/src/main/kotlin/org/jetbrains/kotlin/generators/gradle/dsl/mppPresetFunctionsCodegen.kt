@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION") // Suppress deprecation warning of ConfigureUtil
-
 package org.jetbrains.kotlin.generators.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import java.io.File
 
@@ -35,8 +32,7 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
         .plus(parentInterfaceName)
-        .plus(typeName(ConfigureUtil::class.java.canonicalName))
-        .plus(typeName(Closure::class.java.canonicalName))
+        .plus(typeName(Action::class.java.canonicalName))
         .filter { it.packageName() != className.packageName() }
         .flatMap { it.collectFqNames() }
         .toSortedSet()
@@ -76,7 +72,7 @@ private fun generatePresetFunctions(
 
     fun $presetName() = $presetName("$presetName") { }
     fun $presetName(name: String) = $presetName(name) { }
-    fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
-    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
+    fun $presetName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName(name) { configure.execute(this) }
+    fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
 """.trimIndent()
 }
