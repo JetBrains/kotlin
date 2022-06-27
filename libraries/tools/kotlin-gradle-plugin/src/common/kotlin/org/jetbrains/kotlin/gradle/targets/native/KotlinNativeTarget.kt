@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.jvm.tasks.Jar
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -113,7 +112,11 @@ open class KotlinNativeTarget @Inject constructor(
 
     override val binaries =
         // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
-        project.objects.newInstance(KotlinNativeBinaryContainer::class.java, this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
+        project.objects.newInstance(
+            KotlinNativeBinaryContainer::class.java,
+            this,
+            project.objects.domainObjectSet(NativeBinary::class.java)
+        )
 
     override val artifactsTaskName: String
         get() = disambiguateName("binaries")

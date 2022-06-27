@@ -10,8 +10,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.ConfigureUtil
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -43,7 +41,7 @@ open class KotlinJsCompilation internal constructor(
         target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             target,
-            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+            target.project.objects.domainObjectSet(JsBinary::class.java)
         )
 
     var outputModuleName: String? = null
