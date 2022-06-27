@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -193,7 +192,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
         private val name: String
     ) : Named {
         override fun getName(): String = name
-        val binaries: DomainObjectSet<NativeBinary> = WrapUtil.toDomainObjectSet(NativeBinary::class.java)
+        val binaries: DomainObjectSet<NativeBinary> = project.objects.domainObjectSet(NativeBinary::class.java)
 
         val linkTaskName: String
             get() = lowerCamelCaseName("link", name, target.targetName)

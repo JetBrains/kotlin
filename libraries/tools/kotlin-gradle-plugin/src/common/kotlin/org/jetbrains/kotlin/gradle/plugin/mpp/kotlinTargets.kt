@@ -25,7 +25,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -265,8 +264,9 @@ abstract class AbstractKotlinTarget(
     }
 
     @Suppress("UNCHECKED_CAST")
-    internal val publicationConfigureActions =
-        WrapUtil.toDomainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
+    internal val publicationConfigureActions: DomainObjectSet<Action<MavenPublication>> = project
+        .objects
+        .domainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
 
     override fun mavenPublication(action: Action<MavenPublication>) {
         publicationConfigureActions.add(action)
