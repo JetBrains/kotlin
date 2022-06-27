@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
 import org.jetbrains.kotlin.gradle.testing.requireCompilationOfTarget
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class JsCompilationExecutionSource(override val compilation: KotlinJsCompilation) :
@@ -51,7 +52,7 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
         get() = aggregatingTestRun.getConfiguredExecutions().map { it.executionSource }
 }
 
-open class KotlinJsReportAggregatingTestRun(
+abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     testRunName: String,
     override val target: KotlinJsSubTargetContainerDsl
 ) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),

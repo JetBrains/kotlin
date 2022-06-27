@@ -30,7 +30,11 @@ open class KotlinJsTargetConfigurator :
         name: String,
         target: KotlinJsTarget
     ): KotlinJsReportAggregatingTestRun {
-        val result = KotlinJsReportAggregatingTestRun(name, target)
+        val result = target.project.objects.newInstance(
+            KotlinJsReportAggregatingTestRun::class.java,
+            name,
+            target
+        )
 
         val testTask = target.project.kotlinTestRegistry.getOrCreateAggregatedTestTask(
             name = result.testTaskName,

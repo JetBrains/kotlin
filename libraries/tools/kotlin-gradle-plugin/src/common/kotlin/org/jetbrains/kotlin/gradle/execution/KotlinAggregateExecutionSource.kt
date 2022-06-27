@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.execution
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinExecution
 import org.jetbrains.kotlin.gradle.plugin.KotlinExecution.ExecutionSource
 
@@ -35,10 +34,7 @@ interface KotlinAggregatingExecution<
      */
     fun getConfiguredExecutions(): Iterable<AggregatedExecutionType>
 
-    fun configureAllExecutions(configureClosure: Closure<*>) = configureAllExecutions {
-        ConfigureUtil.configureSelf(
-            configureClosure,
-            this
-        )
+    fun configureAllExecutions(configure: Action<AggregatedExecutionType>) = configureAllExecutions {
+        configure.execute(this)
     }
 }
