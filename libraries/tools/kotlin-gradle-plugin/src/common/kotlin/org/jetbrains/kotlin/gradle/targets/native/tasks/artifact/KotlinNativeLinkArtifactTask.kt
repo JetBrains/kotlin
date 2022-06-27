@@ -151,8 +151,7 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
             return destinationDir.resolve(outFileName)
         }
 
-    @get:Nested
-    internal val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
 
     @TaskAction
     fun link() {

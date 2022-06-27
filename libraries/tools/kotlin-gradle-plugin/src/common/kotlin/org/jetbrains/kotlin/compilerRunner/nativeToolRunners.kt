@@ -61,16 +61,10 @@ internal abstract class KotlinNativeToolRunner(
 ) : KotlinToolRunner(executionContext) {
 
     class Settings(
-        @get:Input
         val konanVersion: CompilerVersion,
-        @get:Input
         val konanHome: String,
-        @get:InputFile
-        @get:PathSensitive(PathSensitivity.ABSOLUTE)
         val konanPropertiesFile: File,
-        @get:Input
         val jvmArgs: List<String>,
-        @get:Classpath
         val classpath: FileCollection
     ) {
 
@@ -194,10 +188,7 @@ internal class KotlinNativeCompilerRunner(
     executionContext: GradleExecutionContext
 ) : KotlinNativeToolRunner("konanc", settings.parent, executionContext) {
     class Settings(
-        @get:Nested
         val parent: KotlinNativeToolRunner.Settings,
-
-        @get:Input
         val disableKonanDaemon: Boolean,
     ) {
         constructor(project: Project) : this(

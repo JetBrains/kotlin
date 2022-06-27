@@ -19,13 +19,10 @@ internal class KotlinNativeCommonizerToolRunner(
 ) : KotlinToolRunner(context) {
 
     class Settings(
-        @get:Input
         val kotlinPluginVersion: String,
         classpathProvider: () -> Set<File>,
-        @get:Input
         val customJvmArgs: List<String>
     ) {
-        @get:Classpath
         val classpath by lazy(classpathProvider)
 
         constructor(project: Project) : this(

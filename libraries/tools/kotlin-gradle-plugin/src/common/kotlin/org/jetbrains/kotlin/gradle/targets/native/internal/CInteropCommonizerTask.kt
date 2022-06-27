@@ -76,8 +76,7 @@ internal open class CInteropCommonizerTask
 
     override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")
 
-    @get:Nested
-    internal val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
