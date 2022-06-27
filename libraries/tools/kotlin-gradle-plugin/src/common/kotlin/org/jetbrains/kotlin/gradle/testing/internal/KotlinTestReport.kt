@@ -239,9 +239,9 @@ open class KotlinTestReport : TestReport() {
             task.ignoreRunFailures = true
         }
 
-        task.reports.html.isEnabled = false
+        task.reports.html.required.set(false)
 
-        task.reports.junitXml.isEnabled = false
+        task.reports.junitXml.required.set(false)
     }
 
     private class SuppressedTestRunningFailureListener(
