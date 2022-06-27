@@ -21,15 +21,13 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ReplCompilationState
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.PrintWriter
 import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -46,10 +44,15 @@ class ReplInterpreter(
 
     private val replState: JvmReplCompilerState<*>
 
+    companion object {
+        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition(Any::class) {
+            override val name = "Kotlin REPL"
+        }
+
+    }
+
     init {
-        val scriptDefinition: ScriptDefinition? =
-            ScriptDefinitionProvider.getInstance(projectEnvironment.project)?.getDefaultDefinition()
-        hostConfiguration = scriptDefinition?.hostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
+        hostConfiguration = defaultJvmScriptingHostConfiguration
 
         val environment = (projectEnvironment as? KotlinCoreEnvironment.ProjectEnvironment)?.let {
             KotlinCoreEnvironment.createForProduction(it, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -60,18 +63,14 @@ class ReplInterpreter(
 
         val context =
             createCompilationContextFromEnvironment(
-                scriptDefinition?.compilationConfiguration.with {
-                    hostConfiguration(this@ReplInterpreter.hostConfiguration)
-                },
+                ScriptCompilationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION),
                 environment,
                 ScriptDiagnosticsMessageCollector(environment.messageCollector)
             )
 
         compilationConfiguration = context.baseScriptCompilationConfiguration
-        evaluationConfiguration = scriptDefinition?.evaluationConfiguration.with {
-            hostConfiguration(this@ReplInterpreter.hostConfiguration)
+        evaluationConfiguration = ScriptEvaluationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION).with {
             scriptExecutionWrapper<Any> { replConfiguration.executionInterceptor.execute(it) }
-            constructorArgs(emptyArray<String>())
         }
 
         replState = JvmReplCompilerState(
