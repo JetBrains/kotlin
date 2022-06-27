@@ -72,15 +72,15 @@ private fun generateFactoryMethods(binaryType: BinaryType): String {
         fun $methodName(
             namePrefix: String,
             buildTypes: Collection<$nativeBuildType> = $nativeBuildType.DEFAULT_BUILD_TYPES,
-            configureClosure: Closure<*>
-        ) = $methodName(namePrefix, buildTypes) { ConfigureUtil.configure(configureClosure, this) }
+            configure: Action<$className>
+        ) = $methodName(namePrefix, buildTypes) { configure.execute(this) }
 
         /** Creates $binaryDescription with the default name prefix for each build type and configures it. */
         @JvmOverloads
         fun $methodName(
             buildTypes: Collection<$nativeBuildType> = $nativeBuildType.DEFAULT_BUILD_TYPES,
-            configureClosure: Closure<*>
-        ) = $methodName(buildTypes) { ConfigureUtil.configure(configureClosure, this) }
+            configure: Action<$className>
+        ) = $methodName(buildTypes) { configure.execute(this) }
     """.trimIndent()
 }
 
@@ -138,10 +138,9 @@ fun generateAbstractKotlinNativeBinaryContainer() {
     val superClassName = typeName("org.gradle.api.DomainObjectSet", nativeBinaryBaseClass.fqName)
 
     val imports = """
-        import groovy.lang.Closure
+        import org.gradle.api.Action
         import org.gradle.api.DomainObjectSet
         import org.gradle.api.Project
-        import org.gradle.util.ConfigureUtil
         import $MPP_PACKAGE.*
     """.trimIndent()
 

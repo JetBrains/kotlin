@@ -22,7 +22,7 @@ Use the following naming scheme:
     executable([debug]) -> debugExecutable
 */
 
-open class KotlinNativeBinaryContainer @Inject constructor(
+abstract class KotlinNativeBinaryContainer @Inject constructor(
     override val target: KotlinNativeTarget,
     backingContainer: DomainObjectSet<NativeBinary>
 ) : AbstractKotlinNativeBinaryContainer(),
