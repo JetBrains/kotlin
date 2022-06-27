@@ -12,8 +12,6 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
-import org.jetbrains.kotlin.asJava.classes.safeIsLocal
-import org.jetbrains.kotlin.asJava.classes.safeScript
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.cli.jvm.compiler.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassDataHolder
@@ -21,11 +19,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.builder.buildLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-private val JAVA_API_STUB_FOR_SCRIPT = Key.create<CachedValue<LightClassDataHolder.ForScript>>("JAVA_API_STUB_FOR_SCRIPT")
 private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder.ForClass>>("JAVA_API_STUB")
 private val JAVA_API_STUB_LOCK = Key.create<Any>("JAVA_API_STUB_LOCK")
 
@@ -37,12 +33,7 @@ object CliExtraDiagnosticsProvider {
             return Diagnostics.EMPTY
         }
 
-        val containingScript = kclass.containingKtFile.safeScript()
-        val lightClassDataHolder = when {
-            !kclass.safeIsLocal() && containingScript != null -> getLightClassCachedValue(containingScript).value
-            else -> getLightClassCachedValue(kclass).value
-        }
-
+        val lightClassDataHolder = getLightClassCachedValue(kclass).value
         return if (lightClassDataHolder is InvalidLightClassDataHolder) {
             Diagnostics.EMPTY
         } else {
@@ -76,15 +67,6 @@ object CliExtraDiagnosticsProvider {
             }.extraDiagnostics
     }
 }
-
-private fun getLightClassCachedValue(script: KtScript): CachedValue<LightClassDataHolder.ForScript> {
-    return script.getUserData(JAVA_API_STUB_FOR_SCRIPT) ?: createCachedValueForScript(script).also {
-        script.putUserData(JAVA_API_STUB_FOR_SCRIPT, it)
-    }
-}
-
-private fun createCachedValueForScript(script: KtScript): CachedValue<LightClassDataHolder.ForScript> =
-    CachedValuesManager.getManager(script.project).createCachedValue(LightClassDataProviderForScript(script), false)
 
 private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
     val outerClassValue = getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB)
