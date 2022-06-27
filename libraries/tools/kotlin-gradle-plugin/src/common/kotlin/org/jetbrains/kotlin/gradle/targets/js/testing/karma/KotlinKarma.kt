@@ -107,7 +107,7 @@ class KotlinKarma(
         val propBrowsers = localPropFile?.reader()?.use { Properties().apply { load(it) } }?.getProperty(propKey)
             ?: project.findProperty(propKey)?.toString()?.split(",")
         propBrowsers?.forEach {
-            when (it.toLowerCase()) {
+            when (it.trim().toLowerCase()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
                 "chrome-canary-headless" -> useChromeCanaryHeadless()
