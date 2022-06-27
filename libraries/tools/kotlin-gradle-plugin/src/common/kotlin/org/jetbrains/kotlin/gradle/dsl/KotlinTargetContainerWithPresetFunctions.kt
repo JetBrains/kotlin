@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
@@ -30,8 +29,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun jvm() = jvm("jvm") { }
     fun jvm(name: String) = jvm(name) { }
-    fun jvm(name: String, configure: Closure<*>) = jvm(name) { ConfigureUtil.configure(configure, this) }
-    fun jvm(configure: Closure<*>) = jvm { ConfigureUtil.configure(configure, this) }
+    fun jvm(name: String, configure: Action<KotlinJvmTarget>) = jvm(name) { configure.execute(this) }
+    fun jvm(configure: Action<KotlinJvmTarget>) = jvm { configure.execute(this) }
 
     fun android(
         name: String = "android",
@@ -45,8 +44,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun android() = android("android") { }
     fun android(name: String) = android(name) { }
-    fun android(name: String, configure: Closure<*>) = android(name) { ConfigureUtil.configure(configure, this) }
-    fun android(configure: Closure<*>) = android { ConfigureUtil.configure(configure, this) }
+    fun android(name: String, configure: Action<KotlinAndroidTarget>) = android(name) { configure.execute(this) }
+    fun android(configure: Action<KotlinAndroidTarget>) = android { configure.execute(this) }
 
     fun androidNativeX64(
         name: String = "androidNativeX64",
@@ -60,8 +59,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun androidNativeX64() = androidNativeX64("androidNativeX64") { }
     fun androidNativeX64(name: String) = androidNativeX64(name) { }
-    fun androidNativeX64(name: String, configure: Closure<*>) = androidNativeX64(name) { ConfigureUtil.configure(configure, this) }
-    fun androidNativeX64(configure: Closure<*>) = androidNativeX64 { ConfigureUtil.configure(configure, this) }
+    fun androidNativeX64(name: String, configure: Action<KotlinNativeTarget>) = androidNativeX64(name) { configure.execute(this) }
+    fun androidNativeX64(configure: Action<KotlinNativeTarget>) = androidNativeX64 { configure.execute(this) }
 
     fun androidNativeX86(
         name: String = "androidNativeX86",
@@ -75,8 +74,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun androidNativeX86() = androidNativeX86("androidNativeX86") { }
     fun androidNativeX86(name: String) = androidNativeX86(name) { }
-    fun androidNativeX86(name: String, configure: Closure<*>) = androidNativeX86(name) { ConfigureUtil.configure(configure, this) }
-    fun androidNativeX86(configure: Closure<*>) = androidNativeX86 { ConfigureUtil.configure(configure, this) }
+    fun androidNativeX86(name: String, configure: Action<KotlinNativeTarget>) = androidNativeX86(name) { configure.execute(this) }
+    fun androidNativeX86(configure: Action<KotlinNativeTarget>) = androidNativeX86 { configure.execute(this) }
 
     fun androidNativeArm32(
         name: String = "androidNativeArm32",
@@ -90,8 +89,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun androidNativeArm32() = androidNativeArm32("androidNativeArm32") { }
     fun androidNativeArm32(name: String) = androidNativeArm32(name) { }
-    fun androidNativeArm32(name: String, configure: Closure<*>) = androidNativeArm32(name) { ConfigureUtil.configure(configure, this) }
-    fun androidNativeArm32(configure: Closure<*>) = androidNativeArm32 { ConfigureUtil.configure(configure, this) }
+    fun androidNativeArm32(name: String, configure: Action<KotlinNativeTarget>) = androidNativeArm32(name) { configure.execute(this) }
+    fun androidNativeArm32(configure: Action<KotlinNativeTarget>) = androidNativeArm32 { configure.execute(this) }
 
     fun androidNativeArm64(
         name: String = "androidNativeArm64",
@@ -105,8 +104,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun androidNativeArm64() = androidNativeArm64("androidNativeArm64") { }
     fun androidNativeArm64(name: String) = androidNativeArm64(name) { }
-    fun androidNativeArm64(name: String, configure: Closure<*>) = androidNativeArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun androidNativeArm64(configure: Closure<*>) = androidNativeArm64 { ConfigureUtil.configure(configure, this) }
+    fun androidNativeArm64(name: String, configure: Action<KotlinNativeTarget>) = androidNativeArm64(name) { configure.execute(this) }
+    fun androidNativeArm64(configure: Action<KotlinNativeTarget>) = androidNativeArm64 { configure.execute(this) }
 
     fun iosArm32(
         name: String = "iosArm32",
@@ -120,8 +119,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun iosArm32() = iosArm32("iosArm32") { }
     fun iosArm32(name: String) = iosArm32(name) { }
-    fun iosArm32(name: String, configure: Closure<*>) = iosArm32(name) { ConfigureUtil.configure(configure, this) }
-    fun iosArm32(configure: Closure<*>) = iosArm32 { ConfigureUtil.configure(configure, this) }
+    fun iosArm32(name: String, configure: Action<KotlinNativeTarget>) = iosArm32(name) { configure.execute(this) }
+    fun iosArm32(configure: Action<KotlinNativeTarget>) = iosArm32 { configure.execute(this) }
 
     fun iosArm64(
         name: String = "iosArm64",
@@ -135,8 +134,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun iosArm64() = iosArm64("iosArm64") { }
     fun iosArm64(name: String) = iosArm64(name) { }
-    fun iosArm64(name: String, configure: Closure<*>) = iosArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun iosArm64(configure: Closure<*>) = iosArm64 { ConfigureUtil.configure(configure, this) }
+    fun iosArm64(name: String, configure: Action<KotlinNativeTarget>) = iosArm64(name) { configure.execute(this) }
+    fun iosArm64(configure: Action<KotlinNativeTarget>) = iosArm64 { configure.execute(this) }
 
     fun iosX64(
         name: String = "iosX64",
@@ -150,8 +149,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun iosX64() = iosX64("iosX64") { }
     fun iosX64(name: String) = iosX64(name) { }
-    fun iosX64(name: String, configure: Closure<*>) = iosX64(name) { ConfigureUtil.configure(configure, this) }
-    fun iosX64(configure: Closure<*>) = iosX64 { ConfigureUtil.configure(configure, this) }
+    fun iosX64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosX64(name) { configure.execute(this) }
+    fun iosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosX64 { configure.execute(this) }
 
     fun iosSimulatorArm64(
         name: String = "iosSimulatorArm64",
@@ -165,8 +164,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun iosSimulatorArm64() = iosSimulatorArm64("iosSimulatorArm64") { }
     fun iosSimulatorArm64(name: String) = iosSimulatorArm64(name) { }
-    fun iosSimulatorArm64(name: String, configure: Closure<*>) = iosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun iosSimulatorArm64(configure: Closure<*>) = iosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
+    fun iosSimulatorArm64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosSimulatorArm64(name) { configure.execute(this) }
+    fun iosSimulatorArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosSimulatorArm64 { configure.execute(this) }
 
     fun watchosArm32(
         name: String = "watchosArm32",
@@ -180,8 +179,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosArm32() = watchosArm32("watchosArm32") { }
     fun watchosArm32(name: String) = watchosArm32(name) { }
-    fun watchosArm32(name: String, configure: Closure<*>) = watchosArm32(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosArm32(configure: Closure<*>) = watchosArm32 { ConfigureUtil.configure(configure, this) }
+    fun watchosArm32(name: String, configure: Action<KotlinNativeTarget>) = watchosArm32(name) { configure.execute(this) }
+    fun watchosArm32(configure: Action<KotlinNativeTarget>) = watchosArm32 { configure.execute(this) }
 
     fun watchosArm64(
         name: String = "watchosArm64",
@@ -195,8 +194,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosArm64() = watchosArm64("watchosArm64") { }
     fun watchosArm64(name: String) = watchosArm64(name) { }
-    fun watchosArm64(name: String, configure: Closure<*>) = watchosArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosArm64(configure: Closure<*>) = watchosArm64 { ConfigureUtil.configure(configure, this) }
+    fun watchosArm64(name: String, configure: Action<KotlinNativeTarget>) = watchosArm64(name) { configure.execute(this) }
+    fun watchosArm64(configure: Action<KotlinNativeTarget>) = watchosArm64 { configure.execute(this) }
 
     fun watchosX86(
         name: String = "watchosX86",
@@ -210,8 +209,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosX86() = watchosX86("watchosX86") { }
     fun watchosX86(name: String) = watchosX86(name) { }
-    fun watchosX86(name: String, configure: Closure<*>) = watchosX86(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosX86(configure: Closure<*>) = watchosX86 { ConfigureUtil.configure(configure, this) }
+    fun watchosX86(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX86(name) { configure.execute(this) }
+    fun watchosX86(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX86 { configure.execute(this) }
 
     fun watchosX64(
         name: String = "watchosX64",
@@ -225,8 +224,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosX64() = watchosX64("watchosX64") { }
     fun watchosX64(name: String) = watchosX64(name) { }
-    fun watchosX64(name: String, configure: Closure<*>) = watchosX64(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosX64(configure: Closure<*>) = watchosX64 { ConfigureUtil.configure(configure, this) }
+    fun watchosX64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX64(name) { configure.execute(this) }
+    fun watchosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX64 { configure.execute(this) }
 
     fun watchosSimulatorArm64(
         name: String = "watchosSimulatorArm64",
@@ -240,8 +239,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun watchosSimulatorArm64() = watchosSimulatorArm64("watchosSimulatorArm64") { }
     fun watchosSimulatorArm64(name: String) = watchosSimulatorArm64(name) { }
-    fun watchosSimulatorArm64(name: String, configure: Closure<*>) = watchosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosSimulatorArm64(configure: Closure<*>) = watchosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
+    fun watchosSimulatorArm64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosSimulatorArm64(name) { configure.execute(this) }
+    fun watchosSimulatorArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosSimulatorArm64 { configure.execute(this) }
 
     fun tvosArm64(
         name: String = "tvosArm64",
@@ -255,8 +254,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun tvosArm64() = tvosArm64("tvosArm64") { }
     fun tvosArm64(name: String) = tvosArm64(name) { }
-    fun tvosArm64(name: String, configure: Closure<*>) = tvosArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun tvosArm64(configure: Closure<*>) = tvosArm64 { ConfigureUtil.configure(configure, this) }
+    fun tvosArm64(name: String, configure: Action<KotlinNativeTarget>) = tvosArm64(name) { configure.execute(this) }
+    fun tvosArm64(configure: Action<KotlinNativeTarget>) = tvosArm64 { configure.execute(this) }
 
     fun tvosX64(
         name: String = "tvosX64",
@@ -270,8 +269,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun tvosX64() = tvosX64("tvosX64") { }
     fun tvosX64(name: String) = tvosX64(name) { }
-    fun tvosX64(name: String, configure: Closure<*>) = tvosX64(name) { ConfigureUtil.configure(configure, this) }
-    fun tvosX64(configure: Closure<*>) = tvosX64 { ConfigureUtil.configure(configure, this) }
+    fun tvosX64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosX64(name) { configure.execute(this) }
+    fun tvosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosX64 { configure.execute(this) }
 
     fun tvosSimulatorArm64(
         name: String = "tvosSimulatorArm64",
@@ -285,8 +284,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun tvosSimulatorArm64() = tvosSimulatorArm64("tvosSimulatorArm64") { }
     fun tvosSimulatorArm64(name: String) = tvosSimulatorArm64(name) { }
-    fun tvosSimulatorArm64(name: String, configure: Closure<*>) = tvosSimulatorArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun tvosSimulatorArm64(configure: Closure<*>) = tvosSimulatorArm64 { ConfigureUtil.configure(configure, this) }
+    fun tvosSimulatorArm64(name: String, configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosSimulatorArm64(name) { configure.execute(this) }
+    fun tvosSimulatorArm64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosSimulatorArm64 { configure.execute(this) }
 
     fun linuxX64(
         name: String = "linuxX64",
@@ -300,8 +299,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxX64() = linuxX64("linuxX64") { }
     fun linuxX64(name: String) = linuxX64(name) { }
-    fun linuxX64(name: String, configure: Closure<*>) = linuxX64(name) { ConfigureUtil.configure(configure, this) }
-    fun linuxX64(configure: Closure<*>) = linuxX64 { ConfigureUtil.configure(configure, this) }
+    fun linuxX64(name: String, configure: Action<KotlinNativeTargetWithHostTests>) = linuxX64(name) { configure.execute(this) }
+    fun linuxX64(configure: Action<KotlinNativeTargetWithHostTests>) = linuxX64 { configure.execute(this) }
 
     fun mingwX86(
         name: String = "mingwX86",
@@ -315,8 +314,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun mingwX86() = mingwX86("mingwX86") { }
     fun mingwX86(name: String) = mingwX86(name) { }
-    fun mingwX86(name: String, configure: Closure<*>) = mingwX86(name) { ConfigureUtil.configure(configure, this) }
-    fun mingwX86(configure: Closure<*>) = mingwX86 { ConfigureUtil.configure(configure, this) }
+    fun mingwX86(name: String, configure: Action<KotlinNativeTarget>) = mingwX86(name) { configure.execute(this) }
+    fun mingwX86(configure: Action<KotlinNativeTarget>) = mingwX86 { configure.execute(this) }
 
     fun mingwX64(
         name: String = "mingwX64",
@@ -330,8 +329,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun mingwX64() = mingwX64("mingwX64") { }
     fun mingwX64(name: String) = mingwX64(name) { }
-    fun mingwX64(name: String, configure: Closure<*>) = mingwX64(name) { ConfigureUtil.configure(configure, this) }
-    fun mingwX64(configure: Closure<*>) = mingwX64 { ConfigureUtil.configure(configure, this) }
+    fun mingwX64(name: String, configure: Action<KotlinNativeTargetWithHostTests>) = mingwX64(name) { configure.execute(this) }
+    fun mingwX64(configure: Action<KotlinNativeTargetWithHostTests>) = mingwX64 { configure.execute(this) }
 
     fun macosX64(
         name: String = "macosX64",
@@ -345,8 +344,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun macosX64() = macosX64("macosX64") { }
     fun macosX64(name: String) = macosX64(name) { }
-    fun macosX64(name: String, configure: Closure<*>) = macosX64(name) { ConfigureUtil.configure(configure, this) }
-    fun macosX64(configure: Closure<*>) = macosX64 { ConfigureUtil.configure(configure, this) }
+    fun macosX64(name: String, configure: Action<KotlinNativeTargetWithHostTests>) = macosX64(name) { configure.execute(this) }
+    fun macosX64(configure: Action<KotlinNativeTargetWithHostTests>) = macosX64 { configure.execute(this) }
 
     fun macosArm64(
         name: String = "macosArm64",
@@ -360,8 +359,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun macosArm64() = macosArm64("macosArm64") { }
     fun macosArm64(name: String) = macosArm64(name) { }
-    fun macosArm64(name: String, configure: Closure<*>) = macosArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun macosArm64(configure: Closure<*>) = macosArm64 { ConfigureUtil.configure(configure, this) }
+    fun macosArm64(name: String, configure: Action<KotlinNativeTargetWithHostTests>) = macosArm64(name) { configure.execute(this) }
+    fun macosArm64(configure: Action<KotlinNativeTargetWithHostTests>) = macosArm64 { configure.execute(this) }
 
     fun linuxArm64(
         name: String = "linuxArm64",
@@ -375,8 +374,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxArm64() = linuxArm64("linuxArm64") { }
     fun linuxArm64(name: String) = linuxArm64(name) { }
-    fun linuxArm64(name: String, configure: Closure<*>) = linuxArm64(name) { ConfigureUtil.configure(configure, this) }
-    fun linuxArm64(configure: Closure<*>) = linuxArm64 { ConfigureUtil.configure(configure, this) }
+    fun linuxArm64(name: String, configure: Action<KotlinNativeTarget>) = linuxArm64(name) { configure.execute(this) }
+    fun linuxArm64(configure: Action<KotlinNativeTarget>) = linuxArm64 { configure.execute(this) }
 
     fun linuxArm32Hfp(
         name: String = "linuxArm32Hfp",
@@ -390,8 +389,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxArm32Hfp() = linuxArm32Hfp("linuxArm32Hfp") { }
     fun linuxArm32Hfp(name: String) = linuxArm32Hfp(name) { }
-    fun linuxArm32Hfp(name: String, configure: Closure<*>) = linuxArm32Hfp(name) { ConfigureUtil.configure(configure, this) }
-    fun linuxArm32Hfp(configure: Closure<*>) = linuxArm32Hfp { ConfigureUtil.configure(configure, this) }
+    fun linuxArm32Hfp(name: String, configure: Action<KotlinNativeTarget>) = linuxArm32Hfp(name) { configure.execute(this) }
+    fun linuxArm32Hfp(configure: Action<KotlinNativeTarget>) = linuxArm32Hfp { configure.execute(this) }
 
     fun linuxMips32(
         name: String = "linuxMips32",
@@ -405,8 +404,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxMips32() = linuxMips32("linuxMips32") { }
     fun linuxMips32(name: String) = linuxMips32(name) { }
-    fun linuxMips32(name: String, configure: Closure<*>) = linuxMips32(name) { ConfigureUtil.configure(configure, this) }
-    fun linuxMips32(configure: Closure<*>) = linuxMips32 { ConfigureUtil.configure(configure, this) }
+    fun linuxMips32(name: String, configure: Action<KotlinNativeTarget>) = linuxMips32(name) { configure.execute(this) }
+    fun linuxMips32(configure: Action<KotlinNativeTarget>) = linuxMips32 { configure.execute(this) }
 
     fun linuxMipsel32(
         name: String = "linuxMipsel32",
@@ -420,8 +419,8 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxMipsel32() = linuxMipsel32("linuxMipsel32") { }
     fun linuxMipsel32(name: String) = linuxMipsel32(name) { }
-    fun linuxMipsel32(name: String, configure: Closure<*>) = linuxMipsel32(name) { ConfigureUtil.configure(configure, this) }
-    fun linuxMipsel32(configure: Closure<*>) = linuxMipsel32 { ConfigureUtil.configure(configure, this) }
+    fun linuxMipsel32(name: String, configure: Action<KotlinNativeTarget>) = linuxMipsel32(name) { configure.execute(this) }
+    fun linuxMipsel32(configure: Action<KotlinNativeTarget>) = linuxMipsel32 { configure.execute(this) }
 
     fun wasm32(
         name: String = "wasm32",
@@ -435,7 +434,7 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun wasm32() = wasm32("wasm32") { }
     fun wasm32(name: String) = wasm32(name) { }
-    fun wasm32(name: String, configure: Closure<*>) = wasm32(name) { ConfigureUtil.configure(configure, this) }
-    fun wasm32(configure: Closure<*>) = wasm32 { ConfigureUtil.configure(configure, this) }
+    fun wasm32(name: String, configure: Action<KotlinNativeTarget>) = wasm32(name) { configure.execute(this) }
+    fun wasm32(configure: Action<KotlinNativeTarget>) = wasm32 { configure.execute(this) }
 
 }
