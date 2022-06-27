@@ -49,12 +49,12 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             val out = ArrayList<String>()
             val exceptionContainer = ExceptionContainer()
             val thread = thread {
-                val promptRegex = Regex("(?:\\u001B\\p{Graph}+)*(?:>>>|\\.\\.\\.)")
+                val promptRegex = Regex("(?:\\u001B\\p{Graph}+)*(?:>>> ?|\\.\\.\\.)")
                 try {
                     reader().forEachLine { rawLine ->
                         promptRegex.split(rawLine).forEach { line ->
                             if (line.isNotEmpty()) {
-                                out.add(line.trim())
+                                out.add(line.trimEnd())
                             }
                         }
                     }
@@ -137,13 +137,24 @@ class LauncherReplTest : TestCaseWithTmpdir() {
                 Assert.fail("missing output for expected patterns:\n${inputsToExpectedOutputsIter.asSequence().joinToString("\n") { it.second } }")
             }
             if (!inputsToExpectedOutputsIter.hasNext() || !actualIter.hasNext()) break
-            val (input, expectedPattern) = inputsToExpectedOutputsIter.next()
-            val actualLine = actualIter.next()
-            val strippedActualLine = if (input != null) actualLine.removePrefix(input) else actualLine
-            assertTrue(
-                "line \"$strippedActualLine\" do not match with expected pattern \"$expectedPattern\"",
-                Regex(expectedPattern).matches(strippedActualLine)
-            )
+            var (input, expectedPattern) = inputsToExpectedOutputsIter.next()
+            var actualLine = actualIter.next()
+            while (input != null) {
+                if (actualLine.startsWith(input)) {
+                    actualLine = actualLine.substring(input.length)
+                } else if (expectedPattern.isEmpty() && actualLine.isNotEmpty() && inputsToExpectedOutputsIter.hasNext()) {
+                    // assuming that on some configs input is not repeated if producing empty output
+                    // in this case trying to check the next expected output
+                    val nextInputToOutput = inputsToExpectedOutputsIter.next()
+                    expectedPattern = nextInputToOutput.second
+                    input = nextInputToOutput.first
+                    continue
+                }
+                break
+            }
+            if (!Regex(expectedPattern).matches(actualLine)) {
+                fail("line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"")
+            }
         }
     }
 
@@ -155,6 +166,37 @@ class LauncherReplTest : TestCaseWithTmpdir() {
     fun testSimpleRepl() {
         runInteractive(
             *replOutHeader,
+            "println(42)" to "42",
+        )
+    }
+
+    fun testSReplWithMultipleErrors() {
+        runInteractive(
+            *replOutHeader,
+            "\$;\$;" to ".*expecting an element",
+            null to "\\\$;\\\$;",
+            null to "\\^",
+            null to ".*expecting an element",
+            null to "\\\$;\\\$;",
+            null to "  \\^",
+            "println(\$);println(\$);" to ".*expecting an expression",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "        \\^",
+            null to ".*expecting '\\)'",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "        \\^",
+            null to ".*expecting an element",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "         \\^",
+            null to ".*expecting an expression",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "                   \\^",
+            null to ".*expecting '\\)'",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "                   \\^",
+            null to ".*expecting an element",
+            null to "println\\(\\\$\\);println\\(\\\$\\);",
+            null to "                    \\^",
             "println(42)" to "42",
         )
     }

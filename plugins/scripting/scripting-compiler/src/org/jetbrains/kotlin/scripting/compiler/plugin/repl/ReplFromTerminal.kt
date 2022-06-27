@@ -139,8 +139,8 @@ class ReplFromTerminal(
                     writer.outputCommandResult(tryInterpretResultAsValueClass(evalResult) ?: evalResult.toString())
                 }
             }
-            is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)
-            is ReplEvalResult.Error.CompileTime -> writer.outputCompileError(evalResult.message)
+            is ReplEvalResult.Error.Runtime -> if (evalResult.message.isNotEmpty()) writer.outputRuntimeError(evalResult.message)
+            is ReplEvalResult.Error.CompileTime -> if (evalResult.message.isNotEmpty()) writer.outputCompileError(evalResult.message)
             is ReplEvalResult.Incomplete -> writer.notifyIncomplete()
             is ReplEvalResult.HistoryMismatch -> {} // assuming handled elsewhere
         }

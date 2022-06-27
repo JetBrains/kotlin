@@ -174,12 +174,11 @@ class ReplInterpreter(
                 when (val compileResult = compiler.compile(listOf(snippet), compilationConfiguration)) {
                     is ResultWithDiagnostics.Failure -> {
                         val incompleteReport = compileResult.reports.find { it.code == ScriptDiagnostic.incompleteCode }
-                        val firstError = compileResult.reports.find { it.isError() }
                         if (incompleteReport != null)
                             ReplEvalResult.Incomplete(incompleteReport.message)
                         else {
                             compileResult.reportToMessageCollector()
-                            ReplEvalResult.Error.CompileTime(firstError?.message ?: "", firstError?.location?.toCompilerMessageLocation())
+                            ReplEvalResult.Error.CompileTime("")
                         }
                     }
                     is ResultWithDiagnostics.Success -> {
@@ -195,9 +194,8 @@ class ReplInterpreter(
                                 }
                             }
                             else -> {
-                                val firstError = evalResult.reports.find { it.isError() }
                                 evalResult.reportToMessageCollector()
-                                ReplEvalResult.Error.Runtime(firstError?.message ?: "", firstError?.exception)
+                                ReplEvalResult.Error.Runtime("")
                             }
                         }
                     }
