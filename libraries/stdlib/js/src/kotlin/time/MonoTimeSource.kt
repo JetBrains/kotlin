@@ -15,15 +15,16 @@ import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 internal actual typealias ValueTimeMarkReading = Any
 
 @ExperimentalTime
-internal interface DefaultTimeSource : TimeSource {
+internal interface DefaultTimeSource : TimeSource.WithComparableMarks {
     override fun markNow(): ValueTimeMark
     fun elapsedFrom(timeMark: ValueTimeMark): Duration
+    fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration
     fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark
 }
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource {  // TODO: interface should not be required here
+internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource.WithComparableMarks {  // TODO: interface should not be required here
 
     private val actualSource: DefaultTimeSource = run {
         val isNode: Boolean = js("typeof process !== 'undefined' && process.versions && !!process.versions.node")
@@ -40,6 +41,8 @@ internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource {  //
 
     actual override fun markNow(): ValueTimeMark = actualSource.markNow()
     actual override fun elapsedFrom(timeMark: ValueTimeMark): Duration = actualSource.elapsedFrom(timeMark)
+    actual override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration = actualSource.differenceBetween(one, another)
+
     actual override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         actualSource.adjustReading(timeMark, duration)
 }
@@ -58,11 +61,19 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
         process.hrtime(timeMark.reading as Array<Double>)
             .let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
+        val (s1, n1) = one.reading as Array<Double>
+        val (s2, n2) = another.reading as Array<Double>
+        return (if (s1 == s2 && n1 == n2) Duration.ZERO else (s1 - s2).toDuration(DurationUnit.SECONDS)) + (n1 - n2).toDuration(DurationUnit.NANOSECONDS)
+    }
+
     override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         @Suppress("UNCHECKED_CAST")
         (timeMark.reading as Array<Double>).let { (seconds, nanos) ->
             duration.toComponents { _, addNanos ->
-                arrayOf<Double>(sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS))), nanos + addNanos)
+                val resultSeconds = sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS)))
+                arrayOf<Double>(resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0)
             }
         }.let(TimeSource.Monotonic::ValueTimeMark)
 
@@ -78,6 +89,13 @@ internal class PerformanceTimeSource(val performance: Performance) :
 
     override fun markNow(): ValueTimeMark = ValueTimeMark(read())
     override fun elapsedFrom(timeMark: ValueTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+
+    override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
+        val ms1 = one.reading as Double
+        val ms2 = another.reading as Double
+        return if (ms1 == ms2) Duration.ZERO else (ms1 - ms2).milliseconds
+    }
+
     override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         ValueTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 
@@ -91,6 +109,13 @@ internal object DateNowTimeSource : DefaultTimeSource {
 
     override fun markNow(): ValueTimeMark = ValueTimeMark(read())
     override fun elapsedFrom(timeMark: ValueTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+
+    override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
+        val ms1 = one.reading as Double
+        val ms2 = another.reading as Double
+        return if (ms1 == ms2) Duration.ZERO else (ms1 - ms2).milliseconds
+    }
+
     override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         ValueTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 

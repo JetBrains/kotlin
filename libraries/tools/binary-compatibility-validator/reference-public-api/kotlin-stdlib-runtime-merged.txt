@@ -5902,18 +5902,36 @@ public final class kotlin/text/jdk8/RegexExtensionsJDK8Kt {
 	public static final fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
-public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource {
+public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource$WithComparableMarks {
 	public fun <init> (Lkotlin/time/DurationUnit;)V
 	protected final fun getUnit ()Lkotlin/time/DurationUnit;
-	public fun markNow ()Lkotlin/time/TimeMark;
+	public fun markNow ()Lkotlin/time/ComparableTimeMark;
+	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()D
 }
 
-public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSource {
+public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSource$WithComparableMarks {
 	public fun <init> (Lkotlin/time/DurationUnit;)V
 	protected final fun getUnit ()Lkotlin/time/DurationUnit;
-	public fun markNow ()Lkotlin/time/TimeMark;
+	public fun markNow ()Lkotlin/time/ComparableTimeMark;
+	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()J
+}
+
+public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
+	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
+	public abstract fun equals (Ljava/lang/Object;)Z
+	public abstract fun hashCode ()I
+	public abstract fun minus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
+	public abstract fun minus-UwyO8pc (Lkotlin/time/ComparableTimeMark;)J
+	public abstract fun plus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
+}
+
+public final class kotlin/time/ComparableTimeMark$DefaultImpls {
+	public static fun compareTo (Lkotlin/time/ComparableTimeMark;Lkotlin/time/ComparableTimeMark;)I
+	public static fun hasNotPassedNow (Lkotlin/time/ComparableTimeMark;)Z
+	public static fun hasPassedNow (Lkotlin/time/ComparableTimeMark;)Z
+	public static fun minus-LRDsOJo (Lkotlin/time/ComparableTimeMark;J)Lkotlin/time/ComparableTimeMark;
 }
 
 public final class kotlin/time/Duration : java/lang/Comparable {
@@ -6086,15 +6104,20 @@ public abstract interface class kotlin/time/TimeSource {
 public final class kotlin/time/TimeSource$Companion {
 }
 
-public final class kotlin/time/TimeSource$Monotonic : kotlin/time/TimeSource {
+public final class kotlin/time/TimeSource$Monotonic : kotlin/time/TimeSource$WithComparableMarks {
 	public static final field INSTANCE Lkotlin/time/TimeSource$Monotonic;
+	public synthetic fun markNow ()Lkotlin/time/ComparableTimeMark;
 	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 	public fun markNow-z9LOYto ()J
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/time/TimeSource$Monotonic$ValueTimeMark : kotlin/time/TimeMark {
+public final class kotlin/time/TimeSource$Monotonic$ValueTimeMark : kotlin/time/ComparableTimeMark {
 	public static final synthetic fun box-impl (J)Lkotlin/time/TimeSource$Monotonic$ValueTimeMark;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlin/time/ComparableTimeMark;)I
+	public static final fun compareTo-6eNON_k (JJ)I
+	public static fun compareTo-impl (JLkotlin/time/ComparableTimeMark;)I
 	public fun elapsedNow-UwyO8pc ()J
 	public static fun elapsedNow-UwyO8pc (J)J
 	public fun equals (Ljava/lang/Object;)Z
@@ -6106,15 +6129,24 @@ public final class kotlin/time/TimeSource$Monotonic$ValueTimeMark : kotlin/time/
 	public static fun hasPassedNow-impl (J)Z
 	public fun hashCode ()I
 	public static fun hashCode-impl (J)I
+	public static final fun minus-6eNON_k (JJ)J
 	public fun minus-LRDsOJo (J)J
+	public synthetic fun minus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
 	public synthetic fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
 	public static fun minus-LRDsOJo (JJ)J
+	public static fun minus-UwyO8pc (JLkotlin/time/ComparableTimeMark;)J
+	public fun minus-UwyO8pc (Lkotlin/time/ComparableTimeMark;)J
 	public fun plus-LRDsOJo (J)J
+	public synthetic fun plus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
 	public synthetic fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
 	public static fun plus-LRDsOJo (JJ)J
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (J)Ljava/lang/String;
 	public final synthetic fun unbox-impl ()J
+}
+
+public abstract interface class kotlin/time/TimeSource$WithComparableMarks : kotlin/time/TimeSource {
+	public abstract fun markNow ()Lkotlin/time/ComparableTimeMark;
 }
 
 public final class kotlin/time/TimedValue {

@@ -9,7 +9,7 @@ import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : TimeSource {
+internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
     private val zero: Long = System.nanoTime()
     private fun read(): Long = System.nanoTime() - zero
     override fun toString(): String = "TimeSource(System.nanoTime())"
@@ -17,6 +17,9 @@ internal actual object MonotonicTimeSource : TimeSource {
     actual override fun markNow(): ValueTimeMark = ValueTimeMark(read())
     actual fun elapsedFrom(timeMark: ValueTimeMark): Duration =
         saturatingDiff(read(), timeMark.reading)
+
+    actual fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration =
+        saturatingOriginsDiff(one.reading, another.reading)
 
     actual fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
         ValueTimeMark(saturatingAdd(timeMark.reading, duration))
