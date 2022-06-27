@@ -132,12 +132,6 @@ public inline fun measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
 @kotlin.time.ExperimentalTime
 public inline fun <T> measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
 
-@kotlin.time.ExperimentalTime
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.internal.InlineOnly
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Comparing one TimeMark to another is not a well defined operation because these time marks could have been obtained from the different time sources.")
-public inline operator fun kotlin.time.TimeMark.compareTo(other: kotlin.time.TimeMark): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
 public inline fun kotlin.time.TimeSource.measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
@@ -153,12 +147,6 @@ public inline fun <T> kotlin.time.TimeSource.measureTimedValue(block: () -> T): 
 @kotlin.SinceKotlin(version = "1.7")
 @kotlin.time.ExperimentalTime
 public inline fun <T> kotlin.time.TimeSource.Monotonic.measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
-
-@kotlin.time.ExperimentalTime
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.internal.InlineOnly
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Subtracting one TimeMark from another is not a well defined operation because these time marks could have been obtained from the different time sources.")
-public inline operator fun kotlin.time.TimeMark.minus(other: kotlin.time.TimeMark): kotlin.time.Duration
 
 @kotlin.SinceKotlin(version = "1.6")
 @kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
@@ -184,26 +172,42 @@ public fun kotlin.Long.toDuration(unit: kotlin.time.DurationUnit): kotlin.time.D
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-public abstract class AbstractDoubleTimeSource : kotlin.time.TimeSource {
+public abstract class AbstractDoubleTimeSource : kotlin.time.TimeSource.WithComparableMarks {
     public constructor AbstractDoubleTimeSource(unit: kotlin.time.DurationUnit)
 
     protected final val unit: kotlin.time.DurationUnit { get; }
 
-    public open override fun markNow(): kotlin.time.TimeMark
+    public open override fun markNow(): kotlin.time.ComparableTimeMark
 
     protected abstract fun read(): kotlin.Double
 }
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-public abstract class AbstractLongTimeSource : kotlin.time.TimeSource {
+public abstract class AbstractLongTimeSource : kotlin.time.TimeSource.WithComparableMarks {
     public constructor AbstractLongTimeSource(unit: kotlin.time.DurationUnit)
 
     protected final val unit: kotlin.time.DurationUnit { get; }
 
-    public open override fun markNow(): kotlin.time.TimeMark
+    public open override fun markNow(): kotlin.time.ComparableTimeMark
 
     protected abstract fun read(): kotlin.Long
+}
+
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.time.ExperimentalTime
+public interface ComparableTimeMark : kotlin.time.TimeMark, kotlin.Comparable<kotlin.time.ComparableTimeMark> {
+    public open override operator fun compareTo(other: kotlin.time.ComparableTimeMark): kotlin.Int
+
+    public abstract override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public abstract override fun hashCode(): kotlin.Int
+
+    public abstract operator fun minus(other: kotlin.time.ComparableTimeMark): kotlin.time.Duration
+
+    public open override operator fun minus(duration: kotlin.time.Duration): kotlin.time.ComparableTimeMark
+
+    public abstract override operator fun plus(duration: kotlin.time.Duration): kotlin.time.ComparableTimeMark
 }
 
 @kotlin.SinceKotlin(version = "1.6")
@@ -587,7 +591,7 @@ public interface TimeSource {
     public companion object of TimeSource {
     }
 
-    public object Monotonic : kotlin.time.TimeSource {
+    public object Monotonic : kotlin.time.TimeSource.WithComparableMarks {
         public open override fun markNow(): kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
         public open override fun toString(): kotlin.String
@@ -595,7 +599,9 @@ public interface TimeSource {
         @kotlin.time.ExperimentalTime
         @kotlin.SinceKotlin(version = "1.7")
         @kotlin.jvm.JvmInline
-        public final inline class ValueTimeMark : kotlin.time.TimeMark {
+        public final inline class ValueTimeMark : kotlin.time.ComparableTimeMark {
+            public final operator fun compareTo(other: kotlin.time.TimeSource.Monotonic.ValueTimeMark): kotlin.Int
+
             public open override fun elapsedNow(): kotlin.time.Duration
 
             public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -606,12 +612,22 @@ public interface TimeSource {
 
             public open override fun hashCode(): kotlin.Int
 
+            public open override operator fun minus(other: kotlin.time.ComparableTimeMark): kotlin.time.Duration
+
             public open override operator fun minus(duration: kotlin.time.Duration): kotlin.time.TimeSource.Monotonic.ValueTimeMark
+
+            public final operator fun minus(other: kotlin.time.TimeSource.Monotonic.ValueTimeMark): kotlin.time.Duration
 
             public open override operator fun plus(duration: kotlin.time.Duration): kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
             public open override fun toString(): kotlin.String
         }
+    }
+
+    @kotlin.SinceKotlin(version = "1.8")
+    @kotlin.time.ExperimentalTime
+    public interface WithComparableMarks : kotlin.time.TimeSource {
+        public abstract override fun markNow(): kotlin.time.ComparableTimeMark
     }
 }
 

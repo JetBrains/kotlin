@@ -45,10 +45,25 @@ internal fun saturatingDiff(valueNs: Long, originNs: Long): Duration {
     if (originNs.isSaturated()) { // MIN_VALUE or MAX_VALUE
         return -(originNs.toDuration(DurationUnit.DAYS)) // saturate to infinity
     }
-    val result = valueNs - originNs
-    if ((result xor valueNs) and (result xor originNs).inv() < 0) {
-        val resultMs = valueNs / NANOS_IN_MILLIS - originNs / NANOS_IN_MILLIS
-        val resultNs = valueNs % NANOS_IN_MILLIS - originNs % NANOS_IN_MILLIS
+    return saturatingFiniteDiff(valueNs, originNs)
+}
+
+internal fun saturatingOriginsDiff(origin1Ns: Long, origin2Ns: Long): Duration {
+    if (origin2Ns.isSaturated()) { // MIN_VALUE or MAX_VALUE
+        if (origin1Ns == origin2Ns) return Duration.ZERO // saturated values of the same sign are considered equal
+        return -(origin2Ns.toDuration(DurationUnit.DAYS)) // saturate to infinity
+    }
+    if (origin1Ns.isSaturated()) {
+        return origin1Ns.toDuration(DurationUnit.DAYS)
+    }
+    return saturatingFiniteDiff(origin1Ns, origin2Ns)
+}
+
+private fun saturatingFiniteDiff(value1Ns: Long, value2Ns: Long): Duration {
+    val result = value1Ns - value2Ns
+    if ((result xor value1Ns) and (result xor value2Ns).inv() < 0) {
+        val resultMs = value1Ns / NANOS_IN_MILLIS - value2Ns / NANOS_IN_MILLIS
+        val resultNs = value1Ns % NANOS_IN_MILLIS - value2Ns % NANOS_IN_MILLIS
         return resultMs.milliseconds + resultNs.nanoseconds
     }
     return result.nanoseconds
