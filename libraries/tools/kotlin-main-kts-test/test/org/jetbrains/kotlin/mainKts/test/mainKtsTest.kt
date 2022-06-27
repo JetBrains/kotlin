@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
 import java.io.*
 import java.util.*
@@ -213,7 +214,8 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationDefaultVariableRedefinition() {
+    @Ignore // Overriding provided properties is no supported yet, the test was working by errorneous coincidence. See #KT-52986
+    fun ignore_testScriptFileLocationDefaultVariableRedefinition() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-redefine-variable.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
