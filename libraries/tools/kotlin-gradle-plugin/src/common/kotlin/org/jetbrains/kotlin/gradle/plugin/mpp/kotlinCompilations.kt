@@ -244,7 +244,7 @@ internal object CompilationSourceSetUtil {
                 val kotlinExtension = project.kotlinExtension
                 val targets = when (kotlinExtension) {
                     is KotlinMultiplatformExtension -> kotlinExtension.targets
-                    is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
+                    is KotlinSingleTargetExtension<*> -> listOf(kotlinExtension.target)
                     else -> emptyList()
                 }
 

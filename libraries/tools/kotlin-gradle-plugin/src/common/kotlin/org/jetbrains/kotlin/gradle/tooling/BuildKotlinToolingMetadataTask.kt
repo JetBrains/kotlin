@@ -234,7 +234,7 @@ private fun KotlinProjectExtension.buildProjectSettings(): KotlinToolingMetadata
 private fun KotlinProjectExtension.buildProjectTargets(): List<KotlinToolingMetadata.ProjectTargetMetadata> {
     val targets = when (this) {
         is KotlinMultiplatformExtension -> this.targets.toSet()
-        is KotlinSingleTargetExtension -> setOf(this.target)
+        is KotlinSingleTargetExtension<*> -> setOf(this.target)
         else -> emptySet()
     }
 

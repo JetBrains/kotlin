@@ -79,7 +79,7 @@ internal class KotlinProjectNpmResolver(
             ?: error("NpmResolverPlugin should be applied after kotlin plugin")
 
         when (kotlin) {
-            is KotlinSingleTargetExtension -> addTargetListeners(kotlin.target)
+            is KotlinSingleTargetExtension<*> -> addTargetListeners(kotlin.target)
             is KotlinMultiplatformExtension -> kotlin.targets.all {
                 addTargetListeners(it)
             }
