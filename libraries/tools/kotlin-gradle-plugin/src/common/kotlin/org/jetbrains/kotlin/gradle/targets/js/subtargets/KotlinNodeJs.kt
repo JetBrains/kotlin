@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
-open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
+abstract class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "node"),
     KotlinJsNodeDsl {
     override val testTaskDescription: String

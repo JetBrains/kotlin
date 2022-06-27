@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
-open class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
+abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "d8"),
     KotlinWasmD8Dsl {
 

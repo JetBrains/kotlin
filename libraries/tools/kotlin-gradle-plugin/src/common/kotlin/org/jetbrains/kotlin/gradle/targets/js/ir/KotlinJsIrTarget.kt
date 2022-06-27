@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
-open class KotlinJsIrTarget
+abstract class KotlinJsIrTarget
 @Inject
 constructor(
     project: Project,

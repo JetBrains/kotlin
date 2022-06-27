@@ -10,7 +10,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
+abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 

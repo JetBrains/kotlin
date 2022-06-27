@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -39,17 +38,17 @@ interface KotlinJsTargetDsl : KotlinTarget {
 
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
-    fun browser(fn: Closure<*>) {
+    fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun nodejs() = nodejs { }
     fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
-    fun nodejs(fn: Closure<*>) {
+    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
         nodejs {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
@@ -77,16 +76,16 @@ interface KotlinJsSubTargetDsl {
     fun distribution(body: Distribution.() -> Unit)
 
     @ExperimentalDistributionDsl
-    fun distribution(fn: Closure<*>) {
+    fun distribution(fn: Action<Distribution>) {
         distribution {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun testTask(body: KotlinJsTest.() -> Unit)
-    fun testTask(fn: Closure<*>) {
+    fun testTask(fn: Action<KotlinJsTest>) {
         testTask {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
@@ -95,23 +94,23 @@ interface KotlinJsSubTargetDsl {
 
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit)
-    fun commonWebpackConfig(fn: Closure<*>) {
+    fun commonWebpackConfig(fn: Action<KotlinWebpackConfig>) {
         commonWebpackConfig {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun runTask(body: KotlinWebpack.() -> Unit)
-    fun runTask(fn: Closure<*>) {
+    fun runTask(fn: Action<KotlinWebpack>) {
         runTask {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun webpackTask(body: KotlinWebpack.() -> Unit)
-    fun webpackTask(fn: Closure<*>) {
+    fun webpackTask(fn: Action<KotlinWebpack>) {
         webpackTask {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
@@ -119,9 +118,9 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun dceTask(body: KotlinJsDce.() -> Unit)
 
     @ExperimentalDceDsl
-    fun dceTask(fn: Closure<*>) {
+    fun dceTask(fn: Action<KotlinJsDce>) {
         dceTask {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 }

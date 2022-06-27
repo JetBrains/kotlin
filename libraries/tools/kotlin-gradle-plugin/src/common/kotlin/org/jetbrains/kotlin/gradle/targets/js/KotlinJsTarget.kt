@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
-open class KotlinJsTarget
+abstract class KotlinJsTarget
 @Inject
 constructor(
     project: Project,
@@ -70,9 +70,9 @@ constructor(
         if (irTarget == null)
             super.kotlinComponents
         else {
-            val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
             val usageContexts = createUsageContexts(mainCompilation) +
-                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME))
+                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
 
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
@@ -96,7 +96,7 @@ constructor(
 
         return usageContexts +
                 DefaultKotlinUsageContext(
-                    compilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
+                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
                     usage = project.usageByName("java-api-jars"),
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }

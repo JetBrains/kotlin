@@ -37,7 +37,7 @@ import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce as KotlinJsDceTask
 
-open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
+abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
