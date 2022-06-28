@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
@@ -47,11 +46,11 @@ interface KotlinTarget : Named, HasAttributes {
 
     val components: Set<SoftwareComponent>
 
-    fun mavenPublication(action: Closure<Unit>)
+    fun mavenPublication(action: MavenPublication.() -> Unit) = mavenPublication(Action { action(it) })
     fun mavenPublication(action: Action<MavenPublication>)
 
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
-    fun attributes(configure: Closure<*>) = attributes { project.configure(this, configure) }
+    fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
