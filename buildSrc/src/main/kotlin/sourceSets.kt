@@ -37,19 +37,27 @@ val SourceSet.projectDefault: Project.() -> Unit
         }
     }
 
-val SourceSet.generatedTestDir: Project.() -> Unit
+val SourceSet.generatedDir: Project.() -> Unit
     get() = {
-        val generationRoot = projectDir.resolve("tests-gen")
-        java.srcDir(generationRoot.name)
-
-        if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-            apply(plugin = "idea")
-            idea {
-                this.module.generatedSourceDirs.add(generationRoot)
-            }
-        }
+        generatedDir(this, "gen")
     }
 
+val SourceSet.generatedTestDir: Project.() -> Unit
+    get() = {
+        generatedDir(this, "tests-gen")
+    }
+
+private fun SourceSet.generatedDir(project: Project, dirName: String) {
+    val generationRoot = project.projectDir.resolve(dirName)
+    java.srcDir(generationRoot.name)
+
+    if (project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        project.apply(plugin = "idea")
+        project.idea {
+            this.module.generatedSourceDirs.add(generationRoot)
+        }
+    }
+}
 
 val Project.sourceSets: SourceSetContainer
     get() = javaPluginExtension().sourceSets

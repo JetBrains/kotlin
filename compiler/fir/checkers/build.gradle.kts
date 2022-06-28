@@ -20,7 +20,7 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        this.java.srcDir("gen")
+        generatedDir()
     }
     "test" { none() }
 }
