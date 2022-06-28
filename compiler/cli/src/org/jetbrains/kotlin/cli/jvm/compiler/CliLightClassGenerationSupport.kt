@@ -46,7 +46,7 @@ class CliLightClassGenerationSupport(
     private class CliLightClassSupport(
         private val project: Project,
         override val languageVersionSettings: LanguageVersionSettings,
-        private val jvmTarget: JvmTarget
+        override val jvmTarget: JvmTarget
     ) : KtUltraLightSupport {
 
         // This is the way to untie CliLightClassSupport and CliLightClassGenerationSupport to prevent descriptors leak
