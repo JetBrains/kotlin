@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
@@ -106,7 +107,7 @@ internal abstract class GradleKpmLegacyMappedVariant @Inject constructor(
     override val fragmentName: String
         get() = fragmentForDefaultSourceSet.fragmentName + "Variant"
 
-    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
+    override val declaredRefinesDependencies: DomainObjectSet<GradleKpmFragment>
         get() = fragmentForDefaultSourceSet.declaredRefinesDependencies
 
     override val declaredModuleDependencies: Iterable<KpmModuleDependency>

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
@@ -43,29 +44,31 @@ abstract class GradleKpmFragmentInternal @Inject constructor(
     // FIXME check for consistency
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override fun refines(other: GradleKpmFragment) {
-        checkCanRefine(other)
-        refines(containingModule.fragments.named(other.name))
-    }
+    override val declaredRefinesDependencies: DomainObjectSet<GradleKpmFragment> =
+        project.objects.domainObjectSet(GradleKpmFragment::class.java)
 
     override fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>) {
-        _declaredRefinesDependencies.add(other)
-        other.configure { checkCanRefine(it) }
+        other.configure { refines(it) }
+    }
+
+    override fun refines(other: GradleKpmFragment) {
+        checkCanRefine(other)
+        declaredRefinesDependencies.add(other)
 
         project.addExtendsFromRelation(
-            this.transitiveApiConfiguration.name, other.get().transitiveApiConfiguration.name
+            this.transitiveApiConfiguration.name, other.transitiveApiConfiguration.name
         )
 
         project.addExtendsFromRelation(
-            this.transitiveImplementationConfiguration.name, other.get().transitiveImplementationConfiguration.name
+            this.transitiveImplementationConfiguration.name, other.transitiveImplementationConfiguration.name
         )
 
         project.addExtendsFromRelation(
-            this.transitiveRuntimeOnlyConfiguration.name, other.get().transitiveRuntimeOnlyConfiguration.name
+            this.transitiveRuntimeOnlyConfiguration.name, other.transitiveRuntimeOnlyConfiguration.name
         )
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@GradleKpmFragmentInternal, other.get())
+            kotlinGradleFragmentConsistencyChecker.runAllChecks(this@GradleKpmFragmentInternal, other)
         }
     }
 
@@ -80,11 +83,6 @@ abstract class GradleKpmFragmentInternal @Inject constructor(
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }
-
-    private val _declaredRefinesDependencies = mutableSetOf<Provider<GradleKpmFragment>>()
-
-    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
-        get() = _declaredRefinesDependencies.map { it.get() }.toSet()
 
     // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
     //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API

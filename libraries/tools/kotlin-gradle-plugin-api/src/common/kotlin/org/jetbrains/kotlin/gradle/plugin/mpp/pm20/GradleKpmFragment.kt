@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
@@ -37,7 +38,7 @@ interface GradleKpmFragment : KpmFragment, HasKotlinDependencies, GradleKpmFragm
 
     fun refines(other: NamedDomainObjectProvider<GradleKpmFragment>)
 
-    override val declaredRefinesDependencies: Iterable<GradleKpmFragment>
+    override val declaredRefinesDependencies: DomainObjectSet<GradleKpmFragment>
 
     override val refinesClosure: Set<GradleKpmFragment>
         get() = this.closure { it.declaredRefinesDependencies }
