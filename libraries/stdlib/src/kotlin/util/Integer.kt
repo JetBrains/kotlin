@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.utils
+package kotlin
 
 @SinceKotlin("1.0")
 /** Returns the int if it is not `null`, or the 0 int otherwise. */
