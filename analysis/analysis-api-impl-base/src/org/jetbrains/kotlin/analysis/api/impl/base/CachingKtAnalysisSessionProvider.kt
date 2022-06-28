@@ -53,13 +53,6 @@ abstract class CachingKtAnalysisSessionProvider<State : Any>(project: Project) :
         }
     }
 
-    final override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
-        val firResolveSession = getFirResolveSession(contextSymbol)
-        val token = contextSymbol.token
-        return getCachedAnalysisSession(firResolveSession, token)
-            ?: createAnalysisSession(firResolveSession, contextSymbol.token)
-    }
-
     private fun getCachedAnalysisSession(firResolveSession: State, token: KtLifetimeToken): KtAnalysisSession? {
         return cache.getCachedAnalysisSession(firResolveSession to token::class)
     }

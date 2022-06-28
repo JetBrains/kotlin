@@ -24,19 +24,6 @@ class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvide
         return KtFe10AnalysisSession(useSiteKtElement, factory.create(project))
     }
 
-    override fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession {
-        if (contextSymbol is KtFe10Symbol) {
-            return KtFe10AnalysisSession(contextSymbol.analysisContext, contextSymbol.analysisContext.contextElement.getKtModule())
-        } else {
-            val contextElement = contextSymbol.psi
-            if (contextElement is KtElement) {
-                return KtFe10AnalysisSession(contextElement, contextSymbol.token)
-            }
-        }
-
-        throw UnsupportedOperationException("getAnalysisSessionBySymbol() should not be used on KtFe10AnalysisSession")
-    }
-
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
         throw UnsupportedOperationException("getAnalysisSessionByModule() should not be used on KtFe10AnalysisSession")
     }
