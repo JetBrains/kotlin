@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -223,7 +226,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 this.catches += irCatch(
                     catchParameter,
                     irComposite {
-                        +finallyExpression.copy()
+                        +copy(finallyExpression)
                         +irThrow(irGet(catchParameter))
                     }
                 )
@@ -270,19 +273,20 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 +irReturnableBlock(symbol, type) {
                     +value
                 }
-                +finallyExpression.copy()
+                +copy(finallyExpression)
             }
             else -> irBlock(value, null, type) {
                 val tmp = createTmpVariable(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })
-                +finallyExpression.copy()
+                +copy(finallyExpression)
                 +irGet(tmp)
             }
         }
     }
 
-    private inline fun <reified T : IrElement> T.copy() = this.deepCopyWithVariables()
+    private inline fun <reified T : IrElement> IrBuilderWithScope.copy(element: T) =
+        element.deepCopyWithVariables().setDeclarationsParent(parent)
 
     fun IrBuilderWithScope.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
         IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)

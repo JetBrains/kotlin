@@ -1,11 +1,5 @@
 package org.jetbrains.kotlin.backend.konan
 
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toKStringFromUtf8
-import llvm.LLVMGetModuleIdentifier
-import llvm.LLVMPrintModuleToFile
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.StringConcatenationLowering
@@ -19,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
 import org.jetbrains.kotlin.ir.IrElement
@@ -301,8 +294,8 @@ internal val dataClassesPhase = makeKonanFileLoweringPhase(
         description = "Data classes lowering"
 )
 
-internal val finallyBlocksPhase = makeKonanFileLoweringPhase(
-        ::FinallyBlocksLowering,
+internal val finallyBlocksPhase = makeKonanFileOpPhase(
+        { context, irFile -> FinallyBlocksLowering(context, context.irBuiltIns.throwableType).lower(irFile) },
         name = "FinallyBlocks",
         description = "Finally blocks lowering",
         prerequisite = setOf(initializersPhase, localFunctionsPhase, tailrecPhase)
