@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.classes.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
-
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+context(KtAnalysisSession)
 internal class FirLightClassForEnumEntry(
     private val enumEntrySymbol: KtEnumEntrySymbol,
     private val enumConstant: FirLightFieldForEnumEntry,
@@ -82,10 +83,10 @@ internal class FirLightClassForEnumEntry(
     override fun isEnum(): Boolean = false
 
     private val _extendsList: PsiReferenceList? by lazyPub {
-        val mappedType = analyzeWithSymbolAsContext(enumEntrySymbol) {
+        val mappedType =
             enumEntrySymbol.returnType.asPsiType(this@FirLightClassForEnumEntry, KtTypeMappingMode.SUPER_TYPE) as? PsiClassType
                 ?: return@lazyPub null
-        }
+
 
         KotlinSuperTypeListBuilder(
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),
@@ -126,13 +127,10 @@ internal class FirLightClassForEnumEntry(
     override fun getOwnMethods(): MutableList<KtLightMethod> {
         val result = mutableListOf<KtLightMethod>()
 
-        analyzeWithSymbolAsContext(enumEntrySymbol) {
-            val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
+        val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
 
-            createMethods(declaredMemberScope.getCallableSymbols(), result)
-
-            createConstructors(declaredMemberScope.getConstructors(), result)
-        }
+        createMethods(declaredMemberScope.getCallableSymbols(), result)
+        createConstructors(declaredMemberScope.getConstructors(), result)
 
         return result
     }

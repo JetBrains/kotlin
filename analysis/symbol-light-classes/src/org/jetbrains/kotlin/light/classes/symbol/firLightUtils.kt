@@ -88,19 +88,16 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
         result.add(PsiModifier.STATIC)
     }
 }
-
+context(KtAnalysisSession)
 internal fun PsiElement.tryGetEffectiveVisibility(symbol: KtCallableSymbol): Visibility? {
-
     if (symbol !is KtPropertySymbol && symbol !is KtFunctionSymbol) return null
 
     var visibility = (symbol as? KtSymbolWithVisibility)?.visibility
 
-    analyzeWithSymbolAsContext(symbol) {
-        for (overriddenSymbol in symbol.getAllOverriddenSymbols()) {
-            val newVisibility = (overriddenSymbol as? KtSymbolWithVisibility)?.visibility
-            if (newVisibility != null) {
-                visibility = newVisibility
-            }
+    for (overriddenSymbol in symbol.getAllOverriddenSymbols()) {
+        val newVisibility = (overriddenSymbol as? KtSymbolWithVisibility)?.visibility
+        if (newVisibility != null) {
+            visibility = newVisibility
         }
     }
 

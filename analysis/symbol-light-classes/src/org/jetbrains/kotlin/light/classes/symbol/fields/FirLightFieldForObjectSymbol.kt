@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightFieldForObjectSymbol(
     private val objectSymbol: KtNamedClassOrObjectSymbol,
     containingClass: KtLightClass,
@@ -40,9 +43,8 @@ internal class FirLightFieldForObjectSymbol(
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _type: PsiType by lazyPub {
-        analyzeWithSymbolAsContext(objectSymbol) {
-            objectSymbol.buildSelfClassType().asPsiType(this@FirLightFieldForObjectSymbol)
-        } ?: nonExistentType()
+        objectSymbol.buildSelfClassType().asPsiType(this@FirLightFieldForObjectSymbol)
+            ?: nonExistentType()
     }
 
     private val _identifier: PsiIdentifier by lazyPub {

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightParameterForSymbol(
     private val parameterSymbol: KtValueParameterSymbol,
     containingMethod: FirLightMethod

@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal abstract class FirLightMethod(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: KtLightClass,

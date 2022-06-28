@@ -11,16 +11,17 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
-import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModuleOfTypeSafe
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -71,7 +72,9 @@ internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLight
     }
 
     return when {
-        classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
+        classOrObject is KtEnumEntry ->  analyseForLightClasses(classOrObject) {
+            lightClassForEnumEntry(classOrObject)
+        }
         classOrObject.hasModifier(INLINE_KEYWORD) -> {
             analyseForLightClasses(classOrObject) {
                 classOrObject.getNamedClassOrObjectSymbol()?.let { FirLightInlineClass(it, classOrObject.manager) }
@@ -85,7 +88,9 @@ internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLight
     }
 }
 
-internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager): FirLightClassBase = when (this) {
+
+context(KtAnalysisSession)
+        internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager): FirLightClassBase = when (this) {
     is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(this, manager)
     is KtNamedClassOrObjectSymbol -> when (classKind) {
         KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(this, manager)
@@ -94,7 +99,8 @@ internal fun KtClassOrObjectSymbol.createLightClassNoCache(manager: PsiManager):
     }
 }
 
-private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
+context(KtAnalysisSession)
+        private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
 
     val firClass = ktEnumEntry
@@ -109,7 +115,8 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? FirLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
-internal fun FirLightClassBase.createConstructors(
+context(KtAnalysisSession)
+        internal fun FirLightClassBase.createConstructors(
     declarations: Sequence<KtConstructorSymbol>,
     result: MutableList<KtLightMethod>
 ) {
@@ -119,7 +126,7 @@ internal fun FirLightClassBase.createConstructors(
         return
     }
     for (constructor in constructors) {
-        if (constructor.isHiddenOrSynthetic(project)) continue
+        if (constructor.isHiddenOrSynthetic()) continue
         result.add(
             FirLightConstructorForSymbol(
                 constructorSymbol = constructor,
@@ -137,7 +144,8 @@ internal fun FirLightClassBase.createConstructors(
     }
 }
 
-private fun FirLightClassBase.shouldGenerateNoArgOverload(
+context(KtAnalysisSession)
+        private fun FirLightClassBase.shouldGenerateNoArgOverload(
     primaryConstructor: KtConstructorSymbol,
     constructors: Iterable<KtConstructorSymbol>,
 ): Boolean {
@@ -151,7 +159,8 @@ private fun FirLightClassBase.shouldGenerateNoArgOverload(
             !primaryConstructor.hasJvmOverloadsAnnotation()
 }
 
-private fun FirLightClassBase.defaultConstructor(): KtLightMethod {
+context(KtAnalysisSession)
+        private fun FirLightClassBase.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
         classOrObject is KtObjectDeclaration || classOrObject?.hasModifier(SEALED_KEYWORD) == true || isEnum -> PsiModifier.PRIVATE
@@ -161,7 +170,8 @@ private fun FirLightClassBase.defaultConstructor(): KtLightMethod {
     return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
 }
 
-private fun FirLightClassBase.noArgConstructor(
+context(KtAnalysisSession)
+        private fun FirLightClassBase.noArgConstructor(
     visibility: String,
     methodIndex: Int,
 ): KtLightMethod {
@@ -177,11 +187,12 @@ private fun FirLightClassBase.noArgConstructor(
     )
 }
 
-internal fun FirLightClassBase.createMethods(
+context(KtAnalysisSession)
+        internal fun FirLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
     result: MutableList<KtLightMethod>,
     isTopLevel: Boolean = false,
-    suppressStatic : Boolean = false
+    suppressStatic: Boolean = false
 ) {
     val declarationGroups = declarations.groupBy { it is KtPropertySymbol && it.isFromPrimaryConstructor }
 
@@ -190,7 +201,7 @@ internal fun FirLightClassBase.createMethods(
             is KtFunctionSymbol -> {
                 // TODO: check if it has expect modifier
                 if (declaration.hasReifiedParameters ||
-                    declaration.isHiddenOrSynthetic(project)
+                    declaration.isHiddenOrSynthetic()
                 ) return
 
                 var methodIndex = METHOD_INDEX_BASE
@@ -234,7 +245,7 @@ internal fun FirLightClassBase.createMethods(
                 suppressStatic = suppressStatic
             )
             is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
-            else -> { }
+            else -> {}
         }
     }
 
@@ -248,7 +259,8 @@ internal fun FirLightClassBase.createMethods(
     }
 }
 
-internal fun FirLightClassBase.createPropertyAccessors(
+context(KtAnalysisSession)
+        internal fun FirLightClassBase.createPropertyAccessors(
     result: MutableList<KtLightMethod>,
     declaration: KtPropertySymbol,
     isTopLevel: Boolean,
@@ -269,8 +281,8 @@ internal fun FirLightClassBase.createPropertyAccessors(
         if (onlyJvmStatic && !hasJvmStaticAnnotation(siteTarget) && !declaration.hasJvmStaticAnnotation()) return false
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
-        if (declaration.isHiddenOrSynthetic(project, siteTarget)) return false
-        if (isHiddenOrSynthetic(project)) return false
+        if (declaration.isHiddenOrSynthetic(siteTarget)) return false
+        if (isHiddenOrSynthetic()) return false
         return true
     }
 
@@ -326,7 +338,8 @@ internal fun FirLightClassBase.createPropertyAccessors(
     }
 }
 
-internal fun FirLightClassBase.createField(
+context(KtAnalysisSession)
+        internal fun FirLightClassBase.createField(
     declaration: KtPropertySymbol,
     nameGenerator: FirLightField.FieldNameGenerator,
     isTopLevel: Boolean,
@@ -339,7 +352,7 @@ internal fun FirLightClassBase.createField(
         is KtSyntheticJavaPropertySymbol -> true
         is KtKotlinPropertySymbol -> when {
             property.modality == Modality.ABSTRACT -> false
-            property.isHiddenOrSynthetic(project) -> false
+            property.isHiddenOrSynthetic() -> false
             property.isLateInit -> true
             property.isDelegatedProperty -> true
             property.isFromPrimaryConstructor -> true
@@ -369,7 +382,8 @@ internal fun FirLightClassBase.createField(
     )
 }
 
-internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
+context(KtAnalysisSession)
+        internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
 
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -400,16 +414,15 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
         .filter { it.needToAddTypeIntoList() }
         .mapNotNull { type ->
             if (type !is KtNonErrorClassType) return@mapNotNull null
-            analyzeWithSymbolAsContext(type.classSymbol) {
-                mapSuperType(type, this@createInheritanceList, kotlinCollectionAsIs = true)
-            }
+            mapSuperType(type, this@createInheritanceList, kotlinCollectionAsIs = true)
         }
         .forEach { listBuilder.addReference(it) }
 
     return listBuilder
 }
 
-internal fun KtSymbolWithMembers.createInnerClasses(
+context(KtAnalysisSession)
+        internal fun KtSymbolWithMembers.createInnerClasses(
     manager: PsiManager,
     containingClass: FirLightClassBase,
     classOrObject: KtClassOrObject?
@@ -420,11 +433,10 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     // inner classes with null names can't be searched for and can't be used from java anyway
     // we can't prohibit creating light classes with null names either since they can contain members
 
-    manager.project.analyzeWithSymbolAsContext(this) {
-        getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
-            it.createLightClassNoCache(manager)
-        }
+    getDeclaredMemberScope().getClassifierSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
+        it.createLightClassNoCache(manager)
     }
+
 
     val jvmDefaultMode =
         classOrObject?.getKtModuleOfTypeSafe<KtSourceModule>()?.languageVersionSettings?.getFlag(JvmAnalysisFlags.jvmDefaultMode)
@@ -439,22 +451,21 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     return result
 }
 
+context(KtAnalysisSession)
 internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     if (this == superClassOrigin) return false
-    return analyseForLightClasses(this) {
-        if (!superClassOrigin.canBeAnalysed()) {
-            return false
-        }
-        val subClassSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
-        val superClassSymbol = superClassOrigin.getClassOrObjectSymbol()
+    if (!superClassOrigin.canBeAnalysed()) {
+        return false
+    }
+    val subClassSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
+    val superClassSymbol = superClassOrigin.getClassOrObjectSymbol()
 
-        if (subClassSymbol == superClassSymbol) return@analyseForLightClasses false
+    if (subClassSymbol == superClassSymbol) return false
 
-        if (checkDeep) {
-            subClassSymbol.isSubClassOf(superClassSymbol)
-        } else {
-            subClassSymbol.isDirectSubClassOf(superClassSymbol)
-        }
+    return if (checkDeep) {
+        subClassSymbol.isSubClassOf(superClassSymbol)
+    } else {
+        subClassSymbol.isDirectSubClassOf(superClassSymbol)
     }
 }
 

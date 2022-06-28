@@ -8,17 +8,19 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInheritanceList
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 
+context(KtAnalysisSession)
 internal open class FirLightInterfaceClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
@@ -38,16 +40,12 @@ internal open class FirLightInterfaceClassSymbol(
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-
         val result = mutableListOf<KtLightMethod>()
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+        val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+            .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
 
-            createMethods(visibleDeclarations, result)
-        }
-
+        createMethods(visibleDeclarations, result)
         addMethodsFromCompanionIfNeeded(result)
 
         result

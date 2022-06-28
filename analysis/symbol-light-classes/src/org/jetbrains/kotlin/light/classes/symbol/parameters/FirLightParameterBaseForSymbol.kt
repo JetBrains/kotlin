@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtParameter
 
+context(KtAnalysisSession)
 internal abstract class FirLightParameterBaseForSymbol(
     private val parameterSymbol: KtValueParameterSymbol,
     private val containingMethod: FirLightMethod
@@ -34,19 +36,14 @@ internal abstract class FirLightParameterBaseForSymbol(
             val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
                     !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
 
-            return if (nullabilityApplicable) {
-                analyzeWithSymbolAsContext(parameterSymbol) {
-                    getTypeNullability(
-                        parameterSymbol.returnType
-                    )
-                }
-            } else NullabilityType.Unknown
+            return if (nullabilityApplicable) getTypeNullability(parameterSymbol.returnType)
+            else NullabilityType.Unknown
         }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _type by lazyPub {
-        val convertedType = analyzeWithSymbolAsContext(parameterSymbol) {
+        val convertedType = run {
             val ktType = parameterSymbol.returnType
             val typeMappingMode = when {
                 ktType.isSuspendFunctionType -> KtTypeMappingMode.DEFAULT

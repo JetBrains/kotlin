@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -49,18 +49,17 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 }
 
+context(KtAnalysisSession)
 internal fun isHiddenByDeprecation(
-    project: Project,
     symbol: KtAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null
 ): Boolean {
-    return project.analyzeWithSymbolAsContext(symbol) {
-        symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
-    }
+    return symbol.getDeprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
 }
 
-internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(project: Project, annotationUseSiteTarget: AnnotationUseSiteTarget? = null) =
-    isHiddenByDeprecation(project, this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
+context(KtAnalysisSession)
+internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(annotationUseSiteTarget: AnnotationUseSiteTarget? = null) =
+    isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
     hasAnnotation(JVM_FIELD_ANNOTATION_CLASS_ID, null)

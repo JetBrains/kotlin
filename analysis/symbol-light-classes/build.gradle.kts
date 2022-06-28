@@ -33,4 +33,9 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+}
+
+
 testsJar()

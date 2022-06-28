@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.lifetime.isValid
+import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+context(KtAnalysisSession)
 internal class FirLightFieldForEnumEntry(
     private val enumEntrySymbol: KtEnumEntrySymbol,
     containingClass: FirLightClassForSymbol,
@@ -64,9 +66,7 @@ internal class FirLightFieldForEnumEntry(
     override fun getName(): String = enumEntrySymbol.name.asString()
 
     private val _type: PsiType by lazyPub {
-        analyzeWithSymbolAsContext(enumEntrySymbol) {
-            enumEntrySymbol.returnType.asPsiType(this@FirLightFieldForEnumEntry)
-        } ?: nonExistentType()
+        enumEntrySymbol.returnType.asPsiType(this@FirLightFieldForEnumEntry) ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type
