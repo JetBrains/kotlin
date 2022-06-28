@@ -551,6 +551,7 @@ class DurationTest {
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
+            "P3W",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
