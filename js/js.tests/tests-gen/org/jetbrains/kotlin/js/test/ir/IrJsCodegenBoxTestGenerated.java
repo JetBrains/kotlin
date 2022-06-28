@@ -10159,6 +10159,34 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/dataObjects")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DataObjects {
+        @Test
+        public void testAllFilesPresentInDataObjects() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataObjects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("equals.kt")
+        public void testEquals() throws Exception {
+            runTest("compiler/testData/codegen/box/dataObjects/equals.kt");
+        }
+
+        @Test
+        @TestMetadata("hashCode.kt")
+        public void testHashCode() throws Exception {
+            runTest("compiler/testData/codegen/box/dataObjects/hashCode.kt");
+        }
+
+        @Test
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            runTest("compiler/testData/codegen/box/dataObjects/toString.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
     @TestDataPath("$PROJECT_ROOT")
     public class DeadCodeElimination {

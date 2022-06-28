@@ -32,7 +32,7 @@ class Experiment {
     annotation class Type
 
     @Type
-    data class Group(s: String)
+    data class Group(var s: String)
 }
 
 class Foo {

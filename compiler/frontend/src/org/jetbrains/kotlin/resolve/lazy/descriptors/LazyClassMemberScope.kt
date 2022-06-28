@@ -482,7 +482,7 @@ open class LazyClassMemberScope(
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        if (!thisDescriptor.isData) return
+        if (!thisDescriptor.isData || thisDescriptor.kind != ClassKind.CLASS) return
 
         if (getPrimaryConstructor() == null) return
 

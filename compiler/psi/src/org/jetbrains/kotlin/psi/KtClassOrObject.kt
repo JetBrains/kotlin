@@ -100,6 +100,8 @@ abstract class KtClassOrObject :
 
     override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
 
+    fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
+
     override fun getDeclarations(): List<KtDeclaration> = getBody()?.declarations.orEmpty()
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)

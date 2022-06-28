@@ -6957,6 +6957,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("companionDataObject.kt")
+            public void testCompanionDataObject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/companionDataObject.kt");
+            }
+
+            @Test
             @TestMetadata("componentNamedComponent1.kt")
             public void testComponentNamedComponent1() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/dataClasses/componentNamedComponent1.kt");
@@ -7029,9 +7035,21 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("dataObject.kt")
-            public void testDataObject() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/dataClasses/dataObject.kt");
+            @TestMetadata("dataObjectDisabled.kt")
+            public void testDataObjectDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectDisabled.kt");
+            }
+
+            @Test
+            @TestMetadata("dataObjectEnabled.kt")
+            public void testDataObjectEnabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectEnabled.kt");
+            }
+
+            @Test
+            @TestMetadata("dataObjectLiteral.kt")
+            public void testDataObjectLiteral() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataClasses/dataObjectLiteral.kt");
             }
 
             @Test
@@ -7652,6 +7670,22 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 public void testSmartcastsForStableIdentifiers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts/SmartcastsForStableIdentifiers.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/dataObjects")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DataObjects {
+            @Test
+            public void testAllFilesPresentInDataObjects() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataObjects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("overrideEqualsAndHashCode.kt")
+            public void testOverrideEqualsAndHashCode() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/dataObjects/overrideEqualsAndHashCode.kt");
             }
         }
 

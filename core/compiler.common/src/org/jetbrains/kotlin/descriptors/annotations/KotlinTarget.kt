@@ -34,8 +34,9 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     // includes only top level classes and nested/inner classes (but not enums, objects, interfaces and local classes)
     CLASS_ONLY("class", false),
 
-    // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
+    // does not include OBJECT_LITERAL but DOES include both STANDALONE_OBJECT and COMPANION_OBJECT
     OBJECT("object", false),
+    STANDALONE_OBJECT("standalone object", false),
     COMPANION_OBJECT("companion object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
@@ -84,7 +85,7 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         val LOCAL_CLASS_LIST = listOf(LOCAL_CLASS, CLASS)
         val CLASS_LIST = listOf(CLASS_ONLY, CLASS)
         val COMPANION_OBJECT_LIST = listOf(COMPANION_OBJECT, OBJECT, CLASS)
-        val OBJECT_LIST = listOf(OBJECT, CLASS)
+        val OBJECT_LIST = listOf(STANDALONE_OBJECT, OBJECT, CLASS)
         val INTERFACE_LIST = listOf(INTERFACE, CLASS)
         val ENUM_LIST = listOf(ENUM_CLASS, CLASS)
         val ENUM_ENTRY_LIST = listOf(ENUM_ENTRY, PROPERTY, FIELD)

@@ -38,7 +38,7 @@ class Experiment {
     annotation class Type
 
     @Type
-    data class Group(s: String)
+    data class Group(val s: String)
 }
 
 class Foo {

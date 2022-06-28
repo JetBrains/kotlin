@@ -2073,6 +2073,11 @@ internal class TailRecursionInTryIsNotSupportedImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.TailRecursionInTryIsNotSupported(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class DataObjectCustomEqualsOrHashCodeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DataObjectCustomEqualsOrHashCode(), KtAbstractFirDiagnostic<KtNamedFunction>
+
 internal class FunInterfaceConstructorReferenceImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

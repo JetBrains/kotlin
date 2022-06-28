@@ -132,7 +132,8 @@ val featureDependencies = mapOf(
     EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
-    FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion)
+    FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion),
+    DATA_KEYWORD to listOf(LanguageFeature.DataObjects)
 )
 
 val featureDependenciesTargets = mapOf(
@@ -141,7 +142,8 @@ val featureDependenciesTargets = mapOf(
     LanguageFeature.LateinitTopLevelProperties to setOf(KotlinTarget.TOP_LEVEL_PROPERTY),
     LanguageFeature.InlineClasses to setOf(KotlinTarget.CLASS_ONLY),
     LanguageFeature.JvmInlineValueClasses to setOf(KotlinTarget.CLASS_ONLY),
-    LanguageFeature.FunctionalInterfaceConversion to setOf(KotlinTarget.INTERFACE)
+    LanguageFeature.FunctionalInterfaceConversion to setOf(KotlinTarget.INTERFACE),
+    LanguageFeature.DataObjects to setOf(KotlinTarget.STANDALONE_OBJECT)
 )
 
 val defaultVisibilityTargets: EnumSet<KotlinTarget> = EnumSet.of(
@@ -204,7 +206,7 @@ val possibleTargetMap = mapOf(
         KotlinTarget.LOCAL_VARIABLE,
         KotlinTarget.BACKING_FIELD
     ),
-    DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS),
+    DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
     INLINE_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,

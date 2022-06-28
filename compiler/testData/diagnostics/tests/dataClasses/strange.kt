@@ -3,8 +3,8 @@
     B(2)
 }
 
-<!WRONG_MODIFIER_TARGET!>data<!> object <!DATA_CLASS_WITHOUT_PARAMETERS!>Second<!>
+<!UNSUPPORTED_FEATURE!>data<!> object Second
 
-<!WRONG_MODIFIER_TARGET!>data<!> interface <!DATA_CLASS_WITHOUT_PARAMETERS!>Third<!>
+<!WRONG_MODIFIER_TARGET!>data<!> interface Third
 
 <!WRONG_MODIFIER_TARGET!>data<!> annotation class Fourth(val x: Int)

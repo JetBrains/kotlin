@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 
@@ -35,6 +37,11 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
 
     @Override
     public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
+        if (getDeclaration() instanceof KtObjectDeclaration) {
+            generateJsMethod(function).getBody().getStatements().add(new JsReturn(new JsStringLiteral(getDeclaration().getName())));
+            return;
+        }
+
         // TODO: relax this limitation, with the data generation logic fixed.
         assert !classProperties.isEmpty();
         JsFunction functionObj = generateJsMethod(function);
@@ -65,6 +72,14 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
     @Override
     public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
         JsFunction functionObj = generateJsMethod(function);
+        if (classProperties.isEmpty()) {
+            FqName fqName = getDeclaration().getFqName();
+            JsExpression returnExpression = new JsIntLiteral(fqName != null ? fqName.hashCode() : 0);
+            JsReturn returnStatement = new JsReturn(returnExpression);
+            returnStatement.setSource(getDeclaration());
+            functionObj.getBody().getStatements().add(returnStatement);
+            return;
+        }
 
         List<JsStatement> statements = functionObj.getBody().getStatements();
 
@@ -92,8 +107,8 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
 
     @Override
     public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> classProperties) {
-        assert !classProperties.isEmpty();
         JsFunction functionObj = generateJsMethod(function);
+
         JsFunctionScope funScope = functionObj.getScope();
 
         JsName paramName = funScope.declareName("other");
@@ -120,9 +135,8 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
                 fieldChain = and(fieldChain, next);
             }
         }
-        assert fieldChain != null;
 
-        JsExpression returnExpression = or(referenceEqual, and(isNotNull, and(otherIsObject, and(prototypeEqual, fieldChain))));
+        JsExpression returnExpression = or(referenceEqual, and(isNotNull, and(otherIsObject, fieldChain != null ? and(prototypeEqual, fieldChain) : prototypeEqual)));
         JsReturn returnStatement = new JsReturn(returnExpression);
         returnStatement.setSource(getDeclaration());
         functionObj.getBody().getStatements().add(returnStatement);

@@ -1729,6 +1729,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = TailRecursionInTryIsNotSupported::class
     }
 
+    abstract class DataObjectCustomEqualsOrHashCode : KtFirDiagnostic<KtNamedFunction>() {
+        override val diagnosticClass get() = DataObjectCustomEqualsOrHashCode::class
+    }
+
     abstract class FunInterfaceConstructorReference : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = FunInterfaceConstructorReference::class
     }

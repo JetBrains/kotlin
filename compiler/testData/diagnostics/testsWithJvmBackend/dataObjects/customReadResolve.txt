@@ -1,0 +1,26 @@
+package
+
+public data object A : java.io.Serializable {
+    private constructor A()
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    private final fun readResolve(): kotlin.Any
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public data object B : java.io.Serializable {
+    private constructor B()
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    private final fun readResolve(): B
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public data object C {
+    private constructor C()
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    private final fun readResolve(): kotlin.Any
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+

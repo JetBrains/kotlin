@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.DATA_KEYWORD
 import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker() {
@@ -182,7 +184,11 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             }
             val set = map[modifierToken] ?: emptySet()
             val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
-                actualTargets.none { it in set }
+                actualTargets.none { it in set } ||
+                        // TODO: Implement some generic feature-checking mechanism
+                        (modifierToken == DATA_KEYWORD
+                                && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
+                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.DataObjects))
             } else {
                 actualTargets.any { it in set }
             }

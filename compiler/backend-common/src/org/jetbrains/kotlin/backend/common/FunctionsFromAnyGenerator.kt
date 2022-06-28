@@ -21,11 +21,9 @@ abstract class FunctionsFromAnyGenerator(protected val declaration: KtClassOrObj
 
     open fun generate() {
         val properties = primaryConstructorProperties
-        if (properties.isNotEmpty()) {
-            generateToStringIfNeeded(properties)
-            generateHashCodeIfNeeded(properties)
-            generateEqualsIfNeeded(properties)
-        }
+        generateToStringIfNeeded(properties)
+        generateHashCodeIfNeeded(properties)
+        generateEqualsIfNeeded(properties)
     }
 
     protected abstract fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>)

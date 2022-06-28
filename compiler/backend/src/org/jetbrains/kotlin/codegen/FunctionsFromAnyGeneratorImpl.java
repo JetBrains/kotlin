@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
@@ -103,42 +105,46 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
         mv.visitCode();
 
-        StringConcatGenerator generator = StringConcatGenerator.Companion.create(generationState, iv);
-        generator.genStringBuilderConstructorIfNeded();
-        boolean first = true;
+        if (properties.isEmpty()) {
+            iv.aconst(classDescriptor.getName().asString());
+        } else {
+            StringConcatGenerator generator = StringConcatGenerator.Companion.create(generationState, iv);
+            generator.genStringBuilderConstructorIfNeded();
+            boolean first = true;
 
-        for (PropertyDescriptor propertyDescriptor : properties) {
-            if (first) {
-                generator.addStringConstant(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString() + "=");
-                first = false;
-            }
-            else {
-                generator.addStringConstant(", " + propertyDescriptor.getName().asString() + "=");
-            }
-
-            JvmKotlinType type = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
-            Type asmType = type.getType();
-            KotlinType kotlinType = type.getKotlinType();
-
-            if (asmType.getSort() == Type.ARRAY) {
-                Type elementType = correctElementType(asmType);
-                if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                    iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
-                    asmType = JAVA_STRING_TYPE;
-                    kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
+            for (PropertyDescriptor propertyDescriptor : properties) {
+                if (first) {
+                    generator.addStringConstant(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString() + "=");
+                    first = false;
                 }
-                else if (elementType.getSort() != Type.CHAR) {
-                    iv.invokestatic("java/util/Arrays", "toString", "(" + asmType.getDescriptor() + ")Ljava/lang/String;", false);
-                    asmType = JAVA_STRING_TYPE;
-                    kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
+                else {
+                    generator.addStringConstant(", " + propertyDescriptor.getName().asString() + "=");
                 }
+
+                JvmKotlinType type = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
+                Type asmType = type.getType();
+                KotlinType kotlinType = type.getKotlinType();
+
+                if (asmType.getSort() == Type.ARRAY) {
+                    Type elementType = correctElementType(asmType);
+                    if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
+                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
+                        asmType = JAVA_STRING_TYPE;
+                        kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
+                    }
+                    else if (elementType.getSort() != Type.CHAR) {
+                        iv.invokestatic("java/util/Arrays", "toString", "(" + asmType.getDescriptor() + ")Ljava/lang/String;", false);
+                        asmType = JAVA_STRING_TYPE;
+                        kotlinType = DescriptorUtilsKt.getBuiltIns(function).getStringType();
+                    }
+                }
+                genInvokeAppendMethod(generator, asmType, kotlinType, typeMapper, StackValue.onStack(asmType));
             }
-            genInvokeAppendMethod(generator, asmType, kotlinType, typeMapper, StackValue.onStack(asmType));
+
+            generator.addStringConstant(")");
+
+            generator.genToString();
         }
-
-        generator.addStringConstant(")");
-
-        generator.genToString();
         iv.areturn(JAVA_STRING_TYPE);
 
         FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
@@ -175,41 +181,45 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
-        boolean first = true;
-        for (PropertyDescriptor propertyDescriptor : properties) {
-            if (!first) {
-                iv.iconst(31);
-                iv.mul(Type.INT_TYPE);
-            }
+        if (properties.isEmpty()) {
+            iv.iconst(DescriptorUtils.getFqNameSafe(classDescriptor).asString().hashCode());
+        } else {
+            boolean first = true;
+            for (PropertyDescriptor propertyDescriptor : properties) {
+                if (!first) {
+                    iv.iconst(31);
+                    iv.mul(Type.INT_TYPE);
+                }
 
-            JvmKotlinType propertyType = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
-            KotlinType kotlinType = propertyDescriptor.getReturnType();
-            Type asmType = typeMapper.mapType(kotlinType);
-            StackValue.coerce(propertyType.getType(), propertyType.getKotlinType(), asmType, kotlinType, iv);
+                JvmKotlinType propertyType = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
+                KotlinType kotlinType = propertyDescriptor.getReturnType();
+                Type asmType = typeMapper.mapType(kotlinType);
+                StackValue.coerce(propertyType.getType(), propertyType.getKotlinType(), asmType, kotlinType, iv);
 
-            Label ifNull = null;
-            if (!isPrimitive(asmType)) {
-                ifNull = new Label();
-                iv.dup();
-                iv.ifnull(ifNull);
-            }
+                Label ifNull = null;
+                if (!isPrimitive(asmType)) {
+                    ifNull = new Label();
+                    iv.dup();
+                    iv.ifnull(ifNull);
+                }
 
-            genHashCode(mv, iv, asmType, generationState.getTarget());
+                genHashCode(mv, iv, asmType, generationState.getTarget());
 
-            if (ifNull != null) {
-                Label end = new Label();
-                iv.goTo(end);
-                iv.mark(ifNull);
-                iv.pop();
-                iv.iconst(0);
-                iv.mark(end);
-            }
+                if (ifNull != null) {
+                    Label end = new Label();
+                    iv.goTo(end);
+                    iv.mark(ifNull);
+                    iv.pop();
+                    iv.iconst(0);
+                    iv.mark(end);
+                }
 
-            if (first) {
-                first = false;
-            }
-            else {
-                iv.add(Type.INT_TYPE);
+                if (first) {
+                    first = false;
+                }
+                else {
+                    iv.add(Type.INT_TYPE);
+                }
             }
         }
 

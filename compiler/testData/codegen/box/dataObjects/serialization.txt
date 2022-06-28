@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class NonSerializableDataObject {
+    // source: 'serialization.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: NonSerializableDataObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SerializableDataObject {
+    // source: 'serialization.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: SerializableDataObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    private final method readResolve(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SerializationKt {
+    // source: 'serialization.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

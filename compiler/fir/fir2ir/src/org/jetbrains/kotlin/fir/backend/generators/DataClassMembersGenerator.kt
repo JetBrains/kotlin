@@ -87,6 +87,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             IrGeneratorContextBase(components.irBuiltIns),
             components.symbolTable,
             irClass,
+            irClass.kotlinFqName,
             origin
         ) {
             override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
@@ -183,9 +184,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         fun generate(klass: FirClass): List<FirDeclaration> {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
-            if (properties.isEmpty()) {
-                return emptyList()
-            }
 
             val result = mutableListOf<FirDeclaration>()
 

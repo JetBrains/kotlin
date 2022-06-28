@@ -353,6 +353,7 @@ private val jvmFilePhases = listOf(
 
     enumClassPhase,
     objectClassPhase,
+    readResolveForDataObjectsPhase,
     staticInitializersPhase,
     initializersPhase,
     initializersCleanupPhase,

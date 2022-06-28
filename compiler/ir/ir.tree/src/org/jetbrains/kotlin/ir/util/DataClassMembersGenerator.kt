@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -32,6 +33,7 @@ abstract class DataClassMembersGenerator(
     val context: IrGeneratorContext,
     val symbolTable: ReferenceSymbolTable,
     val irClass: IrClass,
+    val fqName: FqName?,
     val origin: IrDeclarationOrigin,
     val forbidDirectFieldAccess: Boolean = false,
     val generateBodies: Boolean = false
@@ -139,9 +141,9 @@ abstract class DataClassMembersGenerator(
             +irReturnTrue()
         }
 
-        fun generateHashCodeMethodBody(properties: List<IrProperty>) {
+        fun generateHashCodeMethodBody(properties: List<IrProperty>, constHashCode: Int) {
             if (properties.isEmpty()) {
-                +irReturn(irInt(0))
+                +irReturn(irInt(constHashCode))
                 return
             } else if (properties.size == 1) {
                 +irReturn(getHashCodeOfProperty(properties[0]))
@@ -186,6 +188,10 @@ abstract class DataClassMembersGenerator(
         }
 
         fun generateToStringMethodBody(properties: List<IrProperty>) {
+            if (properties.isEmpty() && irClass.kind == ClassKind.OBJECT) {
+                +irReturn(irString(irClass.name.asString()))
+                return
+            }
             val irConcat = irConcat()
             irConcat.addArgument(irString(irClass.classNameForToString() + "("))
             var first = true
@@ -259,6 +265,7 @@ abstract class DataClassMembersGenerator(
     ) {
         MemberFunctionBuilder(startOffset, endOffset, declareSimpleFunction(startOffset, endOffset, function)).addToClass { irFunction ->
             irFunction.buildWithScope {
+                irFunction.parent = irClass
                 generateSyntheticFunctionParameterDeclarations(irFunction)
                 body(irFunction)
             }
@@ -344,14 +351,20 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateHashCodeMethodBody(properties.map { getIrProperty(it) })
+            generateHashCodeMethodBody(
+                properties.map { getIrProperty(it) },
+                if (irClass.kind == ClassKind.OBJECT && irClass.isData) fqName.hashCode() else 0
+            )
         }
     }
 
     // Entry for fir2ir
     fun generateHashCodeMethod(irFunction: IrFunction, properties: List<IrProperty>) {
         buildMember(irFunction) {
-            generateHashCodeMethodBody(properties)
+            generateHashCodeMethodBody(
+                properties,
+                if (irClass.kind == ClassKind.OBJECT && irClass.isData) fqName.hashCode() else 0
+            )
         }
     }
 
