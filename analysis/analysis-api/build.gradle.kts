@@ -8,6 +8,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(kotlinxCollectionsImmutable())
     compileOnly(project(":kotlin-reflect-api"))
 
     compileOnly(project(":compiler:psi"))

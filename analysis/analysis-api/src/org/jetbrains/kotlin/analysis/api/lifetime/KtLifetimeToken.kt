@@ -22,8 +22,8 @@ public abstract class KtLifetimeTokenFactory {
     public abstract val identifier: KClass<out KtLifetimeToken>
     public abstract fun create(project: Project): KtLifetimeToken
 
-    public open fun beforeEnteringAnalysisContext() {}
-    public open fun afterLeavingAnalysisContext() {}
+    public open fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {}
+    public open fun afterLeavingAnalysisContext(token: KtLifetimeToken) {}
 }
 
 

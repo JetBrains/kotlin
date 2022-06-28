@@ -9,10 +9,10 @@ package org.jetbrains.kotlin.analysis.api.lifetime
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisAllowanceManager
-
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
 @OptIn(KtAllowAnalysisOnEdt::class)
@@ -35,6 +35,7 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
         if (KtAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
         if (!KtReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return false
+        if (KtReadActionConfinementLifetimeTokenFactory.currentToken() != this) return false
         return true
     }
 
@@ -46,6 +47,8 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
             return "Resolve is forbidden in $actionName"
         }
         if (!KtReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
+        if (KtReadActionConfinementLifetimeTokenFactory.currentToken() != this) return "Using KtLifetimeOwner from previous analysis"
+
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
@@ -63,19 +66,24 @@ public object KtReadActionConfinementLifetimeTokenFactory : KtLifetimeTokenFacto
 
     override fun create(project: Project): KtLifetimeToken = KtReadActionConfinementLifetimeToken(project)
 
-    override fun beforeEnteringAnalysisContext() {
-        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
+    override fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {
+        lifetimeOwnersStack.set(lifetimeOwnersStack.get().add(token))
     }
 
-    override fun afterLeavingAnalysisContext() {
-        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() - 1)
+    override fun afterLeavingAnalysisContext(token: KtLifetimeToken) {
+        val stack = lifetimeOwnersStack.get()
+        val last = stack.last()
+        check(last == token)
+        lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
     }
 
-    private val currentAnalysisContextEnteringCount = ThreadLocal.withInitial { 0 }
+    private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KtLifetimeToken>> { persistentListOf() }
 
-    internal fun isInsideAnalysisContext() = currentAnalysisContextEnteringCount.get() > 0
+    internal fun isInsideAnalysisContext() = lifetimeOwnersStack.get().size > 0
 
+    internal fun currentToken() = lifetimeOwnersStack.get().last()
 }
+
 /**
  *
  * @see KtAnalysisSession
