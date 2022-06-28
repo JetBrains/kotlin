@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsLocal
 import org.jetbrains.kotlin.asJava.classes.safeScript
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassDataHolder
 import org.jetbrains.kotlin.cli.jvm.compiler.builder.buildLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -38,16 +37,10 @@ object CliExtraDiagnosticsProvider {
         }
 
         val containingScript = kclass.containingKtFile.safeScript()
-        val lightClassDataHolder = when {
+        return when {
             !kclass.safeIsLocal() && containingScript != null -> getLightClassCachedValue(containingScript).value
             else -> getLightClassCachedValue(kclass).value
-        }
-
-        return if (lightClassDataHolder is InvalidLightClassDataHolder) {
-            Diagnostics.EMPTY
-        } else {
-            lightClassDataHolder.extraDiagnostics
-        }
+        }.extraDiagnostics
     }
 
     fun forFacade(file: KtFile, moduleScope: GlobalSearchScope): Diagnostics {
