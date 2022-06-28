@@ -67,6 +67,10 @@ class IrLazyFunction(
         if (tryLoadIr()) extensionReceiverParameter else createReceiverParameter(descriptor.extensionReceiverParameter)
     }
 
+    override var hasExtensionReceiver: Boolean by lazyVar(stubGenerator.lock) {
+        if (tryLoadIr()) hasExtensionReceiver else descriptor.extensionReceiverParameter != null
+    }
+
     override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) {
         if (tryLoadIr()) valueParameters else createValueParameters()
     }
