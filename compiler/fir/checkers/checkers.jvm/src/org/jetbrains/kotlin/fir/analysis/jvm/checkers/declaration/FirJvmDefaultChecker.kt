@@ -114,7 +114,6 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
     ) {
         if (defaultAnnotation != null || jvmDefaultMode.forAllMethodsWithBody) return
         val member = declaration as? FirSimpleFunction ?: return
-        if (declaration is FirPropertyAccessor) return
 
         val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
         if (containingDeclaration is FirClass && containingDeclaration.isInterface) {
@@ -141,7 +140,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    fun FirCallableSymbol<*>.getOverriddenDeclarations(): List<FirCallableSymbol<*>> {
+    private fun FirCallableSymbol<*>.getOverriddenDeclarations(): List<FirCallableSymbol<*>> {
         return if (this is FirIntersectionCallableSymbol) {
             ArrayList(this.intersections)
         } else {
