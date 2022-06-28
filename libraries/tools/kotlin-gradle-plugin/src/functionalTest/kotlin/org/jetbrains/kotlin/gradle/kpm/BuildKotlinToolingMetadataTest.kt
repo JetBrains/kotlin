@@ -57,13 +57,13 @@ class BuildKotlinToolingMetadataTest : AbstractKpmExtensionTest() {
         assertEquals(3, metadata.projectTargets.size, "Expected 3 targets in KPM")
 
         val jvmTarget = metadata.projectTargets.single { it.platformType == jvm.name }
-        assertEquals(GradleKpmJvmVariant::class.java.canonicalName, jvmTarget.target)
+        assertEquals(GradleKpmJvmVariant::class.decoratedClassCanonicalName, jvmTarget.target)
 
         val nativeTargets = metadata.projectTargets.filter { it.platformType == native.name }.map { it.target }.toSet()
         assertEquals(
             setOf(
-                GradleKpmLinuxArm64Variant::class.java.canonicalName,
-                GradleKpmLinuxX64Variant::class.java.canonicalName
+                GradleKpmLinuxArm64Variant::class.decoratedClassCanonicalName,
+                GradleKpmLinuxX64Variant::class.decoratedClassCanonicalName,
             ),
             nativeTargets
         )
@@ -134,7 +134,7 @@ class KotlinToolingMetadataWithModelMappingTest {
 
         expectedTargets.forEach { (platformType, targetClass) ->
             assertEquals(
-                targetClass.java.canonicalName,
+                targetClass.decoratedClassCanonicalName,
                 metadata.projectTargets.single { it.platformType == platformType.name }.target,
                 "Platform '$platformType' has different target class"
             )
@@ -212,11 +212,11 @@ class KotlinToolingMetadataWithModelMappingTest {
         )
 
         assertEquals(
-            GradleKpmLinuxArm64Variant::class.java.canonicalName,
+            GradleKpmLinuxArm64Variant::class.decoratedClassCanonicalName,
             linuxArm64.target
         )
         assertEquals(
-            GradleKpmLinuxX64Variant::class.java.canonicalName,
+            GradleKpmLinuxX64Variant::class.decoratedClassCanonicalName,
             linuxX64.target
         )
     }

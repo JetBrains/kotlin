@@ -30,7 +30,7 @@ import java.util.concurrent.Callable
 import javax.inject.Inject
 import kotlin.reflect.full.functions
 
-open class KotlinJvmTarget @Inject constructor(
+abstract class KotlinJvmTarget @Inject constructor(
     project: Project
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {

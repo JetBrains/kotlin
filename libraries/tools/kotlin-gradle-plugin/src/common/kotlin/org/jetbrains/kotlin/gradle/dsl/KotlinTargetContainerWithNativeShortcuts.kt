@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -68,8 +67,8 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     fun ios() = ios("ios") { }
     fun ios(namePrefix: String) = ios(namePrefix) { }
-    fun ios(namePrefix: String, configure: Closure<*>) = ios(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun ios(configure: Closure<*>) = ios { ConfigureUtil.configure(configure, this) }
+    fun ios(namePrefix: String, configure: Action<KotlinNativeTarget>) = ios(namePrefix) { configure.execute(this) }
+    fun ios(configure: Action<KotlinNativeTarget>) = ios { configure.execute(this) }
 
     fun tvos(
         namePrefix: String = "tvos",
@@ -85,8 +84,8 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     fun tvos() = tvos("tvos") { }
     fun tvos(namePrefix: String) = tvos(namePrefix) { }
-    fun tvos(namePrefix: String, configure: Closure<*>) = tvos(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun tvos(configure: Closure<*>) = tvos { ConfigureUtil.configure(configure, this) }
+    fun tvos(namePrefix: String, configure: Action<KotlinNativeTarget>) = tvos(namePrefix) { configure.execute(this) }
+    fun tvos(configure: Action<KotlinNativeTarget>) = tvos { configure.execute(this) }
 
     fun watchos(
         namePrefix: String = "watchos",
@@ -113,6 +112,6 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     fun watchos() = watchos("watchos") { }
     fun watchos(namePrefix: String) = watchos(namePrefix) { }
-    fun watchos(namePrefix: String, configure: Closure<*>) = watchos(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun watchos(configure: Closure<*>) = watchos { ConfigureUtil.configure(configure, this) }
+    fun watchos(namePrefix: String, configure: Action<KotlinNativeTarget>) = watchos(namePrefix) { configure.execute(this) }
+    fun watchos(configure: Action<KotlinNativeTarget>) = watchos { configure.execute(this) }
 }

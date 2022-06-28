@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.reportJsCompilerMode
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
@@ -48,30 +47,33 @@ interface KotlinTargetContainerWithJsPresetFunctions :
 
     fun js() = jsInternal(name = "js") { }
     fun js(name: String) = jsInternal(name = name) { }
-    fun js(name: String, configure: Closure<*>) = jsInternal(name = name) { ConfigureUtil.configure(configure, this) }
-    fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) = js(compiler = compiler) { ConfigureUtil.configure(configure, this) }
-    fun js(configure: Closure<*>) = jsInternal { ConfigureUtil.configure(configure, this) }
+    fun js(name: String, configure: Action<KotlinJsTargetDsl>) = jsInternal(name = name) { configure.execute(this) }
+    fun js(compiler: KotlinJsCompilerType, configure: Action<KotlinJsTargetDsl>) = js(compiler = compiler) {
+        configure.execute(this)
+    }
+
+    fun js(configure: Action<KotlinJsTargetDsl>) = jsInternal { configure.execute(this) }
 
     fun js(
         name: String,
         compiler: KotlinJsCompilerType,
-        configure: Closure<*>
+        configure: Action<KotlinJsTargetDsl>
     ) = js(
         name = name,
         compiler = compiler
     ) {
-        ConfigureUtil.configure(configure, this)
+        configure.execute(this)
     }
 
     fun js(
         name: String,
         compiler: String,
-        configure: Closure<*>
+        configure: Action<KotlinJsTargetDsl>
     ) = js(
         name = name,
         compiler = compiler
     ) {
-        ConfigureUtil.configure(configure, this)
+        configure.execute(this)
     }
 }
 

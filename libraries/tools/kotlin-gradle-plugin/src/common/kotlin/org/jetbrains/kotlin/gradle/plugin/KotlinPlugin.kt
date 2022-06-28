@@ -604,13 +604,15 @@ internal open class KotlinPlugin(
         Kotlin2JvmSourceSetProcessor(tasksProvider, compilation)
 
     override fun apply(project: Project) {
-        val target =
-            KotlinWithJavaTarget<KotlinJvmOptions>(
-                project,
-                KotlinPlatformType.jvm,
-                targetName,
-                { KotlinJvmOptionsImpl() }
-            ).apply {
+        @Suppress("UNCHECKED_CAST")
+        val target = (project.objects.newInstance(
+            KotlinWithJavaTarget::class.java,
+            project,
+            KotlinPlatformType.jvm,
+            targetName,
+            { KotlinJvmOptionsImpl() }
+        ) as KotlinWithJavaTarget<KotlinJvmOptions>)
+            .apply {
                 disambiguationClassifier = null // don't add anything to the task names
             }
 
@@ -644,12 +646,14 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(compilation, tasksProvider)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(
+        @Suppress("UNCHECKED_CAST")
+        val target = project.objects.newInstance(
+            KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.common,
             targetName,
             { KotlinMultiplatformCommonOptionsImpl() }
-        )
+        ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
@@ -675,7 +679,14 @@ internal open class Kotlin2JsPlugin(
         Kotlin2JsSourceSetProcessor(tasksProvider, compilation)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName, { KotlinJsOptionsImpl() })
+        @Suppress("UNCHECKED_CAST")
+        val target = project.objects.newInstance(
+            KotlinWithJavaTarget::class.java,
+            project,
+            KotlinPlatformType.js,
+            targetName,
+            { KotlinJsOptionsImpl() }
+        ) as KotlinWithJavaTarget<KotlinJsOptions>
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
         super.apply(project)
@@ -691,7 +702,11 @@ internal open class KotlinAndroidPlugin(
 
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
-                KotlinAndroidTarget("", project).also {
+                project.objects.newInstance(
+                    KotlinAndroidTarget::class.java,
+                    "",
+                    project
+                ).also {
                     (project.kotlinExtension as KotlinAndroidProjectExtension).target = it
                 }
             }

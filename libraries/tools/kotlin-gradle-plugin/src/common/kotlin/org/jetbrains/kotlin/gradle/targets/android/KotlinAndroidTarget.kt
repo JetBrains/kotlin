@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
+import javax.inject.Inject
 
-open class KotlinAndroidTarget(
+abstract class KotlinAndroidTarget @Inject constructor(
     override val targetName: String,
     project: Project
 ) : AbstractKotlinTarget(project) {
