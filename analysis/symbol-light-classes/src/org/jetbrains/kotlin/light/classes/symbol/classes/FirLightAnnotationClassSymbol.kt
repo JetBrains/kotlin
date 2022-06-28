@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 
+context(KtAnalysisSession)
 internal class FirLightAnnotationClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
@@ -36,17 +38,12 @@ internal class FirLightAnnotationClassSymbol(
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-
         val result = mutableListOf<KtLightMethod>()
+        val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+            .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
+            .filterNot { it is KtConstructorSymbol }
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
-                .filterNot { it is KtConstructorSymbol }
-
-            createMethods(visibleDeclarations, result)
-        }
-
+        createMethods(visibleDeclarations, result)
         result
     }
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
+context(KtAnalysisSession)
 internal open class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
@@ -72,31 +73,30 @@ internal open class FirLightClassForSymbol(
 
         val result = mutableListOf<KtLightMethod>()
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
+        val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
 
-            val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
-                filterNot { function ->
-                    function is KtFunctionSymbol &&
-                            (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
-                }
-            }.applyIf(classOrObjectSymbol.isObject) {
-                filterNot {
-                    it is KtKotlinPropertySymbol && it.isConst
-                }
-            }.applyIf(classOrObjectSymbol.isData) {
-                // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
-                // They're just needed to be added later (to be in a backward-compatible order of members).
-                filterNot { function ->
-                    function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
-                }
+        val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
+            filterNot { function ->
+                function is KtFunctionSymbol &&
+                        (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
             }
-
-            val suppressStatic = isCompanionObject
-            createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)
-
-            createConstructors(declaredMemberScope.getConstructors(), result)
+        }.applyIf(classOrObjectSymbol.isObject) {
+            filterNot {
+                it is KtKotlinPropertySymbol && it.isConst
+            }
+        }.applyIf(classOrObjectSymbol.isData) {
+            // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
+            // They're just needed to be added later (to be in a backward-compatible order of members).
+            filterNot { function ->
+                function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            }
         }
+
+        val suppressStatic = isCompanionObject
+        createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)
+
+        createConstructors(declaredMemberScope.getConstructors(), result)
+
 
         addMethodsFromCompanionIfNeeded(result)
 
@@ -114,17 +114,13 @@ internal open class FirLightClassForSymbol(
             val lightMemberOrigin = LightMemberOriginForDeclaration(this.kotlinOrigin!!, JvmDeclarationOriginKind.OTHER)
             result.add(
                 FirLightSimpleMethodForSymbol(
-                    functionSymbol = ktFunctionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = this,
-                    isTopLevel = false,
-                    methodIndex = METHOD_INDEX_BASE,
+                    ktFunctionSymbol, lightMemberOrigin, this, METHOD_INDEX_BASE, false,
                     suppressStatic = false
                 )
             )
         }
 
-        fun KtAnalysisSession.actuallyComesFromAny(functionSymbol: KtFunctionSymbol): Boolean {
+        fun actuallyComesFromAny(functionSymbol: KtFunctionSymbol): Boolean {
             require(functionSymbol.name.isFromAny) {
                 "This function's name should one of three Any's function names, but it was ${functionSymbol.name}"
             }
@@ -136,56 +132,52 @@ internal open class FirLightClassForSymbol(
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
         // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
-                .getCallableSymbols { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
-                .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
-                .filterIsInstance<KtFunctionSymbol>()
+        val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
+            .getCallableSymbols { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
+            .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
+            .filterIsInstance<KtFunctionSymbol>()
 
-            createMethods(componentAndCopyFunctions, result)
+        createMethods(componentAndCopyFunctions, result)
 
-            // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
-            // We want to mimic that.
-            val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
-                .getCallableSymbols { name -> name.isFromAny }
-                .filterIsInstance<KtFunctionSymbol>()
-                .filterNot { it.modality == Modality.FINAL }
-                .filter { actuallyComesFromAny(it) }
+        // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
+        // We want to mimic that.
+        val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
+            .getCallableSymbols { name -> name.isFromAny }
+            .filterIsInstance<KtFunctionSymbol>()
+            .filterNot { it.modality == Modality.FINAL }
+            .filter { actuallyComesFromAny(it) }
 
-            val functionsFromAnyByName = nonFinalFunctionsFromAny.associateBy { it.name }
+        val functionsFromAnyByName = nonFinalFunctionsFromAny.associateBy { it.name }
 
-            // NB: functions from `Any` are not in an alphabetic order.
-            functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it) }
-            functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it) }
-            functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
-        }
+        // NB: functions from `Any` are not in an alphabetic order.
+        functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it) }
+        functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it) }
+        functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
     }
 
     private val Name.isFromAny: Boolean
         get() = this == EQUALS || this == HASHCODE_NAME || this == TO_STRING
 
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>) {
-
         fun createDelegateMethod(ktFunctionSymbol: KtFunctionSymbol) {
             val kotlinOrigin = ktFunctionSymbol.psi as? KtDeclaration ?: kotlinOrigin!!
             val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.DELEGATION)
             result.add(
                 FirLightSimpleMethodForSymbol(
-                    functionSymbol = ktFunctionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = this,
-                    isTopLevel = false,
-                    methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
+                    ktFunctionSymbol,
+                    lightMemberOrigin,
+                    this,
+                    METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
+                    false,
+                    argumentsSkipMask = null,
                     suppressStatic = false
                 )
             )
         }
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            classOrObjectSymbol.getDelegatedMemberScope().getCallableSymbols().forEach { functionSymbol ->
-                if (functionSymbol is KtFunctionSymbol) {
-                    createDelegateMethod(functionSymbol)
-                }
+        classOrObjectSymbol.getDelegatedMemberScope().getCallableSymbols().forEach { functionSymbol ->
+            if (functionSymbol is KtFunctionSymbol) {
+                createDelegateMethod(functionSymbol)
             }
         }
     }
@@ -211,41 +203,39 @@ internal open class FirLightClassForSymbol(
     }
 
     private fun addPropertyBackingFields(result: MutableList<KtLightField>) {
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtPropertySymbol>()
-                .applyIf(isCompanionObject) {
-                    // All fields for companion object of classes are generated to the containing class
-                    // For interfaces, only @JvmField-annotated properties are generated to the containing class
-                    // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
-                    filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
-                }
-            val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
-
-            val nameGenerator = FirLightField.FieldNameGenerator()
-
-            fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
-                val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-                val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
-
-                val forceStatic = classOrObjectSymbol.isObject
-                val takePropertyVisibility = !isCompanionObject && (isLateInit || isJvmField)
-
-                createField(
-                    declaration = propertySymbol,
-                    nameGenerator = nameGenerator,
-                    isTopLevel = false,
-                    forceStatic = forceStatic,
-                    takePropertyVisibility = takePropertyVisibility,
-                    result = result
-                )
+        val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+            .filterIsInstance<KtPropertySymbol>()
+            .applyIf(isCompanionObject) {
+                // All fields for companion object of classes are generated to the containing class
+                // For interfaces, only @JvmField-annotated properties are generated to the containing class
+                // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
+                filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
             }
+        val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
 
-            // First, properties from parameters
-            propertyGroups[true]?.forEach(::addPropertyBackingField)
-            // Then, regular member properties
-            propertyGroups[false]?.forEach(::addPropertyBackingField)
+        val nameGenerator = FirLightField.FieldNameGenerator()
+
+        fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
+            val isJvmField = propertySymbol.hasJvmFieldAnnotation()
+            val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
+
+            val forceStatic = classOrObjectSymbol.isObject
+            val takePropertyVisibility = !isCompanionObject && (isLateInit || isJvmField)
+
+            createField(
+                declaration = propertySymbol,
+                nameGenerator = nameGenerator,
+                isTopLevel = false,
+                forceStatic = forceStatic,
+                takePropertyVisibility = takePropertyVisibility,
+                result = result
+            )
         }
+
+        // First, properties from parameters
+        propertyGroups[true]?.forEach(::addPropertyBackingField)
+        // Then, regular member properties
+        propertyGroups[false]?.forEach(::addPropertyBackingField)
     }
 
     private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>) {
@@ -262,12 +252,10 @@ internal open class FirLightClassForSymbol(
     }
 
     private fun addFieldsForEnumEntries(result: MutableList<KtLightField>) {
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            if (isEnum) {
-                classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtEnumEntrySymbol>()
-                    .mapTo(result) { FirLightFieldForEnumEntry(it, this@FirLightClassForSymbol, null) }
-            }
+        if (isEnum) {
+            classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+                .filterIsInstance<KtEnumEntrySymbol>()
+                .mapTo(result) { FirLightFieldForEnumEntry(it, this@FirLightClassForSymbol, null) }
         }
     }
 

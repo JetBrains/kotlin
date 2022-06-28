@@ -9,16 +9,18 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.psi.KtParameter
 
+context(KtAnalysisSession)
 internal class FirLightParameterForReceiver private constructor(
     private val receiverType: KtType,
     private val context: KtSymbol,
@@ -27,11 +29,11 @@ internal class FirLightParameterForReceiver private constructor(
 ) : FirLightParameter(method) {
 
     companion object {
+       context (KtAnalysisSession)
         fun tryGet(
             callableSymbol: KtCallableSymbol,
             method: FirLightMethod
         ): FirLightParameterForReceiver? {
-
             if (callableSymbol !is KtNamedSymbol) return null
 
             if (!callableSymbol.isExtension) return null
@@ -71,9 +73,7 @@ internal class FirLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazyPub {
-        analyzeWithSymbolAsContext(context) {
-            receiverType.asPsiType(this@FirLightParameterForReceiver)
-        } ?: nonExistentType()
+        receiverType.asPsiType(this@FirLightParameterForReceiver) ?: nonExistentType()
     }
 
     override fun getType(): PsiType = _type

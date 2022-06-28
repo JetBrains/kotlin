@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.light.classes.symbol.elements.FirLightTypeParameter
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightTypeParameterListForSymbol(
     internal val owner: PsiTypeParameterListOwner,
     private val symbolWithTypeParameterList: KtSymbolWithTypeParameters,

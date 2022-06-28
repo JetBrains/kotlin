@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightConstructorForSymbol(
     private val constructorSymbol: KtConstructorSymbol,
     lightMemberOrigin: LightMemberOrigin?,

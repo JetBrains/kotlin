@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAM
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightSuspendContinuationParameter(
     private val functionSymbol: KtFunctionSymbol,
     private val containingMethod: FirLightMethod,
@@ -33,11 +36,9 @@ internal class FirLightSuspendContinuationParameter(
     override fun getType(): PsiType = _type
 
     private val _type by lazyPub {
-        analyzeWithSymbolAsContext(functionSymbol) {
-            buildClassType(StandardClassIds.Continuation) {
-                argument(functionSymbol.returnType)
-            }.asPsiType(this@FirLightSuspendContinuationParameter)
-        } ?: nonExistentType()
+        buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }
+            .asPsiType(this)
+            ?: nonExistentType()
     }
 
     override fun isVarArgs(): Boolean = false

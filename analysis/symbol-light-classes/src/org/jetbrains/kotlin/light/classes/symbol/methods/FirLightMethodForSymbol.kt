@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiParameterList
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
+context(KtAnalysisSession)
 internal abstract class FirLightMethodForSymbol(
     private val functionSymbol: KtFunctionLikeSymbol,
     lightMemberOrigin: LightMemberOrigin?,

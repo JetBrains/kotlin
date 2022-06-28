@@ -12,17 +12,16 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.*
 
+context(KtAnalysisSession)
 internal class FirLightAccessorMethodForSymbol(
     private val propertyAccessorSymbol: KtPropertyAccessorSymbol,
     private val containingPropertySymbol: KtPropertySymbol,
@@ -74,11 +73,7 @@ internal class FirLightAccessorMethodForSymbol(
                 !(isParameter && (containingClass.isAnnotationType || containingClass.isEnum))
 
         val nullabilityType = if (nullabilityApplicable) {
-            analyzeWithSymbolAsContext(containingPropertySymbol) {
-                getTypeNullability(
-                    containingPropertySymbol.returnType
-                )
-            }
+            getTypeNullability(containingPropertySymbol.returnType)
         } else NullabilityType.Unknown
 
         val annotationsFromProperty = containingPropertySymbol.computeAnnotations(
@@ -152,13 +147,11 @@ internal class FirLightAccessorMethodForSymbol(
 
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
-        analyzeWithSymbolAsContext(containingPropertySymbol) {
-            containingPropertySymbol.returnType.asPsiType(
-                this@FirLightAccessorMethodForSymbol,
-                KtTypeMappingMode.RETURN_TYPE,
-                containingClass.isAnnotationType
-            )
-        } ?: nonExistentType()
+        containingPropertySymbol.returnType.asPsiType(
+            this@FirLightAccessorMethodForSymbol,
+            KtTypeMappingMode.RETURN_TYPE,
+            containingClass.isAnnotationType
+        ) ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType
@@ -179,9 +172,7 @@ internal class FirLightAccessorMethodForSymbol(
             if (propertyParameter != null) {
                 builder.addParameter(
                     FirLightSetterParameterForSymbol(
-                        parameterSymbol = propertyParameter,
-                        containingPropertySymbol = containingPropertySymbol,
-                        containingMethod = this@FirLightAccessorMethodForSymbol
+                        containingPropertySymbol, propertyParameter, this@FirLightAccessorMethodForSymbol
                     )
                 )
             }

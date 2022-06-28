@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 import org.jetbrains.kotlin.light.classes.symbol.classes.createPropertyAccessors
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
+context(KtAnalysisSession)
 internal class FirLightInlineClass(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
@@ -29,31 +31,30 @@ internal class FirLightInlineClass(
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         val result = mutableListOf<KtLightMethod>()
 
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
-            val applicableDeclarations = declaredMemberScope.getCallableSymbols()
-                .filter {
-                    (it as? KtPropertySymbol)?.isOverride == true || (it as? KtFunctionSymbol)?.isOverride == true
-                }
-                .filterNot {
-                    it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
-                }
+        val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
+        val applicableDeclarations = declaredMemberScope.getCallableSymbols()
+            .filter {
+                (it as? KtPropertySymbol)?.isOverride == true || (it as? KtFunctionSymbol)?.isOverride == true
+            }
+            .filterNot {
+                it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
+            }
 
-            createMethods(applicableDeclarations, result, suppressStatic = false)
+        createMethods(applicableDeclarations, result, suppressStatic = false)
 
-            val inlineClassParameterSymbol =
-                declaredMemberScope.getConstructors().singleOrNull { it.isPrimary }?.valueParameters?.singleOrNull()
-            if (inlineClassParameterSymbol != null) {
-                val propertySymbol = declaredMemberScope.getCallableSymbols { it == inlineClassParameterSymbol.name }
-                    .singleOrNull { it is KtPropertySymbol && it.isFromPrimaryConstructor } as? KtPropertySymbol
-                if (propertySymbol != null) {
-                    // (inline or) value class primary constructor must have only final read-only (val) property parameter
-                    // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
-                    // we can enforce immutability here.
-                    createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
-                }
+        val inlineClassParameterSymbol =
+            declaredMemberScope.getConstructors().singleOrNull { it.isPrimary }?.valueParameters?.singleOrNull()
+        if (inlineClassParameterSymbol != null) {
+            val propertySymbol = declaredMemberScope.getCallableSymbols { it == inlineClassParameterSymbol.name }
+                .singleOrNull { it is KtPropertySymbol && it.isFromPrimaryConstructor } as? KtPropertySymbol
+            if (propertySymbol != null) {
+                // (inline or) value class primary constructor must have only final read-only (val) property parameter
+                // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
+                // we can enforce immutability here.
+                createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
             }
         }
+
 
         result
     }

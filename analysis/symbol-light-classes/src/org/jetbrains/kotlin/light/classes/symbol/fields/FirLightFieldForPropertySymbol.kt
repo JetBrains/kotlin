@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
+context(KtAnalysisSession)
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
     private val fieldName: String,
@@ -33,16 +35,14 @@ internal class FirLightFieldForPropertySymbol(
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
     private val _returnedType: PsiType by lazyPub {
-        analyzeWithSymbolAsContext(propertySymbol) {
-            val isDelegated = (propertySymbol as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
-            when {
-                isDelegated ->
-                    (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
-                        it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
-                    }
-                else -> {
-                    propertySymbol.returnType.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
+        val isDelegated = (propertySymbol as? KtKotlinPropertySymbol)?.isDelegatedProperty == true
+        when {
+            isDelegated ->
+                (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
+                    it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
                 }
+            else -> {
+                propertySymbol.returnType.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
             }
         } ?: nonExistentType()
     }
@@ -94,9 +94,7 @@ internal class FirLightFieldForPropertySymbol(
         }
 
         val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-            analyzeWithSymbolAsContext(propertySymbol) {
-                getTypeNullability(propertySymbol.returnType)
-            }
+            getTypeNullability(propertySymbol.returnType)
         } else NullabilityType.Unknown
 
         val annotations = propertySymbol.computeAnnotations(

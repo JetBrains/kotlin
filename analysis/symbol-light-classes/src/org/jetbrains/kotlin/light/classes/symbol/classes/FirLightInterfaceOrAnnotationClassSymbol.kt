@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
-import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierList
+import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 
+context(KtAnalysisSession)
 internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
