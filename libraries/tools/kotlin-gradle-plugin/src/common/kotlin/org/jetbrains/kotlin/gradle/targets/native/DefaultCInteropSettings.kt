@@ -6,13 +6,11 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -24,13 +22,13 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
 
-open class DefaultCInteropSettings @Inject constructor(
+abstract class DefaultCInteropSettings @Inject constructor(
     private val project: Project,
     private val name: String,
     override val compilation: KotlinNativeCompilationData<*>
 ) : CInteropSettings {
 
-    inner class DefaultIncludeDirectories : CInteropSettings.IncludeDirectories {
+    inner class DefaultIncludeDirectories : IncludeDirectories {
         var allHeadersDirs: FileCollection = project.files()
         var headerFilterDirs: FileCollection = project.files()
 
@@ -114,7 +112,6 @@ open class DefaultCInteropSettings @Inject constructor(
     }
 
     override fun includeDirs(vararg values: Any) = includeDirs.allHeaders(values.toList())
-    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
     override fun includeDirs(action: Action<IncludeDirectories>) = includeDirs { action.execute(this) }
     override fun includeDirs(configure: IncludeDirectories.() -> Unit) = includeDirs.configure()
 

@@ -35,7 +35,7 @@ abstract class GradleKpmNativeVariantInternal(
         get() = listOf(apiElementsConfiguration.name).flatMap { listOf(it, publishedConfigurationName(it)) }.toSet()
 
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        DefaultCInteropSettings(project, cinteropName, compilationData)
+        project.objects.newInstance(DefaultCInteropSettings::class.java, project, cinteropName, compilationData)
     }
 
     override val compilationData by lazy { GradleKpmNativeVariantCompilationData(this) }

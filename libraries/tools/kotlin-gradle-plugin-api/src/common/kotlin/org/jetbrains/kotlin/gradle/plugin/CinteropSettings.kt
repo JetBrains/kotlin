@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
@@ -38,7 +37,6 @@ interface CInteropSettings : Named {
     fun headers(files: FileCollection)
 
     fun includeDirs(vararg values: Any)
-    fun includeDirs(closure: Closure<Unit>)
     fun includeDirs(action: Action<IncludeDirectories>)
     fun includeDirs(configure: IncludeDirectories.() -> Unit)
 
