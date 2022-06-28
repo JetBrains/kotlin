@@ -10,10 +10,10 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.buildLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsLocal
+import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassDataHolder
+import org.jetbrains.kotlin.cli.jvm.compiler.builder.buildLightClass
 import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil

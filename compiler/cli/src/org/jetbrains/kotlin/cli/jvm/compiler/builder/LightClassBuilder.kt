@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava.builder
+package org.jetbrains.kotlin.cli.jvm.compiler.builder
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
