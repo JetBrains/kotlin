@@ -48,7 +48,6 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((1 until Int.MIN_VALUE).isEmpty())
-//        assertFailsWith<IllegalStateException> { (1..Int.MAX_VALUE).endExclusive }
     }
 
     @Test fun byteRange() {
@@ -158,7 +157,6 @@ public class RangeTest {
 
         assertTrue((0 until Long.MIN_VALUE).isEmpty())
         assertTrue((0L until Long.MIN_VALUE).isEmpty())
-//        assertFailsWith<IllegalStateException> { (1..Long.MAX_VALUE).endExclusive }
     }
 
     @Test fun charRange() {
@@ -195,7 +193,6 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue(('A' until Char.MIN_VALUE).isEmpty())
-//        assertFailsWith<IllegalStateException> { ('A'..Char.MAX_VALUE).endExclusive }
     }
 
     @Test fun doubleRange() {
@@ -297,6 +294,26 @@ public class RangeTest {
         assertFalse(Float.NaN in openRange)
     }
 
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusive() {
+        assertEquals((1..5).endInclusive, (1..<4).endExclusive + 1)
+        assertEquals((1L..5L).endInclusive, (1L..<4L).endExclusive + 1)
+        assertEquals(('X'..'Z').endInclusive, ('X'..<'Y').endExclusive + 1)
+
+        assertNotEquals(Int.MIN_VALUE, (1..<Int.MIN_VALUE).endExclusive)
+        assertNotEquals(Long.MIN_VALUE, (1..<Long.MIN_VALUE).endExclusive)
+        assertNotEquals(Char.MIN_VALUE, ('A'..<Char.MIN_VALUE).endExclusive)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusiveThrows() {
+        assertFailsWith<IllegalStateException> { (1..Int.MAX_VALUE).endExclusive }
+        assertFailsWith<IllegalStateException> { (1..Long.MAX_VALUE).endExclusive }
+        assertFailsWith<IllegalStateException> { ('A'..Char.MAX_VALUE).endExclusive }
+    }
+
     @Suppress("EmptyRange")
     @Test fun isEmpty() {
         assertTrue((2..1).isEmpty())
@@ -385,7 +402,7 @@ public class RangeTest {
     @Test fun comparableOpenRange() {
         val range = "island"..<"isle"
         assertEquals("island..<isle", range.toString())
-//        assertEquals(range, range.start..<range.endExclusive)
+        assertEquals(range, range.start..<range.endExclusive)
         assertFalse("apple" in range)
         assertFalse("icicle" in range)
 

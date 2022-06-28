@@ -50,7 +50,6 @@ public class URangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((1u until UInt.MIN_VALUE).isEmpty())
-//        assertFailsWith<IllegalStateException> { (1u..UInt.MAX_VALUE).endExclusive }
     }
 
     @Test
@@ -164,7 +163,23 @@ public class URangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((0uL until ULong.MIN_VALUE).isEmpty())
-//        assertFailsWith<IllegalStateException> { (1uL..ULong.MAX_VALUE).endExclusive }
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusive() {
+        assertEquals((1u..5u).endInclusive, (1u..<4u).endExclusive + 1u)
+        assertEquals((1uL..5uL).endInclusive, (1uL..<4uL).endExclusive + 1u)
+
+        assertNotEquals(UInt.MIN_VALUE, (1u..<UInt.MIN_VALUE).endExclusive)
+        assertNotEquals(ULong.MIN_VALUE, (1uL..<ULong.MIN_VALUE).endExclusive)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusiveThrows() {
+        assertFailsWith<IllegalStateException> { (1u..UInt.MAX_VALUE).endExclusive }
+        assertFailsWith<IllegalStateException> { (1uL..ULong.MAX_VALUE).endExclusive }
     }
 
     @Suppress("EmptyRange")
