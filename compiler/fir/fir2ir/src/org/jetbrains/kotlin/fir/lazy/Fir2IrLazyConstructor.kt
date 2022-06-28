@@ -94,8 +94,6 @@ class Fir2IrLazyConstructor(
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? = null
-
     override var contextReceiverParametersCount: Int = fir.contextReceivers.size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {

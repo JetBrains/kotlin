@@ -37,7 +37,10 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var dispatchReceiverParameter: IrValueParameter?
 
-    abstract var extensionReceiverParameter: IrValueParameter?
+    abstract val hasExtensionReceiver: Boolean
+
+    val extensionReceiverParameter: IrValueParameter?
+        get() = if (hasExtensionReceiver) valueParameters[contextReceiverParametersCount] else null
 
     abstract var valueParameters: List<IrValueParameter>
 
@@ -48,7 +51,6 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         dispatchReceiverParameter?.accept(visitor, data)
-        extensionReceiverParameter?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
@@ -56,7 +58,6 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
-        extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
         valueParameters = valueParameters.transformIfNeeded(transformer, data)
         body = body?.transform(transformer, data)
     }

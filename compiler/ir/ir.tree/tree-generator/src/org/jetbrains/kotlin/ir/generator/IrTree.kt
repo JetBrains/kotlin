@@ -238,7 +238,10 @@ object IrTree : AbstractTreeBuilder() {
         +field("isExpect", boolean)
         +field("returnType", irTypeType, mutable = true)
         +field("dispatchReceiverParameter", valueParameter, mutable = true, nullable = true, isChild = true)
-        +field("extensionReceiverParameter", valueParameter, mutable = true, nullable = true, isChild = true)
+        +field("hasExtensionReceiver", boolean)
+        +field("extensionReceiverParameter", valueParameter, nullable = true, isChild = false) {
+            baseGetter = code("if (hasExtensionReceiver) valueParameters[contextReceiverParametersCount] else null")
+        }
         +listField("valueParameters", valueParameter, mutability = Var, isChild = true)
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int, mutable = true)

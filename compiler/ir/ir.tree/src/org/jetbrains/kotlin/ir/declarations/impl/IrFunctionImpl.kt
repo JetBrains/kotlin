@@ -52,6 +52,9 @@ abstract class IrFunctionCommonImpl(
 
     override var dispatchReceiverParameter: IrValueParameter? = null
     override var extensionReceiverParameter: IrValueParameter? = null
+
+    override var hasExtensionReceiver: Boolean = false
+
     override var valueParameters: List<IrValueParameter> = emptyList()
 
     override var contextReceiverParametersCount: Int = 0
