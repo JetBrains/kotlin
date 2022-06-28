@@ -34,6 +34,7 @@ class IdeaKpmFragmentAnalysisFlagsTest : AbstractIdeaKpmFragmentsContentTest() {
 
     private fun doTestAnalysisFlags(expectedAnalysisFlags: IdeaKpmFragmentAnalysisFlags, configure: (KotlinCompile<*>) -> Unit) {
         project.tasks.withType(KotlinCompile::class.java).forEach(configure)
+        project.evaluate()
         kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().assertAnalysisFlags(expectedAnalysisFlags)
     }
 

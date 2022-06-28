@@ -35,6 +35,7 @@ class IdeaKpmFragmentLanguageSettingsTest : AbstractIdeaKpmFragmentsContentTest(
 
     private fun doTestLanguageFeatures(expectedLanguageFeatures: IdeaKpmFragmentLanguageFeatures, configure: (KotlinCompile<*>) -> Unit) {
         project.tasks.withType(KotlinCompile::class.java).forEach(configure)
+        project.evaluate()
         kotlin.buildIdeaKpmProjectModel().assertIsNotEmpty().assertLanguageFeatures(expectedLanguageFeatures)
     }
 

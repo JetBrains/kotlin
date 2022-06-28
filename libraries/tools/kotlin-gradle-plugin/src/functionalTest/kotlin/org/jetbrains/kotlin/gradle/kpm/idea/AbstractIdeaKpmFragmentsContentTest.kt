@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.kpm.AbstractKpmExtensionTest
 
 abstract class AbstractIdeaKpmFragmentsContentTest : AbstractKpmExtensionTest() {
     protected open fun doSetupProject() {
+        project.enableDefaultStdlibDependency(false)
+
         with(kotlin) {
             mainAndTest {
                 fragments.create("jvm", org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmJvmVariant::class.java)
