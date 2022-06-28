@@ -178,10 +178,26 @@ fun CompilerConfiguration.configureContentRootsFromClassPath(arguments: K2JVMCom
 }
 
 fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: K2JVMCompilerArguments) {
+    configureStandardLibs(
+        paths,
+        KotlinPaths::stdlibPath,
+        KotlinPaths::scriptRuntimePath,
+        KotlinPaths::reflectPath,
+        arguments
+    )
+}
+
+fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
+    paths: PathProvider?,
+    stdlibPath: (PathProvider) -> File,
+    scriptRuntimePath: (PathProvider) -> File,
+    reflectPath: (PathProvider) -> File,
+    arguments: K2JVMCompilerArguments
+) {
     val jdkRelease = get(JVMConfigurationKeys.JDK_RELEASE)
     val isModularJava = isModularJava() && (jdkRelease == null || jdkRelease >= 9)
 
-    fun addRoot(moduleName: String, libraryName: String, getLibrary: (KotlinPaths) -> File, noLibraryArgument: String) {
+    fun addRoot(moduleName: String, libraryName: String, getLibrary: (PathProvider) -> File, noLibraryArgument: String) {
         addModularRootIfNotNull(
             isModularJava, moduleName,
             getLibraryFromHome(paths, getLibrary, libraryName, messageCollector, noLibraryArgument)
@@ -189,13 +205,13 @@ fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: 
     }
 
     if (!arguments.noStdlib) {
-        addRoot("kotlin.stdlib", PathUtil.KOTLIN_JAVA_STDLIB_JAR, KotlinPaths::stdlibPath, "'-no-stdlib'")
-        addRoot("kotlin.script.runtime", PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, KotlinPaths::scriptRuntimePath, "'-no-stdlib'")
+        addRoot("kotlin.stdlib", PathUtil.KOTLIN_JAVA_STDLIB_JAR, stdlibPath, "'-no-stdlib'")
+        addRoot("kotlin.script.runtime", PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, scriptRuntimePath, "'-no-stdlib'")
     }
     // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
     // which is likely not what user wants since s/he manually provided "-no-stdlib"
     if (!arguments.noReflect && !arguments.noStdlib) {
-        addRoot("kotlin.reflect", PathUtil.KOTLIN_JAVA_REFLECT_JAR, { it.reflectPath }, "'-no-reflect' or '-no-stdlib'")
+        addRoot("kotlin.reflect", PathUtil.KOTLIN_JAVA_REFLECT_JAR, reflectPath, "'-no-reflect' or '-no-stdlib'")
     }
 }
 

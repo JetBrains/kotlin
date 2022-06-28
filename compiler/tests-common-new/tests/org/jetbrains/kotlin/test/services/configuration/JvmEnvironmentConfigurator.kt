@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -60,9 +59,7 @@ import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 
 class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -176,7 +173,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(USE_TYPE_TABLE, JVMConfigurationKeys.USE_TYPE_TABLE)
     }
 
-    @OptIn(ExperimentalPathApi::class, ExperimentalStdlibApi::class)
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
         configureDefaultJvmTarget(configuration)
@@ -209,7 +205,10 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
 
         if (configurationKind.withRuntime) {
-            configuration.configureStandardLibs(PathUtil.kotlinPathsForDistDirectory, K2JVMCompilerArguments().also { it.noReflect = true })
+            configuration.configureStandardLibs(
+                testServices.standardLibrariesPathProvider,
+                K2JVMCompilerArguments().also { it.noReflect = true }
+            )
         }
         configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(testServices, configurationKind, module.directives))
 

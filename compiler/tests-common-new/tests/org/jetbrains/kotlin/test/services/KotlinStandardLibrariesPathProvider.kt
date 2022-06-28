@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.configureStandardLibs
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
@@ -125,3 +128,16 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
 }
 
 val TestServices.standardLibrariesPathProvider: KotlinStandardLibrariesPathProvider by TestServices.testServiceAccessor()
+
+fun CompilerConfiguration.configureStandardLibs(
+    pathProvider: KotlinStandardLibrariesPathProvider,
+    arguments: K2JVMCompilerArguments
+) {
+    configureStandardLibs(
+        pathProvider,
+        KotlinStandardLibrariesPathProvider::runtimeJarForTests,
+        KotlinStandardLibrariesPathProvider::scriptRuntimeJarForTests,
+        KotlinStandardLibrariesPathProvider::reflectJarForTests,
+        arguments
+    )
+}

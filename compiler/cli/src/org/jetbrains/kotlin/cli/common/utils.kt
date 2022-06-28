@@ -63,9 +63,9 @@ fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collect
 fun checkKotlinPackageUsage(configuration: CompilerConfiguration, files: Collection<KtFile>): Boolean =
     checkKotlinPackageUsage(configuration, files, configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE))
 
-fun getLibraryFromHome(
-    paths: KotlinPaths?,
-    getLibrary: (KotlinPaths) -> File,
+fun <PathProvider : Any> getLibraryFromHome(
+    paths: PathProvider?,
+    getLibrary: (PathProvider) -> File,
     libraryName: String,
     messageCollector: MessageCollector,
     noLibraryArgument: String
