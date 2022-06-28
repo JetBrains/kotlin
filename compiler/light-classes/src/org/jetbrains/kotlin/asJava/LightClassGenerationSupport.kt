@@ -1,27 +1,13 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiConstantEvaluationHelper
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
@@ -59,18 +45,11 @@ abstract class LightClassGenerationSupport {
         ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
     }
 
-    abstract val useUltraLightClasses: Boolean
-
-    internal fun canCreateUltraLightClassForFacade(
-        files: Collection<KtFile>,
-    ): Boolean {
-        return useUltraLightClasses && files.none { it.isScript() }
-    }
+    internal fun canCreateUltraLightClassForFacade(files: Collection<KtFile>): Boolean = files.none { it.isScript() }
 
     fun createUltraLightClassForFacade(
         manager: PsiManager,
         facadeClassFqName: FqName,
-        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         files: Collection<KtFile>,
     ): KtUltraLightClassForFacade? {
         if (!canCreateUltraLightClassForFacade(files)) return null
@@ -82,16 +61,12 @@ abstract class LightClassGenerationSupport {
         return KtUltraLightClassForFacade(
             manager,
             facadeClassFqName,
-            lightClassDataCache,
             files,
             filesToSupports
         )
     }
 
     fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-
-        if (!useUltraLightClasses) return null
-
         if (element.shouldNotBeVisibleAsLightClass()) {
             return null
         }
@@ -117,8 +92,8 @@ abstract class LightClassGenerationSupport {
         }
     }
 
-    fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript? =
-        if (useUltraLightClasses) KtUltraLightClassForScript(script, support = getUltraLightClassSupport(script)) else null
+    fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript =
+        KtUltraLightClassForScript(script, support = getUltraLightClassSupport(script))
 
     companion object {
         @JvmStatic

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,7 +33,6 @@ abstract class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
 
     private val _delegate: PsiClass by lazy { DummyJavaPsiFactory.createDummyClass(kotlinOrigin.project) }
 
-    override val clsDelegate get() = _delegate
     override val originKind get() = LightClassOriginKind.SOURCE
 
     override fun getName(): String? = kotlinOrigin.name
@@ -93,7 +92,6 @@ class KtFakeLightMethod private constructor(
     KotlinLanguage.INSTANCE
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration
-    override val clsDelegate get() = myMethod
 
     override fun getName() = ktDeclaration.name ?: ""
 

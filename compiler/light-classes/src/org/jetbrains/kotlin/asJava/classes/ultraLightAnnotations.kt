@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,7 +46,7 @@ class KtUltraLightSimpleAnnotation(
     private val ultraLightSupport: KtUltraLightSupport,
     parent: PsiElement,
     private val nameReferenceElementProvider: (() -> PsiJavaCodeReferenceElement?)? = null,
-) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
+) : KtLightAbstractAnnotation(parent) {
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = nameReferenceElementProvider?.invoke()
 
     private val parameterList = ParameterListImpl()

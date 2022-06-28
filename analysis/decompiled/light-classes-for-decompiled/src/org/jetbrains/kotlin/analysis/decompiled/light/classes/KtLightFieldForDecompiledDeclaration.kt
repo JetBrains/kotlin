@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
@@ -66,8 +69,6 @@ open class KtLightFieldForDecompiledDeclaration(
     override fun clone(): Any = this
 
     override fun toString(): String = "${this.javaClass.simpleName} of $fldParent"
-
-    override val clsDelegate: PsiField = fldDelegate
 
     override fun isValid(): Boolean = parent.isValid
 }

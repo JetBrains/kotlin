@@ -59,7 +59,7 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
     override fun setName(name: String): PsiElement =
         throw IncorrectOperationException("Impossible to rename ${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}")
 
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject, jvmDefaultMode)
+    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject)
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnMethods(): List<KtLightMethod> = _ownMethods.value

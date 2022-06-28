@@ -1,28 +1,18 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
-import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 abstract class KtLightClassBase protected constructor(
@@ -34,7 +24,7 @@ abstract class KtLightClassBase protected constructor(
         lazyCreator = LightClassesLazyCreator(project)
     )
 
-    override fun getDelegate() = clsDelegate
+    override fun getDelegate() = invalidAccess()
 
     override fun getFields() = myInnersCache.fields
 
@@ -55,10 +45,8 @@ abstract class KtLightClassBase protected constructor(
     override fun findMethodsByName(name: String, checkBases: Boolean) = myInnersCache.findMethodsByName(name, checkBases)
 
     override fun findInnerClassByName(name: String, checkBases: Boolean) = myInnersCache.findInnerClassByName(name, checkBases)
-
-    override fun getOwnFields(): List<PsiField> = KtLightFieldImpl.fromClsFields(delegate, this)
-
-    override fun getOwnMethods(): List<PsiMethod> = KtLightMethodImpl.fromClsMethods(delegate, this)
+    abstract override fun getOwnFields(): List<PsiField>
+    abstract override fun getOwnMethods(): List<PsiMethod>
 
     override fun getText(): String {
         val origin = kotlinOrigin

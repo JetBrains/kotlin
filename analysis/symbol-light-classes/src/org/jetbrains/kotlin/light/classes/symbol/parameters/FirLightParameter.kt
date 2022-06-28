@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameter(containingDeclaration: FirLightMethod) : PsiVariable, NavigationItem,
     KtLightElement<KtParameter, PsiParameter>, KtLightParameter, KtLightElementBase(containingDeclaration) {
-
-    override val clsDelegate: PsiParameter
-        get() = invalidAccess()
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>
         get() = invalidAccess()
