@@ -1,0 +1,3 @@
+call gradlew publishIdeArtifacts :prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish -Ppublish.ide.plugin.dependencies=true -PdeployVersion=1.7.255 -Pbuild.number=1.7.255
+copy C:\JB\Cooperative\build\repo\org\jetbrains\kotlin\kotlin-jps-plugin-classpath\1.7.255\kotlin-jps-plugin-classpath-1.7.255.jar C:\Users\andrey\.m2\repository\org\jetbrains\kotlin\kotlin-jps-plugin-classpath\1.6.10-release-971\kotlin-jps-plugin-classpath-1.6.10-release-971.jar
+copy C:\JB\Cooperative\build\repo\org\jetbrains\kotlin\kotlin-jps-plugin-classpath\1.7.255\kotlin-jps-plugin-classpath-1.7.255.jar C:\Users\andrey\.m2\repository\org\jetbrains\kotlin\kotlin-jps-plugin-classpath\1.6.21-release-355\kotlin-jps-plugin-classpath-1.6.21-release-355.jar
