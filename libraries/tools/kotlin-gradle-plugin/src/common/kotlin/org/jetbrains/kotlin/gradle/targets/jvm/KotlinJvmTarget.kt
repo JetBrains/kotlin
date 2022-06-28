@@ -73,7 +73,7 @@ abstract class KotlinJvmTarget @Inject constructor(
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
 
-            val javaClasses = project.files(compileJavaTask.map { it.destinationDir })
+            val javaClasses = project.files(compileJavaTask.map { it.destinationDirectory })
 
             compilation.output.classesDirs.from(javaClasses)
 
