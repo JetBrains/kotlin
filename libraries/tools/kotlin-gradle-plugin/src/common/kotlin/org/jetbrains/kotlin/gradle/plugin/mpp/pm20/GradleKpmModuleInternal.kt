@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import javax.inject.Inject
 
-open class GradleKpmModuleInternal(
+abstract class GradleKpmModuleInternal(
     final override val project: Project,
     final override val moduleClassifier: String?
 ) : GradleKpmModule {

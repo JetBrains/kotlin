@@ -160,7 +160,6 @@ internal class DefaultKotlinSourceSetFactory(
             }
     }
 
-    override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet {
-        return DefaultKotlinSourceSet(project, name)
-    }
+    override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =
+        project.objects.newInstance(DefaultKotlinSourceSet::class.java, project, name)
 }

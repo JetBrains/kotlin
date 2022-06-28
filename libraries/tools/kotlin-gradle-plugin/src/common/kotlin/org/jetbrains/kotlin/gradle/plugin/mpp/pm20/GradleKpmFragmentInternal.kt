@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 
-open class GradleKpmFragmentInternal @Inject constructor(
+abstract class GradleKpmFragmentInternal @Inject constructor(
     final override val containingModule: GradleKpmModule,
     final override val fragmentName: String,
     dependencyConfigurations: GradleKpmFragmentDependencyConfigurations
@@ -79,8 +78,8 @@ open class GradleKpmFragmentInternal @Inject constructor(
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, project).run(configure)
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
 
     private val _declaredRefinesDependencies = mutableSetOf<Provider<GradleKpmFragment>>()
 

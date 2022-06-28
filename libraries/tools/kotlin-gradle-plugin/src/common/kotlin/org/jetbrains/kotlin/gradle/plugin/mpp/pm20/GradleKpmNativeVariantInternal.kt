@@ -54,9 +54,10 @@ internal class KotlinMappedNativeCompilationFactory(
         val module = target.project.kpmModules.maybeCreate(name)
         val variant = module.fragments.create(target.name, variantClass)
 
-        return KotlinNativeCompilation(
+        return target.project.objects.newInstance(
+            KotlinNativeCompilation::class.java,
             target.konanTarget,
-            VariantMappedCompilationDetails(variant, target)
+            VariantMappedCompilationDetails<KotlinCommonOptions>(variant, target)
         )
     }
 }

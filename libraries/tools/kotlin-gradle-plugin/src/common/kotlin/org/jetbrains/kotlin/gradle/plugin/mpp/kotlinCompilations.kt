@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -62,7 +62,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compileOnlyConfigurationName: String get() = kotlinDependenciesHolder.compileOnlyConfigurationName
     override val runtimeOnlyConfigurationName: String get() = kotlinDependenciesHolder.runtimeOnlyConfigurationName
     final override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = kotlinDependenciesHolder.dependencies(configure)
-    final override fun dependencies(configureClosure: Closure<Any?>) = kotlinDependenciesHolder.dependencies(configureClosure)
+    final override fun dependencies(configure: Action<KotlinDependencyHandler>) = dependencies { configure.execute(this) }
     //endregion
 
     //region KotlinCompilationData delegation: delegate members manually for better control and prevention of accidental overrides

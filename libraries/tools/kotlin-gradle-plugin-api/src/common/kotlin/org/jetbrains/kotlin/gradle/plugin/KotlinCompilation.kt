@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
@@ -38,7 +38,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val defaultSourceSet: KotlinSourceSet
 
     fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit)
-    fun defaultSourceSet(configure: Closure<*>) = defaultSourceSet { target.project.configure(this, configure) }
+    fun defaultSourceSet(configure: Action<KotlinSourceSet>) = defaultSourceSet { configure.execute(this) }
 
     val compileDependencyConfigurationName: String
 
@@ -57,10 +57,10 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val kotlinOptions: T
 
     fun kotlinOptions(configure: T.() -> Unit)
-    fun kotlinOptions(configure: Closure<*>) = kotlinOptions { target.project.configure(this, configure) }
+    fun kotlinOptions(configure: Action<@UnsafeVariance T>) = kotlinOptions { configure.execute(this) }
 
     fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
-    fun attributes(configure: Closure<*>) = attributes { target.project.configure(this, configure) }
+    fun attributes(configure: Action<AttributeContainer>) = attributes { configure.execute(this) }
 
     val compileAllTaskName: String
 

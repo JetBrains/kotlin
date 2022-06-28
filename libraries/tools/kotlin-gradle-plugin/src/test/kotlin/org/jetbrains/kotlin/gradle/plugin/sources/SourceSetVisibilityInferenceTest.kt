@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
@@ -252,10 +252,11 @@ class MockKotlinSourceSet(private val name: String) : KotlinSourceSet {
     //region Not implemented
     override val kotlin: SourceDirectorySet get() = throw UnsupportedOperationException()
 
-    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet = throw UnsupportedOperationException()
+    override fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet = throw UnsupportedOperationException()
+    override fun kotlin(configure: Action<SourceDirectorySet>): SourceDirectorySet = throw UnsupportedOperationException()
     override val resources: SourceDirectorySet get() = throw UnsupportedOperationException()
     override val languageSettings: LanguageSettingsBuilder get() = throw UnsupportedOperationException()
-    override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings
+    override fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder = languageSettings
     override fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder = languageSettings
     override val apiMetadataConfigurationName: String get() = throw UnsupportedOperationException()
     override val implementationMetadataConfigurationName: String get() = throw UnsupportedOperationException()
@@ -263,7 +264,7 @@ class MockKotlinSourceSet(private val name: String) : KotlinSourceSet {
     override val runtimeOnlyMetadataConfigurationName: String get() = throw UnsupportedOperationException()
     override val customSourceFilesExtensions: Iterable<String> get() = throw UnsupportedOperationException()
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = throw UnsupportedOperationException()
-    override fun dependencies(configureClosure: Closure<Any?>) = throw UnsupportedOperationException()
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) = throw UnsupportedOperationException()
     override val apiConfigurationName: String get() = throw UnsupportedOperationException()
     override val implementationConfigurationName: String get() = throw UnsupportedOperationException()
     override val compileOnlyConfigurationName: String get() = throw UnsupportedOperationException()
@@ -307,12 +308,12 @@ class MockKotlinCompilation(
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<KotlinCommonOptions>> get() = throw UnsupportedOperationException()
     override fun getAttributes(): AttributeContainer = throw UnsupportedOperationException()
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = throw UnsupportedOperationException()
-    override fun dependencies(configureClosure: Closure<Any?>) = throw UnsupportedOperationException()
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) = throw UnsupportedOperationException()
     override val apiConfigurationName: String get() = throw UnsupportedOperationException()
     override val implementationConfigurationName: String get() = throw UnsupportedOperationException()
     override val compileOnlyConfigurationName: String get() = throw UnsupportedOperationException()
     override val runtimeOnlyConfigurationName: String get() = throw UnsupportedOperationException()
-    override fun defaultSourceSet(configure: Closure<*>) = throw UnsupportedOperationException()
+    override fun defaultSourceSet(configure: Action<KotlinSourceSet>) = throw UnsupportedOperationException()
     override val compileDependencyConfigurationName: String get() = throw UnsupportedOperationException()
     override var compileDependencyFiles: FileCollection
         get() = throw UnsupportedOperationException()
@@ -322,9 +323,9 @@ class MockKotlinCompilation(
     override val compileKotlinTask: KotlinCompile<KotlinCommonOptions> get() = throw UnsupportedOperationException()
     override val kotlinOptions: KotlinCommonOptions get() = throw UnsupportedOperationException()
     override fun kotlinOptions(configure: KotlinCommonOptions.() -> Unit) = throw UnsupportedOperationException()
-    override fun kotlinOptions(configure: Closure<*>) = throw UnsupportedOperationException()
+    override fun kotlinOptions(configure: Action<KotlinCommonOptions>) = throw UnsupportedOperationException()
     override fun attributes(configure: AttributeContainer.() -> Unit) = throw UnsupportedOperationException()
-    override fun attributes(configure: Closure<*>) = throw UnsupportedOperationException()
+    override fun attributes(configure: Action<AttributeContainer>) = throw UnsupportedOperationException()
     override val compileAllTaskName: String get() = throw UnsupportedOperationException()
     override val moduleName: String get() = throw UnsupportedOperationException()
     override fun toString(): String = "compilation '${name}'"

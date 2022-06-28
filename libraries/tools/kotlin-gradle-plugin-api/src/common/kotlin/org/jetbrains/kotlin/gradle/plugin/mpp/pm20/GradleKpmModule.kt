@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import groovy.lang.Closure
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectSet
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.project.model.KpmModule
@@ -56,8 +52,8 @@ interface GradleKpmModule : KpmModule, Named, HasKotlinDependencies {
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) =
         common.dependencies(configure)
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        common.dependencies(configureClosure)
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
 
     override val apiConfigurationName: String
         get() = common.apiConfigurationName

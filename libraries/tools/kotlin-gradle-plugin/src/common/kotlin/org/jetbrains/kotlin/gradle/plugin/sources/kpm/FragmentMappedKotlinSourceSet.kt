@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.kpm
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.createDefaultSourceDirectorySet
+import javax.inject.Inject
 
-class FragmentMappedKotlinSourceSet(
+abstract class FragmentMappedKotlinSourceSet @Inject constructor(
     private val sourceSetName: String,
     private val project: Project,
     internal val underlyingFragment: GradleKpmFragment
@@ -46,11 +47,15 @@ class FragmentMappedKotlinSourceSet(
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
-    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =
-        kotlin.apply { project.configure(this, configureClosure) }
+    override fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet = kotlin.apply {
+        configure(this)
+    }
 
-    override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings.apply {
-        project.configure(this, configureClosure)
+    override fun kotlin(configure: Action<SourceDirectorySet>): SourceDirectorySet =
+        kotlin { configure.execute(this) }
+
+    override fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder = languageSettings.apply {
+        configure.execute(this)
     }
 
     override fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder =
@@ -61,8 +66,8 @@ class FragmentMappedKotlinSourceSet(
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         underlyingFragment.dependencies(configure)
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        underlyingFragment.dependencies(configureClosure)
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        underlyingFragment.dependencies(configure)
 
     override fun dependsOn(other: KotlinSourceSet) {
         if (other !is FragmentMappedKotlinSourceSet) {

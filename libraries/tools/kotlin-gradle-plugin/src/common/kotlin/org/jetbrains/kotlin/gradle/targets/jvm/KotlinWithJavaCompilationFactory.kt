@@ -19,8 +19,12 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
         @Suppress("UNCHECKED_CAST")
         get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>
 
-    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> {
-        val result = KotlinWithJavaCompilation(target, name, kotlinOptionsFactory())
-        return result
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> =
+        project.objects.newInstance(
+            KotlinWithJavaCompilation::class.java,
+            target,
+            name,
+            kotlinOptionsFactory()
+        ) as KotlinWithJavaCompilation<KotlinOptionsType>
 }

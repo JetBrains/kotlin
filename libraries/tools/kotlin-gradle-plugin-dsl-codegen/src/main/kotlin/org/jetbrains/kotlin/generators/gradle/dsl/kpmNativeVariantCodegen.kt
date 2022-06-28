@@ -3,14 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalPathApi::class)
-
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import java.util.*
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.writeText
 
@@ -52,7 +48,7 @@ private fun variantClasses() = allKonanTargets()
     .joinToString("\n\n")
 
 private fun variantClass(konanTarget: KonanTarget) = """
-    open class ${konanTarget.variantClassName} @Inject constructor(
+    abstract class ${konanTarget.variantClassName} @Inject constructor(
         containingModule: GradleKpmModule,
         fragmentName: String,
         dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
@@ -70,14 +66,30 @@ private fun variantClass(konanTarget: KonanTarget) = """
     ) {
         companion object {
             val constructor = GradleKpmNativeVariantConstructor(
-                KonanTarget.${konanTarget.className}, ${konanTarget.variantClassName}::class.java, ::${konanTarget.variantClassName}
-            )
+                KonanTarget.${konanTarget.className},
+                ${konanTarget.variantClassName}::class.java
+            ) { containingModule: GradleKpmModule,
+                fragmentName: String,
+                dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
+                compileDependencyConfiguration: Configuration,
+                apiElementsConfiguration: Configuration,
+                hostSpecificMetadataElementsConfiguration: Configuration? ->
+                containingModule.project.objects.newInstance(
+                    ${konanTarget.variantClassName}::class.java,
+                    containingModule,
+                    fragmentName,
+                    dependencyConfigurations,
+                    compileDependencyConfiguration,
+                    apiElementsConfiguration,
+                    hostSpecificMetadataElementsConfiguration
+                )
+            }
         }
     }
 """.trimIndent()
 
 private fun kpmVariantClassFunction(): String {
-    val konanTargetToVariant  = allKonanTargets()
+    val konanTargetToVariant = allKonanTargets()
         .joinToString("\n") { "KonanTarget.${it.className} -> ${it.variantClassName}::class.java" }
 
     return """

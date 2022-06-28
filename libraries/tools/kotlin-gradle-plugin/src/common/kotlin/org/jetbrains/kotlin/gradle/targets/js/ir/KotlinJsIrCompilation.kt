@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
+import javax.inject.Inject
 
-class KotlinJsIrCompilation(
+abstract class KotlinJsIrCompilation @Inject constructor(
     target: KotlinTarget,
     name: String
 ) : KotlinJsCompilation(JsIrCompilationDetails(target, name)) {

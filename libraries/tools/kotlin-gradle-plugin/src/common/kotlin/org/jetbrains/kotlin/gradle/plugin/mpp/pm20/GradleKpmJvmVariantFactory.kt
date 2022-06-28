@@ -58,20 +58,21 @@ class GradleKpmJvmVariantInstantiator internal constructor(
             module, config.dependenciesConfigurationFactory.create(module, names), names
         )
 
-        return GradleKpmJvmVariant(
-            containingModule = module,
-            fragmentName = name,
-            dependencyConfigurations = context.dependencies,
-            compileDependenciesConfiguration = config.compileDependencies.provider.getConfiguration(context).also { configuration ->
+        return module.project.objects.newInstance(
+            GradleKpmJvmVariant::class.java,
+            module,
+            name,
+            context.dependencies,
+            config.compileDependencies.provider.getConfiguration(context).also { configuration ->
                 config.compileDependencies.relations.setupExtendsFromRelations(configuration, context)
             },
-            runtimeDependenciesConfiguration = config.runtimeDependencies.provider.getConfiguration(context).also { configuration ->
-                config.runtimeElements.relations.setupExtendsFromRelations(configuration, context)
-            },
-            apiElementsConfiguration = config.apiElements.provider.getConfiguration(context).also { configuration ->
+            config.apiElements.provider.getConfiguration(context).also { configuration ->
                 config.apiElements.relations.setupExtendsFromRelations(configuration, context)
             },
-            runtimeElementsConfiguration = config.runtimeElements.provider.getConfiguration(context).also { configuration ->
+            config.runtimeDependencies.provider.getConfiguration(context).also { configuration ->
+                config.runtimeElements.relations.setupExtendsFromRelations(configuration, context)
+            },
+            config.runtimeElements.provider.getConfiguration(context).also { configuration ->
                 config.runtimeElements.relations.setupExtendsFromRelations(configuration, context)
             }
         )

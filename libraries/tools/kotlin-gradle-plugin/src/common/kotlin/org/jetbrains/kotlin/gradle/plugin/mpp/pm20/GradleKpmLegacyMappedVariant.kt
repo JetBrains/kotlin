@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KpmModuleDependency
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import javax.inject.Inject
 
-internal open class GradleKpmLegacyMappedVariant(
+internal abstract class GradleKpmLegacyMappedVariant @Inject constructor(
     internal val compilation: KotlinCompilation<*>,
 ) : GradleKpmVariant {
     override fun toString(): String = "variant mapped to $compilation"
@@ -148,7 +149,7 @@ internal open class GradleKpmLegacyMappedVariant(
         }
 }
 
-internal class GradleKpmLegacyMappedVariantWithRuntime(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
+internal abstract class GradleKpmLegacyMappedVariantWithRuntime @Inject constructor(private val compilationWithRuntime: KotlinCompilationToRunnableFiles<*>) :
     GradleKpmLegacyMappedVariant(compilationWithRuntime),
     GradleKpmVariantWithRuntime {
 
@@ -177,8 +178,14 @@ internal enum class PublicationRegistrationMode {
 internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, publicationRegistration: PublicationRegistrationMode) {
     target.compilations.all { compilation ->
         val variant = if (compilation is KotlinCompilationToRunnableFiles)
-            GradleKpmLegacyMappedVariantWithRuntime(compilation)
-        else GradleKpmLegacyMappedVariant(compilation)
+            target.project.objects.newInstance(
+                GradleKpmLegacyMappedVariantWithRuntime::class.java,
+                compilation
+            )
+        else target.project.objects.newInstance(
+            GradleKpmLegacyMappedVariant::class.java,
+            compilation
+        )
 
         val defaultSourceSetFragment = (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
         variant.refines(defaultSourceSetFragment)

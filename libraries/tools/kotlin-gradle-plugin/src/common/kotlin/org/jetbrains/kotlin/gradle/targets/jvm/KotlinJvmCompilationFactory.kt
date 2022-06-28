@@ -16,7 +16,8 @@ open class KotlinJvmCompilationFactory(
         get() = KotlinJvmCompilation::class.java
 
     override fun create(name: String): KotlinJvmCompilation =
-        KotlinJvmCompilation(
+        target.project.objects.newInstance(
+            KotlinJvmCompilation::class.java,
             DefaultCompilationDetailsWithRuntime(target, name) { KotlinJvmOptionsImpl() }
         )
 }

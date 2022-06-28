@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
+import javax.inject.Inject
 
-class KotlinJvmAndroidCompilation(
+abstract class KotlinJvmAndroidCompilation @Inject constructor(
     compilationDetails: AndroidCompilationDetails
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
 
@@ -34,6 +35,6 @@ class KotlinJvmAndroidCompilation(
     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
 
-    val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
+    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
         get() = androidVariant.getJavaTaskProvider()
 }

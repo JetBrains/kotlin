@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -21,10 +20,11 @@ import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.withClosure
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
-class DefaultKotlinSourceSet(
+abstract class DefaultKotlinSourceSet @Inject constructor(
     private val project: Project,
     val displayName: String
 ) : KotlinSourceSet {
@@ -65,11 +65,15 @@ class DefaultKotlinSourceSet(
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
-    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =
-        kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
+    override fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet = kotlin.apply {
+        configure(this)
+    }
 
-    override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings.apply {
-        ConfigureUtil.configure(configureClosure, this)
+    override fun kotlin(configure: Action<SourceDirectorySet>): SourceDirectorySet =
+        kotlin { configure.execute(this) }
+
+    override fun languageSettings(configure: Action<LanguageSettingsBuilder>): LanguageSettingsBuilder = languageSettings {
+        configure.execute(this)
     }
 
     override fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder =
@@ -80,8 +84,8 @@ class DefaultKotlinSourceSet(
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, project).run(configure)
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
 
     override fun dependsOn(other: KotlinSourceSet) {
         dependsOnSourceSetsImpl.add(other)
@@ -253,7 +257,7 @@ internal fun createDefaultSourceDirectorySet(project: Project, name: String?): S
     project.objects.sourceDirectorySet(name!!, name)
 
 
-val KotlinSourceSet.dependsOnClosure get() = closure { it.dependsOn }
+val KotlinSourceSet.dependsOnClosure get() = closure<KotlinSourceSet> { it.dependsOn }
 
 val KotlinSourceSet.withDependsOnClosure get() = withClosure { it.dependsOn }
 
