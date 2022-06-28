@@ -11887,6 +11887,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/finally/objectInFinally.kt");
         }
 
+        @TestMetadata("returnNullFromInlined.kt")
+        public void testReturnNullFromInlined() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/returnNullFromInlined.kt");
+        }
+
         @TestMetadata("someStuff.kt")
         public void testSomeStuff() throws Exception {
             runTest("compiler/testData/codegen/box/finally/someStuff.kt");

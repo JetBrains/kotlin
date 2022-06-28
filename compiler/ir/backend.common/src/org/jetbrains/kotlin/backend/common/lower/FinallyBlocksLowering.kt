@@ -267,9 +267,8 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                                                                                     value: IrExpression,
                                                                                     finallyExpression: IrExpression
     ): IrExpression {
-        val returnTypeClassifier = (type as? IrSimpleType)?.classifier
-        return when (returnTypeClassifier) {
-            context.irBuiltIns.unitClass, context.irBuiltIns.nothingClass -> irBlock(value, null, type) {
+        return when {
+            type.isUnit() || type.isNothing() -> irBlock(value, null, type) {
                 +irReturnableBlock(symbol, type) {
                     +value
                 }

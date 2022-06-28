@@ -17670,6 +17670,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("returnNullFromInlined.kt")
+        public void testReturnNullFromInlined() throws Exception {
+            runTest("compiler/testData/codegen/box/finally/returnNullFromInlined.kt");
+        }
+
+        @Test
         @TestMetadata("someStuff.kt")
         public void testSomeStuff() throws Exception {
             runTest("compiler/testData/codegen/box/finally/someStuff.kt");
