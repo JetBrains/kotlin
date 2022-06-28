@@ -103,7 +103,7 @@ open class FakeFileForLightClass(
     }
 
     // this should be equal to current compiler target language level
-    override fun getLanguageLevel() = LanguageLevel.JDK_1_6
+    override fun getLanguageLevel() = LanguageLevel.JDK_1_8
 
     override fun hashCode(): Int {
         val thisClass = lightClass()
