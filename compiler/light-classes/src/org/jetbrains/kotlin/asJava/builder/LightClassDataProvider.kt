@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.builder
@@ -36,23 +25,27 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.org.objectweb.asm.Type
 
 class LightClassDataProviderForClassOrObject(
-        private val classOrObject: KtClassOrObject
+    private val classOrObject: KtClassOrObject
 ) : CachedValueProvider<LightClassDataHolder.ForClass> {
 
     private fun computeLightClassData(): LightClassDataHolder.ForClass {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
-        return LightClassGenerationSupport.getInstance(classOrObject.project).createDataHolderForClass(classOrObject) {
-            constructionContext ->
-            buildLightClass(packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext) {
-                state, files ->
-                val packageCodegen = state.factory.forPackage(packageFqName, files)
-                val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
-                val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
-                MemberCodegen.genClassOrObject(context, getOutermostClassOrObject(classOrObject), state, null)
-                state.factory.done()
+        return LightClassGenerationSupport.getInstance(classOrObject.project)
+            .createDataHolderForClass(classOrObject) { constructionContext ->
+                buildLightClass(
+                    packageFqName,
+                    listOf(file),
+                    ClassFilterForClassOrObject(classOrObject),
+                    constructionContext
+                ) { state, files ->
+                    val packageCodegen = state.factory.forPackage(packageFqName, files)
+                    val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
+                    val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
+                    MemberCodegen.genClassOrObject(context, getOutermostClassOrObject(classOrObject), state, null)
+                    state.factory.done()
+                }
             }
-        }
     }
 
     override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForClass>? {
@@ -68,16 +61,14 @@ class LightClassDataProviderForClassOrObject(
     }
 }
 
-sealed class LightClassDataProviderForFileFacade constructor(
-        protected val project: Project, protected val facadeFqName: FqName
+class LightClassDataProviderForFileFacade constructor(
+    private val project: Project, private val facadeFqName: FqName, private val searchScope: GlobalSearchScope
 ) : CachedValueProvider<LightClassDataHolder.ForFacade> {
-    abstract fun findFiles(): Collection<KtFile>
+    fun findFiles(): Collection<KtFile> = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
 
     private fun computeLightClassData(files: Collection<KtFile>): LightClassDataHolder.ForFacade {
-        return LightClassGenerationSupport.getInstance(project).createDataHolderForFacade(files) {
-            constructionContext ->
-            buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@ {
-                state, files ->
+        return LightClassGenerationSupport.getInstance(project).createDataHolderForFacade(files) { constructionContext ->
+            buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@{ state, files ->
                 val representativeFile = files.first()
                 val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(representativeFile)
                 if (!fileClassInfo.withJvmMultifileClass) {
@@ -99,46 +90,26 @@ sealed class LightClassDataProviderForFileFacade constructor(
         if (files.isEmpty()) return null
 
         return CachedValueProvider.Result.create(
-                computeLightClassData(files),
-                KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+            computeLightClassData(files),
+            KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
         )
     }
 
     override fun toString(): String {
         return this::class.java.name + " for $facadeFqName"
     }
-
-    // create delegate by relevant files in project source using LightClassGenerationSupport
-    class ByProjectSource(
-            project: Project,
-            facadeFqName: FqName,
-            private val searchScope: GlobalSearchScope
-    ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
-        override fun findFiles() = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
-    }
-
-    // create delegate by single file
-    class ByFile(
-            project: Project,
-            facadeFqName: FqName,
-            private val file: KtFile
-    ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
-        override fun findFiles() = listOf(file)
-    }
 }
 
 
 class LightClassDataProviderForScript(private val script: KtScript) : CachedValueProvider<LightClassDataHolder.ForScript> {
     private fun computeLightClassData(): LightClassDataHolder.ForScript {
-        return LightClassGenerationSupport.getInstance(script.project).createDataHolderForScript(script) {
-            constructionContext ->
+        return LightClassGenerationSupport.getInstance(script.project).createDataHolderForScript(script) { constructionContext ->
             buildLightClass(
-                    script.fqName.parent(),
-                    listOf(script.containingKtFile),
-                    ClassFilterForScript(script),
-                    constructionContext
-            ) generate@ {
-                state, files ->
+                script.fqName.parent(),
+                listOf(script.containingKtFile),
+                ClassFilterForScript(script),
+                constructionContext
+            ) generate@{ state, files ->
                 val scriptFile = files.first()
                 val codegen = state.factory.forPackage(scriptFile.packageFqName, files)
                 codegen.generate()
@@ -148,10 +119,10 @@ class LightClassDataProviderForScript(private val script: KtScript) : CachedValu
     }
 
     override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForScript>? =
-            CachedValueProvider.Result.create(
-                computeLightClassData(),
-                KotlinModificationTrackerService.getInstance(script.project).outOfBlockModificationTracker
-            )
+        CachedValueProvider.Result.create(
+            computeLightClassData(),
+            KotlinModificationTrackerService.getInstance(script.project).outOfBlockModificationTracker
+        )
 
     override fun toString(): String = this::class.java.name + " for ${script.fqName}"
 }
@@ -197,7 +168,7 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
     }
 
     override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject)
-            // generate outer classes but not their members
+    // generate outer classes but not their members
             = shouldGenerateClassMembers(processingClassOrObject) || processingClassOrObject.isAncestor(classOrObject, true)
 
     override fun shouldGenerateScript(script: KtScript) = PsiTreeUtil.isAncestor(script, classOrObject, false)
@@ -214,10 +185,10 @@ object ClassFilterForFacade : GenerationState.GenerateClassFilter() {
 
 private class ClassFilterForScript(val script: KtScript) : GenerationState.GenerateClassFilter() {
     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean =
-            shouldGenerateClass(processingClassOrObject)
+        shouldGenerateClass(processingClassOrObject)
 
     override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean =
-            processingClassOrObject.isAncestor(script, true)
+        processingClassOrObject.isAncestor(script, true)
 
     override fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject): Boolean = true
 
