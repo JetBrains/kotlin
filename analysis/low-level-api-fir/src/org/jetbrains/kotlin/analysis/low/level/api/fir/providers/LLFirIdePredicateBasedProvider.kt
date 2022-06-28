@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -130,6 +133,45 @@ internal class LLFirIdePredicateBasedProvider(
         override fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: FirDeclaration): Boolean {
             return metaAnnotationsOnOuterDeclarations(data).any { it in predicate.metaAnnotations }
         }
+
+        override fun visitParentAnnotatedWith(predicate: ParentAnnotatedWith, data: FirDeclaration): Boolean {
+            val parent = data.directParentDeclaration ?: return false
+            val parentPredicate = AnnotatedWith(predicate.annotations)
+
+            return parentPredicate.accept(this, parent)
+        }
+
+        override fun visitHasAnnotatedWith(predicate: HasAnnotatedWith, data: FirDeclaration): Boolean {
+            val childPredicate = AnnotatedWith(predicate.annotations)
+
+            return data.anyDirectChildDeclarationMatches(childPredicate)
+        }
+
+        override fun visitParentMetaAnnotatedWith(predicate: ParentMetaAnnotatedWith, data: FirDeclaration): Boolean {
+            val parent = data.directParentDeclaration ?: return false
+            val parentPredicate = MetaAnnotatedWith(predicate.annotations)
+
+            return parentPredicate.accept(this, parent)
+        }
+
+        override fun visitHasMetaAnnotatedWith(predicate: HasMetaAnnotatedWith, data: FirDeclaration): Boolean {
+            val childPredicate = MetaAnnotatedWith(predicate.annotations)
+
+            return data.anyDirectChildDeclarationMatches(childPredicate)
+        }
+
+        private val FirDeclaration.directParentDeclaration: FirDeclaration?
+            get() = getOwnersOfDeclaration(this)?.lastOrNull()?.fir
+
+        private fun FirDeclaration.anyDirectChildDeclarationMatches(childPredicate: DeclarationPredicate): Boolean {
+            var result = false
+
+            this.forEachDirectChildDeclaration {
+                result = result || childPredicate.accept(this@Matcher, it)
+            }
+
+            return result
+        }
     }
 
     private fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
@@ -216,4 +258,27 @@ private inline fun FirFile.forEachElementWithContainers(
     }
 
     accept(declarationsCollector, persistentListOf())
+}
+
+/**
+ * Calls [action] on every direct child declaration of [this] declaration.
+ */
+private inline fun FirDeclaration.forEachDirectChildDeclaration(crossinline action: (child: FirDeclaration) -> Unit) {
+    this.acceptChildren(object : FirDefaultVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            // we must visit only direct children
+        }
+
+        override fun visitFile(file: FirFile) {
+            action(file)
+        }
+
+        override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
+            action(callableDeclaration)
+        }
+
+        override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
+            action(classLikeDeclaration)
+        }
+    })
 }
