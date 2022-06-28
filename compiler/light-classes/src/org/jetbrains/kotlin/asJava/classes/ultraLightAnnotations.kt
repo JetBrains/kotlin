@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
-import com.intellij.psi.impl.compiled.ClsJavaCodeReferenceElementImpl
 import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -48,11 +47,7 @@ class KtUltraLightSimpleAnnotation(
     parent: PsiElement,
     private val nameReferenceElementProvider: (() -> PsiJavaCodeReferenceElement?)? = null,
 ) : KtLightAbstractAnnotation(parent) {
-    private val _nameReferenceElement: PsiJavaCodeReferenceElement? by lazyPub {
-        nameReferenceElementProvider?.invoke() ?: annotationFqName?.let { ClsJavaCodeReferenceElementImpl(parent, it) }
-    }
-
-    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = _nameReferenceElement
+    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = nameReferenceElementProvider?.invoke()
 
     private val parameterList = ParameterListImpl()
 

@@ -10,4 +10,5 @@ class C : A() {
     }
 }
 
+// LAZINESS:NoConsistency
 // COMPILATION_ERRORS

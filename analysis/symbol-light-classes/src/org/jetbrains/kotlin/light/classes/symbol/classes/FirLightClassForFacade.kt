@@ -172,6 +172,7 @@ class FirLightClassForFacade(
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,
         lightClass = { this },
+        stub = { null },
         packageFqName = packageFqName
     )
 

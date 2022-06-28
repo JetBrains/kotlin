@@ -13,4 +13,5 @@ class C : A(), I {
     override fun if() = 5
 }
 
+// LAZINESS:NoLaziness
 // COMPILATION_ERRORS

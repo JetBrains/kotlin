@@ -5,4 +5,5 @@ package a
 fun f() {
 
 }
+// LAZINESS:NoLaziness
 // FIR_COMPARISON

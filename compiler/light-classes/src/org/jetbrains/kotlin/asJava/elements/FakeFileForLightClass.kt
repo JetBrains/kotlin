@@ -19,6 +19,7 @@ import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.SourceTreeToPsiMap
 import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.util.PsiUtil
 import com.intellij.reference.SoftReference
 import com.intellij.util.AstLoadingFilter
@@ -32,7 +33,8 @@ import java.lang.ref.Reference
 open class FakeFileForLightClass(
     val ktFile: KtFile,
     private val lightClass: () -> KtLightClass,
-    private val packageFqName: FqName = ktFile.packageFqName,
+    private val stub: () -> PsiClassHolderFileStub<*>?,
+    private val packageFqName: FqName = ktFile.packageFqName
 ) : ClsFileImpl(ktFile.viewProvider) {
 
     override fun getVirtualFile(): VirtualFile =
@@ -47,7 +49,7 @@ open class FakeFileForLightClass(
         return javaFileStub
     }
 
-    override fun getStub() = createFakeJavaFileStub()
+    override fun getStub() = stub() ?: createFakeJavaFileStub()
 
     override fun getClasses() = arrayOf(lightClass())
 

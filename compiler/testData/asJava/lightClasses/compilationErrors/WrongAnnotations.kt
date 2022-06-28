@@ -32,3 +32,5 @@ class A {
         }
     }
 }
+
+// LAZINESS:NoConsistency

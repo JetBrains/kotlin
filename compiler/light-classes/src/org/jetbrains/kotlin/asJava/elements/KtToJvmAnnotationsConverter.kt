@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -92,10 +91,11 @@ internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtL
 
     val targetAttributes = "value" to ArrayValue(convertedValues) { module -> module.builtIns.array.defaultType }
 
-    return asUltraLightSimpleAnnotation(
+    return KtUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_TARGET,
         listOf(targetAttributes),
         support,
+        parent
     )
 }
 
@@ -111,28 +111,17 @@ internal fun createRetentionRuntimeAnnotation(support: KtUltraLightSupport, pare
     JAVA_LANG_ANNOTATION_RETENTION,
     listOf("value" to retentionMapping["kotlin.annotation.AnnotationRetention.RUNTIME"]!!),
     support,
-    parent,
-)
-
-internal fun PsiAnnotation.asUltraLightSimpleAnnotation(
-    qualifier: String,
-    argumentsList: List<Pair<String, ConstantValue<*>>>,
-    ultraLightSupport: KtUltraLightSupport,
-): KtLightAbstractAnnotation = KtUltraLightSimpleAnnotation(
-    annotationFqName = qualifier,
-    argumentsList = argumentsList,
-    ultraLightSupport = ultraLightSupport,
-    parent = parent,
-    nameReferenceElementProvider = { nameReferenceElement }
+    parent
 )
 
 internal fun PsiAnnotation.tryConvertAsRetention(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
     if (FqNames.retention.asString() != qualifiedName) return null
     val convertedValue = extractAnnotationFqName("value")?.let { retentionMapping[it] } ?: return null
-    return asUltraLightSimpleAnnotation(
+    return KtUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
         listOf("value" to convertedValue),
         support,
+        parent
     )
 }
 
@@ -182,5 +171,5 @@ private fun PsiAnnotation.tryConvertAs(
     from: FqName,
     to: String,
 ): KtLightAbstractAnnotation? = takeIf { from.asString() == qualifiedName }?.let {
-    asUltraLightSimpleAnnotation(to, emptyList(), support)
+    KtUltraLightSimpleAnnotation(to, emptyList(), support, parent)
 }

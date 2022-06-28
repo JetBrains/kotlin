@@ -16,3 +16,5 @@ class Wrapper {
 }
 
 class G
+
+// LAZINESS:NoLaziness

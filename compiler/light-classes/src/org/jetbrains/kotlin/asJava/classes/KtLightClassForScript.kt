@@ -43,6 +43,7 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(sc
         FakeFileForLightClass(
             script.containingKtFile,
             lightClass = { this },
+            stub = { null },
             packageFqName = fqName.parent(),
         )
     }

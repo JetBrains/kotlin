@@ -11,3 +11,5 @@ class Bar(val a: Int) {
         }
     }
 }
+
+// LAZINESS:NoLaziness

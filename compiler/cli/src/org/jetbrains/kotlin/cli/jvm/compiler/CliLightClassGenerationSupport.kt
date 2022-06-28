@@ -97,21 +97,21 @@ class CliLightClassGenerationSupport(
         //force resolve companion for light class generation
         traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
-        val (_, bindingContext, diagnostics) = builder(getContext())
+        val (stub, bindingContext, diagnostics) = builder(getContext())
 
         bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
 
-        return LightClassDataHolderImpl(diagnostics)
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
-        val (_, _, diagnostics) = builder(getContext())
-        return LightClassDataHolderImpl(diagnostics)
+        val (stub, _, diagnostics) = builder(getContext())
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     override fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript {
-        val (_, _, diagnostics) = builder(getContext())
-        return LightClassDataHolderImpl(diagnostics)
+        val (stub, _, diagnostics) = builder(getContext())
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     private fun getContext(): LightClassConstructionContext =

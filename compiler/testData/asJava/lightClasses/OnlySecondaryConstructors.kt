@@ -5,4 +5,5 @@ class OnlySecondaryConstructors {
     constructor(p: Int): this()
 }
 
+// LAZINESS:NoLaziness
 // FIR_COMPARISON

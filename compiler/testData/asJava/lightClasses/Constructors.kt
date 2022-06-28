@@ -5,4 +5,5 @@ class Constructors(val valInPrimary: Int) {
     private constructor(): this(2)
 }
 
+// LAZINESS:NoLaziness
 // FIR_COMPARISON
