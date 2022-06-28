@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
@@ -24,7 +23,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -271,9 +269,6 @@ abstract class AbstractKotlinTarget(
     override fun mavenPublication(action: Action<MavenPublication>) {
         publicationConfigureActions.add(action)
     }
-
-    override fun mavenPublication(action: Closure<Unit>) =
-        mavenPublication(ConfigureUtil.configureUsing(action))
 
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set
