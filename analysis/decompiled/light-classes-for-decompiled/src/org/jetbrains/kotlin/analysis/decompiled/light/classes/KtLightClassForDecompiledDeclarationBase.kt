@@ -1,7 +1,4 @@
-/*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
@@ -12,7 +9,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 abstract class KtLightClassForDecompiledDeclarationBase(
-    val clsDelegate: PsiClass,
+    override val clsDelegate: PsiClass,
     clsParent: PsiElement,
     final override val kotlinOrigin: KtClassOrObject?
 ) : KtLightElementBase(clsParent), PsiClass, KtExtensibleLightClass

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
@@ -108,9 +109,11 @@ class CliKotlinAsJavaSupport(
         ).mapNotNull { member -> (member as? PackageViewDescriptor)?.fqName }
     }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = KtLightClassForSourceDeclaration.create(classOrObject)
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? =
+        KtLightClassForSourceDeclaration.create(classOrObject, traceHolder.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))
 
-    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? = KtLightClassForScript.create(script)
+    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? =
+        KtLightClassForScript.create(script)
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         return ResolveSessionUtils.getClassDescriptorsByFqName(traceHolder.module, fqName).mapNotNull {
@@ -127,5 +130,6 @@ class CliKotlinAsJavaSupport(
         }.orEmpty()
     }
 
-    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass = error("Should not be called")
+    override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass =
+        error("Should not be called")
 }

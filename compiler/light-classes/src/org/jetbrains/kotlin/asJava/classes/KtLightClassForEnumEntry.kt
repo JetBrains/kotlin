@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.asJava.builder.LightClassData
+import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiEnumConstantInitializer
+import org.jetbrains.kotlin.psi.KtEnumEntry
 
-abstract class KtLazyLightClass(manager: PsiManager) : KtLightClassBase(manager) {
-    abstract val lightClassData: LightClassData
+internal class KtLightClassForEnumEntry(
+        enumEntry: KtEnumEntry,
+        private val enumConstant: PsiEnumConstant
+): KtLightClassForAnonymousDeclaration(enumEntry), PsiEnumConstantInitializer {
+    override fun getEnumConstant(): PsiEnumConstant = enumConstant
+    override fun copy() = KtLightClassForEnumEntry(classOrObject as KtEnumEntry, enumConstant)
 
-    override val clsDelegate: PsiClass by lazyPub { lightClassData.clsDelegate }
-
-    override fun getOwnFields() = lightClassData.getOwnFields(this)
-    override fun getOwnMethods() = lightClassData.getOwnMethods(this)
+    override fun getParent() = enumConstant
 }

@@ -15,6 +15,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
@@ -77,6 +78,10 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 
     override fun isFinal(isFinalByPsi: Boolean) = isFinalByPsi
+
+    override fun findLightClassData(): LightClassData = invalidAccess()
+
+    override fun getDelegate(): PsiClass = invalidAccess()
 
     private val _modifierList: PsiModifierList? by lazyPub {
         KtUltraLightClassModifierList(this, support) { computeModifiers() }
@@ -295,7 +300,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 when (declaration) {
                     is KtNamedFunction ->
                         if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration, forceStatic = true))
-
                     is KtProperty -> result.addAll(
                         membersBuilder.propertyAccessors(
                             declaration,
@@ -401,7 +405,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                         declarationOriginKindForOrigin = JvmDeclarationOriginKind.DELEGATION
                     )
                 }
-
                 is FunctionDescriptor -> result.add(
                     createGeneratedMethodFromDescriptor(
                         descriptor = delegate,
@@ -483,7 +486,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return create(it) }
+        containingClass?.let { return create(it, jvmDefaultMode) }
 
         val containingBlock = classOrObject.parent as? KtBlockExpression
         val containingScript = containingBlock?.parent as? KtScript

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T
 ) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierList> {
+    override val clsDelegate by lazyPub { owner.clsDelegate.modifierList!! }
     private val _annotations by lazyPub {
         val annotations = computeAnnotations()
         annotationsFilter?.let(annotations::filter) ?: annotations
@@ -38,13 +39,9 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
 
-    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
-
-    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+    override fun setModifierProperty(name: String, value: Boolean) = clsDelegate.setModifierProperty(name, value)
+    override fun checkSetModifierProperty(name: String, value: Boolean) = clsDelegate.checkSetModifierProperty(name, value)
+    override fun addAnnotation(qualifiedName: String) = clsDelegate.addAnnotation(qualifiedName)
 
     override fun getApplicableAnnotations(): Array<out PsiAnnotation> = annotations
 
@@ -58,7 +55,14 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     override fun toString() = "Light modifier list of $owner"
 
-    open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> = emptyList()
+    protected open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
+
+        val annotations = parent.clsDelegate.modifierList?.annotations
+
+        if (annotations.isNullOrEmpty()) return emptyList()
+
+        return annotations.map { KtLightNonSourceAnnotation(this, it) }
+    }
 
     private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
         val annotationsForEntries = owner.givenAnnotations ?: lightAnnotationsForEntries(this)
@@ -134,7 +138,21 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 
 abstract class KtUltraLightModifierListBase<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     owner: T
-) : KtLightModifierList<T>(owner)
+) : KtLightModifierList<T>(owner) {
+
+    override val clsDelegate: PsiModifierList get() = invalidAccess()
+
+    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
+
+    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+
+    override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> =
+        emptyList()
+}
 
 class KtLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
@@ -163,12 +181,23 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
         }
         .groupBy({ it.first }) { it.second }
         .flatMap { (fqName, entries) ->
-            entries.map { entry ->
+            entries.mapIndexed { index, entry ->
+
+                val lazyClsDelegate = if (lightModifierList !is KtUltraLightModifierList) {
+                    lazyPub {
+                        lightModifierList.clsDelegate.annotations
+                            .filter { it.qualifiedName == fqName }
+                            .getOrNull(index)
+                            ?: KtLightNonExistentAnnotation(lightModifierList)
+                    }
+                } else null
+
                 KtLightAnnotationForSourceEntry(
                     name = entry.shortName?.identifier,
                     lazyQualifiedName = { fqName },
                     kotlinOrigin = entry,
-                    parent = lightModifierList
+                    parent = lightModifierList,
+                    lazyClsDelegate = lazyClsDelegate
                 )
             }
         }
@@ -201,8 +230,8 @@ private fun getAnnotationDescriptors(
     val annotatedDescriptor = when {
         descriptor is ClassDescriptor && annotatedLightElement is KtLightMethod && annotatedLightElement.isConstructor ->
             descriptor.unsubstitutedPrimaryConstructor
-
         descriptor !is PropertyDescriptor -> descriptor
+        annotatedLightElement is KtLightFieldImpl.KtLightEnumConstant -> descriptor
         annotatedLightElement is KtLightField -> descriptor.backingField
         annotatedLightElement !is KtLightMethod -> descriptor
         annotatedLightElement.isGetter -> descriptor.getter

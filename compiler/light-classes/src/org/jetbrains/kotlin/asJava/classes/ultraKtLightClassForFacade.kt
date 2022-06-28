@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
+import com.intellij.psi.*
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.util.CachedValue
+import org.jetbrains.kotlin.asJava.builder.LightClassData
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.findAnnotationEntryOnFileNoResolve
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -25,9 +26,21 @@ import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 class KtUltraLightClassForFacade(
     manager: PsiManager,
     facadeClassFqName: FqName,
+    lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
     files: Collection<KtFile>,
     private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
-) : KtLightClassForFacadeImpl(manager, facadeClassFqName, files) {
+) : KtLightClassForFacadeImpl(manager, facadeClassFqName, lightClassDataCache, files) {
+
+    override fun getDelegate(): PsiClass = invalidAccess()
+
+    override val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade> get() = invalidAccess()
+
+    override val clsDelegate: PsiClass get() = invalidAccess()
+
+    override val lightClassData: LightClassData get() = invalidAccess()
+
+    override val javaFileStub: PsiJavaFileStub? = null
+
     private val _modifierList: PsiModifierList by lazyPub {
         if (isMultiFileClass)
             LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
@@ -46,7 +59,8 @@ class KtUltraLightClassForFacade(
                     name = entry.shortName?.identifier,
                     lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
                     kotlinOrigin = entry,
-                    parent = _modifierList
+                    parent = _modifierList,
+                    lazyClsDelegate = null
                 )
             }
         }
@@ -87,7 +101,6 @@ class KtUltraLightClassForFacade(
                     ktFunction = declaration,
                     forceStatic = true
                 )
-
                 is KtProperty -> {
                     if (!declaration.isPrivate() || declaration.accessors.isNotEmpty()) {
                         creator.propertyAccessors(
@@ -98,7 +111,6 @@ class KtUltraLightClassForFacade(
                         )
                     } else emptyList()
                 }
-
                 else -> emptyList()
             }
             result.addAll(methods)
@@ -136,5 +148,5 @@ class KtUltraLightClassForFacade(
     override fun getOwnMethods() = _ownMethods
 
     override fun copy(): KtLightClassForFacade =
-        KtUltraLightClassForFacade(manager, facadeClassFqName, files, filesWithSupports)
+        KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesWithSupports)
 }
