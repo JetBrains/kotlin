@@ -60,6 +60,8 @@ fun buildLightClass(
         generate(state, files)
 
         val javaFileStub = classBuilderFactory.result()
+
+        stubComputationTrackerInstance(project)?.onStubComputed(javaFileStub, context)
         return LightClassBuilderResult(javaFileStub, context.bindingContext, state.collectedExtraJvmDiagnostics)
     } catch (e: ProcessCanceledException) {
         throw e
