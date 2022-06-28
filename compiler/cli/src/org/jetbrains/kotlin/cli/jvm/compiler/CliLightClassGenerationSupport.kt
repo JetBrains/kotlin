@@ -93,7 +93,7 @@ class CliLightClassGenerationSupport(
         return ultraLightSupport
     }
 
-    fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
+    override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
         traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
@@ -104,12 +104,12 @@ class CliLightClassGenerationSupport(
         return LightClassDataHolderImpl(diagnostics)
     }
 
-    fun createDataHolderForFacade(builder: LightClassBuilder): LightClassDataHolder.ForFacade {
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
         val (_, _, diagnostics) = builder(getContext())
         return LightClassDataHolderImpl(diagnostics)
     }
 
-    fun createDataHolderForScript(builder: LightClassBuilder): LightClassDataHolder.ForScript {
+    override fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript {
         val (_, _, diagnostics) = builder(getContext())
         return LightClassDataHolderImpl(diagnostics)
     }
