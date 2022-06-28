@@ -688,7 +688,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
-            val cocoapodsExtension = CocoapodsExtension(this)
+            val cocoapodsExtension = project.objects.newInstance(CocoapodsExtension::class.java, this)
             kotlinExtension.addExtension(COCOAPODS_EXTENSION_NAME, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             registerDummyFrameworkTask(project, cocoapodsExtension)
