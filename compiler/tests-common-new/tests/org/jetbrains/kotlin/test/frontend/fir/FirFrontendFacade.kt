@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -142,7 +143,8 @@ class FirFrontendFacade(
             lightTreeFiles,
             IrGenerationExtension.getInstances(project),
             lightTreeEnabled,
-            enablePluginPhases
+            enablePluginPhases,
+            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
         )
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->

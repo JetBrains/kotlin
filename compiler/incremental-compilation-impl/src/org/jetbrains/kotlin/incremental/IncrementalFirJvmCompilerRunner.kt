@@ -284,7 +284,8 @@ class IncrementalFirJvmCompilerRunner(
                 extensions, FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl,
                 FirJvmVisibilityConverter,
                 Fir2IrJvmSpecialAnnotationSymbolProvider(),
-                irGenerationExtensions
+                irGenerationExtensions,
+                generateSignatures = false
             )
 
             performanceManager?.notifyIRTranslationFinished()

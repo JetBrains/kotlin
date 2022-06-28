@@ -43,4 +43,5 @@ interface Fir2IrComponents {
     val delegatedMemberGenerator: DelegatedMemberGenerator
 
     val extensions: Fir2IrExtensions
+    val generateSignatures: Boolean
 }

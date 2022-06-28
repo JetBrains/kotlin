@@ -45,6 +45,7 @@ fun FirSession.convertToIr(
         FirJvmKotlinMangler(this), JvmIrMangler, IrFactoryImpl,
         FirJvmVisibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(),
-        irGeneratorExtensions
+        irGeneratorExtensions,
+        generateSignatures = false
     )
 }

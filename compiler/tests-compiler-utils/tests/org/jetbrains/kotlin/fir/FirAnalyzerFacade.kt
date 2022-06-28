@@ -48,6 +48,7 @@ class FirAnalyzerFacade(
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val useLightTree: Boolean = false,
     val enablePluginPhases: Boolean = false,
+    val generateSignatures: Boolean = false,
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -117,7 +118,8 @@ class FirAnalyzerFacade(
             FirJvmKotlinMangler(session), JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions
+            irGeneratorExtensions,
+            generateSignatures
         )
     }
 }

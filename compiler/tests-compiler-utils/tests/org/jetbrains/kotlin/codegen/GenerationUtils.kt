@@ -113,7 +113,8 @@ object GenerationUtils {
             configuration.languageVersionSettings,
             files,
             emptyList(),
-            IrGenerationExtension.getInstances(project)
+            IrGenerationExtension.getInstances(project),
+            generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
         val (moduleFragment, components) = firAnalyzerFacade.convertToIr(fir2IrExtensions)

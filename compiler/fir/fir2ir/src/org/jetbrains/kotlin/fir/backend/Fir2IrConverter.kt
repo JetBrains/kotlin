@@ -396,7 +396,6 @@ class Fir2IrConverter(
             }
         }
 
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun createModuleFragment(
             session: FirSession,
             scopeSession: ScopeSession,
@@ -409,13 +408,16 @@ class Fir2IrConverter(
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
-            irGenerationExtensions: Collection<IrGenerationExtension>
+            irGenerationExtensions: Collection<IrGenerationExtension>,
+            generateSignatures: Boolean
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val signatureComposer = FirBasedSignatureComposer(mangler)
             val wrappedSignaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer)
             val symbolTable = SymbolTable(wrappedSignaturer, irFactory)
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer, fir2IrExtensions)
+            val components = Fir2IrComponentsStorage(
+                session, scopeSession, symbolTable, irFactory, signatureComposer, fir2IrExtensions, generateSignatures
+            )
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
             components.converter = converter
