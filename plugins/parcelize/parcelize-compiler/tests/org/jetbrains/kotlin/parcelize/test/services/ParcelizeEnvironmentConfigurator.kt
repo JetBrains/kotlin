@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,6 +29,6 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        ParcelizeComponentRegistrar.registerParcelizeComponents(this)
+        ParcelizeComponentRegistrar.registerParcelizeComponents(this, useFir = module.frontendKind == FrontendKinds.FIR)
     }
 }
