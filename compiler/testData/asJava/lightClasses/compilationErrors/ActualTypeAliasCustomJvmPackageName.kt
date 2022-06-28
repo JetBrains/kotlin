@@ -4,5 +4,3 @@
 package p
 
 actual typealias B = List<Int>
-
-// SKIP_IDE_TEST

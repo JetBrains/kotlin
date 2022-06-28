@@ -9,5 +9,3 @@ interface I {
 
     fun f()
 }
-
-// LAZINESS:NoLaziness

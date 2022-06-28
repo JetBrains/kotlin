@@ -1,5 +1,4 @@
 // p.Annotations
-// SKIP_SANITY_TEST
 
 package p
 

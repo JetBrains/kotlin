@@ -5,5 +5,3 @@
 fun foo() {
 
 }
-
-// SKIP_IDE_TEST

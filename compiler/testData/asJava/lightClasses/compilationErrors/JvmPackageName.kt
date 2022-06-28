@@ -6,5 +6,3 @@ package p
 fun f() {
 
 }
-
-// SKIP_IDE_TEST

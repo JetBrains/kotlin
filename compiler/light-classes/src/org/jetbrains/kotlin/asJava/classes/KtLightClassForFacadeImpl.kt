@@ -47,7 +47,6 @@ abstract class KtLightClassForFacadeImpl constructor(
         FakeFileForLightClass(
             firstFileInFacade,
             lightClass = { this },
-            stub = { null },
             packageFqName = facadeClassFqName.parent()
         )
     }
