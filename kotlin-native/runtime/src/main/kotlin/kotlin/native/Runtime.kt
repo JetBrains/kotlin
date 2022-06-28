@@ -57,6 +57,17 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * Hook must be a frozen lambda, so that it could be called from any thread/worker.
  */
 @OptIn(FreezingIsDeprecated::class)
+public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
+    try {
+        return UnhandledExceptionHookHolder.hook.swap(hook)
+    } catch (e: InvalidMutabilityException) {
+        throw InvalidMutabilityException("Unhandled exception hook must be frozen")
+    }
+}
+
+@Suppress("CONFLICTING_OVERLOADS")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
     try {
         return UnhandledExceptionHookHolder.hook.swap(hook)
