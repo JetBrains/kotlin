@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
+
+private const val magicPropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(
     val context: JsIrBackendContext,
@@ -133,11 +134,10 @@ class ExportModelGenerator(
         val parentClass = property.parent as? IrClass
 
         return ExportedProperty(
-            property.getExportedIdentifier(),
-            specializeType ?: exportType(property.getter!!.returnType),
+            name = property.getExportedIdentifier(),
+            type = specializeType ?: exportType(property.getter!!.returnType),
             mutable = property.isVar,
             isMember = parentClass != null,
-            isStatic = false,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
@@ -156,18 +156,7 @@ class ExportModelGenerator(
         val ordinal = enumEntries.getValue(irEnumEntry)
 
         fun fakeProperty(name: String, type: ExportedType) =
-            ExportedProperty(
-                name = name,
-                type = type,
-                mutable = false,
-                isMember = true,
-                isStatic = false,
-                isAbstract = false,
-                isProtected = false,
-                irGetter = null,
-                irSetter = null,
-                isField = false,
-            )
+            ExportedProperty(name = name, type = type, mutable = false, isMember = true)
 
         val nameProperty = fakeProperty(
             name = "name",
@@ -189,12 +178,9 @@ class ExportModelGenerator(
             mutable = false,
             isMember = true,
             isStatic = true,
-            isAbstract = false,
             isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
             irGetter = context.mapping.enumEntryToGetInstanceFun[irEnumEntry]
                 ?: error("Unable to find get instance fun for ${field.fqNameWhenAvailable}"),
-            irSetter = null,
-            isField = false,
         )
     }
 
@@ -324,9 +310,66 @@ class ExportModelGenerator(
             }
         }
 
+        if (klass.shouldContainImplementationOfMagicProperty()) {
+            members.addMagicPropertyForInterfaceImplementation(klass)
+        } else if (klass.shouldNotBeImplemented()) {
+            members.addMagicInterfaceProperty(klass)
+        }
+
         return ExportedClassDeclarationsInfo(
             members,
             nestedClasses
+        )
+    }
+
+    private fun IrClass.shouldNotBeImplemented(): Boolean {
+        return isInterface && !isExternal
+    }
+
+    private fun IrClass.shouldContainImplementationOfMagicProperty(): Boolean {
+        return !isExternal && superTypes.any {
+            val superClass = it.classOrNull?.owner ?: return@any false
+            superClass.isInterface && superClass.isExported(context)
+        }
+    }
+
+    private fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty(klass: IrClass) {
+        add(ExportedProperty(name = magicPropertyName, type = klass.generateTagType(), mutable = false, isMember = true, isField = true))
+    }
+
+    private fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplementation(klass: IrClass) {
+        val superTypesToInheritanceMagicProperty = klass.superTypes.filter { it.shouldAddMagicPropertyOfSuper() }
+
+        if (superTypesToInheritanceMagicProperty.isEmpty()) return
+
+        val intersectionOfTypes = superTypesToInheritanceMagicProperty
+            .map { ExportedType.PropertyType(exportType(it), ExportedType.LiteralType.StringLiteralType(magicPropertyName)) }
+            .reduce(ExportedType::IntersectionType)
+            .let { if (klass.shouldNotBeImplemented()) ExportedType.IntersectionType(klass.generateTagType(), it) else it }
+
+        add(ExportedProperty(name = magicPropertyName, type = intersectionOfTypes, mutable = false, isMember = true, isField = true))
+    }
+
+    private fun IrType.shouldAddMagicPropertyOfSuper(): Boolean {
+        return classOrNull?.owner?.isOwnMagicPropertyAdded() ?: false
+    }
+
+    private fun IrClass.isOwnMagicPropertyAdded(): Boolean {
+        if (!isExported(context)) return false
+        return isInterface && !isExternal || superTypes.any { it.classOrNull?.owner?.isOwnMagicPropertyAdded() ?: false }
+    }
+
+    private fun IrClass.generateTagType(): ExportedType {
+        return ExportedType.InlineInterfaceType(
+            listOf(
+                ExportedProperty(
+                    name = getFqNameWithJsNameWhenAvailable(true).asString(),
+                    type = ExportedType.Primitive.UniqueSymbol,
+                    mutable = false,
+                    isMember = true,
+                    isField = true,
+                )
+            )
         )
     }
 

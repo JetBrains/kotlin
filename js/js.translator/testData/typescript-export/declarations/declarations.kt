@@ -202,9 +202,15 @@ interface TestInterface {
 }
 
 @JsExport
-class TestInterfaceImpl(override val value: String) : TestInterface {
+interface AnotherExportedInterface
+
+@JsExport
+open class TestInterfaceImpl(override val value: String) : TestInterface {
     override fun getOwnerName() = "TestInterfaceImpl"
 }
+
+@JsExport
+class ChildTestInterfaceImpl(): TestInterfaceImpl("Test"), AnotherExportedInterface
 
 @JsExport
 fun processInterface(test: TestInterface): String {

@@ -1,7 +1,5 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
-    const __doNotImplementIt: unique symbol
-    type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo {
         interface I<T, S, U> {
             x: T;
@@ -43,7 +41,9 @@ declare namespace JS_TESTS {
             bar: string;
             readonly baz: string;
             bay(): string;
-            readonly __doNotUseIt: __doNotImplementIt;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.I3": unique symbol;
+            };
         }
         function getI3(): foo.I3;
         function getA(): foo.I3;
@@ -56,7 +56,7 @@ declare namespace JS_TESTS {
             abstract set bar(value: string);
             abstract get baz(): string;
             abstract bay(): string;
-            readonly __doNotUseIt: __doNotImplementIt;
+            readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
         class B2 extends foo.A2 {
             constructor();
@@ -98,7 +98,7 @@ declare namespace JS_TESTS {
             get name(): "EC1" | "EC2" | "EC3";
             get ordinal(): 0 | 1 | 2;
             abstract get baz(): string;
-            readonly __doNotUseIt: __doNotImplementIt;
+            readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
     }
 }
