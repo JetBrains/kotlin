@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForScript
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -163,9 +159,6 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(sc
     override fun toString() = "${KtLightClassForScript::class.java.simpleName}:${script.fqName}"
 
     companion object {
-
-        private val JAVA_API_STUB_FOR_SCRIPT = Key.create<CachedValue<LightClassDataHolder.ForScript>>("JAVA_API_STUB_FOR_SCRIPT")
-
         fun create(script: KtScript): KtLightClassForScript? =
             CachedValuesManager.getCachedValue(script) {
                 CachedValueProvider.Result
@@ -186,17 +179,5 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(sc
                 createUltraLightClassForScript(script)
             }
         }
-
-        fun getLightClassCachedValue(script: KtScript): CachedValue<LightClassDataHolder.ForScript> {
-            return script.getUserData(JAVA_API_STUB_FOR_SCRIPT) ?: createCachedValueForScript(script).also {
-                script.putUserData(
-                    JAVA_API_STUB_FOR_SCRIPT,
-                    it,
-                )
-            }
-        }
-
-        private fun createCachedValueForScript(script: KtScript): CachedValue<LightClassDataHolder.ForScript> =
-            CachedValuesManager.getManager(script.project).createCachedValue(LightClassDataProviderForScript(script), false)
     }
 }

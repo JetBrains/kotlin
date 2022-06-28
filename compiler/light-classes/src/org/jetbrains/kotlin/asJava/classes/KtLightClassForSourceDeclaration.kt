@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
@@ -18,7 +17,6 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
@@ -28,9 +26,6 @@ import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
@@ -310,12 +305,6 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
     companion object {
-        private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder.ForClass>>("JAVA_API_STUB")
-        private val JAVA_API_STUB_LOCK = Key.create<Any>("JAVA_API_STUB_LOCK")
-
-        @JvmStatic
-        private val javaApiStubInitIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-
         private val jetTokenToPsiModifier = listOf(
             PUBLIC_KEYWORD to PsiModifier.PUBLIC,
             INTERNAL_KEYWORD to PsiModifier.PUBLIC,
@@ -345,67 +334,6 @@ abstract class KtLightClassForSourceDeclaration(
             return LightClassGenerationSupport.getInstance(classOrObject.project).run {
                 createUltraLightClass(classOrObject)
             }
-        }
-
-        fun getLightClassDataHolder(classOrObject: KtClassOrObject): LightClassDataHolder.ForClass {
-            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
-                return InvalidLightClassDataHolder
-            }
-
-            val containingScript = classOrObject.containingKtFile.safeScript()
-            return when {
-                !classOrObject.safeIsLocal() && containingScript != null ->
-                    KtLightClassForScript.getLightClassCachedValue(containingScript).value
-
-                else ->
-                    getLightClassCachedValue(classOrObject).value
-            }
-        }
-
-        private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
-            val outerClassValue = getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB)
-            outerClassValue?.let {
-                // stub computed for outer class can be used for inner/nested
-                return it
-            }
-            // the idea behind this locking approach:
-            // Thread T1 starts to calculate value for A it acquires lock for A
-            //
-            // Assumption 1: Lets say A calculation requires another value e.g. B to be calculated
-            // Assumption 2: Thread T2 wants to calculate value for B
-
-            // to avoid dead-lock case we mark thread as doing calculation and acquire lock only once per thread
-            // as a trade-off to prevent dependent value could be calculated several time
-            // due to CAS (within putUserDataIfAbsent etc) the same instance of calculated value will be used
-            val value: CachedValue<LightClassDataHolder.ForClass> = if (!javaApiStubInitIsRunning.get()) {
-                classOrObject.getUserData(JAVA_API_STUB) ?: run {
-                    val lock = classOrObject.putUserDataIfAbsent(JAVA_API_STUB_LOCK, Object())
-                    synchronized(lock) {
-                        try {
-                            javaApiStubInitIsRunning.set(true)
-                            computeLightClassCachedValue(classOrObject)
-                        } finally {
-                            javaApiStubInitIsRunning.set(false)
-                        }
-                    }
-                }
-            } else {
-                computeLightClassCachedValue(classOrObject)
-            }
-            return value
-        }
-
-        private fun computeLightClassCachedValue(
-            classOrObject: KtClassOrObject
-        ): CachedValue<LightClassDataHolder.ForClass> {
-            val value = classOrObject.getUserData(JAVA_API_STUB) ?: run {
-                val manager = CachedValuesManager.getManager(classOrObject.project)
-                val cachedValue = manager.createCachedValue(
-                    LightClassDataProviderForClassOrObject(classOrObject), false
-                )
-                classOrObject.putUserDataIfAbsent(JAVA_API_STUB, cachedValue)
-            }
-            return value
         }
 
         private fun checkSuperTypeByFQName(classDescriptor: ClassDescriptor, qualifiedName: String, deep: Boolean): Boolean {
