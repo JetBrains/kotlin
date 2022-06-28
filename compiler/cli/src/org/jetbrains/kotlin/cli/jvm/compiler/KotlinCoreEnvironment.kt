@@ -39,6 +39,7 @@ import com.intellij.util.io.URLUtil
 import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.KotlinExtraDiagnosticsProvider
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.FacadeCache
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -719,6 +720,7 @@ class KotlinCoreEnvironment private constructor(
                 val traceHolder = CliTraceHolder()
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder, project)
                 val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
+                registerService(KotlinExtraDiagnosticsProvider::class.java, CliExtraDiagnosticsProvider())
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
