@@ -330,7 +330,7 @@ private fun KtUltraLightClass.lightMethod(
             descriptor,
             OwnerKind.IMPLEMENTATION,
             support.deprecationResolver,
-            support.jvmDefaultMode,
+            support.typeMapper.jvmDefaultMode,
         )
         packMethodFlags(asmFlags, JvmCodegenUtil.isJvmInterface(kotlinOrigin.resolve() as? ClassDescriptor))
     }
