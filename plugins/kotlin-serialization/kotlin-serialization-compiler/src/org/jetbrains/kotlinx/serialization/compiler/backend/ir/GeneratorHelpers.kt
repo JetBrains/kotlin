@@ -681,12 +681,17 @@ interface IrBuilderExtension {
         }
 
         dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { irValueParameter(it) }
-        extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { irValueParameter(it) }
 
         if (!overwriteValueParameters)
             assert(valueParameters.isEmpty())
 
-        valueParameters = descriptor.valueParameters.map { irValueParameter(it) }
+        hasExtensionReceiver = descriptor.extensionReceiverParameter != null
+        valueParameters = buildList {
+            if (descriptor.extensionReceiverParameter != null) {
+                add(irValueParameter(descriptor.extensionReceiverParameter!!))
+            }
+            descriptor.valueParameters.mapTo(this) { irValueParameter(it) }
+        }
     }
 
     fun IrFunction.copyTypeParamsFromDescriptor(descriptor: FunctionDescriptor) {

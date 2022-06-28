@@ -146,7 +146,6 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             // NB stub method for 'remove(int)' doesn't override any built-in Kotlin declaration
             parent = removeAtStub.parent
             dispatchReceiverParameter = removeAtStub.dispatchReceiverParameter?.copyWithCustomTypeSubstitution(this) { it }
-            extensionReceiverParameter = null
             valueParameters = removeAtStub.valueParameters.map { stubParameter ->
                 stubParameter.copyWithCustomTypeSubstitution(this) { it }
             }
@@ -174,7 +173,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             overriddenSymbols = listOf(function.symbol)
             parent = irClass
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
+            hasExtensionReceiver = function.hasExtensionReceiver
             valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
             body = createThrowingStubBody(context, this)
         }

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -225,24 +224,26 @@ internal class AdapterGenerator(
             val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver
             when {
                 boundReceiver == null ->
-                    irAdapterFunction.extensionReceiverParameter = null
+                    irAdapterFunction.hasExtensionReceiver = false
                 boundDispatchReceiver != null && boundExtensionReceiver != null ->
                     error("Bound callable references can't have both receivers: ${callableReferenceAccess.render()}")
-                else ->
-                    irAdapterFunction.extensionReceiverParameter =
+                else -> {
+                    irAdapterFunction.hasExtensionReceiver = true
+                    irAdapterFunction.valueParameters +=
                         createAdapterParameter(
                             irAdapterFunction,
                             Name.identifier("receiver"),
-                            index = UNDEFINED_PARAMETER_INDEX,
+                            index = 0,
                             boundReceiver.type,
                             IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                         )
+                }
             }
             irAdapterFunction.valueParameters += parameterTypes.mapIndexed { index, parameterType ->
                 createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier("p$index"),
-                    index,
+                    index + irAdapterFunction.valueParameters.size,
                     parameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                 )
@@ -584,22 +585,29 @@ internal class AdapterGenerator(
             isFakeOverride = false
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
-            irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
-                irAdapterFunction,
-                Name.identifier("callee"),
-                UNDEFINED_PARAMETER_INDEX,
-                argumentType,
-                IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
-            )
-            irAdapterFunction.valueParameters += parameterTypes.mapIndexed { index, parameterType ->
-                createAdapterParameter(
-                    irAdapterFunction,
-                    Name.identifier("p$index"),
-                    index,
-                    parameterType,
-                    IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
+
+            irAdapterFunction.valueParameters = buildList {
+                add(
+                    createAdapterParameter(
+                        irAdapterFunction,
+                        Name.identifier("callee"),
+                        0,
+                        argumentType,
+                        IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
+                    )
                 )
+
+                parameterTypes.mapIndexedTo(this) { index, parameterType ->
+                    createAdapterParameter(
+                        irAdapterFunction,
+                        Name.identifier("p$index"),
+                        index + 1,
+                        parameterType,
+                        IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
+                    )
+                }
             }
+
             irAdapterFunction.body = irFactory.createBlockBody(startOffset, endOffset) {
                 val irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
                 if (returnType.isUnit()) {
@@ -708,7 +716,6 @@ internal class AdapterGenerator(
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
-            irAdapterFunction.extensionReceiverParameter = null
             val irFunctionParameter = createAdapterParameter(
                 irAdapterFunction,
                 functionParameter.name,

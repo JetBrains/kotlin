@@ -317,33 +317,38 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val functionDescriptor = irFunction.descriptor
 
         irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction)
+            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction, index = -1)
         }
 
-        irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction)
+        irFunction.hasExtensionReceiver = functionDescriptor.extensionReceiverParameter != null
+        irFunction.contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
+
+        irFunction.valueParameters = buildList {
+            functionDescriptor.contextReceiverParameters.mapIndexedTo(this) { i, contextReceiver ->
+                declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
+            }
+
+            functionDescriptor.extensionReceiverParameter?.let {
+                add(generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction, this.size))
+            }
+
+            functionDescriptor.valueParameters.mapTo(this) { valueParameterDescriptor ->
+                val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
+                declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, this.size)
+            }
         }
+
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
-        val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
-        irFunction.contextReceiverParametersCount = contextReceiverParametersCount
-        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
-            declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
-        }
-
         // Declare all the value parameters up first.
-        irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-            val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiverParametersCount)
-        }
         // Only after value parameters have been declared, generate default values. This ensures
         // that forward references to other parameters works in default value lambdas. For example:
         //
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
-            irFunction.valueParameters.drop(contextReceiverParametersCount).forEachIndexed { index, irValueParameter ->
+            irFunction.sourceValueParameters.forEachIndexed { index, irValueParameter ->
                 val valueParameterDescriptor = functionDescriptor.valueParameters[index]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
@@ -369,7 +374,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtPureElement?,
-        irOwnerElement: IrElement
+        irOwnerElement: IrElement,
+        index: Int,
     ): IrValueParameter {
         val name = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
             if (ktElement is KtFunctionLiteral) {
@@ -380,7 +386,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 Name.identifier("\$this\$$label")
             } else null
         } else null
-        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name)
+        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name, index)
     }
 
     private fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {

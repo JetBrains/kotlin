@@ -115,9 +115,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                 copyTypeParametersFrom(declaration)
                 typeRemapper.withinScope(this) {
                     assert(declaration.dispatchReceiverParameter == null) { "Top level functions do not have dispatch receiver" }
-                    extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()?.also {
-                        it.parent = this
-                    }
+                    hasExtensionReceiver = declaration.hasExtensionReceiver
                     returnType = typeRemapper.remapType(declaration.returnType)
                     valueParameters = declaration.valueParameters.transform()
                     valueParameters.forEach { it.parent = this }

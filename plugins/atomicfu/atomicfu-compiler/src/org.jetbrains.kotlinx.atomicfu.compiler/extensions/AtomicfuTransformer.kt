@@ -94,7 +94,6 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                     buildValueParameter(newDeclaration, GETTER, valueParametersCount, getterType),
                     buildValueParameter(newDeclaration, SETTER, valueParametersCount + 1, setterType)
                 )
-                newDeclaration.extensionReceiverParameter = null
                 return newDeclaration
             }
             return null

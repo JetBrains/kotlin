@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -162,7 +161,7 @@ class JvmCachedDeclarations(
             if (!isStatic) {
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
-            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
+            hasExtensionReceiver = target.hasExtensionReceiver
             valueParameters = target.valueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {

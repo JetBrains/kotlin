@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -594,7 +594,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     newFunction.parent = parent
     newFunction.returnType = returnType.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
     newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
-    newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
+    newFunction.hasExtensionReceiver = hasExtensionReceiver
     newFunction.contextReceiverParametersCount = contextReceiverParametersCount
 
     newFunction.valueParameters = valueParameters.map {

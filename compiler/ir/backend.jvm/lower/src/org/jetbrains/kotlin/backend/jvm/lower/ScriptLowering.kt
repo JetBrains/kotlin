@@ -455,7 +455,6 @@ private class ScriptToClassTransformer(
                         else -> data
                     }
                 dispatchReceiverParameter = newDispatchReceiverParameter
-                extensionReceiverParameter = extensionReceiverParameter?.transform(dataForChildren)
                 returnType = returnType.remapType()
                 valueParameters = valueParameters.transform(dataForChildren)
                 body = body?.transform(dataForChildren)

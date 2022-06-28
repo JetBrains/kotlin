@@ -172,10 +172,7 @@ class MemoizedInlineClassReplacements(
         buildReplacement(function, function.origin) {
             originalFunctionForMethodReplacement[this] = function
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
-                // The function's name will be mangled, so preserve the old receiver name.
-                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
-            )
+            hasExtensionReceiver = function.hasExtensionReceiver
             contextReceiverParametersCount = function.contextReceiverParametersCount
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, index = index, defaultValue = null).also {

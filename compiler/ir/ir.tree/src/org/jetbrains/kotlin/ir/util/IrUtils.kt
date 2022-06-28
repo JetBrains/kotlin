@@ -794,7 +794,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
             parameter.parent = this@copyReceiverParametersFrom
         }
     }
-    extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
+    hasExtensionReceiver = from.hasExtensionReceiver
 }
 
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {

@@ -63,7 +63,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
 
-        staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
+        staticFunction.hasExtensionReceiver = function.hasExtensionReceiver
         staticFunction.valueParameters += buildValueParameter(staticFunction) {
             origin = STATIC_THIS_PARAMETER
             name = Name.identifier("\$this")

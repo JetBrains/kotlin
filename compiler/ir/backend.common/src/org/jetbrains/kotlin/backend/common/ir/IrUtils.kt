@@ -39,10 +39,14 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.index = -1
+        this.index = contextReceiverParametersCount
         this.name = "receiver".synthesizedName
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
-            extensionReceiverParameter = receiver
+            require(valueParameters.size == contextReceiverParametersCount) {
+                "addExtensionReceiver should be called after context receivers added: ${valueParameters.size} != $contextReceiverParametersCount"
+            }
+            valueParameters = valueParameters + receiver
+            hasExtensionReceiver = true
         }
     }
 
