@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-open class KotlinNativeTarget @Inject constructor(
+abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget
 ) : KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
@@ -202,8 +202,8 @@ abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
         internal set
 }
 
-open class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
+abstract class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
     KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget)
 
-open class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
+abstract class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
     KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget)

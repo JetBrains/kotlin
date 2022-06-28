@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import java.io.File
+import javax.inject.Inject
 
-open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
+abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,

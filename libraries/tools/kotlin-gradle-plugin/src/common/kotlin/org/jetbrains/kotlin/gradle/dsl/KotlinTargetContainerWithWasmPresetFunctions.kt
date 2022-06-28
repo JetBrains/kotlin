@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
@@ -31,8 +30,8 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     fun wasm(name: String) = wasm(name) { }
 
     @ExperimentalWasmDsl
-    fun wasm(name: String, configure: Closure<*>) = wasm(name) { ConfigureUtil.configure(configure, this) }
+    fun wasm(name: String, configure: Action<KotlinWasmTargetDsl>) = wasm(name) { configure.execute(this) }
 
     @ExperimentalWasmDsl
-    fun wasm(configure: Closure<*>) = wasm { ConfigureUtil.configure(configure, this) }
+    fun wasm(configure: Action<KotlinWasmTargetDsl>) = wasm { configure.execute(this) }
 }

@@ -29,10 +29,18 @@ class KotlinJvmWithJavaTargetPreset(
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, name, { KotlinJvmOptionsImpl() }).apply {
-            disambiguationClassifier = name
-            preset = this@KotlinJvmWithJavaTargetPreset
-        }
+        @Suppress("UNCHECKED_CAST")
+        val target = (project.objects.newInstance(
+            KotlinWithJavaTarget::class.java,
+            project,
+            KotlinPlatformType.jvm,
+            name,
+            { KotlinJvmOptionsImpl() }
+        ) as KotlinWithJavaTarget<KotlinJvmOptions>)
+            .apply {
+                disambiguationClassifier = name
+                preset = this@KotlinJvmWithJavaTargetPreset
+            }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
             Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilation)

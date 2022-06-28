@@ -12,15 +12,20 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
+import javax.inject.Inject
 
-class KotlinAndroidTargetPreset(
+abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
 ) : KotlinTargetPreset<KotlinAndroidTarget> {
 
     override fun getName(): String = PRESET_NAME
 
     override fun createTarget(name: String): KotlinAndroidTarget {
-        val result = KotlinAndroidTarget(name, project).apply {
+        val result = project.objects.newInstance(
+            KotlinAndroidTarget::class.java,
+            name,
+            project
+        ).apply {
             disambiguationClassifier = name
             preset = this@KotlinAndroidTargetPreset
             targetUnderConstruction = this

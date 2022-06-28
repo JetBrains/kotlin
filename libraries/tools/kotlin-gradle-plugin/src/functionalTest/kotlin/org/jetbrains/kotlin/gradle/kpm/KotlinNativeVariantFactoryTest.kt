@@ -44,7 +44,7 @@ class KotlinNativeVariantFactoryTest(
 
     @Test
     fun `test variantClass`() {
-        assertEquals(variantConstructor.variantClass, variant.javaClass)
+        assertEquals(variantConstructor.variantClass.decoratedClassCanonicalName, variant.javaClass.canonicalName)
     }
 
     @Test
