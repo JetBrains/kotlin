@@ -291,6 +291,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             IrGenerationExtension.registerExtension(
                 project,
                 ComposeIrGenerationExtension(
+                    configuration = configuration,
                     liveLiteralsEnabled = liveLiteralsEnabled,
                     liveLiteralsV2Enabled = liveLiteralsV2Enabled,
                     generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
