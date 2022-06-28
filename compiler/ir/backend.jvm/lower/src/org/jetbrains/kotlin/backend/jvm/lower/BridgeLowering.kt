@@ -578,7 +578,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
         // with dispatch receivers pointing at a superclass instead of the current class.
         dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
-        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, visibleTypeParameters)
+        hasExtensionReceiver = from.hasExtensionReceiver
         valueParameters = if (substitutedParameterTypes != null) {
             from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
                 param.copyWithTypeErasure(this, visibleTypeParameters, type)

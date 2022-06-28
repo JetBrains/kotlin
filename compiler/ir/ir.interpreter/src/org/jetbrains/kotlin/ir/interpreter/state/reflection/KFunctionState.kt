@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.StateWithClosure
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -47,8 +46,8 @@ internal class KFunctionState(
             val samFunction = value.classOrNull!!.owner.getSingleAbstractMethod()
             if (samFunction.extensionReceiverParameter != null) {
                 // this change of parameter is needed because of difference in `invoke` and sam calls
-                invokeSymbol.owner.extensionReceiverParameter = invokeSymbol.owner.valueParameters[0]
-                invokeSymbol.owner.valueParameters = invokeSymbol.owner.valueParameters.drop(1)
+                invokeSymbol.owner.hasExtensionReceiver = true
+                invokeSymbol.owner.valueParameters = invokeSymbol.owner.valueParameters
             }
         }
     private var _parameters: List<KParameter>? = null

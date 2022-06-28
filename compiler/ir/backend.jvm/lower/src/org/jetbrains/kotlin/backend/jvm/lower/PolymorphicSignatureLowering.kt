@@ -72,7 +72,7 @@ class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTr
             parent = function.parent
             copyTypeParametersFrom(function)
             dispatchReceiverParameter = function.dispatchReceiverParameter
-            extensionReceiverParameter = function.extensionReceiverParameter
+            hasExtensionReceiver = function.hasExtensionReceiver
             for ((i, value) in values.withIndex()) {
                 addValueParameter("\$$i", value.type, JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION)
             }

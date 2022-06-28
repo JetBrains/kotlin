@@ -134,7 +134,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         ).apply {
             this.parent = ownerWithDefaults.parent
             this.dispatchReceiverParameter = ownerWithDefaults.dispatchReceiverParameter?.deepCopyWithSymbols(this)
-            this.extensionReceiverParameter = ownerWithDefaults.extensionReceiverParameter?.deepCopyWithSymbols(this)
+            this.hasExtensionReceiver = ownerWithDefaults.hasExtensionReceiver
             (0 until expression.valueArgumentsCount).forEach { index ->
                 val originalParameter = ownerWithDefaults.valueParameters[index]
                 val copiedParameter = originalParameter.deepCopyWithSymbols(this)

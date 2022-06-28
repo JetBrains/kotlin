@@ -368,9 +368,15 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols = descriptor.overriddenDescriptors.map { symbolTable.referenceSimpleFunction(it.original) }
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
+            newFunction.hasExtensionReceiver = descriptor.extensionReceiverParameter != null
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.map { newFunction.createValueParameter(it) }
+            newFunction.valueParameters =
+                buildList {
+                    descriptor.extensionReceiverParameter?.let {
+                        add(newFunction.createValueParameter(it))
+                    }
+                    descriptor.valueParameters.mapTo(this) { newFunction.createValueParameter(it) }
+                }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
                 typeTranslator.constantValueGenerator::generateAnnotationConstructorCall

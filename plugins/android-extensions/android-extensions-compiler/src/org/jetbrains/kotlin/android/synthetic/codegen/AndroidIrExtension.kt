@@ -54,7 +54,8 @@ abstract class AndroidIrExtension : IrGenerationExtension {
     override fun resolveSymbol(symbol: IrSymbol, context: TranslationPluginContext): IrDeclaration? =
         if (symbol !is IrSimpleFunctionSymbol ||
             (symbol.descriptor !is AndroidSyntheticFunction
-                    && symbol.descriptor.safeAs<PropertyGetterDescriptor>()?.correspondingProperty !is AndroidSyntheticProperty)) {
+                    && symbol.descriptor.safeAs<PropertyGetterDescriptor>()?.correspondingProperty !is AndroidSyntheticProperty)
+        ) {
             super.resolveSymbol(symbol, context)
         } else {
             // Replace android synthetic functions with stubs, since they are essentially intrinsics and will be replaced in the plugin
@@ -369,6 +370,12 @@ private fun TranslationPluginContext.declareFunctionStub(descriptor: FunctionDes
     }.also {
         it.typeParameters = descriptor.propertyIfAccessor.typeParameters.map(this::declareTypeParameterStub)
         it.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let(this::declareParameterStub)
-        it.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let(this::declareParameterStub)
-        it.valueParameters = descriptor.valueParameters.map(this::declareParameterStub)
+        it.hasExtensionReceiver = descriptor.extensionReceiverParameter != null
+        it.valueParameters = buildList {
+            if (descriptor.extensionReceiverParameter != null) {
+                add(declareParameterStub(descriptor.extensionReceiverParameter!!))
+            }
+
+            descriptor.valueParameters.mapTo(this, ::declareParameterStub)
+        }
     }

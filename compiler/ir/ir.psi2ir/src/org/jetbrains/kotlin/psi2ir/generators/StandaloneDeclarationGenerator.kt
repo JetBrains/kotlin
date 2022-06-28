@@ -148,16 +148,21 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
             declareParameter(it, null, irFunction)
         }
 
-        irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            declareParameter(it, null, irFunction)
-        }
+        irFunction.hasExtensionReceiver = functionDescriptor.extensionReceiverParameter != null
 
-        // Declare all the value parameters up first.
-        irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
-            val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
-                it.defaultValue = irFunction.defaultArgumentFactory(it)
+        irFunction.valueParameters = buildList {
+            functionDescriptor.extensionReceiverParameter?.let {
+                add(declareParameter(it, null, irFunction))
             }
+
+            // Declare all the value parameters up first.
+            functionDescriptor.valueParameters.mapTo(this) { valueParameterDescriptor ->
+                val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
+                declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
+                    it.defaultValue = irFunction.defaultArgumentFactory(it)
+                }
+            }
+
         }
     }
 

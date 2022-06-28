@@ -112,6 +112,8 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
         }.apply {
+            contextReceiverParametersCount = referencedFunction.contextReceiverParametersCount
+            hasExtensionReceiver = referencedFunction.hasExtensionReceiver
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 // TODO: could there be a star projection here?
                 val argumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }

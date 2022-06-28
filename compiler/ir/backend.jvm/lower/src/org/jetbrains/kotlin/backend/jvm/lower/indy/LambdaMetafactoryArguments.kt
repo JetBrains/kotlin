@@ -458,7 +458,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
 
-        lambda.extensionReceiverParameter = null
         lambda.valueParameters = newValueParameters
 
         return IrFunctionReferenceImpl(

@@ -161,7 +161,7 @@ class JvmCachedDeclarations(
             if (!isStatic) {
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
-            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
+            hasExtensionReceiver = target.hasExtensionReceiver
             valueParameters = target.valueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {

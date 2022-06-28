@@ -75,7 +75,7 @@ internal class ImplementedFakeOverrideCopier(
             copyTypeParametersFrom(declaration)
             typeRemapper.withinScope(this) {
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+                hasExtensionReceiver = declaration.hasExtensionReceiver
                 returnType = typeRemapper.remapType(declaration.returnType)
                 valueParameters = declaration.valueParameters.transform()
                 body = factory.createBlockBody(

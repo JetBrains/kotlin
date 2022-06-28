@@ -180,7 +180,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = null
                 irAdapterFun.dispatchReceiverParameter = null
-                irAdapterFun.extensionReceiverParameter = null
 
                 val fnType = functionParameter.type
 
@@ -460,16 +459,16 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
                 irAdapterFun.dispatchReceiverParameter = null
 
-                val boundReceiverType = callBuilder.original.getBoundReceiverType()
-                if (boundReceiverType != null) {
-                    irAdapterFun.extensionReceiverParameter =
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), -1, boundReceiverType)
-                } else {
-                    irAdapterFun.extensionReceiverParameter = null
-                }
+                irAdapterFun.valueParameters = buildList {
+                    val boundReceiverType = callBuilder.original.getBoundReceiverType()
+                    if (boundReceiverType != null) {
+                        irAdapterFun.hasExtensionReceiver = true
+                        add(createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), 0, boundReceiverType))
+                    }
 
-                irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
-                    createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), index, ktExpectedParameterType)
+                    ktExpectedParameterTypes.mapIndexedTo(this) { index, ktExpectedParameterType ->
+                        createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), size, ktExpectedParameterType)
+                    }
                 }
             }
         }

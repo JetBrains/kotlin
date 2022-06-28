@@ -41,7 +41,7 @@ class FakeOverrideCopier(
                 */
                 // Should fake override's receiver be the current class is an open question.
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+                hasExtensionReceiver = declaration.hasExtensionReceiver
                 returnType = typeRemapper.remapType(declaration.returnType)
                 this.valueParameters = declaration.valueParameters.transform()
             }

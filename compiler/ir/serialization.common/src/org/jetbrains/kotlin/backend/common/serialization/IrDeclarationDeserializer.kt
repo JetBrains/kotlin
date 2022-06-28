@@ -50,9 +50,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullablity
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullablity
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
@@ -458,11 +458,18 @@ class IrDeclarationDeserializer(
         return result
     }
 
-    private fun deserializeValueParameters(protos: List<ProtoValueParameter>): List<IrValueParameter> {
-        val result = ArrayList<IrValueParameter>(protos.size)
+    private fun deserializeValueParameters(proto: ProtoFunctionBase): List<IrValueParameter> {
+        val valueParameterProtos = proto.valueParameterList
+        val result = ArrayList<IrValueParameter>(valueParameterProtos.size)
 
-        for (i in protos.indices) {
-            result.add(deserializeIrValueParameter(protos[i], i))
+        if (proto.hasExtensionReceiver()) {
+            result.add(deserializeIrValueParameter(proto.extensionReceiver, 0))
+        }
+
+        val parameterOffset = if (proto.hasExtensionReceiver()) 1 else 0
+
+        for (i in valueParameterProtos.indices) {
+            result.add(deserializeIrValueParameter(valueParameterProtos[i], i + parameterOffset))
         }
 
         return result
@@ -562,13 +569,11 @@ class IrDeclarationDeserializer(
                 returnType = deserializeIrType(nameType.typeIndex)
 
                 withBodyGuard {
-                    valueParameters = deserializeValueParameters(proto.valueParameterList)
+                    valueParameters = deserializeValueParameters(proto)
                     dispatchReceiverParameter =
                         if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
                         else null
-                    extensionReceiverParameter =
-                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
-                        else null
+                    hasExtensionReceiver = proto.hasExtensionReceiver()
                     contextReceiverParametersCount =
                         if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
                     body =
