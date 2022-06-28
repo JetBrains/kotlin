@@ -163,6 +163,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER) ?:
             (optimizationsEnabled || CompilerVersion.CURRENT.meta != MetaVersion.RELEASE)
 
+    val appStateTracking: AppStateTracking by lazy {
+        configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")

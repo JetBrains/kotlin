@@ -2770,6 +2770,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val programType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
             overrideRuntimeGlobal("Kotlin_printToAndroidLogcat", Int32(if (programType.consolePrintsToLogcat) 1 else 0))
         }
+        overrideRuntimeGlobal("Kotlin_appStateTracking", Int32(context.config.appStateTracking.value))
     }
 
     //-------------------------------------------------------------------------//

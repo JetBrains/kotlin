@@ -35,6 +35,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val bundleId by stringOption()
     val bundleShortVersionString by stringOption()
     val bundleVersion by stringOption()
+
+    val appStateTracking by option<AppStateTracking>()
 }
 
 open class BinaryOption<T : Any>(

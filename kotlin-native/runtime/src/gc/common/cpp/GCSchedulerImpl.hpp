@@ -7,7 +7,9 @@
 
 #include "GCScheduler.hpp"
 
+#include "AppStateTracking.hpp"
 #include "Clock.hpp"
+#include "GlobalData.hpp"
 #include "StackTrace.hpp"
 #include "std_support/UnorderedSet.hpp"
 
@@ -129,10 +131,14 @@ class GCSchedulerDataWithTimer : public gc::GCSchedulerData {
 public:
     GCSchedulerDataWithTimer(gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept :
         config_(config),
+        appStateTracking_(mm::GlobalData::Instance().appStateTracking()),
         heapGrowthController_(config),
         regularIntervalPacer_(config),
         scheduleGC_(std::move(scheduleGC)),
         timer_("GC Timer thread", config_.regularGcInterval(), [this] {
+            if (appStateTracking_.state() == mm::AppStateTracking::State::kBackground) {
+                return;
+            }
             if (regularIntervalPacer_.NeedsGC()) {
                 scheduleGC_();
             }
@@ -155,6 +161,7 @@ public:
 
 private:
     gc::GCSchedulerConfig& config_;
+    mm::AppStateTracking& appStateTracking_;
     HeapGrowthController heapGrowthController_;
     RegularIntervalPacer<Clock> regularIntervalPacer_;
     std::function<void()> scheduleGC_;

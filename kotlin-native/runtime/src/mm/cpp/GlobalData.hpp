@@ -14,6 +14,7 @@
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
 #include "ExtraObjectDataFactory.hpp"
+#include "AppStateTracking.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -28,6 +29,7 @@ public:
     StableRefRegistry& stableRefRegistry() noexcept { return stableRefRegistry_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
     gc::GC& gc() noexcept { return gc_; }
+    AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
 
 private:
     GlobalData();
@@ -37,6 +39,7 @@ private:
     static GlobalData instance_;
 
     ThreadRegistry threadRegistry_;
+    AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;
     StableRefRegistry stableRefRegistry_;
     ExtraObjectDataFactory extraObjectDataFactory_;

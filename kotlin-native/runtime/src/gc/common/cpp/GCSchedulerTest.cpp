@@ -11,6 +11,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "AppStateTrackingTestSupport.hpp"
 #include "ClockTestSupport.hpp"
 #include "GCSchedulerImpl.hpp"
 #include "SingleThreadExecutor.hpp"
@@ -708,6 +709,42 @@ TEST_F(GCSchedulerDataWithTimerTest, TuneTargetHeap) {
 
     // But the minimum is set to 5.
     EXPECT_THAT(config.targetHeapBytes.load(), 5);
+}
+
+TEST_F(GCSchedulerDataWithTimerTest, DoNotCollectOnTimerInBackground) {
+    constexpr int mutatorsCount = kDefaultThreadCount;
+
+    GCSchedulerConfig config;
+    config.regularGcIntervalMicroseconds = 10;
+    config.autoTune = false;
+    config.targetHeapBytes = std::numeric_limits<size_t>::max();
+    GCSchedulerDataWithTimerTestApi<mutatorsCount> schedulerTestApi(config);
+
+    // TODO: Not a global, please.
+    mm::AppStateTrackingTestSupport appStateTracking(mm::GlobalData::Instance().appStateTracking());
+
+    // Wait until the timer is initialized.
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
+
+    // Now go into the background.
+    ASSERT_THAT(mm::GlobalData::Instance().appStateTracking().state(), mm::AppStateTracking::State::kForeground);
+    appStateTracking.setState(mm::AppStateTracking::State::kBackground);
+
+    // Timer works in the background, but does nothing.
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
+    schedulerTestApi.advance_time(microseconds(10));
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
+    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
+
+    // Now go back into the foreground.
+    appStateTracking.setState(mm::AppStateTracking::State::kForeground);
+
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    schedulerTestApi.advance_time(microseconds(10));
+    test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
+    testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
+    schedulerTestApi.OnPerformFullGC();
+    schedulerTestApi.UpdateAliveSetBytes(0);
 }
 
 // These tests require a stack trace to contain call site addresses but
