@@ -114,9 +114,13 @@ abstract class IncrementalCompilerRunner<
                 if (it == ExitCode.OK) {
                     performWorkAfterSuccessfulCompilation(caches)
                 }
+                doCloseCaches(caches, args)
             }
-        } finally {
-            doCloseCaches(caches, args)
+        } catch (e: Throwable) {
+            reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
+                cleanOutputsAndLocalStateOnRebuild(args)
+            }
+            throw e
         }
     }
 
@@ -129,6 +133,15 @@ abstract class IncrementalCompilerRunner<
         abiSnapshot: AbiSnapshot?,
         classpathAbiSnapshot: Map<String, AbiSnapshot>
     ): ExitCode {
+        val abiSnapshot = if (compilationMode is CompilationMode.Incremental && withAbiSnapshot) {
+            AbiSnapshotImpl.read(abiSnapshotFile, reporter)
+        } else {
+            if (withAbiSnapshot) {
+                compilationMode = CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
+            }
+            null
+        }
+
         val exitCode = if (withAbiSnapshot) {
             compileIncrementally(
                 args, caches, allSourceFiles, compilationMode, messageCollector,
@@ -177,14 +190,6 @@ abstract class IncrementalCompilerRunner<
             }
 
             var compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
-            val abiSnapshot = if (compilationMode is CompilationMode.Incremental && withAbiSnapshot) {
-                AbiSnapshotImpl.read(abiSnapshotFile, reporter)
-            } else {
-                if (withAbiSnapshot) {
-                    compilationMode = CompilationMode.Rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
-                }
-                null
-            }
 
             when (compilationMode) {
                 is CompilationMode.Incremental -> {
@@ -210,6 +215,10 @@ abstract class IncrementalCompilerRunner<
         } catch (e: Exception) {
             reporter.report {
                 "Incremental compilation analysis failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
+            }
+
+            reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
+                cleanOutputsAndLocalStateOnRebuild(args)
             }
         } finally {
             doCloseCaches(caches, args)
