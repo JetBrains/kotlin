@@ -48,7 +48,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
     }
 
     // avoid unsynchronized close
-    fun close() {
+    open fun close() {
         storage.close()
     }
 

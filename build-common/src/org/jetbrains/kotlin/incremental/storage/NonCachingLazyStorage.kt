@@ -54,6 +54,14 @@ class NonCachingLazyStorage<K, V>(
         @Synchronized
         get() = getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
 
+    override val keysUnsafe: Collection<K>
+        @Synchronized
+        get() {
+            val result = ArrayList<K>()
+            getStorageIfExists()?.processKeys { result.add(it) }
+            return result
+        }
+
     @Synchronized
     override operator fun contains(key: K): Boolean =
         getStorageIfExists()?.containsMapping(key) ?: false

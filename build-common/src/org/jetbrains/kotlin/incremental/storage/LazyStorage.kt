@@ -18,6 +18,11 @@ package org.jetbrains.kotlin.incremental.storage
 
 interface LazyStorage<K, V> {
     val keys: Collection<K>
+
+    /**
+     * Reads all keys, but doesn't check that corresponding mappings exist
+     */
+    val keysUnsafe: Collection<K>
     operator fun contains(key: K): Boolean
     operator fun get(key: K): V?
     operator fun set(key: K, value: V)
