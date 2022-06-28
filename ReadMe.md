@@ -101,7 +101,10 @@ command line parameters on the first run:
 - `install` - build and install all public artifacts into local maven repository
 - `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
 - `gradlePluginTest` - build and run gradle plugin tests
-- `compilerTest` - build and run all compiler tests
+- `compilerTest` - build and run all compiler tests. These tests are not actively maintained, so only check the tests you are interested in.
+  * A lot of tests check the functionality related to the latest (not necessarily stable) JDK, so make sure the project is built using that.
+  * Some tests check the output from the compiler verbatim, and any environment-related warnings from the compiler can interfere with that.
+    In particular, make sure that the `_JAVA_OPTIONS` environment variable is not set.
 
 To reproduce TeamCity build use `-Pteamcity=true` flag. Local builds don't run proguard and have jar compression disabled by default.
 
