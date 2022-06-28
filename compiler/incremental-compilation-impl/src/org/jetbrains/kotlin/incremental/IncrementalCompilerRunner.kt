@@ -88,7 +88,7 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
-    fun rebuild(
+    private fun doRebuild(
         reason: BuildAttribute,
         allSourceFiles: List<File>,
         args: Args,
@@ -116,8 +116,31 @@ abstract class IncrementalCompilerRunner<
                 }
             }
         } finally {
-            caches.close(true)
+            doCloseCaches(caches, args)
         }
+    }
+
+    private fun doCompileIncrementally(
+        args: Args,
+        caches: CacheManager,
+        allSourceFiles: List<File>,
+        compilationMode: CompilationMode,
+        messageCollector: MessageCollector,
+        abiSnapshot: AbiSnapshot?,
+        classpathAbiSnapshot: Map<String, AbiSnapshot>
+    ): ExitCode {
+        val exitCode = if (withAbiSnapshot) {
+            compileIncrementally(
+                args, caches, allSourceFiles, compilationMode, messageCollector,
+                withAbiSnapshot, abiSnapshot!!, classpathAbiSnapshot
+            )
+        } else {
+            compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
+        }
+        if (exitCode == ExitCode.OK) {
+            performWorkAfterSuccessfulCompilation(caches)
+        }
+        return exitCode
     }
 
     private fun compileImpl(
@@ -166,19 +189,16 @@ abstract class IncrementalCompilerRunner<
             when (compilationMode) {
                 is CompilationMode.Incremental -> {
                     try {
-                        val exitCode = if (withAbiSnapshot) {
-                            compileIncrementally(
-                                args, caches, allSourceFiles, compilationMode, messageCollector,
-                                withAbiSnapshot, abiSnapshot!!, classpathAbiSnapshot
-                            )
-                        } else {
-                            compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
-                        }
-                        if (exitCode == ExitCode.OK) {
-                            performWorkAfterSuccessfulCompilation(caches)
-                        }
-                        return exitCode
-                    } catch (e: Throwable) {
+                        return doCompileIncrementally(
+                            args,
+                            caches,
+                            allSourceFiles,
+                            compilationMode,
+                            messageCollector,
+                            abiSnapshot,
+                            classpathAbiSnapshot
+                        )
+                    } catch (e: Exception) {
                         reporter.report {
                             "Incremental compilation failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
                         }
@@ -192,12 +212,19 @@ abstract class IncrementalCompilerRunner<
                 "Incremental compilation analysis failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
             }
         } finally {
-            if (!caches.close()) {
-                reporter.report { "Unable to close IC caches. Cleaning internal state" }
-                cleanOutputsAndLocalStateOnRebuild(args)
-            }
+            doCloseCaches(caches, args)
         }
-        return rebuild(rebuildReason, allSourceFiles, args, messageCollector, providedChangedFiles, projectDir, classpathAbiSnapshot)
+        return doRebuild(rebuildReason, allSourceFiles, args, messageCollector, providedChangedFiles, projectDir, classpathAbiSnapshot)
+    }
+
+    private fun doCloseCaches(caches: CacheManager, args: Args) {
+        try {
+            caches.close()
+        } catch (e: Throwable) {
+            reporter.report { "Unable to close IC caches. Cleaning internal state." }
+            cleanOutputsAndLocalStateOnRebuild(args)
+            throw e
+        }
     }
 
     /**

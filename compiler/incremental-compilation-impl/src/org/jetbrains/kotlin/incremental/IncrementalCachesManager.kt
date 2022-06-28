@@ -51,9 +51,10 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     abstract val platformCache: PlatformCache
 
     @Synchronized
-    fun close(flush: Boolean = false): Boolean {
+    fun close(flush: Boolean = false) {
+        val exceptions = ArrayList<Throwable>()
         if (isClosed) {
-            return isSuccessfulyClosed
+            return
         }
         isSuccessfulyClosed = true
         for (cache in caches) {
@@ -63,6 +64,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
                 } catch (e: Throwable) {
                     isSuccessfulyClosed = false
                     reporter.report { "Exception when flushing cache ${cache.javaClass}: $e" }
+                    exceptions.add(e)
                 }
             }
 
@@ -71,11 +73,14 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
             } catch (e: Throwable) {
                 isSuccessfulyClosed = false
                 reporter.report { "Exception when closing cache ${cache.javaClass}: $e" }
+                exceptions.add(e)
             }
         }
 
         isClosed = true
-        return isSuccessfulyClosed
+        if (exceptions.isNotEmpty()) {
+            throw exceptions.first()
+        }
     }
 }
 
