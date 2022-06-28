@@ -12,11 +12,12 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInnerClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+context(KtAnalysisSession)
 internal abstract class FirLightClassForClassOrObjectSymbol(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
@@ -90,22 +92,20 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     protected fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
         classOrObjectSymbol.companionObject?.run {
-            analyzeWithSymbolAsContext(this) {
-                val methods = getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtFunctionSymbol>()
-                    .filter { it.hasJvmStaticAnnotation() }
-                createMethods(methods, result)
+            val methods = getDeclaredMemberScope().getCallableSymbols()
+                .filterIsInstance<KtFunctionSymbol>()
+                .filter { it.hasJvmStaticAnnotation() }
+            createMethods(methods, result)
 
-                val properties = getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtPropertySymbol>()
-                properties.forEach { property ->
-                    createPropertyAccessors(
-                        result,
-                        property,
-                        isTopLevel = false,
-                        onlyJvmStatic = true
-                    )
-                }
+            val properties = getDeclaredMemberScope().getCallableSymbols()
+                .filterIsInstance<KtPropertySymbol>()
+            properties.forEach { property ->
+                createPropertyAccessors(
+                    result,
+                    property,
+                    isTopLevel = false,
+                    onlyJvmStatic = true
+                )
             }
         }
     }
@@ -125,24 +125,22 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     protected fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
         classOrObjectSymbol.companionObject?.run {
-            analyzeWithSymbolAsContext(this) {
-                getDeclaredMemberScope().getCallableSymbols()
-                    .filterIsInstance<KtPropertySymbol>()
-                    .applyIf(isInterface) {
-                        filter { it.hasJvmFieldAnnotation() || it.isConst }
-                    }
-                    .mapTo(result) {
-                        FirLightFieldForPropertySymbol(
-                            propertySymbol = it,
-                            fieldName = it.name.asString(),
-                            containingClass = this@FirLightClassForClassOrObjectSymbol,
-                            lightMemberOrigin = null,
-                            isTopLevel = false,
-                            forceStatic = true,
-                            takePropertyVisibility = true
-                        )
-                    }
-            }
+            getDeclaredMemberScope().getCallableSymbols()
+                .filterIsInstance<KtPropertySymbol>()
+                .applyIf(isInterface) {
+                    filter { it.hasJvmFieldAnnotation() || it.isConst }
+                }
+                .mapTo(result) {
+                    FirLightFieldForPropertySymbol(
+                        propertySymbol = it,
+                        fieldName = it.name.asString(),
+                        containingClass = this@FirLightClassForClassOrObjectSymbol,
+                        lightMemberOrigin = null,
+                        isTopLevel = false,
+                        forceStatic = true,
+                        takePropertyVisibility = true
+                    )
+                }
         }
     }
 

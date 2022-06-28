@@ -6,17 +6,19 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
+context(KtAnalysisSession)
 internal class FirLightSimpleMethodForSymbol(
     private val functionSymbol: KtFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
@@ -59,7 +61,7 @@ internal class FirLightSimpleMethodForSymbol(
         val nullability = if (isPrivate) {
             NullabilityType.Unknown
         } else {
-            analyzeWithSymbolAsContext(functionSymbol) l@{
+            run l@{
                 val ktType =
                     when {
                         functionSymbol.isSuspend -> // Any?
@@ -136,22 +138,19 @@ internal class FirLightSimpleMethodForSymbol(
         }
 
     private val _returnedType: PsiType by lazyPub {
-        analyzeWithSymbolAsContext(functionSymbol) {
-            val ktType =
-                when {
-                    functionSymbol.isSuspend -> // Any?
-                        analysisSession.builtinTypes.NULLABLE_ANY
-                    isVoidReturnType ->
-                        return@lazyPub PsiType.VOID
-                    else ->
-                        functionSymbol.returnType
-                }
-            ktType.asPsiType(
-                this@FirLightSimpleMethodForSymbol,
-                KtTypeMappingMode.RETURN_TYPE,
-                containingClass.isAnnotationType
-            )
-        } ?: nonExistentType()
+        val ktType = when {
+            functionSymbol.isSuspend -> // Any?
+                analysisSession.builtinTypes.NULLABLE_ANY
+            isVoidReturnType ->
+                return@lazyPub PsiType.VOID
+            else ->
+                functionSymbol.returnType
+        }
+        ktType.asPsiType(
+            this@FirLightSimpleMethodForSymbol,
+            KtTypeMappingMode.RETURN_TYPE,
+            containingClass.isAnnotationType
+        ) ?: nonExistentType()
     }
 
     override fun getReturnType(): PsiType = _returnedType

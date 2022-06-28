@@ -9,6 +9,9 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightNoArgConstructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: FirLightClassBase,

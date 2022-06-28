@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.load.java.JvmAbi
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+
+context(KtAnalysisSession)
 internal class FirLightClassForInterfaceDefaultImpls(
     private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     private val containingClass: FirLightClassBase,

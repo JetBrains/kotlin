@@ -13,6 +13,7 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
@@ -23,11 +24,15 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.FirLightTypeParameterListForSymbol
+import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.mapSuperType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
+context(KtAnalysisSession)
 internal class FirLightTypeParameter(
     private val parent: FirLightTypeParameterListForSymbol,
     private val index: Int,
@@ -60,20 +65,18 @@ internal class FirLightTypeParameter(
             language = language,
             role = PsiReferenceList.Role.EXTENDS_LIST
         )
-        analyzeWithSymbolAsContext(typeParameterSymbol) {
-            typeParameterSymbol.upperBounds
-                .filter { type ->
-                    when (type) {
-                        is KtNonErrorClassType -> type.classId != StandardClassIds.Any
-                        is KtClassErrorType -> false
-                        else -> true
-                    }
+        typeParameterSymbol.upperBounds
+            .filter { type ->
+                when (type) {
+                    is KtNonErrorClassType -> type.classId != StandardClassIds.Any
+                    is KtClassErrorType -> false
+                    else -> true
                 }
-                .mapNotNull {
-                    mapSuperType(it, this@FirLightTypeParameter, kotlinCollectionAsIs = true)
-                }
-                .forEach { listBuilder.addReference(it) }
-        }
+            }
+            .mapNotNull {
+                mapSuperType(it, this@FirLightTypeParameter, kotlinCollectionAsIs = true)
+            }
+            .forEach { listBuilder.addReference(it) }
 
         listBuilder
     }

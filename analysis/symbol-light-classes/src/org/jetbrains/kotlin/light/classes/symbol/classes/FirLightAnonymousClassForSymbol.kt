@@ -11,6 +11,7 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
+context(KtAnalysisSession)
 internal class FirLightAnonymousClassForSymbol(
     private val anonymousObjectSymbol: KtAnonymousObjectSymbol,
     manager: PsiManager
@@ -51,16 +53,12 @@ internal class FirLightAnonymousClassForSymbol(
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-
         val result = mutableListOf<KtLightMethod>()
 
-        analyzeWithSymbolAsContext(anonymousObjectSymbol) {
-            val declaredMemberScope = anonymousObjectSymbol.getDeclaredMemberScope()
+        val declaredMemberScope = anonymousObjectSymbol.getDeclaredMemberScope()
 
-            createMethods(declaredMemberScope.getCallableSymbols(), result)
-
-            createConstructors(declaredMemberScope.getConstructors(), result)
-        }
+        createMethods(declaredMemberScope.getCallableSymbols(), result)
+        createConstructors(declaredMemberScope.getConstructors(), result)
 
         result
     }
@@ -69,20 +67,18 @@ internal class FirLightAnonymousClassForSymbol(
         val result = mutableListOf<KtLightField>()
         val nameGenerator = FirLightField.FieldNameGenerator()
 
-        analyzeWithSymbolAsContext(anonymousObjectSymbol) {
-            anonymousObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterIsInstance<KtPropertySymbol>()
-                .forEach { propertySymbol ->
-                    createField(
-                        propertySymbol,
-                        nameGenerator,
-                        isTopLevel = false,
-                        forceStatic = false,
-                        takePropertyVisibility = propertySymbol.hasJvmFieldAnnotation(),
-                        result
-                    )
-                }
-        }
+        anonymousObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
+            .filterIsInstance<KtPropertySymbol>()
+            .forEach { propertySymbol ->
+                createField(
+                    propertySymbol,
+                    nameGenerator,
+                    isTopLevel = false,
+                    forceStatic = false,
+                    takePropertyVisibility = propertySymbol.hasJvmFieldAnnotation(),
+                    result
+                )
+            }
 
         result
     }

@@ -10,6 +10,13 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -18,12 +25,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyseForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.createField
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
+context(KtAnalysisSession)
 class FirLightClassForFacade(
     manager: PsiManager,
     override val facadeClassFqName: FqName,
@@ -87,15 +89,13 @@ class FirLightClassForFacade(
 
         val methodsAndProperties = sequence<KtCallableSymbol> {
             for (fileSymbol in fileSymbols) {
-                analyzeWithSymbolAsContext(fileSymbol) {
-                    for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
-                        if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
-                        if (callableSymbol !is KtSymbolWithVisibility) continue
-                        if ((callableSymbol as? KtAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
-                        val isPrivate = callableSymbol.toPsiVisibilityForMember(isTopLevel = true) == PsiModifier.PRIVATE
-                        if (isPrivate && multiFileClass) continue
-                        yield(callableSymbol)
-                    }
+                for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
+                    if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
+                    if (callableSymbol !is KtSymbolWithVisibility) continue
+                    if ((callableSymbol as? KtAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
+                    val isPrivate = callableSymbol.toPsiVisibilityForMember(isTopLevel = true) == PsiModifier.PRIVATE
+                    if (isPrivate && multiFileClass) continue
+                    yield(callableSymbol)
                 }
             }
         }
@@ -148,9 +148,7 @@ class FirLightClassForFacade(
         val result = mutableListOf<KtLightField>()
         val nameGenerator = FirLightField.FieldNameGenerator()
         for (fileSymbol in fileSymbols) {
-            analyzeWithSymbolAsContext(fileSymbol) {
-                loadFieldsFromFile(fileSymbol.getFileScope(), nameGenerator, result)
-            }
+            loadFieldsFromFile(fileSymbol.getFileScope(), nameGenerator, result)
         }
         result
     }
