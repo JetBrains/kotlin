@@ -6,12 +6,10 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
@@ -98,10 +96,9 @@ abstract class KotlinNativeCompilation @Inject constructor(
 
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        DefaultCInteropSettings(project, cinteropName, this)
+        project.objects.newInstance(DefaultCInteropSettings::class.java, project, cinteropName, this)
     }
 
-    fun cinterops(action: Closure<Unit>) = cinterops(ConfigureUtil.configureUsing(action))
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
     // Naming
