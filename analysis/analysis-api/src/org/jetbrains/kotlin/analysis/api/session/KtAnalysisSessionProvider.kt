@@ -31,17 +31,7 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
 
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession
 
-    public abstract fun getAnalysisSessionBySymbol(contextSymbol: KtSymbol): KtAnalysisSession
-
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession
-
-    public inline fun <R> analyzeWithSymbolAsContext(
-        contextSymbol: KtSymbol,
-        action: KtAnalysisSession.() -> R
-    ): R {
-        val analysisSession = getAnalysisSessionBySymbol(contextSymbol)
-        return action(analysisSession)
-    }
 
     public inline fun <R> analyseInDependedAnalysisSession(
         originalFile: KtFile,
