@@ -99,6 +99,49 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
     override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
 }
 
+internal class LightClassDataProviderForScript(private val script: KtScript) : CachedValueProvider<LightClassDataHolder.ForScript> {
+    private fun computeLightClassData(): LightClassDataHolder.ForScript {
+        return LightClassGenerationSupport.getInstance(script.project)
+            .cast<CliLightClassGenerationSupport>()
+            .createDataHolderForScript { constructionContext ->
+                buildLightClass(
+                    script.fqName.parent(),
+                    listOf(script.containingKtFile),
+                    ClassFilterForScript(script),
+                    constructionContext
+                ) generate@{ state, files ->
+                    val scriptFile = files.first()
+                    val codegen = state.factory.forPackage(scriptFile.packageFqName, files)
+                    codegen.generate()
+                    state.factory.done()
+                }
+            }
+    }
+
+    override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForScript> =
+        CachedValueProvider.Result.create(
+            computeLightClassData(),
+            KotlinModificationTrackerService.getInstance(script.project).outOfBlockModificationTracker
+        )
+
+    override fun toString(): String = this::class.java.name + " for ${script.fqName}"
+}
+
+private class ClassFilterForScript(val script: KtScript) : GenerationState.GenerateClassFilter() {
+    override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean =
+        shouldGenerateClass(processingClassOrObject)
+
+    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean =
+        processingClassOrObject.isAncestor(script, true)
+
+    override fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject): Boolean = true
+
+    override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = script.containingKtFile === ktFile
+
+    override fun shouldGenerateScript(script: KtScript): Boolean = this.script === script
+    override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
+}
+
 internal object ClassFilterForFacade : GenerationState.GenerateClassFilter() {
     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
     override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = KtPsiUtil.isLocal(processingClassOrObject)
