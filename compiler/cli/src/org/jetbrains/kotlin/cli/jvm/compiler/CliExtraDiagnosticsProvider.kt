@@ -12,12 +12,12 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.KotlinExtraDiagnosticsProvider
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.buildLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsLocal
 import org.jetbrains.kotlin.asJava.classes.safeScript
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassDataHolder
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.buildLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile

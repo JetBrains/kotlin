@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolderImpl
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.*
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -125,5 +129,3 @@ class CliLightClassGenerationSupport(
 
     override fun analyzeWithContent(element: KtClassOrObject) = traceHolder.bindingContext
 }
-
-typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult

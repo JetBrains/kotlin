@@ -13,6 +13,7 @@ import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -97,6 +98,8 @@ abstract class KtLightMethodImpl protected constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
+    protected abstract val memberIndex: MemberIndex?
+
     /* comparing origin and member index should be enough to determine equality:
         for compiled elements origin contains delegate
         for source elements index is unique to each member
@@ -104,10 +107,13 @@ abstract class KtLightMethodImpl protected constructor(
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtLightMethodImpl &&
             other.javaClass == javaClass &&
+            other.memberIndex == memberIndex &&
             other.containingClass == containingClass &&
             other.lightMemberOrigin == lightMemberOrigin
 
-    override fun hashCode(): Int = name.hashCode().times(31).plus(containingClass.hashCode())
+    override fun hashCode(): Int = name.hashCode()
+        .times(31).plus(containingClass.hashCode())
+        .times(31).plus(memberIndex.hashCode())
 
     abstract override fun getDefaultValue(): PsiAnnotationMemberValue?
 
