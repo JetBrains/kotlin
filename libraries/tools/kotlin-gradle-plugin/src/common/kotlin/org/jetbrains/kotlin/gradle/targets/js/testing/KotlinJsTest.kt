@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -23,17 +21,15 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
-import java.io.File
 import javax.inject.Inject
 
-open class KotlinJsTest
+abstract class KotlinJsTest
 @Inject
 constructor(
     @Transient
     @Internal
     override var compilation: KotlinJsCompilation
-) :
-    KotlinTest(),
+) : KotlinTest(),
     RequiresNpmDependencies {
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -119,17 +115,17 @@ constructor(
     fun useNodeJs(body: KotlinMocha.() -> Unit) = useMocha(body)
 
     @Deprecated("Use useMocha instead", ReplaceWith("useMocha(fn)"))
-    fun useNodeJs(fn: Closure<*>) {
+    fun useNodeJs(fn: Action<KotlinMocha>) {
         useMocha {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation, path), body)
-    fun useMocha(fn: Closure<*>) {
+    fun useMocha(fn: Action<KotlinMocha>) {
         useMocha {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
@@ -139,9 +135,9 @@ constructor(
         body
     )
 
-    fun useKarma(fn: Closure<*>) {
+    fun useKarma(fn: Action<KotlinKarma>) {
         useKarma {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
