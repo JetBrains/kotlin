@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
@@ -76,6 +77,7 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         if (testServices.moduleStructure.modules.any { !it.targetPlatform.isJvm() }) return emptySet()
         if (REPORT_JVM_DIAGNOSTICS_ON_FRONTEND !in testServices.moduleStructure.allDirectives) return emptySet()
         val bindingContext = info.analysisResult.bindingContext
+        val project = info.project
         val jvmSignatureDiagnostics = HashSet<Diagnostic>()
         for (ktFile in info.ktFiles.values) {
             val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
@@ -83,8 +85,8 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
                 val diagnostics = getJvmSignatureDiagnostics(
                     declaration,
                     bindingContext.diagnostics,
+                    GlobalSearchScope.allScope(project)
                 ) ?: continue
-
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration))
             }
         }

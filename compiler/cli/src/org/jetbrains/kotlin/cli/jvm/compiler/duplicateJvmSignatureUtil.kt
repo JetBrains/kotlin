@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsScript
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
+fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
         val outermostClass = getOutermostClassOrObject(ktClassOrObject)
         return CliExtraDiagnosticsProvider.forClassOrObject(outermostClass)
@@ -44,7 +45,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
 
         when (parent) {
             is KtFile -> {
-                return CliExtraDiagnosticsProvider.forFacade(parent)
+                return CliExtraDiagnosticsProvider.forFacade(parent, moduleScope)
             }
 
             is KtClassBody -> {
