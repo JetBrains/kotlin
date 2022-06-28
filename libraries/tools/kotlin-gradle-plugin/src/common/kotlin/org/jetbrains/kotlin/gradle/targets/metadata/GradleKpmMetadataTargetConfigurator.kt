@@ -54,9 +54,17 @@ internal class GradleKpmMetadataTargetConfigurator(private val metadataTargetCon
                     isNative -> {
                         val konanTargets =
                             mainModule.variantsContainingFragment(fragment).map { (it as GradleKpmNativeVariantInternal).konanTarget }
-                        KotlinSharedNativeCompilation(konanTargets, compilationDetails as CompilationDetails<KotlinCommonOptions>)
+                        target.project.objects.newInstance(
+                            KotlinSharedNativeCompilation::class.java,
+                            konanTargets,
+                            compilationDetails as CompilationDetails<KotlinCommonOptions>
+                        )
                     }
-                    else -> KotlinCommonCompilation(compilationDetails as CompilationDetails<KotlinMultiplatformCommonOptions>)
+                    else -> target.project.objects
+                        .newInstance(
+                            KotlinCommonCompilation::class.java,
+                            (compilationDetails as CompilationDetails<KotlinMultiplatformCommonOptions>)
+                        )
                 }
 
                 target.compilations.add(compilation)

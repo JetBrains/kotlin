@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.logging.Logger
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import javax.inject.Inject
 
-open class KotlinMultiplatformExtension(project: Project) :
+abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
@@ -63,7 +61,7 @@ open class KotlinMultiplatformExtension(project: Project) :
         @Suppress("UNCHECKED_CAST")
         (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<AbstractKotlinCompilation<*>>).also(configure)
 
-    fun metadata(configure: Closure<*>) = metadata { ConfigureUtil.configure(configure, this) }
+    fun metadata(configure: Action<KotlinOnlyTarget<AbstractKotlinCompilation<*>>>) = metadata { configure.execute(this) }
 
     fun <T : KotlinTarget> targetFromPreset(
         preset: KotlinTargetPreset<T>,
@@ -71,12 +69,16 @@ open class KotlinMultiplatformExtension(project: Project) :
         configure: T.() -> Unit = { }
     ): T = configureOrCreate(name, preset, configure)
 
-    fun targetFromPreset(preset: KotlinTargetPreset<*>, name: String, configure: Closure<*>) =
-        targetFromPreset(preset, name) { ConfigureUtil.configure(configure, this) }
+    fun <T : KotlinTarget> targetFromPreset(
+        preset: KotlinTargetPreset<T>,
+        name: String,
+        configure: Action<T>
+    ) = targetFromPreset(preset, name) { configure.execute(this) }
 
-    fun targetFromPreset(preset: KotlinTargetPreset<*>) = targetFromPreset(preset, preset.name) { }
-    fun targetFromPreset(preset: KotlinTargetPreset<*>, name: String) = targetFromPreset(preset, name) { }
-    fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
+    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>) = targetFromPreset(preset, preset.name) { }
+    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, name: String) = targetFromPreset(preset, name) { }
+    fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, configure: Action<T>) =
+        targetFromPreset(preset, preset.name, configure)
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)

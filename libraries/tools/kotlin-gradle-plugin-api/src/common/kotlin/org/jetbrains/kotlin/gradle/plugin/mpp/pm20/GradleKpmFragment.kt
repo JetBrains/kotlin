@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.KpmFragment
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
@@ -44,8 +45,8 @@ interface GradleKpmFragment : KpmFragment, HasKotlinDependencies, GradleKpmFragm
     override val withRefinesClosure: Set<GradleKpmFragment>
         get() = this.withClosure { it.declaredRefinesDependencies }
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ project.configure(this@f, configureClosure) }
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
 
     companion object {
         const val COMMON_FRAGMENT_NAME = "common"

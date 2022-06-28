@@ -20,5 +20,5 @@ class KotlinCommonCompilationFactory(
         get() = KotlinCommonCompilation::class.java
 
     override fun create(name: String): KotlinCommonCompilation =
-        KotlinCommonCompilation(MetadataCompilationDetails(target, name))
+        target.project.objects.newInstance(KotlinCommonCompilation::class.java, MetadataCompilationDetails(target, name))
 }

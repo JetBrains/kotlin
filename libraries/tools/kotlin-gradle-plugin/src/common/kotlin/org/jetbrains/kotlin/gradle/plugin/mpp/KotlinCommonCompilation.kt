@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
+import javax.inject.Inject
 
-interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
+ interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
-class KotlinCommonCompilation(
+abstract class KotlinCommonCompilation @Inject constructor(
     compilationDetails: CompilationDetails<KotlinMultiplatformCommonOptions>
 ) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(compilationDetails),
     KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {

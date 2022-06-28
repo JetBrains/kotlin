@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
 internal class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
     private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
@@ -86,7 +87,7 @@ internal fun addSourcesToKotlinNativeCompileTask(
 
 }
 
-class KotlinNativeCompilation(
+abstract class KotlinNativeCompilation @Inject constructor(
     konanTarget: KonanTarget,
     details: CompilationDetails<KotlinCommonOptions>
 ) : AbstractKotlinNativeCompilation(konanTarget, details),
@@ -111,7 +112,7 @@ class KotlinNativeCompilation(
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "binaries")
 }
 
-class KotlinSharedNativeCompilation(
+abstract class KotlinSharedNativeCompilation @Inject constructor(
     val konanTargets: List<KonanTarget>,
     compilationDetails: CompilationDetails<KotlinCommonOptions>
 ) : KotlinNativeFragmentMetadataCompilationData,

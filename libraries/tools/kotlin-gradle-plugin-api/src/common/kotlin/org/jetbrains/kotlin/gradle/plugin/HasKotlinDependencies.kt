@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -164,7 +165,7 @@ interface KotlinDependencyHandler {
 
 interface HasKotlinDependencies {
     fun dependencies(configure: KotlinDependencyHandler.() -> Unit)
-    fun dependencies(configureClosure: Closure<Any?>)
+    fun dependencies(configure: Action<KotlinDependencyHandler>)
 
     val apiConfigurationName: String
     val implementationConfigurationName: String

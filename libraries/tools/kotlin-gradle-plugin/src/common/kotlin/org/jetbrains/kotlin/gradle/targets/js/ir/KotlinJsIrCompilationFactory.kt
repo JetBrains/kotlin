@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 
 class KotlinJsIrCompilationFactory(
@@ -18,5 +17,5 @@ class KotlinJsIrCompilationFactory(
         get() = KotlinJsIrCompilation::class.java
 
     override fun create(name: String): KotlinJsIrCompilation =
-        KotlinJsIrCompilation(target, name)
+        target.project.objects.newInstance(KotlinJsIrCompilation::class.java, target, name)
 }

@@ -29,7 +29,12 @@ class GradleKpmCommonFragmentInstantiator(
 ) : GradleKpmFragmentFactory.FragmentInstantiator<GradleKpmFragmentInternal> {
     override fun create(name: String): GradleKpmFragmentInternal {
         val names = FragmentNameDisambiguation(module, name)
-        return GradleKpmFragmentInternal(module, name, dependencyConfigurationsFactory.create(module, names))
+        return module.project.objects.newInstance(
+            GradleKpmFragmentInternal::class.java,
+            module,
+            name,
+            dependencyConfigurationsFactory.create(module, names)
+        )
     }
 }
 

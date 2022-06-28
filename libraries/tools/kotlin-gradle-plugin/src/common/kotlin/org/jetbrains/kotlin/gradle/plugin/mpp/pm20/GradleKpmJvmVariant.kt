@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import javax.inject.Inject
 
-open class GradleKpmJvmVariant(
+abstract class GradleKpmJvmVariant @Inject constructor(
     containingModule: GradleKpmModule,
     fragmentName: String,
     dependencyConfigurations: GradleKpmFragmentDependencyConfigurations,
@@ -59,8 +60,9 @@ internal class KotlinMappedJvmCompilationFactory(
         val module = target.project.kpmModules.maybeCreate(name)
         val variant = module.fragments.create(target.name, GradleKpmJvmVariant::class.java)
 
-        return KotlinJvmCompilation(
-            VariantMappedCompilationDetailsWithRuntime(variant, target),
+        return target.project.objects.newInstance(
+            KotlinJvmCompilation::class.java,
+            VariantMappedCompilationDetailsWithRuntime<KotlinJvmOptions>(variant, target)
         )
     }
 }

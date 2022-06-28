@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.artifacts.Dependency
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.tooling.core.closure
 import java.util.*
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
 interface CompilationDetails<T : KotlinCommonOptions> {
     val target: KotlinTarget
@@ -89,7 +90,8 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
         get() = this
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = KotlinDependencyConfigurationsHolder(
+        get() = project.objects.newInstance(
+            KotlinDependencyConfigurationsHolder::class.java,
             project,
             lowerCamelCaseName(
                 target.disambiguationClassifier,
@@ -563,7 +565,7 @@ internal open class JsCompilationDetails(
     compilationPurpose: String,
 ) : DefaultCompilationDetailsWithRuntime<KotlinJsOptions>(target, compilationPurpose, { KotlinJsOptionsImpl() }) {
 
-    protected open class JsCompilationDependenciesHolder(
+    internal abstract class JsCompilationDependenciesHolder @Inject constructor(
         val target: KotlinTarget,
         val compilationPurpose: String
     ) : HasKotlinDependencies {
@@ -597,12 +599,12 @@ internal open class JsCompilationDetails(
         override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
             DefaultKotlinDependencyHandler(this, target.project).run(configure)
 
-        override fun dependencies(configureClosure: Closure<Any?>) =
-            dependencies f@{ project.configure(this@f, configureClosure) }
+        override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+            dependencies { configure.execute(this) }
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsCompilationDependenciesHolder(target, compilationPurpose)
+        get() = target.project.objects.newInstance(JsCompilationDependenciesHolder::class.java, target, compilationPurpose)
 
     override val defaultSourceSetName: String
         get() {
@@ -637,17 +639,17 @@ internal class JsIrCompilationDetails(target: KotlinTarget, compilationPurpose: 
             )
         }
 
-    private class JsIrCompilationDependencyHolder(target: KotlinTarget, compilationPurpose: String) :
+    internal abstract class JsIrCompilationDependencyHolder @Inject constructor(target: KotlinTarget, compilationPurpose: String) :
         JsCompilationDependenciesHolder(target, compilationPurpose) {
         override val disambiguationClassifierInPlatform: String?
             get() = (target as KotlinJsIrTarget).disambiguationClassifierInPlatform
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
-        get() = JsIrCompilationDependencyHolder(target, compilationPurpose)
+        get() = target.project.objects.newInstance(JsIrCompilationDependencyHolder::class.java, target, compilationPurpose)
 }
 
-internal class KotlinDependencyConfigurationsHolder(
+internal abstract class KotlinDependencyConfigurationsHolder @Inject constructor(
     val project: Project,
     private val configurationNamesPrefix: String?,
 ) : HasKotlinDependencies {
@@ -667,6 +669,6 @@ internal class KotlinDependencyConfigurationsHolder(
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
         DefaultKotlinDependencyHandler(this, project).run(configure)
 
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ project.configure(this@f, configureClosure) }
+    override fun dependencies(configure: Action<KotlinDependencyHandler>) =
+        dependencies { configure.execute(this) }
 }

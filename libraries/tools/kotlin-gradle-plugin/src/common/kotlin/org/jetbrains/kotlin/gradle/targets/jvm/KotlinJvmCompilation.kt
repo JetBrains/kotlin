@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import javax.inject.Inject
 
-open class KotlinJvmCompilation(
+abstract class KotlinJvmCompilation @Inject constructor(
     compilationDetails: CompilationDetailsWithRuntime<KotlinJvmOptions>,
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails), KotlinCompilationWithResources<KotlinJvmOptions> {
     override val target: KotlinJvmTarget get() = compilationDetails.target as KotlinJvmTarget

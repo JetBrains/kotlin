@@ -20,15 +20,14 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import javax.inject.Inject
 
-open class KotlinJsCompilation internal constructor(
+abstract class KotlinJsCompilation @Inject internal constructor(
     compilationDetails: JsCompilationDetails
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilationDetails),
     KotlinCompilationWithResources<KotlinJsOptions> {
 
     final override val target: KotlinTarget get() = super.target
-
-    constructor(target: KotlinTarget, name: String) : this(JsCompilationDetails(target, name))
 
     private val kotlinProperties = PropertiesProvider(target.project)
 

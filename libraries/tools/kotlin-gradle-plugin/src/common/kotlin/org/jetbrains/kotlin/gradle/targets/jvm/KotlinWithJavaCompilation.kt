@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.named
+import javax.inject.Inject
 
-class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions>(
+abstract class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions> @Inject constructor(
     target: KotlinWithJavaTarget<KotlinOptionsType>,
     name: String,
     kotlinOptions: KotlinOptionsType

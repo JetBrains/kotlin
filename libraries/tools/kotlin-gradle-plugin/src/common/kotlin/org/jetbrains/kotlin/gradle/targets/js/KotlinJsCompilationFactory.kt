@@ -18,5 +18,5 @@ class KotlinJsCompilationFactory(
         get() = KotlinJsCompilation::class.java
 
     override fun create(name: String): KotlinJsCompilation =
-        KotlinJsCompilation(target, name)
+        target.project.objects.newInstance(KotlinJsCompilation::class.java, JsCompilationDetails(target, name))
 }
