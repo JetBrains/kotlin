@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.*
+import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -89,30 +89,12 @@ class CliLightClassGenerationSupport(
         return ultraLightSupport
     }
 
-    fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
-        //force resolve companion for light class generation
-        traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
-
-        val (_, bindingContext, diagnostics) = builder(getContext())
-
-        bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
-
-        return LightClassDataHolderImpl(diagnostics)
-    }
-
-    fun createDataHolderForFacade(builder: LightClassBuilder): LightClassDataHolder.ForFacade {
-        val (_, _, diagnostics) = builder(getContext())
-        return LightClassDataHolderImpl(diagnostics)
-    }
-
-    fun createDataHolderForScript(builder: LightClassBuilder): LightClassDataHolder.ForScript {
-        val (_, _, diagnostics) = builder(getContext())
-        return LightClassDataHolderImpl(diagnostics)
-    }
-
-    private fun getContext(): LightClassConstructionContext =
-        LightClassConstructionContext(
-            traceHolder.bindingContext, traceHolder.module, null /* TODO: traceHolder.languageVersionSettings? */, traceHolder.jvmTarget
+    internal val context: LightClassConstructionContext
+        get() = LightClassConstructionContext(
+            traceHolder.bindingContext,
+            traceHolder.module,
+            traceHolder.languageVersionSettings,
+            traceHolder.jvmTarget,
         )
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
@@ -125,5 +107,3 @@ class CliLightClassGenerationSupport(
 
     override fun analyzeWithContent(element: KtClassOrObject) = traceHolder.bindingContext
 }
-
-typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult

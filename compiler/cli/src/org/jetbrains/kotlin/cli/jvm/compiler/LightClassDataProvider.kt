@@ -12,40 +12,45 @@ import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsLocal
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.LightClassDataHolder
-import org.jetbrains.kotlin.cli.jvm.compiler.builder.buildLightClass
+import org.jetbrains.kotlin.cli.jvm.compiler.builder.extraJvmDiagnosticsFromBackend
 import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class LightClassDataProviderForClassOrObject(
     private val classOrObject: KtClassOrObject
-) : CachedValueProvider<LightClassDataHolder.ForClass> {
-    private fun computeLightClassData(): LightClassDataHolder.ForClass {
+) : CachedValueProvider<Diagnostics> {
+    private fun computeLightClassData(): Diagnostics {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
-        return LightClassGenerationSupport.getInstance(classOrObject.project).cast<CliLightClassGenerationSupport>()
-            .createDataHolderForClass(classOrObject) { constructionContext ->
-                buildLightClass(
-                    packageFqName,
-                    listOf(file),
-                    ClassFilterForClassOrObject(classOrObject),
-                    constructionContext
-                ) { state, files ->
-                    val packageCodegen = state.factory.forPackage(packageFqName, files)
-                    val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
-                    val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
-                    MemberCodegen.genClassOrObject(context, getOutermostClassOrObject(classOrObject), state, null)
-                    state.factory.done()
-                }
-            }
+        val cliSupport = LightClassGenerationSupport.getInstance(classOrObject.project).cast<CliLightClassGenerationSupport>()
+
+        //force resolve companion for light class generation
+        cliSupport.traceHolder.bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
+
+        val (_, bindingContext, diagnostics) = extraJvmDiagnosticsFromBackend(
+            packageFqName,
+            listOf(file),
+            ClassFilterForClassOrObject(classOrObject),
+            cliSupport.context,
+        ) { state, files ->
+            val packageCodegen = state.factory.forPackage(packageFqName, files)
+            val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))
+            val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
+            MemberCodegen.genClassOrObject(context, getOutermostClassOrObject(classOrObject), state, null)
+            state.factory.done()
+        }
+
+        return diagnostics.takeIf { bindingContext.get(BindingContext.CLASS, classOrObject) != null } ?: Diagnostics.EMPTY
     }
 
-    override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForClass> {
+    override fun compute(): CachedValueProvider.Result<Diagnostics> {
         val trackerService = KotlinModificationTrackerService.getInstance(classOrObject.project)
         return CachedValueProvider.Result.create(
             computeLightClassData(),

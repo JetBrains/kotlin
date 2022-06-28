@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
@@ -330,10 +329,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                             return
                         }
 
-                        val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
-                            ktFile,
-                            TextRange(actualStart, actualEnd)
-                        )}"
+                        val message = "Unexpected ${diagnostic.description}${
+                            PsiDiagnosticUtils.atLocation(
+                                ktFile,
+                                TextRange(actualStart, actualEnd)
+                            )
+                        }"
                         System.err.println(message)
                         ok[0] = false
                     }
@@ -375,8 +376,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 val diagnostics = getJvmSignatureDiagnostics(
                     declaration,
                     bindingContext.diagnostics,
-                    GlobalSearchScope.allScope(project)
                 ) ?: continue
+
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
             }
             return jvmSignatureDiagnostics
@@ -490,6 +491,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         }
                         condition = newCondition
                     }
+
                     "+" -> condition = Conditions.or(condition, newCondition)
                     "-" -> condition = Conditions.and(condition, Conditions.not(newCondition))
                 }
