@@ -75,11 +75,11 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
         action: KtAnalysisSession.() -> R
     ): R {
         noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
-        factory.beforeEnteringAnalysisContext()
+        factory.beforeEnteringAnalysisContext(analysisSession.token)
         return try {
             analysisSession.action()
         } finally {
-            factory.afterLeavingAnalysisContext()
+            factory.afterLeavingAnalysisContext(analysisSession.token)
             noWriteActionInAnalyseCallChecker.afterLeavingAnalysisContext()
         }
     }
