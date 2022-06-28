@@ -66,22 +66,22 @@ internal fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLight
 
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
-        return analyseForLightClasses(anonymousObject) {
+        return analyzeForLightClasses(anonymousObject) {
             anonymousObject.getAnonymousObjectSymbol().createLightClassNoCache(anonymousObject.manager)
         }
     }
 
     return when {
-        classOrObject is KtEnumEntry ->  analyseForLightClasses(classOrObject) {
+        classOrObject is KtEnumEntry -> analyzeForLightClasses(classOrObject) {
             lightClassForEnumEntry(classOrObject)
         }
         classOrObject.hasModifier(INLINE_KEYWORD) -> {
-            analyseForLightClasses(classOrObject) {
+            analyzeForLightClasses(classOrObject) {
                 classOrObject.getNamedClassOrObjectSymbol()?.let { FirLightInlineClass(it, classOrObject.manager) }
             }
         }
         else -> {
-            analyseForLightClasses(classOrObject) {
+            analyzeForLightClasses(classOrObject) {
                 classOrObject.getClassOrObjectSymbol().createLightClassNoCache(classOrObject.manager)
             }
         }

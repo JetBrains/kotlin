@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.caches
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.analysis.utils.collections.ConcurrentMapBasedCache
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.FirLightClassForFacade
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyseForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.KtLightClassForDecompiledFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -49,7 +48,7 @@ class SymbolLightClassFacadeCache(private val project: Project) {
         val firstFile = ktFiles.first()
         return when {
             ktFiles.none { it.isCompiled } ->
-                analyseForLightClasses(firstFile) {
+                analyzeForLightClasses(firstFile) {
                     FirLightClassForFacade(firstFile.manager, facadeClassFqName, ktFiles)
                 }
             ktFiles.all { it.isCompiled } -> {

@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeToke
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
 
-internal inline fun <R> analyseForLightClasses(context: KtElement, action: KtAnalysisSession.() -> R): R =
+internal inline fun <R> analyzeForLightClasses(context: KtElement, action: KtAnalysisSession.() -> R): R =
     analyze(context, KtAlwaysAccessibleLifetimeTokenFactory, action)
 
-internal inline fun <R> analyseForLightClasses(useSiteKtModule: KtModule, crossinline action: KtAnalysisSession.() -> R): R =
+internal inline fun <R> analyzeForLightClasses(useSiteKtModule: KtModule, crossinline action: KtAnalysisSession.() -> R): R =
     analyze(useSiteKtModule, KtAlwaysAccessibleLifetimeTokenFactory, action)

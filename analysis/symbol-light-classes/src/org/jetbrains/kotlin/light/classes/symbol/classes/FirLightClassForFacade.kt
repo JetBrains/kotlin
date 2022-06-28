@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyseForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.createField
 import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -56,9 +55,7 @@ class FirLightClassForFacade(
 
     private val fileSymbols by lazyPub {
         files.map { ktFile ->
-            analyseForLightClasses(ktFile) {
-                ktFile.getFileSymbol()
-            }
+            ktFile.getFileSymbol()
         }
     }
 
