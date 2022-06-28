@@ -65,3 +65,26 @@ modules.forEach { module ->
 project.extensions.github_revision = githubRevision
 project.extensions.kotlin_root = kotlinRootDir
 project.extensions.kotlin_libs = kotlinLibsDir
+
+// TODO: Eliminate this workaround when KT-52977 gets fixed in the Kotlin compiler used in Dokka
+final File pathWalkOption = new File("$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/PathWalkOption.kt")
+
+project.extensions.commentOutSinceKotlinForPathWalkOption = {
+  final List<String> lines = pathWalkOption.readLines()
+  for (def i = 0; i < lines.size(); i++) {
+    if (lines[i] == "@SinceKotlin(\"1.7\")") {
+      lines[i] = "//" + lines[i]
+    }
+  }
+  pathWalkOption.write(String.join("\n", lines))
+}
+
+project.extensions.uncommentSinceKotlinForPathWalkOption = {
+  final List<String> lines = pathWalkOption.readLines()
+  for (def i = 0; i < lines.size(); i++) {
+    if (lines[i] == "//@SinceKotlin(\"1.7\")") {
+      lines[i] = lines[i].substring(2)
+    }
+  }
+  pathWalkOption.write(String.join("\n", lines))
+}

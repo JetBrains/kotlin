@@ -49,6 +49,11 @@ task callDokka(type: Exec, dependsOn: setupCallDokka) {
     doFirst {
         def logFile = file("$buildDir/dokka.log")
         standardOutput = new org.apache.tools.ant.util.TeeOutputStream(System.out, new FileOutputStream(logFile))
+
+        pKotlinBig().commentOutSinceKotlinForPathWalkOption.call()
+    }
+    doLast {
+        pKotlinBig().uncommentSinceKotlinForPathWalkOption.call()
     }
 }
 
