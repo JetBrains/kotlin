@@ -11,17 +11,17 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.incremental.md5
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.generateKLib
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -58,7 +58,30 @@ class FilePathsInKlibTest : CodegenTestCase() {
     }
 
     private fun produceKlib(module: ModulesStructure, destination: File) {
-        generateKLib(module, irFactory = IrFactoryImpl, outputKlibPath = destination.path, nopack = false, jsOutputName = MODULE_NAME)
+        val icData = mutableListOf<KotlinFileSerializedData>()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val moduleFragment = generateIrForKlibSerialization(
+            module.project,
+            (module.mainModule as MainModule.SourceFiles).files,
+            module.compilerConfiguration,
+            module.jsFrontEndResult.jsAnalysisResult,
+            sortDependencies(module.descriptors),
+            icData,
+            expectDescriptorToSymbol,
+            IrFactoryImpl,
+            verifySignatures = true
+        ) {
+            module.getModuleDescriptor(it)
+        }
+        generateKLib(
+            module,
+            outputKlibPath = destination.path,
+            nopack = false,
+            jsOutputName = MODULE_NAME,
+            icData = icData,
+            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            moduleFragment = moduleFragment
+        )
     }
 
     private fun setupEnvironment(): CompilerConfiguration {

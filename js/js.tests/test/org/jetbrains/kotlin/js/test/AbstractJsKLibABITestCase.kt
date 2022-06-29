@@ -12,14 +12,17 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.AbstractKlibABITestCase
@@ -46,7 +49,30 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             AnalyzerWithCompilerReport(config)
         )
 
-        generateKLib(sourceModule, IrFactoryImpl, klibFile.path, nopack = false, jsOutputName = moduleName)
+        val icData = mutableListOf<KotlinFileSerializedData>()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val moduleFragment = generateIrForKlibSerialization(
+            environment.project,
+            (sourceModule.mainModule as MainModule.SourceFiles).files,
+            config,
+            sourceModule.jsFrontEndResult.jsAnalysisResult,
+            sortDependencies(sourceModule.descriptors),
+            icData,
+            expectDescriptorToSymbol,
+            IrFactoryImpl,
+            verifySignatures = true
+        ) {
+            sourceModule.getModuleDescriptor(it)
+        }
+        generateKLib(
+            sourceModule,
+            klibFile.path,
+            nopack = false,
+            jsOutputName = moduleName,
+            icData = icData,
+            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            moduleFragment = moduleFragment
+        )
     }
 
     override fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {

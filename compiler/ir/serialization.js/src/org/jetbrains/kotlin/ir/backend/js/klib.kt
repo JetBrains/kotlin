@@ -205,35 +205,19 @@ fun generateIrForKlibSerialization(
 
 fun generateKLib(
     depsDescriptors: ModulesStructure,
-    irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean,
-    verifySignatures: Boolean = true,
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
-    jsOutputName: String?
+    jsOutputName: String?,
+    icData: MutableList<KotlinFileSerializedData>,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    moduleFragment: IrModuleFragment
 ) {
     val project = depsDescriptors.project
     val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies.map { it.library }
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-
-    val icData = mutableListOf<KotlinFileSerializedData>()
-    val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-
-    val moduleFragment = generateIrForKlibSerialization(
-        project,
-        files,
-        configuration,
-        depsDescriptors.jsFrontEndResult.jsAnalysisResult,
-        sortDependencies(depsDescriptors.descriptors),
-        icData,
-        expectDescriptorToSymbol,
-        irFactory,
-        verifySignatures
-    ) {
-        depsDescriptors.getModuleDescriptor(it)
-    }
 
     serializeModuleIntoKlib(
         configuration[CommonConfigurationKeys.MODULE_NAME]!!,
