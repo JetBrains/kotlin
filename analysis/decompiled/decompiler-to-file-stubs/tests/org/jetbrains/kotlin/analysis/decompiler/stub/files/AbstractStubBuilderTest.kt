@@ -33,7 +33,7 @@ import java.util.stream.Collectors
 
 abstract class AbstractStubBuilderTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable, ConfigurationKind.JDK_NO_RUNTIME)
+        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(ApplicationEnvironmentDisposer.ROOT_DISPOSABLE, ConfigurationKind.JDK_NO_RUNTIME)
     }
 
     override fun setUp() {

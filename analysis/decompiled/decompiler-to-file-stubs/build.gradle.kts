@@ -15,7 +15,8 @@ dependencies {
     api(intellijCore())
 
     testImplementation(projectTests(":compiler:tests-common"))
-
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":analysis:analysis-test-framework"))
 }
 
 sourceSets {
