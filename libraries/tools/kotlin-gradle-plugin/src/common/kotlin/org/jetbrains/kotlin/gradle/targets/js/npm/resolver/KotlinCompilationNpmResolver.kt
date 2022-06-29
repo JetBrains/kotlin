@@ -475,7 +475,8 @@ internal class KotlinCompilationNpmResolver(
                 )
             } else emptySet()
 
-            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies + dukatIfNecessary + transitiveNpmDependencies
+            val otherNpmDependencies = toolsNpmDependencies + dukatIfNecessary + transitiveNpmDependencies
+            val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies)
             val packageJsonHandlers = if (compilationResolver.compilation != null) {
                 compilationResolver.compilation.packageJsonHandlers
             } else {
@@ -511,6 +512,32 @@ internal class KotlinCompilationNpmResolver(
                 allNpmDependencies,
                 packageJson
             )
+        }
+
+        private fun disambiguateDependencies(
+            direct: Collection<NpmDependencyDeclaration>,
+            others: Collection<NpmDependencyDeclaration>,
+        ): Collection<NpmDependencyDeclaration> {
+            val unique = others.groupBy(NpmDependencyDeclaration::name)
+                .filterKeys { k -> direct.none { it.name == k } }
+                .mapNotNull { (name, dependencies) ->
+                    dependencies.maxByOrNull { dep ->
+                        SemVer.from(dep.version, true)
+                    }?.also { selected ->
+                        if (dependencies.size > 1) {
+                            compilationResolver.project.logger.warn(
+                                """
+                                Transitive npm dependency version clash for compilation "${compilationResolver.compilation.name}"
+                                    Candidates:
+                                ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                                    Selected:
+                                        ${selected.name}@${selected.version}
+                                """.trimIndent()
+                            )
+                        }
+                    }
+                }
+            return direct + unique
         }
 
         private fun CompositeDependency.getPackages(): List<File> {
