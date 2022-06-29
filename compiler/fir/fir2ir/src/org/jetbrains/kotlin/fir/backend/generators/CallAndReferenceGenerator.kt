@@ -59,10 +59,11 @@ class CallAndReferenceGenerator(
     private val approximator = ConeTypeApproximator(session.typeContext, session.languageVersionSettings)
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
 
-    private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
+    private fun FirTypeRef.toIrType(): IrType =
+        with(typeConverter) { toIrType(conversionScope.defaultConversionTypeContext()) }
 
-    private fun ConeKotlinType.toIrType(conversionTypeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
-        with(typeConverter) { toIrType(conversionTypeContext) }
+    private fun ConeKotlinType.toIrType(): IrType =
+        with(typeConverter) { toIrType(conversionScope.defaultConversionTypeContext()) }
 
     fun convertToIrCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,

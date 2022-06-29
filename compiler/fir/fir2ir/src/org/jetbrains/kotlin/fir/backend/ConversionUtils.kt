@@ -123,6 +123,9 @@ class ConversionTypeContext internal constructor(
             definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT, invariantProjection = false
         )
         internal val WITH_INVARIANT = DEFAULT.withInvariantProjections()
+        internal val IN_SETTER = ConversionTypeContext(
+            definitelyNotNull = false, origin = ConversionTypeOrigin.SETTER, invariantProjection = false
+        )
     }
 }
 

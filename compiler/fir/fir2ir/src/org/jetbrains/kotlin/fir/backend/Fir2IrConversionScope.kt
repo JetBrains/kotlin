@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 class Fir2IrConversionScope {
@@ -133,6 +134,9 @@ class Fir2IrConversionScope {
     }
 
     fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
+
+    fun defaultConversionTypeContext(): ConversionTypeContext =
+        if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
 
     fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
         for (function in functionStack.asReversed()) {
