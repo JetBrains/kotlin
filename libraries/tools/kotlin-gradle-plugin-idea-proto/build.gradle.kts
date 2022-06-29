@@ -33,6 +33,8 @@ sourceSets.main.configure {
     java.srcDir("src/generated/kotlin")
 }
 
+publish()
+
 javadocJar()
 sourcesJar()
 runtimeJar(tasks.register<ShadowJar>("embeddable")) {
@@ -40,8 +42,6 @@ runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     exclude("**/*.proto")
     relocate("com.google.protobuf", "org.jetbrains.kotlin.kpm.idea.proto.com.google.protobuf")
 }
-
-publish()
 
 /* Setup configuration for binary compatibility tests */
 run {
