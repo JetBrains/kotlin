@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsW
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.WrapInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.wasm.lower.generateMainFunctionCalls
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.isExternalOrInheritedFromExternal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
 private fun makeWasmModulePhase(
@@ -322,7 +323,7 @@ private val addMainFunctionCallsLowering = makeCustomWasmModulePhase(
 )
 
 private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
-    { context -> DefaultArgumentStubGenerator(context, skipExternalMethods = true) },
+    { context -> DefaultArgumentStubGenerator(context, shouldSkip = { isInline || isExternalOrInheritedFromExternal() }) },
     name = "DefaultArgumentStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values"
 )
@@ -335,7 +336,7 @@ private val defaultArgumentPatchOverridesPhase = makeWasmModulePhase(
 )
 
 private val defaultParameterInjectorPhase = makeWasmModulePhase(
-    { context -> DefaultParameterInjector(context, skipExternalMethods = true) },
+    { context -> DefaultParameterInjector(context, shouldSkip = { isInline || isExternalOrInheritedFromExternal() }) },
     name = "DefaultParameterInjector",
     description = "Replace call site with default parameters with corresponding stub function",
     prerequisite = setOf(innerClassesLoweringPhase)

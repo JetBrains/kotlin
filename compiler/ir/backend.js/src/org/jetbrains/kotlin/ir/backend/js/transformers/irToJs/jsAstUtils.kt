@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -362,7 +363,7 @@ fun translateCallArguments(
 }
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
-    this is IrFunctionAccessExpression && symbol.owner.isExternalOrInheritedFromExternal()
+    this is IrFunctionAccessExpression && (symbol.owner.isExternalOrInheritedFromExternal() || symbol.owner.valueParameters.any { it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER })
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 

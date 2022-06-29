@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.isExternalOrInheritedFromExternal
 
 private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
 
@@ -553,7 +555,12 @@ private val defaultArgumentPatchOverridesPhase = makeDeclarationTransformerPhase
 )
 
 private val defaultParameterInjectorPhase = makeBodyLoweringPhase(
-    { context -> DefaultParameterInjector(context, skipExternalMethods = true, forceSetOverrideSymbols = false) },
+    { context ->
+        DefaultParameterInjector(
+            context,
+            forceSetOverrideSymbols = false,
+            shouldSkip = { isInline || isExternalOrInheritedFromExternal() || isExported(context) })
+    },
     name = "DefaultParameterInjector",
     description = "Replace callsite with default parameters with corresponding stub function",
     prerequisite = setOf(interopCallableReferenceLoweringPhase, innerClassesLoweringPhase)
@@ -565,11 +572,17 @@ private val defaultParameterCleanerPhase = makeDeclarationTransformerPhase(
     description = "Clean default parameters up"
 )
 
+private val exportedDefaultParameterStubInjectionPhase = makeBodyLoweringPhase(
+    ::ExportDefaultArgumentStubInjectionPhase,
+    name = "ExportDefaultArgumentStubInjectionPhase",
+    description = "Replace callsite with default paramters with correspondig exported stub function"
+)
 
 private val exportedDefaultParameterStubPhase = makeDeclarationTransformerPhase(
     ::ExportedDefaultParameterStub,
     name = "ExportedDefaultParameterStub",
-    description = "Generates default stub for exported entity and renames the non-default counterpart"
+    description = "Generates default stub for exported entity and renames the non-default counterpart",
+    prerequisite = setOf(exportedDefaultParameterStubInjectionPhase)
 )
 
 private val jsDefaultCallbackGeneratorPhase = makeBodyLoweringPhase(
@@ -897,6 +910,7 @@ val loweringList = listOf<Lowering>(
     computeStringTrimPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
+    exportedDefaultParameterStubInjectionPhase,
     exportedDefaultParameterStubPhase,
     defaultArgumentStubGeneratorPhase,
     defaultArgumentPatchOverridesPhase,

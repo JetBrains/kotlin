@@ -2113,6 +2113,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportDefaultArgumentMethodAndOverrideIt.kt")
+        public void testExportDefaultArgumentMethodAndOverrideIt() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportDefaultArgumentMethodAndOverrideIt.kt");
+        }
+
+        @Test
         @TestMetadata("exportEnumClass.kt")
         public void testExportEnumClass() throws Exception {
             runTest("js/js.translator/testData/box/export/exportEnumClass.kt");
