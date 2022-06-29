@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
+import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
 // TODO: This suite is failing with deprecation error on Gradle <7.0 versions
@@ -34,6 +37,14 @@ class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
                 assertFileInProjectExists("build/productionLibrary/js-library.js")
                 assertFileInProjectExists("build/productionLibrary/package.json")
                 assertFileInProjectExists("build/productionLibrary/main.js")
+                projectPath.resolve("build/productionLibrary/package.json").reader()
+                    .use { Gson().fromJson(it, JsonObject::class.java) }
+                    .getAsJsonObject("dependencies")
+                    ?.entrySet()?.associate { (k, v) -> k to v.asString }
+                    .let { dependencies ->
+                        assertNotNull(dependencies?.get("kotlin")) { "Direct npm dependency missing in package.json" }
+                        assertNotNull(dependencies?.get("@js-joda/core")) { "Transitive npm dependency missing in package.json" }
+                    }
             }
         }
     }

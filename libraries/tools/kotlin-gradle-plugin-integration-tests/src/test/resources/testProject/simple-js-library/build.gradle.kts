@@ -15,4 +15,12 @@ kotlin {
         binaries.library()
         nodejs()
     }
+    sourceSets {
+        main {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:latest.release")
+                implementation(npm("kotlin", "*"))
+            }
+        }
+    }
 }
