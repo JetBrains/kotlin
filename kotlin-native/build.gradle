@@ -670,6 +670,7 @@ configure([samplesZip, samplesTar]) {
         filter {
             it.startsWith('org.jetbrains.kotlin.native.home=') || it.startsWith('# Use custom Kotlin/Native home:') ? null : it
         }
+        filter(org.apache.tools.ant.filters.FixCrLfFilter, "eol": org.apache.tools.ant.filters.FixCrLfFilter.CrLf.newInstance("lf"))
     }
 
     // Exclude build artifacts.

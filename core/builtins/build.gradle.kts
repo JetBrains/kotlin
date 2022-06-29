@@ -38,6 +38,7 @@ val prepareRangeSources by tasks.registering(Sync::class) {
     from(kotlinRangesCommon) {
         exclude("Ranges.kt")
         filter { line -> line.takeUnless { "@OptIn" in it } }
+        filter(org.apache.tools.ant.filters.FixCrLfFilter::class, "eol" to org.apache.tools.ant.filters.FixCrLfFilter.CrLf.newInstance("lf"))
     }
     from(kotlinCollectionsCommon) {
         include("PrimitiveIterators.kt")
@@ -45,6 +46,7 @@ val prepareRangeSources by tasks.registering(Sync::class) {
     from(kotlinAnnotationsCommon) {
         include("ExperimentalStdlibApi.kt")
         filter { line -> line.takeUnless { "@RequiresOptIn" in it } }
+        filter(org.apache.tools.ant.filters.FixCrLfFilter::class, "eol" to org.apache.tools.ant.filters.FixCrLfFilter.CrLf.newInstance("lf"))
     }
 
     into(rangesCherryPicked)
