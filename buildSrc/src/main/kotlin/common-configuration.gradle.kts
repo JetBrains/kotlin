@@ -110,7 +110,7 @@ fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
             "-opt-in=kotlin.RequiresOptIn",
-            "-progressive".takeIf { hasProperty("test.progressive.mode") }
+            "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false }
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
