@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue;
 
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,16 @@ import static org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
-    private static final boolean IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+
+    private static boolean IGNORE_OLD_METADATA;
+    static {
+        try {
+            IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+        } catch (AccessControlException e) {
+            // Use default value if the Security Manager blocks reading system variables
+            IGNORE_OLD_METADATA = false;
+        }
+    }
 
     private static final Map<ClassId, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<ClassId, KotlinClassHeader.Kind>();
 
