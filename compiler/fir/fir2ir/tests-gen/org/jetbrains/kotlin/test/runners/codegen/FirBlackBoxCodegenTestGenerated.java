@@ -17646,6 +17646,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("cannotCastToFunction.kt")
+        public void testCannotCastToFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/cannotCastToFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("cannotCastToFunctionInIf.kt")
+        public void testCannotCastToFunctionInIf() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/cannotCastToFunctionInIf.kt");
+        }
+
+        @Test
         @TestMetadata("ClassBuilder.kt")
         public void testClassBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ClassBuilder.kt");
