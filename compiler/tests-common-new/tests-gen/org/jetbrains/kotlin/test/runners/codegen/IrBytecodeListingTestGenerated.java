@@ -2492,6 +2492,18 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             public void testPartiallySpecializedClass() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/partiallySpecializedClass.kt");
             }
+
+            @Test
+            @TestMetadata("withPlatformDependentDeclarations.kt")
+            public void testWithPlatformDependentDeclarations() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/withPlatformDependentDeclarations.kt");
+            }
+
+            @Test
+            @TestMetadata("withoutPlatformDependentDeclarations.kt")
+            public void testWithoutPlatformDependentDeclarations() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/withoutPlatformDependentDeclarations.kt");
+            }
         }
     }
 }

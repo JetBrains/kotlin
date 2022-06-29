@@ -2220,6 +2220,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt52929.kt")
+        public void testKt52929() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt52929.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52929_platformDependent.kt")
+        public void testKt52929_platformDependent() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/kt52929_platformDependent.kt");
+        }
+
+        @Test
         @TestMetadata("longChainOneBridge.kt")
         public void testLongChainOneBridge() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
@@ -2337,6 +2349,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("simpleUpperBound.kt")
         public void testSimpleUpperBound() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
+        }
+
+        @Test
+        @TestMetadata("specialBridgeTypesJava.kt")
+        public void testSpecialBridgeTypesJava() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/specialBridgeTypesJava.kt");
         }
 
         @Test

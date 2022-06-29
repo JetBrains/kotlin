@@ -128,7 +128,6 @@ class JvmBackendContext(
         overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
-    val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
