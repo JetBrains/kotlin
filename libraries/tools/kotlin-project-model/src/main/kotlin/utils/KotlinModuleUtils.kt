@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.tooling.core.closure
 fun KpmModule.variantsContainingFragment(fragment: KpmFragment): Iterable<KpmVariant> =
     variants.filter { variant -> fragment in variant.withRefinesClosure }
 
-fun KpmModule.findRefiningFragments(fragment: KpmFragment): Iterable<KpmFragment> {
-    return fragment.closure { seedFragment ->
-        fragments.filter { otherFragment -> seedFragment in otherFragment.declaredRefinesDependencies }
-    }
+fun KpmFragment.refiningFragments(): Set<KpmFragment> = closure { seedFragment ->
+    containingModule.fragments.filter { otherFragment -> seedFragment in otherFragment.declaredRefinesDependencies }
 }
+
+fun KpmFragment.withRefiningFragments(): Set<KpmFragment> = refiningFragments() + this

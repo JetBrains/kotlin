@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.createExecutionContext
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
-import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -139,7 +138,7 @@ abstract class ModuleCommonizerTask : DefaultTask() {
 
     init {
         //default values
-        outputDir.convention(project.layout.buildDirectory.dir(libraryName.map { "classes/kotlin/commonizer/$it" }))
+        outputDir.convention(project.layout.buildDirectory.dir(libraryName.map { "classes/kotlin/commonizer/$it/temp" }))
     }
 
     @TaskAction
@@ -163,14 +162,33 @@ abstract class ModuleCommonizerTask : DefaultTask() {
     }
 }
 
-internal abstract class DumbCommonizerTask : DefaultTask() {
+@Suppress("LeakingThis")
+internal abstract class FragmentCommonizerTask : DefaultTask() {
+
+    @get:InputDirectory
+    abstract val commonizedModuleDir: DirectoryProperty
+
+    @get:Input
+    abstract val target: Property<SharedCommonizerTarget>
 
     @get:OutputDirectory
-    abstract val outputFile: Property<File>
+    abstract val outputFile: DirectoryProperty
+
+    init {
+        //default values
+        outputFile.convention(commonizedModuleDir.map { it.dir("../${target.get().identityString}/klib") })
+    }
 
     @TaskAction
     fun run() {
         //NOTE! Commonization should be invoked via ModuleCommonizerTask due performance optimization
-        logger.info("Common library was generated: " + outputFile.get().absolutePath)
+        val targetDir = commonizedModuleDir.get().asFile.resolve(target.get().identityString)
+        val targetKlibs = targetDir.listFiles() ?: emptyArray()
+        require(targetKlibs.size == 1) { "Invalid commonized klib dir: ${targetDir.absolutePath}" }
+        val klib = targetKlibs.first()
+
+        klib.copyRecursively(outputFile.get().asFile, true)
+
+        logger.info("Common library was generated: " + outputFile.get().asFile.absolutePath)
     }
 }

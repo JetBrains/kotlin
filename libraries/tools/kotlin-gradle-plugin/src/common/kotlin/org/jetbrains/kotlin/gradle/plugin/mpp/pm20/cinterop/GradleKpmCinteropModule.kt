@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.cinterop
 
 import org.gradle.api.*
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -15,12 +14,13 @@ import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.*
-import org.jetbrains.kotlin.project.model.utils.findRefiningFragments
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import org.jetbrains.kotlin.project.model.utils.withRefiningFragments
 import java.io.File
 import javax.inject.Inject
 
@@ -45,6 +45,19 @@ internal open class GradleKpmCinteropModule @Inject constructor(
 
     override fun toString(): String = "$moduleIdentifier (Gradle)"
     override fun getName(): String = cinteropName
+
+    fun getFragmentByName(fragmentName: String): GradleKpmCinteropFragment? =
+        fragments.firstOrNull { it.fragmentName == fragmentName }
+
+    val commonizerTask = project.locateOrRegisterTask<ModuleCommonizerTask>(
+        lowerCamelCaseName("commonize", cinteropName)
+    ) { task ->
+        task.description = "Generates all common '$cinteropName' libraries."
+        task.libraryName.set(cinteropName)
+        task.targets.set(project.provider {
+            fragments.mapNotNull { it.toSharedCommonizerTarget() }
+        })
+    }
 }
 
 internal open class GradleKpmCinteropFragment(
@@ -79,79 +92,51 @@ internal class GradleKpmCinteropVariant(
 }
 
 internal fun GradleKpmCinteropModule.applyFragmentRequirements(requestingFragment: GradleKpmFragment) {
-    val requestingModule = requestingFragment.containingModule
-    val requestingVariants = requestingFragment.containingVariants
-    requestingVariants.firstOrNull { it !is GradleKpmNativeVariantInternal }?.let { incompatibleVariant ->
-        error("$this can't be configured for $incompatibleVariant")
-    }
-
-    val commonizerTask = project.locateOrRegisterTask<ModuleCommonizerTask>(
-        lowerCamelCaseName("commonize", name)
-    ) { task ->
-        task.description = "Generates all common '$name' libraries."
-        task.libraryName.set(name)
-    }
-
-    val allRequestingFragments = requestingModule.findRefiningFragments(requestingFragment) + requestingFragment
-
-    fun addFragmentWithRefines(fragment: GradleKpmFragment): GradleKpmCinteropFragment? {
-        if (fragment !in allRequestingFragments) return null
-
-        val addedFragment = fragments.firstOrNull { it.fragmentName == fragment.fragmentName } ?: run {
-            val new = if (fragment is KpmVariant) {
-                fragment as GradleKpmNativeVariantInternal
-
-                val cinteropTask = project.registerCinteropTask(name, fragment.konanTarget)
-                commonizerTask.configure { task ->
-                    task.dependsOn(cinteropTask)
-                    task.libraries.put(fragment.konanTarget, cinteropTask.flatMap { it.outputFile })
-                }
-
-                GradleKpmCinteropVariant(
-                    this,
-                    fragment.fragmentName,
-                    fragment.languageSettings,
-                    cinteropTask,
-                    fragment.konanTarget
-                )
-            } else {
-                GradleKpmCinteropFragment(
-                    this,
-                    fragment.fragmentName,
-                    fragment.languageSettings,
-                    project.registerDumbCommonizerTask(name, fragment.fragmentName, commonizerTask)
-                )
-            }
-            fragments.add(new)
-            new
-        }
-
-        val allAddedRefinesFragments = fragment.declaredRefinesDependencies.mapNotNull { addFragmentWithRefines(it) }
-        addedFragment.declaredRefinesDependencies.addAll(allAddedRefinesFragments)
-
-        return addedFragment
-    }
-
-    requestingVariants.forEach { addFragmentWithRefines(it) }
-
-    fragments.forEach { fragment ->
-        if (fragment !is GradleKpmCinteropVariant) {
-            val commonizedKlib = commonizerTask.map { task ->
-                val identityString = fragment.toSharedCommonizerTarget()?.identityString.orEmpty()
-                val group = project.group.toString().takeIf { it.isNotEmpty() }?.let { it + "_" }.orEmpty()
-                val cinteropKlibName = task.libraries.get().values.first().nameWithoutExtension
-                task.outputDir.asFile.get().resolve("$identityString/$group$cinteropKlibName")
-            }
-            (fragment.task as TaskProvider<DumbCommonizerTask>).configure { it.outputFile.set(commonizedKlib) }
-        }
-    }
-
-    //setup commonizer tasks at the end of construction CinteropModule structure
-    //because we can several times add FragmentRequirements to the CinteropModule
-    //and set of variants for intermediate fragment can change
-    val sharedTargets = fragments.mapNotNull { it.toSharedCommonizerTarget() }
-    commonizerTask.configure { it.targets.set(sharedTargets) }
+    addNewFragments(requestingFragment.withRefiningFragments())
+    copyRefineEdgesFrom(requestingFragment.containingModule)
 }
+
+private fun GradleKpmCinteropModule.addNewFragments(original: Set<KpmFragment>) {
+    val currentNames = fragments.map { it.fragmentName }.toSet()
+    val newFragments = original
+        .filterNot { currentNames.contains(it.fragmentName) }
+        .map { copyFragment(it) }
+    fragments.addAll(newFragments)
+}
+
+private fun GradleKpmCinteropModule.copyRefineEdgesFrom(module: GradleKpmModule) {
+    fragments.forEach { fragment ->
+        val originFragment = module.fragments.getByName(fragment.fragmentName)
+        val originRefineEdges = originFragment.declaredRefinesDependencies.map { it.fragmentName }
+        val localRefineEdges = originRefineEdges.mapNotNull { getFragmentByName(it) }
+        fragment.declaredRefinesDependencies.addAll(localRefineEdges)
+    }
+}
+
+private fun GradleKpmCinteropModule.copyFragment(original: KpmFragment) =
+    if (original is KpmVariant) {
+        original as GradleKpmNativeVariantInternal
+        val cinteropTask = registerCinteropTask(original.konanTarget)
+        commonizerTask.configure { task ->
+            task.dependsOn(cinteropTask)
+            task.libraries.put(original.konanTarget, cinteropTask.flatMap { it.outputFile })
+        }
+
+        GradleKpmCinteropVariant(
+            this,
+            original.fragmentName,
+            original.languageSettings,
+            cinteropTask,
+            original.konanTarget
+        )
+    } else {
+        GradleKpmCinteropFragment(
+            this,
+            original.fragmentName,
+            original.languageSettings,
+            registerFragmentCommonizerTask(original.fragmentName)
+        )
+    }
 
 private fun GradleKpmCinteropFragment.toSharedCommonizerTarget(): SharedCommonizerTarget? {
     if (this is GradleKpmCinteropVariant) return null
@@ -160,28 +145,28 @@ private fun GradleKpmCinteropFragment.toSharedCommonizerTarget(): SharedCommoniz
     )
 }
 
-private fun Project.registerCinteropTask(
-    libraryName: String,
+private fun GradleKpmCinteropModule.registerCinteropTask(
     konanTarget: KonanTarget
-): TaskProvider<CinteropTask> = locateOrRegisterTask(
-    lowerCamelCaseName("cinterop", libraryName, *konanTarget.visibleName.split("_").toTypedArray())
+): TaskProvider<CinteropTask> = project.locateOrRegisterTask(
+    lowerCamelCaseName("cinterop", name, *konanTarget.visibleName.split("_").toTypedArray())
 ) { task ->
     task.group = KotlinNativeTargetConfigurator.INTEROP_GROUP
-    task.description = "Generates Kotlin/Native interop library '$libraryName' of target '${konanTarget.name}'."
+    task.description = "Generates Kotlin/Native interop library '$name' of target '${konanTarget.name}'."
     task.enabled = konanTarget.enabledOnCurrentHost
 
-    task.interopName.set(libraryName)
+    task.interopName.set(name)
     task.target.set(konanTarget)
 }
 
-private fun Project.registerDumbCommonizerTask(
-    libraryName: String,
-    fragmentName: String,
-    parentTask: TaskProvider<ModuleCommonizerTask>
-) = locateOrRegisterTask<DumbCommonizerTask>(
-    lowerCamelCaseName("commonize", libraryName, "for", fragmentName)
+private fun GradleKpmCinteropModule.registerFragmentCommonizerTask(
+    fragmentName: String
+) = project.locateOrRegisterTask<FragmentCommonizerTask>(
+    lowerCamelCaseName("commonize", name, "for", fragmentName)
 ) { task ->
     task.group = KotlinNativeTargetConfigurator.INTEROP_GROUP
-    task.description = "Generates common library '$libraryName' for $fragmentName."
-    task.dependsOn(parentTask)
+    task.description = "Generates common library '$name' for $fragmentName."
+    task.dependsOn(commonizerTask)
+
+    task.commonizedModuleDir.set(commonizerTask.map { it.outputDir.get() })
+    task.target.set(project.provider { getFragmentByName(fragmentName)!!.toSharedCommonizerTarget() })
 }
