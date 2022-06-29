@@ -44,6 +44,8 @@ class PluginCliOptionProcessingException(
     cause: Throwable? = null
 ) : CliOptionProcessingException(message, cause)
 
+class PluginProcessingException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+
 fun cliPluginUsageString(pluginId: String, options: Collection<AbstractCliOption>): String {
     val LEFT_INDENT = 2
     val MAX_OPTION_WIDTH = 26
@@ -73,11 +75,21 @@ data class CliOptionValue(
     override fun toString() = "$pluginId:$optionName=$value"
 }
 
-fun parsePluginOption(argumentValue: String): CliOptionValue? {
+fun parseLegacyPluginOption(argumentValue: String): CliOptionValue? {
     val pattern = Pattern.compile("""^plugin:([^:]*):([^=]*)=(.*)$""")
     val matcher = pattern.matcher(argumentValue)
     if (matcher.matches()) {
         return CliOptionValue(matcher.group(1), matcher.group(2), matcher.group(3))
+    }
+
+    return null
+}
+
+fun parseModernPluginOption(argumentValue: String): CliOptionValue? {
+    val pattern = Pattern.compile("""^([^=]*)=(.*)$""")
+    val matcher = pattern.matcher(argumentValue)
+    if (matcher.matches()) {
+        return CliOptionValue("<NO_ID>", matcher.group(1), matcher.group(2))
     }
 
     return null

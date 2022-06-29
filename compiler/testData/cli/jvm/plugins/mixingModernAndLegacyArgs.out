@@ -1,0 +1,8 @@
+error: mixing legacy and modern plugin arguments is prohibited. Please use only one syntax
+Legacy arguments:
+  -Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar
+  -P plugin:org.jetbrains.kotlin.allopen:annotation=foo.AllOpen
+Modern arguments:
+  -Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
+
+COMPILATION_ERROR

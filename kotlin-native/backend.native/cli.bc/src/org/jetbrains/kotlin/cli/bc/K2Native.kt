@@ -57,7 +57,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         val pluginLoadResult =
-            PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, configuration)
+            PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,

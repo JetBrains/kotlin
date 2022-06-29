@@ -20,6 +20,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         private val serialVersionUID = 0L
 
         const val PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>"
+        const val PLUGIN_DECLARATION_FORMAT = "<path>[=<optionName>=<value>]"
 
         const val WARN = "warn"
         const val ERROR = "error"
@@ -70,9 +71,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file")
     var script: Boolean by FreezableVar(false)
 
-    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
-    var pluginOptions: Array<String>? by FreezableVar(null)
-
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
@@ -106,6 +104,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath")
     var pluginClasspaths: Array<String>? by FreezableVar(null)
+
+    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
+    var pluginOptions: Array<String>? by FreezableVar(null)
+
+    @Argument(value = "-Xcompiler-plugin", valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>", description = "Register compiler plugin", delimiter = "")
+    var pluginConfigurations: Array<String>? by FreezableVar(null)
 
     @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
     var multiPlatform: Boolean by FreezableVar(false)

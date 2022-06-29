@@ -170,12 +170,32 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
     protected fun loadPlugins(paths: KotlinPaths?, arguments: A, configuration: CompilerConfiguration): ExitCode {
         val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
+        val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
         val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
 
         for (classpath in pluginClasspaths) {
             if (!File(classpath).exists()) {
                 messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
             }
+        }
+
+        if (pluginConfigurations.isNotEmpty() && (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty())) {
+            val message = buildString {
+                appendLine("Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax")
+                appendLine("Legacy arguments:")
+                if (pluginClasspaths.isNotEmpty()) {
+                    appendLine("  -Xplugin=${pluginClasspaths.joinToString(",")}")
+                }
+                pluginOptions.forEach {
+                    appendLine("  -P $it")
+                }
+                appendLine("Modern arguments:")
+                pluginConfigurations.forEach {
+                    appendLine("  -Xcompiler-plugin=$it")
+                }
+            }
+            messageCollector.report(ERROR, message)
+            return INTERNAL_ERROR
         }
 
         if (!arguments.disableDefaultScriptingPlugin) {
@@ -192,7 +212,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                     pluginClasspaths.addAll(0, jars.map { it.canonicalPath })
                 } else {
                     messageCollector.report(
-                        CompilerMessageSeverity.LOGGING,
+                        LOGGING,
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
                 }
@@ -200,7 +220,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         } else {
             pluginOptions.add("plugin:kotlin.scripting:disable=true")
         }
-        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, configuration)
+        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration)
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(configuration: CompilerConfiguration, pluginOptions: List<String>): Boolean =

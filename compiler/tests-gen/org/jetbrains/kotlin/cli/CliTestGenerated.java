@@ -69,19 +69,59 @@ public class CliTestGenerated extends AbstractCliTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/plugins"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
-        @TestMetadata("firAllOpenPlugin.args")
-        public void testFirAllOpenPlugin() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin.args");
+        @TestMetadata("firAllOpenPlugin_legacy.args")
+        public void testFirAllOpenPlugin_legacy() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin_legacy.args");
         }
 
-        @TestMetadata("pluginSimple.args")
-        public void testPluginSimple() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginSimple.args");
+        @TestMetadata("firAllOpenPlugin_modern.args")
+        public void testFirAllOpenPlugin_modern() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin_modern.args");
         }
 
-        @TestMetadata("pluginWithK2Error.args")
-        public void testPluginWithK2Error() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error.args");
+        @TestMetadata("mixingModernAndLegacyArgs.args")
+        public void testMixingModernAndLegacyArgs() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/mixingModernAndLegacyArgs.args");
+        }
+
+        @TestMetadata("multipleOptionsForOnePlugin.args")
+        public void testMultipleOptionsForOnePlugin() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/multipleOptionsForOnePlugin.args");
+        }
+
+        @TestMetadata("multiplePlugins.args")
+        public void testMultiplePlugins() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/multiplePlugins.args");
+        }
+
+        @TestMetadata("multiplePluginsInSameArg.args")
+        public void testMultiplePluginsInSameArg() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/multiplePluginsInSameArg.args");
+        }
+
+        @TestMetadata("noPluginInClasspath.args")
+        public void testNoPluginInClasspath() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/noPluginInClasspath.args");
+        }
+
+        @TestMetadata("pluginSimple_legacy.args")
+        public void testPluginSimple_legacy() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_legacy.args");
+        }
+
+        @TestMetadata("pluginSimple_modern.args")
+        public void testPluginSimple_modern() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_modern.args");
+        }
+
+        @TestMetadata("pluginWithK2Error_legacy.args")
+        public void testPluginWithK2Error_legacy() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error_legacy.args");
+        }
+
+        @TestMetadata("pluginWithK2Error_modern.args")
+        public void testPluginWithK2Error_modern() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error_modern.args");
         }
     }
 
