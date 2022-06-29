@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.CachedAttributeData
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
@@ -25,15 +26,17 @@ import java.io.DataOutput
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.stream.Collectors
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
-import com.intellij.psi.stubs.PsiFileStub
-import java.util.stream.Collectors
 
 abstract class AbstractStubBuilderTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(ApplicationEnvironmentDisposer.ROOT_DISPOSABLE, ConfigurationKind.JDK_NO_RUNTIME)
+        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
+            ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
+            ConfigurationKind.JDK_NO_RUNTIME
+        )
     }
 
     override fun setUp() {
@@ -45,8 +48,10 @@ abstract class AbstractStubBuilderTest : KotlinTestWithEnvironment() {
     }
 
     private fun CoreApplicationEnvironment.registerApplicationServices() {
-        registerApplicationService(FileAttributeService::class.java, DummyFileAttributeService)
-        registerApplicationService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
+        if (application.getService(FileAttributeService::class.java) == null) {
+            registerApplicationService(FileAttributeService::class.java, DummyFileAttributeService)
+            application.picoContainer.unregisterComponent(ClsKotlinBinaryClassCache::class.java.name)
+        }
     }
 
     fun runTest(testDirectory: String) {
