@@ -25,9 +25,6 @@ interface AbstractCliOption {
     val description: String
     val required: Boolean
     val allowMultipleOccurrences: Boolean
-
-    val deprecatedName: String?
-        get() = null
 }
 
 class CliOption(
@@ -36,11 +33,7 @@ class CliOption(
     override val description: String,
     override val required: Boolean = true,
     override val allowMultipleOccurrences: Boolean = false
-) : AbstractCliOption {
-    @Deprecated("Use optionName instead.", ReplaceWith("optionName"))
-    val name: String
-        get() = optionName
-}
+) : AbstractCliOption
 
 open class CliOptionProcessingException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
