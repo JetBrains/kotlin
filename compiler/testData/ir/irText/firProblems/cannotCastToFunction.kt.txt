@@ -1,0 +1,36 @@
+open class IrElement {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun IrElement.dumpKotlinLike(options: String = ""): String {
+  return "O"
+}
+
+fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String {
+  return "K"
+}
+
+fun dump(data: IrElement, dumpStrategy: String): String {
+  val dump: @ExtensionFunctionType Function1<IrElement, String> = when {
+    EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> { // BLOCK
+      local fun dumpKotlinLike(p0: IrElement): String {
+        return p0.dumpKotlinLike()
+      }
+
+      ::dumpKotlinLike
+    }
+    else -> { // BLOCK
+      local fun dump(p0: IrElement): String {
+        return p0.dump()
+      }
+
+      ::dump
+    }
+  }
+  return dump.invoke(p1 = data)
+}

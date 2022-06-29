@@ -1857,6 +1857,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/candidateSymbol.kt");
         }
 
+        @TestMetadata("cannotCastToFunction.kt")
+        public void testCannotCastToFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/cannotCastToFunction.kt");
+        }
+
         @TestMetadata("DeepCopyIrTree.kt")
         public void testDeepCopyIrTree() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");

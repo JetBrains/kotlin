@@ -2495,6 +2495,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("cannotCastToFunction.kt")
+        public void testCannotCastToFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/cannotCastToFunction.kt");
+        }
+
+        @Test
         @TestMetadata("ClashResolutionDescriptor.kt")
         public void testClashResolutionDescriptor() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ClashResolutionDescriptor.kt");
