@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.jps.build.KotlinChunk
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.platform
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
@@ -68,7 +68,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
 
     private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*> {
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
-            val platform = target.module.platform?.idePlatformKind ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
+            val platform = target.module.platform?.idePlatformKind ?: JvmPlatforms.defaultJvmPlatform.idePlatformKind
 
             when {
                 platform.isCommon -> KotlinCommonModuleBuildTarget(uninitializedContext, target)

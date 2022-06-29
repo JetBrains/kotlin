@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
-import org.jetbrains.kotlin.platform.orDefault
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayInputStream
@@ -483,7 +483,8 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureRequiredLibraries() {
         myProject.modules.forEach { module ->
-            val platformKind = module.kotlinFacet?.settings?.targetPlatform?.idePlatformKind.orDefault()
+            val platformKind = module.kotlinFacet?.settings?.targetPlatform?.idePlatformKind
+                ?: JvmPlatforms.defaultJvmPlatform.idePlatformKind
 
             when {
                 platformKind.isJvm -> {
