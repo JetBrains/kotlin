@@ -101,6 +101,8 @@ class KotlinBuildProperties(
     val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
 
     val renderDiagnosticNames: Boolean = getBoolean("kotlin.build.render.diagnostic.names")
+
+    val isCacheRedirectorEnabled: Boolean = getBoolean("cacheRedirectorEnabled")
 }
 
 private const val extensionName = "kotlinBuildProperties"
