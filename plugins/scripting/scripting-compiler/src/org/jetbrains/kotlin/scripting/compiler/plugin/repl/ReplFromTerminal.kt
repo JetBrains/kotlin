@@ -139,10 +139,19 @@ class ReplFromTerminal(
                     writer.outputCommandResult(tryInterpretResultAsValueClass(evalResult) ?: evalResult.toString())
                 }
             }
-            is ReplEvalResult.Error.Runtime -> if (evalResult.message.isNotEmpty()) writer.outputRuntimeError(evalResult.message)
-            is ReplEvalResult.Error.CompileTime -> if (evalResult.message.isNotEmpty()) writer.outputCompileError(evalResult.message)
+            is ReplEvalResult.Error.Runtime -> {
+                if (evalResult.message.isNotEmpty()) writer.outputRuntimeError(evalResult.message)
+                writer.notifyErrorsReported()
+            }
+            is ReplEvalResult.Error.CompileTime -> {
+                if (evalResult.message.isNotEmpty()) writer.outputCompileError(evalResult.message)
+                writer.notifyErrorsReported()
+            }
             is ReplEvalResult.Incomplete -> writer.notifyIncomplete()
-            is ReplEvalResult.HistoryMismatch -> {} // assuming handled elsewhere
+            is ReplEvalResult.HistoryMismatch -> {
+                // assuming that internal error reported elsewhere
+                writer.notifyErrorsReported()
+            }
         }
         return evalResult
     }
