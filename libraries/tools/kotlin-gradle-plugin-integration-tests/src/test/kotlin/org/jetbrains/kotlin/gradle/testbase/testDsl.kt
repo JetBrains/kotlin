@@ -74,12 +74,11 @@ fun KGPBaseTest.project(
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
 
-    runCatching {
+    val result = runCatching {
         testProject.test()
-    }.onFailure {
-        // A convenient place to place a breakpoint to be able to inspect project output files
-        throw it
     }
+    // A convenient place to place a breakpoint to be able to inspect project output files
+    result.getOrThrow()
     return testProject
 }
 

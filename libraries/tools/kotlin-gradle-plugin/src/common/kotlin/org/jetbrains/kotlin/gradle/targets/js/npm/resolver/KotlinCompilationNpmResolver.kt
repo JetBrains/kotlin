@@ -446,6 +446,9 @@ internal class KotlinCompilationNpmResolver(
                         )
                     }
             }.filterNotNull()
+            val transitiveNpmDependencies = importedExternalGradleDependencies.flatMap {
+                it.dependencies
+            }.filter { it.scope != NpmDependency.Scope.DEV }
 
             val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
                 dependency.getPackages()
@@ -456,8 +459,7 @@ internal class KotlinCompilationNpmResolver(
                             file
                         )
                     }
-            }
-                .filterNotNull()
+            }.filterNotNull()
 
             val toolsNpmDependencies = compilationResolver.rootResolver.taskRequirements
                 .getCompilationNpmRequirements(projectPath, compilationResolver.compilationDisambiguatedName)
@@ -473,7 +475,7 @@ internal class KotlinCompilationNpmResolver(
                 )
             } else emptySet()
 
-            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies + dukatIfNecessary
+            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies + dukatIfNecessary + transitiveNpmDependencies
             val packageJsonHandlers = if (compilationResolver.compilation != null) {
                 compilationResolver.compilation.packageJsonHandlers
             } else {
