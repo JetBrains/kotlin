@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.*
 import java.lang.reflect.Modifier
@@ -113,7 +114,7 @@ fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
     getAttributeValue("allPlatforms").deserializeTargetPlatformByComponentPlatforms()?.let { return it }
 
     // failed to read list of all platforms. Fallback to legacy algorithm
-    val platformName = getAttributeValue("platform") ?: return DefaultIdeTargetPlatformKindProvider.defaultPlatform
+    val platformName = getAttributeValue("platform") ?: return JvmPlatforms.defaultJvmPlatform
 
     return CommonPlatforms.allSimplePlatforms.firstOrNull {
         // first, look for exact match through all simple platforms
@@ -124,7 +125,7 @@ fun Element.getFacetPlatformByConfigurationElement(): TargetPlatform {
     } ?: NativePlatforms.unspecifiedNativePlatform.takeIf {
         // if none of the above succeeded, check if it's an old-style record about native platform (without suffix with target name)
         it.oldFashionedDescription.startsWith(platformName)
-    }.orDefault() // finally, fallback to the default platform
+    } ?: JvmPlatforms.defaultJvmPlatform // finally, fallback to the default platform
 }
 
 private fun readV2AndLaterConfig(
