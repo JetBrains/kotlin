@@ -43,48 +43,21 @@ internal class WasmUsefulDeclarationProcessor(
                 }
                 true
             }
+
             context.wasmSymbols.wasmClassId,
             context.wasmSymbols.wasmInterfaceId,
             context.wasmSymbols.refCast,
-            context.wasmSymbols.refTest -> {
-                call.getTypeArgument(0)?.getClass()?.enqueue(from, "generic intrinsic ${call.symbol.owner.name}")
+            context.wasmSymbols.refTest,
+            context.wasmSymbols.boxIntrinsic -> {
+                call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
                 true
             }
+
             else -> false
-        }
-
-        private fun tryToProcessWasmOpIntrinsicCall(from: IrDeclaration, call: IrCall, function: IrFunction): Boolean {
-            if (function.hasWasmNoOpCastAnnotation()) {
-                return true
-            }
-
-            val opString = function.getWasmOpAnnotation()
-            if (opString != null) {
-                val op = WasmOp.valueOf(opString)
-                when (op.immediates.size) {
-                    0 -> {
-                        if (op == WasmOp.REF_TEST || op == WasmOp.REF_TEST_STATIC) {
-                            call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "REF_TEST/REF_TEST_STATIC")
-                        }
-                    }
-                    1 -> {
-                        if (op.immediates.firstOrNull() == WasmImmediateKind.STRUCT_TYPE_IDX) {
-                            function.dispatchReceiverParameter?.type?.classOrNull?.owner?.enqueue(from, "STRUCT_TYPE_IDX")
-                        }
-                    }
-                }
-                return true
-            }
-            return false
         }
 
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
-
-            if (expression.symbol == context.wasmSymbols.boxIntrinsic) {
-                expression.getTypeArgument(0)?.enqueueRuntimeClassOrAny(data, "boxIntrinsic")
-                return
-            }
 
             val function: IrFunction = expression.symbol.owner.realOverrideTarget
             if (function.returnType == context.irBuiltIns.unitType) {
@@ -92,7 +65,8 @@ internal class WasmUsefulDeclarationProcessor(
             }
 
             if (tryToProcessIntrinsicCall(data, expression)) return
-            if (tryToProcessWasmOpIntrinsicCall(data, expression, function)) return
+            if (function.hasWasmNoOpCastAnnotation()) return
+            if (function.getWasmOpAnnotation() != null) return
 
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {

@@ -338,11 +338,8 @@ enum class WasmOp(
     CALL_REF("call_ref", 0x14),
     RETURN_CALL_REF("return_call_ref", 0x15),
     FUNC_BIND("func.bind", 0x16, FUNC_IDX),
-    LET("let", 0x17, listOf(BLOCK_TYPE, LOCAL_DEFS)),
 
     // GC
-    STRUCT_NEW_WITH_RTT("struct.new_with_rtt", 0xFB_01, STRUCT_TYPE_IDX),
-    STRUCT_NEW_DEFAULT_WITH_RTT("struct.new_default_with_rtt", 0xFB_02, STRUCT_TYPE_IDX),
     STRUCT_NEW("struct.new", 0xFB_07, STRUCT_TYPE_IDX),
     STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_08, STRUCT_TYPE_IDX),
     STRUCT_GET("struct.get", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
@@ -350,8 +347,6 @@ enum class WasmOp(
     STRUCT_GET_U("struct.get_u", 0xFB_05, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
     STRUCT_SET("struct.set", 0xFB_06, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
 
-    ARRAY_NEW_WITH_RTT("array.new_with_rtt", 0xFB_11, STRUCT_TYPE_IDX),
-    ARRAY_NEW_DEFAULT_WITH_RTT("array.new_default_with_rtt", 0xFB_12, STRUCT_TYPE_IDX),
     ARRAY_NEW("array.new", 0xFB_1B, STRUCT_TYPE_IDX),
     ARRAY_NEW_DEFAULT("array.new_default", 0xFB_1C, STRUCT_TYPE_IDX),
     ARRAY_GET("array.get", 0xFB_13, listOf(STRUCT_TYPE_IDX)),
@@ -364,16 +359,9 @@ enum class WasmOp(
     I31_GET_S("i31.get_s", 0xFB_21),
     I31_GET_U("i31.get_u", 0xFB_22),
 
-    RTT_CANON("rtt.canon", 0xFB_30, TYPE_IDX),
-
-    REF_TEST("ref.test", 0xFB_40),
     REF_TEST_STATIC("ref.test_static", 0xFB_44, STRUCT_TYPE_IDX),
-    REF_CAST("ref.cast", 0xFB_41),
     REF_CAST_STATIC("ref.cast_static", 0xFB_45, STRUCT_TYPE_IDX),
 
-    BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
-
-    BR_ON_CAST_FAIL("br_on_cast_fail", 0xfb43, listOf(LABEL_IDX)),
     BR_ON_CAST_STATIC_FAIL("br_on_cast_static_fail", 0xfb47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
 
     REF_IS_FUNC("ref.is_func", 0xfb50),

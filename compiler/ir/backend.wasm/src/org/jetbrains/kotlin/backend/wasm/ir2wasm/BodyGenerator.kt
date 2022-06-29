@@ -197,9 +197,8 @@ class BodyGenerator(
         if (klass.getWasmArrayAnnotation() != null) {
             require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
             generateExpression(expression.getValueArgument(0)!!)
-            body.buildRttCanon(wasmGcType)
             body.buildInstr(
-                WasmOp.ARRAY_NEW_DEFAULT_WITH_RTT,
+                WasmOp.ARRAY_NEW_DEFAULT,
                 WasmImmediate.GcType(wasmGcType)
             )
             return
@@ -383,7 +382,7 @@ class BodyGenerator(
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(function)) {
             return true
         }
 
@@ -431,6 +430,13 @@ class BodyGenerator(
 
             wasmSymbols.refCast -> {
                 generateRefCast(
+                    fromType = call.getValueArgument(0)!!.type,
+                    toType = call.getTypeArgument(0)!!
+                )
+            }
+
+            wasmSymbols.refTest -> {
+                generateRefTest(
                     fromType = call.getValueArgument(0)!!.type,
                     toType = call.getTypeArgument(0)!!
                 )
@@ -625,7 +631,7 @@ class BodyGenerator(
     }
 
     // Return true if function is recognized as intrinsic.
-    private fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
+    private fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
         if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }
@@ -635,17 +641,7 @@ class BodyGenerator(
             val op = WasmOp.valueOf(opString)
             when (op.immediates.size) {
                 0 -> {
-                    when (op) {
-                        WasmOp.REF_TEST, WasmOp.REF_TEST_STATIC -> {
-                            generateRefTest(
-                                fromType = call.getValueArgument(0)!!.type,
-                                toType = call.getTypeArgument(0)!!
-                            )
-                        }
-                        else -> {
-                            body.buildInstr(op)
-                        }
-                    }
+                    body.buildInstr(op)
                 }
                 1 -> {
                     val immediates = arrayOf(
