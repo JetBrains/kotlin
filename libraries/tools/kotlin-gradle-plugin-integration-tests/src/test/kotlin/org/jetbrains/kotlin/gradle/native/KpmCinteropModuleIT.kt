@@ -35,9 +35,9 @@ class KpmCinteropModuleIT : BaseGradleIT() {
                 assertTasksExecuted(
                     ":cinteropSampleInteropLinuxArm64",
                     ":cinteropSampleInteropLinuxX64",
-                    ":commonizeSampleInterop"
+                    ":commonizeSampleInterop",
+                    ":commonizeSampleInteropForLinux"
                 )
-                assertTasksUpToDate(":commonizeSampleInteropForLinux")
                 assertContains("e: ${projectDir.absolutePath}/src/linuxMain/kotlin/Main.kt: (3, 22): Unresolved reference: sampleInterop")
                 assertContains("e: ${projectDir.absolutePath}/src/linuxMain/kotlin/Main.kt: (6, 15): Unresolved reference: sampleInterop")
             }

@@ -21,8 +21,6 @@ kotlin {
         val linuxX64 by fragments.creating(GradleKpmLinuxX64Variant::class)
 
         val linux by fragments.creating {
-            linuxArm64.refines(this)
-            linuxX64.refines(this)
             dependencies {
                 cinterop("sampleInterop")
             }
@@ -31,6 +29,9 @@ kotlin {
             linux.refines(this)
             macosX64.refines(this)
         }
+
+        linuxArm64.refines(linux)
+        linuxX64.refines(linux)
     }
 }
 

@@ -14,24 +14,30 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModelContainer
-import org.jetbrains.kotlin.project.model.utils.findRefiningFragments
+import org.jetbrains.kotlin.project.model.utils.withRefiningFragments
 import java.io.File
 
 internal fun GradleKpmFragment.declareCinteropDependency(cinteropName: String) {
     val cinteropModule = project.kpmModelContainer.cinteropModules.maybeCreate(cinteropName)
-    cinteropModule.applyFragmentRequirements(this)
+    val requestingFragment = this
 
-    val allRequestingFragments = containingModule.findRefiningFragments(this) + this
-    allRequestingFragments.forEach {
-        (it as GradleKpmFragment).addCinteropArtifactDependency(cinteropModule)
+    setupCinteropDependency(cinteropModule, requestingFragment)
+    containingModule.fragments.all { fragment ->
+        fragment.declaredRefinesDependencies.all { refine ->
+            if (refine.withRefinesClosure.contains(requestingFragment)) {
+                setupCinteropDependency(cinteropModule, fragment)
+            }
+        }
     }
 }
 
-private fun GradleKpmFragment.addCinteropArtifactDependency(
-    cinteropModule: GradleKpmCinteropModule
-) {
-    val corresponding = cinteropModule.fragments.first { it.fragmentName == fragmentName }
-    project.dependencies.add(cinteropConfiguration.name, CinteropDependency(corresponding))
+private fun setupCinteropDependency(cinteropModule: GradleKpmCinteropModule, requestingFragment: GradleKpmFragment) {
+    cinteropModule.applyFragmentRequirements(requestingFragment)
+    requestingFragment.withRefiningFragments().forEach {
+        val fragment = it as GradleKpmFragment
+        val corresponding = cinteropModule.getFragmentByName(fragment.fragmentName)!!
+        fragment.project.dependencies.add(fragment.cinteropConfiguration.name, CinteropDependency(corresponding))
+    }
 }
 
 private class CinteropDependency(
