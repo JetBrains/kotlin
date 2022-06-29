@@ -428,13 +428,13 @@ private fun Annotated.schemeItem(): Item {
 
 private fun Annotated.scheme(): Scheme? = compositionScheme()?.let { deserializeScheme(it) }
 
-private fun CallableDescriptor.toScheme(callContext: CallCheckerContext): Scheme =
+internal fun CallableDescriptor.toScheme(callContext: CallCheckerContext?): Scheme =
     scheme()
         ?: Scheme(
             target = schemeItem().let {
                 // The item is unspecified see if the containing has an annotation we can use
                 if (it.isUnspecified) {
-                    val target = fileScopeTarget(callContext)
+                    val target = callContext?.let { context -> fileScopeTarget(context) }
                     if (target != null) return@let target
                 }
                 it
@@ -444,15 +444,15 @@ private fun CallableDescriptor.toScheme(callContext: CallCheckerContext): Scheme
             }.map {
                 it.samComposableOrNull()?.toScheme(callContext) ?: it.type.toScheme()
             }
-        )
+        ).mergeWith(overriddenDescriptors.map { it.toScheme(null) })
 
 private fun CallableDescriptor.fileScopeTarget(callContext: CallCheckerContext): Item? =
     (psiElement?.containingFile as? KtFile)?.let {
         for (entry in it.annotationEntries) {
             val annotationDescriptor =
                 callContext.trace.bindingContext[BindingContext.ANNOTATION, entry]
-            annotationDescriptor?.compositionTarget()?.let {
-                return Token(it)
+            annotationDescriptor?.compositionTarget()?.let { token ->
+                return Token(token)
             }
         }
         null
@@ -470,3 +470,24 @@ private fun ValueParameterDescriptor.samComposableOrNull() =
 
 private fun ValueParameterDescriptor.isSamComposable() =
     samComposableOrNull()?.hasComposableAnnotation() == true
+
+internal fun Scheme.mergeWith(schemes: List<Scheme>): Scheme {
+    if (schemes.isEmpty()) return this
+
+    val lazyScheme = LazyScheme(this)
+    val bindings = lazyScheme.bindings
+
+    fun unifySchemes(a: LazyScheme, b: LazyScheme) {
+        bindings.unify(a.target, b.target)
+        for ((ap, bp) in a.parameters.zip(b.parameters)) {
+            unifySchemes(ap, bp)
+        }
+    }
+
+    schemes.forEach {
+        val overrideScheme = LazyScheme(it, bindings = lazyScheme.bindings)
+        unifySchemes(lazyScheme, overrideScheme)
+    }
+
+    return lazyScheme.toScheme()
+}

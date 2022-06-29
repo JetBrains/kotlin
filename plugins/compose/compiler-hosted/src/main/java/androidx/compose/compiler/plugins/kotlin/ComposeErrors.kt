@@ -148,6 +148,12 @@ object ComposeErrors {
             Severity.WARNING
         )
 
+    @JvmField
+    val COMPOSE_APPLIER_DECLARATION_MISMATCH =
+        DiagnosticFactory0.create<PsiElement>(
+            Severity.WARNING
+        )
+
     init {
         Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
             ComposeErrors::class.java,
