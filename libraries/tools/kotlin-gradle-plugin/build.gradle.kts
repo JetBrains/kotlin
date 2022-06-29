@@ -47,10 +47,10 @@ dependencies {
     commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
-    commonCompileOnly("com.android.tools.build:gradle:3.6.4")
-    commonCompileOnly("com.android.tools.build:gradle-api:3.6.4")
-    commonCompileOnly("com.android.tools.build:builder:3.6.4")
-    commonCompileOnly("com.android.tools.build:builder-model:3.6.4")
+    commonCompileOnly("com.android.tools.build:gradle:4.1.0")
+    commonCompileOnly("com.android.tools.build:gradle-api:4.1.0")
+    commonCompileOnly("com.android.tools.build:builder:4.1.0")
+    commonCompileOnly("com.android.tools.build:builder-model:4.1.0")
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     commonCompileOnly(project(":kotlin-reflect"))
     commonCompileOnly(intellijCore())
@@ -90,9 +90,7 @@ dependencies {
     }
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        "functionalTestImplementation"("com.android.tools.build:gradle:4.0.1") {
-            because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
-        }
+        "functionalTestImplementation"("com.android.tools.build:gradle:4.1.0")
         "functionalTestImplementation"(gradleKotlinDsl())
         "functionalTestImplementation"(project(":kotlin-gradle-plugin-kpm-android"))
         "functionalTestImplementation"(project(":kotlin-tooling-metadata"))

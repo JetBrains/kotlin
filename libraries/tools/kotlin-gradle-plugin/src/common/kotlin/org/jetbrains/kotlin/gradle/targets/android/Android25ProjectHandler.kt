@@ -167,9 +167,6 @@ internal fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
         is AppExtension -> androidExtension.applicationVariants.all(action)
         is LibraryExtension -> {
             androidExtension.libraryVariants.all(action)
-            if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
-            }
         }
         is TestExtension -> androidExtension.applicationVariants.all(action)
     }

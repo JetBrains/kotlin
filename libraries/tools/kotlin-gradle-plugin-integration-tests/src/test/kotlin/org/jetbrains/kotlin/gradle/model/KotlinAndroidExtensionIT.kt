@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 @OtherGradlePluginTests
 class KotlinAndroidExtensionIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = TestVersions.AGP.AGP_36.version,
+        androidVersion = TestVersions.AGP.AGP_41.version,
         warningMode = WarningMode.Summary
     )
 

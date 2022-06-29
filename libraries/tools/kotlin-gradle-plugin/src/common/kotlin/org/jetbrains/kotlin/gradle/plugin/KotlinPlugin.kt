@@ -704,7 +704,7 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
+        const val MINIMAL_SUPPORTED_AGP_VERSION = "4.1.0"
         fun androidTargetHandler(): AbstractAndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
 
@@ -1093,9 +1093,6 @@ internal fun Project.forEachVariant(action: (BaseVariant) -> Unit) {
         is AppExtension -> androidExtension.applicationVariants.all(action)
         is LibraryExtension -> {
             androidExtension.libraryVariants.all(action)
-            if (androidExtension is FeatureExtension) {
-                androidExtension.featureVariants.all(action)
-            }
         }
         is TestExtension -> androidExtension.applicationVariants.all(action)
     }

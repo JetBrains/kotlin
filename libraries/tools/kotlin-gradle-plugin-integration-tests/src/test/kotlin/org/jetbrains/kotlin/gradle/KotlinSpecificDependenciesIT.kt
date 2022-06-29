@@ -109,8 +109,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             "AndroidLibraryKotlinProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                androidVersion = agpVersion
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -131,8 +130,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             "AndroidLibraryKotlinProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                androidVersion = agpVersion
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -249,8 +247,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             "AndroidLibraryKotlinProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                androidVersion = agpVersion
             ),
             buildJdk = jdkVersion.location
         ) {
@@ -276,8 +273,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             "AndroidLibraryKotlinProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-                warningMode = if (agpVersion == TestVersions.AGP.AGP_36.version) WarningMode.Summary else defaultBuildOptions.warningMode
+                androidVersion = agpVersion
             ),
             buildJdk = jdkVersion.location
         ) {

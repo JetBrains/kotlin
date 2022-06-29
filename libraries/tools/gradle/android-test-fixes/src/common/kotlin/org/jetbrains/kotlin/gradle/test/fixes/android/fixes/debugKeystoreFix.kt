@@ -24,8 +24,6 @@ internal fun Project.applyDebugKeystoreFix(
 ) {
     plugins.withId("com.android.application", fix<AppExtension>(testFixesProperties))
     plugins.withId("com.android.library", fix<LibraryExtension>(testFixesProperties))
-    plugins.withId("com.android.feature", fix<FeatureExtension>(testFixesProperties))
-    plugins.withId("com.android.test", fix<TestExtension>(testFixesProperties))
 }
 
 private inline fun <reified AndroidExtension : BaseExtension> Project.fix(
