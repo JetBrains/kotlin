@@ -12,10 +12,10 @@ import kotlin.time.Duration.Companion.nanoseconds
 
 internal fun saturatingAdd(longNs: Long, duration: Duration): Long {
     val durationNs = duration.inWholeNanoseconds
-    if ((longNs - 1) or 1 == Long.MAX_VALUE) { // MIN_VALUE or MAX_VALUE - the reading is infinite
+    if (longNs.isSaturated()) { // MIN_VALUE or MAX_VALUE - the reading is infinite
         return checkInfiniteSumDefined(longNs, duration, durationNs)
     }
-    if ((durationNs - 1) or 1 == Long.MAX_VALUE) { // duration doesn't fit in Long nanos
+    if (durationNs.isSaturated()) { // duration doesn't fit in Long nanos
         return saturatingAddInHalves(longNs, duration)
     }
 
@@ -33,16 +33,16 @@ private fun checkInfiniteSumDefined(longNs: Long, duration: Duration, durationNs
 
 private fun saturatingAddInHalves(longNs: Long, duration: Duration): Long {
     val half = duration / 2
-    if ((half.inWholeNanoseconds - 1) or 1 == Long.MAX_VALUE) {
+    if (half.inWholeNanoseconds.isSaturated()) {
         // this will definitely saturate
         return (longNs + duration.toDouble(DurationUnit.NANOSECONDS)).toLong()
     } else {
-        return saturatingAdd(saturatingAdd(longNs, half), half)
+        return saturatingAdd(saturatingAdd(longNs, half), duration - half)
     }
 }
 
 internal fun saturatingDiff(valueNs: Long, originNs: Long): Duration {
-    if ((originNs - 1) or 1 == Long.MAX_VALUE) { // MIN_VALUE or MAX_VALUE
+    if (originNs.isSaturated()) { // MIN_VALUE or MAX_VALUE
         return -(originNs.toDuration(DurationUnit.DAYS)) // saturate to infinity
     }
     val result = valueNs - originNs
@@ -53,3 +53,7 @@ internal fun saturatingDiff(valueNs: Long, originNs: Long): Duration {
     }
     return result.nanoseconds
 }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun Long.isSaturated(): Boolean =
+    (this - 1) or 1 == Long.MAX_VALUE // == either MAX_VALUE or MIN_VALUE

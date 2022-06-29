@@ -75,13 +75,15 @@ class TimeMarkTest {
 
 
         val longDuration = Long.MAX_VALUE.nanoseconds
-        val long2Duration = longDuration * 2
+        val long2Duration = longDuration + 1001.milliseconds
 
         val pastMark = baseMark - longDuration
         val futureMark = pastMark + long2Duration
-        val sameMark = futureMark - longDuration
-        val elapsedDiff = sameMark.elapsedNow() - baseMark.elapsedNow()
-        assertTrue(elapsedDiff < 1.milliseconds, "$elapsedDiff")
+        val sameMark = futureMark - (long2Duration - longDuration)
+
+        val elapsedDiff = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
+        val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
+        assertTrue(maxOf(elapsedDiff, elapsedDiff2) < 1.milliseconds, "$elapsedDiff, $elapsedDiff2")
     }
 
     @Test
@@ -144,12 +146,14 @@ class TimeMarkTest {
         assertFailsWith<IllegalArgumentException> { infinitePastMark + Duration.INFINITE }
 
         val longDuration = Long.MAX_VALUE.nanoseconds
-        val long2Duration = longDuration * 2
+        val long2Duration = longDuration + 1001.milliseconds
 
         val pastMark = baseMark - longDuration
         val futureMark = pastMark + long2Duration
-        val sameMark = futureMark - longDuration
-        val elapsedDiff = sameMark.elapsedNow() - baseMark.elapsedNow()
-        assertTrue(elapsedDiff < 1.milliseconds, "$elapsedDiff")
+        val sameMark = futureMark - (long2Duration - longDuration)
+
+        val elapsedDiff = (sameMark.elapsedNow() - baseMark.elapsedNow()).absoluteValue
+        val elapsedDiff2 = (baseMark.elapsedNow() - sameMark.elapsedNow()).absoluteValue
+        assertTrue(maxOf(elapsedDiff, elapsedDiff2) < 1.milliseconds, "$elapsedDiff, $elapsedDiff2")
     }
 }
