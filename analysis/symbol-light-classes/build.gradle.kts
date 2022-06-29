@@ -19,6 +19,7 @@ dependencies {
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
 }
 
 sourceSets {

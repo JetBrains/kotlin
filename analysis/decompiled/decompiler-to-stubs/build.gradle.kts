@@ -9,9 +9,9 @@ dependencies {
     api(project(":core:deserialization.common.jvm"))
     api(project(":core:deserialization"))
     implementation(project(":core:compiler.common.jvm"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
 
     api(intellijCore())
-
 }
 
 sourceSets {
