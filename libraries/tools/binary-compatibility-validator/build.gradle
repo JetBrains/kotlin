@@ -7,6 +7,7 @@ configurations {
 
 dependencies {
     api("org.jetbrains.kotlinx:binary-compatibility-validator:0.9.0")
+    api("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
 
     testApi project(':kotlin-test:kotlin-test-junit')
 
