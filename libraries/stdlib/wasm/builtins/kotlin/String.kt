@@ -22,12 +22,15 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     public operator fun plus(other: Any?): String {
+        val thisChars = chars
         val otherChars = if (other is String) other.chars else other.toString().chars
-        val newCharsLen = chars.len() + otherChars.len()
-        val newChars = WasmCharArray(newCharsLen)
-        newChars.fill(newCharsLen) { i ->
-            if (i < chars.len()) chars.get(i) else otherChars.get(i - chars.len())
-        }
+        val thisLen = thisChars.len()
+        val otherLen = otherChars.len()
+        if (otherLen == 0) return String(thisChars)
+
+        val newChars = WasmCharArray(thisLen + otherLen)
+        thisChars.copyTo(newChars, 0, 0, thisLen)
+        otherChars.copyTo(newChars, 0, thisLen, otherLen)
         return String(newChars)
     }
 
@@ -47,42 +50,48 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         val actualStartIndex = startIndex.coerceAtLeast(0)
-        val actualEndIndex = endIndex.coerceAtMost(chars.len())
+        val thisChars = chars
+        val actualEndIndex = endIndex.coerceAtMost(thisChars.len())
         val newCharsLen = actualEndIndex - actualStartIndex
         val newChars = WasmCharArray(newCharsLen)
-        newChars.fill(newCharsLen) { i ->
-            chars.get(actualStartIndex + i)
-        }
+        thisChars.copyTo(newChars, actualStartIndex, 0, newCharsLen)
         return String(newChars)
     }
 
     public override fun compareTo(other: String): Int {
-        val len = min(this.length, other.length)
+        val thisChars = this.chars
+        val otherChars = other.chars
+
+        val thisLength = thisChars.len()
+        val otherLength = otherChars.len()
+        val len = min(thisLength, otherLength)
 
         for (i in 0 until len) {
-            val l = this[i]
-            val r = other[i]
+            val l = thisChars.get(i)
+            val r = otherChars.get(i)
             if (l != r)
                 return l - r
         }
-        return this.length - other.length
+        return thisLength - otherLength
     }
 
-    public override fun equals(other: Any?): Boolean {
-        if (other is String)
-            return this.compareTo(other) == 0
-        return false
-    }
+    public override fun equals(other: Any?): Boolean =
+        other != null &&
+        other is String &&
+        (this.length == other.length) &&
+        this.compareTo(other) == 0
 
     public override fun toString(): String = this
 
     public override fun hashCode(): Int {
-        if (_hashCode != 0 || this.isEmpty())
+        val thisLength = length
+
+        if (_hashCode != 0 || thisLength == null)
             return _hashCode
 
         var hash = 0
         var i = 0
-        while (i < chars.len()) {
+        while (i < thisLength) {
             hash = 31 * hash + chars.get(i).toInt()
             i++
         }

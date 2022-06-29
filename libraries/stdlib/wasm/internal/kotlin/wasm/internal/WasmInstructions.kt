@@ -24,6 +24,9 @@ internal fun <To> wasm_ref_cast(a: Any?): To =
 internal fun <To> wasm_ref_test(a: Any?): Boolean =
     implementedAsIntrinsic
 
+internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_EQ)
 public external fun wasm_i32_eq(a: Int, b: Int): Boolean
 

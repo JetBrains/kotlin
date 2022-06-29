@@ -157,6 +157,7 @@ class WasmSymbols(
     val refIsNull = getInternalFunction("wasm_ref_is_null")
     val refTest = getInternalFunction("wasm_ref_test")
     val refCast = getInternalFunction("wasm_ref_cast")
+    val wasmArrayCopy = getInternalFunction("wasm_array_copy")
 
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 

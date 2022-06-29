@@ -475,6 +475,13 @@ class BodyGenerator(
                 body.buildConstI32Symbol(WasmSymbol(context.scratchMemSizeInBytes))
             }
 
+            wasmSymbols.wasmArrayCopy -> {
+                val immediate = WasmImmediate.GcType(
+                    context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                )
+                body.buildInstr(WasmOp.ARRAY_COPY, immediate, immediate)
+            }
+
             else -> {
                 return false
             }

@@ -1017,18 +1017,8 @@ public actual fun CharArray?.contentToString(): String {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    @Suppress("UNCHECKED_CAST")
+    arrayCopy(this as Array<Any?>, startIndex, destination as Array<Any?>, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1051,18 +1041,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1085,18 +1064,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1119,18 +1087,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1153,18 +1110,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1187,18 +1133,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1221,18 +1156,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1255,18 +1179,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 
@@ -1289,18 +1202,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
-    AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
-    val rangeSize = endIndex - startIndex
-    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    arrayCopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
 

@@ -354,6 +354,7 @@ enum class WasmOp(
     ARRAY_GET_U("array.get_u", 0xFB_15, listOf(STRUCT_TYPE_IDX)),
     ARRAY_SET("array.set", 0xFB_16, listOf(STRUCT_TYPE_IDX)),
     ARRAY_LEN("array.len", 0xFB_17, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
 
     I31_NEW("i31.new", 0xFB_20),
     I31_GET_S("i31.get_s", 0xFB_21),

@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
  * for more information on arrays.
  */
 public class Array<T> constructor(size: Int) {
-    private var storage: WasmAnyArray = WasmAnyArray(size)
+    internal val storage: WasmAnyArray = WasmAnyArray(size)
 
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified

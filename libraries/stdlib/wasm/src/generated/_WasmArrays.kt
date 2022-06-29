@@ -32,7 +32,11 @@ internal class WasmAnyArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmAnyArray.copyTo(destination: WasmAnyArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmAnyArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmAnyArray.fill(size: Int, init: (Int) -> Any?) {
@@ -41,8 +45,7 @@ internal inline fun WasmAnyArray.fill(size: Int, init: (Int) -> Any?) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Byte::class, isNullable = false)
 internal class WasmByteArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET_S)
@@ -55,7 +58,11 @@ internal class WasmByteArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmByteArray.copyTo(destination: WasmByteArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmByteArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmByteArray.fill(size: Int, init: (Int) -> Byte) {
@@ -64,8 +71,7 @@ internal inline fun WasmByteArray.fill(size: Int, init: (Int) -> Byte) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Char::class, isNullable = false)
 internal class WasmCharArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET_U)
@@ -78,7 +84,11 @@ internal class WasmCharArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmCharArray.copyTo(destination: WasmCharArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmCharArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmCharArray.fill(size: Int, init: (Int) -> Char) {
@@ -87,8 +97,7 @@ internal inline fun WasmCharArray.fill(size: Int, init: (Int) -> Char) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Short::class, isNullable = false)
 internal class WasmShortArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET_S)
@@ -101,7 +110,11 @@ internal class WasmShortArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmShortArray.copyTo(destination: WasmShortArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmShortArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmShortArray.fill(size: Int, init: (Int) -> Short) {
@@ -110,8 +123,7 @@ internal inline fun WasmShortArray.fill(size: Int, init: (Int) -> Short) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Int::class, isNullable = false)
 internal class WasmIntArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET)
@@ -124,7 +136,11 @@ internal class WasmIntArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmIntArray.copyTo(destination: WasmIntArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmIntArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmIntArray.fill(size: Int, init: (Int) -> Int) {
@@ -133,8 +149,7 @@ internal inline fun WasmIntArray.fill(size: Int, init: (Int) -> Int) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Long::class, isNullable = false)
 internal class WasmLongArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET)
@@ -147,7 +162,11 @@ internal class WasmLongArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmLongArray.copyTo(destination: WasmLongArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmLongArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmLongArray.fill(size: Int, init: (Int) -> Long) {
@@ -156,8 +175,7 @@ internal inline fun WasmLongArray.fill(size: Int, init: (Int) -> Long) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Float::class, isNullable = false)
 internal class WasmFloatArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET)
@@ -170,7 +188,11 @@ internal class WasmFloatArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmFloatArray.copyTo(destination: WasmFloatArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmFloatArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmFloatArray.fill(size: Int, init: (Int) -> Float) {
@@ -179,8 +201,7 @@ internal inline fun WasmFloatArray.fill(size: Int, init: (Int) -> Float) {
         set(i, init(i))
         i++
     }
-}
-
+}            
 @WasmArrayOf(Double::class, isNullable = false)
 internal class WasmDoubleArray(size: Int) {
     @WasmOp(WasmOp.ARRAY_GET)
@@ -193,7 +214,11 @@ internal class WasmDoubleArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic
+        implementedAsIntrinsic                    
+}
+
+internal inline fun WasmDoubleArray.copyTo(destination: WasmDoubleArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmDoubleArray>(destination, destinationIndex, this, sourceIndex, length)
 }
 
 internal inline fun WasmDoubleArray.fill(size: Int, init: (Int) -> Double) {
@@ -202,5 +227,4 @@ internal inline fun WasmDoubleArray.fill(size: Int, init: (Int) -> Double) {
         set(i, init(i))
         i++
     }
-}
-
+}            

@@ -252,6 +252,7 @@ internal annotation class WasmOp(val name: String) {
         const val ARRAY_GET_U = "ARRAY_GET_U"
         const val ARRAY_SET = "ARRAY_SET"
         const val ARRAY_LEN = "ARRAY_LEN"
+        const val ARRAY_COPY = "ARRAY_COPY"
         const val I31_NEW = "I31_NEW"
         const val I31_GET_S = "I31_GET_S"
         const val I31_GET_U = "I31_GET_U"

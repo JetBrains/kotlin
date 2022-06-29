@@ -8,7 +8,7 @@ package kotlin
 import kotlin.wasm.internal.*
 
 public class ByteArray(size: Int) {
-    private var storage = WasmByteArray(size)
+    internal val storage = WasmByteArray(size)
 
     public constructor(size: Int, init: (Int) -> Byte) : this(size) {
         storage.fill(size, init)
@@ -38,7 +38,7 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
 
 
 public class CharArray(size: Int) {
-    private var storage = WasmCharArray(size)
+    internal val storage = WasmCharArray(size)
 
     public constructor(size: Int, init: (Int) -> Char) : this(size) {
         storage.fill(size) { init(it) }
@@ -69,7 +69,7 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
 
 
 public class ShortArray(size: Int) {
-    private var storage = WasmShortArray(size)
+    internal val storage = WasmShortArray(size)
 
     public constructor(size: Int, init: (Int) -> Short) : this(size) {
         storage.fill(size, init)
@@ -100,7 +100,7 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
 
 
 public class IntArray(size: Int) {
-    private var storage = WasmIntArray(size)
+    internal val storage = WasmIntArray(size)
 
     public constructor(size: Int, init: (Int) -> Int) : this(size) {
         storage.fill(size, init)
@@ -131,7 +131,7 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
 
 
 public class LongArray(size: Int) {
-    private var storage = WasmLongArray (size)
+    internal val storage = WasmLongArray (size)
 
     public constructor(size: Int, init: (Int) -> Long) : this(size) {
         storage.fill(size, init)
@@ -161,7 +161,7 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
 
 
 public class FloatArray(size: Int) {
-    private var storage = WasmFloatArray(size)
+    internal val storage = WasmFloatArray(size)
 
     public constructor(size: Int, init: (Int) -> Float) : this(size) {
         storage.fill(size, init)
@@ -191,7 +191,7 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
 
 
 public class DoubleArray(size: Int) {
-    private var storage = WasmDoubleArray(size)
+    internal val storage = WasmDoubleArray(size)
 
     public constructor(size: Int, init: (Int) -> Double) : this(size) {
         storage.fill(size, init)
@@ -221,7 +221,7 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
 
 
 public class BooleanArray(size: Int) {
-    private var storage = WasmByteArray(size)
+    internal val storage = WasmByteArray(size)
 
     public constructor(size: Int, init: (Int) -> Boolean) : this(size) {
         storage.fill(size) { init(it).toInt().reinterpretAsByte() }
