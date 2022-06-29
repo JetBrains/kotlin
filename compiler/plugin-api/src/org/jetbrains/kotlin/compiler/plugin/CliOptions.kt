@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compiler.plugin
 
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.regex.Pattern
 
 interface AbstractCliOption {
@@ -41,14 +42,14 @@ class CliOption(
         get() = optionName
 }
 
-open class CliOptionProcessingException(message: String, cause: Throwable? = null): RuntimeException(message, cause)
+open class CliOptionProcessingException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
 class PluginCliOptionProcessingException(
-        val pluginId: String,
-        val options: Collection<AbstractCliOption>,
-        message: String,
-        cause: Throwable? = null
-): CliOptionProcessingException(message, cause)
+    val pluginId: String,
+    val options: Collection<AbstractCliOption>,
+    message: String,
+    cause: Throwable? = null
+) : CliOptionProcessingException(message, cause)
 
 fun cliPluginUsageString(pluginId: String, options: Collection<AbstractCliOption>): String {
     val LEFT_INDENT = 2
@@ -61,8 +62,9 @@ fun cliPluginUsageString(pluginId: String, options: Collection<AbstractCliOption
         } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length)
 
         val modifiers = listOfNotNull(
-                if (it.required) "required" else null,
-                if (it.allowMultipleOccurrences) "multiple" else null)
+            runIf(it.required) { "required" },
+            runIf(it.allowMultipleOccurrences) { "multiple" }
+        )
         val modifiersEnclosed = if (modifiers.isEmpty()) "" else " (${modifiers.joinToString()})"
 
         " ".repeat(LEFT_INDENT) + name + margin + it.description + modifiersEnclosed
@@ -71,9 +73,9 @@ fun cliPluginUsageString(pluginId: String, options: Collection<AbstractCliOption
 }
 
 data class CliOptionValue(
-        val pluginId: String,
-        val optionName: String,
-        val value: String
+    val pluginId: String,
+    val optionName: String,
+    val value: String
 ) {
     override fun toString() = "$pluginId:$optionName=$value"
 }
