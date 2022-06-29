@@ -26,5 +26,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND by error<KtElement> {
             parameter<FqName>("exceptionName")
         }
+        val INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY by error<KtElement>()
+        val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error<KtElement>()
     }
 }

@@ -24,6 +24,8 @@ object FirNativeErrors {
     val INCOMPATIBLE_THROWS_OVERRIDE by error1<KtElement, FirRegularClassSymbol>()
     val INCOMPATIBLE_THROWS_INHERITED by error1<KtDeclaration, Collection<FirRegularClassSymbol>>()
     val MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND by error1<KtElement, FqName>()
+    val INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY by error0<KtElement>()
+    val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error0<KtElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)
