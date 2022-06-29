@@ -158,14 +158,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
         // We don't produce bridges for abstract functions in interfaces.
         if (isJvmAbstract(context.config.jvmDefaultMode)) {
-            if (parentAsClass.isJvmInterface) {
-                // If function requires a special bridge, we should record it for generic signatures generation.
-                if (specialBridgeOrNull != null) {
-                    this.hasSpecialBridge = true
-                }
-                return false
-            }
-            return true
+            return !parentAsClass.isJvmInterface
         }
 
         // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
@@ -469,8 +462,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
-            target.hasSpecialBridge = true
-
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
 

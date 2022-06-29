@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
@@ -27,7 +25,10 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -264,43 +265,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         val signature = sw.makeJvmMethodSignature(mapFunctionName(function, skipSpecial))
 
-        val specialSignatureInfo =
-            with(BuiltinMethodsWithSpecialGenericSignature) {
-                function.toIrBasedDescriptorWithOriginalOverrides().getSpecialSignatureInfo()
-            }
-
-        // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
-        // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
-        if (specialSignatureInfo != null && !function.hasSpecialBridge) {
-            val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
-            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
+        if (!skipGenericSignature && function is IrSimpleFunction) {
+            return GenericSignatureMapper.mapSignature(function, signature)
         }
-        if (function.origin == JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB) {
-            return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, null)
-        }
-
         return signature
-    }
-
-    private fun IrFunction.toIrBasedDescriptorWithOriginalOverrides(): FunctionDescriptor =
-        when (this) {
-            is IrConstructor ->
-                toIrBasedDescriptor()
-            is IrSimpleFunction ->
-                if (isPropertyAccessor)
-                    toIrBasedDescriptor()
-                else
-                    IrBasedSimpleFunctionDescriptorWithOriginalOverrides(this, context)
-        }
-
-    private class IrBasedSimpleFunctionDescriptorWithOriginalOverrides(
-        owner: IrSimpleFunction,
-        private val context: JvmBackendContext
-    ) : IrBasedSimpleFunctionDescriptor(owner) {
-        override fun getOverriddenDescriptors(): List<FunctionDescriptor> =
-            (owner.overridesWithoutStubs ?: owner.overriddenSymbols).map {
-                IrBasedSimpleFunctionDescriptorWithOriginalOverrides(it.owner, context)
-            }
     }
 
     companion object {
