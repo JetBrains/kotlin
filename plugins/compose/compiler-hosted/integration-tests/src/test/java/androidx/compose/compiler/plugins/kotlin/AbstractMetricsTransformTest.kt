@@ -27,7 +27,7 @@ abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
         module: IrModuleFragment,
         context: IrPluginContext
     ) {
-        extension.metrics = ModuleMetricsImpl(module.name.asString(), context)
+        extension!!.metrics = ModuleMetricsImpl(module.name.asString(), context)
         super.postProcessingStep(module, context)
     }
 
@@ -40,7 +40,7 @@ abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
             sourceFile("Test.kt", source.replace('%', '$')),
         )
         compilation.compile(files)
-        extension.metrics.verify()
+        extension!!.metrics.verify()
     }
 
     fun assertClasses(
@@ -104,7 +104,7 @@ abstract class AbstractMetricsTransformTest : ComposeIrTransformTest() {
     }
 
     override fun tearDown() {
+        extension!!.metrics = EmptyModuleMetrics
         super.tearDown()
-        extension.metrics = EmptyModuleMetrics
     }
 }

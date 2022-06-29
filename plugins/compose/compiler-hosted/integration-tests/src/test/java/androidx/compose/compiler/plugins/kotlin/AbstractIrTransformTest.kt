@@ -77,25 +77,31 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val decoysEnabled get() = false
     open val metricsDestination: String? get() = null
 
-    protected val extension = ComposeIrGenerationExtension(
-        liveLiteralsEnabled,
-        liveLiteralsV2Enabled,
-        generateFunctionKeyMetaClasses,
-        sourceInformationEnabled,
-        intrinsicRememberEnabled,
-        decoysEnabled,
-        metricsDestination
-    )
+    protected var extension: ComposeIrGenerationExtension? = null
     // Some tests require the plugin context in order to perform assertions, for example, a
     // context is required to determine the stability of a type using the StabilityInferencer.
     var pluginContext: IrPluginContext? = null
+
+    override fun setUp() {
+        super.setUp()
+        extension = ComposeIrGenerationExtension(
+            myEnvironment!!.configuration,
+            liveLiteralsEnabled,
+            liveLiteralsV2Enabled,
+            generateFunctionKeyMetaClasses,
+            sourceInformationEnabled,
+            intrinsicRememberEnabled,
+            decoysEnabled,
+            metricsDestination
+        )
+    }
 
     override fun postProcessingStep(
         module: IrModuleFragment,
         context: IrPluginContext
     ) {
         pluginContext = context
-        extension.generate(
+        extension!!.generate(
             module,
             context
         )
@@ -103,6 +109,7 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
 
     override fun tearDown() {
         pluginContext = null
+        extension = null
         super.tearDown()
     }
 }
