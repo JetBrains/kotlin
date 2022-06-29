@@ -26,6 +26,8 @@ object FirNativeErrors {
     val MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND by error1<KtElement, FqName>()
     val INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY by error0<KtElement>()
     val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error0<KtElement>()
+    val INAPPLICABLE_THREAD_LOCAL by error0<KtElement>()
+    val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error0<KtElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

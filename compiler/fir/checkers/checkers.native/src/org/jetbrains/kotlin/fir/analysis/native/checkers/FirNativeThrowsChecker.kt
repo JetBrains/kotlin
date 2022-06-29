@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 
 object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
-    private val throwsFqName = ClassId.topLevel(KOTLIN_THROWS_ANNOTATION_FQ_NAME)
+    private val throwsClassId = ClassId.topLevel(KOTLIN_THROWS_ANNOTATION_FQ_NAME)
 
     private val cancellationExceptionFqName = FqName("kotlin.coroutines.cancellation.CancellationException")
 
@@ -43,7 +43,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
     )
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val throwsAnnotation = declaration.getAnnotationByClassId(throwsFqName) as? FirAnnotationCall
+        val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
 
         if (!checkInheritance(declaration, throwsAnnotation, context, reporter)) return
 
@@ -121,7 +121,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
                         val annotation = if (overriddenFunction.isSubstitutionOrIntersectionOverride) {
                             null
                         } else {
-                            overriddenFunction.getAnnotationByClassId(throwsFqName) as? FirAnnotationCall
+                            overriddenFunction.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
                         }
                         getInheritedThrows(annotation, overriddenFunction)
                     }

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
@@ -32,6 +34,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "@SharedImmutable is applicable only to val with backing field or to property with delegation"
         )
         map.put(INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, "@SharedImmutable is applicable only to top level declarations")
+        map.put(
+            INAPPLICABLE_THREAD_LOCAL,
+            "@ThreadLocal is applicable only to property with backing field, to property with delegation or to objects"
+        )
+        map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "@ThreadLocal is applicable only to top level declarations")
 
         map.checkMissingMessages(FirNativeErrors)
     }

@@ -18,26 +18,30 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker() {
-    private val sharedImmutableFqName = ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable"))
+    private val sharedImmutableClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.SharedImmutable"))
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirVariable) {
             if (declaration !is FirValueParameter || context.containingDeclarations.lastOrNull() !is FirPrimaryConstructor) {
                 val hasBackingField = declaration is FirProperty && declaration.hasBackingField
                 if ((declaration.isVar || !hasBackingField) && declaration.delegate == null) {
-                    val annotation = declaration.getAnnotationByClassId(sharedImmutableFqName)
-                    if (annotation != null) {
-                        reporter.reportOn(annotation.source, FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, context)
-                    }
+                    reporter.reportIfHasAnnotation(
+                        declaration,
+                        sharedImmutableClassId,
+                        FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
+                        context
+                    )
                 }
             }
         } else {
             if (declaration.source?.kind is KtFakeSourceElementKind) return
 
-            val annotation = declaration.getAnnotationByClassId(sharedImmutableFqName)
-            if (annotation != null) {
-                reporter.reportOn(annotation.source, FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, context)
-            }
+            reporter.reportIfHasAnnotation(
+                declaration,
+                sharedImmutableClassId,
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
+                context
+            )
 
             return
         }
@@ -45,10 +49,12 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker() {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
         if (context.containingDeclarations.lastOrNull() !is FirFile) {
-            val annotation = declaration.getAnnotationByClassId(sharedImmutableFqName)
-            if (annotation != null) {
-                reporter.reportOn(annotation.source, FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, context)
-            }
+            reporter.reportIfHasAnnotation(
+                declaration,
+                sharedImmutableClassId,
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL,
+                context
+            )
         }
     }
 }

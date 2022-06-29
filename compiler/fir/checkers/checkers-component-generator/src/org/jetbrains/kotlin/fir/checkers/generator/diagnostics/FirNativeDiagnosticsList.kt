@@ -28,5 +28,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         }
         val INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY by error<KtElement>()
         val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error<KtElement>()
+        val INAPPLICABLE_THREAD_LOCAL by error<KtElement>()
+        val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error<KtElement>()
     }
 }

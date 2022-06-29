@@ -12,6 +12,7 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirNativeThrowsChecker,
-            FirNativeSharedImmutableChecker
+            FirNativeSharedImmutableChecker,
+            FirNativeThreadLocalChecker
         )
 }
