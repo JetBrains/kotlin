@@ -10,7 +10,7 @@ dependencies {
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCore())

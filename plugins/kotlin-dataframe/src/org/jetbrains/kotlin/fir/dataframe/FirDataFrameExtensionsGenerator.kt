@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.has
+import org.jetbrains.kotlin.fir.extensions.predicate.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -48,7 +49,7 @@ class FirDataFrameExtensionsGenerator(
         predicateBasedProvider.getSymbolsByPredicate(predicate).filterIsInstance<FirRegularClassSymbol>()
     }
 
-    private val predicate: DeclarationPredicate = has(dataSchema)
+    private val predicate: DeclarationPredicate = annotated(dataSchema)
 
     private val fields by lazy {
         matchedClasses.flatMap { classSymbol ->
@@ -73,7 +74,8 @@ class FirDataFrameExtensionsGenerator(
         return fields.mapTo(mutableSetOf()) { it.callableId }
     }
 
-    override fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> {
+    override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
+        val owner = context?.owner
         return when (owner) {
             null -> fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
 
@@ -113,7 +115,7 @@ class FirDataFrameExtensionsGenerator(
             val receiverType =
                 ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), arrayOf(classTypeProjection), isNullable = false)
 
-            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
+            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -189,7 +191,7 @@ class FirDataFrameExtensionsGenerator(
                 ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("ColumnsContainer"))
             val receiverType =
                 ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), arrayOf(classTypeProjection), isNullable = false)
-            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null)
+            val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
 
             val columnClassId = ClassId(
                 FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
@@ -198,7 +200,7 @@ class FirDataFrameExtensionsGenerator(
             val typeProjection = resolvedReturnTypeRef.coneType.toTypeProjection(Variance.INVARIANT)
             val returnType =
                 ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(columnClassId), arrayOf(typeProjection), isNullable = false)
-            val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null)
+            val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null, false)
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -259,7 +261,7 @@ class FirDataFrameExtensionsGenerator(
         register(predicate)
     }
 
-    object DataFramePlugin : FirPluginKey()
+    object DataFramePlugin : GeneratedDeclarationKey()
 
     private companion object {
         val dataSchema = FqName(DataSchema::class.qualifiedName!!)

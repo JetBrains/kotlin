@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe.unit
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.functionSymbol
@@ -32,7 +33,7 @@ abstract class DataFrameUnitTests(val assertion: (FirFunctionCall) -> Unit) : Ab
         }
 
         class Subject(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-            override fun registerCompilerExtensions(project: Project, module: TestModule) {
+            override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
                 FirExtensionRegistrar.registerExtension(project, object : FirExtensionRegistrar() {
                     override fun ExtensionRegistrarContext.configurePlugin() {
                         +{ it: FirSession -> object : FirExpressionResolutionExtension(it) {

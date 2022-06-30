@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -260,7 +260,7 @@ class FirDataFrameReceiverInjector(
         return Arguments(refinedArgument)
     }
 
-    object DataFramePluginKey : FirPluginKey()
+    object DataFramePluginKey : GeneratedDeclarationKey()
 }
 
 fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {
