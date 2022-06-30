@@ -41,6 +41,10 @@ internal class KtFirValueParameterSymbol(
             firSymbol.source?.kind == KtFakeSourceElementKind.ItLambdaParameter
         }
 
+    override val isCrossinline: Boolean get() = withValidityAssertion { firSymbol.isCrossinline}
+
+    override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline}
+
     override val returnType by cached {
         val returnType = firSymbol.resolvedReturnType
         return@cached if (firSymbol.isVararg) {

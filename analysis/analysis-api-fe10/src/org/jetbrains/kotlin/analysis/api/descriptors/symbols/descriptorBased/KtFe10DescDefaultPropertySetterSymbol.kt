@@ -94,6 +94,12 @@ class KtFe10DescDefaultPropertySetterSymbol(
         override val isImplicitLambdaParameter: Boolean
             get() = withValidityAssertion { false }
 
+        override val isCrossinline: Boolean
+            get() = withValidityAssertion { false }
+
+        override val isNoinline: Boolean
+            get() = withValidityAssertion { false }
+
         override val name: Name
             get() = withValidityAssertion { Name.identifier("value") }
 
