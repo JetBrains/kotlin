@@ -271,4 +271,20 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/contextReceiversOnProperty.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueParameters {
+        @Test
+        public void testAllFilesPresentInValueParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("parameterInlining.kt")
+        public void testParameterInlining() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/parameterInlining.kt");
+        }
+    }
 }
