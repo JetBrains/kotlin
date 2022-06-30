@@ -50,7 +50,7 @@ abstract class AbstractStubBuilderTest : KotlinTestWithEnvironment() {
     private fun CoreApplicationEnvironment.registerApplicationServices() {
         if (application.getService(FileAttributeService::class.java) == null) {
             registerApplicationService(FileAttributeService::class.java, DummyFileAttributeService)
-            application.picoContainer.unregisterComponent(ClsKotlinBinaryClassCache::class.java.name)
+            registerApplicationService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
         }
     }
 
