@@ -12,6 +12,7 @@ CALLABLE SYMBOLS:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /test
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -37,6 +38,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /testVal
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -75,6 +77,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: C
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -97,6 +100,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: I
   classKind: INTERFACE
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

@@ -6,6 +6,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: foo/MyClass
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

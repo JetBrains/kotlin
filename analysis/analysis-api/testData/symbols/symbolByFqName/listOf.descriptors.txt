@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

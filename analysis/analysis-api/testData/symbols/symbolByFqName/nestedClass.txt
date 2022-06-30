@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

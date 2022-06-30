@@ -1,6 +1,7 @@
 KtJavaFieldSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.value
+  contextReceivers: []
   isExtension: false
   isStatic: false
   isVal: true
@@ -19,6 +20,7 @@ KtJavaFieldSymbol:
 KtJavaFieldSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash
+  contextReceivers: []
   isExtension: false
   isStatic: false
   isVal: false
@@ -37,6 +39,7 @@ KtJavaFieldSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash32
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -63,6 +66,7 @@ KtFunctionSymbol:
 KtJavaFieldSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash32
+  contextReceivers: []
   isExtension: false
   isStatic: false
   isVal: false
@@ -81,6 +85,7 @@ KtJavaFieldSymbol:
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.length
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -114,6 +119,7 @@ KtSyntheticJavaPropertySymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.isEmpty
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -140,6 +146,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointAt
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -168,6 +175,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointBefore
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -196,6 +204,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointCount
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -225,6 +234,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.offsetByCodePoints
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -254,6 +264,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -283,6 +294,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -317,6 +329,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: java/lang/String.getBytes
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -348,6 +361,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -376,6 +390,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -404,6 +419,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -430,6 +446,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equals
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -458,6 +475,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -486,6 +504,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -514,6 +533,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -542,6 +562,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareTo
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -570,6 +591,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -598,6 +620,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -629,6 +652,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -661,6 +685,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -690,6 +715,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -718,6 +744,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.endsWith
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -746,6 +773,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hashCode
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -772,6 +800,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -800,6 +829,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -829,6 +859,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -857,6 +888,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -886,6 +918,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOfSupplementary
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -915,6 +948,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -943,6 +977,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -972,6 +1007,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1000,6 +1036,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1029,6 +1066,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1058,6 +1096,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1086,6 +1125,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1115,6 +1155,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.subSequence
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1144,6 +1185,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.concat
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1172,6 +1214,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1201,6 +1244,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1230,6 +1274,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.matches
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1258,6 +1303,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contains
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1286,6 +1332,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceFirst
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1315,6 +1362,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceAll
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1344,6 +1392,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1373,6 +1422,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1401,6 +1451,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1429,6 +1480,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1455,6 +1507,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1483,6 +1536,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1509,6 +1563,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.trim
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1535,6 +1590,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toString
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1561,6 +1617,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toCharArray
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1587,6 +1644,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.intern
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1613,6 +1671,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.get
+  contextReceivers: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1643,6 +1702,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -1666,6 +1726,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1683,6 +1744,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1702,6 +1764,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1721,6 +1784,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1742,6 +1806,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1766,6 +1831,7 @@ KtConstructorSymbol:
   ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1791,6 +1857,7 @@ KtConstructorSymbol:
   ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1811,6 +1878,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1833,6 +1901,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1855,6 +1924,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1875,6 +1945,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1895,6 +1966,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1916,6 +1988,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1935,6 +2008,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1954,6 +2028,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1973,6 +2048,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1996,6 +2072,7 @@ KtConstructorSymbol:
   ]
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: java/lang/String
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false

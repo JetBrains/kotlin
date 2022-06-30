@@ -1,6 +1,7 @@
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /A.i
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -42,6 +43,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

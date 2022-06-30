@@ -1,6 +1,7 @@
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/P.x)
   hasDefaultValue: false
   isExtension: false
@@ -18,6 +19,7 @@ KtValueParameterSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/P.y)
   hasDefaultValue: false
   isExtension: false
@@ -36,6 +38,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: P
+  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
@@ -57,6 +60,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: P
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: true
   isExternal: false
   isFun: false
@@ -77,6 +81,7 @@ KtNamedClassOrObjectSymbol:
 KtLocalVariableSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   isExtension: false
   isVal: true
   name: l
@@ -91,6 +96,7 @@ KtLocalVariableSymbol:
 KtLocalVariableSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   isExtension: false
   isVal: true
   name: r
@@ -105,6 +111,7 @@ KtLocalVariableSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /destruct
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

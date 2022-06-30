@@ -44,6 +44,7 @@ KtSuccessCallInfo:
           classIdIfNonLocal: Foo
           classKind: INTERFACE
           companionObject: null
+          contextReceivers: []
           isData: false
           isExternal: false
           isFun: false
