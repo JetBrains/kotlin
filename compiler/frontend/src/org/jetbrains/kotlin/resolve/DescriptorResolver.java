@@ -984,7 +984,7 @@ public class DescriptorResolver {
                     KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
                     AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
                     return DescriptorFactory.createContextReceiverParameterForCallable(
-                            propertyDescriptor, type, splitter.getAnnotationsForTarget(RECEIVER)
+                            propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER)
                     );
                 }).collect(Collectors.toList());
 

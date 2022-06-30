@@ -17,10 +17,16 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Describes an implicit "this" receiver
  */
 interface ImplicitReceiver : ReceiverValue {
     val declarationDescriptor: DeclarationDescriptor
+}
+
+
+interface ImplicitContextReceiver : ImplicitReceiver {
+    val customLabelName: Name?
 }
