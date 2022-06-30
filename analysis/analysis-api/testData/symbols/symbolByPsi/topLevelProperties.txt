@@ -1,6 +1,7 @@
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /x
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -33,6 +34,7 @@ KtKotlinPropertySymbol:
 KtPropertyGetterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -53,6 +55,7 @@ KtPropertyGetterSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /y
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true

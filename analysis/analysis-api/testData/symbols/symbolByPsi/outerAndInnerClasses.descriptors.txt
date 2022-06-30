@@ -29,6 +29,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: X.Y
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -66,6 +67,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: X.Z
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -129,6 +131,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -166,6 +169,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -190,6 +194,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -212,6 +217,7 @@ KtNamedClassOrObjectSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.foo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -242,6 +248,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

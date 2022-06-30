@@ -1,6 +1,7 @@
 KtLocalVariableSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   isExtension: false
   isVal: true
   name: loopVariable
@@ -15,6 +16,7 @@ KtLocalVariableSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /usage
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
