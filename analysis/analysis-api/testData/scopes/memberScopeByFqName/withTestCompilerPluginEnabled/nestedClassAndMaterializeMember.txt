@@ -1,6 +1,7 @@
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: test/MyClass.materialize
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -27,6 +28,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -55,6 +57,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -81,6 +84,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -109,6 +113,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: test/MyClass.Nested
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -130,6 +135,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: test/MyClass
+  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true

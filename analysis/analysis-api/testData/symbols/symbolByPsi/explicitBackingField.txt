@@ -1,6 +1,7 @@
 KtPropertyGetterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -21,6 +22,7 @@ KtPropertyGetterSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
@@ -38,6 +40,7 @@ KtValueParameterSymbol:
 KtPropertySetterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
   isDefault: false
@@ -61,6 +64,7 @@ KtPropertySetterSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /p
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

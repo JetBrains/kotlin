@@ -4,6 +4,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.and
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -35,6 +36,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -66,6 +68,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -97,6 +100,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -128,6 +132,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -159,6 +164,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -190,6 +196,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -218,6 +225,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.dec
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -247,6 +255,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -278,6 +287,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -309,6 +319,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -340,6 +351,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -371,6 +383,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -402,6 +415,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.div
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -433,6 +447,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.equals
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -461,6 +476,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.inc
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -490,6 +506,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.inv
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -519,6 +536,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -550,6 +568,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -581,6 +600,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -612,6 +632,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -643,6 +664,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -674,6 +696,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.minus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -705,6 +728,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.or
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -736,6 +760,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -767,6 +792,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -798,6 +824,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -829,6 +856,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -860,6 +888,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -891,6 +920,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.plus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -919,6 +949,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -947,6 +978,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -975,6 +1007,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1003,6 +1036,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Int.rangeTo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1036,6 +1070,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1069,6 +1104,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1102,6 +1138,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1135,6 +1172,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1168,6 +1206,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1201,6 +1240,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.rem
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1232,6 +1272,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.shl
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1263,6 +1304,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.shr
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1294,6 +1336,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1325,6 +1368,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1356,6 +1400,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1387,6 +1432,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1418,6 +1464,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1449,6 +1496,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.times
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1480,6 +1528,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toByte
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1509,6 +1558,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toChar
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1538,6 +1588,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toDouble
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1567,6 +1618,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toFloat
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1596,6 +1648,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toInt
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1625,6 +1678,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toLong
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1654,6 +1708,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toShort
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1683,6 +1738,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.toString
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1712,6 +1768,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.unaryMinus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1741,6 +1798,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.unaryPlus
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1770,6 +1828,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.ushr
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1801,6 +1860,7 @@ KtFunctionSymbol:
       psi: null
   ]
   callableIdIfNonLocal: kotlin/Int.xor
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1829,6 +1889,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1857,6 +1918,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -1878,6 +1940,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: kotlin/Int
+  contextReceivers: []
   hasStableParameterNames: false
   isExtension: false
   isPrimary: false
@@ -1897,6 +1960,7 @@ KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: kotlin/Int
+  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true

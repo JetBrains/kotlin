@@ -4,6 +4,7 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /i
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -36,6 +37,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /i2
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -68,6 +70,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /i3
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -100,6 +103,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /i4
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -135,6 +139,7 @@ KtFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /f
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -165,6 +170,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: MyClass
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -188,6 +194,7 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.i2
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -224,6 +231,7 @@ KtFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /Foo.f2
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -252,6 +260,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: Foo
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -275,6 +284,7 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -310,6 +320,7 @@ KtKotlinPropertySymbol:
       psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: /j2
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -342,6 +353,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /j2
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

@@ -58,6 +58,7 @@ Declaration Scope:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Outer.A.foo
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -85,6 +86,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /Outer.A.map
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -110,6 +112,7 @@ KtKotlinPropertySymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -134,6 +137,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -156,6 +160,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

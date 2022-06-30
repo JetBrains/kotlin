@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: test/WithGeneratedCompanion.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
