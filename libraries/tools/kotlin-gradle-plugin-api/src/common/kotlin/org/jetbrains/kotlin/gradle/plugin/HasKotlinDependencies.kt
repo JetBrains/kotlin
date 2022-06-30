@@ -56,6 +56,12 @@ interface KotlinDependencyHandler {
 
     fun project(notation: Map<String, Any?>): ProjectDependency
 
+    fun enforcedPlatform(notation: Any): Dependency =
+        project.dependencies.enforcedPlatform(notation)
+
+    fun enforcedPlatform(notation: Any, configureAction: Action<in Dependency>): Dependency =
+        project.dependencies.enforcedPlatform(notation, configureAction)
+
     @Deprecated("Declaring NPM dependency without version is forbidden")
     fun npm(name: String): Dependency
 
