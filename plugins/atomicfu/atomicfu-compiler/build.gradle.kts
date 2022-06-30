@@ -76,9 +76,9 @@ dependencies {
 
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
     atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.17.1") { isTransitive = false }
-    atomicfuJsIrRuntimeForTests(project(":atomicfu-runtime"))  { isTransitive = false }
+    atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
 
-    embedded(project(":atomicfu-runtime")) {
+    embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
             attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
