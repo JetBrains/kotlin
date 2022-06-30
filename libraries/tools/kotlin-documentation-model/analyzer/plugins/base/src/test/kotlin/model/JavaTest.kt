@@ -334,11 +334,6 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             with((this / "java" / "E").cast<DEnum>()) {
                 name equals "E"
                 entries counts 1
-                functions.sortedBy { it.name }.filter { it.name == "valueOf" || it.name == "values" }.map { it.dri } equals listOf(
-                    DRI("java", "E", DRICallable("valueOf", null, listOf(JavaClassReference("java.lang.String"))), PointingToDeclaration),
-                    DRI("java", "E", DRICallable("values", null, emptyList()), PointingToDeclaration),
-                )
-
                 with((this / "Foo").cast<DEnumEntry>()) {
                     name equals "Foo"
                 }
