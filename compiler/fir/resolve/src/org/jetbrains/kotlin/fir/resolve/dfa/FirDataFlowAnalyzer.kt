@@ -308,8 +308,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             else -> {}
         }
         // TODO: questionable
-        postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()
+        postponedLambdaExitNode?.mergeIncomingFlow()
         logicSystem.updateAllReceivers(graph.enterNode.computeIncomingFlow().first)
         return FirControlFlowGraphReferenceImpl(graph)
     }
