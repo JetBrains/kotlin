@@ -849,6 +849,13 @@ standaloneTest("cleaner_basic") {
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
+standaloneTest("collect_reference_field_values") {
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+            !isNoopGC
+    source = "runtime/basic/collectReferenceFieldValues.kt"
+    flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
+}
+
 standaloneTest("cleaner_workers") {
     enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
         !isNoopGC

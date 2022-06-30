@@ -16,6 +16,9 @@
 
 #include "KAssert.h"
 #include "TypeInfo.h"
+#include "Memory.h"
+#include "Types.h"
+#include "KString.h"
 
 extern "C" {
 
@@ -37,6 +40,16 @@ InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord cons
     else r = m;
   }
   return interfaceTable + l;
+}
+
+RUNTIME_NOTHROW int Kotlin_internal_reflect_getObjectReferenceFieldsCount(ObjHeader* object) {
+    auto *info = object->type_info();
+    if (info->IsArray()) return 0;
+    return info->objOffsetsCount_;
+}
+
+RUNTIME_NOTHROW OBJ_GETTER(Kotlin_internal_reflect_getObjectReferenceFieldByIndex, ObjHeader* object, int index) {
+    RETURN_OBJ(*reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]));
 }
 
 }
