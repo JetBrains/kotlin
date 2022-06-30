@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartList;
 
@@ -635,6 +636,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 }
                 ReceiverParameterDescriptor substitutedContextReceiverParameter =
                         DescriptorFactory.createContextReceiverParameterForCallable(substitutedDescriptor, substitutedContextReceiverType,
+                                                                                    ((ImplicitContextReceiver)newContextReceiverParameter.getValue()).getCustomLabelName(),
                                                                                     newContextReceiverParameter.getAnnotations());
                 substitutedContextReceiverParameters.add(substitutedContextReceiverParameter);
 

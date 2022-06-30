@@ -358,6 +358,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         callableDescriptor: CallableDescriptor
     ): ReceiverParameterDescriptor? {
         val contextReceiverType = deserializationContext.typeDeserializer.type(this)
-        return DescriptorFactory.createContextReceiverParameterForCallable(callableDescriptor, contextReceiverType, Annotations.EMPTY)
+        return DescriptorFactory.createContextReceiverParameterForCallable(
+            callableDescriptor,
+            contextReceiverType,
+            /* customLabelName = */ null/*todo store custom label name in metadata?*/,
+            Annotations.EMPTY
+        )
     }
 }
