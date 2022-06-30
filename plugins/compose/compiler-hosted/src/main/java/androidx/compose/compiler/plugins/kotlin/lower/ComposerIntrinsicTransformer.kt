@@ -59,7 +59,6 @@ class ComposerIntrinsicTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
-        @Suppress("DEPRECATION")
         val calleeFqName = expression.symbol.descriptor.fqNameSafe
         if (calleeFqName == currentComposerIntrinsic) {
             // since this call was transformed by the ComposerParamTransformer, the first argument

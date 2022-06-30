@@ -165,7 +165,6 @@ class CreateDecoysTransformer(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.decoyImplementationName(): Name {
         return dexSafeName(
             Name.identifier(name.asString() + IMPLEMENTATION_FUNCTION_SUFFIX)
