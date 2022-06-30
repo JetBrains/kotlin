@@ -1,0 +1,63 @@
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  generatedPrimaryConstructorProperty: null
+  hasDefaultValue: false
+  isExtension: false
+  isImplicitLambdaParameter: false
+  isVararg: false
+  name: int
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: A
+  contextReceivers: []
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: false
+  origin: SOURCE
+  receiverType: null
+  returnType: A
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(int)
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: A
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: [
+    ContextReceiver(kotlin/Int)
+    ContextReceiver(s@kotlin/String)
+  ]
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  superTypes: [
+    kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

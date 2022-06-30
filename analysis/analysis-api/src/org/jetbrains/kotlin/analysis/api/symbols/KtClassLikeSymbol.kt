@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -74,7 +75,8 @@ public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
 public abstract class KtNamedClassOrObjectSymbol : KtClassOrObjectSymbol(),
     KtSymbolWithModality,
     KtSymbolWithVisibility,
-    KtNamedSymbol {
+    KtNamedSymbol,
+    KtContextReceiversOwner {
 
     public abstract val isInner: Boolean
     public abstract val isData: Boolean

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -73,6 +74,8 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
     override val isFun: Boolean get() = withValidityAssertion { firSymbol.isFun }
     override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isExternal }
+
+    override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
     override val companionObject: KtFirNamedClassOrObjectSymbol? by cached {
         firSymbol.companionObjectSymbol?.let {

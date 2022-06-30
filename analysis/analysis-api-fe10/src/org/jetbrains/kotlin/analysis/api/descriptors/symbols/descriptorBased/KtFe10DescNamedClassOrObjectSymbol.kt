@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescNamedClassOrObjectSymbolSymbol
@@ -53,6 +54,9 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
                 return KtFe10DescNamedClassOrObjectSymbol(companionObject, analysisContext)
             }
         }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind

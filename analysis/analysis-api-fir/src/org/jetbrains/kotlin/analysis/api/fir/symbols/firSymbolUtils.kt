@@ -3,19 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtAnalysisApiInternals::class)
+
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -23,10 +25,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -56,6 +55,27 @@ internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
     }
 }
 
+
+internal fun FirCallableSymbol<*>.createContextReceivers(
+    builder: KtSymbolByFirBuilder
+): List<KtContextReceiver> {
+    return resolvedContextReceivers.map { createContextReceiver(builder, it) }
+}
+
+internal fun FirRegularClassSymbol.createContextReceivers(
+    builder: KtSymbolByFirBuilder
+): List<KtContextReceiver> {
+    return resolvedContextReceivers.map { createContextReceiver(builder, it) }
+}
+
+private fun createContextReceiver(
+    builder: KtSymbolByFirBuilder,
+    contextReceiver: FirContextReceiver
+) = KtContextReceiverImpl(
+    builder.typeBuilder.buildKtType(contextReceiver.typeRef),
+    contextReceiver.customLabelName,
+    builder.token
+)
 
 internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? =
     callableId.takeUnless { it.isLocal }
