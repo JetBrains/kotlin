@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,6 +48,12 @@ internal class KtFe10PsiValueParameterSymbol(
 
     override val isVararg: Boolean
         get() = withValidityAssertion { psi.isVarArg }
+
+    override val isCrossinline: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.CROSSINLINE_KEYWORD) }
+
+    override val isNoinline: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.NOINLINE_KEYWORD)  }
 
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion { false }

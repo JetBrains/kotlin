@@ -42,6 +42,12 @@ internal class KtFe10DescValueParameterSymbol(
     override val isVararg: Boolean
         get() = withValidityAssertion { descriptor.isVararg }
 
+    override val isCrossinline: Boolean
+        get() = withValidityAssertion { descriptor.isCrossinline }
+
+    override val isNoinline: Boolean
+        get() = withValidityAssertion { descriptor.isNoinline }
+
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion {
             descriptor.containingDeclaration is AnonymousFunctionDescriptor &&

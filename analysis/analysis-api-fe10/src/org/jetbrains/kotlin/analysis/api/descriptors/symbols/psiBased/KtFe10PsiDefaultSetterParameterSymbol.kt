@@ -43,6 +43,12 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val isVararg: Boolean
         get() = withValidityAssertion { false }
 
+    override val isCrossinline: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isNoinline: Boolean
+        get() = withValidityAssertion { false }
+
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion { false }
 
