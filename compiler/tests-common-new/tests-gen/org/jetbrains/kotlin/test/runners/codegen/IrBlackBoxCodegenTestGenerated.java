@@ -26241,6 +26241,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt52875.kt")
+            public void testKt52875() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaSerializable.kt")
             public void testLambdaSerializable() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaSerializable.kt");

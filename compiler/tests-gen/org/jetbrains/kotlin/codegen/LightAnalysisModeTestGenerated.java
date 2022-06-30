@@ -21673,6 +21673,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/extensionLambda.kt");
             }
 
+            @TestMetadata("kt52875.kt")
+            public void testKt52875() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
+            }
+
             @TestMetadata("nestedIndyLambdas.kt")
             public void testNestedIndyLambdas() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nestedIndyLambdas.kt");

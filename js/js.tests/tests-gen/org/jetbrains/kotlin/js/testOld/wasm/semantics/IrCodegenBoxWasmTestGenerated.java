@@ -18276,6 +18276,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
+            @TestMetadata("kt52875.kt")
+            public void testKt52875() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

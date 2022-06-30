@@ -20656,6 +20656,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
 
+            @Test
+            @TestMetadata("kt52875.kt")
+            public void testKt52875() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
             @TestDataPath("$PROJECT_ROOT")

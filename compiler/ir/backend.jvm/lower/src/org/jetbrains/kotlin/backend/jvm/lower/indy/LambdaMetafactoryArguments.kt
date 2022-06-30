@@ -335,7 +335,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         val newReference =
-            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
+            if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction)
                 remapExtensionLambda(implFun as IrSimpleFunction, reference)
             else
                 reference
