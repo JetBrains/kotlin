@@ -68,7 +68,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
         block: T.() -> Unit
     ) {
         val testMethods = testBuilder().apply(block).build()
-        val testDirPath = getTempDir(cleanupOutput).root.toPath()
+        val testDirPath = getTempDir(cleanupOutput).root.toPath().toAbsolutePath()
         val fileMap = query.toFileMap()
         fileMap.materializeFiles(testDirPath.toAbsolutePath())
         if (!cleanupOutput)
@@ -85,7 +85,7 @@ abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGe
                     }.toSet(),
                     sourceLinks = sourceSet.sourceLinks.map { link ->
                         link.copy(
-                            localDirectory = testDirPath.toFile().resolve(link.localDirectory).canonicalPath
+                            localDirectory = testDirPath.toFile().resolve(link.localDirectory).absolutePath
                         )
                     }.toSet()
                 )
