@@ -80,8 +80,7 @@ digraph callsInPlace_kt {
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {25};
-    20 -> {21} [color=red];
+    20 -> {21 25};
     20 -> {25} [style=dashed];
     21 -> {22};
     22 -> {23};
@@ -90,7 +89,7 @@ digraph callsInPlace_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {21} [color=green];
+    29 -> {21};
     29 -> {25} [color=green style=dashed];
 
     subgraph cluster_8 {
@@ -120,8 +119,7 @@ digraph callsInPlace_kt {
     }
     30 -> {31};
     31 -> {32};
-    32 -> {38};
-    32 -> {33} [color=red];
+    32 -> {33 38};
     32 -> {38} [style=dashed];
     33 -> {34};
     34 -> {35};
@@ -131,7 +129,7 @@ digraph callsInPlace_kt {
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {33} [color=green];
+    42 -> {33};
     42 -> {38} [color=green style=dashed];
 
     subgraph cluster_12 {
@@ -293,12 +291,10 @@ digraph callsInPlace_kt {
     }
     85 -> {86};
     86 -> {87};
-    87 -> {99};
-    87 -> {88} [color=red];
+    87 -> {88 99};
     87 -> {99} [style=dashed];
     88 -> {89};
-    89 -> {94};
-    89 -> {90} [color=red];
+    89 -> {90 94};
     89 -> {94} [style=dashed];
     90 -> {91};
     91 -> {92};
@@ -307,13 +303,13 @@ digraph callsInPlace_kt {
     95 -> {96};
     96 -> {97};
     97 -> {98};
-    98 -> {90} [color=green];
+    98 -> {90};
     98 -> {94} [color=green style=dashed];
     99 -> {103 100};
     100 -> {101};
     101 -> {102};
     102 -> {103};
-    103 -> {88} [color=green];
+    103 -> {88};
     103 -> {99} [color=green style=dashed];
 
     subgraph cluster_28 {
@@ -355,12 +351,10 @@ digraph callsInPlace_kt {
     }
     104 -> {105};
     105 -> {106};
-    106 -> {113};
-    106 -> {107} [color=red];
+    106 -> {107 113};
     106 -> {113} [style=dashed];
     107 -> {108};
-    108 -> {118};
-    108 -> {109} [color=red];
+    108 -> {109 118};
     108 -> {118} [style=dashed];
     109 -> {110};
     110 -> {111};
@@ -369,13 +363,13 @@ digraph callsInPlace_kt {
     114 -> {115};
     115 -> {116};
     116 -> {117};
-    117 -> {107} [color=green];
+    117 -> {107};
     117 -> {113} [color=green style=dashed];
     118 -> {122 119};
     119 -> {120};
     120 -> {121};
     121 -> {122};
-    122 -> {109} [color=green];
+    122 -> {109};
     122 -> {118} [color=green style=dashed];
 
     subgraph cluster_34 {

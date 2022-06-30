@@ -323,7 +323,7 @@ class ControlFlowGraphBuilder {
 
     private val EventOccurrencesRange?.hasBackEdge: Boolean
         get() = when (this) {
-            EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.UNKNOWN -> true
+            EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.MORE_THAN_ONCE, EventOccurrencesRange.UNKNOWN -> true
             else -> false
         }
 
@@ -354,20 +354,35 @@ class ControlFlowGraphBuilder {
         }
 
         val invocationKind = anonymousFunction.invocationKind
-        if (invocationKind != null) {
-            addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.CfgForward)
-        } else {
+        val maybeNonZero = invocationKind != null && invocationKind != EventOccurrencesRange.ZERO
+        val maybeZero = invocationKind != EventOccurrencesRange.AT_LEAST_ONCE &&
+                invocationKind != EventOccurrencesRange.EXACTLY_ONCE &&
+                invocationKind != EventOccurrencesRange.MORE_THAN_ONCE
+        // Four cases we handle differently here:
+        //  1. function not called in-place: data and control flow skips the function,
+        //     and any assignment inside the function invalidates smart casts
+        //  2. function never executed (EventOccurrencesRange.ZERO): same as above,
+        //     but without smart cast invalidation
+        //  3. function executed at least once (or exactly once or more than once):
+        //     control flow merged from postponedEnterNode and exitNode into postponedExitNode,
+        //     data flow goes from exitNode to the union of arguments of the call
+        //  4. function executed an unknown number of times (maybe zero, maybe not):
+        //     both control flow and data flow merged from postponedEnterNode and exitNode
+        //     into postponedExitNode
+        if (maybeZero) {
             val kind = if (postponedExitNode.isDead) EdgeKind.DeadForward else EdgeKind.CfgForward
             CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
         }
-
-        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE && shouldPassFlowFromInplaceLambda.top()) {
-            exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(postponedExitNode)
+        if (maybeNonZero) {
+            addEdge(exitNode, postponedExitNode, preferredKind = if (maybeZero) EdgeKind.Forward else EdgeKind.CfgForward)
+            if (!maybeZero && shouldPassFlowFromInplaceLambda.top()) {
+                exitsFromCompletedPostponedAnonymousFunctions.lastOrNull()?.add(postponedExitNode)
+            }
         }
 
         val containingGraph = parentGraphForAnonymousFunctions.remove(symbol) ?: currentGraph
         containingGraph.addSubGraph(graph)
-        return if (lambdaIsPostponedFromCall) {
+        return if (lambdaIsPostponedFromCall && !(maybeNonZero && maybeZero)) {
             Triple(exitNode, null, graph)
         } else {
             Triple(exitNode, postponedExitNode, graph)

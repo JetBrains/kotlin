@@ -395,8 +395,7 @@ digraph jumps_kt {
     }
     124 -> {125};
     125 -> {126};
-    126 -> {131};
-    126 -> {127} [color=red];
+    126 -> {127 131};
     126 -> {131} [style=dashed];
     127 -> {128};
     128 -> {129};
@@ -407,7 +406,7 @@ digraph jumps_kt {
     133 -> {134} [style=dotted];
     134 -> {135} [style=dotted];
     135 -> {136} [style=dotted];
-    136 -> {127} [color=green];
+    136 -> {127};
     136 -> {131} [color=green style=dashed];
 
 }

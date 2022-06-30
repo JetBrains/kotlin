@@ -1106,6 +1106,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("flowFromInplaceLambda3.kt")
+            public void testFlowFromInplaceLambda3() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda3.kt");
+            }
+
+            @Test
             @TestMetadata("flowFromTwoInplaceLambdas.kt")
             public void testFlowFromTwoInplaceLambdas() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromTwoInplaceLambdas.kt");

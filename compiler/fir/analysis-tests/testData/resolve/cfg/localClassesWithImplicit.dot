@@ -191,8 +191,7 @@ digraph localClassesWithImplicit_kt {
     }
     36 -> {37};
     37 -> {38};
-    38 -> {45};
-    38 -> {39} [color=red];
+    38 -> {39 45};
     38 -> {45} [style=dashed];
     39 -> {40};
     40 -> {41};
@@ -225,7 +224,7 @@ digraph localClassesWithImplicit_kt {
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {39} [color=green];
+    70 -> {39};
     70 -> {45} [color=green style=dashed];
 
     subgraph cluster_19 {
@@ -265,8 +264,7 @@ digraph localClassesWithImplicit_kt {
     }
     71 -> {72};
     72 -> {73};
-    73 -> {80};
-    73 -> {74} [color=red];
+    73 -> {74 80};
     73 -> {80} [style=dashed];
     74 -> {75};
     75 -> {76};
@@ -282,7 +280,7 @@ digraph localClassesWithImplicit_kt {
     85 -> {86};
     86 -> {87};
     87 -> {88};
-    88 -> {74} [color=green];
+    88 -> {74};
     88 -> {80} [color=green style=dashed];
 
     subgraph cluster_23 {
@@ -392,8 +390,7 @@ digraph localClassesWithImplicit_kt {
     }
     99 -> {100};
     100 -> {101};
-    101 -> {108};
-    101 -> {102} [color=red];
+    101 -> {102 108};
     101 -> {108} [style=dashed];
     102 -> {103};
     103 -> {104};
@@ -426,7 +423,7 @@ digraph localClassesWithImplicit_kt {
     130 -> {131};
     131 -> {132};
     132 -> {133};
-    133 -> {102} [color=green];
+    133 -> {102};
     133 -> {108} [color=green style=dashed];
 
     subgraph cluster_35 {
@@ -466,8 +463,7 @@ digraph localClassesWithImplicit_kt {
     }
     134 -> {135};
     135 -> {136};
-    136 -> {143};
-    136 -> {137} [color=red];
+    136 -> {137 143};
     136 -> {143} [style=dashed];
     137 -> {138};
     138 -> {139};
@@ -483,7 +479,7 @@ digraph localClassesWithImplicit_kt {
     148 -> {149};
     149 -> {150};
     150 -> {151};
-    151 -> {137} [color=green];
+    151 -> {137};
     151 -> {143} [color=green style=dashed];
 
     subgraph cluster_39 {

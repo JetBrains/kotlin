@@ -74,8 +74,7 @@ digraph lambdas_kt {
     12 -> {20};
     13 -> {14};
     14 -> {15};
-    15 -> {23};
-    15 -> {16} [color=red];
+    15 -> {16 23};
     15 -> {23} [style=dashed];
     16 -> {17};
     17 -> {18};
@@ -88,7 +87,7 @@ digraph lambdas_kt {
     25 -> {26};
     26 -> {27};
     27 -> {28};
-    28 -> {16} [color=green];
+    28 -> {16};
     28 -> {23} [color=green style=dashed];
 
     subgraph cluster_9 {
@@ -218,8 +217,7 @@ digraph lambdas_kt {
     }
     62 -> {63};
     63 -> {64};
-    64 -> {71};
-    64 -> {65} [color=red];
+    64 -> {65 71};
     64 -> {71} [style=dashed];
     65 -> {66};
     66 -> {67};
@@ -234,7 +232,7 @@ digraph lambdas_kt {
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
     76 -> {77} [style=dotted];
-    77 -> {65} [color=green];
+    77 -> {65};
     77 -> {71} [color=green style=dashed];
 
     subgraph cluster_22 {
@@ -270,8 +268,7 @@ digraph lambdas_kt {
     }
     78 -> {79};
     79 -> {80};
-    80 -> {87};
-    80 -> {81} [color=red];
+    80 -> {81 87};
     80 -> {87} [style=dashed];
     81 -> {82};
     82 -> {83};
@@ -286,7 +283,7 @@ digraph lambdas_kt {
     90 -> {91} [style=dotted];
     91 -> {92} [style=dotted];
     92 -> {93} [style=dotted];
-    93 -> {81} [color=green];
+    93 -> {81};
     93 -> {87} [color=green style=dashed];
 
 }

@@ -956,6 +956,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda2.kt");
         }
 
+        @TestMetadata("flowFromInplaceLambda3.kt")
+        public void testFlowFromInplaceLambda3() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromInplaceLambda3.kt");
+        }
+
         @TestMetadata("flowFromTwoInplaceLambdas.kt")
         public void testFlowFromTwoInplaceLambdas() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/flowFromTwoInplaceLambdas.kt");
