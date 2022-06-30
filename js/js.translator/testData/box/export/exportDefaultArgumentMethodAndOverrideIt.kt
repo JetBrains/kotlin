@@ -2,6 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 // SKIP_DCE_DRIVEN
+// IGNORE_BACKEND: JS
 
 // MODULE: export_default_method
 // FILE: lib.kt
