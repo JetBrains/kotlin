@@ -3,11 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtAnalysisApiInternals::class)
+
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
@@ -15,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KtFe10Renderer
+import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -43,6 +47,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -263,7 +268,8 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KtType {
                 is FunctionClassDescriptor -> KtFe10FunctionalType(unwrappedType, typeDeclaration, analysisContext)
                 is ClassDescriptor -> KtFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {
-                    val errorType = ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, typeConstructor, typeDeclaration.toString())
+                    val errorType =
+                        ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, typeConstructor, typeDeclaration.toString())
                     KtFe10ClassErrorType(errorType, analysisContext)
                 }
             }
@@ -563,3 +569,26 @@ internal fun AnnotationDescriptor.getKtNamedAnnotationArguments() =
     allValueArguments.map { (name, value) ->
         KtNamedAnnotationValue(name, value.toKtAnnotationValue())
     }
+
+
+internal fun CallableDescriptor.createContextReceivers(
+    analysisContext: Fe10AnalysisContext
+): List<KtContextReceiver> {
+    return contextReceiverParameters.map { createContextReceiver(it, analysisContext) }
+}
+internal fun ClassDescriptor.createContextReceivers(
+    analysisContext: Fe10AnalysisContext
+): List<KtContextReceiver> {
+    return contextReceivers.map { createContextReceiver(it, analysisContext) }
+}
+
+private fun createContextReceiver(
+    contextReceiver: ReceiverParameterDescriptor,
+    analysisContext: Fe10AnalysisContext
+): KtContextReceiverImpl {
+    return KtContextReceiverImpl(
+        contextReceiver.value.type.toKtType(analysisContext),
+        (contextReceiver.value as ImplicitContextReceiver).customLabelName,
+        analysisContext.token
+    )
+}

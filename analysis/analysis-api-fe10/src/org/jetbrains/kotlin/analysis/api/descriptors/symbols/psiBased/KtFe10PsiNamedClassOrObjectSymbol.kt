@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSupertypesWithAny
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -66,6 +68,10 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
             val companionObject = psi.companionObjects.firstOrNull() ?: return null
             KtFe10PsiNamedClassOrObjectSymbol(companionObject, analysisContext)
         }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
+
 
     @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind

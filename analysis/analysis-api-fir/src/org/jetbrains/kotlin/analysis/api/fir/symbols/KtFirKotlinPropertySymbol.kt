@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -63,7 +64,8 @@ internal class KtFirKotlinPropertySymbol(
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
-    
+
+    override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
     override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer() }
