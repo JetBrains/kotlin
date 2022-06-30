@@ -31,6 +31,12 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             return fir.receiverTypeRef as FirResolvedTypeRef?
         }
 
+    val resolvedContextReceivers: List<FirContextReceiver>
+        get() {
+            ensureResolved(FirResolvePhase.TYPES)
+            return fir.contextReceivers
+        }
+
     val resolvedStatus: FirResolvedDeclarationStatus
         get() {
             ensureResolved(FirResolvePhase.STATUS)

@@ -76,6 +76,12 @@ sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol
 class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId) {
     val companionObjectSymbol: FirRegularClassSymbol?
         get() = fir.companionObjectSymbol
+
+    val resolvedContextReceivers: List<FirContextReceiver>
+        get() {
+            ensureResolved(FirResolvePhase.TYPES)
+            return fir.contextReceivers
+        }
 }
 
 val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(SpecialNames.ANONYMOUS), true)

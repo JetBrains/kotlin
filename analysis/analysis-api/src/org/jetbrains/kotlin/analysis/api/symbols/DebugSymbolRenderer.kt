@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
@@ -203,6 +204,7 @@ public object DebugSymbolRenderer {
             is KtAnnotationValue -> renderAnnotationValue(value)
             is KtNamedAnnotationValue -> renderNamedConstantValue(value)
             is KtInitializerValue -> renderKtInitializerValue(value)
+            is KtContextReceiver -> rendeContextReceiver(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)
             is KtAnnotationsList -> renderAnnotationsList(value)
             is KtModule -> renderKtModule(value)
@@ -222,6 +224,16 @@ public object DebugSymbolRenderer {
             is List<*> -> renderList(value)
             else -> append(value.toString())
         }
+    }
+
+    private fun PrettyPrinter.rendeContextReceiver(receiver: KtContextReceiver) {
+        append("ContextReceiver(")
+        receiver.label?.let { label ->
+            renderValue(label)
+            append("@")
+        }
+        renderType(receiver.type)
+        append(")")
     }
 
     private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
