@@ -23,8 +23,7 @@ fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D
 }
 
 val IrClass.isSingleFieldValueClass: Boolean
-    get() = this.isValue && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME) &&
-            valueClassRepresentation is InlineClassRepresentation
+    get() = this.isValue && valueClassRepresentation is InlineClassRepresentation
 
 val IrClass.isInline: Boolean
     get() = (isSingleFieldValueClass && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) || (isValue && modality == Modality.SEALED)

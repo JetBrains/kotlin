@@ -26,7 +26,7 @@ fun DeclarationDescriptor.isInlineClass(): Boolean {
     val isJvmBackend = this.module.platform?.singleOrNull()?.oldFashionedDescription?.startsWith("JVM") == true
 
     return this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation &&
-            (!isJvmBackend || annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME))
+            (!isJvmBackend || isInline || (isValue && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)))
 }
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
