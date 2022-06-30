@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescMemberSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.createContextReceivers
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktHasStableParameterNames
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
@@ -38,6 +40,9 @@ internal class KtFe10DescAnonymousFunctionSymbol(
 
     override val receiverType: KtType?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtType(analysisContext) }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
         return KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()

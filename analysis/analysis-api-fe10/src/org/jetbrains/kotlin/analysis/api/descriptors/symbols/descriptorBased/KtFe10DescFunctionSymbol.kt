@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescFunctionLikeSymbolPointer
@@ -74,6 +75,9 @@ internal class KtFe10DescFunctionSymbol private constructor(
 
     override val receiverType: KtType?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtType(analysisContext) }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }

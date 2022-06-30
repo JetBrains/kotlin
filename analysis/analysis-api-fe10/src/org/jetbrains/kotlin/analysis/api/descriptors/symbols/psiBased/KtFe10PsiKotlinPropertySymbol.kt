@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.createKtInitializerValue
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
@@ -115,6 +117,9 @@ internal class KtFe10PsiKotlinPropertySymbol(
                 null
             }
         }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }

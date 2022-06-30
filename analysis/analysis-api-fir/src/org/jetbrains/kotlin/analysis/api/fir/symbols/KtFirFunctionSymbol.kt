@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -50,7 +51,8 @@ internal class KtFirFunctionSymbol(
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
-    
+    override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
+
     override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
     override val valueParameters: List<KtValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
 

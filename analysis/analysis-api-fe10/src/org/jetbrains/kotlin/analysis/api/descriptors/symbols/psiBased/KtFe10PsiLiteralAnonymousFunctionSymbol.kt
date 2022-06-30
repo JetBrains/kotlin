@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.createContextReceivers
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
@@ -56,6 +58,10 @@ internal class KtFe10PsiLiteralAnonymousFunctionSymbol(
             val extensionReceiverParameter = descriptor.extensionReceiverParameter ?: return null
             extensionReceiverParameter.type.toKtType(analysisContext)
         }
+
+    override val contextReceivers: List<KtContextReceiver>
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
+
 
     override val isExtension: Boolean
         get() = withValidityAssertion { psi.isExtensionDeclaration() }
