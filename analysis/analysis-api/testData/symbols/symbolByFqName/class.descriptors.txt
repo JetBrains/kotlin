@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/Lazy
   classKind: INTERFACE
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

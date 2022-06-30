@@ -1,6 +1,7 @@
 KtLocalVariableSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   isExtension: false
   isVal: true
   name: q
@@ -15,6 +16,7 @@ KtLocalVariableSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -42,6 +44,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -62,6 +65,7 @@ KtNamedClassOrObjectSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /yyy
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false

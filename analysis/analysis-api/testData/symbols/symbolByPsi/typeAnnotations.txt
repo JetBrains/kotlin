@@ -6,6 +6,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: Anno1
   classKind: ANNOTATION_CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -31,6 +32,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: Anno2
   classKind: ANNOTATION_CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -56,6 +58,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: Anno3
   classKind: ANNOTATION_CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -81,6 +84,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: Anno4
   classKind: ANNOTATION_CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -103,6 +107,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: I
   classKind: INTERFACE
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
@@ -123,6 +128,7 @@ KtNamedClassOrObjectSymbol:
 KtValueParameterSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
   isExtension: false
@@ -143,6 +149,7 @@ KtValueParameterSymbol:
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.f
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -174,6 +181,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.x
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -212,6 +220,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

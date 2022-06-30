@@ -3,6 +3,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: java/lang/String
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false

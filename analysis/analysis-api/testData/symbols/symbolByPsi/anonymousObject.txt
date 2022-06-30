@@ -1,6 +1,7 @@
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -27,6 +28,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: null
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -74,6 +76,7 @@ KtAnonymousObjectSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   callableIdIfNonLocal: /AnonymousContainer.anonymousObject
+  contextReceivers: []
   getter: KtPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -109,6 +112,7 @@ KtNamedClassOrObjectSymbol:
   classIdIfNonLocal: AnonymousContainer
   classKind: CLASS
   companionObject: null
+  contextReceivers: []
   isData: false
   isExternal: false
   isFun: false
