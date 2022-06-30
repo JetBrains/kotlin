@@ -57,6 +57,34 @@ public class CliTestGenerated extends AbstractCliTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cli/jvm/plugins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Plugins extends AbstractCliTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInPlugins() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/plugins"), Pattern.compile("^(.+)\\.args$"), null, false);
+        }
+
+        @TestMetadata("firAllOpenPlugin.args")
+        public void testFirAllOpenPlugin() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin.args");
+        }
+
+        @TestMetadata("pluginSimple.args")
+        public void testPluginSimple() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginSimple.args");
+        }
+
+        @TestMetadata("pluginWithK2Error.args")
+        public void testPluginWithK2Error() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginWithK2Error.args");
+        }
+    }
+
     @TestMetadata("compiler/testData/cli/jvm")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -367,11 +395,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("fileClassClashMultipleFiles.args")
         public void testFileClassClashMultipleFiles() throws Exception {
             runTest("compiler/testData/cli/jvm/fileClassClashMultipleFiles.args");
-        }
-
-        @TestMetadata("firAllOpenPlugin.args")
-        public void testFirAllOpenPlugin() throws Exception {
-            runTest("compiler/testData/cli/jvm/firAllOpenPlugin.args");
         }
 
         @TestMetadata("firDeprecationJava.args")
@@ -872,16 +895,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("optInOverrideMessageFir.args")
         public void testOptInOverrideMessageFir() throws Exception {
             runTest("compiler/testData/cli/jvm/optInOverrideMessageFir.args");
-        }
-
-        @TestMetadata("pluginSimple.args")
-        public void testPluginSimple() throws Exception {
-            runTest("compiler/testData/cli/jvm/pluginSimple.args");
-        }
-
-        @TestMetadata("pluginWithK2Error.args")
-        public void testPluginWithK2Error() throws Exception {
-            runTest("compiler/testData/cli/jvm/pluginWithK2Error.args");
         }
 
         @TestMetadata("progressiveModeOff.args")

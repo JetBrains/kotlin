@@ -4,6 +4,6 @@ $TEMP_DIR$
 -P
 plugin\:org.jetbrains.kotlin.android\:package=com.myapp
 -P
-plugin\:org.jetbrains.kotlin.android\:variant=main;$TESTDATA_DIR$/androidPlugin/res
+plugin\:org.jetbrains.kotlin.android\:variant=main;$TESTDATA_DIR$/../androidPlugin/res
 $TESTDATA_DIR$/pluginSimple.kt
-$TESTDATA_DIR$/androidPlugin
+$TESTDATA_DIR$/../androidPlugin
