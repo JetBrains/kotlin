@@ -87,7 +87,7 @@ internal class AdapterGenerator(
         function: IrFunction
     ): Boolean =
         needSuspendConversion(type, function) || needCoercionToUnit(type, function) ||
-                needVarargSpread(callableReferenceAccess)
+                hasVarargOrDefaultArguments(callableReferenceAccess)
 
     /**
      * For example,
@@ -125,11 +125,12 @@ internal class AdapterGenerator(
      *
      * At the use site, instead of referenced, we can put the adapter: { a, b -> referenced(a, b) }
      */
-    private fun needVarargSpread(callableReferenceAccess: FirCallableReferenceAccess): Boolean {
+    private fun hasVarargOrDefaultArguments(callableReferenceAccess: FirCallableReferenceAccess): Boolean {
         // Unbound callable reference 'A::foo'
-        return (callableReferenceAccess.calleeReference as? FirResolvedCallableReference)?.mappedArguments?.any {
-            it.value is ResolvedCallArgument.VarargArgument || it.value is ResolvedCallArgument.DefaultArgument
-        } == true
+        val calleeReference = callableReferenceAccess.calleeReference as? FirResolvedCallableReference ?: return false
+        return calleeReference.mappedArguments.any { (_, value) ->
+            value is ResolvedCallArgument.VarargArgument || value is ResolvedCallArgument.DefaultArgument
+        }
     }
 
     internal fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType =
@@ -318,10 +319,8 @@ internal class AdapterGenerator(
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, adapterFunction.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
-            when {
-                boundDispatchReceiver != null -> irCall.dispatchReceiver = receiverValue
-                boundExtensionReceiver != null -> irCall.extensionReceiver = receiverValue
-            }
+            if (boundDispatchReceiver != null) irCall.dispatchReceiver = receiverValue
+            else irCall.extensionReceiver = receiverValue
         } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)) {
             // Unbound callable reference 'A::foo'
             val adaptedReceiverParameter = adapterFunction.valueParameters[0]
