@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartSet;
 
@@ -561,7 +562,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         if (substitutedType == null) return null;
         return new ReceiverParameterDescriptorImpl(
                 substitutedPropertyDescriptor,
-                new ContextReceiver(substitutedPropertyDescriptor, substitutedType, receiverParameterDescriptor.getValue()),
+                new ContextReceiver(substitutedPropertyDescriptor,
+                                    substitutedType,
+                                    ((ImplicitContextReceiver) receiverParameterDescriptor.getValue()).getCustomLabelName(),
+                                    receiverParameterDescriptor.getValue()),
                 receiverParameterDescriptor.getAnnotations()
         );
     }

@@ -308,17 +308,20 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
             List<KtContextReceiver> contextReceivers = classOrObject.getContextReceivers();
             List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
-                    .map(KtContextReceiver::typeReference)
-                    .filter(Objects::nonNull)
-                    .map(typeReference -> {
+                    .map(contextReceiver -> {
+                        KtTypeReference typeReference = contextReceiver.typeReference();
+                        if (typeReference == null) return null;
                         KotlinType kotlinType =
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
                         return DescriptorFactory.createContextReceiverParameterForClass(
                                 this,
                                 kotlinType,
+                                contextReceiver.labelNameAsName(),
                                 Annotations.Companion.getEMPTY()
                         );
-                    }).collect(Collectors.toList());
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
             if (c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ContextReceivers)) {
                 HashMultimap<String, ReceiverParameterDescriptor> labelNameToReceiverMap = HashMultimap.create();
