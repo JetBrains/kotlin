@@ -200,21 +200,23 @@ public class DescriptorFactory {
     public static ReceiverParameterDescriptor createContextReceiverParameterForCallable(
             @NotNull CallableDescriptor owner,
             @Nullable KotlinType receiverParameterType,
+            @Nullable Name customLabelName,
             @NotNull Annotations annotations
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, customLabelName, null), annotations);
     }
 
     @Nullable
     public static ReceiverParameterDescriptor createContextReceiverParameterForClass(
             @NotNull ClassDescriptor owner,
             @Nullable KotlinType receiverParameterType,
+            @Nullable Name customLabelName,
             @NotNull Annotations annotations
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ContextClassReceiver(owner, receiverParameterType, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ContextClassReceiver(owner, receiverParameterType, customLabelName, null), annotations);
     }
 }

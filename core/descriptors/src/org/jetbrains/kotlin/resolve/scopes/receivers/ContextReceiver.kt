@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 class ContextReceiver(
     override val declarationDescriptor: CallableDescriptor,
     receiverType: KotlinType,
+    override val customLabelName: Name?,
     original: ReceiverValue?
-) : AbstractReceiverValue(receiverType, original), ImplicitReceiver {
-    override fun replaceType(newType: KotlinType): ReceiverValue = ContextReceiver(declarationDescriptor, newType, original)
+) : AbstractReceiverValue(receiverType, original), ImplicitContextReceiver {
+    override fun replaceType(newType: KotlinType): ReceiverValue = ContextReceiver(declarationDescriptor, newType, customLabelName, original)
 
     override fun toString(): String = "Cxt { $declarationDescriptor }"
 }

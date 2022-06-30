@@ -150,7 +150,12 @@ class DeserializedClassDescriptor(
         val contextReceiverType = c.typeDeserializer.type(it)
         ReceiverParameterDescriptorImpl(
             thisAsReceiverParameter,
-            ContextClassReceiver(this, contextReceiverType, null),
+            ContextClassReceiver(
+                this,
+                contextReceiverType,
+                /* customLabelName = */ null/*todo store custom label name in metadata?*/,
+                null
+            ),
             Annotations.EMPTY
         );
     }
