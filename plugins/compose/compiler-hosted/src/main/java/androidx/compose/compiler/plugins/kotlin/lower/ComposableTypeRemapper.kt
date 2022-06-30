@@ -180,7 +180,6 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrCall {
         val ownerFn = expression.symbol.owner as? IrSimpleFunction
-        @Suppress("DEPRECATION")
         val containingClass = expression.symbol.descriptor.containingDeclaration as? ClassDescriptor
 
         // Any virtual calls on composable functions we want to make sure we update the call to
@@ -353,7 +352,6 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 }
 
-@Suppress("DEPRECATION")
 class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
@@ -377,7 +375,6 @@ class ComposerTypeRemapper(
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private val IrConstructorCall.annotationClass
         get() = this.symbol.owner.returnType.classifierOrNull
 

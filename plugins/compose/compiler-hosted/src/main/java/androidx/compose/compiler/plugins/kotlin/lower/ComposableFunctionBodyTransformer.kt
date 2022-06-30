@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -470,7 +471,6 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  * of every function is also marked to correspond to indicate that the group corresponds to a call
  * and the source location of the caller can be determined from the containing group.
  */
-@Suppress("DEPRECATION")
 class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -671,7 +671,7 @@ class ComposableFunctionBodyTransformer(
     private fun printScopeStack(): String {
         return buildString {
             currentScope.forEach {
-                appendln(it.name)
+                appendLine(it.name)
             }
         }
     }
@@ -1597,11 +1597,13 @@ class ComposableFunctionBodyTransformer(
             initialize(
                 null,
                 null,
+                emptyList<ReceiverParameterDescriptor>(),
                 emptyList(),
                 listOf(passedInComposerParameter, ignoredChangedParameter),
                 updateScopeBlockType.toKotlinType(),
                 Modality.FINAL,
-                DescriptorVisibilities.LOCAL
+                DescriptorVisibilities.LOCAL,
+                null
             )
         }
 
@@ -1855,7 +1857,6 @@ class ComposableFunctionBodyTransformer(
         return hash
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun functionSourceKey(): Int {
         val fn = currentFunctionScope.function
         if (fn is IrSimpleFunction) {
@@ -1986,7 +1987,6 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), endRestartGroupFunction)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irCache(
         startOffset: Int,
         endOffset: Int,
@@ -2115,7 +2115,6 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irCall(
         function: IrFunction,
         startOffset: Int = UNDEFINED_OFFSET,
@@ -3723,7 +3722,7 @@ class ComposableFunctionBodyTransformer(
 
             private fun packageHash(): Int =
                 packageName()?.fold(0) { hash, current ->
-                    hash * 31 + current.toInt()
+                    hash * 31 + current.code
                 }?.absoluteValue ?: 0
 
             internal fun sourceFileInformation(): String {
