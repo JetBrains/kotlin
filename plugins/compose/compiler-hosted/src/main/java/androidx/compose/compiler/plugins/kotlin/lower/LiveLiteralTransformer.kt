@@ -240,7 +240,6 @@ open class LiveLiteralTransformer(
         putValueArgument(0, irConst(file))
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irLiveLiteralGetter(
         key: String,
         literalValue: IrExpression,

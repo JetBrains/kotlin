@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 import java.util.Locale
 import kotlin.math.abs
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 
 fun IrElement.dumpSrc(): String {
     val sb = StringBuilder()
@@ -131,7 +132,6 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
 
-@Suppress("DEPRECATION")
 class IrSourcePrinterVisitor(
     out: Appendable,
     indentUnit: String = "  ",
@@ -206,11 +206,11 @@ class IrSourcePrinterVisitor(
                 declaration.visibility != DescriptorVisibilities.PUBLIC &&
                 declaration.visibility != DescriptorVisibilities.LOCAL
             ) {
-                print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
+                print(declaration.visibility.toString().lowercase(Locale.ROOT))
                 print(" ")
             }
             if (declaration.modality != Modality.FINAL) {
-                print(declaration.modality.toString().toLowerCase(Locale.ROOT))
+                print(declaration.modality.toString().lowercase(Locale.ROOT))
                 print(" ")
             }
         }
@@ -266,7 +266,6 @@ class IrSourcePrinterVisitor(
 
     private var isInNotCall = false
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall) {
         val function = expression.symbol.owner
         val name = function.name.asString()
@@ -772,7 +771,6 @@ class IrSourcePrinterVisitor(
         println("}")
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitReturn(expression: IrReturn) {
         val value = expression.value
         // only print the return statement directly if it is not a lambda
@@ -879,7 +877,7 @@ class IrSourcePrinterVisitor(
             declaration.visibility != DescriptorVisibilities.PUBLIC &&
             declaration.visibility != DescriptorVisibilities.LOCAL
         ) {
-            print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
+            print(declaration.visibility.toString().lowercase(Locale.ROOT))
             print(" ")
         }
         if (declaration.isStatic) {
@@ -1055,7 +1053,7 @@ class IrSourcePrinterVisitor(
             declaration.visibility != DescriptorVisibilities.PUBLIC &&
             declaration.visibility != DescriptorVisibilities.LOCAL
         ) {
-            print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
+            print(declaration.visibility.toString().lowercase(Locale.ROOT))
             print(" ")
         }
         if (declaration.isInner) {
@@ -1070,7 +1068,7 @@ class IrSourcePrinterVisitor(
             print("object ")
         } else {
             if (declaration.modality != Modality.FINAL) {
-                print(declaration.modality.toString().toLowerCase(Locale.ROOT))
+                print(declaration.modality.toString().lowercase(Locale.ROOT))
                 print(" ")
             }
             if (declaration.isAnnotationClass) {
@@ -1321,7 +1319,7 @@ class IrSourcePrinterVisitor(
                         }
                     )
                 }
-                if (hasQuestionMark) {
+                if (isMarkedNullable()) {
                     append('?')
                 }
                 abbreviation?.let {

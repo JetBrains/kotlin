@@ -564,7 +564,6 @@ class LiveLiteralV2TransformTests : AbstractIrTransformTest() {
         module: IrModuleFragment,
         context: IrPluginContext
     ) {
-        @Suppress("DEPRECATION")
         val symbolRemapper = DeepCopySymbolRemapper()
         val keyVisitor = DurableKeyVisitor(builtKeys)
         val transformer = object : LiveLiteralTransformer(

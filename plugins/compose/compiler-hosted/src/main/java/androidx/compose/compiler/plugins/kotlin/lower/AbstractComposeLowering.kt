@@ -124,6 +124,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -156,7 +157,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 
-@Suppress("DEPRECATION")
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
@@ -271,7 +271,7 @@ abstract class AbstractComposeLowering(
         when (this) {
             is IrSimpleType -> IrSimpleTypeImpl(
                 classifier,
-                hasQuestionMark,
+                isMarkedNullable(),
                 List(arguments.size) { IrStarProjectionImpl },
                 annotations,
                 abbreviation
@@ -451,7 +451,6 @@ abstract class AbstractComposeLowering(
         body: IrBlockBodyBuilder.(IrFunction) -> Unit
     ) = irLambdaExpression(this.startOffset, this.endOffset, descriptor, type, body)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrBuilderWithScope.irLambdaExpression(
         startOffset: Int,
         endOffset: Int,
@@ -599,7 +598,6 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun irCall(
         symbol: IrFunctionSymbol,
         origin: IrStatementOrigin? = null,
@@ -624,11 +622,9 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
         context.symbols.getBinaryOperator(name, this, paramType)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.unaryOperator(name: Name): IrFunctionSymbol =
         context.symbols.getUnaryOperator(name, this)
 
@@ -1033,7 +1029,6 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun irLambda(function: IrFunction, type: IrType): IrExpression {
         return irBlock(
             type,
@@ -1306,7 +1301,6 @@ fun IrFunction.composerParam(): IrValueParameter? {
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrValueParameter.isComposerParam(): Boolean =
-    @Suppress("DEPRECATION")
     (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
 
 fun ValueParameterDescriptor.isComposerParam(): Boolean =
