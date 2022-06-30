@@ -3,7 +3,7 @@
     B(2)
 }
 
-<!UNSUPPORTED_FEATURE!>data<!> object Second
+data object Second
 
 <!WRONG_MODIFIER_TARGET!>data<!> interface Third
 

@@ -9,17 +9,17 @@ value class Empty<T><!VALUE_CLASS_EMPTY_CONSTRUCTOR!>()<!>
 
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class Foo<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
+value class Foo<T>(val x: T, val y: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class FooNullable<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>)
+value class FooNullable<T>(val x: T?, val y: T?)
 
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class FooGenericArray<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<T><!>, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<T><!>)
+value class FooGenericArray<T>(val x: Array<T>, val y: Array<T>)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class FooGenericArray2<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<Array<T>><!>, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<Array<T>><!>)
+value class FooGenericArray2<T>(val x: Array<Array<T>>, val y: Array<Array<T>>)
 
 
 OPTIONAL_JVM_INLINE_ANNOTATION
