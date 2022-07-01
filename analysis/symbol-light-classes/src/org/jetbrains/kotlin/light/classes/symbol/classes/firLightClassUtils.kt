@@ -227,12 +227,7 @@ context(KtAnalysisSession)
 
                         result.add(
                             FirLightSimpleMethodForSymbol(
-                                functionSymbol = declaration,
-                                lightMemberOrigin = null,
-                                containingClass = this@createMethods,
-                                isTopLevel = isTopLevel,
-                                methodIndex = methodIndex++,
-                                argumentsSkipMask = skipMask.copy()
+                                declaration, null, this@createMethods, methodIndex++, isTopLevel, skipMask.copy()
                             )
                         )
                     }

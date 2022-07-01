@@ -114,11 +114,7 @@ internal open class FirLightClassForSymbol(
             val lightMemberOrigin = LightMemberOriginForDeclaration(this.kotlinOrigin!!, JvmDeclarationOriginKind.OTHER)
             result.add(
                 FirLightSimpleMethodForSymbol(
-                    functionSymbol = ktFunctionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = this,
-                    isTopLevel = false,
-                    methodIndex = METHOD_INDEX_BASE,
+                    ktFunctionSymbol, lightMemberOrigin, this, METHOD_INDEX_BASE, false,
                     suppressStatic = false
                 )
             )
@@ -168,11 +164,12 @@ internal open class FirLightClassForSymbol(
             val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.DELEGATION)
             result.add(
                 FirLightSimpleMethodForSymbol(
-                    functionSymbol = ktFunctionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = this,
-                    isTopLevel = false,
-                    methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
+                    ktFunctionSymbol,
+                    lightMemberOrigin,
+                    this,
+                    METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
+                    false,
+                    argumentsSkipMask = null,
                     suppressStatic = false
                 )
             )
