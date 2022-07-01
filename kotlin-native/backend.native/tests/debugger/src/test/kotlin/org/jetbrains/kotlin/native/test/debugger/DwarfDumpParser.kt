@@ -283,6 +283,7 @@ class DwarfAttribute(val attribute: Attribute, val rawValue: String) {
         DW_AT_LLVM_include_path(0x3e00),
         DW_AT_LLVM_config_macros(0x3e01),
         DW_AT_LLVM_isysroot(0x3e02),
+        DW_AT_LLVM_sysroot(0x3e02),
         DW_AT_APPLE_optimized(0x3fe1),
         DW_AT_APPLE_flags(0x3fe2),
         DW_AT_APPLE_isa(0x3fe3),
