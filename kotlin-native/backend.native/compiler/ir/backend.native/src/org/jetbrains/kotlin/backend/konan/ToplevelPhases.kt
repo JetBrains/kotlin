@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.*
@@ -67,7 +68,7 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
 internal fun konanUnitPhase(
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet(),
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
         op: Context.() -> Unit
 ) = namedOpUnitPhase(name, description, prerequisite, op)
 
@@ -328,6 +329,49 @@ internal val dependenciesLowerPhase = NamedCompilerPhase(
             }
         })
 
+internal val umbrellaCompilation = NamedCompilerPhase(
+        name = "UmbrellaCompilation",
+        description = "A batched compilation with shared FE and ME phases",
+        prerequisite = emptySet(),
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                val module = context.irModules.values.single()
+
+                val files = module.files.toList()
+                module.files.clear()
+                val functionInterfaceFiles = files.filter { it.isFunctionInterfaceFile }
+
+                for (file in files) {
+                    if (file.isFunctionInterfaceFile) continue
+
+                    // Pretend we're about to create a single file cache.
+                    context.config.cacheSupport.libraryToCache!!.strategy =
+                            CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+                    context.config.recreateOutputFiles(explicitlyProducePerFileCache = false)
+
+                    module.files += file
+                    if (context.shouldDefineFunctionClasses)
+                        module.files += functionInterfaceFiles
+
+                    entireBackend.invoke(phaseConfig, phaserState, context, Unit)
+
+                    module.files.clear()
+                    context.irModule!!.files.clear() // [dependenciesLowerPhase] puts all files to [context.irModule] for codegen.
+
+                    context.inlineFunctionBodies.clear()
+                    context.classFields.clear()
+                    context.calledFromExportedInlineFunctions.clear()
+                    context.constructedFromExportedInlineFunctions.clear()
+                    context.localClassNames.clear()
+                    context.testCasesToDump.clear()
+                    context.mapping.loweredInlineFunctions.clear()
+                    context.cStubsManager = CStubsManager(context.config.target)
+                }
+
+                module.files += files
+            }
+        })
+
 internal val dumpTestsPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "dumpTestsPhase",
         description = "Dump the list of all available tests",
@@ -408,12 +452,10 @@ private val bitcodePostprocessingPhase = NamedCompilerPhase(
                 rewriteExternalCallsCheckerGlobals
 )
 
-private val backendCodegen = namedUnitPhase(
+private val backendCodegen = NamedCompilerPhase(
         name = "Backend codegen",
         description = "Backend code generation",
-        lower = takeFromContext<Context, Unit, IrModuleFragment> { it.irModule!! } then
-                entryPointPhase then
-                functionsWithoutBoundCheck then
+        lower = entryPointPhase then
                 allLoweringsPhase then // Lower current module first.
                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                             // With that we guarantee that inline functions are unlowered while being inlined.
@@ -422,36 +464,53 @@ private val backendCodegen = namedUnitPhase(
                 verifyBitcodePhase then
                 printBitcodePhase then
                 linkBitcodeDependenciesPhase then
-                bitcodePostprocessingPhase then
-                unitSink()
+                bitcodePostprocessingPhase
+)
+
+private val entireBackend = NamedCompilerPhase(
+        name = "EntireBackend",
+        description = "Entire backend",
+        lower = createLLVMImportsPhase then
+                buildAdditionalCacheInfoPhase then
+                takeFromContext { it.irModule!! } then
+                specialBackendChecksPhase then
+                backendCodegen then
+                unitSink() then
+                saveAdditionalCacheInfoPhase then
+                produceOutputPhase then
+                disposeLLVMPhase then
+                objectFilesPhase then
+                linkerPhase then
+                finalizeCachePhase
+)
+
+private val middleEnd = NamedCompilerPhase(
+        name = "MiddleEnd",
+        description = "Build and prepare IR for back end",
+        lower = createSymbolTablePhase then
+                objCExportPhase then
+                buildCExportsPhase then
+                psiToIrPhase then
+                destroySymbolTablePhase then
+                copyDefaultValuesToActualPhase then
+                checkSamSuperTypesPhase then
+                serializerPhase then
+                functionsWithoutBoundCheck
+)
+
+private val singleCompilation = NamedCompilerPhase(
+        name = "SingleCompilation",
+        description = "Single compilation",
+        lower = entireBackend
 )
 
 // Have to hide Context as type parameter in order to expose toplevelPhase outside of this module.
 val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
         name = "Compiler",
         description = "The whole compilation process",
-        lower = createSymbolTablePhase then
-                objCExportPhase then
-                buildCExportsPhase then
-                psiToIrPhase then
-                buildAdditionalCacheInfoPhase then
-                destroySymbolTablePhase then
-                copyDefaultValuesToActualPhase then
-                checkSamSuperTypesPhase then
-                serializerPhase then
-                specialBackendChecksPhase then
-                namedUnitPhase(
-                        name = "Backend",
-                        description = "All backend",
-                        lower = backendCodegen then
-                                produceOutputPhase then
-                                disposeLLVMPhase then
-                                unitSink()
-                ) then
-                saveAdditionalCacheInfoPhase then
-                objectFilesPhase then
-                linkerPhase then
-                finalizeCachePhase
+        lower = middleEnd then
+                singleCompilation then
+                umbrellaCompilation
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
@@ -472,6 +531,9 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disable(localEscapeAnalysisPhase)
 
+        disableIf(singleCompilation, config.produceBatchedPerFileCache)
+        disableUnless(umbrellaCompilation, config.produceBatchedPerFileCache)
+
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
@@ -480,7 +542,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(finalizeCachePhase, config.produce.isCache)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableUnless(buildCExportsPhase, config.produce.isNativeLibrary)
-        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY || config.omitFrameworkBinary || config.produce == CompilerOutputKind.PRELIMINARY_CACHE)
+        disableUnless(backendCodegen, config.involvesCodegen)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)

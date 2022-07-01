@@ -82,8 +82,8 @@ internal fun makeKonanModuleOpPhase(
         actions = modulePhaseActions
 )
 
-internal val specialBackendChecksPhase = konanUnitPhase(
-        op = { irModule!!.files.forEach { SpecialBackendChecksTraversal(this).lower(it) } },
+internal val specialBackendChecksPhase = makeKonanModuleLoweringPhase(
+        ::SpecialBackendChecksTraversal,
         name = "SpecialBackendChecks",
         description = "Special backend checks"
 )
@@ -151,6 +151,18 @@ internal val inventNamesForLocalClasses = makeKonanFileLoweringPhase(
 
 internal val extractLocalClassesFromInlineBodies = makeKonanFileOpPhase(
         { context, irFile ->
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    if (declaration.isInline)
+                        context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
+                    declaration.acceptChildrenVoid(this)
+                }
+            })
+
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
             LocalClassesInInlineFunctionsLowering(context).lower(irFile)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
@@ -168,18 +180,6 @@ internal val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeKonan
 
 internal val inlinePhase = makeKonanFileOpPhase(
         { context, irFile ->
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    if (declaration.isInline)
-                        context.inlineFunctionsSupport.getNonLoweredInlineFunction(declaration)
-                    declaration.acceptChildrenVoid(this)
-                }
-            })
-
             FunctionInlining(context, NativeInlineFunctionResolver(context)).lower(irFile)
         },
         name = "Inline",
@@ -286,12 +286,10 @@ internal val rangeContainsLoweringPhase = makeKonanFileLoweringPhase(
         description = "Optimizes calls to contains() for ClosedRanges"
 )
 
-internal val functionsWithoutBoundCheck = makeKonanModuleOpPhase(
+internal val functionsWithoutBoundCheck = konanUnitPhase(
         name = "FunctionsWithoutBoundCheckGenerator",
         description = "Functions without bounds check generation",
-        op = { context, _ ->
-            FunctionsWithoutBoundCheckGenerator(context).generate()
-        }
+        op = { FunctionsWithoutBoundCheckGenerator(this).generate() }
 )
 
 internal val forLoopsPhase = makeKonanFileOpPhase(

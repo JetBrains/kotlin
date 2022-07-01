@@ -90,22 +90,25 @@ class CachedLibraries(
     private val cacheDirsContents = mutableMapOf<String, Set<String>>()
 
     private fun selectCache(library: KotlinLibrary, cacheDir: File): Cache? {
-        val cacheBinaryPartDir = cacheDir.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
         // See Linker.renameOutput why is it ok to have an empty cache directory.
         val cacheDirContents = cacheDirsContents.getOrPut(cacheDir.absolutePath) {
-            cacheBinaryPartDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
+            cacheDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
         }
         if (cacheDirContents.isEmpty()) return null
+        val cacheBinaryPartDir = cacheDir.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+        val cacheBinaryPartDirContents = cacheDirsContents.getOrPut(cacheBinaryPartDir.absolutePath) {
+            cacheBinaryPartDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
+        }
         val baseName = getCachedLibraryName(library)
         val dynamicFile = cacheBinaryPartDir.child(getArtifactName(baseName, CompilerOutputKind.DYNAMIC_CACHE))
         val staticFile = cacheBinaryPartDir.child(getArtifactName(baseName, CompilerOutputKind.STATIC_CACHE))
 
-        if (dynamicFile.absolutePath in cacheDirContents && staticFile.absolutePath in cacheDirContents)
+        if (dynamicFile.absolutePath in cacheBinaryPartDirContents && staticFile.absolutePath in cacheBinaryPartDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.libraryName}, path to cache: ${cacheDir.absolutePath}")
         return when {
-            dynamicFile.absolutePath in cacheDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
-            staticFile.absolutePath in cacheDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
+            dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache(Kind.DYNAMIC, Granularity.MODULE, dynamicFile.absolutePath)
+            staticFile.absolutePath in cacheBinaryPartDirContents -> Cache(Kind.STATIC, Granularity.MODULE, staticFile.absolutePath)
             else -> Cache(Kind.STATIC, Granularity.FILE, cacheDir.absolutePath)
         }
     }

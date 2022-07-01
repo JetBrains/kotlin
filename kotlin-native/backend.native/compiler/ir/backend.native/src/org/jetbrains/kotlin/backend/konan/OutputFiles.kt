@@ -49,7 +49,7 @@ class OutputFiles(outputPath: String?, target: KonanTarget, val produce: Compile
                 outputName.substring(0, outputName.lastIndexOf(File.separatorChar) /* skip [PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME]*/)
             else null
 
-    val perFileCacheFileName = pathToPerFileCache?.let { File(it).name }
+    val perFileCacheFileName = File(pathToPerFileCache ?: outputName).absoluteFile.name
 
     val cacheFileName = File((pathToPerFileCache ?: outputName).fullOutputName()).absoluteFile.name
 

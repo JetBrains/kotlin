@@ -410,13 +410,28 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val libraryToCache: PartialCacheInfo?
         get() = cacheSupport.libraryToCache
 
-    internal val producePerFileCache = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
+    internal val producePerFileCache
+        get() = libraryToCache?.strategy is CacheDeserializationStrategy.SingleFile
 
-    val outputFiles =
-            OutputFiles(configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(),
-                    target, produce, producePerFileCache)
+    internal val produceBatchedPerFileCache
+        get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
+                && configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) != false
 
-    val tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
+    lateinit var outputFiles: OutputFiles
+
+    lateinit var tempFiles: TempFiles
+
+    init {
+        recreateOutputFiles(producePerFileCache)
+    }
+
+    fun recreateOutputFiles(explicitlyProducePerFileCache: Boolean) {
+        val outputPath = configuration.get(KonanConfigKeys.OUTPUT) ?: cacheSupport.tryGetImplicitOutput(explicitlyProducePerFileCache)
+        outputFiles = OutputFiles(outputPath, target, produce, explicitlyProducePerFileCache)
+        tempFiles = TempFiles(outputFiles.outputName, configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR))
+
+        println("ZZZ: ${outputFiles.outputName}")
+    }
 
     val outputFile get() = outputFiles.mainFileName
 
