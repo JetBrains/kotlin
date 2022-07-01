@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
+import org.jetbrains.kotlin.backend.konan.llvm.tryDisposeLLVMContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -42,8 +43,13 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         if (fileNames == null) {
             KonanConfig(project, configuration).runTopLevelPhases()
         } else {
-            fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
-            fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+            if (configuration.get(KonanConfigKeys.BATCHED_PER_FILE_CACHE_BUILD) == false) {
+                fileNames.forEach { buildFileCache(it, CompilerOutputKind.PRELIMINARY_CACHE) }
+                fileNames.forEach { buildFileCache(it, configuration.get(KonanConfigKeys.PRODUCE)!!) }
+            } else {
+                configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
+                KonanConfig(project, configuration).runTopLevelPhases()
+            }
         }
     }
 
@@ -52,7 +58,6 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
         val subConfiguration = configuration.copy()
         subConfiguration.put(KonanConfigKeys.PRODUCE, cacheKind)
         subConfiguration.put(KonanConfigKeys.FILE_TO_CACHE, fileName)
-        subConfiguration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, false)
         subConfiguration.put(CLIConfigurationKeys.PHASE_CONFIG, phaseConfig.toBuilder().build())
         KonanConfig(project, subConfiguration).runTopLevelPhases()
     }
@@ -102,6 +107,8 @@ private fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreE
                 toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
             } finally {
                 context.disposeLlvm()
+                context.disposeRuntime()
+                tryDisposeLLVMContext()
             }
         }
     }

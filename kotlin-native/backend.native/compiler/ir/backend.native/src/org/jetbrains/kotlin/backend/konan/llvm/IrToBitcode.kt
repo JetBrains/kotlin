@@ -2857,7 +2857,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 library == null -> context.config.moduleId.moduleConstructorName
                 library == context.config.libraryToCache?.klib
                         && context.config.producePerFileCache ->
-                    fileCtorName(library.uniqueName, context.config.outputFiles.perFileCacheFileName!!)
+                    fileCtorName(library.uniqueName, context.config.outputFiles.perFileCacheFileName)
                 else -> library.moduleConstructorName
             }
 

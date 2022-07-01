@@ -143,7 +143,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         lazyValues[member] = newValue
     }
 
-    private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
+    val localClassNames = mutableMapOf<IrAttributeContainer, String>()
 
     fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
 
@@ -227,22 +227,32 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     var llvmModule: LLVMModuleRef? = null
         set(module) {
-            if (field != null) {
-                throw Error("Another LLVMModule in the context.")
-            }
             field = module!!
 
             llvm = Llvm(this, module)
             debugInfo = DebugInfo(this)
         }
 
+    lateinit var runtime: Runtime
+
+    private var runtimeDisposed = false
+
+    fun disposeRuntime() {
+        if (runtimeDisposed) return
+        if (::runtime.isInitialized) {
+            LLVMDisposeTargetData(runtime.targetData)
+            LLVMDisposeModule(runtime.llvmModule)
+        }
+        runtimeDisposed = true
+    }
+
+    lateinit var llvmImports: LlvmImports
     lateinit var llvm: Llvm
-    val llvmImports: LlvmImports = Llvm.ImportsImpl(this)
     lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
 
-    private var llvmDisposed = false
+    var llvmDisposed = false
 
     fun disposeLlvm() {
         if (llvmDisposed) return
@@ -250,15 +260,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             LLVMDisposeDIBuilder(debugInfo.builder)
         if (llvmModule != null)
             LLVMDisposeModule(llvmModule)
-        if (::llvm.isInitialized) {
-            LLVMDisposeTargetData(llvm.runtime.targetData)
-            LLVMDisposeModule(llvm.runtime.llvmModule)
-        }
-        tryDisposeLLVMContext()
         llvmDisposed = true
     }
 
-    val cStubsManager = CStubsManager(config.target)
+    var cStubsManager = CStubsManager(config.target)
 
     val coverage = CoverageManager(this)
 
@@ -354,7 +359,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val llvmModuleSpecification: LlvmModuleSpecification by lazy {
         when {
             config.produce.isCache ->
-                CacheLlvmModuleSpecification(config.cachedLibraries, config.libraryToCache!!.klib)
+                CacheLlvmModuleSpecification(this, config.cachedLibraries, config.libraryToCache!!)
             else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
     }
@@ -369,6 +374,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
+
+    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
 
     val targetAbiInfo: TargetAbiInfo by lazy {
         when {
