@@ -70,6 +70,9 @@ val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
             || this == CompilerOutputKind.PRELIMINARY_CACHE
 
+val KonanConfig.involvesCodegen: Boolean
+    get() = produce != CompilerOutputKind.LIBRARY && produce != CompilerOutputKind.PRELIMINARY_CACHE && !omitFrameworkBinary
+
 internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
     module.let{}
     if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {

@@ -307,6 +307,8 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
     }
 }
 
+internal data class DeserializedInlineFunction(val firstAccess: Boolean, val function: InlineFunctionOriginInfo)
+
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val translationPluginContext: TranslationPluginContext?,
@@ -387,14 +389,18 @@ internal class KonanIrLinker(
         else -> null
     }
 
-    fun getExternalDeclarationFileName(declaration: IrDeclaration) = with(declaration) {
-        val externalPackageFragment = getPackageFragment() as? IrExternalPackageFragment
-                ?: error("Expected an external package fragment for ${render()}")
-        val moduleDescriptor = externalPackageFragment.packageFragmentDescriptor.containingDeclaration
-        val moduleDeserializer = moduleDeserializers[moduleDescriptor]
-                ?: error("No module deserializer for $moduleDescriptor")
-        val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
-        idSig.topLevelSignature().fileSignature()?.fileName ?: error("No file for $idSig")
+    fun getExternalDeclarationFileName(declaration: IrDeclaration) = when (val packageFragment = declaration.getPackageFragment()) {
+        is IrFile -> packageFragment.path
+
+        is IrExternalPackageFragment -> {
+            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
+            val moduleDeserializer = moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for $moduleDescriptor")
+            val descriptor = declaration.descriptor
+            val idSig = moduleDeserializer.descriptorSignatures[descriptor] ?: error("No signature for $descriptor")
+            idSig.topLevelSignature().fileSignature()?.fileName ?: error("No file for $idSig")
+        }
+
+        else -> error("Unknown package fragment kind ${packageFragment::class.java}")
     }
 
     private val IrClass.firstNonClassParent: IrDeclarationParent
@@ -637,7 +643,16 @@ internal class KonanIrLinker(
             }
         }
 
-        fun deserializeInlineFunction(function: IrFunction): InlineFunctionOriginInfo {
+        private val deserializedInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+
+        fun deserializeInlineFunction(function: IrFunction): DeserializedInlineFunction {
+            deserializedInlineFunctions[function]?.let { return DeserializedInlineFunction(firstAccess = false, it) }
+            val result = deserializeInlineFunctionInternal(function)
+            deserializedInlineFunctions[function] = result
+            return DeserializedInlineFunction(firstAccess = true, result)
+        }
+
+        private fun deserializeInlineFunctionInternal(function: IrFunction): InlineFunctionOriginInfo {
             val packageFragment = function.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${function.render()}")
             if (function.parents.any { (it as? IrFunction)?.isInline == true }) {

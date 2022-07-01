@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -39,7 +36,12 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             // (see Llvm class in ContextUtils)
             // Which in turn is determined by the clang flags
             // used to compile runtime.bc.
+            // TODO
             llvmContext = LLVMContextCreate()!!
+            context.llvmDisposed = false
+
+            context.runtime = Runtime(context.config.distribution.compilerInterface(context.config.target))
+
             val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
             context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
@@ -72,12 +74,24 @@ internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         }
 )
 
+internal val createLLVMImportsPhase = namedUnitPhase(
+        name = "CreateLLVMImoorts",
+        description = "Create LLVM imports",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.llvmImports = Llvm.ImportsImpl(context)
+            }
+        }
+)
+
 internal val disposeLLVMPhase = namedUnitPhase(
         name = "DisposeLLVM",
         description = "Dispose LLVM",
         lower = object : CompilerPhase<Context, Unit, Unit> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
                 context.disposeLlvm()
+                context.disposeRuntime()
+                tryDisposeLLVMContext()
             }
         }
 )

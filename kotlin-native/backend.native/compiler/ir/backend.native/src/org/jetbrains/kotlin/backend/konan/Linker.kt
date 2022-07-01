@@ -51,7 +51,7 @@ internal class CacheStorage(val context: Context) {
         context.config.outputFiles.prepareTempDirectories()
         if (!isPreliminaryCache)
             saveCacheBitcodeDependencies()
-        if (isPreliminaryCache || context.configuration.get(KonanConfigKeys.FILE_TO_CACHE) == null) {
+        if (isPreliminaryCache || !context.config.producePerFileCache || context.config.produceBatchedPerFileCache) {
             saveInlineFunctionBodies()
             saveClassFields()
         }
