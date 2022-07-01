@@ -18,6 +18,7 @@ idePluginDependency {
     val embedded by configurations
 
     dependencies {
+        embedded(project(":kotlin-native-shared")) { isTransitive = false }
         embedded(project(":kotlin-native:backend.native")) { isTransitive = false }
 
         proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_stdlib_jar"))
