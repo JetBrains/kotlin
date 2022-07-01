@@ -4,8 +4,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param1)
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: param1
   origin: SOURCE
@@ -22,8 +24,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/Anno.param2)
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: param2
   origin: SOURCE

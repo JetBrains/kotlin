@@ -4,8 +4,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.x)
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: x
   origin: SOURCE
@@ -22,8 +24,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.y)
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: y
   origin: SOURCE
@@ -40,8 +44,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: KtKotlinPropertySymbol(/MyColor.z)
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: z
   origin: SOURCE
