@@ -55,23 +55,24 @@ abstract class AnalysisApiTestConfigurator {
     }
 }
 
-private object ApplicationServiceRegistrar {
+object ApplicationServiceRegistrar {
     fun register(application: MockApplication, registrars: List<AnalysisApiTestServiceRegistrar>, testServices: TestServices) {
+        val lock = application.lock
         for (registrar in registrars) {
-            val registered = application.lock.readLock().withLock {
-                application.serviceRegistered[registrar::class] == true
-            }
-
-            if (registered) {
+            if (lock.readLock().withLock { application.isRegistrarRegistered(registrar) }) {
                 continue
             }
 
-            application.lock.writeLock().withLock {
+            lock.writeLock().withLock {
+                if (application.isRegistrarRegistered(registrar)) return@withLock
                 registrar.registerApplicationServices(application, testServices)
                 application.serviceRegistered[registrar::class] = true
             }
         }
     }
+
+    private fun Application.isRegistrarRegistered(registrar: AnalysisApiTestServiceRegistrar): Boolean =
+        serviceRegistered[registrar::class] == true
 
     private val Application.lock
             by NotNullableUserDataProperty<Application, ReadWriteLock>(
