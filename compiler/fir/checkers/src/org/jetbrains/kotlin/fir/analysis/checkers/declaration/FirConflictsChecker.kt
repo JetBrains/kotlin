@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
@@ -95,13 +96,18 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                     is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(conflictingSymbol)
                     else -> null
                 }
-            if (containingFile == actualConflictingFile) return // TODO: rewrite local decls checker to the same logic and then remove the check
+            if (containingFile == actualConflictingFile && conflicting.origin == FirDeclarationOrigin.Precompiled) {
+                return // TODO: rewrite local decls checker to the same logic and then remove the check
+            }
             if (areCompatibleMainFunctions(declaration, containingFile, conflicting, actualConflictingFile)) return
             if (isExpectAndActual(declaration, conflicting)) return
             if (
                 conflicting is FirMemberDeclaration &&
                 !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), null)
             ) return
+            val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.annotations)
+            val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.annotations)
+            if (declarationIsLowPriority != conflictingIsLowPriority) return
             declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
         }
 
@@ -355,7 +361,7 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
     }
 }
 
-private fun FirDeclaration.onConstructors(action: (ctor: FirConstructor) -> Unit) {
+private fun FirRegularClass.onConstructors(action: (ctor: FirConstructor) -> Unit) {
 
     class ClassConstructorVisitor : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {}
@@ -370,7 +376,9 @@ private fun FirDeclaration.onConstructors(action: (ctor: FirConstructor) -> Unit
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {}
     }
 
-    acceptChildren(ClassConstructorVisitor())
+    if (classKind != ClassKind.OBJECT && classKind != ClassKind.ENUM_ENTRY) {
+        acceptChildren(ClassConstructorVisitor())
+    }
 }
 
 

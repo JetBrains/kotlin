@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -186,3 +187,11 @@ val FirAnnotation.resolved: Boolean
         if (this !is FirAnnotationCall) return true
         return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
     }
+
+private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
+    ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
+
+fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any {
+    val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
+    lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+}

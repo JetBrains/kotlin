@@ -61,9 +61,9 @@ class L {
     fun B.foo() {}
 }
 
-fun mest() {}
+<!CONFLICTING_OVERLOADS!>fun mest()<!> {}
 
-class mest
+class <!CONFLICTING_OVERLOADS!>mest<!>
 
 <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 

@@ -10,7 +10,7 @@ object Foo {
 
 fun En() = 239
 
-enum class En {
+enum class <!CONFLICTING_OVERLOADS!>En<!> {
     ENTRY,
 
     SUBCLASS { };

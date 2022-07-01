@@ -7,10 +7,10 @@ class A(x: String = "", y: String = "") {
 }
 
 class B {
-    constructor(x: Int)
+    <!CONFLICTING_OVERLOADS!>constructor(x: Int)<!>
 }
 
-fun B(x: Int) {}
+<!CONFLICTING_OVERLOADS!>fun B(x: Int)<!> {}
 
 class Outer {
     class A(x: String = "", y: String = "") {

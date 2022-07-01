@@ -2,9 +2,9 @@
 
 package constructorVsFun
 
-class a() { }
+class a<!CONFLICTING_OVERLOADS!>()<!> { }
 
-fun a() = 1
+<!CONFLICTING_OVERLOADS!>fun a()<!> = 1
 
 class Tram {
     fun f() { }
