@@ -83,8 +83,8 @@ val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFrom
 fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
     append(this@renderWithType)
     append(": ")
-    this@renderWithType.accept(FirRenderer(this, mode))
+    this@renderWithType.accept(FirRenderer(this, mode).Visitor())
 }
 
 fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
-    buildString { this@render.accept(FirRenderer(this, mode)) }
+    buildString { this@render.accept(FirRenderer(this, mode).Visitor()) }
