@@ -18,17 +18,22 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
-    var fileSignature: IdSignature.FileSignature? = null
+    private var fileSignature: IdSignature.FileSignature? = null
 
     override fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
         fileSignature = sig
         body()
         fileSignature = null
     }
+
+    private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?)
+
+    private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
 
     inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
@@ -87,13 +92,27 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             if (declaration.visibility == Visibilities.Local) return null
             if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
+        val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)
+        val publicSignature = signatureCache.getOrPut(declarationWithParentId) {
+            calculatePublicSignature(declarationWithParentId)
+        }
+        val resultSignature: IdSignature = if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
+            val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
+            IdSignature.CompositeSignature(fileSig, publicSignature)
+        } else
+            publicSignature
+        return resultSignature
+    }
+
+    private fun calculatePublicSignature(declarationWithParentId: FirDeclarationWithParentId): IdSignature.CommonSignature {
+        val (declaration, containingClassId) = declarationWithParentId
         val builder = SignatureBuilder()
         try {
             declaration.accept(builder, null)
         } catch (t: Throwable) {
             throw IllegalStateException("Error while composing signature for ${declaration.render()}", t)
         }
-        val publicSignature = when (declaration) {
+        return when (declaration) {
             is FirRegularClass -> {
                 // TODO: private classes are probably not acceptable here too
                 val classId = declaration.classId
@@ -108,8 +127,6 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 )
             }
             is FirCallableDeclaration -> {
-                val containingClassId = containingClass?.classId
-
                 val classId = containingClassId ?: declaration.containingClass()?.classId
                 val packageName = classId?.packageFqName ?: declaration.symbol.callableId.packageName
                 val callableName = declaration.irName
@@ -122,11 +139,6 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
-        return if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
-            val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
-            IdSignature.CompositeSignature(fileSig, publicSignature)
-        } else
-            publicSignature
     }
 
     override fun composeTypeParameterSignature(
@@ -136,8 +148,8 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     ): IdSignature? {
         if (containerSignature == null) return null
         return IdSignature.CompositeSignature(
-             containerSignature,
-             IdSignature.LocalSignature(MangleConstant.TYPE_PARAMETER_MARKER_NAME, index.toLong(), null)
+            containerSignature,
+            IdSignature.LocalSignature(MangleConstant.TYPE_PARAMETER_MARKER_NAME, index.toLong(), null)
         )
     }
 
