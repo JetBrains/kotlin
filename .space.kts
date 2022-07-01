@@ -3,9 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import circlet.pipelines.config.dsl.api.Ide
-
-fun warmupJob(ide: Ide) {
+fun warmupJob(ide: Ide, devfilePath: String) {
     job("Kotlin project warmup for ${ide.name}") {
         startOn {
             schedule { cron("0 2 * * *") }  // 5 am GMT +3
@@ -13,6 +11,7 @@ fun warmupJob(ide: Ide) {
 
         warmup(ide = ide) {
             scriptLocation = "./dev-env-warmup.sh"
+            devfile = devfilePath
         }
 
         git {
@@ -24,5 +23,5 @@ fun warmupJob(ide: Ide) {
     }
 }
 
-warmupJob(Ide.Idea)
-warmupJob(Ide.Fleet)
+warmupJob(Ide.Idea, ".space/idea.yaml")
+warmupJob(Ide.Fleet, ".space/fleet.yaml")
