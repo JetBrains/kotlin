@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>data<!> enum class First(val x: Int) {
     A(1),
     B(2)

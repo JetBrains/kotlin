@@ -11,8 +11,8 @@ inline class SimpleParameter(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAM
 
 inline class UnitParameter(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
 inline class NothingParameter(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Nothing<!>)
-inline class TypeParameterType<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
-inline class ArrayOfTypeParameters<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<T><!>)
+inline class TypeParameterType<T>(val x: T)
+inline class ArrayOfTypeParameters<T>(val x: Array<T>)
 inline class ListOfTypeParameters<T>(val x: List<T>)
 inline class StarProjection<T>(val x: Array<*>)
 
