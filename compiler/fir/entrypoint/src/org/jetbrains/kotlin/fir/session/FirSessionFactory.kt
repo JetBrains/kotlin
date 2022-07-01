@@ -197,6 +197,7 @@ object FirSessionFactory {
 
             val dependenciesSymbolProvider = FirDependenciesSymbolProviderImpl(this)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(this)
+            val javaSymbolProvider = JavaSymbolProvider(this, projectEnvironment.getFirJavaFacade(this, moduleData, javaSourcesScope))
             register(
                 FirSymbolProvider::class,
                 FirCompositeSymbolProvider(
@@ -206,12 +207,13 @@ object FirSessionFactory {
                         *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                         symbolProviderForBinariesFromIncrementalCompilation,
                         generatedSymbolsProvider,
-                        JavaSymbolProvider(this, projectEnvironment.getFirJavaFacade(this, moduleData, javaSourcesScope)),
+                        javaSymbolProvider,
                         dependenciesSymbolProvider,
                         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                     )
                 )
             )
+            register(JavaSymbolProvider::class, javaSymbolProvider)
 
             generatedSymbolsProvider?.let { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
 

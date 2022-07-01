@@ -28,7 +28,8 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val regularClassCheckers: Set<FirRegularClassChecker>
         get() = setOf(
             FirJvmRecordChecker,
-            FirJvmInlineApplicabilityChecker
+            FirJvmInlineApplicabilityChecker,
+            FirJvmConflictsChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

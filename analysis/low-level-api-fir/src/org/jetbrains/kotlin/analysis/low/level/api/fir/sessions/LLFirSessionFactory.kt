@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -120,6 +121,7 @@ internal object LLFirSessionFactory {
                     }
             }
 
+            val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -128,10 +130,11 @@ internal object LLFirSessionFactory {
                     providers = listOfNotNull(
                         provider.symbolProvider,
                         switchableExtensionDeclarationsSymbolProvider,
-                        createJavaSymbolProvider(this, moduleData, project, contentScope)
+                        javaSymbolProvider,
                     ),
                 )
             )
+            register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
@@ -210,6 +213,7 @@ internal object LLFirSessionFactory {
                 )
             }
 
+            val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -217,10 +221,11 @@ internal object LLFirSessionFactory {
                     dependencyProvider,
                     providers = listOf(
                         provider.symbolProvider,
-                        createJavaSymbolProvider(this, moduleData, project, contentScope),
+                        javaSymbolProvider,
                     ),
                 )
             )
+            register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))

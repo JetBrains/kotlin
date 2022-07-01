@@ -1,5 +1,5 @@
 // FILE: Hello.kt
-private class Hello()
+private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Hello<!>()
 {
     val a = 4
 }

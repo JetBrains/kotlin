@@ -80,7 +80,7 @@ import javax.annotation.Nonnull;
 @Retention(AnnotationRetention.RUNTIME)
 @Nonnull
 @TypeQualifierNickname
-annotation class NotNull
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NotNull<!>
 
 // FILE: main.kt
 

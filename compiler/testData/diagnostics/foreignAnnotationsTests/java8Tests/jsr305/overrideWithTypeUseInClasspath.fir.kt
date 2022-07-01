@@ -1,7 +1,6 @@
 // SOURCE_RETENTION_ANNOTATIONS
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 
 // FILE: spr/Nullable.java
 package spr;
@@ -49,7 +48,8 @@ public @interface NotNull {
 import spr.*;
 
 public interface J1<T> {
-    T @Nullable [] getFoo();
+    @Nullable
+    T getFoo();
 }
 
 // FILE: J2.java
@@ -58,7 +58,7 @@ import spr.*;
 
 public class J2 implements J1<String> {
     @NotNull
-    public String[] getFoo() { return null; }
+    public String getFoo() { return ""; }
 }
 
 
@@ -80,10 +80,10 @@ import javax.annotation.Nonnull;
 @Retention(AnnotationRetention.RUNTIME)
 @Nonnull
 @TypeQualifierNickname
-annotation class NotNull
+annotation class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NotNull<!>
 
 // FILE: main.kt
 
 fun bar(j2: J2) {
-    j2.foo<!UNSAFE_CALL!>.<!>get(0).length // `j2.foo` is not nullable
+    j2.foo.length // `j2.foo` is not nullable
 }

@@ -57,3 +57,6 @@ class JavaSymbolProvider(
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 }
+
+val FirSession.javaSymbolProvider: JavaSymbolProvider by FirSession.sessionComponentAccessor()
+
