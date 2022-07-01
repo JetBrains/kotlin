@@ -4,8 +4,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: false
   name: int
   origin: SOURCE
