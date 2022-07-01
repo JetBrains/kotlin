@@ -78,7 +78,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, NativeCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirSyntheticNamesProvider::class, FirNativeSyntheticNamesProvider)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
     }
 }

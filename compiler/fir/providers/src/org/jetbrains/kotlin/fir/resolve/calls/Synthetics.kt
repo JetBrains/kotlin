@@ -44,11 +44,23 @@ class FirSyntheticFunctionSymbol(
     callableId: CallableId
 ) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
 
-class FirSyntheticPropertiesScope(
+class FirSyntheticPropertiesScope private constructor(
     val session: FirSession,
-    private val baseScope: FirTypeScope
+    private val baseScope: FirTypeScope,
+    private val syntheticNamesProvider: FirSyntheticNamesProvider
 ) : FirContainingNamesAwareScope() {
-    private val syntheticNamesProvider = session.syntheticNamesProvider
+    companion object {
+        fun createIfSyntheticNamesProviderIsDefined(
+            session: FirSession,
+            baseScope: FirTypeScope
+        ): FirSyntheticPropertiesScope? {
+            val syntheticNamesProvider = session.syntheticNamesProvider
+            return if (syntheticNamesProvider != null)
+                FirSyntheticPropertiesScope(session, baseScope, syntheticNamesProvider)
+            else
+                null
+        }
+    }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         val getterNames = syntheticNamesProvider.possibleGetterNamesByPropertyName(name)

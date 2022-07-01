@@ -90,7 +90,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirSyntheticNamesProvider::class, FirJsSyntheticNamesProvider)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
     }
 }

@@ -15,4 +15,4 @@ abstract class FirSyntheticNamesProvider : FirSessionComponent {
     abstract fun possiblePropertyNamesByAccessorName(name: Name): List<Name>
 }
 
-val FirSession.syntheticNamesProvider: FirSyntheticNamesProvider by FirSession.sessionComponentAccessor()
+val FirSession.syntheticNamesProvider: FirSyntheticNamesProvider? by FirSession.nullableSessionComponentAccessor()

@@ -185,9 +185,9 @@ internal class KtFirScopeProvider(
             FakeOverrideTypeCalculator.Forced
         ) ?: return null
         return KtCompositeTypeScope(
-            listOf(
+            listOfNotNull(
                 convertToKtTypeScope(firTypeScope),
-                convertToKtTypeScope(FirSyntheticPropertiesScope(firSession, firTypeScope))
+                FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(firSession, firTypeScope)?.let { convertToKtTypeScope(it) }
             ),
             token
         )
