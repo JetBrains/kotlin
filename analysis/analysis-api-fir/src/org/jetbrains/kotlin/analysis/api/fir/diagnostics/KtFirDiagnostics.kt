@@ -1157,6 +1157,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class JsBuiltinNameClash : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsBuiltinNameClash::class
+        abstract val name: String
+    }
+
     abstract class NoContextReceiver : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = NoContextReceiver::class
         abstract val contextReceiverRepresentation: KtType

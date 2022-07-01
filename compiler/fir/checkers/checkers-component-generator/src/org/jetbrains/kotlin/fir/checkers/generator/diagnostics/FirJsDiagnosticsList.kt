@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -16,5 +18,11 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val WRONG_JS_QUALIFIER by error<KtExpression>()
         val JS_MODULE_PROHIBITED_ON_VAR by error<KtAnnotationEntry>()
+    }
+
+    val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
+        val JS_BUILTIN_NAME_CLASH by error<KtElement>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<String>("name")
+        }
     }
 }

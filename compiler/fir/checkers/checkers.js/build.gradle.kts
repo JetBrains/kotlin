@@ -14,6 +14,7 @@ dependencies {
      */
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:psi"))
+    implementation(project(":js:js.ast"))
 
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCore())

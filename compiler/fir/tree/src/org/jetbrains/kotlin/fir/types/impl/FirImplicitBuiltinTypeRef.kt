@@ -120,6 +120,10 @@ class FirImplicitStringTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.String)
 
+class FirImplicitNullableStringTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.String, isNullable = true)
+
 class FirImplicitThrowableTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Throwable)
@@ -194,6 +198,7 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitNullableNothingTypeRef -> FirImplicitNullableNothingTypeRef(newSource)
         is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)
         is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
+        is FirImplicitNullableStringTypeRef -> FirImplicitNullableStringTypeRef(newSource)
         is FirImplicitThrowableTypeRef -> FirImplicitThrowableTypeRef(newSource)
         is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
             newSource,

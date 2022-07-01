@@ -1388,6 +1388,12 @@ internal class NextAmbiguityImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NextAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class JsBuiltinNameClashImpl(
+    override val name: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsBuiltinNameClash(), KtAbstractFirDiagnostic<KtElement>
+
 internal class NoContextReceiverImpl(
     override val contextReceiverRepresentation: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
