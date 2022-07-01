@@ -13,12 +13,12 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.readSourceFileWithMapping

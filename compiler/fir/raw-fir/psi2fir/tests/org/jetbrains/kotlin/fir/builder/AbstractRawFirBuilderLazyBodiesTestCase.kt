@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 

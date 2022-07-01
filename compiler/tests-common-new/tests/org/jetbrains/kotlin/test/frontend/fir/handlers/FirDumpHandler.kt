@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -28,7 +27,6 @@ class FirDumpHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    @OptIn(SymbolInternals::class)
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         if (FirDiagnosticsDirectives.FIR_DUMP !in module.directives) return
         val builderForModule = dumper.builderForModule(module)

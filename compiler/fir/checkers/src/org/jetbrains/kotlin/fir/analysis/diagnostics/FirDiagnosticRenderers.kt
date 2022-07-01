@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRen
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*

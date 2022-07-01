@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors

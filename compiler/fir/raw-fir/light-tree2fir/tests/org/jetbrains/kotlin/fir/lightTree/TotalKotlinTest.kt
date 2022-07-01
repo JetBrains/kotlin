@@ -13,9 +13,9 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping

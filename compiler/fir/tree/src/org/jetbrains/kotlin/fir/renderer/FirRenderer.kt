@@ -1,15 +1,16 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir
+package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
@@ -35,15 +36,6 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 import kotlin.reflect.KClass
-
-fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
-    append(this@renderWithType)
-    append(": ")
-    this@renderWithType.accept(FirRenderer(this, mode))
-}
-
-fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
-    buildString { this@render.accept(FirRenderer(this, mode)) }
 
 open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
     companion object {
