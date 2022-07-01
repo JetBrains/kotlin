@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("IncorrectFormatting")
+
 package org.jetbrains.kotlin.fir.dataframe.unit
 
 import com.intellij.openapi.project.Project
@@ -10,10 +12,16 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.functionSymbol
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.model.TestModule
@@ -22,10 +30,14 @@ import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.Test
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-abstract class DataFrameUnitTests(val assertion: (FirFunctionCall) -> Unit) : AbstractKotlinCompilerTest() {
+abstract class DataFrameUnitTests(val assertion: List<(FirFunctionCall) -> Unit>) : AbstractKotlinCompilerTest() {
+
+    constructor(assertion: (FirFunctionCall) -> Unit): this(listOf(assertion))
+
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
         defaultDirectives {
@@ -37,8 +49,14 @@ abstract class DataFrameUnitTests(val assertion: (FirFunctionCall) -> Unit) : Ab
                 FirExtensionRegistrar.registerExtension(project, object : FirExtensionRegistrar() {
                     override fun ExtensionRegistrarContext.configurePlugin() {
                         +{ it: FirSession -> object : FirExpressionResolutionExtension(it) {
+                                var i = 0
                                 override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-                                    assertion(functionCall)
+                                    if (assertion.size == 1) {
+                                        assertion[0](functionCall)
+                                    } else {
+                                        assertion[i](functionCall)
+                                        i++
+                                    }
                                     return emptyList()
                                 }
                             }
@@ -94,5 +112,41 @@ class FindAnnotationOnReceiverFromLibrary : DataFrameUnitTests({ functionCall ->
     @Test
     fun test() {
         runTest("plugins/kotlin-dataframe/testData/unit/receiverAnnotationFromFunctionDeclarationFromLibrary.kt")
+    }
+}
+
+class CallWithVariable : DataFrameUnitTests({ functionCall ->
+    val argument = functionCall.arguments[0]
+    assertIs<FirPropertyAccessExpression>(argument)
+}) {
+
+    @Test
+    fun test() {
+        runTest("plugins/kotlin-dataframe/testData/unit/callWithVariable.kt")
+    }
+}
+
+class CallWithReference : DataFrameUnitTests(
+    listOf({ functionCall ->
+        val argument = functionCall.arguments[0]
+        assertIs<FirCallableReferenceAccess>(argument)
+        assertTrue { argument.calleeReference.name == Name.identifier("i") }
+    }, { functionCall ->
+        val argument = functionCall.arguments[0]
+        assertIs<FirCallableReferenceAccess>(argument)
+        val callableId = (argument.calleeReference.resolvedSymbol as? FirCallableSymbol)?.callableId
+        assertNotNull(callableId)
+        assertTrue { callableId.callableName == Name.identifier("i") }
+        assertTrue { callableId.className?.shortName() == Name.identifier("Schema") }
+    }, { functionCall ->
+        val argument = functionCall.arguments[0]
+        assertIs<FirCallableReferenceAccess>(argument)
+        argument.calleeReference.resolvedSymbol?.resolvedAnnotationsWithArguments?.isNotEmpty()
+    })
+) {
+
+    @Test
+    fun test() {
+        runTest("plugins/kotlin-dataframe/testData/unit/callWithReference.kt")
     }
 }
