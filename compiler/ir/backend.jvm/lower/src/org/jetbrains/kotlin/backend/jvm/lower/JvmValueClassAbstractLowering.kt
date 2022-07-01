@@ -79,7 +79,9 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
     protected fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
 
-    protected fun IrClass.isSealedInlineClassOrItsChild(): Boolean = modality == Modality.SEALED || isChildOfSealedInlineClass()
+    protected fun IrClass.isSealedInlineClass(): Boolean = isInline && modality == Modality.SEALED
+
+    protected fun IrClass.isSealedInlineClassOrItsChild(): Boolean = isSealedInlineClass() || isChildOfSealedInlineClass()
 
     protected fun buildCommonAdditionalMethods(declaration: IrClass, irConstructor: IrConstructor) {
         buildPrimaryValueClassConstructor(declaration, irConstructor)

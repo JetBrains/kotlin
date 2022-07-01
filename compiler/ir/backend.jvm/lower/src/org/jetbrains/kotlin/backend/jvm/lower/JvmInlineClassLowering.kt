@@ -362,7 +362,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         // Don't create a wrapper for functions which are only used in an unboxed context
         // However, sealed inline classes do have overrides.
         if ((function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null) &&
-            function.parentAsClass.modality != Modality.SEALED
+            !function.parentAsClass.isSealedInlineClass()
         ) return listOf(replacement)
 
         val bridgeFunction = createBridgeDeclaration(
