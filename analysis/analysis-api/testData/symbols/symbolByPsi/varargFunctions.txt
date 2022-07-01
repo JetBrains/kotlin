@@ -4,8 +4,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: true
   name: a
   origin: SOURCE
@@ -50,8 +52,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: true
   name: b
   origin: SOURCE
@@ -96,8 +100,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: true
   name: c
   origin: SOURCE
@@ -142,8 +148,10 @@ KtValueParameterSymbol:
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false
+  isCrossinline: false
   isExtension: false
   isImplicitLambdaParameter: false
+  isNoinline: false
   isVararg: true
   name: d
   origin: SOURCE
