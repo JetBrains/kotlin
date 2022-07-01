@@ -13665,6 +13665,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("dontThrowEmptyIntersectionException.kt")
+            public void testDontThrowEmptyIntersectionException() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/dontThrowEmptyIntersectionException.kt");
+            }
+
+            @Test
             @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
             public void testEqualitySubstitutionInsideNonInvariantType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");
