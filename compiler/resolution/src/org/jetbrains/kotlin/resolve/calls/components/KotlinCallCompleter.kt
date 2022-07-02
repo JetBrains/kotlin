@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReference
 import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -304,7 +302,10 @@ class KotlinCallCompleter(
 
     private fun ResolutionCandidate.substitutedReturnType(): UnwrappedType? {
         val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return null
-        return resolvedCall.freshVariablesSubstitutor.safeSubstitute(returnType)
+        val substitutedReturnTypeWithVariables = resolvedCall.freshVariablesSubstitutor.safeSubstitute(returnType)
+        return (getResultingSubstitutor() as? NewTypeSubstitutorByConstructorMap)
+            ?.safeSubstitute(substitutedReturnTypeWithVariables)
+            ?: substitutedReturnTypeWithVariables
     }
 
     private fun ResolutionCandidate.addExpectedTypeConstraint(

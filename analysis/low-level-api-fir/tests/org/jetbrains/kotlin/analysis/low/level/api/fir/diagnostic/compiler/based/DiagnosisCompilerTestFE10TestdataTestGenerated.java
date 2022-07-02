@@ -13659,6 +13659,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("dontThrowEmptyIntersectionException.kt")
+            public void testDontThrowEmptyIntersectionException() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/dontThrowEmptyIntersectionException.kt");
+            }
+
+            @Test
             @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
             public void testEqualitySubstitutionInsideNonInvariantType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");
@@ -14313,6 +14319,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 @TestMetadata("kt47986_4.kt")
                 public void testKt47986_4() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_4.kt");
+                }
+
+                @Test
+                @TestMetadata("kt48031.kt")
+                public void testKt48031() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt48031.kt");
                 }
 
                 @Test

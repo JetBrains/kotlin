@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
@@ -488,7 +489,9 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 }
 
 private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTypeRef): ConeKotlinType {
-    return candidate.substitutor.substituteOrSelf(typeRef.type)
+    val system = candidate.system
+    val resultingSubstitutor = system.buildCurrentSubstitutor()
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(typeRef.type)) as ConeKotlinType
 }
 
 fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
