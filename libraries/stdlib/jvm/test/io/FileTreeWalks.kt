@@ -53,13 +53,13 @@ class FileTreeWalkTest {
 
     @Test fun singleFile() {
         val testFile = @Suppress("DEPRECATION") createTempFile()
-        val nonExistantFile = testFile.resolve("foo")
+        val nonExistentFile = testFile.resolve("foo")
         try {
             for (walk in listOf(File::walkTopDown, File::walkBottomUp)) {
-                assertEquals(testFile, walk(testFile).single(), "${walk.name}")
+                assertEquals(testFile, walk(testFile).single(), walk.name)
                 assertEquals(testFile, testFile.walk().onEnter { false }.single(), "${walk.name} - enter should not be called for single file")
 
-                assertTrue(walk(nonExistantFile).none(), "${walk.name} - enter should not be called for single file")
+                assertTrue(walk(nonExistentFile).none(), "${walk.name} - enter should not be called for single file")
             }
         }
         finally {
@@ -222,7 +222,7 @@ class FileTreeWalkTest {
         val basedir = createTestFiles()
         try {
             val referenceNames = emptySet<String>()
-            compareWalkResults(referenceNames, basedir, { false })
+            compareWalkResults(referenceNames, basedir) { false }
         } finally {
             basedir.deleteRecursively()
         }
@@ -291,7 +291,7 @@ class FileTreeWalkTest {
                 failed.add(dir.name)
             }
             basedir.walkTopDown().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).
-                    onFail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory) visitFile(it) }
+                    onFail(::visitDirectoryFailed).forEach { if (!it.isDirectory) visitFile(it) }
             assertTrue(stack.isEmpty())
             for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
                 assertTrue(dirs.contains(File(fileName)), fileName)
@@ -304,11 +304,11 @@ class FileTreeWalkTest {
             files.clear()
             dirs.clear()
             basedir.walkTopDown().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).maxDepth(1).
-                    forEach { it -> if (it != basedir) visitFile(it) }
+                    forEach { if (it != basedir) visitFile(it) }
             assertTrue(stack.isEmpty())
             assertEquals(setOf(File("")), dirs)
             for (file in arrayOf("1", "6", "7.txt", "8")) {
-                assertTrue(files.contains(File(file)), file.toString())
+                assertTrue(files.contains(File(file)), file)
             }
 
             //restrict access
@@ -317,7 +317,7 @@ class FileTreeWalkTest {
                     files.clear()
                     dirs.clear()
                     basedir.walkTopDown().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).
-                            onFail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory) visitFile(it) }
+                            onFail(::visitDirectoryFailed).forEach { if (!it.isDirectory) visitFile(it) }
                     assertTrue(stack.isEmpty())
                     assertEquals(setOf("1"), failed)
                     assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
@@ -373,7 +373,7 @@ class FileTreeWalkTest {
         var count = 0
         fun makeBackup(file: File) {
             count++
-            val bakFile = File(file.toString() + ".bak")
+            val bakFile = File("$file.bak")
             file.copyTo(bakFile)
         }
 
@@ -459,5 +459,4 @@ class FileTreeWalkTest {
             dir.delete()
         }
     }
-
 }
