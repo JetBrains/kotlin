@@ -855,6 +855,14 @@ object LightTreePositioningStrategies {
             if (node.tokenType == KtNodeTypes.LABEL_QUALIFIER) {
                 return super.mark(node, startOffset, endOffset - 1, tree)
             }
+            if (node.tokenType == KtNodeTypes.PACKAGE_DIRECTIVE) {
+                val referenceExpression = tree.findLastDescendant(node) {
+                    it.tokenType == KtNodeTypes.REFERENCE_EXPRESSION
+                }
+                if (referenceExpression != null) {
+                    return markElement(referenceExpression, startOffset, endOffset, tree, node)
+                }
+            }
             return DEFAULT.mark(node, startOffset, endOffset, tree)
         }
     }
@@ -1449,8 +1457,28 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
 ): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it != null && predicate(it) }
-        ?: childrenRef.get()?.firstNotNullOfOrNull { child -> child?.let { findFirstDescendant(it, predicate) } }
+    val nodes = childrenRef.get()
+    return nodes?.firstOrNull { it != null && predicate(it) }
+        ?: nodes?.firstNotNullOfOrNull { child -> child?.let { findFirstDescendant(it, predicate) } }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.findLastDescendant(
+    node: LighterASTNode,
+    predicate: (LighterASTNode) -> Boolean
+): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    val nodes = childrenRef.get()
+    return nodes?.lastOrNull { it != null && predicate(it) }
+        ?: run {
+            for (child in nodes.reversed()) {
+                val result = child?.let { findLastDescendant(it, predicate) }
+                if (result != null) {
+                    return result
+                }
+            }
+            return null
+        }
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(

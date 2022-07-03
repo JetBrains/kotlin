@@ -13,6 +13,7 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirNativeThrowsChecker,
             FirNativeSharedImmutableChecker,
-            FirNativeThreadLocalChecker
+            FirNativeThreadLocalChecker,
+            FirNativeIdentifierChecker
         )
 }

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics.native
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvalidCharsInNativeIdentifiers
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -28,6 +31,7 @@ object FirNativeErrors {
     val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error0<KtElement>()
     val INAPPLICABLE_THREAD_LOCAL by error0<KtElement>()
     val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error0<KtElement>()
+    val INVALID_CHARACTERS_NATIVE by deprecationError1<PsiElement, String>(ProhibitInvalidCharsInNativeIdentifiers, SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 
@@ -39,6 +40,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "@ThreadLocal is applicable only to property with backing field, to property with delegation or to objects"
         )
         map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "@ThreadLocal is applicable only to top level declarations")
+        map.put(INVALID_CHARACTERS_NATIVE, "Name {0}", TO_STRING)
 
         map.checkMissingMessages(FirNativeErrors)
     }

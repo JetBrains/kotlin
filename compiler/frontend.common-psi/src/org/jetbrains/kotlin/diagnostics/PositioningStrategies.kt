@@ -847,6 +847,11 @@ object PositioningStrategies {
                 }
             } else if (element is KtLabelReferenceExpression) {
                 return super.mark(element.getReferencedNameElement())
+            } else if (element is KtPackageDirective) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) {
+                    return super.mark(nameIdentifier)
+                }
             }
 
             return DEFAULT.mark(element)
