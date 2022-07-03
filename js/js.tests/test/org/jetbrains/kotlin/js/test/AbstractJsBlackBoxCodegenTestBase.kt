@@ -32,7 +32,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     targetBackend: TargetBackend,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
-    private val skipMinification: Boolean = getBoolean("kotlin.js.skipMinificationTest"),
+    protected val skipMinification: Boolean = getBoolean("kotlin.js.skipMinificationTest"),
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>

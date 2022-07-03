@@ -315,6 +315,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         ) {
             sourceModule.getModuleDescriptor(it)
         }
+        val metadataSerializer =
+            KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
         generateKLib(
             sourceModule,
             outputKlibFile.canonicalPath,
@@ -323,7 +326,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             icData = icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
-        )
+        ) { file ->
+            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+        }
     }
 
     private fun initializeWorkingDir(projectInfo: ProjectInfo, testDir: File, sourceDir: File, buildDir: File) {

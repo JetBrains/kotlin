@@ -56,21 +56,6 @@ class KlibMetadataIncrementalSerializer(
         return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors).single()
     }
 
-    fun serializedMetadata(
-        fragments: Map<String, List<ByteArray>>,
-        header: ByteArray
-    ): SerializedMetadata {
-        val fragmentNames = mutableListOf<String>()
-        val fragmentParts = mutableListOf<List<ByteArray>>()
-
-        for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
-            fragmentNames += fqName
-            fragmentParts += fragment
-        }
-
-        return SerializedMetadata(header, fragmentParts, fragmentNames)
-    }
-
     // TODO: For now, in the incremental serializer, we assume
     // there is only a single package fragment per file.
     // This is no always the case, actually.
@@ -78,4 +63,19 @@ class KlibMetadataIncrementalSerializer(
     // See monolithic serializer for details.
     override val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = null
     override val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = null
+}
+
+fun makeSerializedKlibMetadata(
+    fragments: Map<String, List<ByteArray>>,
+    header: ByteArray
+): SerializedMetadata {
+    val fragmentNames = mutableListOf<String>()
+    val fragmentParts = mutableListOf<List<ByteArray>>()
+
+    for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
+        fragmentNames += fqName
+        fragmentParts += fragment
+    }
+
+    return SerializedMetadata(header, fragmentParts, fragmentNames)
 }
