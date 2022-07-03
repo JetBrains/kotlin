@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -49,13 +50,6 @@ class JsKlibBackendFacade(
         val outputFile = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
 
         if (firstTimeCompilation) {
-            val project = testServices.compilerConfigurationProvider.getProject(module)
-            val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-            val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(inputArtifact.sourceFiles, inputArtifact.bindingContext, errorPolicy)
-
-            val metadataSerializer =
-                KlibMetadataIncrementalSerializer(configuration, project, hasErrors)
-
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration,
@@ -68,12 +62,11 @@ class JsKlibBackendFacade(
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,
-                containsErrorCode = hasErrors,
+                containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null
-            ) { file ->
-                metadataSerializer.serializeScope(file, inputArtifact.bindingContext, inputArtifact.irModuleFragment.descriptor)
-            }
+                jsOutputName = null,
+                inputArtifact.serializeSingleFile
+            )
         }
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()

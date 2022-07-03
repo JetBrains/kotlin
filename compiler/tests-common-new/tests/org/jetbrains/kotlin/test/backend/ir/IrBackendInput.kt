@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 
@@ -28,9 +27,10 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     data class JsIrBackendInput(
         override val irModuleFragment: IrModuleFragment,
         val sourceFiles: List<KtFile>,
-        val bindingContext: BindingContext,
         val icData: List<KotlinFileSerializedData>,
-        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
+        val hasErrors: Boolean,
+        val serializeSingleFile: (KtFile) -> ProtoBuf.PackageFragment
     ) : IrBackendInput()
 
     data class JvmIrBackendInput(
