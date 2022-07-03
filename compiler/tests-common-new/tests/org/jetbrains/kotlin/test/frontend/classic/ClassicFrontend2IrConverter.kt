@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.test.frontend.classic
 
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
-import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
+import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeScope
 import org.jetbrains.kotlin.ir.backend.js.sortDependencies
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -103,7 +104,7 @@ class ClassicFrontend2IrConverter(
 
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
-            sourceFiles,
+            sourceFiles.map(::KtPsiSourceFile),
             icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             hasErrors

@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
@@ -493,7 +494,7 @@ class GenerateIrRuntime {
             moduleName,
             configuration,
             IrMessageLogger.None,
-            files,
+            files.map(::KtPsiSourceFile),
             tmpKlibDir,
             emptyList(),
             moduleFragment,

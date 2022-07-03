@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -210,9 +214,9 @@ fun generateKLib(
     icData: MutableList<KotlinFileSerializedData>,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
-    serializeSingleFile: (KtFile) -> ProtoBuf.PackageFragment
+    serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
-    val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files
+    val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies.map { it.library }
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
@@ -684,7 +688,7 @@ fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
     messageLogger: IrMessageLogger,
-    files: List<KtFile>,
+    files: List<KtSourceFile>,
     klibPath: String,
     dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
@@ -695,7 +699,7 @@ fun serializeModuleIntoKlib(
     containsErrorCode: Boolean = false,
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
-    serializeSingleFile: (KtFile) -> ProtoBuf.PackageFragment
+    serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     assert(files.size == moduleFragment.files.size)
 
@@ -730,18 +734,22 @@ fun serializeModuleIntoKlib(
 
     val additionalFiles = mutableListOf<KotlinFileSerializedData>()
 
-    for ((ktFile, binaryFile) in files.zip(serializedIr.files)) {
-        assert(ktFile.virtualFilePath == binaryFile.path) {
+    for ((ktSourceFile, binaryFile) in files.zip(serializedIr.files)) {
+        assert(ktSourceFile.path == binaryFile.path) {
             """The Kt and Ir files are put in different order
-                Kt: ${ktFile.virtualFilePath}
+                Kt: ${ktSourceFile.path}
                 Ir: ${binaryFile.path}
             """.trimMargin()
         }
-        val packageFragment = serializeSingleFile(ktFile)
+        val packageFragment = serializeSingleFile(ktSourceFile)
         val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
 
         additionalFiles += compiledKotlinFile
-        processCompiledFileData(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), compiledKotlinFile)
+        val ioFile = ktSourceFile.toIoFileOrNull()
+        assert(ioFile != null) {
+            "No file fouud for source ${ktSourceFile.path}"
+        }
+        processCompiledFileData(ioFile!!, compiledKotlinFile)
     }
 
     val compiledKotlinFiles = (cleanFiles + additionalFiles)
@@ -808,6 +816,16 @@ fun KlibMetadataIncrementalSerializer.serializeScope(
     return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
 }
 
+fun KlibMetadataIncrementalSerializer.serializeScope(
+    ktSourceFile: KtSourceFile,
+    bindingContext: BindingContext,
+    moduleDescriptor: ModuleDescriptor
+): ProtoBuf.PackageFragment {
+    val ktFile = (ktSourceFile as KtPsiSourceFile).psiFile as KtFile
+    val memberScope = ktFile.declarations.map { getDescriptorForElement(bindingContext, it) }
+    return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
+}
+
 private fun compareMetadataAndGoToNextICRoundIfNeeded(
     analysisResult: AnalysisResult,
     config: CompilerConfiguration,
@@ -844,4 +862,11 @@ private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment():
             moduleFragment to it
         }
     }.toMap()
+}
+
+private fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
+    is KtIoFileSourceFile -> file
+    is KtVirtualFileSourceFile -> VfsUtilCore.virtualToIoFile(virtualFile)
+    is KtPsiSourceFile -> VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
+    else -> path?.let(::File)
 }
