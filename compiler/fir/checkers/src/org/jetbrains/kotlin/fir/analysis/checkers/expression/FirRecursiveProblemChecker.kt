@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.*
 
 object FirRecursiveProblemChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression !is FirExpression) return
+        if (expression !is FirExpression || expression.source?.kind is KtFakeSourceElementKind) return
 
         fun checkConeType(coneType: ConeKotlinType?) {
             if (coneType is ConeErrorType && (coneType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
