@@ -55,7 +55,7 @@ class FileTreeWalkTest {
         val testFile = @Suppress("DEPRECATION") createTempFile()
         val nonExistentFile = testFile.resolve("foo")
         try {
-            for (walk in listOf(File::walkTopDown, File::walkBottomUp)) {
+            for (walk in listOf(File::walkTopDown, File::walkBottomUp, File::walkBreadthFirst)) {
                 assertEquals(testFile, walk(testFile).single(), walk.name)
                 assertEquals(testFile, testFile.walk().onEnter { false }.single(), "${walk.name} - enter should not be called for single file")
 
@@ -124,6 +124,15 @@ class FileTreeWalkTest {
             }
             assertEquals(referenceNames, namesTopDownEnter)
             assertEquals(referenceNames, namesTopDownLeave)
+
+            namesTopDownEnter.clear()
+            namesTopDownLeave.clear()
+            namesTopDown.clear()
+            for (file in basedir.walkBreadthFirst().onEnter(::enter).onLeave(::leave)) {
+                visit(file)
+            }
+            assertEquals(referenceNames, namesTopDownEnter)
+            assertEquals(referenceNames, namesTopDownLeave)
         } finally {
             basedir.deleteRecursively()
         }
@@ -134,6 +143,19 @@ class FileTreeWalkTest {
         try {
             val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
             assertEquals(referenceNames, basedir.walkTopDown().filter { it.isDirectory }.map {
+                it.relativeToOrSelf(basedir).invariantSeparatorsPath
+            }.toHashSet())
+        } finally {
+            basedir.deleteRecursively()
+        }
+
+    }
+
+    @Test fun withFilterAndMapBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
+            assertEquals(referenceNames, basedir.walkBreadthFirst().filter { it.isDirectory }.map {
                 it.relativeToOrSelf(basedir).invariantSeparatorsPath
             }.toHashSet())
         } finally {
@@ -188,6 +210,29 @@ class FileTreeWalkTest {
         }
     }
 
+    @Test fun withDeleteTxtBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
+            val namesTopDown = HashSet<String>()
+            fun enter(file: File) {
+                assertTrue(file.isDirectory)
+                for (child in file.listFiles()) {
+                    if (child.name.endsWith("txt"))
+                        child.delete()
+                }
+            }
+            for (file in basedir.walkBreadthFirst().onEnter { enter(it); true }) {
+                val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
+                assertFalse(namesTopDown.contains(name), "$name is visited twice")
+                namesTopDown.add(name)
+            }
+            assertEquals(referenceNames, namesTopDown)
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
     private fun compareWalkResults(expected: Set<String>, basedir: File, filter: (File) -> Boolean) {
         val namesTopDown = HashSet<String>()
         for (file in basedir.walkTopDown().onEnter { filter(it) }) {
@@ -203,6 +248,13 @@ class FileTreeWalkTest {
             namesBottomUp.add(name)
         }
         assertEquals(expected, namesBottomUp, "Bottom-up walk results differ")
+        val namesBreadthFirst = HashSet<String>()
+        for (file in basedir.walkBreadthFirst().onEnter { filter(it) }) {
+            val name = file.toRelativeString(basedir)
+            assertFalse(namesBreadthFirst.contains(name), "$name is visited twice")
+            namesBreadthFirst.add(name)
+        }
+        assertEquals(expected, namesBreadthFirst, "Breadth-first walk results differ")
     }
 
     @Test fun withDirectoryFilter() {
@@ -233,10 +285,13 @@ class FileTreeWalkTest {
         try {
             var i = 0
             basedir.walkTopDown().forEach { _ -> i++ }
-            assertEquals(10, i);
+            assertEquals(10, i)
             i = 0
             basedir.walkBottomUp().forEach { _ -> i++ }
-            assertEquals(10, i);
+            assertEquals(10, i)
+            i = 0
+            basedir.walkBreadthFirst().forEach { _ -> i++ }
+            assertEquals(10, i)
         } finally {
             basedir.deleteRecursively()
         }
@@ -247,6 +302,7 @@ class FileTreeWalkTest {
         try {
             assertEquals(10, basedir.walkTopDown().count());
             assertEquals(10, basedir.walkBottomUp().count());
+            assertEquals(10, basedir.walkBreadthFirst().count());
         } finally {
             basedir.deleteRecursively()
         }
@@ -255,8 +311,11 @@ class FileTreeWalkTest {
     @Test fun withReduce() {
         val basedir = createTestFiles()
         try {
-            val res = basedir.walkTopDown().reduce { a, b -> if (a.canonicalPath > b.canonicalPath) a else b }
+            var res = basedir.walkTopDown().reduce { a, b -> if (a.canonicalPath > b.canonicalPath) a else b }
             assertTrue(res.endsWith("9.txt"), "Expected end with 9.txt actual: ${res.name}")
+
+            res = basedir.walkBreadthFirst().reduce { a, b -> if (a.canonicalPath > b.canonicalPath) a else b }
+            assertTrue(res.endsWith("9.txt"), "Expected end for breadth-first with 9.txt actual: ${res.name}")
         } finally {
             basedir.deleteRecursively()
         }
@@ -318,6 +377,82 @@ class FileTreeWalkTest {
                     dirs.clear()
                     basedir.walkTopDown().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).
                             onFail(::visitDirectoryFailed).forEach { if (!it.isDirectory) visitFile(it) }
+                    assertTrue(stack.isEmpty())
+                    assertEquals(setOf("1"), failed)
+                    assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
+                    assertEquals(listOf("7.txt", "8/9.txt").map { File(it) }.toSet(), files)
+                } finally {
+                    File(basedir, "1").setReadable(true)
+                }
+            } else {
+                System.err.println("cannot restrict access")
+            }
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
+    @Test fun withDepthBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val files = HashSet<File>()
+            val dirs = HashSet<File>()
+            fun beforeVisitDirectory(dir: File): Boolean {
+                dirs.add(dir.relativeToOrSelf(basedir))
+                return true
+            }
+
+            fun visitFile(file: File) {
+                files.add(file.relativeToOrSelf(basedir))
+            }
+
+            basedir.walkBreadthFirst().onEnter(::beforeVisitDirectory).forEach { if (!it.isDirectory) visitFile(it) }
+            for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
+                assertTrue(dirs.contains(File(fileName)), fileName)
+            }
+            for (fileName in arrayOf("1/3/4.txt", "1/3/4.txt", "7.txt", "8/9.txt")) {
+                assertTrue(files.contains(File(fileName)), fileName)
+            }
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
+    @Test fun withRestrictedAccessBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val files = HashSet<File>()
+            val dirs = HashSet<File>()
+            val failed = HashSet<String>()
+            val stack = ArrayList<File>()
+            fun beforeVisitDirectory(dir: File): Boolean {
+                stack.add(dir)
+                dirs.add(dir.relativeToOrSelf(basedir))
+                return true
+            }
+
+            fun afterVisitDirectory(dir: File) {
+                assertEquals(stack.last(), dir)
+                stack.removeAt(stack.lastIndex)
+            }
+
+            fun visitFile(file: File) {
+                assertTrue(stack.last().listFiles().contains(file), file.toString())
+                files.add(file.relativeToOrSelf(basedir))
+            }
+
+            fun visitDirectoryFailed(dir: File, @Suppress("UNUSED_PARAMETER") e: IOException) {
+                assertEquals(stack.last(), dir)
+                failed.add(dir.name)
+            }
+
+            //restrict access
+            if (File(basedir, "1").setReadable(false)) {
+                try {
+                    files.clear()
+                    dirs.clear()
+                    basedir.walkBreadthFirst().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).
+                    onFail(::visitDirectoryFailed).forEach { if (!it.isDirectory) visitFile(it) }
                     assertTrue(stack.isEmpty())
                     assertEquals(setOf("1"), failed)
                     assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
@@ -408,7 +543,23 @@ class FileTreeWalkTest {
         try {
             File(basedir, "8/4.txt").createNewFile()
             var count = 0
-            basedir.walkTopDown().takeWhile { _ -> count == 0 }.forEach {
+            basedir.walkTopDown().takeWhile { count == 0 }.forEach {
+                if (it.name == "4.txt") {
+                    count++
+                }
+            }
+            assertEquals(1, count)
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
+    @Test fun findBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            File(basedir, "8/4.txt").createNewFile()
+            var count = 0
+            basedir.walkBreadthFirst().takeWhile { count == 0 }.forEach {
                 if (it.name == "4.txt") {
                     count++
                 }
@@ -437,6 +588,24 @@ class FileTreeWalkTest {
         }
     }
 
+    @Test fun findGitsBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            File(basedir, "1/3/.git").mkdir()
+            File(basedir, "1/2/.git").mkdir()
+            File(basedir, "6/.git").mkdir()
+            val found = HashSet<File>()
+            for (file in basedir.walkBreadthFirst()) {
+                if (file.name == ".git") {
+                    found.add(file.parentFile)
+                }
+            }
+            assertEquals(3, found.size)
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
     @Suppress("DEPRECATION")
     @Test fun streamFileTree() {
         val dir = createTempDir()
@@ -453,6 +622,29 @@ class FileTreeWalkTest {
         dir.mkdir()
         try {
             val it = dir.walkTopDown().iterator()
+            it.next()
+            assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
+        } finally {
+            dir.delete()
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    @Test fun streamFileTreeBreadthFirst() {
+        val dir = createTempDir()
+        try {
+            val subDir1 = createTempDir(prefix = "d1_", directory = dir)
+            val subDir2 = createTempDir(prefix = "d2_", directory = dir)
+            createTempDir(prefix = "d1_", directory = subDir1)
+            createTempFile(prefix = "f1_", directory = subDir1)
+            createTempDir(prefix = "d1_", directory = subDir2)
+            assertEquals(6, dir.walkBreadthFirst().count())
+        } finally {
+            dir.deleteRecursively()
+        }
+        dir.mkdir()
+        try {
+            val it = dir.walkBreadthFirst().iterator()
             it.next()
             assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
         } finally {

@@ -21,8 +21,9 @@ public enum class FileWalkDirection {
     /** Depth-first search, directory is visited BEFORE its files */
     TOP_DOWN,
     /** Depth-first search, directory is visited AFTER its files */
-    BOTTOM_UP
-    // Do we want also breadth-first search?
+    BOTTOM_UP,
+    /**Breadth-first search, directory is visited BEFORE its files */
+    BREADTH_FIRST
 }
 
 /**
@@ -89,6 +90,7 @@ public class FileTreeWalk private constructor(
             return when (direction) {
                 FileWalkDirection.TOP_DOWN -> TopDownDirectoryState(root)
                 FileWalkDirection.BOTTOM_UP -> BottomUpDirectoryState(root)
+                FileWalkDirection.BREADTH_FIRST -> BreadthFirstDirectoryState(root)
             }
         }
 
@@ -193,6 +195,12 @@ public class FileTreeWalk private constructor(
             }
         }
 
+        private inner class BreadthFirstDirectoryState(rootDir: File) : DirectoryState(rootDir) {
+            override fun step(): File? {
+                TODO()
+            }
+        }
+
         private inner class SingleFileState(rootFile: File) : WalkState(rootFile) {
             private var visited: Boolean = false
 
@@ -270,3 +278,10 @@ public fun File.walkTopDown(): FileTreeWalk = walk(FileWalkDirection.TOP_DOWN)
  * Depth-first search is used and directories are visited after all their files.
  */
 public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
+
+/**
+ * Gets a sequence for visiting this directory and all its content, visiting all the files at the same depth before continuing
+ * with the ones at the next depth level.
+ * Breadth-first search is used and directories are visited before all their files.
+ */
+public fun File.walkBreadthFirst(): FileTreeWalk = walk(FileWalkDirection.BREADTH_FIRST)
