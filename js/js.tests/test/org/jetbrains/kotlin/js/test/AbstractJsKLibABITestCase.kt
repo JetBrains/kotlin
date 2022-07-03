@@ -64,6 +64,10 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         ) {
             sourceModule.getModuleDescriptor(it)
         }
+
+        val metadataSerializer =
+            KlibMetadataIncrementalSerializer(config, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
         generateKLib(
             sourceModule,
             klibFile.path,
@@ -72,7 +76,9 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             icData = icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
-        )
+        ) { file ->
+            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+        }
     }
 
     override fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {

@@ -73,6 +73,10 @@ class FilePathsInKlibTest : CodegenTestCase() {
         ) {
             module.getModuleDescriptor(it)
         }
+
+        val metadataSerializer =
+            KlibMetadataIncrementalSerializer(module.compilerConfiguration, module.project, module.jsFrontEndResult.hasErrors)
+
         generateKLib(
             module,
             outputKlibPath = destination.path,
@@ -81,7 +85,9 @@ class FilePathsInKlibTest : CodegenTestCase() {
             icData = icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
-        )
+        ) { file ->
+            metadataSerializer.serializeScope(file, module.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+        }
     }
 
     private fun setupEnvironment(): CompilerConfiguration {

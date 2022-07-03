@@ -488,12 +488,11 @@ class GenerateIrRuntime {
         perFile: Boolean = false
     ): String {
         val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
+        val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, false)
         serializeModuleIntoKlib(
             moduleName,
-            project,
             configuration,
             IrMessageLogger.None,
-            bindingContext,
             files,
             tmpKlibDir,
             emptyList(),
@@ -504,7 +503,9 @@ class GenerateIrRuntime {
             perFile,
             abiVersion = KotlinAbiVersion.CURRENT,
             jsOutputName = null
-        )
+        ) { file ->
+            metadataSerializer.serializeScope(file, bindingContext, moduleFragment.descriptor)
+        }
 
         return tmpKlibDir
     }

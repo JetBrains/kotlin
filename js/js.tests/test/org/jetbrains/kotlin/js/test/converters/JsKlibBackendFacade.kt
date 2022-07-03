@@ -53,12 +53,13 @@ class JsKlibBackendFacade(
             val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
             val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(inputArtifact.sourceFiles, inputArtifact.bindingContext, errorPolicy)
 
+            val metadataSerializer =
+                KlibMetadataIncrementalSerializer(configuration, project, hasErrors)
+
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                project,
                 configuration,
                 configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
-                inputArtifact.bindingContext,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
@@ -70,7 +71,9 @@ class JsKlibBackendFacade(
                 containsErrorCode = hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
-            )
+            ) { file ->
+                metadataSerializer.serializeScope(file, inputArtifact.bindingContext, inputArtifact.irModuleFragment.descriptor)
+            }
         }
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()
