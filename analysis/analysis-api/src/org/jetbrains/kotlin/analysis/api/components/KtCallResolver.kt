@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
@@ -52,5 +53,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 }
 
 private inline fun <reified PSI : KtElement> unresolvedKtCallError(element: PSI): Nothing {
-    error("${PSI::class.simpleName} should always resolve to a KtCallInfo\nelement: ${element::class.simpleName}\ntext:\n${element.getElementTextInContext()}")
+    throw KotlinExceptionWithAttachments("${PSI::class.simpleName} should always resolve to a KtCallInfo")
+        .withAttachment(element::class.simpleName ?: "element", element.getElementTextInContext())
 }
