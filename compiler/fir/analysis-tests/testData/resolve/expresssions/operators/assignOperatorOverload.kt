@@ -1,75 +1,62 @@
-var result: String = "Fail"
+// !LANGUAGE: +AssignOperatorOverloadForJvm
 
-operator fun Any.assign(other: String) {
-    result = other
+import kotlin.reflect.KProperty
+
+class A
+class B
+operator fun B.assign(a: String) {
 }
 
-operator fun String.assign(x: Int) {}
-
-operator fun String.set(i: Int, v: Int) {}
-operator fun String.set(i: Int, v: Long) {}
-
-operator fun Any.plusAssign(x: String) {}
-
-operator fun String.plusAssign(x: String) {}
-//operator fun Foo.plusAssign(x: Foo) {}
-//operator fun Foo.plusAssign(x: String) {}
-
-data class Foo(val x: String)
-
-fun test_local_variable(): String {
-    val x = 10
-    x = "OK"
-    return result
+class C {
+    fun assign(a: A) {
+    }
 }
 
-fun test_local_variable_plus_assign(): String {
-    val x = 10
-    x += "OK"
-    return result
+operator fun C.assign(a: String) {
 }
 
-fun test_object_property(): String {
-    val x = Foo("Hello")
-    x.x = "OK"
-    return result
+operator fun C.assign(a: Int) {
 }
 
-fun test_object_property_with_different_type(): String {
-    val x = Foo("Hello")
-    x.x = 5
-    return result
+operator fun Int.assign(a: String) {
 }
 
-fun test_assignment_type_mismatch(): String {
-    val x = Foo("Hello")
-    x.x = <!ASSIGNMENT_TYPE_MISMATCH!>5L<!>
-    return result
+data class NullCheck(val x: NullCheckContainer)
+data class NullCheckContainer(var value: String)
+operator fun NullCheckContainer.assign(value: String) {
+}
+operator fun NullCheckContainer.plusAssign(value: String) {
 }
 
-fun test_set_priority(): String {
-    val x = Foo("Hello")
-    x.x[5] = 5
-    x.x[5] = 5L
-    return result
+/**
+ * Test that if return type is not Unit then method has an error
+ */
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.assign(a: String): String {
+    return ""
 }
 
-fun test_object_property_plus_assign(): String {
-    val x = Foo("Hello")
-    x.x += "OK"
-    return result
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun String.plusAssign(a: String): String {
+    return ""
 }
 
-fun test_null_safe_operator_with_assignment(): String {
-    // TODO check if this is ok
-    val x: Foo? = null
-    x?.x = "OK"
-    return result
-}
+fun test() {
+    // Test a val without any assign operator still works
+    val a = A()
+    <!VAL_REASSIGNMENT!>a<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"5"<!>
 
+    // Test assign operator diagnostics
+    val b = B()
+    <!VAL_REASSIGNMENT!>b<!> = <!ASSIGNMENT_TYPE_MISMATCH!>A()<!>
+    val c = C()
+    <!VAL_REASSIGNMENT!>c<!> = <!ASSIGNMENT_TYPE_MISMATCH!>A()<!>
+    <!VAL_REASSIGNMENT!>c<!> = <!ASSIGNMENT_TYPE_MISMATCH!>1L<!>
 
-fun test_plus_assign_assignment_type_mismatch(): String {
-    val x = Foo("Hello")
-    x.<!VAL_REASSIGNMENT!>x<!> += 5L
-    return result
+    // Test "operator fun assign" return type diagnostics
+    val x = ""
+    x <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT!>=<!> ""
+
+    // Test unsafe call diagnostics
+    val nullCheck: NullCheck? = null
+    nullCheck<!UNSAFE_CALL!>.<!>x = <!ASSIGNMENT_TYPE_MISMATCH!>"Fail"<!>
+    nullCheck?.x = "Fail"
 }

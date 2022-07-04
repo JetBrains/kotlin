@@ -1,3 +1,4 @@
+import kotlin.reflect.KProperty
 
 // TARGET_BACKEND: JVM_IR
 // !LANGUAGE:+AssignOperatorOverloadForJvm
@@ -33,6 +34,18 @@ operator fun String.assign(value: Int) {
     result = "OK.operator.String.assign"
 }
 
+class ByDelegate {
+    val v: Int by Delegate()
+}
+
+class Delegate {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+        return 5
+    }
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+    }
+}
+
 class SelectAssignTest {
     fun String.assign(value: Int) {
         result = "Fail.String.assign"
@@ -61,11 +74,13 @@ operator fun SelectAssignTest2.assign(i: Int) {
 
 fun box(): String {
     // Test simple assign for local variable
+    result = "Fail"
     val x = 10
     x = "OK"
     if (result != "OK") return "Fail: $result"
 
     // Test same type assign overload
+    result = "Fail"
     x = 5
     if (result != "OK.Int.assign(Int)") return "Fail: $result"
 
@@ -76,11 +91,13 @@ fun box(): String {
     if (result != "OK.var" || y != 5) return "Fail: $result, y = $y"
 
     // Test simple assign for property
+    result = "Fail"
     val foo = Foo(Container("Fail"))
     foo.x = 42
     if (foo.x.value != "OK") return "Fail: ${foo.x.value}"
 
     // Test set() has priority
+    foo.x.value = "Fail"
     foo.x[1] = 2
     if (foo.x.value != "OK.Container.set1") return "Fail: ${foo.x.value}"
     foo.x[1] = 2L
@@ -106,6 +123,12 @@ fun box(): String {
     result = "Fail"
     val nullCheckContainer: NullCheckContainer? = null
     nullCheckContainer = "OK"
+    if (result != "OK") return "Fail: $result"
+
+    // Test that it works with delegate
+    result = "Fail"
+    val delegate: ByDelegate = ByDelegate()
+    delegate.v = "OK"
     if (result != "OK") return "Fail: $result"
 
     return "OK"

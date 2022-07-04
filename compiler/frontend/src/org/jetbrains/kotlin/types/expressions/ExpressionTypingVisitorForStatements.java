@@ -500,8 +500,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         TemporaryTraceAndCache temporaryForAssignmentOperation = null;
         VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
         OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
-        boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
-        if (descriptor != null && !descriptor.isVar() && !isDelegated) {
+        if (descriptor != null && !descriptor.isVar()) {
             ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
             temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
             ExpressionTypingContext temporaryContext = context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope);

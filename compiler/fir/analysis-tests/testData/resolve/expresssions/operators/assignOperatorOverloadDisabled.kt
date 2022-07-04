@@ -1,5 +1,3 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-
 class A
 
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun A.assign(a: String) {
@@ -13,9 +11,9 @@ class A
  */
 fun test() {
     val a = A()
-    <!VAL_REASSIGNMENT!>a<!> = <!TYPE_MISMATCH!>"hello"<!>
-    a = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+    <!VAL_REASSIGNMENT!>a<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"hello"<!>
+    <!VAL_REASSIGNMENT!>a<!> = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 
     val integer = 5
-    <!VAL_REASSIGNMENT!>integer<!> = <!TYPE_MISMATCH!>"Five"<!>
+    <!VAL_REASSIGNMENT!>integer<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"Five"<!>
 }

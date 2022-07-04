@@ -264,7 +264,6 @@ enum class LanguageFeature(
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     DataObjects(KOTLIN_1_8), // KT-4107
-    AssignOperatorOverloadForJvm(KOTLIN_1_8),
 
     // 1.9
 
@@ -282,6 +281,7 @@ enum class LanguageFeature(
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, kind = BUG_FIX), // KT-52502
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_1_9, kind = BUG_FIX), // KT-47986
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
+    AssignOperatorOverloadForJvm(KOTLIN_1_9),
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
