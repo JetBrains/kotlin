@@ -6,10 +6,10 @@ interface IQ1
 interface IQ2
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-sealed value class IC1: IQ1
+sealed value class IC1: IQ1, IQ2
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class X(val x: Any): IC1(), IQ2
+value class X(val x: Any): IC1()
 
 interface IFoo1 {
     fun foo(): IQ1

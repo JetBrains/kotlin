@@ -46,7 +46,7 @@ fun box(): String {
         throw AssertionError("foo1 !is X: $foo1")
     }
 
-    val t2: IFoo2<IQ> = Test()
+    val t2: IFoo2<IC> = Test()
     val foo2 = t2.foo()
     if (foo2 !is X) {
         throw AssertionError("foo2 !is X: $foo2")

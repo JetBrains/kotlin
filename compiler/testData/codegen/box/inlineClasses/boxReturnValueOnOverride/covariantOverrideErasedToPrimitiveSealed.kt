@@ -6,7 +6,7 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 sealed value class IC
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class X(val x: Char)
+value class X(val x: Char): IC()
 
 interface IFoo {
     fun foo(): Any
@@ -25,5 +25,5 @@ fun box(): String {
         throw AssertionError("X expected: $tFoo")
     }
 
-    return (t.foo() as X).x.toString() + t.bar().x.toString()
+    return (t.foo() as X).x.toString() + (t.bar() as X).x.toString()
 }

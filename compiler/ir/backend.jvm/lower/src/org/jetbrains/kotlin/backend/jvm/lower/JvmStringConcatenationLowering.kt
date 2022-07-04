@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.findTopSealedInlineSuperClass
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,7 +24,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val jvmStringConcatenationLowering = makeIrFilePhase(
@@ -41,8 +44,12 @@ internal val jvmStringConcatenationLowering = makeIrFilePhase(
 )
 
 private val IrClass.toStringFunction: IrSimpleFunction
-    get() = functions.single {
-        with(FlattenStringConcatenationLowering) { it.isToString }
+    get() {
+        val irClass = if (isChildOfSealedInlineClass()) defaultType.findTopSealedInlineSuperClass() else this
+
+        return irClass.functions.singleOrNull {
+            with(FlattenStringConcatenationLowering) { it.isToString }
+        } ?: error("Could not find 'toString' function in ${this.render()}")
     }
 
 private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {

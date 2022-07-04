@@ -23,5 +23,5 @@ class Test : IFoo1<String>, IFoo2 {
 fun box(): String {
     val t1: IFoo1<String> = Test()
     val t2: IFoo2 = Test()
-    return t1.foo("O").x + t2.foo("K").x
+    return (t1.foo("O") as X).x + (t2.foo("K") as X).x
 }

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +, +SealedInlineClasses
+// LANGUAGE: +SealedInlineClasses
 
 interface IQ {
     fun ok(): String
@@ -22,7 +22,7 @@ interface IFoo2 {
     fun foo(): IQ
 }
 
-object OK : IC() {
+value object OK : IC() {
     override fun ok(): String = "OK"
 }
 

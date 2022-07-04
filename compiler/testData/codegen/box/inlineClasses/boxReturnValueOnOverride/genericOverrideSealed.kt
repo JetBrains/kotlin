@@ -19,11 +19,11 @@ class TestX : IFoo<IC> {
 }
 
 fun box(): String {
-    val t: IFoo<X> = TestX()
+    val t: IFoo<IC> = TestX()
     val tFoo: Any = t.foo()
     if (tFoo !is X) {
         throw AssertionError("X expected: $tFoo")
     }
 
-    return (t.foo() as X).x.toString() + t.bar().x.toString()
+    return (t.foo() as X).x.toString() + (t.bar() as X).x.toString()
 }

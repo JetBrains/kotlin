@@ -24,7 +24,7 @@ interface IFoo2 {
     fun foo(): Any
 }
 
-object OK : IC() {
+value object OK : IC() {
     override fun ok(): String = "OK"
 }
 
