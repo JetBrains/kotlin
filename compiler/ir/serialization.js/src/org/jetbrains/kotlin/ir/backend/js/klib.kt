@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
@@ -211,7 +212,7 @@ fun generateKLib(
     nopack: Boolean,
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
     jsOutputName: String?,
-    icData: MutableList<KotlinFileSerializedData>,
+    icData: List<KotlinFileSerializedData>,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
@@ -864,9 +865,48 @@ private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment():
     }.toMap()
 }
 
-private fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
+fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
     is KtIoFileSourceFile -> file
     is KtVirtualFileSourceFile -> VfsUtilCore.virtualToIoFile(virtualFile)
     is KtPsiSourceFile -> VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
     else -> path?.let(::File)
 }
+
+fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): List<KotlinFileSerializedData> {
+    val nonCompiledSources = newSources.associateBy { it.toIoFileOrNull()!! }
+    val compiledIrFiles = serializedIrFiles
+    val compiledMetaFiles = compiledPackageParts
+
+    assert(compiledIrFiles.size == compiledMetaFiles.size)
+
+    val storage = mutableListOf<KotlinFileSerializedData>()
+
+    for (f in compiledIrFiles.keys) {
+        if (f in nonCompiledSources) continue
+
+        val irData = compiledIrFiles[f] ?: error("No Ir Data found for file $f")
+        val metaFile = compiledMetaFiles[f] ?: error("No Meta Data found for file $f")
+        val irFile = with(irData) {
+            SerializedIrFile(
+                fileData,
+                String(fqn),
+                f.path.replace('\\', '/'),
+                types,
+                signatures,
+                strings,
+                bodies,
+                declarations,
+                debugInfo
+            )
+        }
+        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
+    }
+    return storage
+}
+
+@JvmName("getSerializedDataByPsiFiles")
+fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
+    getSerializedData(newSources.map(::KtPsiSourceFile))
+
+val CompilerConfiguration.incrementalDataProvider : IncrementalDataProvider?
+    get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)

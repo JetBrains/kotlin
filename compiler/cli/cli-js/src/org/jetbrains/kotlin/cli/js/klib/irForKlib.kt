@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.cli.js.klib
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -49,53 +47,15 @@ fun generateIrForKlibSerialization(
     configuration: CompilerConfiguration,
     analysisResult: AnalysisResult,
     sortedDependencies: Collection<KotlinLibrary>,
-    icData: MutableList<KotlinFileSerializedData>,
+    icData: List<KotlinFileSerializedData>,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     irFactory: IrFactory,
     verifySignatures: Boolean = true,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleFragment {
-    val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-
-    val serializedIrFiles = mutableListOf<SerializedIrFile>()
-
-    if (incrementalDataProvider != null) {
-        val nonCompiledSources = files.associateBy { VfsUtilCore.virtualToIoFile(it.virtualFile) }
-        val compiledIrFiles = incrementalDataProvider.serializedIrFiles
-        val compiledMetaFiles = incrementalDataProvider.compiledPackageParts
-
-        assert(compiledIrFiles.size == compiledMetaFiles.size)
-
-        val storage = mutableListOf<KotlinFileSerializedData>()
-
-        for (f in compiledIrFiles.keys) {
-            if (f in nonCompiledSources) continue
-
-            val irData = compiledIrFiles[f] ?: error("No Ir Data found for file $f")
-            val metaFile = compiledMetaFiles[f] ?: error("No Meta Data found for file $f")
-            val irFile = with(irData) {
-                SerializedIrFile(
-                    fileData,
-                    String(fqn),
-                    f.path.replace('\\', '/'),
-                    types,
-                    signatures,
-                    strings,
-                    bodies,
-                    declarations,
-                    debugInfo
-                )
-            }
-            storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
-        }
-
-        icData.addAll(storage)
-        serializedIrFiles.addAll(storage.map { it.irData })
-    }
-
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols))
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
@@ -110,7 +70,7 @@ fun generateIrForKlibSerialization(
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
         feContext,
-        ICData(serializedIrFiles, errorPolicy.allowErrors)
+        ICData(icData.map { it.irData }, errorPolicy.allowErrors)
     )
 
     sortedDependencies.map { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }

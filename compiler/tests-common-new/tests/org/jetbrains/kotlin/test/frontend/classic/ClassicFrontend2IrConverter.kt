@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
-import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
-import org.jetbrains.kotlin.ir.backend.js.serializeScope
-import org.jetbrains.kotlin.ir.backend.js.sortDependencies
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -81,9 +78,9 @@ class ClassicFrontend2IrConverter(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val verifySignatures = JsEnvironmentConfigurationDirectives.SKIP_MANGLE_VERIFICATION !in module.directives
 
-        val icData = mutableListOf<KotlinFileSerializedData>()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val sourceFiles = psiFiles.values.toList()
+        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val moduleFragment = generateIrForKlibSerialization(
             project,
             sourceFiles,
