@@ -12,7 +12,7 @@ abstract class FirPrinter internal constructor(builder: StringBuilder) {
 
     private var lineBeginning = true
 
-    protected fun print(vararg objects: Any) {
+    fun print(vararg objects: Any) {
         if (lineBeginning) {
             lineBeginning = false
             printer.print(*objects)
@@ -21,7 +21,7 @@ abstract class FirPrinter internal constructor(builder: StringBuilder) {
         }
     }
 
-    protected fun println(vararg objects: Any) {
+    fun println(vararg objects: Any) {
         print(*objects)
         printer.printlnWithNoIndent()
         lineBeginning = true
@@ -35,8 +35,15 @@ abstract class FirPrinter internal constructor(builder: StringBuilder) {
         printer.popIndent()
     }
 
-    protected fun newLine() {
+    fun newLine() {
         println()
     }
 
+    fun renderInBraces(leftBrace: String = "{", rightBrace: String = "}", f: () -> Unit) {
+        println(" $leftBrace")
+        pushIndent()
+        f()
+        popIndent()
+        println(rightBrace)
+    }
 }
