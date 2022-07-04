@@ -614,7 +614,9 @@ internal class ObjCExportTranslatorImpl(
         val declarationAttributes = mutableListOf(swiftNameAttribute(name))
         declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
-        val commentOrNull = objCCommentOrNull(mustBeDocumentedAttributeList(property.annotations))
+        val visibilityComments = visibilityComments(property.visibility, "property")
+
+        val commentOrNull = objCCommentOrNull(mustBeDocumentedAttributeList(property.annotations) + visibilityComments)
         return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes, commentOrNull)
     }
 
@@ -770,15 +772,19 @@ internal class ObjCExportTranslatorImpl(
             }
         } else emptyList()
 
-        val visibilityComments = when (method.visibility) {
-            DescriptorVisibilities.PROTECTED -> listOf("@note This method has protected visibility in Kotlin source and is intended only for use by subclasses.")
-            else -> emptyList()
-        }
+        val visibilityComments = visibilityComments(method.visibility, "method")
         val paramComments = parameters.flatMap { parameter ->
             parameter.descriptor?.let { mustBeDocumentedParamAttributeList(parameter, descriptor = it) } ?: emptyList()
         }
         val annotationsComments = mustBeDocumentedAttributeList(method.annotations)
         return objCCommentOrNull(annotationsComments + paramComments + throwsComments + visibilityComments)
+    }
+
+    private fun visibilityComments(visibility: DescriptorVisibility, kind: String): List<String> {
+        return when (visibility) {
+            DescriptorVisibilities.PROTECTED -> listOf("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
+            else -> emptyList()
+        }
     }
 
     private fun mustBeDocumentedParamAttributeList(parameter: ObjCParameter, descriptor: ParameterDescriptor): List<String> {

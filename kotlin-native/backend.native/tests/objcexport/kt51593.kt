@@ -49,5 +49,6 @@ class Bar {
         }
 
     // Not a kDoc-formatted comment
-    fun notKDoc() {}
+    protected val farewell: String
+        get() { return "Bye bye!" }
 }
