@@ -279,12 +279,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (arguments.irProduceKlibFile) {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
             }
-            val icData = mutableListOf<KotlinFileSerializedData>()
+            val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+            val icData = configurationJs.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
             val moduleFragment = generateIrForKlibSerialization(
                 projectJs,
-                (sourceModule.mainModule as MainModule.SourceFiles).files,
+                moduleSourceFiles,
                 configurationJs,
                 sourceModule.jsFrontEndResult.jsAnalysisResult,
                 sortDependencies(sourceModule.descriptors),

@@ -49,11 +49,12 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             AnalyzerWithCompilerReport(config)
         )
 
-        val icData = mutableListOf<KotlinFileSerializedData>()
+        val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+        val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val moduleFragment = generateIrForKlibSerialization(
             environment.project,
-            (sourceModule.mainModule as MainModule.SourceFiles).files,
+            moduleSourceFiles,
             config,
             sourceModule.jsFrontEndResult.jsAnalysisResult,
             sortDependencies(sourceModule.descriptors),

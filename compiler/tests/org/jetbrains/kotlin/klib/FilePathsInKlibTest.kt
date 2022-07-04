@@ -58,11 +58,12 @@ class FilePathsInKlibTest : CodegenTestCase() {
     }
 
     private fun produceKlib(module: ModulesStructure, destination: File) {
-        val icData = mutableListOf<KotlinFileSerializedData>()
+        val sourceFiles = (module.mainModule as MainModule.SourceFiles).files
+        val icData = module.compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
         val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val moduleFragment = generateIrForKlibSerialization(
             module.project,
-            (module.mainModule as MainModule.SourceFiles).files,
+            sourceFiles,
             module.compilerConfiguration,
             module.jsFrontEndResult.jsAnalysisResult,
             sortDependencies(module.descriptors),
