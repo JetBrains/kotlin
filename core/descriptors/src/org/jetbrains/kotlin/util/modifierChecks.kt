@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.MemberKindCheck.Member
 import org.jetbrains.kotlin.util.MemberKindCheck.MemberOrExtension
+import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGN
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
@@ -212,6 +213,7 @@ object OperatorChecks : AbstractModifierChecks() {
             }
         },
         Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(listOf(ASSIGN), MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
     )
 

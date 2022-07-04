@@ -72,7 +72,7 @@ public class OperatorConventions {
 
     public static final ImmutableSet<KtSingleValueToken> NOT_OVERLOADABLE =
             ImmutableSet.of(KtTokens.ANDAND, KtTokens.OROR, KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
-    
+
     public static final ImmutableSet<KtSingleValueToken> INCREMENT_OPERATIONS =
             ImmutableSet.of(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS);
 

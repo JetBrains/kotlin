@@ -1,12 +1,14 @@
-import java.lang.RuntimeException
 
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE:+AssignOperatorOverloadForJvm
 
 var result: String = "Fail"
 
 operator fun Int.assign(other: String) {
     result = other
+}
+operator fun Int.assign(other: Int) {
+    result = "OK.Int.assign(Int)"
 }
 operator fun Container.assign(other: Int) {
     this.value = "OK"
@@ -21,11 +23,40 @@ operator fun Container.set(i: Int, v: Long) {
 data class Foo(val x: Container)
 data class Container(var value: String)
 
-var nullCheckResult: String = "OK"
 data class NullCheck(val x: NullCheckContainer)
 data class NullCheckContainer(var value: String)
-operator fun NullCheckContainer.assign(value: String) {
-    nullCheckResult = value
+operator fun NullCheckContainer?.assign(value: String) {
+    result = value
+}
+
+operator fun String.assign(value: Int) {
+    result = "OK.operator.String.assign"
+}
+
+class SelectAssignTest {
+    fun String.assign(value: Int) {
+        result = "Fail.String.assign"
+    }
+
+    fun test() {
+        val s = "hello"
+        s = 1
+    }
+}
+
+class SelectAssignTest2 {
+    fun assign(value: Int) {
+        result = "Fail.SelectAssignTest2.assign"
+    }
+
+    fun test() {
+        val s = SelectAssignTest2()
+        s = 1
+    }
+}
+
+operator fun SelectAssignTest2.assign(i: Int) {
+    result = "OK.operator.SelectAssignTest2.assign"
 }
 
 fun box(): String {
@@ -33,6 +64,16 @@ fun box(): String {
     val x = 10
     x = "OK"
     if (result != "OK") return "Fail: $result"
+
+    // Test same type assign overload
+    x = 5
+    if (result != "OK.Int.assign(Int)") return "Fail: $result"
+
+    // Test assign overload for var is not applied
+    result = "OK.var"
+    var y = 10
+    y = 5
+    if (result != "OK.var" || y != 5) return "Fail: $result, y = $y"
 
     // Test simple assign for property
     val foo = Foo(Container("Fail"))
@@ -45,10 +86,27 @@ fun box(): String {
     foo.x[1] = 2L
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
-    // Test assign() on null is not called
+    // Test operator String.assign is selected over SelectAssignTest.String.assign
+    result = "Fail"
+    SelectAssignTest().test()
+    if (result != "OK.operator.String.assign") return "Fail: ${result}"
+
+    // Test operator SelectAssignTest2.assign is selected over SelectAssignTest2.assign
+    result = "Fail"
+    SelectAssignTest2().test()
+    if (result != "OK.operator.SelectAssignTest2.assign") return "Fail: ${result}"
+
+    // Test reference on null is not called
+    result = "OK"
     val nullCheck: NullCheck? = null
     nullCheck?.x = "Fail"
-    if (nullCheckResult != "OK") return "Fail: $nullCheckResult"
+    if (result != "OK") return "Fail: $result"
+
+    // Test direct null is called
+    result = "Fail"
+    val nullCheckContainer: NullCheckContainer? = null
+    nullCheckContainer = "OK"
+    if (result != "OK") return "Fail: $result"
 
     return "OK"
 }

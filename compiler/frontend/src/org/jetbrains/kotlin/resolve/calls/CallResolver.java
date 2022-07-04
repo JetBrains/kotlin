@@ -57,6 +57,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGN;
 
 @SuppressWarnings("RedundantTypeArguments")
 public class CallResolver {
@@ -250,6 +251,20 @@ public class CallResolver {
                 CallMaker.makeCall(receiver, binaryExpression),
                 binaryExpression.getOperationReference(),
                 name
+        );
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveAssignOperatorCall(
+            ExpressionTypingContext context,
+            ExpressionReceiver receiver,
+            KtBinaryExpression binaryExpression
+    ) {
+        return resolveCallWithGivenName(
+                context,
+                CallMaker.makeAssignOperatorCall(receiver, binaryExpression),
+                binaryExpression.getOperationReference(),
+                OperatorNameConventions.ASSIGN
         );
     }
 

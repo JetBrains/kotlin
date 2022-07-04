@@ -264,6 +264,7 @@ enum class LanguageFeature(
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     DataObjects(KOTLIN_1_8), // KT-4107
+    AssignOperatorOverloadForJvm(KOTLIN_1_8),
 
     // 1.9
 

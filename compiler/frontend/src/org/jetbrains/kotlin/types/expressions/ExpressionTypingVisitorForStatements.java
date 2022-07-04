@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.results.NameNotFoundResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
@@ -441,6 +442,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
+        // Resolve assign operator overload
+        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+            KotlinTypeInfo assignOperatorOverload = resolveAssignOperatorOverload(bindingContext, expression, contextWithExpectedType, leftOperand, left, leftInfo, context);
+            if (assignOperatorOverload != null) {
+                return assignOperatorOverload;
+            }
+        }
+
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
         if (right != null) {
@@ -475,6 +484,42 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
 
         return resultInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(expression, contextWithExpectedType));
+    }
+
+    private KotlinTypeInfo resolveAssignOperatorOverload(
+            BindingContext bindingContext,
+            KtBinaryExpression expression,
+            ExpressionTypingContext contextWithExpectedType,
+            KtExpression leftOperand,
+            KtExpression left,
+            KotlinTypeInfo leftInfo,
+            ExpressionTypingContext context
+    ) {
+        KotlinType leftType = leftInfo.getType();
+        KotlinType assignmentOperationType = null;
+        TemporaryTraceAndCache temporaryForAssignmentOperation = null;
+        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
+        boolean isDelegated = descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated();
+        if (descriptor != null && !descriptor.isVar() && !isDelegated) {
+            ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
+            temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
+            ExpressionTypingContext temporaryContext = context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope);
+            assignmentOperationDescriptors = components.callResolver.resolveAssignOperatorCall(temporaryContext, receiver, expression);
+            assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
+        }
+
+        boolean isAssignOperatorResolved = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
+        if (isAssignOperatorResolved) {
+            temporaryForAssignmentOperation.commit();
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(components.builtIns.getUnitType(), assignmentOperationType)) {
+                KtSimpleNameExpression operationSign = expression.getOperationReference();
+                context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
+            }
+            KotlinTypeInfo rightInfo = leftInfo;
+            return rightInfo.replaceType(checkAssignmentType(assignmentOperationType, expression, contextWithExpectedType));
+        }
+        return null;
     }
 
     private void checkPropertyInTypeWithWarnings(

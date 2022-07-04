@@ -22375,6 +22375,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("assignOperatorOverload.kt")
+            public void testAssignOperatorOverload() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverload.kt");
+            }
+
+            @Test
+            @TestMetadata("assignOperatorOverloadDisabled.kt")
+            public void testAssignOperatorOverloadDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverloadDisabled.kt");
+            }
+
+            @Test
             @TestMetadata("AssignmentOperations.kt")
             public void testAssignmentOperations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");

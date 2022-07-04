@@ -49,6 +49,12 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.OperatorRem, languageVersionSettings, diagnosticHolder, modifier)
                 OperatorNameConventions.PROVIDE_DELEGATE ->
                     checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
+                OperatorNameConventions.ASSIGN -> checkSupportsAssignOperator(
+                    languageVersionSettings,
+                    diagnosticHolder,
+                    checkResult,
+                    modifier
+                )
             }
 
             if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&
@@ -68,9 +74,7 @@ object OperatorModifierChecker {
             return
         }
 
-        val errorDescription = (checkResult as? CheckResult.IllegalSignature)?.error ?: "illegal function name"
-
-        diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
+        reportInapplicableOperatorModifier(diagnosticHolder, checkResult, modifier)
     }
 
     private fun checkSupportsFeature(
@@ -82,5 +86,25 @@ object OperatorModifierChecker {
         if (!languageVersionSettings.supportsFeature(feature)) {
             diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature to languageVersionSettings))
         }
+    }
+
+    private fun checkSupportsAssignOperator(
+        languageVersionSettings: LanguageVersionSettings,
+        diagnosticHolder: DiagnosticSink,
+        checkResult: CheckResult,
+        modifier: PsiElement
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+            reportInapplicableOperatorModifier(diagnosticHolder, checkResult, modifier)
+        }
+    }
+
+    private fun reportInapplicableOperatorModifier(
+        diagnosticHolder: DiagnosticSink,
+        checkResult: CheckResult,
+        modifier: PsiElement
+    ) {
+        val errorDescription = (checkResult as? CheckResult.IllegalSignature)?.error ?: "illegal function name"
+        diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
     }
 }
