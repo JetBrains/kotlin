@@ -2333,6 +2333,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("assignOperatorOverload.kt")
+                public void testAssignOperatorOverload() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/assignOperatorOverload.kt");
+                }
+
+                @Test
                 @TestMetadata("plus.kt")
                 public void testPlus() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");

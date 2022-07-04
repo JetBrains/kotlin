@@ -2039,6 +2039,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("assignOperatorOverload.kt")
+            public void testAssignOperatorOverload() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/assignOperatorOverload.kt");
+            }
+
             @TestMetadata("plus.kt")
             public void testPlus() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");

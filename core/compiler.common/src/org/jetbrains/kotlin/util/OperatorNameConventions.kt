@@ -63,6 +63,7 @@ object OperatorNameConventions {
     @JvmField val RANGE_TO = Name.identifier("rangeTo")
     @JvmField val RANGE_UNTIL = Name.identifier("rangeUntil")
 
+    @JvmField val ASSIGN = Name.identifier("assign")
     @JvmField val TIMES_ASSIGN = Name.identifier("timesAssign")
     @JvmField val DIV_ASSIGN = Name.identifier("divAssign")
     @JvmField val MOD_ASSIGN = Name.identifier("modAssign")
@@ -82,7 +83,8 @@ object OperatorNameConventions {
     val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, RANGE_UNTIL)
 
     @JvmField
-    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
+    // TODO: Add ASSIGN to OperatorConventions. Also should assign be here or should be a separate thing?
+    val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, ASSIGN)
 
     @JvmField
     val DELEGATED_PROPERTY_OPERATORS = setOf(GET_VALUE, SET_VALUE, PROVIDE_DELEGATE)

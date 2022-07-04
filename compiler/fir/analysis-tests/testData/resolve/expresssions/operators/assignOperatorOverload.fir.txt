@@ -1,0 +1,76 @@
+FILE: assignOperatorOverload.kt
+    public final var result: R|kotlin/String| = String(Fail)
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final operator fun R|kotlin/Any|.assign(other: R|kotlin/String|): R|kotlin/Unit| {
+        R|/result| = R|<local>/other|
+    }
+    public final operator fun R|kotlin/String|.assign(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/String|.set(i: R|kotlin/Int|, v: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/String|.set(i: R|kotlin/Int|, v: R|kotlin/Long|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/Any|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final operator fun R|kotlin/String|.plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/Foo|.R|/Foo.x|): R|Foo|
+
+    }
+    public final fun test_local_variable(): R|kotlin/String| {
+        lval x: R|kotlin/Int| = Int(10)
+        R|<local>/x|.R|/assign|(String(OK))
+        ^test_local_variable R|/result|
+    }
+    public final fun test_local_variable_plus_assign(): R|kotlin/String| {
+        lval x: R|kotlin/Int| = Int(10)
+        R|<local>/x|.R|/plusAssign|(String(OK))
+        ^test_local_variable_plus_assign R|/result|
+    }
+    public final fun test_object_property(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/assign|(String(OK))
+        ^test_object_property R|/result|
+    }
+    public final fun test_object_property_with_different_type(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/assign|(Int(5))
+        ^test_object_property_with_different_type R|/result|
+    }
+    public final fun test_assignment_type_mismatch(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x| = Long(5)
+        ^test_assignment_type_mismatch R|/result|
+    }
+    public final fun test_set_priority(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/set|(Int(5), Int(5))
+        R|<local>/x|.R|/Foo.x|.R|/set|(Int(5), Long(5))
+        ^test_set_priority R|/result|
+    }
+    public final fun test_object_property_plus_assign(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.R|/Foo.x|.R|/plusAssign|(String(OK))
+        ^test_object_property_plus_assign R|/result|
+    }
+    public final fun test_null_safe_operator_with_assignment(): R|kotlin/String| {
+        lval x: R|Foo?| = Null(null)
+        R|<local>/x|?.{ $subj$.R|/Foo.x|.R|/assign|(String(OK)) }
+        ^test_null_safe_operator_with_assignment R|/result|
+    }
+    public final fun test_plus_assign_assignment_type_mismatch(): R|kotlin/String| {
+        lval x: R|Foo| = R|/Foo.Foo|(String(Hello))
+        R|<local>/x|.<Re-assigning a val variable># = R|<local>/x|.R|/Foo.x|.R|kotlin/String.plus|(Long(5))
+        ^test_plus_assign_assignment_type_mismatch R|/result|
+    }

@@ -839,18 +839,73 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
-        val result = if (resolvedAssignment is FirVariableAssignment) {
+
+        fun FirFunctionCall.updateFunctionCallDataflow(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(this)
+            callCompleter.completeCall(this, noExpectedType)
+            dataFlowAnalyzer.exitFunctionCall(this, callCompleted = true)
+            return this
+        }
+
+        fun FirVariableAssignment.updateOperatorDataflow(): FirStatement {
+            dataFlowAnalyzer.exitVariableAssignment(this)
+            return this
+        }
+
+        return if (resolvedAssignment is FirVariableAssignment) {
             val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
-            completeAssignment.transformRValue(
+            val completedAssignment = completeAssignment.transformRValue(
                 transformer,
-                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
+                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true)
             )
+            when (val resolvedAssignCall = resolveAssignOperatorFunctionCall(completedAssignment)) {
+                null -> completedAssignment.updateOperatorDataflow()
+                else -> resolvedAssignCall.updateFunctionCallDataflow()
+            }
         } else {
             // This can happen in erroneous code only
             resolvedAssignment
         }
-        (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
-        return result
+    }
+
+    private fun resolveAssignOperatorFunctionCall(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
+        val leftArgument = resolvedAssignment.lValue
+        val leftSymbol = leftArgument.resolvedSymbol as? FirVariableSymbol<*>
+        if (leftSymbol?.fir?.isVal != true) {
+            return null
+        }
+        val leftResolvedType = leftSymbol.fir.returnTypeRef
+        val rightArgument = resolvedAssignment.rValue
+        val assignOperatorCall = buildFunctionCall {
+            source = resolvedAssignment.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            explicitReceiver = buildPropertyAccessExpression {
+                source = leftArgument.source
+                typeRef = leftResolvedType
+                calleeReference = resolvedAssignment.calleeReference
+                typeArguments += resolvedAssignment.typeArguments
+                annotations += resolvedAssignment.annotations
+                explicitReceiver = resolvedAssignment.explicitReceiver
+                dispatchReceiver = resolvedAssignment.dispatchReceiver
+                extensionReceiver = resolvedAssignment.extensionReceiver
+                contextReceiverArguments += resolvedAssignment.contextReceiverArguments
+            }
+            argumentList = buildUnaryArgumentList(rightArgument)
+            calleeReference = buildSimpleNamedReference {
+                // TODO: Should I use different source here same as in += function call?
+                source = resolvedAssignment.source
+                name = OperatorNameConventions.ASSIGN
+                candidateSymbol = null
+            }
+            origin = FirFunctionCallOrigin.Operator
+        }
+        val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
+            assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
+        }
+        val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
+        return when (assignCallReference?.isError) {
+            false -> resolvedAssignCall
+            else -> null
+        }
     }
 
     override fun transformCallableReferenceAccess(
