@@ -23,5 +23,5 @@ fun warmupJob(ide: Ide, devfilePath: String) {
     }
 }
 
-warmupJob(Ide.Idea, ".space/idea.yaml")
-warmupJob(Ide.Fleet, ".space/fleet.yaml")
+warmupJob(Ide.Idea, ".space/idea.devfile.yaml")
+warmupJob(Ide.Fleet, ".space/fleet.devfile.yaml")
