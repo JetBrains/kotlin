@@ -153,7 +153,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     @get:Internal
-    override val metrics: Property<BuildMetricsReporter> = project.objects
+    final override val metrics: Property<BuildMetricsReporter> = project.objects
         .property(BuildMetricsReporterImpl())
 
     /**
@@ -228,7 +228,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
+    workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
     BaseKotlinCompile {
@@ -323,16 +324,31 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         )
 
     @get:Internal
-    internal open val compilerRunner: Provider<GradleCompilerRunner> =
+    internal open val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
+        .propertyWithNewInstance({ null })
+
+    @get:Internal
+    internal val compilerRunner: Provider<GradleCompilerRunner> =
         objectFactory.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunner(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get(),
-                    compilerExecutionStrategy.get(),
-                )
+            gradleCompileTaskProvider.flatMap { taskProvider ->
+                compilerExecutionStrategy
+                    .zip(metrics) { executionStrategy, metrics ->
+                        metrics to executionStrategy
+                    }
+                    .flatMap { params ->
+                        defaultKotlinJavaToolchain
+                            .map {
+                                val toolsJar = it.currentJvmJdkToolsJar.orNull
+                                GradleCompilerRunnerWithWorkers(
+                                    taskProvider,
+                                    toolsJar,
+                                    normalizedKotlinDaemonJvmArguments.orNull,
+                                    params.first,
+                                    params.second,
+                                    workerExecutor
+                                )
+                            }
+                    }
             }
         )
 
@@ -502,7 +518,7 @@ abstract class KotlinCompile @Inject constructor(
     override val kotlinOptions: KotlinJvmOptions,
     workerExecutor: WorkerExecutor,
     private val objectFactory: ObjectFactory
-) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory),
+) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     UsesKotlinJavaToolchain {
 
@@ -575,27 +591,10 @@ abstract class KotlinCompile @Inject constructor(
         get() = classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { listOf(it) } ?: emptyList()
 
     @get:Internal
-    internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
+    final override val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
         .propertyWithNewInstance({ this })
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
-
-    @get:Internal
-    override val compilerRunner: Provider<GradleCompilerRunner> = objectFactory.propertyWithConvention(
-        // From Gradle 6.6 better to replace flatMap with provider.zip()
-        defaultKotlinJavaToolchain.flatMap { toolchain ->
-            objectFactory.property(gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    toolchain.currentJvmJdkToolsJar.orNull,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get(),
-                    compilerExecutionStrategy.get(),
-                    workerExecutor
-                )
-            })
-        }
-    )
 
     @get:Internal
     internal abstract val associatedJavaCompileTaskTargetCompatibility: Property<String>
@@ -866,7 +865,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val kotlinOptions: KotlinJsOptions,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor
-) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory),
+) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinJsCompile {
 
     init {
@@ -922,20 +921,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:OutputFile
     @get:Optional
     abstract val optionalOutputFile: RegularFileProperty
-
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get(),
-                    compilerExecutionStrategy.get(),
-                    workerExecutor
-                )
-            }
-        )
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()

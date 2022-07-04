@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.tooling.internal.consumer.ConnectorServices
@@ -118,6 +119,23 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
             }
         }
     }
+
+    @DisplayName("Kotlin daemon should be reused in mixed Kotlin JVM/JS project")
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    fun jsAndJvmCompatibleDaemons(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        project(
+            "jvmAndJsProject",
+            gradleVersion,
+            buildJdk = jdk.location
+        ) {
+            build(":jsLib:assemble")
+            build("jvmLib:assemble") {
+                assertKotlinDaemonReusesOnlyOneSession()
+            }
+        }
+    }
+
 
     private fun BuildResult.assertGradleClasspathNotLeaked() {
         assertOutputContains("Kotlin compiler classpath:")

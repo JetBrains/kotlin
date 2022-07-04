@@ -18,19 +18,15 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import javax.inject.Inject
 
@@ -39,22 +35,8 @@ abstract class KotlinCompileCommon @Inject constructor(
     override val kotlinOptions: KotlinMultiplatformCommonOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
-) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory),
+) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
     KotlinCommonCompile {
-
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get(),
-                    compilerExecutionStrategy.get(),
-                    workerExecutor
-                )
-            }
-        )
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()

@@ -79,20 +79,19 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     ): Provider<File?> {
         return objects
             .propertyWithConvention(
-                jvmProvider.flatMap { jvm ->
-                    objects.propertyWithConvention(jvm.toolsJar)
+                javaVersionProvider.flatMap { javaVersion ->
+                    jvmProvider.map { jvm ->
+                        jvm.toolsJar.also {
+                            if (it == null && javaVersion < JavaVersion.VERSION_1_9) {
+                                throw GradleException(
+                                    "Kotlin could not find the required JDK tools in the Java installation. " +
+                                            "Make sure Kotlin compilation is running on a JDK, not JRE."
+                                )
+                            }
+                        }
+                    }
                 }
             )
-            .orElse(javaVersionProvider.flatMap {
-                if (it < JavaVersion.VERSION_1_9) {
-                    throw GradleException(
-                        "Kotlin could not find the required JDK tools in the Java installation. " +
-                                "Make sure Kotlin compilation is running on a JDK, not JRE."
-                    )
-                } else {
-                    objects.propertyWithConvention<File?>(null)
-                }
-            })
     }
 
     @get:Internal
