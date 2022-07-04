@@ -636,10 +636,30 @@ internal class KonanIrLinker(
                 DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
+        private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
+
+        // Need to notify the deserializing machinery that some symbols have already been created by stub generator
+        // (like type parameters and receiver parameters) and there's no need to create new symbols for them.
+        private fun referenceIrSymbol(symbolDeserializer: IrSymbolDeserializer, sigIndex: Int, symbol: IrSymbol) {
+            val idSig = symbolDeserializer.deserializeIdSignature(sigIndex)
+            symbolDeserializer.referenceLocalIrSymbol(symbol, idSig)
+            if (idSig.isPubliclyVisible) {
+                deserializedSymbols[idSig]?.let {
+                    require(it == symbol) { "Two different symbols for the same signature ${idSig.render()}" }
+                }
+                // Sometimes the linker would want to create a new symbol, so save actual symbol here
+                // and use it in [contains] and [tryDeserializeSymbol].
+                deserializedSymbols[idSig] = symbol
+            }
+        }
+
         override fun contains(idSig: IdSignature) =
-                idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+                deserializedSymbols.containsKey(idSig) ||
+                    idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
 
         override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+            deserializedSymbols[idSig]?.let { return it }
+
             val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig)
                     ?: error("Expecting descriptor for $idSig")
 
@@ -689,30 +709,30 @@ internal class KonanIrLinker(
             outerClasses.forEach { outerClass ->
                 outerClass.typeParameters.forEach { parameter ->
                     val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                    symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                    referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
                 }
             }
             function.typeParameters.forEach { parameter ->
                 val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             function.valueParameters.forEachIndexed { index, parameter ->
                 val sigIndex = inlineFunctionReference.valueParameterSigs[index]
-                symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             function.extensionReceiverParameter?.let { parameter ->
                 val sigIndex = inlineFunctionReference.extensionReceiverSig
                 require(sigIndex != InvalidIndex) { "Expected a valid sig reference to the extension receiver for ${function.render()}" }
-                symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             function.dispatchReceiverParameter?.let { parameter ->
                 val sigIndex = inlineFunctionReference.dispatchReceiverSig
                 require(sigIndex != InvalidIndex) { "Expected a valid sig reference to the dispatch receiver for ${function.render()}" }
-                symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             for (index in 0 until outerClasses.size - 1) {
                 val sigIndex = inlineFunctionReference.outerReceiverSigs[index]
-                symbolDeserializer.referenceLocalIrSymbol(outerClasses[index].thisReceiver!!.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                referenceIrSymbol(symbolDeserializer, sigIndex, outerClasses[index].thisReceiver!!.symbol)
             }
 
             with(declarationDeserializer) {
@@ -753,7 +773,7 @@ internal class KonanIrLinker(
             outerClasses.forEach { outerClass ->
                 outerClass.typeParameters.forEach { parameter ->
                     val sigIndex = serializedClassFields.typeParameterSigs[endToEndTypeParameterIndex++]
-                    symbolDeserializer.referenceLocalIrSymbol(parameter.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
+                    referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
                 }
             }
 
