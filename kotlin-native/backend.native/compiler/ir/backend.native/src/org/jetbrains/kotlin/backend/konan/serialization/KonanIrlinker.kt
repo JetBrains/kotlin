@@ -372,6 +372,15 @@ internal class KonanIrLinker(
         super.postProcess()
     }
 
+    private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()
+
+    override fun getFileOf(declaration: IrDeclaration): IrFile {
+        val packageFragment = declaration.getPackageFragment()
+        return packageFragment as? IrFile
+                ?: inlineFunctionFiles[packageFragment as IrExternalPackageFragment]
+                ?: error("Unknown external package fragment: ${packageFragment.packageFragmentDescriptor}")
+    }
+
     private val IrClass.firstNonClassParent: IrDeclarationParent
         get() {
             var parent = parent
@@ -643,8 +652,6 @@ internal class KonanIrLinker(
             }
         }
 
-        private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()
-
         fun deserializeInlineFunction(function: IrFunction): InlineFunctionOriginInfo {
             val packageFragment = function.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${function.render()}")
@@ -665,6 +672,13 @@ internal class KonanIrLinker(
             val fileDeserializationState = fileDeserializationStates[inlineFunctionReference.file]
             val declarationDeserializer = fileDeserializationState.declarationDeserializer
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
+
+            inlineFunctionFiles[packageFragment]?.let {
+                require(it == fileDeserializationState.file) {
+                    "Different files ${it.fileEntry.name} and ${fileDeserializationState.file.fileEntry.name} have the same $packageFragment"
+                }
+            }
+            inlineFunctionFiles[packageFragment] = fileDeserializationState.file
 
             val outerClasses = (function.parent as? IrClass)?.getOuterClasses(takeOnlyInner = true) ?: emptyList()
             require((outerClasses.getOrNull(0)?.firstNonClassParent ?: function.parent) is IrExternalPackageFragment) {
@@ -701,22 +715,16 @@ internal class KonanIrLinker(
                 symbolDeserializer.referenceLocalIrSymbol(outerClasses[index].thisReceiver!!.symbol, symbolDeserializer.deserializeIdSignature(sigIndex))
             }
 
-            function.body = declarationDeserializer.deserializeStatementBody(inlineFunctionReference.body) as IrBody
-
-            function.valueParameters.forEachIndexed { index, parameter ->
-                val defaultValueIndex = inlineFunctionReference.defaultValues[index]
-                if (defaultValueIndex != InvalidIndex)
-                    parameter.defaultValue = declarationDeserializer.deserializeExpressionBody(defaultValueIndex)
+            with(declarationDeserializer) {
+                function.body = (deserializeStatementBody(inlineFunctionReference.body) as IrBody).setDeclarationsParent(function)
+                function.valueParameters.forEachIndexed { index, parameter ->
+                    val defaultValueIndex = inlineFunctionReference.defaultValues[index]
+                    if (defaultValueIndex != InvalidIndex)
+                        parameter.defaultValue = deserializeExpressionBody(defaultValueIndex)?.setDeclarationsParent(function)
+                }
             }
 
             fakeOverrideBuilder.provideFakeOverrides()
-
-            inlineFunctionFiles[packageFragment]?.let {
-                require(it == fileDeserializationState.file) {
-                    "Different files ${it.fileEntry.name} and ${fileDeserializationState.file.fileEntry.name} have the same $packageFragment"
-                }
-            }
-            inlineFunctionFiles[packageFragment] = fileDeserializationState.file
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
