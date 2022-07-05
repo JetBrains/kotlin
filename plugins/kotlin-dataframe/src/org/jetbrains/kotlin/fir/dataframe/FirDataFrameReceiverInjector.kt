@@ -47,9 +47,9 @@ class FirDataFrameReceiverInjector(
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
         val processor = findSchemaProcessor(functionCall) ?: return emptyList()
 
-        val dataFrameSchema = interpret(functionCall, processor)
+        val dataFrameSchema = interpret(functionCall, processor) ?: return emptyList()
 
-        val properties = dataFrameSchema.columns().map {
+        val properties = dataFrameSchema.value.columns().map {
             val typeApproximation = when (val type = it.type) {
                 is TypeApproximationImpl -> type
                 ColumnGroupTypeApproximation -> TODO("support column groups in data schema")
@@ -68,8 +68,8 @@ class FirDataFrameReceiverInjector(
     private fun <T> interpret(
         functionCall: FirFunctionCall,
         processor: Interpreter<T>,
-        additionalArguments: Map<String, Any> = emptyMap()
-    ): T {
+        additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap()
+    ): Interpreter.Success<T>? {
         fun loadInterpreter(call: FirFunctionCall): Interpreter<*>? {
             val symbol =
                 (call.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
@@ -100,32 +100,31 @@ class FirDataFrameReceiverInjector(
             error(message)
         }
 
-        val arguments = mutableMapOf<String, Any>()
+        val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
         arguments += additionalArguments
-        refinedArguments.refinedArguments.associateTo(arguments) {
+        val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
             val name = it.name.identifier
             val expectedArgument = expectedArgsMap[name]!!
             val expectedReturnType = expectedArgument.klass
-            @Suppress("UNCHECKED_CAST") val value: Any = when (expectedArgument.lens) {
+            val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
                 is Interpreter.Value -> {
-                    when (val expression = it.expression) {
-                        is FirConstExpression<*> -> expression.value!!
+                     when (val expression = it.expression) {
+                        is FirConstExpression<*> -> Interpreter.Success(expression.value!!)
                         is FirVarargArgumentsExpression -> {
-                            expression.arguments.map { (it as FirConstExpression<*>).value }
+                            Interpreter.Success(expression.arguments.map { (it as FirConstExpression<*>).value })
                         }
-
                         else -> {
                             val call = expression as FirFunctionCall
                             val interpreter = loadInterpreter(call)
                                 ?: TODO("receiver ${call.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
-                            interpret(expression, interpreter, emptyMap()) ?: error("allow interpreters to return null values")
+                            interpret(expression, interpreter, emptyMap())
                         }
                     }
                 }
 
                 is Interpreter.ReturnType -> {
                     val returnType = it.expression.typeRef.coneType.returnType(session)
-                    TypeApproximation(returnType.classId?.asFqNameString()!!, returnType.isNullable)
+                    Interpreter.Success(TypeApproximation(returnType.classId?.asFqNameString()!!, returnType.isNullable))
                 }
 
                 is Interpreter.Dsl -> {
@@ -135,9 +134,9 @@ class FirDataFrameReceiverInjector(
                             .statements.filterIsInstance<FirFunctionCall>()
                             .forEach { call ->
                                 val schemaProcessor = loadInterpreter(call) ?: return@forEach
-                                interpret(call, schemaProcessor, mapOf("receiver" to receiver))
+                                interpret(call, schemaProcessor, mapOf("receiver" to Interpreter.Success(receiver)))
                             }
-                    }
+                    }.let { Interpreter.Success(it) }
                 }
 
                 is Interpreter.Schema -> {
@@ -161,12 +160,25 @@ class FirDataFrameReceiverInjector(
                             )
                         }
                         PluginDataFrameSchema(columns)
-                    }
+                    }.let { Interpreter.Success(it) }
                 }
             }
-            it.name.identifier to value
+            value?.let { value1 -> it.name.identifier to value1 }
         }
-        return processor.interpret(arguments)
+
+
+        return if (interpretationResults.size == refinedArguments.refinedArguments.size) {
+            arguments.putAll(interpretationResults)
+            when (val res = processor.interpret(arguments)) {
+                is Interpreter.Success -> res
+                is Interpreter.Error -> {
+                    // TODO Report errors
+                    null
+                }
+            }
+        } else {
+            null
+        }
     }
 
     private inline fun <reified T> ClassId.load(): T {
