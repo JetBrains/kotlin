@@ -34,7 +34,7 @@ object GenericSignatureMapper {
 
         fun process(signature: String): String? = when (kind) {
             SignatureKind.NON_GENERIC -> null
-            SignatureKind.FIXED_COLLECTION_PARAMETER -> "(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"
+            SignatureKind.FIXED_COLLECTION_PARAMETER -> "(Ljava/util/Collection<*>;)Z"
             SignatureKind.FIRST_PARAMETER_ERASED -> "(Ljava/lang/Object;${signature.substringAfter(';')}"
         }
     }
