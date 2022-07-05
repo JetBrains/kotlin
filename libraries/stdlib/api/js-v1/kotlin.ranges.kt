@@ -809,9 +809,9 @@ public open class CharProgression : kotlin.collections.Iterable<kotlin.Char> {
 public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.ClosedRange<kotlin.Char>, kotlin.ranges.OpenEndRange<kotlin.Char> {
     public constructor CharRange(start: kotlin.Char, endInclusive: kotlin.Char)
 
+    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @kotlin.SinceKotlin(version = "1.7")
     @kotlin.ExperimentalStdlibApi
-    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     public open override val endExclusive: kotlin.Char { get; }
 
     public open override val endInclusive: kotlin.Char { get; }
@@ -836,9 +836,9 @@ public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.Clos
 /*∆*/ public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.ClosedRange<kotlin.Char>, kotlin.ranges.OpenEndRange<kotlin.Char> {
 /*∆*/     public constructor CharRange(start: kotlin.Char, endInclusive: kotlin.Char)
 /*∆*/ 
+/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     @kotlin.SinceKotlin(version = "1.7")
 /*∆*/     @kotlin.ExperimentalStdlibApi
-/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     public open override val endExclusive: kotlin.Char { get; }
 /*∆*/ 
 /*∆*/     public open override val endInclusive: kotlin.Char { get; }
@@ -936,9 +936,9 @@ public open class IntProgression : kotlin.collections.Iterable<kotlin.Int> {
 public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.ClosedRange<kotlin.Int>, kotlin.ranges.OpenEndRange<kotlin.Int> {
     public constructor IntRange(start: kotlin.Int, endInclusive: kotlin.Int)
 
+    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @kotlin.SinceKotlin(version = "1.7")
     @kotlin.ExperimentalStdlibApi
-    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     public open override val endExclusive: kotlin.Int { get; }
 
     public open override val endInclusive: kotlin.Int { get; }
@@ -963,9 +963,9 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
 /*∆*/ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.ClosedRange<kotlin.Int>, kotlin.ranges.OpenEndRange<kotlin.Int> {
 /*∆*/     public constructor IntRange(start: kotlin.Int, endInclusive: kotlin.Int)
 /*∆*/ 
+/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     @kotlin.SinceKotlin(version = "1.7")
 /*∆*/     @kotlin.ExperimentalStdlibApi
-/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     public open override val endExclusive: kotlin.Int { get; }
 /*∆*/ 
 /*∆*/     public open override val endInclusive: kotlin.Int { get; }
@@ -1034,9 +1034,9 @@ public open class LongProgression : kotlin.collections.Iterable<kotlin.Long> {
 public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.ClosedRange<kotlin.Long>, kotlin.ranges.OpenEndRange<kotlin.Long> {
     public constructor LongRange(start: kotlin.Long, endInclusive: kotlin.Long)
 
+    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @kotlin.SinceKotlin(version = "1.7")
     @kotlin.ExperimentalStdlibApi
-    @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     public open override val endExclusive: kotlin.Long { get; }
 
     public open override val endInclusive: kotlin.Long { get; }
@@ -1061,9 +1061,9 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
 /*∆*/ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.ClosedRange<kotlin.Long>, kotlin.ranges.OpenEndRange<kotlin.Long> {
 /*∆*/     public constructor LongRange(start: kotlin.Long, endInclusive: kotlin.Long)
 /*∆*/ 
+/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     @kotlin.SinceKotlin(version = "1.7")
 /*∆*/     @kotlin.ExperimentalStdlibApi
-/*∆*/     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
 /*∆*/     public open override val endExclusive: kotlin.Long { get; }
 /*∆*/ 
 /*∆*/     public open override val endInclusive: kotlin.Long { get; }
