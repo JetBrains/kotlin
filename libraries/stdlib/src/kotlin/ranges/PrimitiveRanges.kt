@@ -15,9 +15,9 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
     override val start: Char get() = first
     override val endInclusive: Char get() = last
     
+    @Deprecated("Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    @Deprecated("Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     override val endExclusive: Char get() {
         if (last == Char.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1
@@ -55,9 +55,9 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
     override val start: Int get() = first
     override val endInclusive: Int get() = last
     
+    @Deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    @Deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     override val endExclusive: Int get() {
         if (last == Int.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1
@@ -95,9 +95,9 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
     override val start: Long get() = first
     override val endInclusive: Long get() = last
     
+    @Deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    @Deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     override val endExclusive: Long get() {
         if (last == Long.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1

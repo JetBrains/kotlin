@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.generators.builtins.ranges
 
-import org.jetbrains.kotlin.generators.builtins.*
-import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
+import org.jetbrains.kotlin.generators.builtins.ProgressionKind
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
+import org.jetbrains.kotlin.generators.builtins.areEqualNumbers
+import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.generators.builtins.hashLong
 import java.io.PrintWriter
 
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -57,9 +59,9 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
     override val start: $t get() = first
     override val endInclusive: $t get() = last
     
+    @Deprecated("Can throw an exception when it's impossible to represent the value with $t type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    @Deprecated("Can throw an exception when it's impossible to represent the value with $t type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     override val endExclusive: $t get() {
         if (last == $t.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1
