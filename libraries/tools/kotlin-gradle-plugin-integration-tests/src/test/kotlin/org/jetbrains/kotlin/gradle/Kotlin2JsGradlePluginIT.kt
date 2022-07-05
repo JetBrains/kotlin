@@ -302,30 +302,6 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
         }
     }
 
-    @DisplayName("incremental compilation with multiple js modules after compilation error works")
-    @GradleTest
-    fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-            build("compileKotlinJs")
-
-            val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
-            val appKt = subProject("app").kotlinSourcesDir().resolve("App.kt") ?: error("No App.kt file in test project")
-
-            libKt.modify { it.replace("fun answer", "func answe") } // introduce compilation error
-            buildAndFail("compileKotlinJs")
-            libKt.modify { it.replace("func answe", "fun answer") } // revert compilation error
-            appKt.modify { it.replace("Sheldon:", "Sheldon :") } // some change for incremental compilation
-            build("compileKotlinJs", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                assertTasksUpToDate(":lib:compileKotlinJs")
-                assertTasksExecuted(":app:compileKotlinJs")
-                assertCompiledKotlinSources(listOf(appKt).relativizeTo(projectPath), output)
-            }
-        }
-    }
-
     @DisplayName("builtins are loaded")
     @GradleTest
     fun testKotlinJsBuiltins(gradleVersion: GradleVersion) {
@@ -1241,6 +1217,30 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             .let {
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
+
+    @DisplayName("incremental compilation with multiple js modules after compilation error works")
+    @GradleTest
+    fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("compileKotlinJs")
+
+            val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
+            val appKt = subProject("app").kotlinSourcesDir().resolve("App.kt") ?: error("No App.kt file in test project")
+
+            libKt.modify { it.replace("fun answer", "func answe") } // introduce compilation error
+            buildAndFail("compileKotlinJs")
+            libKt.modify { it.replace("func answe", "fun answer") } // revert compilation error
+            appKt.modify { it.replace("Sheldon:", "Sheldon :") } // some change for incremental compilation
+            build("compileKotlinJs", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                assertTasksUpToDate(":lib:compileKotlinJs")
+                assertTasksExecuted(":app:compileKotlinJs")
+                assertCompiledKotlinSources(listOf(appKt).relativizeTo(projectPath), output)
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
