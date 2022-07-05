@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: ANDROID
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
