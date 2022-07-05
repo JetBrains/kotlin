@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
-import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
@@ -23,27 +21,24 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
-import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -192,14 +187,6 @@ internal fun makeElementSerializer(
         )
         else -> null
     }
-
-internal class TypeApproximatorForMetadataSerializer(session: FirSession) :
-    AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
-
-    override fun createErrorType(debugName: String): SimpleTypeMarker {
-        return ConeErrorType(ConeIntermediateDiagnostic(debugName))
-    }
-}
 
 private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeApproximator): FirAnonymousFunction {
     val function = this
