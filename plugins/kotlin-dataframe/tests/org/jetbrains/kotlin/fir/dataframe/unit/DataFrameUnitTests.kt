@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.functionSymbol
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.resolvedSymbol
@@ -148,5 +145,27 @@ class CallWithReference : DataFrameUnitTests(
     @Test
     fun test() {
         runTest("plugins/kotlin-dataframe/testData/unit/callWithReference.kt")
+    }
+}
+
+class AccessReceiverInCallChain : DataFrameUnitTests(lambda@{ functionCall ->
+//    val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return@lambda
+//    if (callReturnType.classId != FirDataFrameReceiverInjector.DF_CLASS_ID) return@lambda
+    println(functionCall)
+    val ff = f(functionCall)
+    println(ff)
+}) {
+
+    @Test
+    fun test() {
+        runTest("plugins/kotlin-dataframe/testData/unit/accessReceiverInCallChain.kt")
+    }
+}
+
+fun f(parent: FirQualifiedAccess): FirPropertyAccessExpression {
+    return when (val er = parent.explicitReceiver) {
+        null -> parent as FirPropertyAccessExpression
+        is FirQualifiedAccess -> { f(er) }
+        else -> TODO("${er::class}")
     }
 }
