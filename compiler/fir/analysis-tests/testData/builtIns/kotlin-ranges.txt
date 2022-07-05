@@ -71,7 +71,7 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
 
     public open fun toString(): R|kotlin/String|
 
-    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Char|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() public open val endExclusive: R|kotlin/Char|
         public get(): R|kotlin/Char|
 
     public open val endInclusive: R|kotlin/Char|
@@ -170,7 +170,7 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 
     public open fun toString(): R|kotlin/String|
 
-    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Int|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() public open val endExclusive: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public open val endInclusive: R|kotlin/Int|
@@ -256,7 +256,7 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
     public open fun toString(): R|kotlin/String|
 
-    @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) public open val endExclusive: R|kotlin/Long|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.7)) @PROPERTY:R|kotlin/ExperimentalStdlibApi|() public open val endExclusive: R|kotlin/Long|
         public get(): R|kotlin/Long|
 
     public open val endInclusive: R|kotlin/Long|
