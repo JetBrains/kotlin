@@ -41,16 +41,12 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingDescriptor
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.bindingContextUtil.*
 import org.jetbrains.kotlin.resolve.calls.checkers.findDestructuredVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -823,7 +819,7 @@ class ControlFlowInformationProviderImpl private constructor(
             val isUsedAsExpression = usages.isNotEmpty()
             val isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages)
             for (element in pseudocode.getValueElements(value)) {
-                trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
+                element.recordUsedAsExpression(trace, isUsedAsExpression)
                 trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
                 if (isUsedAsExpression) {
                     when (element) {
@@ -849,7 +845,7 @@ class ControlFlowInformationProviderImpl private constructor(
     }
 
     private fun KtExpression.recordUsedAsExpression() {
-        trace.record(USED_AS_EXPRESSION, this, true)
+        recordUsedAsExpression(trace, true)
     }
 
     private fun checkForSuspendLambdaAndMarkParameters(pseudocode: Pseudocode) {
@@ -958,7 +954,7 @@ class ControlFlowInformationProviderImpl private constructor(
     private fun markAnnotationArguments(entry: KtAnnotationEntry) {
         for (argument in entry.valueArguments) {
             argument.getArgumentExpression()?.forEachDescendantOfType<KtExpression> {
-                trace.record(USED_AS_EXPRESSION, it, true)
+                it.recordUsedAsExpression(trace, true)
             }
         }
     }

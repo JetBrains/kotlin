@@ -45,10 +45,10 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.USED_AS_EXPRESSION
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingFunctionDescriptor
+import org.jetbrains.kotlin.resolve.bindingContextUtil.recordUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -352,7 +352,7 @@ class ControlFlowProcessor(
                 builder.bindLabel(afterElvis)
                 mergeValues(listOfNotNull(left, right), expression)
                 if (right != null && languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)) {
-                    trace.record(USED_AS_EXPRESSION, right, true)
+                    right.recordUsedAsExpression(trace, true)
                 }
             } else {
                 if (!generateCall(expression)) {
@@ -1438,7 +1438,7 @@ class ControlFlowProcessor(
                 if (declaration is KtAnonymousInitializer) {
                     generateInstructions(declaration)
                     if (hasResultField && declaration == lastInitializer) {
-                        trace.record(USED_AS_EXPRESSION, resultExpression, true)
+                        resultExpression?.recordUsedAsExpression(trace, true)
                     }
                 } else if (declaration is KtProperty || declaration is KtDestructuringDeclaration) {
                     generateInstructions(declaration)
