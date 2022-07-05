@@ -15,9 +15,8 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishData
+import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildScanStatisticsListener
@@ -159,6 +158,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                 checkResponseAndLog(connection)
                 connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
             } catch (e: Exception) {
+                log.debug("Unexpected exception happened ${e.message}: ${e.stackTrace}")
                 checkResponseAndLog(connection)
             } finally {
                 connection.disconnect()
@@ -168,7 +168,8 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
     }
 
     private fun reportBuildFinish() {
-        val buildFinishData = BuildFinishData(
+        val buildFinishData = BuildFinishStatisticsData(
+            projectName = parameters.projectName,
             startParameters = parameters.startParameters,
             buildUuid = buildUuid,
             label = parameters.label,

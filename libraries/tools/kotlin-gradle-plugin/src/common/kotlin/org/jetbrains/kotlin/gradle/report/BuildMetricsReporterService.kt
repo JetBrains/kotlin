@@ -115,7 +115,7 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
 
         fun getStartParameters(project: Project) = project.gradle.startParameter.let {
             GradleBuildStartParameters(
-                tasks = it.taskRequests.map { it.args.toString() },
+                tasks = it.taskRequests.flatMap { it.args },
                 excludedTasks = it.excludedTaskNames,
                 currentDir = it.currentDir.path,
                 projectProperties = it.projectProperties.map {(key, value) -> "$key: $value"},
