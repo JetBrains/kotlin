@@ -29,6 +29,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.DurableFunctionKeyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.WrapJsComposableLambdaLowering
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.RecordDecoySignaturesTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.SubstituteDecoyCallsTransformer
@@ -193,6 +194,15 @@ class ComposeIrGenerationExtension(
                 pluginContext,
                 symbolRemapper,
                 metrics,
+            ).lower(moduleFragment)
+        }
+
+        if (pluginContext.platform.isJs()) {
+            WrapJsComposableLambdaLowering(
+                pluginContext,
+                symbolRemapper,
+                metrics,
+                idSignatureBuilder!!
             ).lower(moduleFragment)
         }
 

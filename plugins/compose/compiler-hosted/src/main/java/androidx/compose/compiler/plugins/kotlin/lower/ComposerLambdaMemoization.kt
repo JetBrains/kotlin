@@ -85,11 +85,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -777,40 +775,7 @@ class ComposerLambdaMemoization(
             putValueArgument(index, expression.markIsTransformedLambda())
         }
 
-        return if (!isJs) {
-            composableLambdaExpression.markHasTransformedLambda()
-        } else {
-            /*
-             * JS doesn't have ability to extend FunctionN types, therefore the lambda call must be
-             * transformed into composableLambda(...)::invoke. It loses some of the optimizations
-             * related to skipping updates that way, but still ensures correct handling of
-             * lambdas.
-             */
-            val realArgumentCount = argumentCount +
-                if (function.extensionReceiverParameter != null) 1 else 0
-
-            val invokeArgumentCount = realArgumentCount +
-                /*composer*/ 1 +
-                changedParamCount(realArgumentCount, 0)
-
-            val invokeSymbol = composableLambdaExpression.type.classOrNull!!
-                .functions
-                .single {
-                    it.owner.name.asString() == "invoke" &&
-                        invokeArgumentCount == it.owner.valueParameters.size
-                }
-
-            IrFunctionReferenceImpl(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                type = expression.type,
-                symbol = invokeSymbol,
-                typeArgumentsCount = invokeSymbol.owner.typeParameters.size,
-                valueArgumentsCount = invokeSymbol.owner.valueParameters.size
-            ).also { reference ->
-                reference.dispatchReceiver = composableLambdaExpression
-            }
-        }
+        return composableLambdaExpression.markHasTransformedLambda()
     }
 
     private fun rememberExpression(
