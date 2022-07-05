@@ -386,6 +386,9 @@ internal class ObjCExportCodeGenerator(
         this.needsRuntimeInit = true
     }
 
+    /**
+     * Convert [genValue] of Kotlin type from [actualType] to [expectedType] in a bridge method.
+     */
     inline fun ObjCExportFunctionGenerationContext.convertKotlin(
             genValue: (Lifetime) -> LLVMValueRef,
             actualType: IrType,
@@ -1451,6 +1454,28 @@ private fun MethodBridge.ReturnValue.isAutoreleasedObjCReference(): Boolean = wh
     is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.isAutoreleasedObjCReference()
 }
 
+/**
+ * Reverse adapters are required when Kotlin code invokes virtual method which might be overriden on Objective-C side.
+ * Example:
+ *
+ * ```kotlin
+ * interface I {
+ *     fun foo()
+ * }
+ *
+ * fun usage(i: I) {
+ *     i.foo() // Here we invoke
+ * }
+ * ```
+ *
+ * ```swift
+ * class C : I {
+ *     override func foo() { ... }
+ * }
+ *
+ * FileKt.usage(C()) // C.foo is invoked via reverse method adapter.
+ * ```
+ */
 private fun ObjCExportCodeGenerator.createReverseAdapter(
         irFunction: IrFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>,
@@ -1471,6 +1496,28 @@ private fun ObjCExportCodeGenerator.createReverseAdapter(
             kotlinToObjC)
 }
 
+/**
+ * We need to generate indirect version of a method for a cases
+ * when it is called on an object of non-exported type.
+ *
+ * Consider the following example:
+ * file.kt:
+ * ```
+ * open class Foo {
+ *     open fun foo() {}
+ * }
+ * private class Bar : Foo() {
+ *    override fun foo() {}
+ * }
+ *
+ * fun createBar(): Foo = Bar()
+ * ```
+ * file.swift:
+ * ```
+ * FileKt.createBar().foo()
+ * ```
+ * There is no Objective-C typeinfo for `Bar`, thus `foo` will be called via method lookup.
+ */
 private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
