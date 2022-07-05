@@ -150,6 +150,16 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
+        public void testFakeOverrideInDefaultMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");
+        }
+
+        @TestMetadata("fakeOverrideMultiModule.kt")
+        public void testFakeOverrideMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideMultiModule.kt");
+        }
+
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
