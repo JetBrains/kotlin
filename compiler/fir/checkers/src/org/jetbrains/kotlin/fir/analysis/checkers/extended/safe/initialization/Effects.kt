@@ -20,6 +20,8 @@ open class Effects(private val collection: Collection<Effect>) : Collection<Effe
     operator fun plus(effects: Collection<Effect>) = collectionsPlus(effects).toEffects()
 
     companion object {
-        fun <P : Effect> Collection<P>.toEffects() = Effects(this)
+        private fun Collection<Effect>.fastToEffects() = Effects(this)
+
+        fun Collection<Effect>.toEffects() = Effects(toList())
     }
 }

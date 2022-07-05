@@ -62,6 +62,8 @@ open class Potentials(open val collection: Collection<Potential>) : Collection<P
         collectionsPlus(collection).toPotentials()
 
     companion object {
-        fun <P : Potential> Collection<P>.toPotentials() = Potentials(this)
+        private fun Collection<Potential>.fastToPotentials() = Potentials(this)
+
+        fun Collection<Potential>.toPotentials() = Potentials(toList())
     }
 }
