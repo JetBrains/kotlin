@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.TypeUsage
+import org.jetbrains.kotlin.load.java.extractNullabilityAnnotationOnBoundedWildcard
 import org.jetbrains.kotlin.types.TypeUsage.COMMON
 import org.jetbrains.kotlin.types.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
@@ -287,8 +287,15 @@ class JavaTypeResolver(
                 if (bound == null || projectionKind.isConflictingArgumentFor(typeParameter))
                     makeStarProjection(typeParameter, attr)
                 else {
+                    val nullabilityAnnotationOnWildcard = extractNullabilityAnnotationOnBoundedWildcard(c, javaType)
+                    val transformedJavaType = transformJavaType(bound, COMMON.toAttributes()).let {
+                        if (nullabilityAnnotationOnWildcard != null) {
+                            it.replaceAnnotations(Annotations.create(it.annotations + nullabilityAnnotationOnWildcard))
+                        } else it
+                    }
+
                     createProjection(
-                        type = transformJavaType(bound, COMMON.toAttributes()),
+                        type = transformedJavaType,
                         projectionKind = projectionKind,
                         typeParameterDescriptor = typeParameter
                     )

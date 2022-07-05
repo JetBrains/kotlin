@@ -27848,6 +27848,32 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForeignAnnotationsTests {
+            @Test
+            public void testAllFilesPresentInForeignAnnotationsTests() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Tests {
+                @Test
+                public void testAllFilesPresentInTests() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("kt53041.kt")
+                public void testKt53041() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/kt53041.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
         @TestDataPath("$PROJECT_ROOT")
         public class Generics {

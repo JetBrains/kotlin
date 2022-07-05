@@ -10,7 +10,15 @@ import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
+val RXJAVA3_ANNOTATIONS_PACKAGE = FqName("io.reactivex.rxjava3.annotations")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
+
+private val RXJAVA3_ANNOTATIONS_PACKAGE_NAME = RXJAVA3_ANNOTATIONS_PACKAGE.asString()
+
+val RXJAVA3_ANNOTATIONS = arrayOf(
+    FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.Nullable"),
+    FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.NonNull")
+)
 
 val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullabilityAnnotationsStatus> = NullabilityAnnotationStatesImpl(
     mapOf(
@@ -39,7 +47,7 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
             sinceVersion = KotlinVersion(1, 9),
             reportLevelAfter = ReportLevel.STRICT
         ),
-        FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
+        RXJAVA3_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
             sinceVersion = KotlinVersion(1, 8),
             reportLevelAfter = ReportLevel.STRICT
