@@ -18,6 +18,7 @@ STEP 3:
     modifications:
         U : A.0.kt -> A.kt
     modified ir: A.kt
+    updated imports: B.kt, C.kt
 STEP 4:
     modifications:
         U : B.0.kt -> B.kt
