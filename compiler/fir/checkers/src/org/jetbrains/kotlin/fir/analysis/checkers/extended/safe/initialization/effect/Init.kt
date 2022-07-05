@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm

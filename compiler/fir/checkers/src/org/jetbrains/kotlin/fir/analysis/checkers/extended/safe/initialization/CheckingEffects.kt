@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effect.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Effect
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.FieldAccess
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.MethodAccess
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Promote
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
@@ -43,7 +46,7 @@ object Checker {
         if (clazz === innerClass || stateOfClass.superClasses.contains(clazz))
             return effsAndPots
 
-        val outerSelection = outerSelection(effsAndPots.potentials, innerClass)
+        val outerSelection = effsAndPots.potentials.outerSelection(innerClass)
         // val outerClass =  // outerClass for innerClass
         return stateOfClass.outerClassState?.let { resolveThis(clazz, outerSelection, it) } ?: TODO()
     }
@@ -64,7 +67,7 @@ object Checker {
         data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
 
         val initializationOrder = mutableMapOf<FirExpression, InitializationPointInfo>()
-        val effectsInProcess = mutableListOf<Effect>()
+        val effectsInProcess: MutableList<Effect> = mutableListOf()
 
         val localInitedProperties = LinkedHashSet<FirVariable>()
         val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()

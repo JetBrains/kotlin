@@ -17,7 +17,7 @@ data class Super(val firSuperReference: FirSuperReference, val firClass: FirClas
 
     override fun propagate(): EffectsAndPotentials {
         val (effs, pots) = potential.propagate()
-        return EffectsAndPotentials(effs, pots.map(::createPotentialForPotential))
+        return EffectsAndPotentials(effs, pots.wrapPots(::createPotentialForPotential))
     }
 
     fun getRightStateOfClass() = Checker.alreadyCheckedClasses[firClass] ?: TODO()

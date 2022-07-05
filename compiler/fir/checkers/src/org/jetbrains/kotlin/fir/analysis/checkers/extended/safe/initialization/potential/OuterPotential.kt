@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.outerSelection
 import org.jetbrains.kotlin.fir.declarations.FirClass
 
 data class OuterPotential(override val potential: Potential, val outerClass: FirClass) :
@@ -30,7 +29,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
             is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Out3
                 val (effects, potentials) = potential.propagate()
-                val (_, outPots) = outerSelection(potentials, outerClass)
+                val (_, outPots) = potentials.outerSelection(outerClass)
                 EffectsAndPotentials(effects, outPots)
             }
         }

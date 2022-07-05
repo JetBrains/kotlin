@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodPotential(override val potential: Potential, val method: FirFunction) : WithPrefix(potential, method) {
@@ -18,29 +19,29 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
             is Root.This -> {                                     // P-Inv1
                 val state = Checker.resolve(method)
                 val potentials = potential.potentialsOf(state, method)
-                potentials.toEffectsAndPotentials()
+                EffectsAndPotentials(potentials = potentials)
             }
             is Warm -> {                                     // P-Inv2
                 val state = Checker.resolve(method)
                 val potentials = potential.potentialsOf(state, method)  // find real state
-                potentials.viewChange(potential).toEffectsAndPotentials()
+                EffectsAndPotentials(potentials = potentials.viewChange(potential))
             }
-            is Root.Cold -> EffectsAndPotentials(potential)
+            is Root.Cold -> EffectsAndPotentials(potential = potential)
             is Super -> {
                 val state = potential.getRightStateOfClass()
                 val potentials = potential.potentialsOf(state, method)
-                potentials.toEffectsAndPotentials()
+                EffectsAndPotentials(potentials = potentials)
             }
             is LambdaPotential -> {
                 val (_, pots) = potential.effectsAndPotentials
-                pots.toEffectsAndPotentials()
+                EffectsAndPotentials(potentials = pots)
             }
             else -> {                                                       // P-Inv3
                 val (effects, potentials) = potential.propagate()
                 val call =
                     if (potentials.isNotEmpty()) {
                         val state = Checker.resolve(method)
-                        state.call(potentials, method)
+                        potentials.call(state, method)
                     } else emptyEffsAndPots
                 call + effects
             }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.toEffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
@@ -59,7 +58,8 @@ object Analyser {
 
         override fun visitSuperReference(superReference: FirSuperReference, data: Pair<StateOfClass, Potentials>): EffectsAndPotentials {
             val (stateOfClass, pots) = data
-            return pots.map { pot -> Super(superReference, stateOfClass.firClass, pot) }.toEffectsAndPotentials()
+            val superPots = pots.wrapPots { pot -> Super(superReference, stateOfClass.firClass, pot) }
+            return EffectsAndPotentials(potentials = superPots)
         }
 
         @OptIn(SymbolInternals::class)
@@ -74,10 +74,10 @@ object Analyser {
         ): EffectsAndPotentials {
             val (stateOfClass, prefPots) = data
             return when (val symbol = resolvedNamedReference.resolvedSymbol) {
-                is FirVariableSymbol<*> -> stateOfClass.select(prefPots, symbol.fir)
-                is FirConstructorSymbol -> init(prefPots, symbol)
+                is FirVariableSymbol<*> -> prefPots.select(stateOfClass, symbol.fir)
+                is FirConstructorSymbol -> prefPots.init(symbol)
                 is FirAnonymousFunctionSymbol -> TODO()
-                is FirFunctionSymbol<*> -> stateOfClass.call(prefPots, symbol.fir)
+                is FirFunctionSymbol<*> -> prefPots.call(stateOfClass, symbol.fir)
                 else -> emptyEffsAndPots
             }
         }
@@ -91,7 +91,7 @@ object Analyser {
         private fun analyseArgumentList(argumentList: FirArgumentList): EffectsAndPotentials =
             argumentList.arguments.fold(emptyEffsAndPots) { sum, argDec ->
                 val (effs, pots) = argDec.accept()
-                sum + effs + promote(pots)
+                sum + effs + pots.promote()
             }
 
         private fun analyseQualifiedAccess(firQualifiedAccess: FirQualifiedAccess): EffectsAndPotentials = firQualifiedAccess.run {
@@ -100,7 +100,7 @@ object Analyser {
             ).fold(emptyEffsAndPots) { sum, receiver ->
                 val recEffsAndPots = receiver.accept().let {
                     if (receiver != extensionReceiver) it
-                    else (promote(it.potentials) + it.effects).toEffectsAndPotentials()
+                    else EffectsAndPotentials(it.potentials.promote() + it.effects)
                 }
                 sum + recEffsAndPots
             }
@@ -145,7 +145,7 @@ object Analyser {
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): EffectsAndPotentials {
             val firThisReference = thisReceiverExpression.calleeReference
             val firClass = firThisReference.boundSymbol?.fir as FirClass
-            val effectsAndPotentials = firThisReference.accept(ReferenceVisitor, stateOfClass to emptyList())
+            val effectsAndPotentials = firThisReference.accept(ReferenceVisitor, stateOfClass to EmptyPotentials)
             return if (stateOfClass.superClasses.contains(firClass) || firClass === stateOfClass.firClass)
                 effectsAndPotentials else resolveThis(firClass, effectsAndPotentials, stateOfClass)
         }
@@ -253,8 +253,7 @@ object Analyser {
         }
 
         override fun visitReturnExpression(returnExpression: FirReturnExpression, data: Nothing?): EffectsAndPotentials {
-            val effsAndPots = returnExpression.result.accept()
-            return effsAndPots
+            return returnExpression.result.accept()
         }
 
         override fun visitBlock(block: FirBlock, data: Nothing?): EffectsAndPotentials =

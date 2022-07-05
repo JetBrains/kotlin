@@ -6,42 +6,50 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.ClassAnalyser.analyseDeclaration1
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potentials
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.FieldAccess
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.MethodAccess
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Promote
+import org.jetbrains.kotlin.fir.declarations.*
 
 sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     sealed interface Propagatable {
-        fun effectsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Effects =
+        fun effectsOf(state: StateOfClass, firDeclaration: FirDeclaration) =
             state.analyseDeclaration1(firDeclaration).effects
 
-        fun potentialsOf(state: Checker.StateOfClass, firDeclaration: FirDeclaration): Potentials =
+        fun potentialsOf(state: StateOfClass, firDeclaration: FirDeclaration) =
             state.analyseDeclaration1(firDeclaration).potentials
     }
 
     abstract fun propagate(): EffectsAndPotentials
 
-    fun Checker.StateOfClass.select(field: FirVariable): EffectsAndPotentials = when {
-        this@Potential is Root.Cold -> EffectsAndPotentials(Promote(this@Potential))
-        length < 4 -> {
-            val f = resolveMember(this@Potential, field)
-            EffectsAndPotentials(
-                FieldAccess(this@Potential, f),
-                FieldPotential(this@Potential, f)
-            )
-        }
-        else -> EffectsAndPotentials(Promote(this@Potential))
-    }
+    abstract fun viewChange(root: Potential): Potential
 
-    fun Checker.StateOfClass.call(function: FirFunction): EffectsAndPotentials {
-        val potential = this@Potential
+    inline fun <reified T : FirMemberDeclaration> StateOfClass.resolveMember(dec: T): T =
+        if (this@Potential is Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
+
+    fun select(stateOfClass: StateOfClass, field: FirVariable): EffectsAndPotentials =
+        when {
+            this is Root.Cold -> EffectsAndPotentials(Promote(this))
+            length < 4 -> {
+                val f = stateOfClass.resolveMember(field)
+                EffectsAndPotentials(
+                    FieldAccess(this, f),
+                    FieldPotential(this, f)
+                )
+            }
+            else -> EffectsAndPotentials(Promote(this))
+        }
+
+    fun call(stateOfClass: StateOfClass, function: FirFunction): EffectsAndPotentials {
+        val potential = this
         return when {
             potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
             potential.length < 2 -> {
-                val f = resolveMember(potential, function)
+                val f = stateOfClass.resolveMember(function)
                 EffectsAndPotentials(
                     MethodAccess(potential, f),
                     MethodPotential(potential, f)
@@ -60,5 +68,5 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
         }
     }
 
-    abstract fun viewChange(root: Potential): Potential
+    fun toPotentials() = Potentials(this)
 }

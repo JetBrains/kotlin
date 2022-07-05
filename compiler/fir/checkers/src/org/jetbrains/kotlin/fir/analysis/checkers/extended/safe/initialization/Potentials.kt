@@ -5,50 +5,63 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effects.Companion.toEffects
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Init
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Promote
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
+import kotlin.collections.plus as collectionsPlus
 
-typealias Potentials = List<Potential>
+object EmptyPotentials : Potentials(emptyList())
 
-inline fun <reified T : FirMemberDeclaration> Checker.StateOfClass.resolveMember(potential: Potential, dec: T): T =
-    if (potential is Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
+open class Potentials(open val collection: Collection<Potential>) : Collection<Potential> by collection {
 
-fun Checker.StateOfClass.select(potentials: Potentials, field: FirVariable): EffectsAndPotentials {
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { select(field) } }
+    constructor(potential: Potential) : this(listOf(potential))
+
+    fun select(stateOfClass: StateOfClass, field: FirVariable) =
+        fold(emptyEffsAndPots) { sum, pot -> sum + pot.select(stateOfClass, field) }
+
+    fun call(stateOfClass: StateOfClass, function: FirFunction): EffectsAndPotentials =
+        fold(emptyEffsAndPots) { sum, pot -> sum + pot.call(stateOfClass, function) }
+
+    fun outerSelection(clazz: FirClass): EffectsAndPotentials =
+        fold(emptyEffsAndPots) { sum, pot -> sum + pot.outerSelection(clazz) }
+
+    fun <W : Potential> wrapPots(createPot: (Potential) -> W) = map { createPot(it) }.toPotentials()
+
+    fun promote() = map(::Promote).toEffects()
+
+    fun viewChange(root: Potential) =
+        map { pot -> pot.viewChange(root) }.toPotentials()
+
+    fun init(firConstructorSymbol: FirConstructorSymbol): EffectsAndPotentials {
+        @OptIn(LookupTagInternals::class)
+        fun FirConstructorSymbol.getClassFromConstructor() =
+            containingClass()?.toFirRegularClass(moduleData.session)
+
+        val clazz = firConstructorSymbol.getClassFromConstructor() ?: return emptyEffsAndPots
+
+        return fold(emptyEffsAndPots) { sum, pot ->
+            val warmPot = Warm(clazz, pot)
+            val initEff = Init(warmPot, clazz, firConstructorSymbol)
+            sum + warmPot + initEff
+        }
+    }
+
+    operator fun <P : Potential> plus(potential: P) = collectionsPlus(potential).toPotentials()
+
+    operator fun <P : Potential> plus(collection: Collection<P>) =
+        collectionsPlus(collection).toPotentials()
+
+    companion object {
+        fun <P : Potential> Collection<P>.toPotentials() = Potentials(this)
+    }
 }
-
-fun Checker.StateOfClass.call(potentials: Potentials, function: FirFunction): EffectsAndPotentials {
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { call(function) } }
-}
-
-fun outerSelection(potentials: Potentials, clazz: FirClass): EffectsAndPotentials {
-    return potentials.fold(emptyEffsAndPots) { sum, pot -> sum + pot.run { outerSelection(clazz) } }
-}
-
-fun promote(potentials: Potentials): Effects = potentials.map { Promote(it) }
-
-fun init(
-    potentials: Potentials,
-    firConstructorSymbol: FirConstructorSymbol,
-): EffectsAndPotentials {
-    @OptIn(LookupTagInternals::class)
-    fun FirConstructorSymbol.getClassFromConstructor() =
-        containingClass()?.toFirRegularClass(moduleData.session)
-
-    val clazz = firConstructorSymbol.getClassFromConstructor() ?: return emptyEffsAndPots
-    val prefixPotentials = potentials.map { pot -> Warm(clazz, pot) }
-    val initEffects = prefixPotentials.map { warm -> Init(warm, clazz, firConstructorSymbol) }
-
-    return EffectsAndPotentials(initEffects, prefixPotentials)
-}
-
-fun Potentials.viewChange(root: Potential): Potentials = map { pot -> pot.viewChange(root) }

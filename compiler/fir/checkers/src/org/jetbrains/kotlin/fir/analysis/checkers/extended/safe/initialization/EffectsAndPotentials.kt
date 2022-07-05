@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Effect
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
 
 
 val emptyEffsAndPots = EffectsAndPotentials()
 
 data class EffectsAndPotentials(
-    val effects: Effects = emptyList(),
-    val potentials: Potentials = emptyList()
+    val effects: Effects = EmptyEffects,
+    val potentials: Potentials = EmptyPotentials
 ) {
-    constructor(effect: Effect, potential: Potential) : this(listOf(effect), listOf(potential))
+    constructor(effect: Effect, potential: Potential) : this(effect.toEffects(), potential.toPotentials())
 
-    constructor(effect: Effect) : this(effects = listOf(effect))
+    constructor(effect: Effect) : this(effects = effect.toEffects())
 
-    constructor(potential: Potential) : this(potentials = listOf(potential))
+    constructor(potential: Potential) : this(potentials = potential.toPotentials())
 
-    operator fun plus(effect: Effect): EffectsAndPotentials = plus(listOf(effect))
+    operator fun plus(effect: Effect): EffectsAndPotentials = plus(effect.toEffects())
 
-    operator fun plus(potential: Potential): EffectsAndPotentials = plus(listOf(potential))
+    operator fun plus(potential: Potential): EffectsAndPotentials = plus(potential.toPotentials())
 
     @JvmName("plus1")
     operator fun plus(effs: Effects): EffectsAndPotentials =
@@ -32,9 +33,9 @@ data class EffectsAndPotentials(
     operator fun plus(pots: Potentials): EffectsAndPotentials =
         addEffectsAndPotentials(pots = pots)
 
-    fun addEffectsAndPotentials(
-        effs: Effects = emptyList(),
-        pots: Potentials = emptyList()
+    private fun addEffectsAndPotentials(
+        effs: Effects = EmptyEffects,
+        pots: Potentials = EmptyPotentials
     ): EffectsAndPotentials =
         EffectsAndPotentials(effects + effs, potentials + pots)
 
@@ -48,15 +49,11 @@ data class EffectsAndPotentials(
     }
 
     companion object {
-        @JvmName("PotentialsToEffectsAndPotentials")
-        fun Potentials.toEffectsAndPotentials() = EffectsAndPotentials(potentials = this)
-
-        @JvmName("EffectsToEffectsAndPotentials")
-        fun Effects.toEffectsAndPotentials() = EffectsAndPotentials(this)
     }
 }
 
 @JvmName("plus1")
 operator fun Effects.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
+
 @JvmName("plus2")
 operator fun Potentials.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this

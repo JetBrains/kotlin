@@ -7,28 +7,19 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Effect
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
+import kotlin.collections.plus as collectionsPlus
 
-//typealias Effects = List<Effect>
+object EmptyEffects : Effects(emptyList())
 
-object EmptyEffects : Effects<Effect>(emptyList())
+open class Effects(private val collection: Collection<Effect>) : Collection<Effect> by collection {
 
-open class Effects<P : Effect>(private val effectList: Collection<P>) : Collection<P> by effectList {
+    constructor(effect: Effect) : this(listOf(effect))
 
-    constructor(effect: P) : this(listOf(effect))
+    fun viewChange(root: Potential) = map { eff -> eff.viewChange(root) }.toEffects()
 
-    fun viewChange(root: Potential): Effects<*> = map { eff -> eff.viewChange(root) }.toEffects()
-
-    operator fun plus(effects: Effects<*>) = (effectList + effects.effectList).toEffects()
-
-    fun toEffectsAndPotentials() = EffectsAndPotentials(this)
+    operator fun plus(effects: Collection<Effect>) = collectionsPlus(effects).toEffects()
 
     companion object {
         fun <P : Effect> Collection<P>.toEffects() = Effects(this)
-    }
-}
-
-    fun viewChange(root: Potential): Effect {
-        val viewedPot = potential.viewChange(root)
-        return createEffectForPotential(viewedPot)
     }
 }

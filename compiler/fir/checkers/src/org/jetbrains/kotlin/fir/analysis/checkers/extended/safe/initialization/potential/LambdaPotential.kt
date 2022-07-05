@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.viewChange
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 
 data class LambdaPotential(
