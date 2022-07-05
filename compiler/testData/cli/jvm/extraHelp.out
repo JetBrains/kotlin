@@ -28,8 +28,6 @@ where advanced options include:
   -Xir-do-not-clear-binding-context
                              When using the IR backend, do not clear BindingContext between psi2ir and lowerings
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
-  -Xdebug                    Enable debug mode for compilation.
-                             Currently this includes spilling all variables in a suspending context regardless their liveness.
   -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
                              Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
   -Xenhance-type-parameter-types-to-def-not-null

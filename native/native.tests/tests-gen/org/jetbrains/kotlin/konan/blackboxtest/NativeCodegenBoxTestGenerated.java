@@ -10703,18 +10703,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                     }
                 }
-
-                @Nested
-                @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
-                @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @UseExtTestCaseGroupProvider()
-                public class DebugMode {
-                    @Test
-                    public void testAllFilesPresentInDebugMode() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                    }
-                }
             }
         }
 

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.USE_JAVAC_BASE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -80,12 +79,6 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 
         forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava17/*") {
             configureModernJavaTest(TestJdkKind.FULL_JDK_17, JvmTarget.JVM_17)
-        }
-
-        forTestsMatching("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/*") {
-            defaultDirectives {
-                +ENABLE_DEBUG_MODE
-            }
         }
 
         enableMetaInfoHandler()

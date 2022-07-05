@@ -13107,16 +13107,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/coroutines/varSpilling/cleanup/when.kt");
                 }
             }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
-            @TestDataPath("$PROJECT_ROOT")
-            public class DebugMode {
-                @Test
-                public void testAllFilesPresentInDebugMode() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                }
-            }
         }
     }
 

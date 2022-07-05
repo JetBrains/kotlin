@@ -77,6 +77,4 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable serialization of JVM IR",
         additionalParser = JvmSerializeIrMode.Companion::fromString
     )
-
-    val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
 }
