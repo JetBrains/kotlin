@@ -908,7 +908,6 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    @ObsoleteDescriptorBasedAPI
     protected fun irTemporary(
         value: IrExpression,
         name: String,
