@@ -511,13 +511,6 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var linkViaSignatures: Boolean by FreezableVar(false)
 
-    @Argument(
-        value = "-Xdebug",
-        description = "Enable debug mode for compilation.\n" +
-                "Currently this includes spilling all variables in a suspending context regardless their liveness."
-    )
-    var enableDebugMode: Boolean by FreezableVar(false)
-
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
