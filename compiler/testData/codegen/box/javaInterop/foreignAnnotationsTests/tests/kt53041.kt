@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // JVM_TARGET: 1.8
+// TARGET_BACKEND: JVM
 // NULLABILITY_ANNOTATIONS: @io.reactivex.rxjava3.annotations:strict
 // IGNORE_LIGHT_ANALYSIS
 

@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.createArrayType
+import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
+import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal val JavaModifierListOwner.modality: Modality
@@ -97,4 +100,10 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
     }
     replaceTypeRef(typeRef)
     return this
+}
+
+// For now, it's supported only for RxJava3 annotations, see KT-53041
+fun extractNullabilityAnnotationOnBoundedWildcard(wildcardType: JavaWildcardType): JavaAnnotation? {
+    require(wildcardType.bound != null) { "Nullability annotations on unbounded wildcards aren't supported" }
+    return wildcardType.annotations.find { annotation -> RXJAVA3_ANNOTATIONS.any { annotation.classId?.asSingleFqName() == it } }
 }

@@ -23789,12 +23789,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     public void testAllFilesPresentInTests() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                     }
-
-                    @Test
-                    @TestMetadata("kt53041.kt")
-                    public void testKt53041() throws Exception {
-                        runTest("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/kt53041.kt");
-                    }
                 }
             }
 

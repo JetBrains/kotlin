@@ -78,19 +78,31 @@ internal fun JavaType?.toFirResolvedTypeRef(
 
 private fun JavaType?.toConeKotlinType(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
-    mode: FirJavaTypeConversionMode
+    mode: FirJavaTypeConversionMode,
+    additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeKotlinType =
-    toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode).type
+    toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, additionalAnnotations).type
         ?: StandardClassIds.Any.toConeFlexibleType(emptyArray(), emptyArray(), ConeAttributes.Empty)
 
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
-    parameterVariance: Variance, mode: FirJavaTypeConversionMode
+    parameterVariance: Variance, mode: FirJavaTypeConversionMode,
+    additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
-    val attributes = if (this != null && annotations.isNotEmpty())
-        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertAnnotationsToFir(session, javaTypeParameterStack))))
-    else
+    val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
+        val convertedAnnotations = buildList {
+            if (annotations.isNotEmpty()) {
+                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, javaTypeParameterStack))
+            }
+            if (additionalAnnotations != null) {
+                addAll(additionalAnnotations.convertAnnotationsToFir(session, javaTypeParameterStack))
+            }
+        }
+
+        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations)))
+    } else {
         ConeAttributes.Empty
+    }
 
     return when (this) {
         is JavaClassifierType -> {
@@ -141,7 +153,8 @@ private fun JavaType?.toConeTypeProjection(
             if (bound == null || (parameterVariance != Variance.INVARIANT && parameterVariance != argumentVariance)) {
                 ConeStarProjection
             } else {
-                val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode)
+                val nullabilityAnnotationOnWildcard = extractNullabilityAnnotationOnBoundedWildcard(this)?.let(::listOf)
+                val boundType = bound.toConeKotlinType(session, javaTypeParameterStack, mode, nullabilityAnnotationOnWildcard)
                 if (isExtends) ConeKotlinTypeProjectionOut(boundType) else ConeKotlinTypeProjectionIn(boundType)
             }
         }
