@@ -5,9 +5,9 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/Double;>;Lkot
     public <(I)Ljava/util/ListIterator<Ljava/lang/Double;>;> method listIterator(p0: int): java.util.ListIterator
     public <(II)Ljava/util/List<Ljava/lang/Double;>;> method subList(p0: int, p1: int): java.util.List
     public <(ILjava/util/Collection<+Ljava/lang/Double;>;)Z> method addAll(p0: int, p1: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/Double;>;)Z> method addAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method add(p0: double): boolean
@@ -41,8 +41,8 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT
     public <(ILjava/util/Collection<+TT;>;)Z> method addAll(p0: int, p1: java.util.Collection): boolean
     public <(ITT;)TT;> method set(p0: int, p1: java.lang.Object): java.lang.Object
     public <(ITT;)V> method add(p0: int, p1: java.lang.Object): void
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+TT;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <(TT;)Z> method add(p0: java.lang.Object): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -61,8 +61,8 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/String;>;Lkot
     public <(I)Ljava/util/ListIterator<Ljava/lang/String;>;> method listIterator(p0: int): java.util.ListIterator
     public <(II)Ljava/util/List<Ljava/lang/String;>;> method subList(p0: int, p1: int): java.util.List
     public <(ILjava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: int, p1: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(p0: java.util.Collection): boolean
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method removeAll(p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method retainAll(p0: java.util.Collection): boolean
     public <(Ljava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void

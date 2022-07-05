@@ -12,9 +12,9 @@ public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT;>;
     public final <(ILjava/util/Collection<+TT;>;)Z> method addAll(p0: int, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
     public final <(ITT;)TT;> method set(p0: int, p1: java.lang.Object): java.lang.Object
     public final <(ITT;)V> method add(p0: int, p1: java.lang.Object): void
-    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
-    public final <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
-    public final <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public <(Ljava/util/Collection<*>;)Z> method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final <(Ljava/util/Collection<*>;)Z> method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final <(Ljava/util/Collection<*>;)Z> method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public final <(Ljava/util/Collection<+TT;>;)Z> method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public <(TT;)V> method <init>(p0: java.lang.Object): void
     public final <(TT;)Z> method add(p0: java.lang.Object): boolean
