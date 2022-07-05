@@ -39201,6 +39201,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
+            public void testFakeOverrideInDefaultMultiModule() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");
+            }
+
+            @Test
+            @TestMetadata("fakeOverrideMultiModule.kt")
+            public void testFakeOverrideMultiModule() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideMultiModule.kt");
+            }
+
+            @Test
             @TestMetadata("functionExpression.kt")
             public void testFunctionExpression() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
