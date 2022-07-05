@@ -43,7 +43,7 @@ internal class TaskOutputsBackup(
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputs.toSortedSet().forEachIndexed { index, outputPath ->
-            if (outputPath.isDirectory && Files.list(outputPath.toPath()).use { it.findFirst().isPresent }) {
+            if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
                 compressDirectoryToZip(
                     File(snapshotsDir.get().asFile, index.asSnapshotArchiveName),
                     outputPath
@@ -105,11 +105,14 @@ internal class TaskOutputsBackup(
             zip.setLevel(Deflater.NO_COMPRESSION)
             outputPath
                 .walkTopDown()
-                .filter { !it.isDirectory }
+                .filter { file -> !file.isDirectory || file.isEmptyDirectory }
                 .forEach { file ->
-                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath)
+                    val suffix = if (file.isDirectory) "/" else ""
+                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath + suffix)
                     zip.putNextEntry(entry)
-                    file.inputStream().buffered().use { it.copyTo(zip) }
+                    if (!file.isDirectory) {
+                        file.inputStream().buffered().use { it.copyTo(zip) }
+                    }
                     zip.closeEntry()
                 }
             zip.flush()
@@ -136,6 +139,9 @@ internal class TaskOutputsBackup(
             }
         }
     }
+
+    private val File.isEmptyDirectory: Boolean
+        get() = !Files.list(toPath()).use { it.findFirst().isPresent }
 
     private val Path.normalizedToBeRelative: String
         get() = if (toString() == "/") "." else toString().removePrefix("/")
