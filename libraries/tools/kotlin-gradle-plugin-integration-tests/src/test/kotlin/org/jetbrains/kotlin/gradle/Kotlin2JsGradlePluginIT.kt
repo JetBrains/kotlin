@@ -266,7 +266,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
                 projectPath.resolve("$it/src/main").allKotlinFiles
             }
 
-            build("build") {
+            build("compileKotlinJs", "compileTestKotlinJs") {
                 checkIrCompilationMessage()
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 if (irBackend) {
@@ -276,7 +276,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
                 }
             }
 
-            build("build") {
+            build("compileKotlinJs", "compileTestKotlinJs") {
                 assertCompiledKotlinSources(emptyList(), output)
             }
 
@@ -284,7 +284,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
             modifiedFile.modify {
                 it.replace("val x = 0", "val x = \"a\"")
             }
-            build("build") {
+            build("compileKotlinJs", "compileTestKotlinJs") {
                 checkIrCompilationMessage()
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
@@ -716,7 +716,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
         val options = defaultBuildOptions.copy(jsOptions = jsOptions)
         project("kotlin2JsICProject", gradleVersion, buildOptions = options) {
-            build("build") {
+            build("compileKotlinJs", "compileTestKotlinJs") {
                 checkIrCompilationMessage()
                 assertOutputDoesNotContain(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
             }
