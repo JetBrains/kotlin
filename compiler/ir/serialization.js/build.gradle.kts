@@ -9,6 +9,7 @@ dependencies {
     api(project(":js:js.frontend"))
 
     implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":kotlin-reflect-api"))
 
     compileOnly(intellijCore())
