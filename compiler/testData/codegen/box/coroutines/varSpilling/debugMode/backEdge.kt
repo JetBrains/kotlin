@@ -2,6 +2,7 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -42,7 +43,7 @@ fun box(): String {
         test()
     }
 
-    val continuationName = "Continuation at BackEdgeKt\$box\$1.invokeSuspend(backEdge.kt:42)"
+    val continuationName = "Continuation at BackEdgeKt\$box\$1.invokeSuspend(backEdge.kt:43)"
     if (spilledVariables != setOf("label" to "1", "I$0" to "0", "L$0" to continuationName, "L$1" to "null")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "I$0" to "0", "L$0" to continuationName, "L$1" to "a")) return "FAIL 2: $spilledVariables"

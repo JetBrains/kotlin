@@ -2,6 +2,7 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -61,7 +62,7 @@ fun box(): String {
         test(0)
     }
 
-    var continuationName = "Continuation at WhenKt\$box\$1.invokeSuspend(when.kt:61)"
+    var continuationName = "Continuation at WhenKt\$box\$1.invokeSuspend(when.kt:62)"
     if (spilledVariables != setOf("label" to "1", "I$0" to "0", "I$1" to "0", "I$2" to "0", "L$0" to continuationName, "L$1" to "a0", "L$2" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
@@ -75,7 +76,7 @@ fun box(): String {
         test(1)
     }
 
-    continuationName = "Continuation at WhenKt\$box\$2.invokeSuspend(when.kt:75)"
+    continuationName = "Continuation at WhenKt\$box\$2.invokeSuspend(when.kt:76)"
     if (spilledVariables != setOf("label" to "2", "I$0" to "1", "I$1" to "1", "I$2" to "0", "L$0" to continuationName, "L$1" to "a1", "L$2" to "b1"))
         return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
@@ -89,7 +90,7 @@ fun box(): String {
         test(2)
     }
 
-    continuationName = "Continuation at WhenKt\$box\$3.invokeSuspend(when.kt:89)"
+    continuationName = "Continuation at WhenKt\$box\$3.invokeSuspend(when.kt:90)"
     if (spilledVariables != setOf("label" to "3", "I$0" to "2", "I$1" to "2", "I$2" to "1", "L$0" to continuationName, "L$1" to "a2", "L$2" to "b2"))
         return "FAIL 7: $spilledVariables"
     c?.resume(Unit)
