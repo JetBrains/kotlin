@@ -161,7 +161,7 @@ internal class KtFirTypeProvider(
 
         require(typeParameterSymbols.size == argumentTypes.size) {
             "'${symbol.fir.render(FirRenderer.RenderMode.NoBodies)}' expects '${typeParameterSymbols.size}' type arguments " +
-                    "but type '${this.render()}' has ${argumentTypes.size} type arguments."
+                    "but type '${this.renderForDebugging()}' has ${argumentTypes.size} type arguments."
         }
 
         val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)

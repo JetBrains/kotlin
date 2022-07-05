@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-internal interface FirRendererComponents {
-    val visitor: FirRenderer.Visitor
-    val printer: FirPrinter
-    val annotationRenderer: FirAnnotationRenderer?
-    val bodyRenderer: FirBodyRenderer?
-    val typeRenderer: ConeTypeRenderer
+import org.jetbrains.kotlin.name.ClassId
+
+open class ConeTypeRendererWithFqNames(builder: StringBuilder) : ConeTypeRenderer(builder) {
+    override fun ClassId.render() {
+        builder.append(asString())
+    }
 }

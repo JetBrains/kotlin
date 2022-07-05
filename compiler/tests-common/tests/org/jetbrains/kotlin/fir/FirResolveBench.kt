@@ -5,9 +5,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -339,7 +337,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                                 return
                             }
                             val psi = resolvedTypeRef.psi ?: return
-                            val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.render()}"
+                            val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.renderForDebugging()}"
                             reportProblem(problem, psi)
                         }
                     }

@@ -77,7 +77,7 @@ internal class ConeTypeIdeRenderer(
             }
             is ConeCapturedType -> {
                 renderAnnotationList(type)
-                append(type.render())
+                append(type.renderReadableWithFqNames())
                 renderNullability(type.type)
             }
             is ConeDefinitelyNotNullType -> {

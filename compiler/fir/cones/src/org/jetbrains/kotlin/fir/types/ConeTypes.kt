@@ -28,7 +28,7 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     abstract val attributes: ConeAttributes
 
     final override fun toString(): String {
-        return render()
+        return renderForDebugging()
     }
 
     abstract override fun equals(other: Any?): Boolean
@@ -160,7 +160,7 @@ data class ConeCapturedType(
     }
 
     override fun hashCode(): Int {
-        var result = 0
+        var result = 7
         result = 31 * result + (lowerType?.hashCode() ?: 0)
         result = 31 * result + constructor.projection.hashCode()
         result = 31 * result + constructor.typeParameterMarker.hashCode()

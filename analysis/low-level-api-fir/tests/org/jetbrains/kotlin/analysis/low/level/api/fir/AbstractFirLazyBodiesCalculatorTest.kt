@@ -52,8 +52,8 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
                 bodyBuildingMode = BodyBuildingMode.NORMAL
             ).buildFirFile(ktFile)
 
-            val laziedFirFileDump = StringBuilder().also { FirRenderer(it).visitFile(laziedFirFile) }.toString()
-            val fullFirFileDump = StringBuilder().also { FirRenderer(it).visitFile(fullFirFile) }.toString()
+            val laziedFirFileDump = StringBuilder().also { FirRenderer(it).Visitor().visitFile(laziedFirFile) }.toString()
+            val fullFirFileDump = StringBuilder().also { FirRenderer(it).Visitor().visitFile(fullFirFile) }.toString()
 
             TestCase.assertEquals(laziedFirFileDump, fullFirFileDump)
         }

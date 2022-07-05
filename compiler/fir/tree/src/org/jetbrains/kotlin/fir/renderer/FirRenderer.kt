@@ -47,6 +47,8 @@ open class FirRenderer private constructor(
 
         override var bodyRenderer: FirBodyRenderer? = null
 
+        override lateinit var typeRenderer: ConeTypeRenderer
+
         override lateinit var visitor: Visitor
 
         override lateinit var printer: FirPrinter
@@ -154,12 +156,18 @@ open class FirRenderer private constructor(
         else ->
             null
     }
-    private val bodyRenderer = if (mode.renderBodies) FirBodyRenderer(components) else null
+    private val bodyRenderer =
+        if (mode.renderBodies) FirBodyRenderer(components) else null
+
+    @Suppress("LeakingThis")
+    private val typeRenderer =
+        if (mode.renderDetailedTypeReferences) ConeTypeRendererForDebugging(builder) else ConeTypeRenderer(builder)
 
     init {
         components.visitor = visitor
         components.annotationRenderer = annotationRenderer
         components.bodyRenderer = bodyRenderer
+        components.typeRenderer = typeRenderer
         @Suppress("LeakingThis")
         components.printer = this
     }
@@ -188,7 +196,7 @@ open class FirRenderer private constructor(
             if (index > 0) {
                 print(", ")
             }
-            print(element.render())
+            print(element.renderForDebugging())
         }
     }
 
@@ -318,6 +326,10 @@ open class FirRenderer private constructor(
         }
     }
 
+    fun renderAnnotations(annotationContainer: FirAnnotationContainer) {
+        annotationRenderer?.render(annotationContainer)
+    }
+
     protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
         if (mode.renderNestedDeclarations) {
             regularClass.declarations.renderDeclarations()
@@ -344,6 +356,14 @@ open class FirRenderer private constructor(
             file.imports.forEach { it.accept(this) }
             file.declarations.forEach { it.accept(this) }
             popIndent()
+        }
+
+        override fun visitAnnotation(annotation: FirAnnotation) {
+            annotationRenderer?.renderAnnotation(annotation)
+        }
+
+        override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+            annotationRenderer?.renderAnnotation(annotationCall)
         }
 
         override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
@@ -603,7 +623,7 @@ open class FirRenderer private constructor(
             constructor.renderDeclarationData()
 
             constructor.dispatchReceiverType?.let {
-                print(it.render())
+                typeRenderer.render(it)
                 print(".")
             }
             print("constructor")
@@ -1051,15 +1071,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-            val kind = resolvedTypeRef.functionTypeKind
-            if (mode.renderDetailedTypeReferences) {
-                print("R|")
-            }
-            val coneType = resolvedTypeRef.type
-            print(coneType.renderFunctionType(kind, renderFqNames = mode.renderDetailedTypeReferences))
-            if (mode.renderDetailedTypeReferences) {
-                print("|")
-            }
+            typeRenderer.renderAsPossibleFunctionType(resolvedTypeRef.type)
         }
 
         override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

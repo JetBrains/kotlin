@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.fir.types.renderForDebugging
+
 class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDescriptionVisitor<Unit, Nothing?>() {
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
         conditionalEffect.effect.accept(this, data)
@@ -37,7 +39,7 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Nothing?) {
         isInstancePredicate.arg.accept(this, data)
-        builder.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type}")
+        builder.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type.renderForDebugging()}")
     }
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Nothing?) {

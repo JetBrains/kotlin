@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.FirPrinter
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -322,10 +324,22 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private val filePackage = firFile.packageFqName.toString()
         private val filePackageWithSlash = filePackage.replace(".", "/")
 
-        private fun ConeTypeProjection.tryToRenderConeAsFunctionType(): String {
-            if (this !is ConeKotlinType) return localTypeRenderer()
-            val functionType = renderFunctionType(functionTypeKind, renderFqNames = true) { localTypeRenderer() }
-            return functionType.removeCurrentFilePackage()
+        private fun ConeTypeProjection.tryToRenderConeAsFunctionTypeString(): String {
+            return buildString {
+                tryToRenderConeAsFunctionType(this@buildString)
+            }
+        }
+
+        private fun ConeTypeProjection.tryToRenderConeAsFunctionType(builder: StringBuilder) {
+            if (this !is ConeKotlinType) {
+                localTypeProjectionRenderer(builder)
+                return
+            }
+            val projectionBuilder = StringBuilder()
+            ConeTypeRendererForDebugging(projectionBuilder).renderAsPossibleFunctionType(this) {
+                localTypeProjectionRenderer(projectionBuilder)
+            }
+            builder.append(projectionBuilder.toString().removeCurrentFilePackage())
         }
 
         // TODO rewrite or extract in common utils
@@ -384,33 +398,49 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             return null
         }
 
-        private fun ConeTypeProjection.localTypeRenderer(): String {
+        private fun ConeTypeProjection.localTypeProjectionRenderer(builder: StringBuilder) {
             val nullabilitySuffix = when {
-                this is ConeKotlinType && this !is ConeErrorType && this !is ConeErrorType -> nullability.suffix
+                this is ConeKotlinType && this !is ConeErrorType -> nullability.suffix
                 else -> ""
             }
 
-            return when (this) {
-                is ConeKotlinTypeProjectionIn -> "in ${type.tryToRenderConeAsFunctionType()}"
-                is ConeKotlinTypeProjectionOut -> "out ${type.tryToRenderConeAsFunctionType()}"
+            when (this) {
+                is ConeKotlinTypeProjectionIn -> {
+                    builder.append("in ")
+                    type.tryToRenderConeAsFunctionType(builder)
+                }
+                is ConeKotlinTypeProjectionOut -> {
+                    builder.append("out ")
+                    type.tryToRenderConeAsFunctionType(builder)
+                }
+                is ConeStarProjection -> builder.append("*")
                 is ConeClassLikeType -> {
                     val type = this.fullyExpandedType(session)
-                    if (type != this) return type.tryToRenderConeAsFunctionType()
-                    val classId = type.lookupTag.classId
-                    buildString {
-                        when {
-                            classId.isLocal -> append(classId.shortClassName.asString().let { stack.getPathByName(it) + it })
-                            else -> append(classId.asString())
-                        }
-                        if (type.typeArguments.isNotEmpty()) {
-                            append(type.typeArguments.joinToString(prefix = "<", postfix = ">") { it.tryToRenderConeAsFunctionType() })
-                        }
-                        append(nullabilitySuffix)
+                    if (type != this) {
+                        type.tryToRenderConeAsFunctionType(builder)
+                        return
                     }
+                    val classId = type.lookupTag.classId
+                    when {
+                        classId.isLocal -> builder.append(classId.shortClassName.asString().let { stack.getPathByName(it) + it })
+                        else -> builder.append(classId.asString())
+                    }
+                    if (type.typeArguments.isNotEmpty()) {
+                        builder.append("<")
+                        for ((index, typeArgument) in type.typeArguments.withIndex()) {
+                            if (index != 0) {
+                                builder.append(", ")
+                            }
+                            typeArgument.tryToRenderConeAsFunctionType(builder)
+                        }
+                        builder.append(">")
+                    }
+                    builder.append(nullabilitySuffix)
                 }
-                is ConeLookupTagBasedType -> lookupTag.name.asString() + nullabilitySuffix
+                is ConeLookupTagBasedType -> builder.append(lookupTag.name.asString() + nullabilitySuffix)
                 is ConeFlexibleType -> {
-                    val lowerRendered = lowerBound.tryToRenderConeAsFunctionType()
+                    val lowerBuilder = StringBuilder()
+                    lowerBound.tryToRenderConeAsFunctionType(lowerBuilder)
                     if (lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE &&
                         AbstractStrictEqualityTypeChecker
                             .strictEqualTypes(
@@ -419,17 +449,20 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                                 upperBound.withNullability(ConeNullability.NOT_NULL, session.typeContext)
                             )
                     ) {
-                        "$lowerRendered!"
+                        builder.append(lowerBuilder)
                     } else {
-                        val upperRendered = upperBound.tryToRenderConeAsFunctionType()
-                        tryToSquashFlexibleType(lowerRendered, upperRendered) ?: "$lowerRendered..$upperRendered"
+                        val upperBuilder = StringBuilder()
+                        upperBound.tryToRenderConeAsFunctionType(upperBuilder)
+                        builder.append(
+                            tryToSquashFlexibleType(lowerBuilder.toString(), upperBuilder.toString()) ?: "$lowerBuilder..$upperBuilder"
+                        )
                     }
                 }
                 is ConeIntersectionType -> {
-                    intersectedTypes.map { it.render().replace("/", ".").replace("kotlin.", "") }.sorted()
+                    intersectedTypes.map { it.renderForDebugging().replace("/", ".").replace("kotlin.", "") }.sorted()
                         .joinToString(separator = " & ", prefix = "{", postfix = "}")
                 }
-                else -> this.render(renderFqNames = true)
+                else -> builder.append((this as ConeKotlinType).renderForDebugging())
             }
         }
 
@@ -485,11 +518,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (original.isVal) data.append("val ") else if (original.isVar) data.append("var ")
 
             data.append("(")
-                .append(original.dispatchReceiverType?.tryToRenderConeAsFunctionType())
-                .append(").")
+            original.dispatchReceiverType?.tryToRenderConeAsFunctionType(data)
+            data.append(").")
                 .append(original.name)
                 .append(": ")
-                .append(original.returnTypeRef.coneType.tryToRenderConeAsFunctionType())
+            original.returnTypeRef.coneType.tryToRenderConeAsFunctionType(data)
         }
 
         private fun renderVariable(variable: FirVariable, data: StringBuilder) {
@@ -513,15 +546,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
 
             val receiver = when (variable) {
-                is FirField -> variable.dispatchReceiverType?.tryToRenderConeAsFunctionType()
+                is FirField -> variable.dispatchReceiverType?.tryToRenderConeAsFunctionTypeString()
                 else -> getSymbolId(variable.symbol)
             }
 
             data.append(receiver)
                 .append(variable.symbol.callableId.callableName)
                 .append(": ")
-                .append(returnType?.tryToRenderConeAsFunctionType())
-                .append((variable as? FirValueParameter)?.defaultValue?.let { " = ..." } ?: "")
+            returnType?.tryToRenderConeAsFunctionType(data)
+            data.append((variable as? FirValueParameter)?.defaultValue?.let { " = ..." } ?: "")
         }
 
         private fun renderPropertySymbol(symbol: FirPropertySymbol, data: StringBuilder) {
@@ -533,7 +566,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             when {
                 receiver != null -> data.append(receiver).append(".").append(symbol.callableId.callableName)
                 fir.dispatchReceiverType != null -> {
-                    val dispatchReceiver = fir.dispatchReceiverType?.tryToRenderConeAsFunctionType()
+                    val dispatchReceiver = fir.dispatchReceiverType?.tryToRenderConeAsFunctionTypeString()
                     data.append("($dispatchReceiver)").append(".").append(symbol.callableId.callableName)
                 }
                 else -> {
@@ -578,7 +611,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 }
                 call.dispatchReceiver !is FirNoReceiverExpression -> {
                     data.append("(")
-                    val dispatch = fir.dispatchReceiverType!!.tryToRenderConeAsFunctionType()
+                    val dispatch = fir.dispatchReceiverType!!.tryToRenderConeAsFunctionTypeString()
                         .let { if (it.endsWith("!")) it.dropLast(1) else it } // this hack drop flexible annotation for receiver
                     data.append(dispatch).append(").").append(callableName)
                 }
@@ -654,7 +687,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitValueParameter(valueParameter: FirValueParameter, data: StringBuilder) {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
-                valueParameter.returnTypeRef.coneType.arrayElementType()?.let { data.append(it.localTypeRenderer()) }
+                valueParameter.returnTypeRef.coneType.arrayElementType()?.localTypeProjectionRenderer(data)
             } else {
                 valueParameter.returnTypeRef.accept(this, data)
             }
@@ -683,7 +716,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     data.append(stack.getPathByName(resolvedNamedReference.name.asString()))
                         .append(resolvedNamedReference.name)
                         .append(": ")
-                        .append(fir.dispatchReceiverType?.tryToRenderConeAsFunctionType())
+                    fir.dispatchReceiverType?.tryToRenderConeAsFunctionType(data)
                 }
                 symbol is FirFieldSymbol -> renderField(symbol.fir, data)
                 else -> (symbol.fir as? FirVariable)?.let { renderVariable(it, data) }
@@ -813,7 +846,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
-            data.append(resolvedTypeRef.type.tryToRenderConeAsFunctionType())
+            resolvedTypeRef.type.tryToRenderConeAsFunctionType(data)
         }
 
         override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: StringBuilder) {
@@ -836,7 +869,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
             data.append("fun$typeParameters ${name.replaceFirstChar(Char::lowercaseChar)}Of")
             typeArguments.firstOrNull()?.let {
-                data.append("<").append(it.tryToRenderConeAsFunctionType()).append(">")
+                data.append("<")
+                it.tryToRenderConeAsFunctionType(data)
+                data.append(">")
             }
             val valueParameter = name.replace("Array", "").takeIf { it.isNotEmpty() } ?: "T"
             data.append("(vararg $valueParameter): $name${typeParameters.trim()}") // TODO change "T" to concrete type is array is primitive

@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.render
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -72,7 +69,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                 val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return false
                 if (errorNamedReference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
-                    (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.render() }})"
+                    (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.renderReadable() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
 
                 fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {

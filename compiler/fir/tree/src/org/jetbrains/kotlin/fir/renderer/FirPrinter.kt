@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.utils.Printer
 
-abstract class FirPrinter internal constructor(builder: StringBuilder) {
+open class FirPrinter(builder: StringBuilder) {
     private val printer = Printer(builder)
 
     private var lineBeginning = true

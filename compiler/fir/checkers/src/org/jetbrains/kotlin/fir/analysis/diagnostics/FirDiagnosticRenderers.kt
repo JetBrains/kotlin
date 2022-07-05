@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
 import org.jetbrains.kotlin.name.CallableId
 
 object FirDiagnosticRenderers {
@@ -89,7 +89,7 @@ object FirDiagnosticRenderers {
 
     val RENDER_TYPE = Renderer { t: ConeKotlinType ->
         // TODO: need a way to tune granuality, e.g., without parameter names in functional types.
-        t.render()
+        t.renderReadableWithFqNames()
     }
 
     val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->

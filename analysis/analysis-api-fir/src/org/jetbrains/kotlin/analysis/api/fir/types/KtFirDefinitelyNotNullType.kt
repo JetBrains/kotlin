@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirDefinitelyNotNullType(
     override val coneType: ConeDefinitelyNotNullType,
@@ -26,7 +26,7 @@ internal class KtFirDefinitelyNotNullType(
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

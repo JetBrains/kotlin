@@ -519,7 +519,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
         require(this is ConeKotlinType)
         assert(this.isBuiltinFunctionalTypeOrSubtype()) {
-            "Not a function type or subtype: ${this.render()}"
+            "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
         return fullyExpandedType(session).let {

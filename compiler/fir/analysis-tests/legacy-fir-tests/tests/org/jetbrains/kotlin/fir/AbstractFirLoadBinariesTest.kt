@@ -37,14 +37,14 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
 
         for (name in declarationNames) {
             for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
-                symbol.fir.accept(firRenderer)
+                symbol.fir.accept(firRenderer.Visitor())
                 builder.appendLine()
             }
         }
 
         for (name in declarationNames) {
             val classLikeSymbol = provider.getClassLikeSymbolByClassId(ClassId.topLevel(packageFqName.child(name))) ?: continue
-            classLikeSymbol.fir.accept(firRenderer)
+            classLikeSymbol.fir.accept(firRenderer.Visitor())
             builder.appendLine()
         }
 

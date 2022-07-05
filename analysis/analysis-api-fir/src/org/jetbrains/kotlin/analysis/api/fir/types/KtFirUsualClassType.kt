@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirUsualClassType(
@@ -40,7 +40,7 @@ internal class KtFirUsualClassType(
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

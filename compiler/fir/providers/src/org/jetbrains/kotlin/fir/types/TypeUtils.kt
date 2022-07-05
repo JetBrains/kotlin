@@ -122,7 +122,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withArguments(arguments)) as T
-        else -> error("Not supported: $this: ${this.render()}")
+        else -> error("Not supported: $this: ${this.renderForDebugging()}")
     }
 }
 
@@ -154,7 +154,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
-        else -> error("Not supported: $this: ${this.render()}")
+        else -> error("Not supported: $this: ${this.renderForDebugging()}")
     } as T
 }
 

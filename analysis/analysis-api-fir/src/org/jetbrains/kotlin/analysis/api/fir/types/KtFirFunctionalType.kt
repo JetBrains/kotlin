@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
 import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.types.receiverType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirFunctionalType(
@@ -73,7 +73,7 @@ internal class KtFirFunctionalType(
     override val returnType: KtType
         get() = withValidityAssertion { (typeArguments.last() as KtTypeArgumentWithVariance).type }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

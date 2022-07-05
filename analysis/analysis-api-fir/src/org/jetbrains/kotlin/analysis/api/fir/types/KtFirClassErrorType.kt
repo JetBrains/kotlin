@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirClassErrorType(
     override val coneType: ConeErrorType,
@@ -37,7 +37,7 @@ internal class KtFirClassErrorType(
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

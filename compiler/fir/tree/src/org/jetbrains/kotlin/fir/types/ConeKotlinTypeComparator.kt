@@ -75,13 +75,13 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         when (a) {
             is ConeErrorType -> {
                 require(b is ConeErrorType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 return a.hashCode() - b.hashCode()
             }
             is ConeLookupTagBasedType -> {
                 require(b is ConeLookupTagBasedType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val nameDiff = a.lookupTag.name.compareTo(b.lookupTag.name)
                 if (nameDiff != 0) {
@@ -95,7 +95,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeFlexibleType -> {
                 require(b is ConeFlexibleType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val lowerBoundDiff = compare(a.lowerBound, b.lowerBound)
                 if (lowerBoundDiff != 0) {
@@ -105,7 +105,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeCapturedType -> {
                 require(b is ConeCapturedType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val aHasLowerType = if (a.lowerType != null) 1 else 0
                 val bHasLowerType = if (b.lowerType != null) 1 else 0
@@ -127,13 +127,13 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeDefinitelyNotNullType -> {
                 require(b is ConeDefinitelyNotNullType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 return compare(a.original, b.original)
             }
             is ConeIntersectionType -> {
                 require(b is ConeIntersectionType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val sizeDiff = a.intersectedTypes.size - b.intersectedTypes.size
                 if (sizeDiff != 0) {
@@ -144,7 +144,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeStubType -> {
                 require(b is ConeStubType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val nameDiff = a.constructor.variable.typeConstructor.name.compareTo(b.constructor.variable.typeConstructor.name)
                 if (nameDiff != 0) {
@@ -154,7 +154,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeIntegerLiteralConstantType -> {
                 require(b is ConeIntegerLiteralConstantType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val valueDiff = a.value - b.value
                 if (valueDiff != 0L) {
@@ -171,7 +171,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 return compare(a.nullability, b.nullability)
             }
             else ->
-                error("Unsupported type comparison: ${a.render()} v.s. ${b.render()}")
+                error("Unsupported type comparison: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}")
         }
     }
 }

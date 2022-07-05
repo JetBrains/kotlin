@@ -103,7 +103,7 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     fun checkFir(testDataFile: File, firFiles: List<FirFile>) {
-        val firFileDump = StringBuilder().apply { firFiles.forEach { it.accept(FirRenderer(this), null) } }.toString()
+        val firFileDump = StringBuilder().apply { firFiles.forEach { it.accept(FirRenderer(this).Visitor(), null) } }.toString()
         val expectedPath = testDataFile.absolutePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(
             File(expectedPath),

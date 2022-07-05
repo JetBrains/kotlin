@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -15,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -195,13 +196,3 @@ val ConeKotlinType.canBeNull: Boolean
         }
     }
 
-val ConeKotlinType?.functionTypeKind: FunctionClassKind?
-    get() {
-        val classId = (this as? ConeClassLikeType)?.lookupTag?.classId ?: return null
-        return FunctionClassKind.getFunctionalClassKind(
-            classId.shortClassName.asString(), classId.packageFqName
-        )
-    }
-
-val FirResolvedTypeRef.functionTypeKind: FunctionClassKind?
-    get() = type.functionTypeKind

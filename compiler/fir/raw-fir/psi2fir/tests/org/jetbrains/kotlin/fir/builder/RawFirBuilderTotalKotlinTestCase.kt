@@ -65,7 +65,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 time += measureNanoTime {
                     firFile = ktFile.toFirFile()
                 }
-                totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
+                totalLength += StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFile) }.length
                 counter++
                 firFile.accept(object : FirVisitorVoid() {
                     override fun visitElement(element: FirElement) {

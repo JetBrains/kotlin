@@ -20,7 +20,7 @@ class FirBodyRenderer internal constructor(components: FirRendererComponents) : 
         if (block == null) return
         when (block) {
             is FirLazyBlock -> {
-                println(" { LAZY_BLOCK }")
+                printer.println(" { LAZY_BLOCK }")
             }
             else -> {
                 annotationRenderer?.render(block)

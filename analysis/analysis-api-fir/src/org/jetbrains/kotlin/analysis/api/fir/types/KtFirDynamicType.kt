@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtDynamicType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirDynamicType(
     override val coneType: ConeDynamicType,
@@ -26,7 +26,7 @@ internal class KtFirDynamicType(
     }
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
 }

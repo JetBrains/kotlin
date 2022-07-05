@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtCapturedType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.types.ConeCapturedType
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirCapturedType(
     override val coneType: ConeCapturedType,
@@ -27,7 +27,7 @@ internal class KtFirCapturedType(
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
+    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
 
 
     override fun equals(other: Any?) = typeEquals(other)

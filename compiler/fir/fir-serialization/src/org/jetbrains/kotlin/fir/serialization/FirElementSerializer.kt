@@ -685,15 +685,15 @@ class FirElementSerializer private constructor(
                     typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
                 }
                 assert(approximatedType != type && approximatedType is ConeKotlinType) {
-                    "Approximation failed: ${type.render()}"
+                    "Approximation failed: ${type.renderForDebugging()}"
                 }
                 return typeProto(approximatedType as ConeKotlinType)
             }
             is ConeIntegerLiteralType -> {
-                throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.render()}")
+                throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.renderForDebugging()}")
             }
             is ConeCapturedType -> {
-                throw IllegalStateException("Captured types should not persist up to the serializer: ${type.render()}")
+                throw IllegalStateException("Captured types should not persist up to the serializer: ${type.renderForDebugging()}")
             }
             else -> {
                 throw AssertionError("Should not be here: ${type::class.java}")

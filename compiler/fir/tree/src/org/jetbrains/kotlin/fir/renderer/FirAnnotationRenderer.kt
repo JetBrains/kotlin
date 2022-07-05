@@ -23,7 +23,7 @@ open class FirAnnotationRenderer internal constructor(components: FirRendererCom
         }
     }
 
-    private fun renderAnnotation(annotation: FirAnnotation) {
+    internal fun renderAnnotation(annotation: FirAnnotation) {
         printer.print("@")
         annotation.useSiteTarget?.let {
             printer.print(it.name)

@@ -121,7 +121,7 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         val toIndex = firClass.typeParameters.count { it is FirTypeParameter } + index
         if (!firClass.isInner) {
             assert(toIndex == typeArguments.size || firClass.isLocal) {
-                "${typeArguments.size - toIndex} trailing arguments were found in this type: ${render()}"
+                "${typeArguments.size - toIndex} trailing arguments were found in this type: ${renderForDebugging()}"
             }
             return PossiblyInnerConeType(classifier, typeArguments.toList().subList(index, typeArguments.size), null)
         }

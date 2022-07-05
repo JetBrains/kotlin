@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -42,7 +42,7 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
         assert(resolvedTypeRef.type !is ConeErrorType) {
-            "Instead use FirErrorTypeRef for ${resolvedTypeRef.type.render()}"
+            "Instead use FirErrorTypeRef for ${resolvedTypeRef.type.renderForDebugging()}"
         }
     }
 
