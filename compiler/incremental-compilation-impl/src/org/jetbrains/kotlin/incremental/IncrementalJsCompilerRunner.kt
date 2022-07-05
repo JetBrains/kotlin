@@ -137,8 +137,7 @@ class IncrementalJsCompilerRunner(
             caches.lookupCache.lookupSymbols.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
         )
 
-        @Suppress("UNUSED_VARIABLE") // for sealed when
-        val unused = when (classpathChanges) {
+        when (classpathChanges) {
             is ChangesEither.Unknown -> {
                 reporter.report { "Could not get classpath's changes: ${classpathChanges.reason}" }
                 return CompilationMode.Rebuild(classpathChanges.reason)
