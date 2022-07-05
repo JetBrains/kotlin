@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -346,8 +347,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             return emptyList()
         }
 
-        if (function.parentAsClass.isSealedInlineClassOrItsChild() && function.isFakeOverride) {
-            return listOf(function)
+        if (function.isFakeOverride) {
+            if (function.parentAsClass.isChildOfSealedInlineClass()) {
+                return listOf(function)
+            } else if (function.parentAsClass.isSealedInlineClass()) {
+                if (function.isFakeOverrideOfDefaultMethod() && (function.overriddenInChildren() || context.state.jvmDefaultMode.isEnabled && context.state.jvmDefaultMode.forAllMethodsWithBody)) {
+                    return listOf(function)
+                }
+            }
         }
 
         replacement.valueParameters.forEach {
@@ -406,6 +413,18 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         return listOf(replacement, bridgeFunction)
     }
 
+    private fun IrSimpleFunction.overriddenInChildren(): Boolean {
+        val stack = mutableListOf<IrClassSymbol>()
+        stack += parentAsClass.sealedSubclasses
+        while (stack.isNotEmpty()) {
+            val current = stack.popLast()
+            val function = current.functions.find { it.owner.allOverridden().contains(this) }
+            if (function != null && !function.owner.isFakeOverride) return true
+            stack += current.owner.sealedSubclasses
+        }
+        return false
+    }
+
     private fun IrSimpleFunction.signatureRequiresMangling() =
         fullValueParameterList.any { it.type.requiresMangling } ||
                 context.state.functionsWithInlineClassReturnTypesMangled && returnType.requiresMangling
@@ -428,14 +447,21 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             copyAttributes(source)
         }
 
-    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
+    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, returnBoxedSealedInlineClass: Boolean = false) {
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
-            irExprBody(irCall(target).apply {
+            val call = irCall(target).apply {
                 passTypeArgumentsFrom(source)
                 for ((parameter, newParameter) in source.explicitParameters.zip(target.explicitParameters)) {
                     putArgument(newParameter, irGet(parameter))
                 }
-            })
+            }
+            irExprBody(
+                if (returnBoxedSealedInlineClass) {
+                    coerceInlineClasses(call, context.irBuiltIns.anyNType, source.returnType)
+                } else {
+                    call
+                }
+            )
         }
     }
 
@@ -939,35 +965,6 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     private fun rewriteMethodsForSealed(info: SealedInlineClassInfo) {
         rewriteOpenAndAbstractMethodsForSealed(info)
-
-        if (context.state.jvmDefaultMode.let { it.isEnabled && !it.forAllMethodsWithBody }) {
-            val toAdd = mutableListOf<IrSimpleFunction>()
-            // Generate a method for default method, not overridden in sealed inline class and its children.
-            for (method in info.top.functions) {
-                if (method.isFakeOverrideOfDefaultMethod()) {
-                    val function = replacements.getReplacementFunction(method)
-                        ?: error("Cannot create sealed inline class method replacement for ${method.render()}")
-                    with(context.createIrBuilder(function.symbol)) {
-                        function.body = irExprBody(
-                            irCall(method.symbol).also {
-                                // Just call the fake override, instead of calling DefaultImpls's one -- without
-                                // overrides, there is no need for it.
-                                for ((target, source) in method.explicitParameters.zip(function.explicitParameters)) {
-                                    it.putArgument(target, irGet(source))
-                                }
-                            }
-                        )
-                    }
-
-                    toAdd += function
-                    // There is no need to replace fake override with the bridge, since it calls the fake override
-                }
-            }
-
-            for (function in toAdd) {
-                info.top.addMember(function)
-            }
-        }
     }
 
     /**
@@ -1208,12 +1205,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     info.top.addMember(function)
                 }
 
+                val allOverridden = retargets
+                    .flatMap { (_, retarget) -> retarget.owner.allOverridden() }
+                    .toSet()
+
                 if (retargets.any { (_, retarget) ->
-                        val retargetToSealedInline = retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
-                        if (retargetToSealedInline) return@any true
-                        val retargetToOverriddenInInterface = retarget.owner.allOverridden().any { it.parentAsClass.isInterface }
-                        retargetToOverriddenInInterface
-                    }
+                        retarget.owner.parentAsClass.let { it.isInline && it.modality == Modality.SEALED }
+                    } || allOverridden.any { it.parentAsClass.isInterface }
                 ) {
                     val bridge = context.irFactory.buildFun {
                         updateFrom(methodSymbol.owner)
@@ -1227,7 +1225,14 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         parent = info.top
                     }
                     info.top.addMember(bridge)
-                    createBridgeBody(bridge, function)
+
+                    val returnBoxed = bridge.returnType.isInlineClassType() && !bridge.returnType.isNullable() &&
+                            allOverridden.any {
+                                it.returnType.isNullable() || it.returnType.isAny() ||
+                                        it.returnType.isNullableAny() || it.returnType.isTypeParameter()
+                            }
+
+                    createBridgeBody(bridge, function, returnBoxed)
                 }
 
                 for ((_, retarget) in retargets) {

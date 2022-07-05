@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -130,6 +131,8 @@ fun IrType.findTopSealedInlineSuperClass(): IrClass {
 
 fun IrClass.sealedInlineClassParent(): IrClass =
     superTypes.single { it.isInlineClassType() }.classOrNull!!.owner
+
+fun IrClass.isSealedInlineClass(): Boolean = isInline && modality == Modality.SEALED
 
 fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
 

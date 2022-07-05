@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isSealedInlineClass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irReturn
@@ -78,8 +79,6 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
     }
 
     protected fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
-
-    protected fun IrClass.isSealedInlineClass(): Boolean = isInline && modality == Modality.SEALED
 
     protected fun IrClass.isSealedInlineClassOrItsChild(): Boolean = isSealedInlineClass() || isChildOfSealedInlineClass()
 
