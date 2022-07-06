@@ -251,7 +251,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
      * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
      * a lazy manner
      */
-    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+    protected fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
         project.configurations.named(this).configure { receiverConfiguration ->
             receiverConfiguration.dependencies.addAllLater(
                 project.objects.listProperty(Dependency::class.java).apply {
@@ -528,10 +528,29 @@ class AndroidCompilationDetails(
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
 
+    /*
+    * Example of how multiplatform dependencies from common would get to Android test classpath:
+    * commonMainImplementation -> androidDebugImplementation -> debugImplementation -> debugAndroidTestCompileClasspath
+    * After the fix for KT-35916 MPP compilation configurations receive a 'compilation' postfix for disambiguation.
+    * androidDebugImplementation remains a source set configuration, but no longer contains compilation dependencies.
+    * Therefore, it doesn't get dependencies from common source sets.
+    * We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
+    * This helps, because the Android test classpath configurations extend from the Kotlin test compilations' directly.
+    */
     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        if ((other as? KotlinJvmAndroidCompilation)?.androidVariant != getTestedVariantData(androidVariant)) {
-            super.addAssociateCompilationDependencies(other)
-        } // otherwise, do nothing: the Android Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
+        compilation.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.compileOnlyConfigurationName
+        )
+
+        compilation.runtimeDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.runtimeOnlyConfigurationName
+        )
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies

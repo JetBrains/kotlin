@@ -784,6 +784,31 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
             }
         }
     }
+
+    @Test
+    fun `test associate compilation dependencies are passed correctly to android test compilations`() {
+        with(Project("kt-49877")) {
+            build("allTests") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileDebugKotlinAndroid",
+                    ":compileReleaseKotlinAndroid",
+                    ":compileDebugUnitTestKotlinAndroid",
+                    ":compileReleaseUnitTestKotlinAndroid",
+                    ":testDebugUnitTest",
+                    ":testReleaseUnitTest",
+                )
+            }
+
+            // instrumented tests don't work without a device, so we only compile them
+            build("packageDebugAndroidTest") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":compileDebugAndroidTestKotlinAndroid",
+                )
+            }
+        }
+    }
 }
 
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
