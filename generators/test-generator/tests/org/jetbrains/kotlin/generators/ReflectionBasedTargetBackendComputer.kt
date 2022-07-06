@@ -29,7 +29,7 @@ object ReflectionBasedTargetBackendComputer : TargetBackendComputer {
         }
         require(testKClass.isOpen) {
             """
-                Test runner which inherits from ${runnerMarkerKClass.simpleName} and used as base class
+                Test runner ${testKClass.simpleName} which inherits from ${runnerMarkerKClass.simpleName} and used as base class
                   for real test should have `open` modality 
             """.trimIndent()
         }

@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.buildKlibPackageFragment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -19,14 +18,11 @@ import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
-fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: ScopeSession, configuration: CompilerConfiguration): ProtoBuf.PackageFragment {
-    val serializerExtension = FirKLibSerializerExtension(
-        session,
-        configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-        FirElementAwareSerializableStringTable()
-    )
+fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: ScopeSession, metadataVersion: BinaryVersion): ProtoBuf.PackageFragment {
+    val serializerExtension = FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable())
     val approximator = TypeApproximatorForMetadataSerializer(session)
     val packageSerializer = FirElementSerializer.createTopLevel(session, scopeSession, serializerExtension, approximator)
 
@@ -36,14 +32,15 @@ fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: Sco
 
     val packageProto = packageSerializer.packagePartProto(file.packageFqName, file).build()
 
-    // TODO: filter out expects
-    val classifiers = file.declarations.filterIsInstance<FirClass>().sortedBy { it.classId.asFqNameString() }
+    fun List<FirDeclaration>.makeClassesProtoWithNested(): List<Pair<ProtoBuf.Class, Int>> =
+        // TODO: filter out expects
+        filterIsInstance<FirClass>().sortedBy { it.classId.asFqNameString() }.flatMap {
+            val classSerializer = FirElementSerializer.create(session, scopeSession, it, serializerExtension, null, approximator)
+            val index = classSerializer.stringTable.getFqNameIndex(it)
+            listOf(classSerializer.classProto(it).build() to index) + it.declarations.makeClassesProtoWithNested()
+        }
 
-    val classesProto = classifiers.map {
-        val classSerializer = FirElementSerializer.create(session, scopeSession, it, serializerExtension, null, approximator)
-        val index = classSerializer.stringTable.getFqNameIndex(it)
-        classSerializer.classProto(it).build() to index
-    }
+    val classesProto = file.declarations.makeClassesProtoWithNested()
 
     val hasTopLevelDeclarations = file.declarations.any {
         it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias
@@ -62,6 +59,12 @@ class FirKLibSerializerExtension(
     override val session: FirSession,
     override val metadataVersion: BinaryVersion,
     override val stringTable: FirElementAwareSerializableStringTable
-) : FirSerializerExtension()
+) : FirSerializerExtension() {
+    override fun shouldSerializeFunction(function: FirFunction): Boolean = true
 
-class FirElementAwareSerializableStringTable() : FirElementAwareStringTable, SerializableStringTable()
+    override fun shouldSerializeProperty(property: FirProperty): Boolean = true
+}
+
+class FirElementAwareSerializableStringTable() : FirElementAwareStringTable, SerializableStringTable() {
+    override fun getLocalClassIdReplacement(firClass: FirClass): ClassId? = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
+}

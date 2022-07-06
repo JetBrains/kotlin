@@ -15,16 +15,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 class ModuleDescriptorProvider(
     private val testServices: TestServices
 ) : TestService {
-    private val moduleDescriptorByModule = mutableMapOf<TestModule, ModuleDescriptorImpl>()
+    private val moduleDescriptorByModule = mutableMapOf<TestModule, ModuleDescriptor>()
 
-    fun getModuleDescriptor(testModule: TestModule): ModuleDescriptorImpl {
+    fun getModuleDescriptor(testModule: TestModule): ModuleDescriptor {
         return moduleDescriptorByModule[testModule] ?: testServices.assertions.fail {
             "Module descriptor for module ${testModule.name} not found"
         }
     }
 
     fun replaceModuleDescriptorForModule(testModule: TestModule, moduleDescriptor: ModuleDescriptor) {
-        require(moduleDescriptor is ModuleDescriptorImpl)
         moduleDescriptorByModule[testModule] = moduleDescriptor
     }
 }
