@@ -289,4 +289,4 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 }
 
-private const val rebuildIndex = true
+private const val rebuildIndex = false
