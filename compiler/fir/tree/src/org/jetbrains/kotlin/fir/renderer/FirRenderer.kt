@@ -62,7 +62,6 @@ open class FirRenderer private constructor(
     }
 
     data class RenderMode(
-        val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
         val renderDeclarationResolvePhase: Boolean,
@@ -79,7 +78,6 @@ open class FirRenderer private constructor(
     ) {
         companion object {
             val Normal = RenderMode(
-                renderLambdaBodies = true,
                 renderCallArguments = true,
                 renderCallableFqNames = false,
                 renderDeclarationResolvePhase = false,
@@ -87,7 +85,6 @@ open class FirRenderer private constructor(
             )
 
             val WithFqNames = RenderMode(
-                renderLambdaBodies = true,
                 renderCallArguments = true,
                 renderCallableFqNames = true,
                 renderDeclarationResolvePhase = false,
@@ -95,7 +92,6 @@ open class FirRenderer private constructor(
             )
 
             val WithFqNamesExceptAnnotationAndBody = RenderMode(
-                renderLambdaBodies = true,
                 renderCallArguments = true,
                 renderCallableFqNames = true,
                 renderDeclarationResolvePhase = false,
@@ -104,7 +100,6 @@ open class FirRenderer private constructor(
             )
 
             val WithResolvePhases = RenderMode(
-                renderLambdaBodies = true,
                 renderCallArguments = true,
                 renderCallableFqNames = false,
                 renderDeclarationResolvePhase = true,
@@ -112,7 +107,6 @@ open class FirRenderer private constructor(
             )
 
             val NoBodies = RenderMode(
-                renderLambdaBodies = false,
                 renderCallArguments = false,
                 renderCallableFqNames = false,
                 renderDeclarationResolvePhase = false,
@@ -122,7 +116,6 @@ open class FirRenderer private constructor(
             )
 
             val DeclarationHeader = RenderMode(
-                renderLambdaBodies = false,
                 renderCallArguments = false,
                 renderCallableFqNames = false,
                 renderDeclarationResolvePhase = false,
@@ -139,7 +132,6 @@ open class FirRenderer private constructor(
             )
 
             val WithDeclarationAttributes = RenderMode(
-                renderLambdaBodies = true,
                 renderCallArguments = true,
                 renderCallableFqNames = false,
                 renderDeclarationResolvePhase = false,
@@ -692,9 +684,7 @@ open class FirRenderer private constructor(
                 print(", kind=${anonymousFunction.invocationKind}")
             }
             print("> ")
-            if (mode.renderLambdaBodies) {
-                bodyRenderer?.render(anonymousFunction)
-            }
+            bodyRenderer?.render(anonymousFunction)
         }
 
         override fun visitFunction(function: FirFunction) {

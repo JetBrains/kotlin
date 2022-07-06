@@ -137,7 +137,6 @@ fun CFGNode<*>.render(): String =
     }
 
 private val CfgRenderMode = FirRenderer.RenderMode(
-    renderLambdaBodies = false,
     renderCallArguments = false,
     renderCallableFqNames = false,
     renderDeclarationResolvePhase = false,
