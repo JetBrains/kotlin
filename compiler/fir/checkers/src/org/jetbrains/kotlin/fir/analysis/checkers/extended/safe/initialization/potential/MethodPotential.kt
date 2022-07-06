@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodPotential(override val potential: Potential, val method: FirFunction) : WithPrefix(potential, method) {
@@ -33,7 +33,7 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
                 EffectsAndPotentials(potentials = potentials)
             }
             is LambdaPotential -> {
-                val (_, pots) = potential.effectsAndPotentials
+                val (_, pots) = potential.effsAndPots
                 EffectsAndPotentials(potentials = pots)
             }
             else -> {                                                       // P-Inv3

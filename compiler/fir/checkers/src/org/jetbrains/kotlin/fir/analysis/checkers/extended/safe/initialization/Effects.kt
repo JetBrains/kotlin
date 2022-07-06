@@ -15,9 +15,13 @@ open class Effects(private val collection: Collection<Effect>) : Collection<Effe
 
     constructor(effect: Effect) : this(listOf(effect))
 
-    fun viewChange(root: Potential) = map { eff -> eff.viewChange(root) }.toEffects()
+    fun viewChange(root: Potential) = map { eff -> eff.viewChange(root) }.fastToEffects()
 
-    operator fun plus(effects: Collection<Effect>) = collectionsPlus(effects).toEffects()
+    operator fun plus(effects: Collection<Effect>) = collectionsPlus(effects).fastToEffects()
+
+    operator fun plus(effect: Effect) = collectionsPlus(effect).fastToEffects()
+
+    operator fun plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
 
     companion object {
         private fun Collection<Effect>.fastToEffects() = Effects(this)

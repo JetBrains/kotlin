@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirClass
 
 data class OuterPotential(override val potential: Potential, val outerClass: FirClass) :

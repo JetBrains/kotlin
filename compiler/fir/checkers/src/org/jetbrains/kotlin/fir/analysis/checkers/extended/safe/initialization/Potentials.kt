@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effects.Companion.toEffects
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Init
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Promote
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
@@ -22,7 +23,7 @@ import kotlin.collections.plus as collectionsPlus
 
 object EmptyPotentials : Potentials(emptyList())
 
-open class Potentials(open val collection: Collection<Potential>) : Collection<Potential> by collection {
+open class Potentials(protected val collection: Collection<Potential>) : Collection<Potential> by collection {
 
     constructor(potential: Potential) : this(listOf(potential))
 
@@ -35,7 +36,7 @@ open class Potentials(open val collection: Collection<Potential>) : Collection<P
     fun outerSelection(clazz: FirClass): EffectsAndPotentials =
         fold(emptyEffsAndPots) { sum, pot -> sum + pot.outerSelection(clazz) }
 
-    fun <W : Potential> wrapPots(createPot: (Potential) -> W) = map { createPot(it) }.toPotentials()
+    fun wrapPots(createPot: (Potential) -> Potential) = map { createPot(it) }.fastToPotentials()
 
     fun promote() = map(::Promote).toEffects()
 
@@ -56,10 +57,12 @@ open class Potentials(open val collection: Collection<Potential>) : Collection<P
         }
     }
 
-    operator fun <P : Potential> plus(potential: P) = collectionsPlus(potential).toPotentials()
+    operator fun plus(potential: Potential) = collectionsPlus(potential).fastToPotentials()
 
-    operator fun <P : Potential> plus(collection: Collection<P>) =
-        collectionsPlus(collection).toPotentials()
+    operator fun plus(collection: Collection<Potential>) =
+        collectionsPlus(collection).fastToPotentials()
+
+    operator fun plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
 
     companion object {
         private fun Collection<Potential>.fastToPotentials() = Potentials(this)

@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Effect
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
 
-
-val emptyEffsAndPots = EffectsAndPotentials()
-
 data class EffectsAndPotentials(
     val effects: Effects = EmptyEffects,
     val potentials: Potentials = EmptyPotentials
@@ -25,22 +22,20 @@ data class EffectsAndPotentials(
 
     operator fun plus(potential: Potential): EffectsAndPotentials = plus(potential.toPotentials())
 
-    @JvmName("plus1")
+    operator fun plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials =
+        effsAndPots.let { (effs, pots) -> plusEffsAndPots(effs, pots) }
+
     operator fun plus(effs: Effects): EffectsAndPotentials =
-        addEffectsAndPotentials(effs = effs)
+        plusEffsAndPots(effs = effs)
 
-    @JvmName("plus2")
     operator fun plus(pots: Potentials): EffectsAndPotentials =
-        addEffectsAndPotentials(pots = pots)
+        plusEffsAndPots(pots = pots)
 
-    private fun addEffectsAndPotentials(
+    private fun plusEffsAndPots(
         effs: Effects = EmptyEffects,
         pots: Potentials = EmptyPotentials
     ): EffectsAndPotentials =
         EffectsAndPotentials(effects + effs, potentials + pots)
-
-    operator fun plus(effectsAndPotentials: EffectsAndPotentials): EffectsAndPotentials =
-        effectsAndPotentials.let { (effs, pots) -> addEffectsAndPotentials(effs, pots) }
 
     fun maxLength(): Int = potentials.maxOfOrNull(Potential::length) ?: 0
 
@@ -49,11 +44,6 @@ data class EffectsAndPotentials(
     }
 
     companion object {
+        val emptyEffsAndPots = EffectsAndPotentials()
     }
 }
-
-@JvmName("plus1")
-operator fun Effects.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
-
-@JvmName("plus2")
-operator fun Potentials.plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this

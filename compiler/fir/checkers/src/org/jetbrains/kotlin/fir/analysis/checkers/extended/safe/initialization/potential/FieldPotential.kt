@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.emptyEffsAndPots
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 data class FieldPotential(override val potential: Potential, val field: FirVariable) : WithPrefix(potential, field) {

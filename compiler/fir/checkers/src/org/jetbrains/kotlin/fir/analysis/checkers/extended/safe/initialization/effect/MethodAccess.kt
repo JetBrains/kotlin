@@ -26,7 +26,7 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
                 }
             }
             is LambdaPotential -> {                                 // invoke
-                potential.effectsAndPotentials.effects.flatMap { it.check(this) }
+                potential.effsAndPots.effects.flatMap { it.check(this) }
             }
             is Root.Cold -> listOf(Error.InvokeError(this@MethodAccess))              // illegal
             is Super -> {

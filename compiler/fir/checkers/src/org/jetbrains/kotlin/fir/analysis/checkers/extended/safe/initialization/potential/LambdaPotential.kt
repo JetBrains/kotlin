@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.E
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 
 data class LambdaPotential(
-    val effectsAndPotentials: EffectsAndPotentials,
+    val effsAndPots: EffectsAndPotentials,
     val anonymousFunction: FirAnonymousFunction
-) : Potential(anonymousFunction, effectsAndPotentials.maxLength()) {
+) : Potential(anonymousFunction, effsAndPots.maxLength()) {
 
     override fun propagate() = EffectsAndPotentials(this)
 
     override fun viewChange(root: Potential): Potential {
-        val (effs, pots) = effectsAndPotentials
+        val (effs, pots) = effsAndPots
         val viewedEffsAndPots = EffectsAndPotentials(effs.viewChange(root), pots.viewChange(root))
         return LambdaPotential(viewedEffsAndPots, anonymousFunction)
     }
 
     override fun toString(): String {
-        return "Fun($effectsAndPotentials, ${anonymousFunction.symbol.callableId.callableName})"
+        return "Fun($effsAndPots, ${anonymousFunction.symbol.callableId.callableName})"
     }
 }

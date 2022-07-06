@@ -35,7 +35,7 @@ data class Promote(override val potential: Potential) : Effect(potential, potent
                     }
                 }
             }
-            is LambdaPotential -> ruleAcc3(potential.effectsAndPotentials)
+            is LambdaPotential -> ruleAcc3(potential.effsAndPots)
             is Root -> listOf(Error.PromoteError(this@Promote))
             else -> ruleAcc3(potential.propagate())
         }

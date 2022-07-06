@@ -31,9 +31,9 @@ sealed class Effect(open val potential: Potential, open val symbol: FirBasedSymb
     }
 
     protected fun StateOfClass.ruleAcc3(
-        effectsAndPotentials: EffectsAndPotentials
+        effsAndPots: EffectsAndPotentials
     ): Errors =
-        effectsAndPotentials.run {
+        effsAndPots.run {
             val errors = potentials.map { createEffectForPotential(it).check(this@ruleAcc3) } // call / select
             val effectErrors = effects.map { it.check(this@ruleAcc3) }
             (errors + effectErrors).flatten()
