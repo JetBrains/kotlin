@@ -4,6 +4,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.ideaExt.idea
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 
 plugins {
     kotlin("jvm")
@@ -149,34 +150,6 @@ val unzipJsShell by task<Copy> {
     into(unpackedDir)
 }
 
-val v8osString = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_32) -> "linux32"
-    OsType(OsName.LINUX, OsArch.X86_64) -> "linux64"
-    OsType(OsName.MAC, OsArch.X86_64) -> "mac64"
-    OsType(OsName.MAC, OsArch.ARM64) -> "mac-arm64"
-    OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
-    else -> error("unsupported os type $currentOsType")
-}
-
-val v8edition = "rel" // rel or dbg
-val v8version = "10.2.9"
-val v8fileName = "v8-${v8osString}-${v8edition}-${v8version}"
-val v8url = "https://storage.googleapis.com/chromium-v8/official/canary/$v8fileName.zip"
-
-val downloadV8 by task<Download> {
-    src(v8url)
-    dest(File(downloadedTools, "$v8fileName.zip"))
-    overwrite(false)
-}
-
-val unzipV8 by task<Copy> {
-    dependsOn(downloadV8)
-    from(zipTree(downloadV8.get().dest))
-    val unpackedDir = File(downloadedTools, v8fileName)
-    into(unpackedDir)
-}
-
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
 
@@ -204,18 +177,19 @@ val generateTypeScriptTests = sequential(
         .map { generateTypeScriptTestFor(it.name) }
 )
 
-fun Test.setupV8() {
-    dependsOn(unzipV8)
-    val v8Path = unzipV8.get().destinationDir
-    val v8ExecutablePath = File(v8Path, "d8")
-    systemProperty("javascript.engine.path.V8", v8ExecutablePath)
-    inputs.dir(v8Path)
-}
-
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+}
+
+fun Test.setupV8() {
+    val d8Plugin = D8RootPlugin.apply(rootProject)
+    dependsOn(d8Plugin.setupTaskProvider)
+    d8Plugin.version = v8Version
+    doFirst {
+        systemProperty("javascript.engine.path.V8", d8Plugin.requireConfigured().executablePath.absolutePath)
+    }
 }
 
 fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
