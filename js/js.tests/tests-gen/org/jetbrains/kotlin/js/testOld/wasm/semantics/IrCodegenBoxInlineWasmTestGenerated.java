@@ -3103,6 +3103,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/property/reifiedVal.kt");
         }
 
+        @TestMetadata("reifiedValMultiModule.kt")
+        public void testReifiedValMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/reifiedValMultiModule.kt");
+        }
+
         @TestMetadata("reifiedVar.kt")
         public void testReifiedVar() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/reifiedVar.kt");

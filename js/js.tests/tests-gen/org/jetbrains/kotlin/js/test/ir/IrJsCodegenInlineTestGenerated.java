@@ -3389,6 +3389,12 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         }
 
         @Test
+        @TestMetadata("reifiedValMultiModule.kt")
+        public void testReifiedValMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/reifiedValMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("reifiedVar.kt")
         public void testReifiedVar() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/reifiedVar.kt");
