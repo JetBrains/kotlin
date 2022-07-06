@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -180,6 +179,8 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val functionParameters = referencedFunction.explicitParameters
         private val boundFunctionParameters = functionReference.getArgumentsWithIr().map { it.first }
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
+        private val functionParameterTypes = unboundFunctionParameters.map { it.type }
+        private val functionParameterAndReturnTypes = functionParameterTypes + referencedFunction.returnType
 
         private val typeArgumentsMap = referencedFunction.typeParameters.associate { typeParam ->
             typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
@@ -253,16 +254,15 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 buildInvokeMethod(sam.owner)
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
-                val functionParameterTypes = unboundFunctionParameters.map { it.type }
                 val functionClass: IrClass?
                 val suspendFunctionClass: IrClass?
                 if (isKSuspendFunction) {
                     functionClass = null
                     suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
-                    superTypes += suspendFunctionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
+                    superTypes += suspendFunctionClass.typeWith(functionParameterAndReturnTypes)
                 } else {
                     functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
-                    superTypes += functionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
+                    superTypes += functionClass.typeWith(functionParameterAndReturnTypes)
                     val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
                     if (lastParameterType?.classifierOrNull != continuationClassSymbol)
                         suspendFunctionClass = null
@@ -435,6 +435,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         }
 
         private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
+            val typeSubstitution = superFunction.parentAsClass.typeParameters.withIndex().associate {
+                it.value.symbol to functionParameterAndReturnTypes[it.index]
+            }
             return IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
@@ -442,7 +445,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                     superFunction.name,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
-                    referencedFunction.returnType,
+                    referencedFunction.returnType.substitute(typeSubstitution),
                     isInline = false,
                     isExternal = false,
                     isTailrec = false,
@@ -462,7 +465,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = unboundFunctionParameters[index].type.substitute(typeArgumentsMap))
+                            type = parameter.type.substitute(typeSubstitution))
                 }
 
                 overriddenSymbols += superFunction.symbol
