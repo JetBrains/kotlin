@@ -280,7 +280,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }.apply {
                     parent = proxyFun
                 }
-                proxyFun.valueParameters += proxyParameter
+                proxyFun.allValueParameters += proxyParameter
                 return IrGetValueImpl(startOffset, endOffset, proxyParameter.symbol)
             }
 
@@ -785,7 +785,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             val valueParameterMap = callee.explicitParameters.withIndex().associate { (index, param) ->
                 param to param.copyTo(this, index = index)
             }
-            valueParameters += valueParameterMap.values
+            allValueParameters += valueParameterMap.values
             body = callee.moveBodyTo(this, valueParameterMap)
         }
 
@@ -794,7 +794,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 ?: throw AssertionError("Single value parameter expected: ${callee.render()}")
             val invokeValueParameter = adapterValueParameter.copyTo(this, index = 0)
             val valueParameterMap = mapOf(adapterValueParameter to invokeValueParameter)
-            valueParameters = listOf(invokeValueParameter)
+            allValueParameters = listOf(invokeValueParameter)
             body = callee.moveBodyTo(this, valueParameterMap)
             callee.body = null
         }

@@ -417,7 +417,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
         val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
             ?: valueParameters.size
-        function.valueParameters += valueParameters.take(index).map {
+        function.allValueParameters += allValueParameters.take(index).map {
             it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
         }
         function.addValueParameter(
@@ -425,7 +425,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
             continuationType(context).substitute(substitutionMap),
             JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
-        function.valueParameters += valueParameters.drop(index).map {
+        function.allValueParameters += allValueParameters.drop(index).map {
             it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
         }
     }

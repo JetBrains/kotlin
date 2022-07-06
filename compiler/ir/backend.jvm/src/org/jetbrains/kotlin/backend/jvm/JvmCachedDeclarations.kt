@@ -162,7 +162,7 @@ class JvmCachedDeclarations(
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
             hasExtensionReceiver = target.hasExtensionReceiver
-            valueParameters = target.valueParameters.map { it.copyTo(this) }
+            allValueParameters += target.allValueParameters.map { it.copyTo(this) }
 
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {

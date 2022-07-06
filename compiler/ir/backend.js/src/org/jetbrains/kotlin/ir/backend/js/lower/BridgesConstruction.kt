@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -196,14 +195,14 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
      * The rest parameters are expected to be obtained later using the `arguments` object in JS.
      */
     private fun IrSimpleFunction.copyValueParametersFrom(bridge: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
-        var valueParametersToCopy = bridge.valueParameters
+        var valueParametersToCopy = bridge.allValueParameters
         if (bridge.isEffectivelyExternal()) {
             val varargIndex = bridge.varargParameterIndex()
             if (varargIndex != -1) {
-                valueParametersToCopy = bridge.valueParameters.take(varargIndex)
+                valueParametersToCopy = bridge.allValueParameters.take(varargIndex)
             }
         }
-        valueParameters += valueParametersToCopy.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
+        allValueParameters += valueParametersToCopy.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
     }
 
     abstract fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin

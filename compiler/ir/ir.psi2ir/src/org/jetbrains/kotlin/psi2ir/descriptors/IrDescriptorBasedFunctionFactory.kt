@@ -315,7 +315,7 @@ class IrDescriptorBasedFunctionFactory(
                     isAssignable = false
                 )
                 vDeclaration.parent = fDeclaration
-                fDeclaration.valueParameters += vDeclaration
+                fDeclaration.allValueParameters += vDeclaration
             }
 
             fDeclaration.parent = this
@@ -370,7 +370,7 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.hasExtensionReceiver = descriptor.extensionReceiverParameter != null
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters =
+            newFunction.allValueParameters =
                 buildList {
                     descriptor.extensionReceiverParameter?.let {
                         add(newFunction.createValueParameter(it))

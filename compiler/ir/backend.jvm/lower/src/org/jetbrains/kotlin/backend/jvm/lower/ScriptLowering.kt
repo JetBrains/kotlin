@@ -456,7 +456,7 @@ private class ScriptToClassTransformer(
                     }
                 dispatchReceiverParameter = newDispatchReceiverParameter
                 returnType = returnType.remapType()
-                valueParameters = valueParameters.transform(dataForChildren)
+                allValueParameters = allValueParameters.transform(dataForChildren)
                 body = body?.transform(dataForChildren)
             }
         }

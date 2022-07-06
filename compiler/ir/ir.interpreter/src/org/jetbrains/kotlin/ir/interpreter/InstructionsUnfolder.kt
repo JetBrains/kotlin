@@ -138,7 +138,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
             (0 until expression.valueArgumentsCount).forEach { index ->
                 val originalParameter = ownerWithDefaults.valueParameters[index]
                 val copiedParameter = originalParameter.deepCopyWithSymbols(this)
-                this.valueParameters += copiedParameter
+                this.allValueParameters += copiedParameter
                 actualParameters[index] = if (copiedParameter.defaultValue != null || copiedParameter.isVararg) {
                     copiedParameter.type = copiedParameter.type.makeNullable() // make nullable type to keep consistency; parameter can be null if it is missing
                     val irGetParameter = copiedParameter.createGetValue()

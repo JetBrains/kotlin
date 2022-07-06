@@ -153,7 +153,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     containerSource = containerSource
                 )
             }.also { irConstructor ->
-                irConstructor.valueParameters = buildList {
+                irConstructor.allValueParameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)
                     addAll(irScript.explicitCallParameters)
                     addAll(irScript.implicitReceiversParameters)

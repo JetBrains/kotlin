@@ -190,8 +190,8 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
         it.parent = constructor.parent
         it.copyTypeParametersFrom(constructor.parentAsClass)
 
-        it.valueParameters = constructor.valueParameters.map { p -> p.copyTo(it) }
-        it.valueParameters += JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
+        it.allValueParameters = constructor.allValueParameters.map { p -> p.copyTo(it) }
+        it.allValueParameters += JsIrBuilder.buildValueParameter(it, "\$this", constructor.allValueParameters.size, type)
     }
 }
 
@@ -210,7 +210,7 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     }.also { factory ->
         factory.parent = constructor.parent
         factory.copyTypeParametersFrom(constructor.parentAsClass)
-        factory.valueParameters += constructor.valueParameters.map { p -> p.copyTo(factory) }
+        factory.allValueParameters += constructor.valueParameters.map { p -> p.copyTo(factory) }
         factory.annotations = constructor.annotations
     }
 }

@@ -327,7 +327,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         irFunction.hasExtensionReceiver = functionDescriptor.extensionReceiverParameter != null
         irFunction.contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
 
-        irFunction.valueParameters = buildList {
+        irFunction.allValueParameters = buildList {
             functionDescriptor.contextReceiverParameters.mapIndexedTo(this) { i, contextReceiver ->
                 declareParameter(contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner, irFunction, null, i)
             }
@@ -352,7 +352,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
-            irFunction.sourceValueParameters.forEachIndexed { index, irValueParameter ->
+            irFunction.valueParameters.forEachIndexed { index, irValueParameter ->
                 val valueParameterDescriptor = functionDescriptor.valueParameters[index]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->

@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -113,7 +113,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         }.apply {
             overriddenSymbols += superFunction.symbol
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters += superFunction.valueParameters.single().copyTo(this)
+            allValueParameters += superFunction.allValueParameters.single().copyTo(this)
 
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 // Check the number of arguments
