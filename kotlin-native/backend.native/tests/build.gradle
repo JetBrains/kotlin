@@ -6098,7 +6098,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                         if (!isCrossCompiling) {
                             extraOpts project.globalTestArgs
                         }
-                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xmeaningful-bridge-names"
+                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target"
                         extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
 
                         if (lib != null) {
