@@ -83,7 +83,6 @@ open class FirRenderer private constructor(
         val renderBodies: Boolean = true,
         val renderPropertyAccessors: Boolean = true,
         val renderDeclarationAttributes: Boolean = false,
-        val renderDeclarationOrigin: Boolean = false,
         val renderPackageDirective: Boolean = false,
         val renderNestedDeclarations: Boolean = true,
         val renderDefaultParameterValues: Boolean = true,
@@ -137,7 +136,6 @@ open class FirRenderer private constructor(
                 renderBodies = false,
                 renderPropertyAccessors = false,
                 renderDeclarationAttributes = false,
-                renderDeclarationOrigin = false,
                 renderPackageDirective = false,
                 renderNestedDeclarations = false,
                 renderDefaultParameterValues = false,
@@ -279,7 +277,6 @@ open class FirRenderer private constructor(
     private fun FirDeclaration.renderDeclarationData() {
         renderDeclarationResolvePhaseIfNeeded()
         renderDeclarationAttributesIfNeeded()
-        renderDeclarationOriginIfNeeded()
     }
 
     private fun FirDeclaration.renderDeclarationResolvePhaseIfNeeded() {
@@ -294,12 +291,6 @@ open class FirRenderer private constructor(
                 value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
             }.joinToString { (name, value) -> "$name=$value" }
             print("[$attributes] ")
-        }
-    }
-
-    private fun FirDeclaration.renderDeclarationOriginIfNeeded() {
-        if (mode.renderDeclarationOrigin) {
-            print("[$origin] ")
         }
     }
 
