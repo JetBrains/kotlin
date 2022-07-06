@@ -51,12 +51,7 @@ fun CFGNode<*>.render(): String =
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
                     "Variable declaration: ${
-                        buildString {
-                            FirRenderer(
-                                this,
-                                CfgRenderMode
-                            ).Visitor().visitCallableDeclaration(fir)
-                        }
+                        FirRenderer(mode = CfgRenderMode).renderAsCallableDeclarationString(fir)
                     }"
 
                 is VariableAssignmentNode -> "Assignment: ${fir.lValue.render(CfgRenderMode)}"

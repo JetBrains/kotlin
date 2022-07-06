@@ -33,7 +33,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
             DebugUtil.psiTreeToString(ktFile, false)
         } else {
             val firFile = ktFile.toFirFile()
-            StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFile) }.toString()
+            FirRenderer().renderElementAsString(firFile)
         }
     }
 
@@ -46,7 +46,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
             val firFile = converter.buildFirFile(text, sourceFile, linesMapping)
-            StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFile) }.toString()
+            FirRenderer().renderElementAsString(firFile)
         }
     }
 

@@ -65,9 +65,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
-        val firFileDump = StringBuilder().also {
-            FirRenderer(it, mode = FirRenderer.RenderMode.WithDeclarationAttributes).Visitor().visitFile(firFile)
-        }.toString()
+        val firFileDump = FirRenderer(mode = FirRenderer.RenderMode.WithDeclarationAttributes).renderElementAsString(firFile)
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }
@@ -193,7 +191,7 @@ private fun throwTwiceVisitingError(element: FirElement) {
         if (psiParent is KtPropertyDelegate || psiParent?.parent is KtPropertyDelegate) return
     }
 
-    val elementDump = StringBuilder().also { element.accept(FirRenderer(it).Visitor()) }.toString()
+    val elementDump = FirRenderer().renderElementAsString(element)
     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
 }
 

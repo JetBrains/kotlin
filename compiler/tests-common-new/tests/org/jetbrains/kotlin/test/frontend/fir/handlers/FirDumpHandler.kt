@@ -39,7 +39,7 @@ class FirDumpHandler(
 
         val renderer = FirRendererWithGeneratedDeclarations(info.session, builderForModule)
         allFiles.forEach {
-            it.accept(renderer.Visitor())
+            renderer.renderElementAsString(it)
         }
     }
 

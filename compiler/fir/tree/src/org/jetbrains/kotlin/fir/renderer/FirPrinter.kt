@@ -46,4 +46,8 @@ open class FirPrinter(builder: StringBuilder) {
         popIndent()
         println(rightBrace)
     }
+
+    override fun toString(): String {
+        return printer.toString()
+    }
 }

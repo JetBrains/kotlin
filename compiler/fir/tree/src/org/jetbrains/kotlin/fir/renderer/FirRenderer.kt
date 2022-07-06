@@ -40,7 +40,28 @@ open class FirRenderer private constructor(
     components: FirComponentsImpl
 ) : FirPrinter(builder) {
 
-    constructor(builder: StringBuilder, mode: RenderMode = RenderMode.Normal) : this(builder, mode, FirComponentsImpl())
+    companion object {
+        private val visibilitiesToRenderEffectiveSet = setOf(
+            Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
+            Visibilities.Protected, Visibilities.Public, Visibilities.Local
+        )
+    }
+
+    constructor(builder: StringBuilder = StringBuilder(), mode: RenderMode = RenderMode.Normal) : this(builder, mode, FirComponentsImpl())
+
+    fun renderElementAsString(element: FirElement): String {
+        element.accept(visitor)
+        return toString()
+    }
+
+    fun renderAsCallableDeclarationString(callableDeclaration: FirCallableDeclaration): String {
+        visitor.visitCallableDeclaration(callableDeclaration)
+        return toString()
+    }
+
+    fun renderMemberDeclarationClass(firClass: FirClass) {
+        visitor.visitMemberDeclaration(firClass)
+    }
 
     private class FirComponentsImpl : FirRendererComponents {
         override var annotationRenderer: FirAnnotationRenderer? = null
@@ -52,13 +73,6 @@ open class FirRenderer private constructor(
         override lateinit var visitor: Visitor
 
         override lateinit var printer: FirPrinter
-    }
-
-    companion object {
-        private val visibilitiesToRenderEffectiveSet = setOf(
-            Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
-            Visibilities.Protected, Visibilities.Public, Visibilities.Local
-        )
     }
 
     data class RenderMode(
@@ -334,7 +348,7 @@ open class FirRenderer private constructor(
         rValue.accept(visitor)
     }
 
-    inner class Visitor : FirVisitorVoid() {
+    inner class Visitor internal constructor() : FirVisitorVoid() {
 
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)

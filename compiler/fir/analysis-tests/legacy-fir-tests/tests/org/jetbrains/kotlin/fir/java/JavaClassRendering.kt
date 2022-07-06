@@ -24,10 +24,9 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
     val memberScope = javaClass.unsubstitutedScope(session, ScopeSession(), withForcedTypeCalculator = true)
 
     val staticScope = javaClass.scopeProvider.getStaticScope(javaClass, session, ScopeSession())
-    val visitor = renderer.Visitor()
 
     renderer.renderAnnotations(javaClass)
-    visitor.visitMemberDeclaration(javaClass)
+    renderer.renderMemberDeclarationClass(javaClass)
     renderer.renderSupertypes(javaClass)
     renderer.renderInBraces {
         val renderedDeclarations = mutableListOf<FirDeclaration>()
@@ -35,7 +34,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
         fun renderAndCache(symbol: FirCallableSymbol<*>) {
             val enhanced = symbol.fir
             if (enhanced !in renderedDeclarations) {
-                enhanced.accept(visitor, null)
+                renderer.renderElementAsString(enhanced)
                 renderer.newLine()
                 renderedDeclarations += enhanced
             }
@@ -56,7 +55,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
                 is FirJavaField -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                 is FirEnumEntry -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                 else -> {
-                    declaration.accept(visitor, null)
+                    renderer.renderElementAsString(declaration)
                     renderer.newLine()
                     renderedDeclarations += declaration
                 }

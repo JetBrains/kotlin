@@ -72,12 +72,12 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             //psi
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text.toString().trim()) as KtFile
             val firFileFromPsi = ktFile.toFirFile()
-            val treeFromPsi = StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFileFromPsi) }.toString()
+            val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                 .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             //light tree
             val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
-            val treeFromLightTree = StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFileFromLightTree) }.toString()
+            val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                 .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
             return@compareBase treeFromLightTree == treeFromPsi
@@ -104,7 +104,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             //psi
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
             val firFileFromPsi = ktFile.toFirFile()
-            val treeFromPsi = StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFileFromPsi) }.toString()
+            val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                 .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -115,7 +115,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                     KtInMemoryTextSourceFile(file.name, file.path, text),
                     text.toSourceLinesMapping()
                 )
-            val treeFromLightTree = StringBuilder().also { FirRenderer(it).Visitor().visitFile(firFileFromLightTree) }.toString()
+            val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                 .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                 .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
