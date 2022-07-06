@@ -35,7 +35,8 @@ class SimpleDirective(
 class StringDirective(
     name: String,
     description: String,
-    applicability: DirectiveApplicability
+    applicability: DirectiveApplicability,
+    val multiLine: Boolean
 ) : Directive(name, description, applicability)
 
 class ValueDirective<T : Any>(

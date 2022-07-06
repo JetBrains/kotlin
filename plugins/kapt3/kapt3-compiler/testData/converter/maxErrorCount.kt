@@ -11,4 +11,4 @@ class Test {
 // There are two errors (unresolved identifier ABC, BCD) actually.
 // But we specified the max error count, so the error output is limited.
 
-// EXPECTED_ERROR(kotlin:7:5) cannot find symbol
+// EXPECTED_ERROR: (kotlin:7:5) cannot find symbol

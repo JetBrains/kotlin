@@ -1,4 +1,4 @@
-// !KEEP_KDOC_COMMENTS_IN_STUBS
+// DISABLED_FLAGS: KEEP_KDOC_COMMENTS_IN_STUBS
 /** Test. */
 class Test {
     /** method(). */

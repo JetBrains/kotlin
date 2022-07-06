@@ -151,6 +151,3 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
 private operator fun <T : Any> CompilerConfiguration.set(key: CompilerConfigurationKey<T>, value: T) {
     put(key, value)
 }
-
-val TestModule.javaFiles: List<TestFile>
-    get() = files.filter { it.isJavaFile }

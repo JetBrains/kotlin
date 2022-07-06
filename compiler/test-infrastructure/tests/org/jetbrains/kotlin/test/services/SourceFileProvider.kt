@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
@@ -142,3 +143,10 @@ val TestFile.isJsFile: Boolean
 
 val TestFile.isMjsFile: Boolean
     get() = name.endsWith(".mjs")
+
+val TestModule.javaFiles: List<TestFile>
+    get() = files.filter { it.isJavaFile }
+
+fun SourceFileProvider.getRealJavaFiles(module: TestModule): List<File> {
+    return module.javaFiles.map { getRealFileForSourceFile(it) }
+}

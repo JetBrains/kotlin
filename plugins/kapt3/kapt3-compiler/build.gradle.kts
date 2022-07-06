@@ -25,10 +25,13 @@ dependencies {
     testImplementation(intellijCore())
     testRuntimeOnly(intellijResources()) { isTransitive = false }
 
-    testApi(projectTests(":compiler:tests-common"))
+    testApiJUnit5()
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+
     testApi(project(":kotlin-annotation-processing-base"))
     testApi(projectTests(":kotlin-annotation-processing-base"))
-    testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-annotation-processing-runtime"))
 
     testCompileOnly(toolsJarApi())
@@ -43,12 +46,16 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar {}
 
 projectTest(parallel = true) {
+    useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")
 }

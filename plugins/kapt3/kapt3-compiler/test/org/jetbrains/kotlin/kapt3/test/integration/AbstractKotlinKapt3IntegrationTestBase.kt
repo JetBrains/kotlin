@@ -1,27 +1,17 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.test
+package org.jetbrains.kotlin.kapt3.test.integration
 
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.junit.Test
-import org.junit.runner.JUnitCore
-import org.junit.runner.Request
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -31,25 +21,34 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.util.ElementFilter
 import javax.tools.Diagnostic
-import kotlin.system.exitProcess
 
-class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), CustomJdkTestLauncher {
-    override fun test(
+class KotlinKapt3IntegrationTest(testInfo: TestInfo) : AbstractKotlinKapt3IntegrationTestBase(testInfo, TargetBackend.JVM)
+
+abstract class AbstractKotlinKapt3IntegrationTestBase(private val testInfo: TestInfo, private val targetBackend: TargetBackend) {
+    private companion object {
+        val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
+    }
+
+    private fun test(
         name: String,
         vararg supportedAnnotations: String,
-        options: Map<String, String>,
-        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
+        options: Map<String, String> = emptyMap(),
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, Kapt3ExtensionForTests) -> Unit
     ) {
-        super.test(name, *supportedAnnotations, options = options, process = process)
-
-        doTestWithJdk11(
-            SingleJUnitTestRunner::class.java,
-            KotlinKapt3IntegrationTests::class.java.name + "#test" + getTestName(false)
-        )
+        val file = File(TEST_DATA_DIR, "$name.kt")
+        AbstractKotlinKapt3IntegrationTestRunner(
+            targetBackend,
+            options,
+            supportedAnnotations.toList(),
+            process
+        ).apply {
+            initTestInfo(testInfo)
+            runTest(file.absolutePath)
+        }
     }
 
     @Test
-    fun testSimple() = test("Simple", "test.MyAnnotation") { set, roundEnv, _ ->
+    fun testSimple() = test("Simple", "test.MyAnnotation") { set, roundEnv, _, _ ->
         assertEquals(1, set.size)
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)
@@ -57,17 +56,17 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
     }
 
     @Test
-    fun testComments() = test("Simple", "test.MyAnnotation") { _, _, env ->
+    fun testComments() = test("Simple", "test.MyAnnotation") { _, _, env, _ ->
         fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
 
-        assert(commentOf("test.Simple") == " KDoc comment.\n")
-        assert(commentOf("test.EnumClass") == null) // simple comment - not saved
-        assert(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
+        assertTrue(commentOf("test.Simple") == " KDoc comment.\n")
+        assertTrue(commentOf("test.EnumClass") == null) // simple comment - not saved
+        assertTrue(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
     }
 
     @Test
     fun testParameterNames() {
-        test("DefaultParameterValues", "test.Anno") { set, roundEnv, _ ->
+        test("DefaultParameterValues", "test.Anno") { set, roundEnv, _, _ ->
             val user = roundEnv.getElementsAnnotatedWith(set.single()).single() as TypeElement
             val nameField = user.enclosedElements.filterIsInstance<VariableElement>().single()
             assertEquals("John", nameField.constantValue)
@@ -76,32 +75,32 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
 
     @Test
     fun testSimpleStubsAndIncrementalData() = bindingsTest("Simple") { stubsOutputDir, incrementalDataOutputDir, bindings ->
-        assert(File(stubsOutputDir, "error/NonExistentClass.java").exists())
-        assert(File(stubsOutputDir, "test/Simple.java").exists())
-        assert(File(stubsOutputDir, "test/EnumClass.java").exists())
+        assertTrue(File(stubsOutputDir, "error/NonExistentClass.java").exists())
+        assertTrue(File(stubsOutputDir, "test/Simple.java").exists())
+        assertTrue(File(stubsOutputDir, "test/EnumClass.java").exists())
 
-        assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
-        assert(File(incrementalDataOutputDir, "test/EnumClass.class").exists())
+        assertTrue(File(incrementalDataOutputDir, "test/Simple.class").exists())
+        assertTrue(File(incrementalDataOutputDir, "test/EnumClass.class").exists())
 
-        assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
-        assert(bindings.any { it.key == "test/EnumClass" && it.value.name == "test/EnumClass.java" })
+        assertTrue(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
+        assertTrue(bindings.any { it.key == "test/EnumClass" && it.value.name == "test/EnumClass.java" })
     }
 
     @Test
     fun testStubsAndIncrementalDataForNestedClasses() {
         bindingsTest("NestedClasses") { stubsOutputDir, incrementalDataOutputDir, bindings ->
-            assert(File(stubsOutputDir, "test/Simple.java").exists())
-            assert(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
+            assertTrue(File(stubsOutputDir, "test/Simple.java").exists())
+            assertTrue(!File(stubsOutputDir, "test/Simple/InnerClass.java").exists())
 
-            assert(File(incrementalDataOutputDir, "test/Simple.class").exists())
-            assert(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
-            assert(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
-            assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
-            assert(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, "test/Simple.class").exists())
+            assertTrue(File(incrementalDataOutputDir, "test/Simple\$Companion.class").exists())
+            assertTrue(File(incrementalDataOutputDir, "test/Simple\$InnerClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, "test/Simple\$NestedClass.class").exists())
+            assertTrue(File(incrementalDataOutputDir, "test/Simple\$NestedClass\$NestedNestedClass.class").exists())
 
-            assert(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
-            assert(bindings.none { it.key.contains("Companion") })
-            assert(bindings.none { it.key.contains("InnerClass") })
+            assertTrue(bindings.any { it.key == "test/Simple" && it.value.name == "test/Simple.java" })
+            assertTrue(bindings.none { it.key.contains("Companion") })
+            assertTrue(bindings.none { it.key.contains("InnerClass") })
         }
     }
 
@@ -134,7 +133,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
     private fun List<LoggingMessageCollector.Message>.assertContainsDiagnostic(
         message: String
     ) {
-        assert(
+        assertTrue(
             any {
                 it.message.contains(message)
             }
@@ -158,8 +157,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
         test(
             name = name,
             supportedAnnotations = supportedAnnotations
-        ) { typeElements, roundEnv, processingEnv ->
-            val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
+        ) { typeElements, roundEnv, processingEnv, kaptExtension ->
             messageCollector = kaptExtension.messageCollector
             process(typeElements, roundEnv, processingEnv)
         }
@@ -168,9 +166,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
 
 
     private fun bindingsTest(name: String, test: (File, File, Map<String, KaptJavaFileObject>) -> Unit) {
-        test(name, "test.MyAnnotation") { _, _, _ ->
-            val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
-
+        test(name, "test.MyAnnotation") { _, _, _, kaptExtension->
             val stubsOutputDir = kaptExtension.options.stubsOutputDir
             val incrementalDataOutputDir = kaptExtension.options.incrementalDataOutputDir
 
@@ -184,14 +180,14 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
     fun testOptions() = test(
         "Simple", "test.MyAnnotation",
         options = mapOf("firstKey" to "firstValue", "secondKey" to "")
-    ) { _, _, env ->
+    ) { _, _, env, _ ->
         val options = env.options
         assertEquals("firstValue", options["firstKey"])
         assertTrue("secondKey" in options)
     }
 
     @Test
-    fun testOverloads() = test("Overloads", "test.MyAnnotation") { set, roundEnv, _ ->
+    fun testOverloads() = test("Overloads", "test.MyAnnotation") { set, roundEnv, _, _ ->
         assertEquals(1, set.size)
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)
@@ -214,17 +210,5 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
         assertEquals("someInt", constructors[1].parameters[0].simpleName.toString())
         assertEquals("someLong", constructors[1].parameters[1].simpleName.toString())
         assertEquals("someString", constructors[1].parameters[2].simpleName.toString())
-    }
-}
-
-internal class SingleJUnitTestRunner {
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val (className, methodName) = args.single().split('#')
-            val request = Request.method(Class.forName(className), methodName)
-            val result = JUnitCore().run(request)
-            exitProcess(if (result.wasSuccessful()) 0 else 1)
-        }
     }
 }

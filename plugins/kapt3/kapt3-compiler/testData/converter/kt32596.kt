@@ -15,6 +15,6 @@ class ErrorSomeMissingAnnotations
 
 annotation class Anno(val klass: KClass<*>)
 
-// EXPECTED_ERROR(kotlin:10:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:13:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:7:1) cannot find symbol
+// EXPECTED_ERROR: (kotlin:10:1) cannot find symbol
+// EXPECTED_ERROR: (kotlin:13:1) cannot find symbol
+// EXPECTED_ERROR: (kotlin:7:1) cannot find symbol

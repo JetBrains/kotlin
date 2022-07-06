@@ -29,6 +29,9 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         KtTestUtil.tmpDirForTest(packageName + simplifiedClassName, "test$simplifiedMethodName")
     }
 
+    override val rootDir: File
+        get() = rootTempDir
+
     override fun getOrCreateTempDirectory(name: String): File {
         return cache.getOrPut(name) { KtTestUtil.tmpDir(rootTempDir, name) }
     }

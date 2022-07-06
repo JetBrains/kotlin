@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
+import kotlin.jvm.optionals.getOrNull
 
 abstract class AbstractKotlinCompilerTest {
     companion object {
@@ -68,11 +69,12 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     @BeforeEach
+    @OptIn(ExperimentalStdlibApi::class)
     fun initTestInfo(testInfo: TestInfo) {
         initTestInfo(
             KotlinTestInfo(
-                className = testInfo.testClass.orElseGet(null)?.name ?: "_undefined_",
-                methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
+                className = testInfo.testClass.getOrNull()?.name ?: "_undefined_",
+                methodName = testInfo.testMethod.getOrNull()?.name ?: "_testUndefined_",
                 tags = testInfo.tags
             )
         )

@@ -25,20 +25,20 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractClassFileToSourceStubConverterTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
 import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -194,24 +194,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/kapt3/kapt3-compiler/test", "plugins/kapt3/kapt3-compiler/testData") {
-            testClass<AbstractClassFileToSourceStubConverterTest> {
-                model("converter")
-            }
-
-            testClass<AbstractKotlinKaptContextTest> {
-                model("kotlinRunner")
-            }
-
-            testClass<AbstractIrClassFileToSourceStubConverterTest> {
-                model("converter", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrKotlinKaptContextTest> {
-                model("kotlinRunner", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
         testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverScriptTest> {
                 model("script", extension = "kts")
@@ -238,80 +220,80 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
         }
-/*
-    testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
-        testClass<AbstractAndroidCompletionTest> {
-            model("android/completion", recursive = false, extension = null)
-        }
+        /*
+            testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
+                testClass<AbstractAndroidCompletionTest> {
+                    model("android/completion", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidGotoTest> {
-            model("android/goto", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidGotoTest> {
+                    model("android/goto", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidRenameTest> {
-            model("android/rename", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidRenameTest> {
+                    model("android/rename", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidLayoutRenameTest> {
-            model("android/renameLayout", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidLayoutRenameTest> {
+                    model("android/renameLayout", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidFindUsagesTest> {
-            model("android/findUsages", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidFindUsagesTest> {
+                    model("android/findUsages", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidUsageHighlightingTest> {
-            model("android/usageHighlighting", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidUsageHighlightingTest> {
+                    model("android/usageHighlighting", recursive = false, extension = null)
+                }
 
-        testClass<AbstractAndroidExtractionTest> {
-            model("android/extraction", recursive = false, extension = null)
-        }
+                testClass<AbstractAndroidExtractionTest> {
+                    model("android/extraction", recursive = false, extension = null)
+                }
 
-        testClass<AbstractParcelCheckerTest> {
-            model("android/parcel/checker", excludeParentDirs = true)
-        }
+                testClass<AbstractParcelCheckerTest> {
+                    model("android/parcel/checker", excludeParentDirs = true)
+                }
 
-        testClass<AbstractParcelQuickFixTest> {
-            model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
-    }
+                testClass<AbstractParcelQuickFixTest> {
+                    model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+                }
+            }
 
-    testGroup("idea/idea-android/tests", "idea/testData") {
-        testClass<AbstractConfigureProjectTest> {
-            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
-            model("configuration/android-gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestAndroidGradle")
-        }
+            testGroup("idea/idea-android/tests", "idea/testData") {
+                testClass<AbstractConfigureProjectTest> {
+                    model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+                    model("configuration/android-gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestAndroidGradle")
+                }
 
-        testClass<AbstractAndroidIntentionTest> {
-            model("android/intention", pattern = "^([\\w\\-_]+)\\.kt$")
-        }
+                testClass<AbstractAndroidIntentionTest> {
+                    model("android/intention", pattern = "^([\\w\\-_]+)\\.kt$")
+                }
 
-        testClass<AbstractAndroidResourceIntentionTest> {
-            model("android/resourceIntention", extension = "test", singleClass = true)
-        }
+                testClass<AbstractAndroidResourceIntentionTest> {
+                    model("android/resourceIntention", extension = "test", singleClass = true)
+                }
 
-        testClass<AbstractAndroidQuickFixMultiFileTest> {
-            model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
+                testClass<AbstractAndroidQuickFixMultiFileTest> {
+                    model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+                }
 
-        testClass<AbstractKotlinLintTest> {
-            model("android/lint", excludeParentDirs = true)
-        }
+                testClass<AbstractKotlinLintTest> {
+                    model("android/lint", excludeParentDirs = true)
+                }
 
-        testClass<AbstractAndroidLintQuickfixTest> {
-            model("android/lintQuickfix", pattern = "^([\\w\\-_]+)\\.kt$")
-        }
+                testClass<AbstractAndroidLintQuickfixTest> {
+                    model("android/lintQuickfix", pattern = "^([\\w\\-_]+)\\.kt$")
+                }
 
-        testClass<AbstractAndroidResourceFoldingTest> {
-            model("android/folding")
-        }
+                testClass<AbstractAndroidResourceFoldingTest> {
+                    model("android/folding")
+                }
 
-        testClass<AbstractAndroidGutterIconTest> {
-            model("android/gutterIcon")
-        }
-    }
-*/
+                testClass<AbstractAndroidGutterIconTest> {
+                    model("android/gutterIcon")
+                }
+            }
+        */
 
         testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
             testClass<AbstractIncrementalFirJvmWithPluginCompilerRunnerTest> {
@@ -464,5 +446,24 @@ fun main(args: Array<String>) {
                 model("integration", recursive = false, extension = null)
             }
         }
+
+        testGroup("plugins/kapt3/kapt3-compiler/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+            testClass<AbstractKotlinKaptContextTest> {
+                model("kotlinRunner")
+            }
+
+            testClass<AbstractIrKotlinKaptContextTest> {
+                model("kotlinRunner")
+            }
+
+            testClass<AbstractClassFileToSourceStubConverterTest> {
+                model("converter")
+            }
+
+            testClass<AbstractIrClassFileToSourceStubConverterTest> {
+                model("converter")
+            }
+        }
+
     }
 }
