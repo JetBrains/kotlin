@@ -21,12 +21,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
-fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: ScopeSession, configuration: CompilerConfiguration): ProtoBuf.PackageFragment {
-    val serializerExtension = FirKLibSerializerExtension(
-        session,
-        configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-        FirElementAwareSerializableStringTable()
-    )
+fun serializeSingleFirFile(file: FirFile, session: FirSession, scopeSession: ScopeSession, metadataVersion: BinaryVersion): ProtoBuf.PackageFragment {
+    val serializerExtension = FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable())
     val approximator = TypeApproximatorForMetadataSerializer(session)
     val packageSerializer = FirElementSerializer.createTopLevel(session, scopeSession, serializerExtension, approximator)
 

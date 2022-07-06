@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -122,4 +126,24 @@ class FirAnalyzerFacade(
             generateSignatures
         )
     }
+}
+
+fun AbstractFirAnalyzerFacade.convertToJsIr(firFiles: List<FirFile>, fir2IrExtensions: Fir2IrExtensions): Fir2IrResult {
+    this as FirAnalyzerFacade
+    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val commonFirFiles = session.moduleData.dependsOnDependencies
+        .map { it.session }
+        .filter { it.kind == FirSession.Kind.Source }
+        .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
+
+    return Fir2IrConverter.createModuleFragment(
+        session, scopeSession, firFiles + commonFirFiles,
+        languageVersionSettings, signaturer,
+        fir2IrExtensions,
+        FirJvmKotlinMangler(session), // TODO: replace with potentially simpler JS version
+        JsManglerIr, IrFactoryImpl,
+        Fir2IrVisibilityConverter.Default,
+        Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
+        irGeneratorExtensions
+    )
 }
