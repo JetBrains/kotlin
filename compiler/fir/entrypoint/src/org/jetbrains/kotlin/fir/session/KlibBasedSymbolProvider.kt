@@ -50,7 +50,7 @@ class KlibBasedSymbolProvider(
     }
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
-        val packageStringName = packageFqName.asString()
+        val packageStringName = if (packageFqName.isRoot) "" else packageFqName.asString()
 
         if (packageStringName !in fragmentNameList) {
             return emptyList()

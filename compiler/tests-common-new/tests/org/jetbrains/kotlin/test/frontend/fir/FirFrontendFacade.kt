@@ -83,7 +83,9 @@ class FirFrontendFacade(
             testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
-        val moduleName = Name.identifier(module.name)
+        // the special name is required for `KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns`
+        // it doesn't seem convincingly legitimate, probably should be refactored
+        val moduleName = Name.special("<${module.name}>")
         val languageVersionSettings = module.languageVersionSettings
         val analyzerServices = module.targetPlatform.getAnalyzerServices()
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -249,7 +251,7 @@ private fun getJsDependencies(module: TestModule, testServices: TestServices): T
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
 }
 
-internal fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
+fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
     val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
