@@ -528,12 +528,6 @@ class AndroidCompilationDetails(
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
 
-    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        if ((other as? KotlinJvmAndroidCompilation)?.androidVariant != getTestedVariantData(androidVariant)) {
-            super.addAssociateCompilationDependencies(other)
-        } // otherwise, do nothing: the Android Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
-    }
-
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = object : HasKotlinDependencies by super.kotlinDependenciesHolder {
             override val relatedConfigurationNames: List<String>
