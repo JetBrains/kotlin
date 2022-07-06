@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
@@ -187,7 +189,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, 0, valueType)
-        this.valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        this.allValueParameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {
@@ -237,7 +239,7 @@ internal fun IrPluginContext.buildFieldAccessor(
     val name = if (isSetter) field.setterName() else field.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, 0, valueType)
-        valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
+        allValueParameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
                 if (isSetter) {

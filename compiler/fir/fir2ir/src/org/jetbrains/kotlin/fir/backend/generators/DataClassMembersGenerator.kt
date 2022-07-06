@@ -308,7 +308,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                         val irValueParameter = createSyntheticIrParameter(
                             this, firFunction.valueParameters.first().name, components.irBuiltIns.anyNType
                         )
-                        this.valueParameters = listOf(irValueParameter)
+                        this.allValueParameters = listOf(irValueParameter)
                     }
                     metadata = FirMetadataSource.Function(
                         firFunction

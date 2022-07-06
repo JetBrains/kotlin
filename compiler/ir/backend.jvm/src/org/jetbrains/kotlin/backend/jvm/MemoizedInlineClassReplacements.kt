@@ -174,7 +174,7 @@ class MemoizedInlineClassReplacements(
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
             hasExtensionReceiver = function.hasExtensionReceiver
             contextReceiverParametersCount = function.contextReceiverParametersCount
-            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
+            allValueParameters = function.allValueParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, index = index, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
@@ -215,7 +215,7 @@ class MemoizedInlineClassReplacements(
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
-            valueParameters = newValueParameters
+            allValueParameters = newValueParameters
         }
 
     private fun buildReplacement(

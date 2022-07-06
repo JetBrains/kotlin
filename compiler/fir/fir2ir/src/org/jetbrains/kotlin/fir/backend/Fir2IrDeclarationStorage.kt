@@ -289,7 +289,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
-        valueParameters = listOf(
+        allValueParameters = listOf(
             createDefaultSetterParameter(startOffset, endOffset, type, parent = this)
         )
         return this
@@ -338,7 +338,7 @@ class Fir2IrDeclarationStorage(
             val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
 
             contextReceiverParametersCount = contextReceivers.size
-            valueParameters = buildList {
+            allValueParameters = buildList {
                 addContextReceiverParametersTo(contextReceivers, parent, this)
 
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->

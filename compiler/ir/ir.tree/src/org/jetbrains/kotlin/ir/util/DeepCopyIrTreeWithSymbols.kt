@@ -220,7 +220,7 @@ open class DeepCopyIrTreeWithSymbols(
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
                 hasExtensionReceiver = declaration.hasExtensionReceiver
                 returnType = typeRemapper.remapType(declaration.returnType)
-                valueParameters = declaration.valueParameters.transform()
+                allValueParameters = declaration.allValueParameters.transform()
                 body = declaration.body?.transform()
             }
         }

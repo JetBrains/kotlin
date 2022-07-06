@@ -102,7 +102,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     //          java.util.Map<K, V>#remove(K): V
                     //      This corresponds to replacing value parameter types with 'Any?'.
                     irClass.declarations.add(stub.apply {
-                        valueParameters = valueParameters.map {
+                        allValueParameters = allValueParameters.map {
                             it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }
                         }
                     })
@@ -146,7 +146,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             // NB stub method for 'remove(int)' doesn't override any built-in Kotlin declaration
             parent = removeAtStub.parent
             dispatchReceiverParameter = removeAtStub.dispatchReceiverParameter?.copyWithCustomTypeSubstitution(this) { it }
-            valueParameters = removeAtStub.valueParameters.map { stubParameter ->
+            allValueParameters = removeAtStub.allValueParameters.map { stubParameter ->
                 stubParameter.copyWithCustomTypeSubstitution(this) { it }
             }
             body = createThrowingStubBody(context, this)
@@ -174,7 +174,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             parent = irClass
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             hasExtensionReceiver = function.hasExtensionReceiver
-            valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
+            allValueParameters = function.allValueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
             body = createThrowingStubBody(context, this)
         }
     }

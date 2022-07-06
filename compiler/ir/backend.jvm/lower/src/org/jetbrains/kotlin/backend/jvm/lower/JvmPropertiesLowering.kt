@@ -196,7 +196,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                     it.copyTo(this, type = it.type.eraseTypeParameters())
                 }
             }
-            valueParameters = listOfNotNull(
+            allValueParameters = listOfNotNull(
                 declaration.getter?.extensionReceiverParameter?.let {
                     it.copyTo(this, type = it.type.eraseTypeParameters(), index = 0)
                 }

@@ -608,7 +608,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         lambdaDeclaration.parent = parent
 
-        lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.mapIndexed { id, vp ->
+        lambdaDeclaration.allValueParameters = superInvokeFun.allValueParameters.mapIndexed { id, vp ->
             vp.copyTo(lambdaDeclaration, type = anyNType, name = invokeFun.valueParameters[id].name)
         }
         return lambdaDeclaration
@@ -632,7 +632,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             }
         }
 
-        factoryDeclaration.valueParameters = constructor.valueParameters.map { it.copyTo(factoryDeclaration) }
+        factoryDeclaration.allValueParameters = constructor.allValueParameters.map { it.copyTo(factoryDeclaration) }
         factoryDeclaration.typeParameters = constructor.typeParameters.map {
             it.copyToWithoutSuperTypes(factoryDeclaration).also { tp ->
                 // TODO: make sure it is done well

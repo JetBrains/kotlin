@@ -274,10 +274,10 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
     IrValueParameterBuilder().run {
         builder()
         if (index == UNDEFINED_PARAMETER_INDEX) {
-            index = valueParameters.size
+            index = allValueParameters.size
         }
         factory.buildValueParameter(this, this@addValueParameter).also { valueParameter ->
-            valueParameters = valueParameters + valueParameter
+            allValueParameters = allValueParameters + valueParameter
         }
     }
 

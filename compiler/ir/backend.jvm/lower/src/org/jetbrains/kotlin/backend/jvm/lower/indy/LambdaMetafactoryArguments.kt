@@ -455,7 +455,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
 
-        lambda.valueParameters = newValueParameters
+        lambda.allValueParameters = newValueParameters
 
         return IrFunctionReferenceImpl(
             reference.startOffset, reference.endOffset, reference.type,

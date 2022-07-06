@@ -455,7 +455,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         )
 
     irAdapterFun.hasExtensionReceiver = true
-    irAdapterFun.valueParameters = buildList {
+    irAdapterFun.allValueParameters = buildList {
         add(createValueParameter("callee", 0, funType.toIrType()))
 
         suspendFunType.arguments

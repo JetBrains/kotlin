@@ -95,7 +95,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
         }.apply {
             parent = enumClass
             additionalParameters.forEachIndexed { index, (name, type) ->
-                valueParameters += JsIrBuilder.buildValueParameter(this, name, index, type)
+                allValueParameters += JsIrBuilder.buildValueParameter(this, name, index, type)
             }
             copyParameterDeclarationsFrom(enumConstructor)
 

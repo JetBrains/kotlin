@@ -201,7 +201,7 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
 
         val parameterDeclaration = createClosureBoxConstructorParameterDeclaration(declaration)
 
-        declaration.valueParameters += parameterDeclaration
+        declaration.allValueParameters += parameterDeclaration
 
         val receiver = JsIrBuilder.buildGetValue(closureBoxClassDeclaration.thisReceiver!!.symbol)
         val value = JsIrBuilder.buildGetValue(parameterDeclaration.symbol)

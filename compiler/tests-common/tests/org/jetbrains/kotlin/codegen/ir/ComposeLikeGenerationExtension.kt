@@ -145,7 +145,7 @@ class ComposeLikeDefaultArgumentRewriter(
         if (!hasDefaultArguments) return super.visitFunction(declaration)
         rewrittenFunctions.add(declaration)
         val newParameters = mutableListOf<IrValueParameter>()
-        declaration.valueParameters.forEach { param ->
+        declaration.allValueParameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
                     val result = IrValueParameterImpl(
@@ -170,7 +170,7 @@ class ComposeLikeDefaultArgumentRewriter(
                 } else param
             )
         }
-        declaration.valueParameters = newParameters
+        declaration.allValueParameters = newParameters
         val defaultParam = declaration.addValueParameter(
             "\$default",
             context.irBuiltIns.intType,

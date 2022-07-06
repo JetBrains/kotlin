@@ -655,7 +655,7 @@ class LocalDeclarationsLowering(
             newDeclaration.hasExtensionReceiver = oldDeclaration.hasExtensionReceiver
             newDeclaration.copyAttributes(oldDeclaration)
 
-            newDeclaration.valueParameters += createTransformedValueParameters(
+            newDeclaration.allValueParameters += createTransformedValueParameters(
                 capturedValues, localFunctionContext, oldDeclaration, newDeclaration,
                 isExplicitLocalFunction = oldDeclaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION
             )
@@ -672,7 +672,7 @@ class LocalDeclarationsLowering(
             oldDeclaration: IrFunction,
             newDeclaration: IrFunction,
             isExplicitLocalFunction: Boolean = false
-        ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
+        ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.allValueParameters.size).apply {
             val generatedNames = mutableSetOf<String>()
             capturedValues.mapIndexedTo(this) { i, capturedValue ->
                 val p = capturedValue.owner
@@ -692,7 +692,7 @@ class LocalDeclarationsLowering(
                 }
             }
 
-            oldDeclaration.valueParameters.mapTo(this) { v ->
+            oldDeclaration.allValueParameters.mapTo(this) { v ->
                 v.copyTo(
                     newDeclaration,
                     index = v.index + capturedValues.size,
@@ -746,7 +746,7 @@ class LocalDeclarationsLowering(
                 throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
             }
 
-            newDeclaration.valueParameters += createTransformedValueParameters(
+            newDeclaration.allValueParameters += createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
             )
             newDeclaration.recordTransformedValueParameters(constructorContext)

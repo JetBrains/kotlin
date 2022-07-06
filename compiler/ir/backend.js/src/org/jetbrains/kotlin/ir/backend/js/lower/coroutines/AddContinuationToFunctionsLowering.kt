@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -112,7 +113,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JsCommonBackendC
         function.overriddenSymbols += overriddenSymbols.map {
             it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
         }
-        function.valueParameters = valueParameters.map { it.copyTo(function) }
+        function.allValueParameters = allValueParameters.map { it.copyTo(function) }
 
         val mapping = mutableMapOf<IrValueSymbol, IrValueSymbol>()
         valueParameters.forEach { mapping[it.symbol] = function.valueParameters[it.index].symbol }

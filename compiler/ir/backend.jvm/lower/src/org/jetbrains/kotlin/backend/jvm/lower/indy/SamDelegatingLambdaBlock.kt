@@ -161,7 +161,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             isSuspend = superMethod.isSuspend
         }.also { lambda ->
             lambda.dispatchReceiverParameter = null
-            lambda.valueParameters = createLambdaValueParameters(superMethod, lambda, typeSubstitutor)
+            lambda.allValueParameters = createLambdaValueParameters(superMethod, lambda, typeSubstitutor)
             lambda.body = jvmContext.createJvmIrBuilder(lambda.symbol, expression)
                 .irBlockBody {
                     +irReturn(

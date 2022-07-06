@@ -47,7 +47,7 @@ internal class KFunctionState(
             if (samFunction.extensionReceiverParameter != null) {
                 // this change of parameter is needed because of difference in `invoke` and sam calls
                 invokeSymbol.owner.hasExtensionReceiver = true
-                invokeSymbol.owner.valueParameters = invokeSymbol.owner.valueParameters
+                invokeSymbol.owner.allValueParameters = invokeSymbol.owner.allValueParameters
             }
         }
     private var _parameters: List<KParameter>? = null
@@ -105,7 +105,7 @@ internal class KFunctionState(
                     }
                 }
 
-                valueParameters = newValueParameters
+                allValueParameters = newValueParameters
                 body = listOf(this.createReturn(call)).wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke

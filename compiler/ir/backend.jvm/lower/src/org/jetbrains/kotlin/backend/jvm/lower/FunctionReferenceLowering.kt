@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.parents
@@ -381,7 +381,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }.apply {
                     parent = proxyFun
                 }
-                proxyFun.valueParameters += proxyParameter
+                proxyFun.allValueParameters += proxyParameter
                 return IrGetValueImpl(startOffset, endOffset, proxyParameter.symbol)
             }
 
@@ -879,7 +879,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             val valueParameterMap = callee.explicitParameters.withIndex().associate { (index, param) ->
                 param to param.copyTo(this, index = index)
             }
-            valueParameters += valueParameterMap.values
+            allValueParameters += valueParameterMap.values
             body = callee.moveBodyTo(this, valueParameterMap)
         }
 
@@ -888,7 +888,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 ?: throw AssertionError("Single value parameter expected: ${callee.render()}")
             val invokeValueParameter = adapterValueParameter.copyTo(this, index = 0)
             val valueParameterMap = mapOf(adapterValueParameter to invokeValueParameter)
-            valueParameters = listOf(invokeValueParameter)
+            allValueParameters = listOf(invokeValueParameter)
             body = callee.moveBodyTo(this, valueParameterMap)
             callee.body = null
         }

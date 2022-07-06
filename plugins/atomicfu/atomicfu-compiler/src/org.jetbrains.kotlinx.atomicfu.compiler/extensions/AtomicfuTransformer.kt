@@ -6,18 +6,26 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
-import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.CAST
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.platform.js.isJs
 
 private const val AFU_PKG = "kotlinx.atomicfu"
@@ -90,7 +98,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                 val type = newDeclaration.extensionReceiverParameter!!.type.atomicToValueType()
                 val getterType = context.buildGetterType(type)
                 val setterType = context.buildSetterType(type)
-                newDeclaration.valueParameters = newDeclaration.valueParameters + listOf(
+                newDeclaration.allValueParameters = newDeclaration.valueParameters + listOf(
                     buildValueParameter(newDeclaration, GETTER, valueParametersCount, getterType),
                     buildValueParameter(newDeclaration, SETTER, valueParametersCount + 1, setterType)
                 )

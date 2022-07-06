@@ -229,7 +229,7 @@ internal class AdapterGenerator(
                     error("Bound callable references can't have both receivers: ${callableReferenceAccess.render()}")
                 else -> {
                     irAdapterFunction.hasExtensionReceiver = true
-                    irAdapterFunction.valueParameters +=
+                    irAdapterFunction.allValueParameters +=
                         createAdapterParameter(
                             irAdapterFunction,
                             Name.identifier("receiver"),
@@ -239,7 +239,7 @@ internal class AdapterGenerator(
                         )
                 }
             }
-            irAdapterFunction.valueParameters += parameterTypes.mapIndexed { index, parameterType ->
+            irAdapterFunction.allValueParameters += parameterTypes.mapIndexed { index, parameterType ->
                 createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier("p$index"),
@@ -586,7 +586,7 @@ internal class AdapterGenerator(
         ).also { irAdapterFunction ->
             symbolTable.enterScope(irAdapterFunction)
 
-            irAdapterFunction.valueParameters = buildList {
+            irAdapterFunction.allValueParameters = buildList {
                 add(
                     createAdapterParameter(
                         irAdapterFunction,
@@ -723,7 +723,7 @@ internal class AdapterGenerator(
                 irFunctionType,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
             )
-            irAdapterFunction.valueParameters = listOf(irFunctionParameter)
+            irAdapterFunction.allValueParameters = listOf(irFunctionParameter)
             irAdapterFunction.body = irFactory.createBlockBody(
                 startOffset, endOffset,
                 listOf(

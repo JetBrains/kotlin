@@ -76,7 +76,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
             startOffset = startOffset, endOffset = endOffset
         ).apply {
             overriddenSymbols = listOf(function.symbol)
-            valueParameters = function.valueParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
+            allValueParameters = function.allValueParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
         }
     }
 
@@ -266,7 +266,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
         ).apply {
             copyAttributes(invokeSuspend)
             generateErrorForInlineBody()
-            valueParameters = invokeSuspend.valueParameters.map { it.copyTo(this) }
+            allValueParameters = invokeSuspend.allValueParameters.map { it.copyTo(this) }
         }
     }
 

@@ -569,7 +569,7 @@ class IrDeclarationDeserializer(
                 returnType = deserializeIrType(nameType.typeIndex)
 
                 withBodyGuard {
-                    valueParameters = deserializeValueParameters(proto)
+                    allValueParameters = deserializeValueParameters(proto)
                     dispatchReceiverParameter =
                         if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
                         else null

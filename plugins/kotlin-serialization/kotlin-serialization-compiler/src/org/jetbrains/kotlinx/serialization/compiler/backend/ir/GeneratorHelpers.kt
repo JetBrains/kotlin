@@ -686,7 +686,7 @@ interface IrBuilderExtension {
             assert(valueParameters.isEmpty())
 
         hasExtensionReceiver = descriptor.extensionReceiverParameter != null
-        valueParameters = buildList {
+        allValueParameters = buildList {
             if (descriptor.extensionReceiverParameter != null) {
                 add(irValueParameter(descriptor.extensionReceiverParameter!!))
             }

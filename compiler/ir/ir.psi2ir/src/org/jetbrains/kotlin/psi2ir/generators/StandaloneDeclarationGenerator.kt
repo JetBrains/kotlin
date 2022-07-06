@@ -150,7 +150,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
         irFunction.hasExtensionReceiver = functionDescriptor.extensionReceiverParameter != null
 
-        irFunction.valueParameters = buildList {
+        irFunction.allValueParameters = buildList {
             functionDescriptor.extensionReceiverParameter?.let {
                 add(declareParameter(it, null, irFunction))
             }
