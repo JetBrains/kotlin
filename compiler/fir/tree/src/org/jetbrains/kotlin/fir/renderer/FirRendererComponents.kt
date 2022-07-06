@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.renderer
 internal interface FirRendererComponents {
     val visitor: FirRenderer.Visitor
     val printer: FirPrinter
+    val declarationRenderer: FirDeclarationRenderer
     val annotationRenderer: FirAnnotationRenderer?
     val bodyRenderer: FirBodyRenderer?
     val typeRenderer: ConeTypeRenderer

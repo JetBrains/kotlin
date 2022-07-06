@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
-import kotlin.reflect.KClass
 
 open class FirRenderer private constructor(
     builder: StringBuilder,
@@ -67,6 +66,8 @@ open class FirRenderer private constructor(
         override var annotationRenderer: FirAnnotationRenderer? = null
 
         override var bodyRenderer: FirBodyRenderer? = null
+
+        override lateinit var declarationRenderer: FirDeclarationRenderer
 
         override lateinit var typeRenderer: ConeTypeRenderer
 
@@ -163,6 +164,16 @@ open class FirRenderer private constructor(
     private val bodyRenderer =
         if (mode.renderBodies) FirBodyRenderer(components) else null
 
+    private val declarationRenderer = when {
+        mode.renderDeclarationAttributes && mode.renderDeclarationResolvePhase ->
+            FirDeclarationRendererWithAttributesAndResolvePhase(components)
+        mode.renderDeclarationAttributes ->
+            FirDeclarationRendererWithAttributes(components)
+        mode.renderDeclarationResolvePhase ->
+            FirDeclarationRendererWithResolvePhase(components)
+        else -> FirDeclarationRenderer(components)
+    }
+
     @Suppress("LeakingThis")
     private val typeRenderer =
         if (mode.renderDetailedTypeReferences) ConeTypeRendererForDebugging(builder) else ConeTypeRenderer(builder)
@@ -171,6 +182,7 @@ open class FirRenderer private constructor(
         components.visitor = visitor
         components.annotationRenderer = annotationRenderer
         components.bodyRenderer = bodyRenderer
+        components.declarationRenderer = declarationRenderer
         components.typeRenderer = typeRenderer
         @Suppress("LeakingThis")
         components.printer = this
@@ -273,39 +285,6 @@ open class FirRenderer private constructor(
             print(">")
         }
     }
-
-    private fun FirDeclaration.renderDeclarationData() {
-        renderDeclarationResolvePhaseIfNeeded()
-        renderDeclarationAttributesIfNeeded()
-    }
-
-    private fun FirDeclaration.renderDeclarationResolvePhaseIfNeeded() {
-        if (mode.renderDeclarationResolvePhase) {
-            print("[${resolvePhase}] ")
-        }
-    }
-
-    private fun FirDeclaration.renderDeclarationAttributesIfNeeded() {
-        if (mode.renderDeclarationAttributes && attributes.isNotEmpty()) {
-            val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->
-                value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
-            }.joinToString { (name, value) -> "$name=$value" }
-            print("[$attributes] ")
-        }
-    }
-
-    private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
-        val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
-        return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes[index] }
-    }
-
-    private fun Any.renderAsDeclarationAttributeValue() = when (this) {
-        is FirCallableSymbol<*> -> callableId.toString()
-        is FirClassLikeSymbol<*> -> classId.asString()
-        is FirProperty -> symbol.callableId.toString()
-        else -> toString()
-    }
-
 
     protected fun List<FirDeclaration>.renderDeclarations() {
         renderInBraces {
@@ -501,7 +480,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitDeclaration(declaration: FirDeclaration) {
-            declaration.renderDeclarationData()
+            declarationRenderer.render(declaration)
             print(
                 when (declaration) {
                     is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
@@ -617,7 +596,7 @@ open class FirRenderer private constructor(
             if (constructor.isActual) {
                 print("actual ")
             }
-            constructor.renderDeclarationData()
+            declarationRenderer.render(constructor)
 
             constructor.dispatchReceiverType?.let {
                 typeRenderer.render(it)
@@ -644,7 +623,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-            propertyAccessor.renderDeclarationData()
+            declarationRenderer.render(propertyAccessor)
             annotationRenderer?.render(propertyAccessor)
             print(propertyAccessor.visibility.asString() + " ")
             print(if (propertyAccessor.isInline) "inline " else "")
@@ -662,7 +641,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-            anonymousFunction.renderDeclarationData()
+            declarationRenderer.render(anonymousFunction)
             annotationRenderer?.render(anonymousFunction)
             val label = anonymousFunction.label
             if (label != null) {
@@ -748,7 +727,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter) {
-            valueParameter.renderDeclarationData()
+            declarationRenderer.render(valueParameter)
             annotationRenderer?.render(valueParameter)
             if (valueParameter.isCrossinline) {
                 print("crossinline ")
