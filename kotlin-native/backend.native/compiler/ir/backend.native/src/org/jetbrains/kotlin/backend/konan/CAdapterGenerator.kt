@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.annotations.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -479,12 +478,12 @@ private class ExportedElement(val kind: ElementKind,
         return builder.toString()
     }
 
-    private fun addUsedType(type: KotlinType, set: MutableSet<ClassDescriptor>) {
+    private fun addUsedType(type: KotlinType, set: MutableSet<KotlinType>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
-        set.addIfNotNull(TypeUtils.getClassDescriptor(type))
+        set.add(type)
     }
 
-    fun addUsedTypes(set: MutableSet<ClassDescriptor>) {
+    fun addUsedTypes(set: MutableSet<KotlinType>) {
         val descriptor = declaration
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -497,7 +496,7 @@ private class ExportedElement(val kind: ElementKind,
                 addUsedType(original.correspondingProperty.type, set)
             }
             is ClassDescriptor -> {
-                set += descriptor
+                set += descriptor.defaultType
             }
         }
     }
@@ -787,7 +786,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
     }
 
-    private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<ClassDescriptor>) {
+    private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<KotlinType>) {
         scope.elements.forEach {
             it.addUsedTypes(set)
         }
@@ -797,23 +796,20 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
     }
 
     private fun defineUsedTypes(scope: ExportedElementScope, indent: Int) {
-        val set = mutableSetOf<ClassDescriptor>()
-        defineUsedTypesImpl(scope, set)
-        // Add nullable primitives.
-        predefinedTypes.forEach {
-            val nullableIt = it.makeNullable()
-            output("typedef struct {", indent)
-            output("${prefix}_KNativePtr pinned;", indent + 1)
-            output("} ${translateType(nullableIt)};", indent)
-        }
-        set.forEach {
-            val type = it.defaultType
-            if (isMappedToReference(type) && !it.isInlined()) {
-                output("typedef struct {", indent)
-                output("${prefix}_KNativePtr pinned;", indent + 1)
-                output("} ${translateType(type)};", indent)
-            }
-        }
+        val usedTypes = mutableSetOf<KotlinType>()
+        defineUsedTypesImpl(scope, usedTypes)
+        val usedReferenceTypes = usedTypes.filter { isMappedToReference(it) }
+        // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
+        val predefinedNullableTypes = predefinedTypes.map { it.makeNullable() }
+
+        (predefinedNullableTypes + usedReferenceTypes)
+                .map { translateType(it) }
+                .toSet()
+                .forEach {
+                    output("typedef struct {", indent)
+                    output("${prefix}_KNativePtr pinned;", indent + 1)
+                    output("} $it;", indent)
+                }
     }
 
     val exportedSymbols = mutableListOf<String>()
