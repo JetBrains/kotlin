@@ -257,51 +257,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
 @JsGradlePluginTests
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
-
-    @DisplayName("incremental compilation for js works")
-    @GradleTest
-    fun testIncrementalCompilation(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-        project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
-            val modules = listOf("app", "lib")
-            val mainFiles = modules.flatMapTo(LinkedHashSet()) {
-                projectPath.resolve("$it/src/main").allKotlinFiles
-            }
-
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                if (irBackend) {
-                    assertCompiledKotlinSources(mainFiles.relativizeTo(projectPath), output)
-                } else {
-                    assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
-                }
-            }
-
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                assertCompiledKotlinSources(emptyList(), output)
-            }
-
-            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
-            modifiedFile.modify {
-                it.replace("val x = 0", "val x = \"a\"")
-            }
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
-                    projectPath.findInPath(it)
-                }
-                if (irBackend) {
-                    // only klib ic is supported for now, so tests are generated non-incrementally with ir backend
-                    assertCompiledKotlinSources(affectedFiles.filter { it in mainFiles }.relativizeTo(projectPath), output)
-                } else {
-                    assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
-                }
-            }
-        }
-    }
-
     @DisplayName("incremental compilation with multiple js modules after compilation error works")
     @GradleTest
     fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
@@ -730,6 +685,36 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     "\"fun main(args: Array<String>) {",
                     "\"inline fun foo(): String {",
                 )
+            }
+        }
+    }
+
+    @DisplayName("incremental compilation for js works")
+    @GradleTest
+    fun testIncrementalCompilation(gradleVersion: GradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                checkIrCompilationMessage()
+                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
+            }
+
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                assertCompiledKotlinSources(emptyList(), output)
+            }
+
+            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
+            modifiedFile.modify {
+                it.replace("val x = 0", "val x = \"a\"")
+            }
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                checkIrCompilationMessage()
+                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
+                    projectPath.findInPath(it)
+                }
+                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
             }
         }
     }
