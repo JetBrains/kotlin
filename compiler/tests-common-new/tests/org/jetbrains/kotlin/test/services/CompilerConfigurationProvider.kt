@@ -125,14 +125,6 @@ fun TargetPlatform.platformToEnvironmentConfigFiles() = when {
 fun createCompilerConfiguration(module: TestModule, configurators: List<AbstractEnvironmentConfigurator>): CompilerConfiguration {
     val configuration = CompilerConfiguration()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
-    if (JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives) {
-        configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
-    }
-
-    if (JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS in module.directives) {
-        configuration.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, true)
-    }
-
     if (module.frontendKind == FrontendKinds.FIR) {
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }
