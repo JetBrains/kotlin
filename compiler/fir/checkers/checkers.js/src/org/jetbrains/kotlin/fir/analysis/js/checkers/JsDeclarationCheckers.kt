@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsBuiltinNameClashChecker
-import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlinePropertyChecker
-import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsJsModuleOnVarPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
@@ -29,5 +26,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirJsBuiltinNameClashChecker,
+            FirJsInheritanceChecker,
         )
 }

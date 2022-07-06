@@ -3771,6 +3771,22 @@ internal class JavaSamInterfaceConstructorReferenceImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.JavaSamInterfaceConstructorReference(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class ImplementingFunctionInterfaceImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplementingFunctionInterface(), KtAbstractFirDiagnostic<KtClassOrObject>
+
+internal class OverridingExternalFunWithOptionalParamsImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.OverridingExternalFunWithOptionalParams(), KtAbstractFirDiagnostic<KtElement>
+
+internal class OverridingExternalFunWithOptionalParamsWithFakeImpl(
+    override val function: KtFunctionLikeSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.OverridingExternalFunWithOptionalParamsWithFake(), KtAbstractFirDiagnostic<KtElement>
+
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

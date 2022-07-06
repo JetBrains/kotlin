@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -23,6 +25,17 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
         val JS_BUILTIN_NAME_CLASH by error<KtElement>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<String>("name")
+        }
+    }
+
+    val FUN_INTERFACES by object : DiagnosticGroup("Fun Interfaces") {
+        val IMPLEMENTING_FUNCTION_INTERFACE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+    }
+
+    val EXTERNAL by object : DiagnosticGroup("External") {
+        val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<FirNamedFunctionSymbol>("function")
         }
     }
 }

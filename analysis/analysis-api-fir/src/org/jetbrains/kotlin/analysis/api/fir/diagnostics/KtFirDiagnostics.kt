@@ -3119,6 +3119,19 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
     }
 
+    abstract class ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = ImplementingFunctionInterface::class
+    }
+
+    abstract class OverridingExternalFunWithOptionalParams : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = OverridingExternalFunWithOptionalParams::class
+    }
+
+    abstract class OverridingExternalFunWithOptionalParamsWithFake : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = OverridingExternalFunWithOptionalParamsWithFake::class
+        abstract val function: KtFunctionLikeSymbol
+    }
+
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
     }
