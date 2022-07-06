@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
@@ -119,7 +120,8 @@ class FirAnalyzerFacade(
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
-            generateSignatures
+            generateSignatures,
+            kotlinBuiltIns = DefaultBuiltIns.Instance // TODO: consider passing externally
         )
     }
 }
