@@ -3,14 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
 import com.sun.source.util.TaskListener
 import com.sun.source.util.Trees
 import com.sun.tools.javac.api.JavacTaskImpl
-import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
-import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt3.base.incremental.RuntimeProcType
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import java.io.File
 import javax.annotation.processing.AbstractProcessor

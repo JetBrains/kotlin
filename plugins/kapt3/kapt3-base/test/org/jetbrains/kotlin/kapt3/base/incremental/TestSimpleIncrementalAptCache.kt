@@ -3,31 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.kapt3.base.newCacheFolder
+import org.jetbrains.kotlin.kapt3.base.newCompiledSourcesFolder
+import org.jetbrains.kotlin.kapt3.base.newGeneratedSourcesFolder
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class TestSimpleIncrementalAptCache {
-
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
-
     private lateinit var cache: JavaClassCacheManager
     private lateinit var generatedSources: File
     private lateinit var compiledSources: List<File>
 
-    @Before
-    fun setUp() {
-        cache = JavaClassCacheManager(tmp.newFolder())
-        generatedSources = tmp.newFolder()
-        compiledSources = listOf(tmp.newFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
+    @BeforeEach
+    fun setUp(@TempDir tmp: File) {
+        cache = JavaClassCacheManager(tmp.newCacheFolder())
+        generatedSources = tmp.newGeneratedSourcesFolder()
+        compiledSources = listOf(tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
         cache.close()
     }
 

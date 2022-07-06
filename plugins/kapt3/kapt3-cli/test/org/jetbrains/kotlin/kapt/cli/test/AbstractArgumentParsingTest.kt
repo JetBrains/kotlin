@@ -4,21 +4,17 @@
  */
 package org.jetbrains.kotlin.kapt.cli.test
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.kapt.cli.transformArgs
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.runner.RunWith
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import java.io.File
 
 private val LINE_SEPARATOR: String = System.getProperty("line.separator")
 
-@RunWith(JUnit3RunnerWithInners::class)
-abstract class AbstractArgumentParsingTest : TestCase() {
-    fun doTest(filePath: String) {
+abstract class AbstractArgumentParsingTest {
+    fun runTest(filePath: String) {
         val testFile = File(filePath)
 
         val sections = Section.parse(testFile)
@@ -29,7 +25,7 @@ abstract class AbstractArgumentParsingTest : TestCase() {
         val actualAfter = if (messageCollector.hasErrors()) messageCollector.toString() else transformedArgs.joinToString(LINE_SEPARATOR)
         val actual = sections.replacingSection("after", actualAfter).render()
 
-        KotlinTestUtils.assertEqualsToFile(testFile, actual)
+        JUnit5Assertions.assertEqualsToFile(testFile, actual)
     }
 }
 

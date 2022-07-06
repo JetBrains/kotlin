@@ -212,16 +212,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/kapt3/kapt3-cli/test", "plugins/kapt3/kapt3-cli/testData") {
-            testClass<AbstractArgumentParsingTest> {
-                model("argumentParsing", extension = "txt")
-            }
-
-            testClass<AbstractKaptToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
-            }
-        }
-
         testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverScriptTest> {
                 model("script", extension = "kts")
@@ -462,6 +452,16 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirBlackBoxCodegenTestForSamWithReceiver> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/kapt3/kapt3-cli/tests-gen", "plugins/kapt3/kapt3-cli/testData") {
+            testClass<AbstractArgumentParsingTest> {
+                model("argumentParsing", extension = "txt")
+            }
+
+            testClass<AbstractKaptToolIntegrationTest> {
+                model("integration", recursive = false, extension = null)
             }
         }
     }

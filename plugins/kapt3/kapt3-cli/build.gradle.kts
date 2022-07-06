@@ -9,19 +9,23 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(intellijCore())
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler"))
-    testApi(commonDependency("junit:junit"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApiJUnit5()
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar()
 
 projectTest {
+    useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")
 }

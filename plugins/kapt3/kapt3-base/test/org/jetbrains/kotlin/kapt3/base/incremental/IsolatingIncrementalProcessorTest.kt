@@ -3,28 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.RuntimeProcType
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 
-class IsolationgIncrementalProcessorTest {
-    @JvmField
-    @Rule
-    val tmp: TemporaryFolder = TemporaryFolder()
-
-    private lateinit var generatedSources: File
-
-    @Before
-    fun setUp() {
-        generatedSources = tmp.newFolder()
-    }
-
+class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir() {
     @Test
     fun testDependenciesRecorded() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
@@ -49,7 +34,7 @@ class IsolationgIncrementalProcessorTest {
         runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
 
         assertEquals(RuntimeProcType.ISOLATING, isolating.getRuntimeType())
-        assertEquals(emptyMap<File, File>(), isolating.getGeneratedToSources())
+        assertEquals(emptyMap<File, String?>(), isolating.getGeneratedToSources())
     }
 
     @Test
@@ -80,7 +65,7 @@ class IsolationgIncrementalProcessorTest {
         runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
 
         assertEquals(RuntimeProcType.NON_INCREMENTAL, isolating.getRuntimeType())
-        assertEquals(emptyMap<File, File>(), isolating.getGeneratedToSources())
+        assertEquals(emptyMap<File, String?>(), isolating.getGeneratedToSources())
     }
 
     @Test

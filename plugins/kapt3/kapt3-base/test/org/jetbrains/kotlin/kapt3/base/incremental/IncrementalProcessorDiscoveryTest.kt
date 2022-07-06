@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
-import org.jetbrains.kotlin.kapt3.base.incremental.getIncrementalProcessorsFromClasspath
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -22,15 +20,11 @@ class IncrementalProcessorDiscoveryTest {
                     Input1Processor3,DYNAMIC
                     Input1Processor4,UNKNOWN
                     Input1Processor5 this is malformed input
-            """.trimIndent();
-
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
+            """.trimIndent()
 
     @Test
-    fun locateInJars() {
-        val inputJar = tmp.root.resolve("inputJar.jar")
+    fun locateInJars(@TempDir tmp: File) {
+        val inputJar = tmp.resolve("inputJar.jar")
         ZipOutputStream(inputJar.outputStream()).use {
             it.putNextEntry(ZipEntry("META-INF/gradle/incremental.annotation.processors"))
             it.write(markerFileContent.toByteArray())
@@ -53,8 +47,8 @@ class IncrementalProcessorDiscoveryTest {
     }
 
     @Test
-    fun locateInDir() {
-        val inputDir = tmp.root.resolve("inputDir")
+    fun locateInDir(@TempDir tmp: File) {
+        val inputDir = tmp.resolve("inputDir")
         inputDir.resolve("META-INF/gradle/incremental.annotation.processors").let {
             it.parentFile.mkdirs()
             it.writeText(markerFileContent)
@@ -76,15 +70,15 @@ class IncrementalProcessorDiscoveryTest {
     }
 
     @Test
-    fun locateInJarsAndDirs() {
-        val inputJar = tmp.root.resolve("inputJar.jar")
+    fun locateInJarsAndDirs(@TempDir tmp: File) {
+        val inputJar = tmp.resolve("inputJar.jar")
         ZipOutputStream(inputJar.outputStream()).use {
             it.putNextEntry(ZipEntry("META-INF/gradle/incremental.annotation.processors"))
             it.write("InputJarProcessor,ISOLATING".toByteArray())
             it.closeEntry()
         }
 
-        val inputDir = tmp.root.resolve("inputDir")
+        val inputDir = tmp.resolve("inputDir")
         inputDir.resolve("META-INF/gradle/incremental.annotation.processors").let {
             it.parentFile.mkdirs()
             it.writeText("InputDirProcessor,DYNAMIC")
