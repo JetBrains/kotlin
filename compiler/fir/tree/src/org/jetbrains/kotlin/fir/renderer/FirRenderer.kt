@@ -67,6 +67,8 @@ open class FirRenderer private constructor(
 
         override var bodyRenderer: FirBodyRenderer? = null
 
+        override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
+
         override lateinit var declarationRenderer: FirDeclarationRenderer
 
         override lateinit var typeRenderer: ConeTypeRenderer
@@ -174,6 +176,8 @@ open class FirRenderer private constructor(
         else -> FirDeclarationRenderer(components)
     }
 
+    private val packageDirectiveRenderer = if (mode.renderPackageDirective) FirPackageDirectiveRenderer(components) else null
+
     @Suppress("LeakingThis")
     private val typeRenderer =
         if (mode.renderDetailedTypeReferences) ConeTypeRendererForDebugging(builder) else ConeTypeRenderer(builder)
@@ -183,6 +187,7 @@ open class FirRenderer private constructor(
         components.annotationRenderer = annotationRenderer
         components.bodyRenderer = bodyRenderer
         components.declarationRenderer = declarationRenderer
+        components.packageDirectiveRenderer = packageDirectiveRenderer
         components.typeRenderer = typeRenderer
         @Suppress("LeakingThis")
         components.printer = this
@@ -1406,12 +1411,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitPackageDirective(packageDirective: FirPackageDirective) {
-            if (mode.renderPackageDirective) {
-                if (!packageDirective.packageFqName.isRoot) {
-                    println("package ${packageDirective.packageFqName.asString()}")
-                    println()
-                }
-            }
+            packageDirectiveRenderer?.render(packageDirective)
         }
     }
 }
