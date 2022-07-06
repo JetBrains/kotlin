@@ -1640,7 +1640,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                 classAdapters += if (it.classSymbol.owner.isUnit()) {
                     createUnitInstanceAdapter(it.selector)
                 } else {
-                    createObjectInstanceAdapter(it.classSymbol.owner, it.selector)
+                    createObjectInstanceAdapter(it.classSymbol.owner, it.selector, irClass)
                 }
             }
             ObjCKotlinThrowableAsErrorMethod -> {
@@ -1889,15 +1889,16 @@ private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(selector: String) 
         }
 
 private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
-        irClass: IrClass,
-        selector: String
+        objectClass: IrClass,
+        selector: String,
+        owner: IrClass,
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    assert(irClass.kind == ClassKind.OBJECT)
-    assert(!irClass.isUnit())
-
-    return generateObjCToKotlinSyntheticGetter(selector, "${irClass.computeTypeInfoSymbolName()}#$selector") {
+    assert(objectClass.kind == ClassKind.OBJECT)
+    assert(!objectClass.isUnit())
+    val bridgeSuffix = "${owner.computeTypeInfoSymbolName()}#$selector"
+    return generateObjCToKotlinSyntheticGetter(selector, bridgeSuffix) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
-        val value = getObjectValue(irClass, startLocationInfo = null, exceptionHandler = ExceptionHandler.Caller)
+        val value = getObjectValue(objectClass, startLocationInfo = null, exceptionHandler = ExceptionHandler.Caller)
         autoreleaseAndRet(kotlinReferenceToRetainedObjC(value))
     }
 }
