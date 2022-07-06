@@ -17,7 +17,7 @@ dependencies {
     testImplementation(project(":kotlin-lombok-compiler-plugin.k2"))
     testImplementation(project(":kotlin-lombok-compiler-plugin.cli"))
 
-    testImplementation("org.projectlombok:lombok:1.18.16")
+    testImplementation(commonDependency("org.projectlombok:lombok"))
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))
