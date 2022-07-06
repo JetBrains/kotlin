@@ -396,15 +396,10 @@ class IrBuiltInsOverFir(
                 name: String,
                 returnType: IrType,
                 vararg valueParameterTypes: Pair<String, IrType>,
-                isIntrinsicConst: Boolean = false,
-                builder: IrSimpleFunction.() -> Unit = {}
+                isIntrinsicConst: Boolean = false
             ) =
                 createFunction(name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR, isIntrinsicConst = isIntrinsicConst).also {
                     declarations.add(it)
-                    it.builder()
-                }.also {
-                    it.parent = operatorsPackageFragment
-                    components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
                 }.symbol
 
             primitiveFloatingPointIrTypes.forEach { fpType ->
@@ -445,13 +440,10 @@ class IrBuiltInsOverFir(
                     "CHECK_NOT_NULL",
                     IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
                     arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
+                    typeParameters = listOf(typeParameter),
                     origin = BUILTIN_OPERATOR
                 ).also {
-                    it.typeParameters = listOf(typeParameter)
-                    typeParameter.parent = it
                     declarations.add(it)
-                    it.parent = operatorsPackageFragment
-                    components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
                 }.symbol
             }
 
@@ -538,11 +530,8 @@ class IrBuiltInsOverFir(
             vararg argumentTypes: Pair<String, IrType>,
             builder: IrSimpleFunction.() -> Unit
         ) =
-            owner.createFunction(name, returnType, argumentTypes).also {
-                it.builder()
+            kotlinIrPackage.createFunction(name, returnType, argumentTypes, postBuild = builder).also {
                 this.owner.declarations.add(it)
-                it.parent = kotlinIrPackage
-                components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
             }.symbol
 
         val kotlinKt = kotlinIrPackage.createClass(kotlinPackage.child(Name.identifier("KotlinKt")))
@@ -826,16 +815,14 @@ class IrBuiltInsOverFir(
         isInfix: Boolean = false,
         isIntrinsicConst: Boolean = true,
         build: IrFunctionBuilder.() -> Unit = {}
-    ) = parent.createFunction(
-        name, returnType, valueParameterTypes, origin, modality, isOperator, isInfix, isIntrinsicConst, build
+    ) = createFunction(
+        name, returnType, valueParameterTypes,
+        origin = origin, modality = modality, isOperator = isOperator, isInfix = isInfix, isIntrinsicConst = isIntrinsicConst,
+        postBuild = {
+            addDispatchReceiver { type = this@createMemberFunction.defaultType }
+        },
+        build = build
     ).also { fn ->
-        fn.addDispatchReceiver { type = this@createMemberFunction.defaultType }
-        declarations.add(fn)
-        fn.parent = this@createMemberFunction
-        if (isIntrinsicConst) {
-            fn.annotations += intrinsicConstAnnotation
-        }
-
         // very simple and fragile logic, but works for all current usages
         // TODO: replace with correct logic or explicit specification if cases become more complex
         forEachSuperClass {
@@ -847,9 +834,8 @@ class IrBuiltInsOverFir(
                 fn.overriddenSymbols += it.symbol
             }
         }
-        components.symbolTable.declareSimpleFunctionWithSignature(
-            irSignatureBuilder.computeSignature(fn), fn.symbol
-        )
+
+        declarations.add(fn)
     }
 
     private fun IrClass.createMemberFunction(
@@ -887,28 +873,47 @@ class IrBuiltInsOverFir(
         name: String,
         returnType: IrType,
         valueParameterTypes: Array<out Pair<String, IrType>>,
+        typeParameters: List<IrTypeParameter> = emptyList(),
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false,
         isInfix: Boolean = false,
         isIntrinsicConst: Boolean = false,
-        build: IrFunctionBuilder.() -> Unit = {}
-    ) = irFactory.buildFun {
-        this.name = Name.identifier(name)
-        this.returnType = returnType
-        this.origin = origin
-        this.modality = modality
-        this.isOperator = isOperator
-        this.isInfix = isInfix
-        build()
-    }.also { fn ->
-        valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-            fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
+        postBuild: IrSimpleFunction.() -> Unit = {},
+        build: IrFunctionBuilder.() -> Unit = {},
+    ): IrSimpleFunction {
+
+        fun makeWithSymbol(symbol: IrSimpleFunctionSymbol) = IrFunctionBuilder().run {
+            this.name = Name.identifier(name)
+            this.returnType = returnType
+            this.origin = origin
+            this.modality = modality
+            this.isOperator = isOperator
+            this.isInfix = isInfix
+            build()
+            irFactory.createFunction(
+                startOffset, endOffset, this.origin,
+                symbol,
+                this.name, visibility, this.modality, this.returnType,
+                isInline, isExternal, isTailrec, isSuspend, this.isOperator, this.isInfix, isExpect, isFakeOverride,
+                containerSource,
+            )
+        }.also { fn ->
+            valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+                fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
+            }
+            fn.typeParameters = typeParameters
+            typeParameters.forEach { it.parent = fn }
+            if (isIntrinsicConst) {
+                fn.annotations += intrinsicConstAnnotation
+            }
+            fn.parent = this@createFunction
+            fn.postBuild()
         }
-        if (isIntrinsicConst) {
-            fn.annotations += intrinsicConstAnnotation
-        }
-        fn.parent = this@createFunction
+
+        val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
+        val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
+        return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature, null) }, ::makeWithSymbol)
     }
 
     private fun IrClass.addArrayMembers(elementType: IrType) {
