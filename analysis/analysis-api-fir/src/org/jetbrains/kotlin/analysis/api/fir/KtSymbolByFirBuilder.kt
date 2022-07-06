@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.Normal
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -583,7 +585,11 @@ internal class KtSymbolByFirBuilder constructor(
                 returns() implies requirement
             }
             require(requirement) {
-                "Cannot build ${S::class.simpleName} for ${firSymbol.fir.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}"
+                // TODO: renderWithTypes!!!
+                val renderedSymbol = FirRenderer().with(
+                    declarationRenderer = FirDeclarationRendererWithResolvePhase()
+                ).renderElementAsString(firSymbol.fir)
+                "Cannot build ${S::class.simpleName} for $renderedSymbol}"
             }
         }
     }

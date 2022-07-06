@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-open class FirDeclarationRenderer internal constructor(components: FirRendererComponents) : FirRendererComponents by components {
+open class FirDeclarationRenderer {
+
+    internal lateinit var components: FirRendererComponents
+    protected val printer get() = components.printer
+
     fun render(declaration: FirDeclaration) {
         with(declaration) {
             renderDeclarationResolvePhase()

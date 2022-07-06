@@ -136,7 +136,10 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
 
     private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
         print("[${declaration.origin}]: ")
-        print(declaration.render(FirRenderer.RenderMode.NoBodies).trim())
+        val renderedDeclaration = FirRenderer(mode = FirRenderer.RenderMode.NoBodies).with(
+            annotationRenderer = null, bodyRenderer = null
+        ).renderElementAsString(declaration).trim()
+        print(renderedDeclaration)
         print(" from $scope")
         println(" [id: ${counter.getIndex(declaration.symbol)}]")
     }

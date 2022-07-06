@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributesAndResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -51,8 +51,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
     }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val rendererOption = FirRenderer.RenderMode.WithDeclarationAttributes.copy(renderDeclarationResolvePhase = true)
         val resultBuilder = StringBuilder()
+        val renderer = FirRenderer(resultBuilder).with(declarationRenderer = FirDeclarationRendererWithAttributesAndResolvePhase())
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession is LLFirSourceResolveSession)
             val declarationToResolve = firResolveSession
@@ -63,7 +63,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 declarationToResolve.ensureResolved(currentPhase)
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
                 resultBuilder.append("\n${currentPhase.name}:\n")
-                resultBuilder.append(firFile.render(rendererOption))
+                renderer.renderElementAsString(firFile)
             }
         }
 
@@ -72,7 +72,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             val firFile = firResolveSession.getOrBuildFirFile(ktFile)
             firFile.ensureResolved(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")
-            resultBuilder.append(firFile.render(rendererOption))
+            renderer.renderElementAsString(firFile)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())

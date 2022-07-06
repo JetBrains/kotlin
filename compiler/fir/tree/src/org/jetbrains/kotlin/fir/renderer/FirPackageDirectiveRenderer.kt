@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirPackageDirective
 
-class FirPackageDirectiveRenderer internal constructor(components: FirRendererComponents) : FirRendererComponents by components {
+class FirPackageDirectiveRenderer {
+
+    internal lateinit var components: FirRendererComponents
+    private val printer get() = components.printer
+
+
     fun render(packageDirective: FirPackageDirective) {
         if (!packageDirective.packageFqName.isRoot) {
             printer.println("package ${packageDirective.packageFqName.asString()}")

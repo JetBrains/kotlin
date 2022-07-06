@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.Name
 
-class FirAnnotationWithArgumentsRenderer internal constructor(components: FirRendererComponents) : FirAnnotationRenderer(components) {
+class FirAnnotationWithArgumentsRenderer() : FirAnnotationRenderer() {
     override fun FirAnnotation.renderArgumentMapping() {
         printer.print("(")
         argumentMapping.mapping.renderSeparated()

@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 
-class FirBodyRenderer internal constructor(components: FirRendererComponents) : FirRendererComponents by components {
+class FirBodyRenderer {
+
+    internal lateinit var components: FirRendererComponents
+
+    private val annotationRenderer get() = components.annotationRenderer
+    private val visitor get() = components.visitor
+    private val printer get() = components.printer
 
     fun render(function: FirFunction) {
         renderBody(function.body)
@@ -31,6 +38,17 @@ class FirBodyRenderer internal constructor(components: FirRendererComponents) : 
                     }
                 }
             }
+        }
+    }
+
+    fun renderDelegatedConstructor(delegatedConstructor: FirDelegatedConstructorCall?) {
+        if (delegatedConstructor != null) {
+            printer.renderInBraces {
+                delegatedConstructor.accept(visitor)
+                printer.println()
+            }
+        } else {
+            printer.println()
         }
     }
 }

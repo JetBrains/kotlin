@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-class FirDeclarationRendererWithResolvePhase : FirDeclarationRenderer() {
-    override fun FirDeclaration.renderDeclarationResolvePhase() {
-        printer.print("[${resolvePhase}] ")
+class FirNoClassMemberRenderer : FirClassMemberRenderer() {
+    override fun render(regularClass: FirRegularClass) {
+    }
+
+    override fun render(declarations: List<FirDeclaration>) {
     }
 }

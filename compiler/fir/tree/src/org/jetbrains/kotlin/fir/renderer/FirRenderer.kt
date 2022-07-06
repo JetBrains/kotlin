@@ -34,9 +34,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 open class FirRenderer private constructor(
-    builder: StringBuilder,
+    private val builder: StringBuilder,
     protected val mode: RenderMode,
-    components: FirComponentsImpl
+    components: FirComponentsImpl,
+    private val annotationRenderer: FirAnnotationRenderer?,
+    private val bodyRenderer: FirBodyRenderer?,
+    private val classMemberRenderer: FirClassMemberRenderer,
+    private val declarationRenderer: FirDeclarationRenderer,
+    private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
+    private val typeRenderer: ConeTypeRenderer
 ) : FirPrinter(builder) {
 
     companion object {
@@ -46,7 +52,56 @@ open class FirRenderer private constructor(
         )
     }
 
+    private val visitor = Visitor()
+
+    init {
+        components.visitor = visitor
+        components.annotationRenderer = annotationRenderer
+        components.bodyRenderer = bodyRenderer
+        components.classMemberRenderer = classMemberRenderer
+        components.declarationRenderer = declarationRenderer
+        components.packageDirectiveRenderer = packageDirectiveRenderer
+        components.typeRenderer = typeRenderer
+        @Suppress("LeakingThis")
+        components.printer = this
+        annotationRenderer?.components = components
+        bodyRenderer?.components = components
+        classMemberRenderer.components = components
+        declarationRenderer.components = components
+        packageDirectiveRenderer?.components = components
+        typeRenderer.builder = builder
+    }
+
+    private constructor(
+        builder: StringBuilder,
+        mode: RenderMode,
+        components: FirComponentsImpl,
+    ) : this(
+        builder,
+        mode,
+        components,
+        FirAnnotationWithArgumentsRenderer(),
+        FirBodyRenderer(),
+        FirClassMemberRenderer(),
+        FirDeclarationRenderer(),
+        packageDirectiveRenderer = null,
+        ConeTypeRendererForDebugging(),
+    )
+
     constructor(builder: StringBuilder = StringBuilder(), mode: RenderMode = RenderMode.Normal) : this(builder, mode, FirComponentsImpl())
+
+    fun with(
+        annotationRenderer: FirAnnotationRenderer? = this.annotationRenderer,
+        bodyRenderer: FirBodyRenderer? = this.bodyRenderer,
+        classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
+        declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
+        packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
+        typeRenderer: ConeTypeRenderer = this.typeRenderer
+    ): FirRenderer = FirRenderer(
+        builder, mode, FirComponentsImpl(),
+        annotationRenderer, bodyRenderer, classMemberRenderer,
+        declarationRenderer, packageDirectiveRenderer, typeRenderer
+    )
 
     fun renderElementAsString(element: FirElement): String {
         element.accept(visitor)
@@ -69,6 +124,8 @@ open class FirRenderer private constructor(
 
         override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
 
+        override lateinit var classMemberRenderer: FirClassMemberRenderer
+
         override lateinit var declarationRenderer: FirDeclarationRenderer
 
         override lateinit var typeRenderer: ConeTypeRenderer
@@ -81,116 +138,35 @@ open class FirRenderer private constructor(
     data class RenderMode(
         val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
-        val renderDeclarationResolvePhase: Boolean,
-        val renderAnnotation: Boolean,
-        val renderBodies: Boolean = true,
         val renderPropertyAccessors: Boolean = true,
-        val renderDeclarationAttributes: Boolean = false,
-        val renderPackageDirective: Boolean = false,
-        val renderNestedDeclarations: Boolean = true,
         val renderDefaultParameterValues: Boolean = true,
-        val renderDetailedTypeReferences: Boolean = true,
         val renderAllModifiers: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
                 renderCallArguments = true,
                 renderCallableFqNames = false,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = true,
             )
 
             val WithFqNames = RenderMode(
                 renderCallArguments = true,
                 renderCallableFqNames = true,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = true,
-            )
-
-            val WithFqNamesExceptAnnotationAndBody = RenderMode(
-                renderCallArguments = true,
-                renderCallableFqNames = true,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = false,
-                renderBodies = false,
-            )
-
-            val WithResolvePhases = RenderMode(
-                renderCallArguments = true,
-                renderCallableFqNames = false,
-                renderDeclarationResolvePhase = true,
-                renderAnnotation = true,
             )
 
             val NoBodies = RenderMode(
                 renderCallArguments = false,
                 renderCallableFqNames = false,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = false,
-                renderBodies = false,
                 renderPropertyAccessors = false,
             )
 
             val DeclarationHeader = RenderMode(
                 renderCallArguments = false,
                 renderCallableFqNames = false,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = true,
-                renderBodies = false,
                 renderPropertyAccessors = false,
-                renderDeclarationAttributes = false,
-                renderPackageDirective = false,
-                renderNestedDeclarations = false,
                 renderDefaultParameterValues = false,
-                renderDetailedTypeReferences = false,
                 renderAllModifiers = false,
             )
-
-            val WithDeclarationAttributes = RenderMode(
-                renderCallArguments = true,
-                renderCallableFqNames = false,
-                renderDeclarationResolvePhase = false,
-                renderAnnotation = true,
-                renderDeclarationAttributes = true,
-            )
         }
-    }
-
-    private val visitor = Visitor()
-    private val annotationRenderer = when {
-        mode.renderAnnotation ->
-            if (mode.renderCallArguments) FirAnnotationWithArgumentsRenderer(components) else FirAnnotationRenderer(components)
-        else ->
-            null
-    }
-    private val bodyRenderer =
-        if (mode.renderBodies) FirBodyRenderer(components) else null
-
-    private val declarationRenderer = when {
-        mode.renderDeclarationAttributes && mode.renderDeclarationResolvePhase ->
-            FirDeclarationRendererWithAttributesAndResolvePhase(components)
-        mode.renderDeclarationAttributes ->
-            FirDeclarationRendererWithAttributes(components)
-        mode.renderDeclarationResolvePhase ->
-            FirDeclarationRendererWithResolvePhase(components)
-        else -> FirDeclarationRenderer(components)
-    }
-
-    private val packageDirectiveRenderer = if (mode.renderPackageDirective) FirPackageDirectiveRenderer(components) else null
-
-    @Suppress("LeakingThis")
-    private val typeRenderer =
-        if (mode.renderDetailedTypeReferences) ConeTypeRendererForDebugging(builder) else ConeTypeRenderer(builder)
-
-    init {
-        components.visitor = visitor
-        components.annotationRenderer = annotationRenderer
-        components.bodyRenderer = bodyRenderer
-        components.declarationRenderer = declarationRenderer
-        components.packageDirectiveRenderer = packageDirectiveRenderer
-        components.typeRenderer = typeRenderer
-        @Suppress("LeakingThis")
-        components.printer = this
     }
 
     private fun List<FirElement>.renderSeparated() {
@@ -291,15 +267,6 @@ open class FirRenderer private constructor(
         }
     }
 
-    protected fun List<FirDeclaration>.renderDeclarations() {
-        renderInBraces {
-            for (declaration in this) {
-                declaration.accept(visitor)
-                println()
-            }
-        }
-    }
-
     fun renderSupertypes(regularClass: FirRegularClass) {
         if (regularClass.superTypeRefs.isNotEmpty()) {
             print(" : ")
@@ -312,9 +279,7 @@ open class FirRenderer private constructor(
     }
 
     protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
-        if (mode.renderNestedDeclarations) {
-            regularClass.declarations.renderDeclarations()
-        }
+        classMemberRenderer.render(regularClass)
     }
 
     private fun visitAssignment(operation: FirOperation, rValue: FirExpression) {
@@ -526,7 +491,7 @@ open class FirRenderer private constructor(
             annotationRenderer?.render(anonymousObject)
             print("object : ")
             anonymousObject.superTypeRefs.renderSeparated()
-            anonymousObject.declarations.renderDeclarations()
+            classMemberRenderer.render(anonymousObject.declarations)
         }
 
         override fun visitVariable(variable: FirVariable) {
@@ -614,15 +579,8 @@ open class FirRenderer private constructor(
             constructor.returnTypeRef.accept(this)
             val body = constructor.body
             val delegatedConstructor = constructor.delegatedConstructor
-            if (body == null && mode.renderBodies) {
-                if (delegatedConstructor != null) {
-                    renderInBraces {
-                        delegatedConstructor.accept(this)
-                        println()
-                    }
-                } else {
-                    println()
-                }
+            if (body == null) {
+                bodyRenderer?.renderDelegatedConstructor(delegatedConstructor)
             }
             bodyRenderer?.renderBody(body, listOfNotNull<FirStatement>(delegatedConstructor))
         }

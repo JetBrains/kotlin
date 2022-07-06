@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -65,7 +66,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
-        val firFileDump = FirRenderer(mode = FirRenderer.RenderMode.WithDeclarationAttributes).renderElementAsString(firFile)
+        val firFileDump = FirRenderer().with(declarationRenderer = FirDeclarationRendererWithAttributes()).renderElementAsString(firFile)
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }

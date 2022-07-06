@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.name.ClassId
 
-open class ConeTypeRendererWithFqNames(builder: StringBuilder) : ConeTypeRenderer(builder) {
+open class ConeTypeRendererWithFqNames() : ConeTypeRenderer() {
+
+    constructor(builder: StringBuilder) : this() {
+        this.builder = builder
+    }
+
     override fun ClassId.render() {
         builder.append(asString())
     }

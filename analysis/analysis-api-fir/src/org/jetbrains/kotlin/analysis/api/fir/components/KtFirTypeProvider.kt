@@ -160,7 +160,10 @@ internal class KtFirTypeProvider(
             ?: this.typeArguments.mapNotNull { it.type })
 
         require(typeParameterSymbols.size == argumentTypes.size) {
-            "'${symbol.fir.render(FirRenderer.RenderMode.NoBodies)}' expects '${typeParameterSymbols.size}' type arguments " +
+            val renderedSymbol = FirRenderer(mode = FirRenderer.RenderMode.NoBodies).with(
+                annotationRenderer = null, bodyRenderer = null
+            ).renderElementAsString(symbol.fir)
+            "'$renderedSymbol' expects '${typeParameterSymbols.size}' type arguments " +
                     "but type '${this.renderForDebugging()}' has ${argumentTypes.size} type arguments."
         }
 

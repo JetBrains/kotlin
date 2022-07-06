@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import kotlin.reflect.KClass
 
-open class FirDeclarationRendererWithAttributes internal constructor(components: FirRendererComponents) : FirDeclarationRenderer(components) {
+open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     override fun FirDeclaration.renderDeclarationAttributes() {
         if (attributes.isNotEmpty()) {
             val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->

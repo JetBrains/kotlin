@@ -12,7 +12,12 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 
-open class FirAnnotationRenderer internal constructor(components: FirRendererComponents) : FirRendererComponents by components {
+open class FirAnnotationRenderer {
+
+    internal lateinit var components: FirRendererComponents
+    protected val visitor get() = components.visitor
+    protected val printer get() = components.printer
+
     fun render(annotationContainer: FirAnnotationContainer) {
         renderAnnotations(annotationContainer.annotations)
     }

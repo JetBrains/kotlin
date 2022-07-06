@@ -11,7 +11,13 @@ import org.jetbrains.kotlin.name.ClassId
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-open class ConeTypeRenderer(protected val builder: StringBuilder) {
+open class ConeTypeRenderer() {
+
+    lateinit var builder: StringBuilder
+
+    constructor(builder: StringBuilder) : this() {
+        this.builder = builder
+    }
 
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType, renderType: ConeTypeProjection.() -> Unit = { render() }

@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
+import org.jetbrains.kotlin.fir.renderer.FirAnnotationRenderer
+import org.jetbrains.kotlin.fir.renderer.FirNoClassMemberRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.WithFqNames
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -27,7 +31,14 @@ object FirDiagnosticRenderers {
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol<*>,
-            is FirCallableSymbol<*> -> symbol.fir.render(FirRenderer.RenderMode.DeclarationHeader)
+            is FirCallableSymbol<*> -> FirRenderer(
+                mode = FirRenderer.RenderMode.DeclarationHeader
+            ).with(
+                typeRenderer = ConeTypeRenderer(),
+                classMemberRenderer = FirNoClassMemberRenderer(),
+                annotationRenderer = FirAnnotationRenderer(),
+                bodyRenderer = null,
+            ).renderElementAsString(symbol.fir)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"
         }
@@ -94,7 +105,9 @@ object FirDiagnosticRenderers {
 
     val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
         @OptIn(SymbolInternals::class)
-        symbol.fir.render(mode = FirRenderer.RenderMode.WithFqNamesExceptAnnotationAndBody)
+        FirRenderer(mode = WithFqNames).with(
+            annotationRenderer = null, bodyRenderer = null
+        ).renderElementAsString(symbol.fir)
     }
 
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->

@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.Normal
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -32,10 +33,14 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 
 internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
+    // TODO: renderWithTypes!!!
+    val rendered = FirRenderer().with(
+        declarationRenderer = FirDeclarationRendererWithResolvePhase()
+    ).renderElementAsString(fir)
     error(
         """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
                    |
-                   |${fir.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}
+                   |$rendered
                    |
                    |${(fir.psi as? KtDeclaration)?.getElementTextInContext()}""".trimMargin()
     )

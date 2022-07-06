@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-class FirDeclarationRendererWithAttributesAndResolvePhase internal constructor(
-    components: FirRendererComponents
-) : FirDeclarationRendererWithAttributes(components) {
+class FirDeclarationRendererWithAttributesAndResolvePhase : FirDeclarationRendererWithAttributes() {
     override fun FirDeclaration.renderDeclarationResolvePhase() {
         printer.print("[${resolvePhase}] ")
     }
