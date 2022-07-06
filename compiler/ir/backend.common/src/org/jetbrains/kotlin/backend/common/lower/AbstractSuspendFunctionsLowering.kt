@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -125,11 +124,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                                 .apply { superTypes += parameter.superTypes }
                         }
 
-                        valueParameters = invokeFunction.valueParameters
+                        allValueParameters = invokeFunction.valueParameters
                             .mapIndexed { index, parameter ->
                                 parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                             }
-                        valueParameters += buildValueParameter(this) {
+                        allValueParameters += buildValueParameter(this) {
                             index = valueParameters.size
                             type = context.irBuiltIns.anyNType
                             name = "completion".synthesizedName
@@ -467,11 +466,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                valueParameters = functionParameters.mapIndexed { index, parameter ->
+                allValueParameters = functionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                valueParameters += continuationParameter.copyTo(
+                allValueParameters += continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     index = valueParameters.size, type = continuationType
                 )
@@ -506,7 +505,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                valueParameters = boundParams.mapIndexed { index, parameter ->
+                allValueParameters = boundParams.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 
@@ -549,7 +548,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     .apply { superTypes += parameter.superTypes }
             }
 
-            valueParameters = (unboundArgs + create1CompletionParameter).mapIndexed { index, parameter ->
+            allValueParameters = (unboundArgs + create1CompletionParameter).mapIndexed { index, parameter ->
                 parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
             }
 
@@ -605,7 +604,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     .apply { superTypes += parameter.superTypes }
             }
 
-            valueParameters = createFunction.valueParameters
+            allValueParameters = createFunction.valueParameters
                 // Skip completion - invoke() already has it implicitly as a suspend function.
                 .take(createFunction.valueParameters.size - 1)
                 .mapIndexed { index, parameter ->
@@ -660,7 +659,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes += parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
+                allValueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 

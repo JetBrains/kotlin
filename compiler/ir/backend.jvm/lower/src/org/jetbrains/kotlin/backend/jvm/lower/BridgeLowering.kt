@@ -187,7 +187,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     private fun makeLastParameterNullable(irFunction: IrSimpleFunction) {
         val oldValueParameter = irFunction.valueParameters.last()
         val newValueParameter = oldValueParameter.copyTo(irFunction, type = oldValueParameter.type.makeNullable())
-        irFunction.valueParameters = irFunction.valueParameters.dropLast(1) + newValueParameter
+        irFunction.allValueParameters = irFunction.allValueParameters.dropLast(1) + newValueParameter
         irFunction.body?.transform(VariableRemapper(mapOf(oldValueParameter to newValueParameter)), null)
     }
 
@@ -413,7 +413,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // be references to the original fake override stub.
             copyCorrespondingPropertyFrom(irFunction)
             dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
-            valueParameters = irFunction.valueParameters.map { param ->
+            allValueParameters = irFunction.valueParameters.map { param ->
                 param.copyTo(this, type = param.type)
             }
             overriddenSymbols = irFunction.overriddenSymbols.toList()
@@ -537,7 +537,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 )
                             }
                         }
-                        valueParameters = newValueParameters
+                        allValueParameters = newValueParameters
                         // After the checks, insert the original method body.
                         if (body is IrExpressionBody) {
                             +irReturn((body as IrExpressionBody).expression)
@@ -550,7 +550,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         } else {
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
-            valueParameters = valueParameters.mapIndexed { i, p ->
+            allValueParameters = valueParameters.mapIndexed { i, p ->
                 if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     val newParameter = p.copyTo(this, type = p.type.makeNullable())
                     variableMap[p] = newParameter
@@ -579,7 +579,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // with dispatch receivers pointing at a superclass instead of the current class.
         dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
         hasExtensionReceiver = from.hasExtensionReceiver
-        valueParameters = if (substitutedParameterTypes != null) {
+        allValueParameters = if (substitutedParameterTypes != null) {
             from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
                 param.copyWithTypeErasure(this, visibleTypeParameters, type)
             }

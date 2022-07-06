@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -689,7 +688,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         this.visibility = superConstructor.visibility
         this.isPrimary = isPrimary
     }.also { constructor ->
-        constructor.valueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
+        constructor.allValueParameters = superConstructor.allParameters.mapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
 
@@ -800,7 +799,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     copyReceiverParametersFrom(from, substitutionMap)
     val shift = valueParameters.size
-    valueParameters += from.valueParameters.map {
+    allValueParameters += from.allValueParameters.map {
         it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
     }
 }
@@ -890,7 +889,7 @@ fun IrFunction.copyValueParametersToStatic(
             target.classIfConstructor
         )
 
-        target.valueParameters += originalDispatchReceiver.copyTo(
+        target.allValueParameters += originalDispatchReceiver.copyTo(
             target,
             origin = originalDispatchReceiver.origin,
             index = shift++,
@@ -899,7 +898,7 @@ fun IrFunction.copyValueParametersToStatic(
         )
     }
     source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.valueParameters += originalExtensionReceiver.copyTo(
+        target.allValueParameters += originalExtensionReceiver.copyTo(
             target,
             origin = originalExtensionReceiver.origin,
             index = shift++,
@@ -909,7 +908,7 @@ fun IrFunction.copyValueParametersToStatic(
 
     for (oldValueParameter in source.valueParameters) {
         if (oldValueParameter.index >= numValueParametersToCopy) break
-        target.valueParameters += oldValueParameter.copyTo(
+        target.allValueParameters += oldValueParameter.copyTo(
             target,
             origin = origin,
             index = oldValueParameter.index + shift
@@ -1183,7 +1182,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
             remapTypeMap = typeParameterMap
         )
-        valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
+        allValueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
                 oldFunction.valueParameters.map {
                     it.copyTo(
                         this,

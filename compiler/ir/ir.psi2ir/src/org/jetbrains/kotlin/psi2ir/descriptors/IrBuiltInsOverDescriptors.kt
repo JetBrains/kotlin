@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -120,7 +123,7 @@ class IrBuiltInsOverDescriptors(
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
 
-            operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+            operator.allValueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
@@ -227,7 +230,7 @@ class IrBuiltInsOverDescriptors(
                 valueParameter.parent = operator
                 typeParameter.parent = operator
 
-                operator.valueParameters += valueParameter
+                operator.allValueParameters += valueParameter
                 operator.typeParameters += typeParameter
             }
         }.symbol

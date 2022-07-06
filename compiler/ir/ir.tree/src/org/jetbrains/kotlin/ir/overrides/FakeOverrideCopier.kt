@@ -43,7 +43,7 @@ class FakeOverrideCopier(
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
                 hasExtensionReceiver = declaration.hasExtensionReceiver
                 returnType = typeRemapper.remapType(declaration.returnType)
-                this.valueParameters = declaration.valueParameters.transform()
+                this.allValueParameters = declaration.allValueParameters.transform()
             }
         }
 

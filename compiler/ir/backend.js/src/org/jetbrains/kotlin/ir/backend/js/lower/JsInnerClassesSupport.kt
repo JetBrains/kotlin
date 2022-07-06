@@ -93,11 +93,11 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
             type = outerThisType
         })
 
-        for (p in oldConstructor.valueParameters) {
+        for (p in oldConstructor.allValueParameters) {
             newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
         }
 
-        newConstructor.valueParameters += newValueParameters
+        newConstructor.allValueParameters += newValueParameters
 
         return newConstructor
     }

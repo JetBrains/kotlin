@@ -86,7 +86,7 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
                 returnType = function.returnType
             }.apply {
                 // All existing special bridges only have value parameter types.
-                valueParameters = function.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
+                allValueParameters = function.allValueParameters.zip(substitutedParameterTypes).map { (param, type) ->
                     param.copyTo(this, IrDeclarationOrigin.BRIDGE, type = type)
                 }
                 overriddenSymbols = listOf(specialBridge.overridden.symbol)

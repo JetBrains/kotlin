@@ -135,7 +135,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }.apply {
             overriddenSymbols += method.symbol
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters = method.valueParameters.map { it.copyTo(this) }
+            allValueParameters = method.allValueParameters.map { it.copyTo(this) }
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 irExprBody(buildBody(listOf(dispatchReceiverParameter!!) + valueParameters))
             }
@@ -151,7 +151,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }.apply {
             overriddenSymbols += method.symbol
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)
-            valueParameters = method.valueParameters.map { it.copyTo(this) }
+            allValueParameters = method.allValueParameters.map { it.copyTo(this) }
         }
 
     private class PropertyReferenceKind(

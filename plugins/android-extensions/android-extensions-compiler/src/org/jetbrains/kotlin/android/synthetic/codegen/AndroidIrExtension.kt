@@ -371,7 +371,7 @@ private fun TranslationPluginContext.declareFunctionStub(descriptor: FunctionDes
         it.typeParameters = descriptor.propertyIfAccessor.typeParameters.map(this::declareTypeParameterStub)
         it.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let(this::declareParameterStub)
         it.hasExtensionReceiver = descriptor.extensionReceiverParameter != null
-        it.valueParameters = buildList {
+        it.allValueParameters = buildList {
             if (descriptor.extensionReceiverParameter != null) {
                 add(declareParameterStub(descriptor.extensionReceiverParameter!!))
             }

@@ -194,7 +194,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                         )
                     ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$fnType")
 
-                irAdapterFun.valueParameters = listOf(irFnParameter)
+                irAdapterFun.allValueParameters = listOf(irFnParameter)
                 irAdapterFun.body =
                     IrBlockBodyBuilder(
                         context,
@@ -459,7 +459,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
                 irAdapterFun.dispatchReceiverParameter = null
 
-                irAdapterFun.valueParameters = buildList {
+                irAdapterFun.allValueParameters = buildList {
                     val boundReceiverType = callBuilder.original.getBoundReceiverType()
                     if (boundReceiverType != null) {
                         irAdapterFun.hasExtensionReceiver = true

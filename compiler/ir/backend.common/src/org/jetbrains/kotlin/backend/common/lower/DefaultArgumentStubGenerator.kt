@@ -597,7 +597,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     newFunction.hasExtensionReceiver = hasExtensionReceiver
     newFunction.contextReceiverParametersCount = contextReceiverParametersCount
 
-    newFunction.valueParameters = valueParameters.map {
+    newFunction.allValueParameters = allValueParameters.map {
         val newType = it.type.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
         val makeNullable = it.defaultValue != null &&
                 (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes

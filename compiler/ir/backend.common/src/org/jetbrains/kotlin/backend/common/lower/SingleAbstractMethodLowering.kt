@@ -218,7 +218,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             overriddenSymbols = listOf(superMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             hasExtensionReceiver = superMethod.hasExtensionReceiver
-            valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
+            allValueParameters += superMethod.allValueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(

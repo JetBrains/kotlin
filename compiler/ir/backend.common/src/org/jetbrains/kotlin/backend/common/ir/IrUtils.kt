@@ -45,7 +45,7 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
             require(valueParameters.size == contextReceiverParametersCount) {
                 "addExtensionReceiver should be called after context receivers added: ${valueParameters.size} != $contextReceiverParametersCount"
             }
-            valueParameters = valueParameters + receiver
+            allValueParameters = valueParameters + receiver
             hasExtensionReceiver = true
         }
     }

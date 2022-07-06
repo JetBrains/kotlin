@@ -117,7 +117,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
                     assert(declaration.dispatchReceiverParameter == null) { "Top level functions do not have dispatch receiver" }
                     hasExtensionReceiver = declaration.hasExtensionReceiver
                     returnType = typeRemapper.remapType(declaration.returnType)
-                    valueParameters = declaration.valueParameters.transform()
+                    allValueParameters = declaration.allValueParameters.transform()
                     valueParameters.forEach { it.parent = this }
                     typeParameters.forEach { it.parent = this }
                 }

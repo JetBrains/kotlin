@@ -72,7 +72,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                     name = Name.identifier("\$b$i")
                 }
             }
-            factoryDeclaration.valueParameters = valueParameters
+            factoryDeclaration.allValueParameters = valueParameters
 
             // TODO: type parameters
 
@@ -145,7 +145,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
             function.parent = factory
 
             val unboundValueParameters = supperAccessor.valueParameters.map { it.copyTo(function) }
-            function.valueParameters = unboundValueParameters
+            function.allValueParameters = unboundValueParameters
             val arity = unboundValueParameters.size
             val total = arity + boundValueParameters.size
 

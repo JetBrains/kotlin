@@ -146,7 +146,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         res.copyTypeParametersFrom(oldFunction)
         res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
         res.hasExtensionReceiver = oldFunction.hasExtensionReceiver
-        res.valueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
+        res.allValueParameters += res.generateNewValueParameters(oldFunction, numDefaultParametersToExpect)
         return res
     }
 
@@ -157,7 +157,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         var parametersCopied = 0
         var defaultParametersCopied = 0
         val result = mutableListOf<IrValueParameter>()
-        for (oldValueParameter in oldFunction.valueParameters) {
+        for (oldValueParameter in oldFunction.allValueParameters) {
             if (oldValueParameter.defaultValue != null &&
                 defaultParametersCopied < numDefaultParametersToExpect
             ) {
