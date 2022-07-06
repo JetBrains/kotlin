@@ -44,8 +44,7 @@ struct MarkTraits {
 
     static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
         auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
-        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack) return;
-        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack);
+        if (!objectData.atomicSetToBlack()) return;
         queue.push_front(objectData);
     }
 };
