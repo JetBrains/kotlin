@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
+import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.*
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
-import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.ir.generator.print.toPoet
 import org.jetbrains.kotlin.ir.generator.util.*
@@ -238,11 +238,14 @@ object IrTree : AbstractTreeBuilder() {
         +field("isExpect", boolean)
         +field("returnType", irTypeType, mutable = true)
         +field("dispatchReceiverParameter", valueParameter, mutable = true, nullable = true, isChild = true)
-        +field("hasExtensionReceiver", boolean)
+        +field("hasExtensionReceiver", boolean, mutable = true)
         +field("extensionReceiverParameter", valueParameter, nullable = true, isChild = false) {
-            baseGetter = code("if (hasExtensionReceiver) valueParameters[contextReceiverParametersCount] else null")
+            baseGetter = code("if (hasExtensionReceiver) allValueParameters[contextReceiverParametersCount] else null")
         }
-        +listField("valueParameters", valueParameter, mutability = Var, isChild = true)
+        +listField("allValueParameters", valueParameter, mutability = Var, isChild = true)
+        +listField("valueParameters", valueParameter, mutability = Immutable, isChild = false) {
+            baseGetter = code("if (hasExtensionReceiver) valueParameters.drop(1) else emptyList()")
+        }
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int, mutable = true)
         +field("body", body, mutable = true, nullable = true, isChild = true)

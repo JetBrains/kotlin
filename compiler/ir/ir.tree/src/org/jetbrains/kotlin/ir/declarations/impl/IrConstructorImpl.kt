@@ -50,12 +50,11 @@ class IrConstructorImpl(
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var dispatchReceiverParameter: IrValueParameter? = null
-    override var extensionReceiverParameter: IrValueParameter? = null
 
     override var hasExtensionReceiver: Boolean = false
 
     override var contextReceiverParametersCount: Int = 0
-    override var valueParameters: List<IrValueParameter> = emptyList()
+    override var allValueParameters: List<IrValueParameter> = emptyList()
 
     override var body: IrBody? = null
 
