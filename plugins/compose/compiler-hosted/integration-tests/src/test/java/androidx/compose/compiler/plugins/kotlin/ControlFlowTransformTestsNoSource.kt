@@ -36,8 +36,14 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A(a, %composer, 0)
                 A(b, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -62,8 +68,14 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
             private fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A(a, %composer, 0)
                 A(b, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -71,6 +83,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
                 Test(%composer, %changed or 0b0001)
               }
             }
+
         """
     )
 
@@ -90,7 +103,13 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -101,7 +120,13 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   A(%composer, 0)
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -126,13 +151,25 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 IW({ %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
                     A(%composer, 0)
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
                 }, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }

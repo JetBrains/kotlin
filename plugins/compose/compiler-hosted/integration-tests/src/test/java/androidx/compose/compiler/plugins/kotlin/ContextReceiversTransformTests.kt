@@ -61,6 +61,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test):Test.kt")
               if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -93,6 +99,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A):Test.kt")
               if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -105,6 +117,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -137,6 +155,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A):Test.kt")
               if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -149,6 +173,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
               if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -188,6 +218,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0100 !== 0) {
                   a = 1
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -205,6 +241,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 }
                 if (%default and 0b00100000 !== 0) {
                   c = 1
+                }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -232,6 +274,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -265,6 +313,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
             }
             if (%default and 0b00100000 !== 0) {
               c = 1
+            }
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            if (isTraceInProgress()) {
+              traceEventEnd()
             }
           } else {
             %composer.skipToGroupEnd()
@@ -304,8 +358,14 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 with(foo) {
                   A(%this%with, %composer, 0)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -352,11 +412,17 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 with(foo) {
                   A(%this%with, %composer, 0)
                   with(Bar()) {
                     B(%this%with, %this%with, %composer, 0)
                   }
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -395,8 +461,14 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 with(foo) {
                   "Hello".A(%this%with, 2, null, %composer, 0b000110000110, 0b0100)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -436,6 +508,12 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test):Test.kt")
               if (%changed and 0b0001 !== 0 || %changed1 and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, %changed1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -469,7 +547,13 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(b)) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001010000001 !== 0b10000000 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
                 b("yay", %composer, 0b0110 or 0b01110000 and %dirty shr 0b0011)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -513,11 +597,17 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Parent)*<Test()>,<Test(a>,<Test(b>,<Test(a>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 with(Foo()) {
                   Test(%this%with, null, 0, %composer, 0, 0b0110)
                   Test(%this%with, "a", 0, %composer, 0b00110000, 0b0100)
                   Test(%this%with, null, 101, %composer, 0b000110000000, 0b0010)
                   Test(%this%with, "Yes", 10, %composer, 0b000110110000, 0)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -553,9 +643,15 @@ class ContextReceiversTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0100 !== 0) {
                   b = 2
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 val combineParams = a + b
                 if (%this%.someString == combineParams) {
                   println("Same same")
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()

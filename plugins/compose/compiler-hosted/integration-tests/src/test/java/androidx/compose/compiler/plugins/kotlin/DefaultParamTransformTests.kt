@@ -66,9 +66,15 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A(1)>,<B()>,<B(2)>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A(1, %composer, 0b0110)
                 B(0, %composer, 0, 0b0001)
                 B(2, %composer, 0b0110, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -109,7 +115,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0001 !== 0) {
                   foo = Foo(0)
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 print(foo)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -122,7 +134,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 Example(<unsafe-coerce>(0), %composer, 0, 0b0001)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -151,8 +169,14 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A(0,>,<A(a>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A(0, 1, 2, 0, 0, %composer, 0b000110110110, 0b00011000)
                 A(0, 0, 2, 0, 0, %composer, 0b000110000110, 0b00011010)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -176,7 +200,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C:Test.kt")
               if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 Unit
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -223,7 +253,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 used(x)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -276,8 +312,14 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 print(a)
                 print(b)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -618,6 +660,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b01000000000000000000000000000000 !== 0) {
                   a30 = 0
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, %changed1, <>)
+                }
                 used(a00)
                 used(a01)
                 used(a02)
@@ -649,6 +694,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 used(a28)
                 used(a29)
                 used(a30)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -999,6 +1047,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default1 and 0b0001 !== 0) {
                   a31 = 0
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, %changed1, <>)
+                }
                 used(a00)
                 used(a01)
                 used(a02)
@@ -1031,6 +1082,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 used(a29)
                 used(a30)
                 used(a31)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1392,6 +1446,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 %composer.endDefaults()
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, %changed1, <>)
+                }
                 used(a00)
                 used(a01)
                 used(a02)
@@ -1424,6 +1481,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 used(a29)
                 used(a30)
                 used(a31)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1459,6 +1519,12 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0001 !== 0) {
                   x = 0
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
                 %composer.endReplaceableGroup()
               }
               static val %stable: Int = 0
@@ -1470,7 +1536,13 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               fun Example(%composer: Composer?, %changed: Int) {
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "C(Example)<foo()>:Test.kt")
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 foo(0, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
                 %composer.endReplaceableGroup()
               }
               static val %stable: Int = 0
@@ -1518,12 +1590,17 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun Bar(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Bar)<HasDef...>,<NoDefa...>,<Multip...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
               HasDefault(null, %composer, 0b00110000, 0b0001)
               NoDefault("Some Text", %composer, 0b00110110)
               MultipleDefault(null, 0, %composer, 0b000110000000, 0b0011)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
               %composer.endReplaceableGroup()
             }
-
         """
         )
 }
