@@ -37,12 +37,16 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var dispatchReceiverParameter: IrValueParameter?
 
-    abstract val hasExtensionReceiver: Boolean
+    abstract var hasExtensionReceiver: Boolean
 
     val extensionReceiverParameter: IrValueParameter?
-        get() = if (hasExtensionReceiver) valueParameters[contextReceiverParametersCount] else null
+        get() = if (hasExtensionReceiver) allValueParameters[contextReceiverParametersCount] else
+                null
 
-    abstract var valueParameters: List<IrValueParameter>
+    abstract var allValueParameters: List<IrValueParameter>
+
+    val valueParameters: List<IrValueParameter>
+        get() = if (hasExtensionReceiver) valueParameters.drop(1) else emptyList()
 
     abstract var contextReceiverParametersCount: Int
 
@@ -51,14 +55,14 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         dispatchReceiverParameter?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
+        allValueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
-        valueParameters = valueParameters.transformIfNeeded(transformer, data)
+        allValueParameters = allValueParameters.transformIfNeeded(transformer, data)
         body = body?.transform(transformer, data)
     }
 }

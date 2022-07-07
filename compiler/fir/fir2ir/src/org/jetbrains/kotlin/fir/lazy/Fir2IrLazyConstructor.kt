@@ -96,7 +96,15 @@ class Fir2IrLazyConstructor(
 
     override var contextReceiverParametersCount: Int = fir.contextReceivers.size
 
-    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
+    override var hasExtensionReceiver: Boolean
+        get() = false
+        set(value) {
+            require(!value) {
+                "Constructors don't have extension receivers"
+            }
+        }
+
+    override var allValueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
 
         buildList {

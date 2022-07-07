@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -55,15 +58,11 @@ class Fir2IrLazySimpleFunction(
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        fir.receiverTypeRef?.let {
-            createThisReceiverParameter(it.toIrType(typeConverter))
-        }
-    }
+    override var hasExtensionReceiver: Boolean = fir.receiverTypeRef != null
 
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
-    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
+    override var allValueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
 
         buildList {
@@ -72,6 +71,10 @@ class Fir2IrLazySimpleFunction(
                 this@Fir2IrLazySimpleFunction,
                 this@buildList,
             )
+
+            fir.receiverTypeRef?.let {
+                add(createThisReceiverParameter(it.toIrType(typeConverter)))
+            }
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
