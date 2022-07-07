@@ -330,6 +330,24 @@ class Fir2IrDeclarationStorage(
             allValueParameters = buildList {
                 addContextReceiverParametersTo(contextReceivers, parent, this)
 
+                val receiverTypeRef =
+                    if (function !is FirPropertyAccessor) function.receiverTypeRef
+                    else parentPropertyReceiverType
+                if (receiverTypeRef != null) {
+                    hasExtensionReceiver = true
+
+                    add(
+                        symbolTable.irFactory.createValueParameter(
+                            startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
+                            name, 0, receiverTypeRef.toIrType(typeContext),
+                            varargElementType = null, isCrossinline = false, isNoinline = false,
+                            isHidden = false, isAssignable = false
+                        ).apply {
+                            this.parent = this@declareParameters
+                        }
+                    )
+                }
+
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     createIrParameter(
                         valueParameter, index + contextReceiverParametersCount,
@@ -345,24 +363,6 @@ class Fir2IrDeclarationStorage(
         with(classifierStorage) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
             if (function !is FirConstructor) {
-                val receiverTypeRef =
-                    if (function !is FirPropertyAccessor && function != null) function.receiverTypeRef
-                    else parentPropertyReceiverType
-                if (receiverTypeRef != null) {
-                    extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
-                        val name = (function as? FirAnonymousFunction)?.label?.name?.let {
-                            val suffix = it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
-                            Name.identifier("\$this\$$suffix")
-                        } ?: SpecialNames.THIS
-                        declareThisReceiverParameter(
-                            thisType = receiverTypeRef.toIrType(typeContext),
-                            thisOrigin = thisOrigin,
-                            startOffset = startOffset,
-                            endOffset = endOffset,
-                            name = name
-                        )
-                    }
-                }
                 // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
                 val isLocal = function is FirSimpleFunction && function.isLocal
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
