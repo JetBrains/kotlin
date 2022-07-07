@@ -32,11 +32,11 @@ internal class WasmAnyArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmAnyArray.copyTo(destination: WasmAnyArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmAnyArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmAnyArray, destination: WasmAnyArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmAnyArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmAnyArray.fill(size: Int, init: (Int) -> Any?) {
@@ -58,11 +58,11 @@ internal class WasmByteArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmByteArray.copyTo(destination: WasmByteArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmByteArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmByteArray, destination: WasmByteArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmByteArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmByteArray.fill(size: Int, init: (Int) -> Byte) {
@@ -84,11 +84,11 @@ internal class WasmCharArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmCharArray.copyTo(destination: WasmCharArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmCharArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmCharArray, destination: WasmCharArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmCharArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmCharArray.fill(size: Int, init: (Int) -> Char) {
@@ -110,11 +110,11 @@ internal class WasmShortArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmShortArray.copyTo(destination: WasmShortArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmShortArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmShortArray, destination: WasmShortArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmShortArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmShortArray.fill(size: Int, init: (Int) -> Short) {
@@ -136,11 +136,11 @@ internal class WasmIntArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmIntArray.copyTo(destination: WasmIntArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmIntArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmIntArray, destination: WasmIntArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmIntArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmIntArray.fill(size: Int, init: (Int) -> Int) {
@@ -162,11 +162,11 @@ internal class WasmLongArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmLongArray.copyTo(destination: WasmLongArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmLongArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmLongArray, destination: WasmLongArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmLongArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmLongArray.fill(size: Int, init: (Int) -> Long) {
@@ -188,11 +188,11 @@ internal class WasmFloatArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmFloatArray.copyTo(destination: WasmFloatArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmFloatArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmFloatArray, destination: WasmFloatArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmFloatArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmFloatArray.fill(size: Int, init: (Int) -> Float) {
@@ -214,11 +214,11 @@ internal class WasmDoubleArray(size: Int) {
 
     @WasmOp(WasmOp.ARRAY_LEN)
     fun len(): Int =
-        implementedAsIntrinsic                    
+        implementedAsIntrinsic
 }
 
-internal inline fun WasmDoubleArray.copyTo(destination: WasmDoubleArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
-    wasm_array_copy<WasmDoubleArray>(destination, destinationIndex, this, sourceIndex, length)
+internal inline fun copyWasmArray(source: WasmDoubleArray, destination: WasmDoubleArray, sourceIndex: Int, destinationIndex: Int, length: Int) {
+    wasm_array_copy<WasmDoubleArray>(destination, destinationIndex, source, sourceIndex, length)
 }
 
 internal inline fun WasmDoubleArray.fill(size: Int, init: (Int) -> Double) {

@@ -919,6 +919,17 @@ object ArrayOps : TemplateGroupBase() {
                         """
                     }
                 }
+                on(Backend.Wasm) {
+                    body {
+                        """
+                        AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+                        val rangeSize = endIndex - startIndex
+                        AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+                        kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
+                        return destination
+                        """
+                    }
+                }
             }
         }
     }

@@ -8,13 +8,13 @@ package kotlin.text
 import kotlin.wasm.internal.*
 
 internal fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int {
-    value.chars.copyTo(array.storage, sourceIndex, destinationIndex, count)
+    copyWasmArray(value.chars, array.storage, sourceIndex, destinationIndex, count)
     return count
 }
 
 internal fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String {
     val copy = WasmCharArray(size)
-    array.storage.copyTo(copy, start, 0, size)
+    copyWasmArray(array.storage, copy, start, 0, size)
     return String.unsafeFromCharArray(copy)
 }
 

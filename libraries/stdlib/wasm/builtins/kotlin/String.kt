@@ -29,8 +29,8 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
         if (otherLen == 0) return String(thisChars)
 
         val newChars = WasmCharArray(thisLen + otherLen)
-        thisChars.copyTo(newChars, 0, 0, thisLen)
-        otherChars.copyTo(newChars, 0, thisLen, otherLen)
+        copyWasmArray(thisChars, newChars, 0, 0, thisLen)
+        copyWasmArray(otherChars, newChars, 0, thisLen, otherLen)
         return String(newChars)
     }
 
@@ -54,7 +54,7 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
         val actualEndIndex = endIndex.coerceAtMost(thisChars.len())
         val newCharsLen = actualEndIndex - actualStartIndex
         val newChars = WasmCharArray(newCharsLen)
-        thisChars.copyTo(newChars, actualStartIndex, 0, newCharsLen)
+        copyWasmArray(thisChars, newChars, actualStartIndex, 0, newCharsLen)
         return String(newChars)
     }
 

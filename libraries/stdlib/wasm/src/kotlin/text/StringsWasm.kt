@@ -74,7 +74,7 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
         throw IndexOutOfBoundsException()
 
     val copy = WasmCharArray(length)
-    chars.storage.copyTo(copy, offset, 0, length)
+    copyWasmArray(chars.storage, copy, offset, 0, length)
     return String.unsafeFromCharArray(copy)
 }
 
@@ -87,7 +87,7 @@ public actual fun CharArray.concatToString(): String {
     val thisStorage = this.storage
     val thisLength = thisStorage.len()
     val copy = WasmCharArray(thisLength)
-    this.storage.copyTo(copy, 0, 0, thisLength)
+    copyWasmArray(this.storage, copy, 0, 0, thisLength)
     return String.unsafeFromCharArray(copy)
 }
 
@@ -108,7 +108,7 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 
     val length = endIndex - startIndex
     val copy = WasmCharArray(length)
-    this.storage.copyTo(copy, startIndex, 0, length)
+    copyWasmArray(this.storage, copy, startIndex, 0, length)
     return String.unsafeFromCharArray(copy)
 }
 
@@ -121,7 +121,7 @@ public actual fun String.toCharArray(): CharArray {
     val thisChars = this.chars
     val thisLength = thisChars.len()
     val newArray = CharArray(thisLength)
-    thisChars.copyTo(newArray.storage, 0, 0, thisLength)
+    copyWasmArray(thisChars, newArray.storage, 0, 0, thisLength)
     return newArray
 }
 
@@ -141,7 +141,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     val newLength = endIndex - startIndex
     val newArray = CharArray(newLength)
-    this.chars.copyTo(newArray.storage, startIndex, 0, newLength)
+    copyWasmArray(this.chars, newArray.storage, startIndex, 0, newLength)
     return newArray
 }
 

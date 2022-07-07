@@ -104,11 +104,11 @@ fun wasmArrayForType(
     
                 @WasmOp(WasmOp.ARRAY_LEN)
                 fun len(): Int =
-                    implementedAsIntrinsic                    
+                    implementedAsIntrinsic
             }
             
-            internal inline fun $name.copyTo(destination: $name, sourceIndex: Int, destinationIndex: Int, length: Int) {
-                wasm_array_copy<$name>(destination, destinationIndex, this, sourceIndex, length)
+            internal inline fun copyWasmArray(source: $name, destination: $name, sourceIndex: Int, destinationIndex: Int, length: Int) {
+                wasm_array_copy<$name>(destination, destinationIndex, source, sourceIndex, length)
             }
     
             internal inline fun $name.fill(size: Int, init: (Int) -> $type) {
