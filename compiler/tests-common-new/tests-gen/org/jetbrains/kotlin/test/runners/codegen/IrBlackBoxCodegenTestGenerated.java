@@ -50212,6 +50212,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testThrowingMFVCReassignments() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/throwingMFVCReassignments.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
+
+        @Test
+        @TestMetadata("visibility.kt")
+        public void testVisibility() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/visibility.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
     }
 
     @Nested
