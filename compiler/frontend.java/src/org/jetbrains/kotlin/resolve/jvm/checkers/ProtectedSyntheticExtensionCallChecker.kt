@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
@@ -35,14 +36,14 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 object ProtectedSyntheticExtensionCallChecker : CallChecker {
-    fun computeSuitableDescriptorAndError(
+    private fun computeSuitableDescriptorAndError(
         descriptor: SyntheticJavaPropertyDescriptor,
         reportOn: PsiElement,
         context: CallCheckerContext
     ): Pair<FunctionDescriptor, DiagnosticFactory3<PsiElement, DeclarationDescriptor, DescriptorVisibility, DeclarationDescriptor>> {
         val callPosition = context.resolutionContext.callPosition
         val isLeftSide = callPosition is CallPosition.PropertyAssignment
-                && (callPosition.leftPart as? KtDotQualifiedExpression)?.selectorExpression == reportOn
+                && (callPosition.leftPart as? KtQualifiedExpression)?.selectorExpression == reportOn
         val getMethod = descriptor.getMethod
         val setMethod = descriptor.setMethod
         val isImprovingDiagnosticsEnabled =
