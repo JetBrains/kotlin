@@ -14,10 +14,13 @@ class FileTreeWalkTest {
 
     companion object {
         val referenceFilenames =
-                listOf("1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt")
-        fun createTestFiles(): File {
+            listOf("1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt")
+
+        fun createTestFiles(): File = createTestFiles(referenceFilenames)
+
+        fun createTestFiles(references: List<String>): File {
             val basedir = @Suppress("DEPRECATION") createTempDir()
-            for (name in referenceFilenames) {
+            for (name in references) {
                 val file = basedir.resolve(name)
                 if (file.extension.isEmpty())
                     file.mkdir()
@@ -124,15 +127,64 @@ class FileTreeWalkTest {
             }
             assertEquals(referenceNames, namesTopDownEnter)
             assertEquals(referenceNames, namesTopDownLeave)
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
 
-            namesTopDownEnter.clear()
-            namesTopDownLeave.clear()
-            namesTopDown.clear()
+    @Test fun withEnterLeaveBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val referenceNames =
+                setOf("", "1", "1/2", "6", "8")
+            val entered = HashSet<String>()
+            val left = HashSet<String>()
+            val visited = HashSet<String>()
+            fun enter(file: File): Boolean {
+                val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
+                assertTrue(file.isDirectory, "$name is not directory, only directories should be entered")
+                assertFalse(entered.contains(name), "$name is entered twice")
+                assertFalse(left.contains(name), "$name is left before entrance")
+                assertTrue(visited.contains(name), "$name entered before visiting")
+                if (file.name == "3") return false // filter out 3
+                entered.add(name)
+                return true
+            }
+
+            fun leave(file: File) {
+                val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
+                assertTrue(file.isDirectory, "$name is not directory, only directories should be left")
+                assertFalse(left.contains(name), "$name is left twice")
+                left.add(name)
+                assertTrue(entered.contains(name), "$name is left before entrance")
+            }
+
+            fun visit(file: File) {
+                val name = file.relativeToOrSelf(basedir).invariantSeparatorsPath
+                if (file.isDirectory) {
+                    visited.add(name)
+                    assertFalse(left.contains(name), "$name is visited after leaving")
+                }
+                if (file == basedir)
+                    return
+                val parent = file.parentFile
+                if (parent != null) {
+                    val parentName = parent.relativeToOrSelf(basedir).invariantSeparatorsPath
+                    assertTrue(
+                        entered.contains(parentName),
+                        "$name is visited before entering its parent $parentName"
+                    )
+                    assertFalse(
+                        left.contains(parentName),
+                        "$name is visited after leaving its parent $parentName"
+                    )
+                }
+            }
             for (file in basedir.walkBreadthFirst().onEnter(::enter).onLeave(::leave)) {
                 visit(file)
             }
-            assertEquals(referenceNames, namesTopDownEnter)
-            assertEquals(referenceNames, namesTopDownLeave)
+            assertEquals(referenceNames, entered)
+            assertEquals(referenceNames, left)
         } finally {
             basedir.deleteRecursively()
         }
@@ -248,13 +300,6 @@ class FileTreeWalkTest {
             namesBottomUp.add(name)
         }
         assertEquals(expected, namesBottomUp, "Bottom-up walk results differ")
-        val namesBreadthFirst = HashSet<String>()
-        for (file in basedir.walkBreadthFirst().onEnter { filter(it) }) {
-            val name = file.toRelativeString(basedir)
-            assertFalse(namesBreadthFirst.contains(name), "$name is visited twice")
-            namesBreadthFirst.add(name)
-        }
-        assertEquals(expected, namesBreadthFirst, "Breadth-first walk results differ")
     }
 
     @Test fun withDirectoryFilter() {
@@ -270,11 +315,46 @@ class FileTreeWalkTest {
         }
     }
 
+    @Test fun withDirectoryFilterBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            // Every directory ended with 3 and its content is filtered out
+            fun filter(file: File) = !file.name.endsWith("3")
+            // expect to visit 1/3 but not go inside it
+            val visitedExpected = listOf("", "1", "1/2", "1/3", "6", "7.txt", "8", "8/9.txt").map { File(it).path }.toSet()
+            val visited = HashSet<String>()
+            for (file in basedir.walkBreadthFirst().onEnter { filter(it) }) {
+                val name = file.toRelativeString(basedir)
+                assertFalse(visited.contains(name), "$name is visited twice")
+                visited.add(name)
+            }
+            assertEquals(visitedExpected, visited, "Breadth-first visited results differ")
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
     @Test fun withTotalDirectoryFilter() {
         val basedir = createTestFiles()
         try {
             val referenceNames = emptySet<String>()
             compareWalkResults(referenceNames, basedir) { false }
+        } finally {
+            basedir.deleteRecursively()
+        }
+    }
+
+    @Test fun withTotalDirectoryFilterBreadthFirst() {
+        val basedir = createTestFiles()
+        try {
+            val visited = HashSet<String>()
+            for (file in basedir.walkBreadthFirst().onEnter { false }) {
+                val name = file.toRelativeString(basedir)
+                assertFalse(visited.contains(name), "$name is visited twice")
+                visited.add(name)
+            }
+            // Expect the root directory to be visited
+            assertEquals(setOf(""), visited, "Breadth-first walk results differ")
         } finally {
             basedir.deleteRecursively()
         }
@@ -394,10 +474,13 @@ class FileTreeWalkTest {
 
     @Test fun withDepthBreadthFirst() {
         val basedir = createTestFiles()
+        File(basedir, "8/10").mkdir()
+        File(basedir, "8/10/11").mkdir()
+        File(basedir, "8/10/11/12.txt").mkdir()
         try {
-            val files = HashSet<File>()
-            val dirs = HashSet<File>()
-            fun beforeVisitDirectory(dir: File): Boolean {
+            val files = mutableListOf<File>()
+            val dirs = mutableSetOf<File>()
+            fun afterVisitDirectory(dir: File): Boolean {
                 dirs.add(dir.relativeToOrSelf(basedir))
                 return true
             }
@@ -406,12 +489,52 @@ class FileTreeWalkTest {
                 files.add(file.relativeToOrSelf(basedir))
             }
 
-            basedir.walkBreadthFirst().onEnter(::beforeVisitDirectory).forEach { if (!it.isDirectory) visitFile(it) }
-            for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
-                assertTrue(dirs.contains(File(fileName)), fileName)
+            fun assertDirsAndFiles(
+                expectedDirNames: List<String>, expectedFileNames: List<String>,
+                nonVisitedFiles: List<String>
+            ) {
+                assertEquals(expectedDirNames.map { File(it) }.toSet(), dirs)
+                for (file in expectedFileNames.map { File(it) }) {
+                    assertTrue(files.contains(file), file.name)
+                }
+                for (file in nonVisitedFiles.map { File(it) }) {
+                    assertFalse(files.contains(file), file.name)
+                }
+                files.clear()
+                dirs.clear()
             }
-            for (fileName in arrayOf("1/3/4.txt", "1/3/4.txt", "7.txt", "8/9.txt")) {
-                assertTrue(files.contains(File(fileName)), fileName)
+
+            data class TestCase(val depth: Int, val expectedDirNames: List<String>,
+                                val expectedFileNames: List<String>,
+                                val nonVisitedFiles: List<String> = emptyList()
+            )
+
+            for ((depth, expectedDirNames, expectedFileNames, nonVisitedFiles) in listOf(
+                TestCase(
+                    1,
+                    listOf("", "1", "6", "8"),
+                    listOf("1", "6", "7.txt", "8", "1/3", "1/2", "8/9.txt", "8/10"),
+                    listOf("8/10/11", "8/10/11/12.txt")
+                ),
+                TestCase(
+                    2,
+                    listOf("", "1", "6", "8", "1/3", "1/2", "8/10"),
+                    listOf("1", "6", "7.txt", "8", "1/3", "1/2", "8/9.txt", "8/10", "8/10/11"),
+                    listOf("8/10/11/12.txt")
+                ),
+                TestCase(
+                    3,
+                    listOf("", "1", "6", "8", "1/3", "1/2", "8/10", "8/10/11"),
+                    listOf("1", "6", "7.txt", "8", "1/3", "1/2", "8/9.txt", "8/10", "8/10/11", "8/10/11/12.txt"),
+                )
+            )) {
+                basedir.walkBreadthFirst().onEnter(::afterVisitDirectory).maxDepth(depth)
+                    .forEach { if (it != basedir) visitFile(it) }
+                assertDirsAndFiles(
+                    expectedDirNames,
+                    expectedFileNames,
+                    nonVisitedFiles
+                )
             }
         } finally {
             basedir.deleteRecursively()
@@ -420,6 +543,8 @@ class FileTreeWalkTest {
 
     @Test fun withRestrictedAccessBreadthFirst() {
         val basedir = createTestFiles()
+        File(basedir, "1/10").mkdir()
+        File(basedir, "1/10/11.txt").mkdir()
         try {
             val files = HashSet<File>()
             val dirs = HashSet<File>()
@@ -449,14 +574,14 @@ class FileTreeWalkTest {
             //restrict access
             if (File(basedir, "1").setReadable(false)) {
                 try {
-                    files.clear()
-                    dirs.clear()
-                    basedir.walkBreadthFirst().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).
-                    onFail(::visitDirectoryFailed).forEach { if (!it.isDirectory) visitFile(it) }
+                    basedir.walkBreadthFirst().onEnter(::beforeVisitDirectory).onLeave(::afterVisitDirectory).onFail(::visitDirectoryFailed)
+                        .forEach { if (!it.isDirectory) visitFile(it) }
                     assertTrue(stack.isEmpty())
                     assertEquals(setOf("1"), failed)
                     assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
                     assertEquals(listOf("7.txt", "8/9.txt").map { File(it) }.toSet(), files)
+                    assertFalse(dirs.contains(File("1/10")))
+                    assertFalse(files.contains(File("1/10/11.txt")))
                 } finally {
                     File(basedir, "1").setReadable(true)
                 }
@@ -649,6 +774,48 @@ class FileTreeWalkTest {
             assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
         } finally {
             dir.delete()
+        }
+    }
+
+    @Test fun breadthFirstCallbacksOrder() {
+        val actualCallbackOrder = mutableListOf<String>()
+        val expectedCallbackOrder = listOf(
+            "visit tmp\\d+.tmp",
+            "onEnter tmp\\d+.tmp",
+            "visit 1",
+            "visit 4.txt",
+            "visit 2.txt",
+            "visit 3",
+            "onExit tmp\\d+.tmp",
+            "onEnter 1",
+            "onExit 1",
+            "onEnter 3",
+            "visit 5.txt",
+            "visit 6.txt",
+            "onExit 3",
+        ).map { Regex(it) }
+
+        fun onEnter(directory: File): Boolean {
+            actualCallbackOrder.add("onEnter ${directory.name}")
+            return true
+        }
+
+        fun onLeave(file: File) {
+            actualCallbackOrder.add("onExit ${file.name}")
+        }
+
+        val basedir = createTestFiles(listOf("1", "2.txt", "3", "3/5.txt", "3/6.txt", "4.txt"))
+        try {
+            basedir.walkBreadthFirst().onEnter(::onEnter).onLeave(::onLeave).forEach {
+                actualCallbackOrder.add("visit ${it.name}")
+            }
+            assertTrue { actualCallbackOrder.size == expectedCallbackOrder.size }
+            val actualAndExpected = actualCallbackOrder.zip(expectedCallbackOrder)
+            for (pair in actualAndExpected) {
+                assertTrue { pair.second.matches(pair.first) }
+            }
+        } finally {
+            basedir.deleteRecursively()
         }
     }
 }
