@@ -85,7 +85,7 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
             // inner classes with null names can't be searched for and can't be used from java anyway
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
-            .mapNotNull { KtLightClassForSourceDeclaration.create(it) }
+            .mapNotNull { KtLightClassImpl.create(it) }
     }
 
     override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY

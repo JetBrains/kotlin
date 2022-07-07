@@ -11,23 +11,15 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.impl.source.tree.TreeUtil
-import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
-import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -37,16 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import javax.swing.Icon
-
-private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
-    KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
-
-    private val modifiers by lazyPub { computeModifiers() }
-
-    override fun hasModifierProperty(name: String): Boolean =
-        if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
-
-}
 
 abstract class KtLightClassForSourceDeclaration(
     protected val classOrObject: KtClassOrObject,
@@ -75,7 +57,6 @@ abstract class KtLightClassForSourceDeclaration(
 
     private val _extendsList by lazyPub { createExtendsList() }
     private val _implementsList by lazyPub { createImplementsList() }
-    private val _deprecated by lazyPub { classOrObject.isDeprecated() }
 
     protected abstract fun createExtendsList(): PsiReferenceList?
     protected abstract fun createImplementsList(): PsiReferenceList?
@@ -86,35 +67,7 @@ abstract class KtLightClassForSourceDeclaration(
     abstract override fun getParent(): PsiElement?
     abstract override fun getQualifiedName(): String?
 
-    private val _containingFile: PsiFile by lazyPub {
-        object : FakeFileForLightClass(
-            classOrObject.containingKtFile,
-            { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
-        ) {
-            override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
-
-            override fun processDeclarations(
-                processor: PsiScopeProcessor,
-                state: ResolveState,
-                lastParent: PsiElement?,
-                place: PsiElement
-            ): Boolean {
-                if (!super.processDeclarations(processor, state, lastParent, place)) return false
-
-                // We have to explicitly process package declarations if current file belongs to default package
-                // so that Java resolve can find classes located in that package
-                val packageName = packageName
-                if (!packageName.isEmpty()) return true
-
-                val aPackage = JavaPsiFacade.getInstance(myManager.project).findPackage(packageName)
-                if (aPackage != null && !aPackage.processDeclarations(processor, state, null, place)) return false
-
-                return true
-            }
-        }
-    }
-
-    override fun getContainingFile(): PsiFile? = _containingFile
+    abstract override fun getContainingFile(): PsiFile?
 
     override fun getNavigationElement(): PsiElement = classOrObject
 
@@ -140,17 +93,6 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun hashCode(): Int = classOrObject.hashCode() * 31 + jvmDefaultMode.hashCode()
 
-    override fun getContainingClass(): PsiClass? {
-        if (classOrObject.parent === classOrObject.containingFile) return null
-
-        val containingClassOrObject = (classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject
-        if (containingClassOrObject != null) {
-            return create(containingClassOrObject)
-        }
-
-        // TODO: should return null
-        return super.getContainingClass()
-    }
 
     private val _typeParameterList: PsiTypeParameterList by lazyPub { buildTypeParameterList() }
 
@@ -162,15 +104,11 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazyPub { KtLightClassModifierList(this) { computeModifiers() } }
-
-    override fun getModifierList(): PsiModifierList? = _modifierList
-
+    abstract override fun getModifierList(): PsiModifierList?
     protected abstract fun computeModifiers(): Set<String>
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
-
-    override fun isDeprecated(): Boolean = _deprecated
+    abstract override fun isDeprecated(): Boolean
 
     override fun isInterface(): Boolean {
         if (classOrObject !is KtClass) return false
@@ -195,25 +133,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun toString() = "${this::class.java.simpleName}:${classOrObject.getDebugText()}"
 
-    override fun getOwnInnerClasses(): List<PsiClass> {
-        val result = ArrayList<PsiClass>()
-        classOrObject.declarations.filterIsInstance<KtClassOrObject>()
-            // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
-            // inner classes with null names can't be searched for and can't be used from java anyway
-            // we can't prohibit creating light classes with null names either since they can contain members
-            .filter { it.name != null }
-            .mapNotNullTo(result) {
-                create(it)
-            }
-
-        if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
-            result.add(createClassForInterfaceDefaultImpls())
-        }
-
-        return result
-    }
-
-    protected abstract fun createClassForInterfaceDefaultImpls(): PsiClass
+    abstract override fun getOwnInnerClasses(): List<PsiClass>
 
     override fun getUseScope(): SearchScope = kotlinOrigin.useScope
 
@@ -224,32 +144,6 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList
-
-    companion object {
-        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
-            CachedValuesManager.getCachedValue(classOrObject) {
-                CachedValueProvider.Result.create(
-                    createNoCache(classOrObject),
-                    KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker,
-                )
-            }
-
-        fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            val containingFile = classOrObject.containingFile
-            if (containingFile is KtCodeFragment) {
-                // Avoid building light classes for code fragments
-                return null
-            }
-
-            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
-                return null
-            }
-
-            return LightClassGenerationSupport.getInstance(classOrObject.project).run {
-                createUltraLightClass(classOrObject)
-            }
-        }
-    }
 
     abstract override fun getSupers(): Array<PsiClass>
 
