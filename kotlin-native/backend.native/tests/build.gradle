@@ -5726,6 +5726,16 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/stacktrace/']
     }
 
+    frameworkTest("testStackTraceBridgesFramework") {
+        enabled = !project.globalTestArgs.contains('-opt')
+        framework('StacktraceBridges') {
+            sources = ['framework/stacktraceBridges']
+            opts = ['-g']
+        }
+        swiftSources = ['framework/stacktraceBridges/']
+    }
+
+
     frameworkTest("testStackTraceByLibbacktraceFramework") {
         enabled = !project.globalTestArgs.contains('-opt')
         framework('StacktraceByLibbacktrace') {
