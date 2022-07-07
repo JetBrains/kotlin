@@ -155,6 +155,8 @@ fun reuseBoxed(list: MutableList<R<List<Int>>>) {
 }
 
 fun supply(x: Boolean) {}
+
+fun equalsChecks1(x: A<List<Int>>) {}
 fun equalsChecks(left: R<List<Int>>, right: R<List<Int>>) {
     supply(left == right)
     supply(left as Any == right)

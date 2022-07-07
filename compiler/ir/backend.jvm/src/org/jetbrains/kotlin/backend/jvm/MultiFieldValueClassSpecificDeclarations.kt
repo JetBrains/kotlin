@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.pop
@@ -43,8 +41,8 @@ sealed class MultiFieldValueClassTree {
 
     companion object {
         @JvmStatic
-        fun create(type: IrSimpleType, replacements: MemoizedMultiFieldValueClassReplacements) =
-            if (!type.isNullable() && type.isMultiFieldValueClassType()) InternalNode(type, DescriptorVisibilities.PUBLIC, replacements)
+        fun create(type: IrSimpleType, replacements: MemoizedMultiFieldValueClassReplacements, descriptorVisibility: DescriptorVisibility) =
+            if (!type.isNullable() && type.isMultiFieldValueClassType()) InternalNode(type, descriptorVisibility, replacements)
             else Leaf(type)
     }
 
@@ -71,9 +69,7 @@ sealed class MultiFieldValueClassTree {
             valueClassRepresentation.underlyingPropertyNamesToTypes.map { (name, representationType) ->
                 val property = propertiesByName[name]!!
                 val innerVisibility = property.visibility
-                val comparison = visibility.compareTo(innerVisibility)
-                    ?: error("Expected comparable visibilities but got $visibility and $innerVisibility")
-                val newVisibility = if (comparison < 0) visibility else innerVisibility
+                val newVisibility = minVisibility(visibility, innerVisibility)
                 TreeField(
                     name,
                     representationType.substitute(substitutionMap) as IrSimpleType,
@@ -94,11 +90,8 @@ sealed class MultiFieldValueClassTree {
                 visibility: DescriptorVisibility,
                 annotations: List<IrConstructorCall>,
                 replacements: MemoizedMultiFieldValueClassReplacements
-            ) : this(name, type, visibility, annotations, create(type, replacements))
+            ) : this(name, type, visibility, annotations, create(type, replacements, visibility))
         }
-
-        // todo store real fields, cannot restore them
-        // todo or store fields not pairs
 
         init {
             require(!type.isNullable() && type.isMultiFieldValueClassType())
@@ -108,6 +101,15 @@ sealed class MultiFieldValueClassTree {
 
         operator fun get(name: Name) = fieldByName[name]
     }
+}
+
+fun minVisibility(
+    visibility1: DescriptorVisibility,
+    visibility2: DescriptorVisibility
+): DescriptorVisibility {
+    val comparison = visibility1.compareTo(visibility2)
+        ?: error("Expected comparable visibilities but got $visibility1 and $visibility2")
+    return if (comparison < 0) visibility1 else visibility2
 }
 
 fun MultiFieldValueClassTree.render(): String = type.render() + when (this) {
@@ -126,7 +128,8 @@ class MultiFieldValueClassSpecificDeclarations(
         require(valueClass.isMultiFieldValueClass) { "Cannot build ${this::class.simpleName} for not multi-field value class: $valueClass" }
     }
 
-    val loweringRepresentation = MultiFieldValueClassTree.create(valueClass.defaultType, replacements) as InternalNode
+    val loweringRepresentation =
+        MultiFieldValueClassTree.create(valueClass.defaultType, replacements, DescriptorVisibilities.PUBLIC) as InternalNode
 
     val leaves: List<Leaf> = ArrayList<Leaf>().apply {
         fun proceed(node: MultiFieldValueClassTree) {
@@ -167,8 +170,8 @@ class MultiFieldValueClassSpecificDeclarations(
         require(nodeFullNames.size == nodeFullNames.values.distinct().size) { "Ambiguous names found: ${nodeFullNames.values}" }
     }
 
-    private val indexByLeaf = leaves.withIndex().associate { it.value to it.index }
-    private val indexesByInternalNode = mutableMapOf<InternalNode, IntRange>().apply {
+    val indexByLeaf = leaves.withIndex().associate { it.value to it.index }
+    val indexesByInternalNode = mutableMapOf<InternalNode, IntRange>().apply {
         var index = 0
         fun proceed(node: MultiFieldValueClassTree) {
             when (node) {
@@ -202,7 +205,7 @@ class MultiFieldValueClassSpecificDeclarations(
         }
     }
 
-    private val gettersVisibilities = mutableMapOf<MultiFieldValueClassTree, DescriptorVisibility>().apply {
+    val gettersVisibilities = mutableMapOf<MultiFieldValueClassTree, DescriptorVisibility>().apply {
         val stack = mutableListOf<DescriptorVisibility>()
         fun proceed(node: MultiFieldValueClassTree) {
             when (node) {
@@ -368,10 +371,11 @@ class MultiFieldValueClassSpecificDeclarations(
             makeNodes2FieldExpressions(fields)
         nodeFullNames.mapValues { (node, propertyName) ->
             val overrideable = oldProperties[propertyName]
+            val descriptorVisibility = gettersVisibilities[node]!!
             irFactory.buildProperty {
                 name = propertyName
                 origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
-                visibility = gettersVisibilities[node]!!
+                visibility = descriptorVisibility
             }.apply {
                 annotations = gettersAnnotations[node]!!
                 overrideable?.overriddenSymbols?.let { overriddenSymbols = it }
@@ -379,6 +383,7 @@ class MultiFieldValueClassSpecificDeclarations(
                 addGetter {
                     returnType = node.type
                     origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
+                    visibility = descriptorVisibility
                 }.apply {
                     val function = this
                     overrideable?.getter?.overriddenSymbols?.let { overriddenSymbols = it }
@@ -513,6 +518,8 @@ class MultiFieldValueClassSpecificDeclarations(
 
         // todo default parameters
         // todo annotations etc.
+        // todo visibilities etc.
+        // todo regenerate tests for not only jvm
     }
 }
 

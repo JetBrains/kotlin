@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
@@ -16,13 +13,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: IrFactory, protected val context: JvmBackendContext) {
-    protected val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
-    
+    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
+
     /**
      * Get a replacement for a function or a constructor.
      */
@@ -102,9 +100,7 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
                 }
             }
 
-            overriddenSymbols = function.overriddenSymbols.map {
-                getReplacementFunction(it.owner)?.symbol ?: it
-            }
+            overriddenSymbols = replaceOverriddenSymbols(function)
         }
 
         body()
@@ -113,4 +109,9 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
     abstract val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol>
 
     abstract val getReplacementRegularClassConstructor: (IrConstructor) -> IrConstructor?
+
+    protected fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
+        getReplacementFunction(function) ?: function.also {
+            function.overriddenSymbols = replaceOverriddenSymbols(function)
+        }
 }

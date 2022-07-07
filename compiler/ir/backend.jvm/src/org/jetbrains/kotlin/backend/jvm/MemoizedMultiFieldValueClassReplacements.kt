@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -295,8 +293,12 @@ class MemoizedMultiFieldValueClassReplacements(
             }
         }
 
-    override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> = storageManager.createMemoizedFunction {
-        TODO()
-    }
+
+    override val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
+        storageManager.createMemoizedFunction { irSimpleFunction ->
+            irSimpleFunction.overriddenSymbols.map {
+                computeOverrideReplacement(it.owner).symbol
+            }
+        }
 }
 
