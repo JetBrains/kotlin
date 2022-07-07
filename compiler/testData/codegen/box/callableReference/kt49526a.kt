@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 fun <T> id(x: T): T = x
 
 fun <T> intersect(x: T, y: T): T = x

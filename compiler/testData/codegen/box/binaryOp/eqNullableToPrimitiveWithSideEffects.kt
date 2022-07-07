@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, WASM, NATIVE
+// IGNORE_BACKEND: JS, JS_IR, WASM
 var result = ""
 
 fun sideEffecting(): Int {

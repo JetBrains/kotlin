@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: MINOR: CONST_EQUIVALENCE
-// IGNORE_BACKEND: NATIVE
 
 object A {
     const val a: String = "$"

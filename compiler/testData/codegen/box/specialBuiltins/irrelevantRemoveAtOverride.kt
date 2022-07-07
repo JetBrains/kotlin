@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 interface Container {
     fun removeAt(x: Int): String
 }

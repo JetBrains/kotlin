@@ -1,5 +1,4 @@
 // !LANGUAGE: +ReleaseCoroutines
-// IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*

@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE, WASM
+// IGNORE_BACKEND: JS, WASM
 
 // WITH_REFLECT
 
