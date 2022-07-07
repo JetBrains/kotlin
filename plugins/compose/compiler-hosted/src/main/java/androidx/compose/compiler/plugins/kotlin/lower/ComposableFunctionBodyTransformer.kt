@@ -3310,6 +3310,11 @@ class ComposableFunctionBodyTransformer(
             }
         }
         return if (!loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
+            // If a loop contains composable calls but not a otherwise need a group per iteration
+            // group, none of the children can be coalesced and must be realized as the second
+            // iteration as composable calls at the end might end of overlapping slots with the
+            // start of the loop. See b/205590513 for details.
+            loopScope.realizeAllDirectChildren()
             loop.asCoalescableGroup(loopScope)
         } else {
             loop
@@ -3753,6 +3758,14 @@ class ComposableFunctionBodyTransformer(
                     // if a call happens after the coalescable child group, then we should
                     // realize the group of the coalescable child
                     coalescableChilds.last().shouldRealize = true
+                }
+            }
+
+            fun realizeAllDirectChildren() {
+                if (coalescableChilds.isNotEmpty()) {
+                    coalescableChilds.forEach {
+                        it.shouldRealize = true
+                    }
                 }
             }
 
