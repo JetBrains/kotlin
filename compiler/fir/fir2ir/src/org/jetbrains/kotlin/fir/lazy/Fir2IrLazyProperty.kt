@@ -103,7 +103,6 @@ class Fir2IrLazyProperty(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override var backingField: IrField? by lazyVar(lock) {
         // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
         val parent = parent

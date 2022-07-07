@@ -458,21 +458,17 @@ private fun reflectFunctionClassFqn(shortName: Name): FqName = KOTLIN_REFLECT_FQ
 private fun reflectionFunctionClassName(isSuspend: Boolean, arity: Int): Name =
     Name.identifier("K${if (isSuspend) "Suspend" else ""}Function$arity")
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun KotlinBuiltIns.functionClassDescriptor(arity: Int): FunctionClassDescriptor =
     getFunction(arity) as FunctionClassDescriptor
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun KotlinBuiltIns.suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
     getSuspendFunction(arity) as FunctionClassDescriptor
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun KotlinBuiltIns.kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
     val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(false, arity))
     return getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun KotlinBuiltIns.kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
     val kFunctionFqn =
         reflectFunctionClassFqn(reflectionFunctionClassName(true, arity))

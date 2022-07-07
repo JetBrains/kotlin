@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.defaultArgumentCleanerPhase
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -82,7 +81,6 @@ internal class ReflectiveAccessLowering(
     // `fieldLocationAndReceiver`.
     val callsOnCompanionObjects: MutableMap<IrCall, IrClassSymbol> = mutableMapOf()
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun recordCompanionObjectAsDispatchReceiver(expression: IrCall) {
         val dispatchReceiver = expression.dispatchReceiver as? IrGetField ?: return
         val dispatchReceiverType = dispatchReceiver.symbol.owner.type as? IrSimpleType ?: return

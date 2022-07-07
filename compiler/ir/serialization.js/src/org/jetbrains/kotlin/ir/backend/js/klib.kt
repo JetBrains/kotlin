@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
-import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -58,7 +57,6 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorForNotFoundClasses
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -68,7 +66,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 val KotlinLibrary.moduleName: String
@@ -302,7 +299,6 @@ fun getFunctionFactoryCallback(stdlibModule: IrModuleFragment) = { packageFragme
     ).also { stdlibModule.files += it }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,

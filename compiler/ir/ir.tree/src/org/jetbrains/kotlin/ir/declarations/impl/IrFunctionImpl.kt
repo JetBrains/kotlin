@@ -134,7 +134,6 @@ class IrFakeOverrideFunctionImpl(
     override val descriptor
         get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol

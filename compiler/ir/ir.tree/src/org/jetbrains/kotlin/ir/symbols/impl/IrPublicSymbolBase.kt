@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
+abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> constructor(
     override val signature: IdSignature,
     private val _descriptor: D?
 ) : IrSymbol {
