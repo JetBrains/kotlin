@@ -64,5 +64,5 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 1 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;\n    ARETURN
 // 1 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
 // 1 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;\n    ARETURN
-// 1 public final static functionWithoutBoxes-GPBa7dw-AYZo7_8\(IILjava/lang/String;IILjava/lang/String;\)V
+// 1 public final static functionWithoutBoxes-GPBa7dw\(IILjava/lang/String;IILjava/lang/String;\)V
 // 0 functionWithoutBoxes.*(\n {3}.*)*(\n {4}(NEW [ABCD]|.*(box|[ABCD]\.<init>|LA;|LB;|LC;|LD;)))
