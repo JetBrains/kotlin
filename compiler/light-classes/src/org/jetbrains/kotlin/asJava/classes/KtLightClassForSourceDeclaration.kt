@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -30,18 +28,14 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import javax.swing.Icon
 
 private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
@@ -91,9 +85,6 @@ abstract class KtLightClassForSourceDeclaration(
     abstract override fun copy(): PsiElement
     abstract override fun getParent(): PsiElement?
     abstract override fun getQualifiedName(): String?
-
-    fun getDescriptor() =
-        LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
 
     private val _containingFile: PsiFile by lazyPub {
         object : FakeFileForLightClass(
@@ -175,59 +166,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
-    protected open fun computeModifiers(): Set<String> {
-        val psiModifiers = hashSetOf<String>()
-
-        // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
-        //noinspection unchecked
-
-        for (tokenAndModifier in jetTokenToPsiModifier) {
-            if (classOrObject.hasModifier(tokenAndModifier.first)) {
-                psiModifiers.add(tokenAndModifier.second)
-            }
-        }
-
-        if (classOrObject.hasModifier(PRIVATE_KEYWORD)) {
-            // Top-level private class has PACKAGE_LOCAL visibility in Java
-            // Nested private class has PRIVATE visibility
-            psiModifiers.add(if (classOrObject.isTopLevel()) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE)
-        } else if (!psiModifiers.contains(PsiModifier.PROTECTED)) {
-            psiModifiers.add(PsiModifier.PUBLIC)
-        }
-
-        // ABSTRACT | FINAL
-        when {
-            isAbstract() || isSealed() -> {
-                psiModifiers.add(PsiModifier.ABSTRACT)
-            }
-
-            isEnum -> {
-                // Enum class should not be `final`, since its enum entries extend it.
-                // It could be either `abstract` w/o ctor, or empty modality w/ private ctor.
-            }
-
-            !(classOrObject.hasModifier(OPEN_KEYWORD)) -> {
-                val descriptor = lazy { getDescriptor() }
-                var modifier = PsiModifier.FINAL
-                project.applyCompilerPlugins {
-                    modifier = it.interceptModalityBuilding(kotlinOrigin, descriptor, modifier)
-                }
-                if (modifier == PsiModifier.FINAL) {
-                    psiModifiers.add(PsiModifier.FINAL)
-                }
-            }
-        }
-
-        if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(INNER_KEYWORD)) {
-            psiModifiers.add(PsiModifier.STATIC)
-        }
-
-        return psiModifiers
-    }
-
-    private fun isAbstract(): Boolean = classOrObject.hasModifier(ABSTRACT_KEYWORD) || isInterface
-
-    private fun isSealed(): Boolean = classOrObject.hasModifier(SEALED_KEYWORD)
+    protected abstract fun computeModifiers(): Set<String>
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
@@ -242,29 +181,11 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun isEnum(): Boolean = classOrObject is KtClass && classOrObject.isEnum()
 
-    override fun hasTypeParameters(): Boolean = classOrObject is KtClass && !classOrObject.typeParameters.isEmpty()
+    override fun hasTypeParameters(): Boolean = classOrObject is KtClass && classOrObject.typeParameters.isNotEmpty()
 
     override fun isValid(): Boolean = classOrObject.isValid
 
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
-        if (manager.areElementsEquivalent(baseClass, this)) return false
-        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
-
-        val qualifiedName: String? = if (baseClass is KtLightClassForSourceDeclaration) {
-            baseClass.getDescriptor()?.let(DescriptorUtils::getFqName)?.asString()
-        } else {
-            baseClass.qualifiedName
-        }
-
-        val thisDescriptor = getDescriptor()
-
-        return if (qualifiedName != null && thisDescriptor != null) {
-            qualifiedName != DescriptorUtils.getFqName(thisDescriptor).asString() &&
-                    checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
-        } else {
-            InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
-        }
-    }
+    abstract override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean
 
     @Throws(IncorrectOperationException::class)
     override fun setName(@NonNls name: String): PsiElement {
@@ -305,13 +226,6 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
     companion object {
-        private val jetTokenToPsiModifier = listOf(
-            PUBLIC_KEYWORD to PsiModifier.PUBLIC,
-            INTERNAL_KEYWORD to PsiModifier.PUBLIC,
-            PROTECTED_KEYWORD to PsiModifier.PROTECTED,
-            FINAL_KEYWORD to PsiModifier.FINAL
-        )
-
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
             CachedValuesManager.getCachedValue(classOrObject) {
                 CachedValueProvider.Result.create(
@@ -335,38 +249,6 @@ abstract class KtLightClassForSourceDeclaration(
                 createUltraLightClass(classOrObject)
             }
         }
-
-        private fun checkSuperTypeByFQName(classDescriptor: ClassDescriptor, qualifiedName: String, deep: Boolean): Boolean {
-            if (CommonClassNames.JAVA_LANG_OBJECT == qualifiedName) return true
-
-            if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
-
-            val fqName = FqNameUnsafe(qualifiedName)
-            val mappedQName =
-                if (fqName.isSafe)
-                    JavaToKotlinClassMap.mapJavaToKotlin(fqName.toSafe())?.asSingleFqName()?.asString()
-                else null
-            if (qualifiedName == mappedQName) return true
-
-            for (superType in classDescriptor.typeConstructor.supertypes) {
-                val superDescriptor = superType.constructor.declarationDescriptor
-
-                if (superDescriptor is ClassDescriptor) {
-                    val superQName = DescriptorUtils.getFqName(superDescriptor).asString()
-                    if (superQName == qualifiedName || superQName == mappedQName) return true
-
-                    if (deep) {
-                        if (checkSuperTypeByFQName(superDescriptor, qualifiedName, true)) {
-                            return true
-                        }
-                    }
-                }
-            }
-
-            return false
-        }
-
-        private val LOG = Logger.getInstance(KtLightClassForSourceDeclaration::class.java)
     }
 
     abstract override fun getSupers(): Array<PsiClass>

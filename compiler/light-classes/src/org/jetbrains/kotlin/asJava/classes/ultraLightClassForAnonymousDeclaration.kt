@@ -65,7 +65,7 @@ open class KtUltraLightClassForAnonymousDeclaration(classOrObject: KtClassOrObje
     override fun copy() = KtUltraLightClassForAnonymousDeclaration(classOrObject, support)
 }
 
-private fun KtLightClassForSourceDeclaration.getFirstSupertypeFQNameForAnonymousDeclaration(): String {
+private fun KtLightClassImpl.getFirstSupertypeFQNameForAnonymousDeclaration(): String {
     val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
 
     val superTypes = descriptor.typeConstructor.supertypes
