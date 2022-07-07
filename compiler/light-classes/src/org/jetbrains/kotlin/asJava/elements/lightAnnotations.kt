@@ -40,18 +40,6 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-abstract class KtLightAbstractAnnotation(parent: PsiElement) :
-    KtLightElementBase(parent), PsiAnnotation, KtLightElement<KtCallElement, PsiAnnotation> {
-
-    abstract override fun getNameReferenceElement(): PsiJavaCodeReferenceElement?
-
-    override fun getOwner(): PsiAnnotationOwner? = parent as? PsiAnnotationOwner
-
-    abstract override fun getParameterList(): PsiAnnotationParameterList
-
-    open fun fqNameMatches(fqName: String): Boolean = qualifiedName == fqName
-}
-
 class KtLightAnnotationForSourceEntry(
     private val name: String?,
     private val lazyQualifiedName: () -> String?,
