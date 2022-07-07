@@ -53,6 +53,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 }
 
 private inline fun <reified PSI : KtElement> unresolvedKtCallError(element: PSI): Nothing {
-    throw KotlinExceptionWithAttachments("${PSI::class.simpleName} should always resolve to a KtCallInfo")
-        .withAttachment(element::class.simpleName ?: "element", element.getElementTextInContext())
+    throw KotlinExceptionWithAttachments("${PSI::class.simpleName}(${element::class.simpleName}) should always resolve to a KtCallInfo")
+        .withAttachment("elementText", element.getElementTextInContext())
 }
