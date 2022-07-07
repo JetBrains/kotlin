@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassTree.InternalNode
 import org.jetbrains.kotlin.backend.jvm.MultiFieldValueClassTree.Leaf
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -151,7 +152,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     name = Name.guessByFirstCharacter("${oldField.name.asString()}$${sourceField.name.asString()}")
                     type = sourceField.type
                     origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
-                    visibility = sourceField.visibility
+                    visibility = DescriptorVisibilities.PRIVATE
                 }.apply {
                     parent = declaration
                     initializer = null
@@ -205,11 +206,12 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 accessor.body?.transform(object : IrElementTransformerVoid() {
                     override fun visitGetField(expression: IrGetField): IrExpression {
                         if (expression.symbol.owner == oldField) {
-                            require(expression.receiver.let { it is IrGetValue && it.symbol.owner == accessor.dispatchReceiverParameter!! }) {
-                                "Unexpected receiver for IrGetField: ${expression.receiver}"
-                            }
+                            require(expression.receiver.let {
+                                it is IrGetValue && it.symbol.owner == accessor.dispatchReceiverParameter ||
+                                        it == null && oldField.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
+                            }) { "Unexpected receiver for IrGetField: ${expression.receiver}" }
                             val gettersAndSetters =
-                                newFields.toGettersAndSetters(accessor.dispatchReceiverParameter!!, transformReceiver = true)
+                                newFields.toGettersAndSetters(accessor.dispatchReceiverParameter, transformReceiver = true)
                             val representation = newFields.zip(gettersAndSetters) { newField, (getter, setter) ->
                                 VirtualProperty(newField.type, getter, setter, null)
                             }
@@ -232,7 +234,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                     parent = declaration
                     body = context.createIrBuilder(this.symbol).irBlockBody {
                         +irBlock {
-                            flattenExpressionTo(initializer.expression, newFields.toGettersAndSetters(declaration.thisReceiver!!))
+                            flattenExpressionTo(initializer.expression, newFields.toGettersAndSetters(declaration.thisReceiver))
                         }
                     }
                     oldFieldToInitializers[oldField] = this
@@ -785,10 +787,10 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
             field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
                     parent is IrClass &&
                     parent.multiFieldValueClassRepresentation?.containsPropertyWithName(field.name) == true -> {
-                val receiver = expression.receiver!!.transform(this, null)
+                val receiver = expression.receiver?.transform(this, null)
                 with(valueDeclarationsRemapper) {
                     with(context.createIrBuilder(expression.symbol)) {
-                        subfield(receiver, field.name) ?: run {
+                        receiver?.let { subfield(it, field.name) } ?: run {
                             expression.receiver = receiver
                             expression
                         }
@@ -813,7 +815,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         val field = expression.symbol.owner
         val replacementFields = regularClassMFVCPropertyFieldsMapping[field] ?: return super.visitSetField(expression)
         return context.createIrBuilder(expression.symbol).irBlock {
-            val thisVar = irTemporary(expression.receiver!!.transform(this@JvmMultiFieldValueClassLowering, null))
+            val thisVar = expression.receiver?.let { irTemporary(it.transform(this@JvmMultiFieldValueClassLowering, null)) }
             // We flatten to temp variables because code can throw an exception otherwise and partially update variables
             val subValues = flattenExpressionToGetters(
                 expression = expression.value, // not modified
@@ -821,7 +823,7 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
                 additionalConditionForValue = { (_, value) -> value is IrGetValue }
             )
             for ((replacementField, subValue) in replacementFields zip subValues) {
-                +irSetField(irGet(thisVar), replacementField, subValue)
+                +irSetField(thisVar?.let { irGet(it) }, replacementField, subValue)
             }
         }
     }
@@ -882,19 +884,19 @@ private class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmV
         )
     }
 
-    private fun List<IrField>.toGettersAndSetters(receiver: IrValueParameter, transformReceiver: Boolean = false) = map { field ->
+    private fun List<IrField>.toGettersAndSetters(receiver: IrValueParameter?, transformReceiver: Boolean = false) = map { field ->
         Pair<ExpressionGenerator, ExpressionSupplier>(
             {
-                val initialGetReceiver = irGet(receiver)
+                val initialGetReceiver = receiver?.let { irGet(it) }
                 val resultReceiver =
-                    if (transformReceiver) initialGetReceiver.transform(this@JvmMultiFieldValueClassLowering, null)
+                    if (transformReceiver) initialGetReceiver?.transform(this@JvmMultiFieldValueClassLowering, null)
                     else initialGetReceiver
                 irGetField(resultReceiver, field)
             },
             { value: IrExpression ->
-                val initialGetReceiver = irGet(receiver)
+                val initialGetReceiver = receiver?.let { irGet(it) }
                 val resultReceiver =
-                    if (transformReceiver) initialGetReceiver.transform(this@JvmMultiFieldValueClassLowering, null)
+                    if (transformReceiver) initialGetReceiver?.transform(this@JvmMultiFieldValueClassLowering, null)
                     else initialGetReceiver
                 irSetField(resultReceiver, field, value)
             },

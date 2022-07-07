@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
+import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
+import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -52,6 +50,7 @@ class MemoizedInlineClassReplacements(
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticValueClassReplacement ||
+                        it in context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure ||
                         it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
@@ -260,10 +259,5 @@ class MemoizedInlineClassReplacements(
             irSimpleFunction.overriddenSymbols.map {
                 computeOverrideReplacement(it.owner).symbol
             }
-        }
-
-    private fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
-        getReplacementFunction(function) ?: function.also {
-            function.overriddenSymbols = replaceOverriddenSymbols(function)
         }
 }
