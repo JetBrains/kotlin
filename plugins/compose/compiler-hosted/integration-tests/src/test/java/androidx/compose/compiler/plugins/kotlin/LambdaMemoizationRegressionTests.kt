@@ -46,7 +46,13 @@ class LambdaMemoizationRegressionTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -80,7 +86,13 @@ class LambdaMemoizationRegressionTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -103,7 +115,13 @@ class LambdaMemoizationRegressionTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }

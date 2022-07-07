@@ -47,6 +47,12 @@ class TraceInformationTest : ComposeIrTransformTest() {
                 %composer = %composer.startRestartGroup(<>)
                 sourceInformation(%composer, "C(B):Test.kt")
                 if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -62,7 +68,13 @@ class TraceInformationTest : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A().B(1337, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }

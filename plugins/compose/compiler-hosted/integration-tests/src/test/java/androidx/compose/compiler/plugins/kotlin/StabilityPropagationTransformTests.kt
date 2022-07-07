@@ -68,11 +68,17 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
             %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
             A(x, %composer, 0b1110 and %dirty)
             A(Foo(0), %composer, 0)
             A(remember({
               Foo(0)
             }, %composer, 0), %composer, 0b0110)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
           } else {
             %composer.skipToGroupEnd()
           }
@@ -104,11 +110,17 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
             fun Test(x: Foo, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
               A(x, %composer, 0b1000)
               A(Foo(0), %composer, 0b1000)
               A(remember({
                 Foo(0)
               }, %composer, 0), %composer, 0b1000)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001)
               }
@@ -133,7 +145,13 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<A(list...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 A(listOf("a"), %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
