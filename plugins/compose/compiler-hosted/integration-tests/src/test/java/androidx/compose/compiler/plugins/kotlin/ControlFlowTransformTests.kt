@@ -3952,6 +3952,74 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
         """
     )
 
+    @Test // Regression test for 205590513
+    fun testGroupAroundExtensionFunctions() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(start: Int, end: Int) {
+                val a = remember { A() }
+                for (i in start until end) {
+                    val b = a.get(bKey)
+                    if (i == 2) {
+                        a.get(cKey)
+                    }
+                }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            class A
+
+            class B
+
+            class C
+
+            val bKey: () -> B = { B() }
+            val cKey: () -> C = { C() }
+
+            @Composable
+            fun <T> A.get(block: () -> T) = block()
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)P(1)<rememb...>,*<get(bK...>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(start)) 0b0100 else 0b0010
+              }
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(end)) 0b00100000 else 0b00010000
+              }
+              if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+                val a = remember({
+                  A()
+                }, %composer, 0)
+                val tmp0_iterator = start until end.iterator()
+                while (tmp0_iterator.hasNext()) {
+                  val i = tmp0_iterator.next()
+                  val b = a.get(bKey, %composer, 0b00110110)
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "<get(cK...>")
+                  if (i == 0b0010) {
+                    a.get(cKey, %composer, 0b00110110)
+                  }
+                  %composer.endReplaceableGroup()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(start, end, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
     // There are a number of "inline constructors" in the Kotlin standard library for Array types.
     // These are special cases, since normal constructors cannot be inlined.
     @Test
