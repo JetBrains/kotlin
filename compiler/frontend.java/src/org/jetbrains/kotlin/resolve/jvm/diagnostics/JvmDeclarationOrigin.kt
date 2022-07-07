@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,26 +16,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 enum class MemberKind { FIELD, METHOD }
 
 data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
-
-enum class JvmDeclarationOriginKind {
-    OTHER,
-    PACKAGE_PART,
-    INTERFACE_DEFAULT_IMPL,
-    CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
-    DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
-    DELEGATION,
-    SAM_DELEGATION,
-    BRIDGE,
-    MULTIFILE_CLASS,
-    MULTIFILE_CLASS_PART,
-    SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
-    COLLECTION_STUB,
-    AUGMENTED_BUILTIN_API,
-    ERASED_INLINE_CLASS,
-    UNBOX_METHOD_OF_INLINE_CLASS,
-    JVM_OVERLOADS,
-    INLINE_VERSION_OF_SUSPEND_FUN,
-}
 
 class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
