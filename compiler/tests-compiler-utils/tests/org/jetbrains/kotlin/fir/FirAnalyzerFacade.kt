@@ -111,7 +111,7 @@ class FirAnalyzerFacade(
             .filter { it.kind == FirSession.Kind.Source }
             .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-        return Fir2IrConverter.createModuleFragment(
+        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, _scopeSession!!, firFiles!! + commonFirFiles,
             languageVersionSettings, signaturer,
             fir2IrExtensions,

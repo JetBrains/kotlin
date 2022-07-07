@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
@@ -30,22 +28,17 @@ fun FirSession.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>
 ): Fir2IrResult {
-    val mangler = JvmDescriptorMangler(null)
-    val signaturer = JvmIdSignatureDescriptor(mangler)
-
     val commonFirFiles = moduleData.dependsOnDependencies
         .map { it.session }
         .filter { it.kind == FirSession.Kind.Source }
         .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
-    return Fir2IrConverter.createModuleFragment(
+    return Fir2IrConverter.createModuleFragmentWithoutSignatures(
         this, scopeSession, firFiles + commonFirFiles,
-        languageVersionSettings, signaturer,
-        fir2IrExtensions,
-        FirJvmKotlinMangler(this), JvmIrMangler, IrFactoryImpl,
-        FirJvmVisibilityConverter,
+        languageVersionSettings, fir2IrExtensions,
+        FirJvmKotlinMangler(this),
+        JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(),
-        irGeneratorExtensions,
-        generateSignatures = false
+        irGeneratorExtensions
     )
 }
