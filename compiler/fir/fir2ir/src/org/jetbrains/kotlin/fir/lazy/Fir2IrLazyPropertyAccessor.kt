@@ -67,16 +67,12 @@ class Fir2IrLazyPropertyAccessor(
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        firParentProperty.receiverTypeRef?.let {
-            createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
-        }
-    }
+    override var hasExtensionReceiver: Boolean = firParentProperty.receiverTypeRef != null
 
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
-    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        if (!isSetter && contextReceiverParametersCount == 0) emptyList()
+    override var allValueParameters: List<IrValueParameter> by lazyVar(lock) {
+        if (!isSetter && contextReceiverParametersCount == 0 && !hasExtensionReceiver) emptyList()
         else {
             declarationStorage.enterScope(this)
 
@@ -86,6 +82,10 @@ class Fir2IrLazyPropertyAccessor(
                     this@Fir2IrLazyPropertyAccessor,
                     this@buildList,
                 )
+
+                firParentProperty.receiverTypeRef?.let {
+                    add(createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext)))
+                }
 
                 if (isSetter) {
                     val valueParameter = firAccessor?.valueParameters?.firstOrNull()

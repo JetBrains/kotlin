@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -42,6 +43,9 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
                     null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                 ).apply { parent = this@IrLazyFunctionBase }
             }
+
+            result.addIfNotNull(createReceiverParameter(descriptor.extensionReceiverParameter))
+
             descriptor.valueParameters.mapTo(result) {
                 stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
                     .apply { parent = this@IrLazyFunctionBase }
