@@ -6157,6 +6157,16 @@ fileCheckTest("filecheck_kt49847_redundant_boxing_unboxing") {
     enabled = project.globalTestArgs.contains('-opt')
 }
 
+fileCheckTest("filecheck_kt49847_sam") {
+    annotatedSource = project.file('filecheck/kt49847_sam.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_generic") {
+    annotatedSource = project.file('filecheck/kt49847_sam_generic.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_kt49847_class") {
     annotatedSource = project.file('filecheck/kt49847_class.kt')
     enabled = project.globalTestArgs.contains('-opt')
