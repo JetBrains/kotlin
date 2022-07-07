@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: KtUltraLightSupport) :
     KtLightClassImpl(classOrObject, support.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)) {
@@ -215,7 +217,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
 
         if (!isInterface) {
-            val isCompanion = this.classOrObject is KtObjectDeclaration && this.classOrObject.isCompanion()
+            val isCompanion = this.classOrObject.safeAs<KtObjectDeclaration>()?.isCompanion() == true
             for (property in this.classOrObject.declarations.filterIsInstance<KtProperty>()) {
                 // All fields for companion object of classes are generated to the containing class
                 // For interfaces, only @JvmField-annotated properties are generated to the containing class
@@ -254,7 +256,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         result.updateWithCompilerPlugins()
     }
 
-    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
+    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.cast<KtObjectDeclaration>().isCompanion()
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
