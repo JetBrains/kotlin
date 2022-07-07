@@ -27,5 +27,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJsBuiltinNameClashChecker,
             FirJsInheritanceChecker,
+            FirJsRuntimeAnnotationChecker,
         )
 }

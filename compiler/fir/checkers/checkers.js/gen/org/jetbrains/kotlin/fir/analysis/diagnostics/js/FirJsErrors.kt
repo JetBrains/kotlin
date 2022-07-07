@@ -25,6 +25,8 @@ object FirJsErrors {
     // Annotations
     val WRONG_JS_QUALIFIER by error0<KtExpression>()
     val JS_MODULE_PROHIBITED_ON_VAR by error0<KtAnnotationEntry>()
+    val RUNTIME_ANNOTATION_NOT_SUPPORTED by warning0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Ambiguity
     val JS_BUILTIN_NAME_CLASH by error1<KtElement, String>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
