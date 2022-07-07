@@ -9,7 +9,6 @@ class C {
 
 // CHECK: define void @"kfun:#main(){}"()
 // CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 // CHECK: ret void
 fun main() {
     val c = C()

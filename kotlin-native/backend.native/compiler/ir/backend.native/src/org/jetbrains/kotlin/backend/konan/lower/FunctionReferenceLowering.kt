@@ -179,12 +179,14 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val functionParameters = referencedFunction.explicitParameters
         private val boundFunctionParameters = functionReference.getArgumentsWithIr().map { it.first }
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
-        private val functionParameterTypes = unboundFunctionParameters.map { it.type }
-        private val functionParameterAndReturnTypes = functionParameterTypes + referencedFunction.returnType
 
-        private val typeArgumentsMap = referencedFunction.typeParameters.associate { typeParam ->
-            typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
+        private val functionParameterAndReturnTypes = (functionReference.type as IrSimpleType).arguments.map {
+            when (it) {
+                is IrTypeProjection -> it.type
+                else -> context.irBuiltIns.anyNType
+            }
         }
+        private val functionReturnType = if (samSuperType != null) referencedFunction.returnType else functionParameterAndReturnTypes.last()
 
         private val isLambda = functionReference.origin.isLambda
         private val isKFunction = functionReference.type.isKFunction()
@@ -242,9 +244,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
         private fun buildClass(): IrClass {
             val superClass = when {
-                isKSuspendFunction -> kSuspendFunctionImplSymbol.typeWith(referencedFunction.returnType)
+                isKSuspendFunction -> kSuspendFunctionImplSymbol.typeWith(functionReturnType)
                 isLambda -> irBuiltIns.anyType
-                else -> kFunctionImplSymbol.typeWith(referencedFunction.returnType)
+                else -> kFunctionImplSymbol.typeWith(functionReturnType)
             }
             val superTypes = mutableListOf(superClass)
             if (samSuperType != null) {
@@ -270,7 +272,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                         lastParameterType as IrSimpleType
                         // If the last parameter is Continuation<> inherit from SuspendFunction.
                         suspendFunctionClass = symbols.suspendFunctionN(numberOfParameters - 1).owner
-                        val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
+                        val suspendFunctionClassTypeParameters = functionParameterAndReturnTypes.dropLast(2) +
                                 (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
                         superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)
                     }
@@ -315,7 +317,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 }
 
                 val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
-                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(referencedFunction.returnType) } }
+                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(functionReturnType) } }
                 addOverride("computeArity") { irInt(unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0) }
                 addOverride("computeFlags") { irInt(getFlags()) }
                 val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
@@ -358,7 +360,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = parameter.type.substitute(typeArgumentsMap))
+                            type = parameter.type)
                 }
 
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
@@ -445,7 +447,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                     superFunction.name,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
-                    referencedFunction.returnType.substitute(typeSubstitution),
+                    functionReturnType,
                     isInline = false,
                     isExternal = false,
                     isTailrec = false,
@@ -500,6 +502,10 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                                     }
                                 }
                                 assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
+
+                                referencedFunction.typeParameters.forEach { typeParam ->
+                                    putTypeArgument(typeParam.index, functionReference.getTypeArgument(typeParam.index)!!)
+                                }
                             }
                     )
                 }

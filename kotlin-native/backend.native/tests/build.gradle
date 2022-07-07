@@ -6159,12 +6159,16 @@ fileCheckTest("filecheck_kt49847_redundant_boxing_unboxing") {
 
 fileCheckTest("filecheck_kt49847_class") {
     annotatedSource = project.file('filecheck/kt49847_class.kt')
-    enabled = false // project.globalTestArgs.contains('-opt')
+    enabled = project.globalTestArgs.contains('-opt')
+    // TODO add the following check to test file, after fix https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
+    // CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 }
 
 fileCheckTest("filecheck_kt49847_generic") {
     annotatedSource = project.file('filecheck/kt49847_generic.kt')
-    enabled = false // project.globalTestArgs.contains('-opt')
+    enabled = project.globalTestArgs.contains('-opt')
+    // TODO add the following check to test file, after fix https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
+    // CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 }
 
 fileCheckTest("filecheck_intrinsics") {
