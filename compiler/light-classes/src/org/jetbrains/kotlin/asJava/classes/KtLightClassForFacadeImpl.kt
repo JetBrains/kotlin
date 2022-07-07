@@ -34,7 +34,7 @@ abstract class KtLightClassForFacadeImpl constructor(
     manager: PsiManager,
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>
-) : KtLazyLightClass(manager), KtLightClassForFacade {
+) : KtLightClassBase(manager), KtLightClassForFacade {
     private val firstFileInFacade by lazyPub { files.iterator().next() }
 
     private val modifierList: PsiModifierList =

@@ -58,7 +58,7 @@ abstract class KtLightClassForSourceDeclaration(
     protected val classOrObject: KtClassOrObject,
     protected val jvmDefaultMode: JvmDefaultMode,
     private val forceUsingOldLightClasses: Boolean = false
-) : KtLazyLightClass(classOrObject.manager),
+) : KtLightClassBase(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
 
     override val myInnersCache: KotlinClassInnerStuffCache = KotlinClassInnerStuffCache(

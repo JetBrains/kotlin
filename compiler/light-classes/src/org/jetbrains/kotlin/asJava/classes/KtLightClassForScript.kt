@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtScript
 import javax.swing.Icon
 
-abstract class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script.manager) {
+abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(script.manager) {
     private val modifierList: PsiModifierList = LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC)
 
     private val scriptImplementsList: LightEmptyImplementsList = LightEmptyImplementsList(manager)
