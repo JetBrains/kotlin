@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.psi.KtElement
 
 
-internal fun FirElement.renderWithClassName(renderMode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
-    "${this::class.simpleName} `${render(renderMode)}`"
+internal fun FirElement.renderWithClassName(): String =
+    "${this::class.simpleName} `${render()}`"
 
 
 internal fun FirBasedSymbol<*>.name(): String = when (this) {

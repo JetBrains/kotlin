@@ -80,11 +80,8 @@ val FirReference.resolvedSymbol: FirBasedSymbol<*>? get() = resolved?.resolvedSy
 
 val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFromTypeRef
 
-fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
-    append(this@renderWithType)
-    append(": ")
-    FirRenderer(this, mode).renderElementAsString(this@renderWithType)
-}
+fun FirElement.renderWithType(): String =
+    FirRenderer().renderElementWithTypeAsString(this)
 
-fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
-    FirRenderer(mode = mode).renderElementAsString(this)
+fun FirElement.render(): String =
+    FirRenderer().renderElementAsString(this)

@@ -108,6 +108,12 @@ open class FirRenderer private constructor(
         return toString()
     }
 
+    fun renderElementWithTypeAsString(element: FirElement): String {
+        print(element)
+        print(": ")
+        return renderElementAsString(element)
+    }
+
     fun renderAsCallableDeclarationString(callableDeclaration: FirCallableDeclaration): String {
         visitor.visitCallableDeclaration(callableDeclaration)
         return toString()
