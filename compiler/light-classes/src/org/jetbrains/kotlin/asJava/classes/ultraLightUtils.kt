@@ -539,10 +539,6 @@ internal inline fun Project.applyCompilerPlugins(body: (UltraLightClassModifierE
     UltraLightClassModifierExtension.getInstances(this).forEach { body(it) }
 }
 
-internal fun <L : Any> L.invalidAccess(): Nothing =
-    error("Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: ${javaClass.name}")
-
-
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
