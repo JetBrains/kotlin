@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributesAndResolvePhase
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -52,7 +53,10 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val resultBuilder = StringBuilder()
-        val renderer = FirRenderer(resultBuilder).with(declarationRenderer = FirDeclarationRendererWithAttributesAndResolvePhase())
+        val renderer = FirRenderer(resultBuilder).with(
+            declarationRenderer = FirDeclarationRendererWithAttributes(),
+            resolvePhaseRenderer = FirResolvePhaseRenderer()
+        )
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession is LLFirSourceResolveSession)
             val declarationToResolve = firResolveSession

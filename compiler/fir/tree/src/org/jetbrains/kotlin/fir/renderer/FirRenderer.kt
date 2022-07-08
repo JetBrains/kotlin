@@ -41,6 +41,7 @@ class FirRenderer private constructor(
     private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
     private val propertyAccessorRenderer: FirPropertyAccessorRenderer?,
+    private val resolvePhaseRenderer: FirResolvePhaseRenderer?,
     private val typeRenderer: ConeTypeRenderer,
     private val valueParameterRenderer: FirValueParameterRenderer,
 ) : FirPrinter(builder) {
@@ -58,6 +59,7 @@ class FirRenderer private constructor(
         components.modifierRenderer = modifierRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
         components.propertyAccessorRenderer = propertyAccessorRenderer
+        components.resolvePhaseRenderer = resolvePhaseRenderer
         components.typeRenderer = typeRenderer
         components.valueParameterRenderer = valueParameterRenderer
         @Suppress("LeakingThis")
@@ -72,6 +74,7 @@ class FirRenderer private constructor(
         modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
         propertyAccessorRenderer?.components = components
+        resolvePhaseRenderer?.components = components
         typeRenderer.builder = builder
         typeRenderer.idRenderer = idRenderer
         valueParameterRenderer.components = components
@@ -93,6 +96,7 @@ class FirRenderer private constructor(
         FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
         FirPropertyAccessorRenderer(),
+        resolvePhaseRenderer = null,
         ConeTypeRendererForDebugging(),
         FirValueParameterRenderer(),
     )
@@ -110,13 +114,15 @@ class FirRenderer private constructor(
         modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
         propertyAccessorRenderer: FirPropertyAccessorRenderer? = this.propertyAccessorRenderer,
+        resolvePhaseRenderer: FirResolvePhaseRenderer? = this.resolvePhaseRenderer,
         typeRenderer: ConeTypeRenderer = this.typeRenderer,
         valueParameterRenderer: FirValueParameterRenderer = this.valueParameterRenderer,
     ): FirRenderer = FirRenderer(
         builder, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
         contractRenderer, declarationRenderer, idRenderer, modifierRenderer,
-        packageDirectiveRenderer, propertyAccessorRenderer, typeRenderer, valueParameterRenderer
+        packageDirectiveRenderer, propertyAccessorRenderer,
+        resolvePhaseRenderer, typeRenderer, valueParameterRenderer
     )
 
     fun renderElementAsString(element: FirElement): String {
@@ -149,6 +155,8 @@ class FirRenderer private constructor(
         override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
 
         override var propertyAccessorRenderer: FirPropertyAccessorRenderer? = null
+
+        override var resolvePhaseRenderer: FirResolvePhaseRenderer? = null
 
         override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
 
