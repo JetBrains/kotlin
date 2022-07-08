@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.ir.util.hasNonConstInitializer
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.name.Name
 
-internal object DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("MODULE_GLOBAL_INITIALIZER")
-internal object DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("MODULE_THREAD_LOCAL_INITIALIZER")
 internal object DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("FILE_GLOBAL_INITIALIZER")
 internal object DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_THREAD_LOCAL_INITIALIZER")
 internal object DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_STANDALONE_THREAD_LOCAL_INITIALIZER")
@@ -35,10 +33,6 @@ internal val IrFunction.isFileInitializer: Boolean
     get() = origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
             || origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
             || origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
-
-internal val IrFunction.isModuleInitializer: Boolean
-    get() = origin == DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
-            || origin == DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
 
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
         irCall(initializer)
@@ -82,7 +76,7 @@ internal class FileInitializersLowering(val context: Context) : FileLoweringPass
                 else null
 
         irFile.simpleFunctions()
-                .filterNot { it.isModuleInitializer || it.origin == DECLARATION_ORIGIN_ENTRY_POINT }
+                .filterNot { it.origin == DECLARATION_ORIGIN_ENTRY_POINT }
                 .forEach {
                     val body = it.body ?: return@forEach
                     val statements = (body as IrBlockBody).statements

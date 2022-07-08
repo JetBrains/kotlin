@@ -12,21 +12,22 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -590,7 +591,7 @@ internal class TestProcessor (val context: Context) {
     }
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
-        val statements = mutableListOf<IrExpression>()
+        val statements = mutableListOf<IrStatement>()
 
         // There is no specified order on fake override functions, so to ensure all the tests are run deterministically,
         // sort the fake override functions by name.
@@ -619,19 +620,23 @@ internal class TestProcessor (val context: Context) {
         }
 
         if (statements.isNotEmpty()) {
-            context.irFactory.buildFun {
+            context.irFactory.buildField {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
-                origin = DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
-                name = Name.identifier("\$createTestSuites")
+                name = "createTestSuites".synthesizedName
                 visibility = DescriptorVisibilities.PRIVATE
-                returnType = context.irBuiltIns.unitType
+                isFinal = true
+                isStatic = true
+                type = context.irBuiltIns.unitType
             }.apply {
                 parent = irFile
                 irFile.declarations.add(this)
-
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
                 statements.forEach { it.accept(SetDeclarationsParentVisitor, this) }
-                body = IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, statements)
+                initializer = IrExpressionBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                        IrCompositeImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, null, statements)
+                )
             }
         }
     }
