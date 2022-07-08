@@ -24,7 +24,7 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         ).buildFirFile(Paths.get(filePath))
-        val firDump = FirRenderer().with(declarationRenderer = FirDeclarationRendererWithAttributes()).renderElementAsString(firFile)
+        val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
         val expectedFile = File(filePath.replace(".kt", ".txt"))
         KotlinTestUtils.assertEqualsToFile(expectedFile, firDump)

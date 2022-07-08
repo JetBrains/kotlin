@@ -28,27 +28,41 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
-class FirRenderer private constructor(
-    private val builder: StringBuilder,
-    components: FirComponentsImpl,
-    private val annotationRenderer: FirAnnotationRenderer?,
-    private val bodyRenderer: FirBodyRenderer?,
-    private val callArgumentsRenderer: FirCallArgumentsRenderer,
-    private val classMemberRenderer: FirClassMemberRenderer,
-    private val contractRenderer: ConeContractRenderer?,
-    private val declarationRenderer: FirDeclarationRenderer,
-    private val idRenderer: ConeIdRenderer,
-    private val modifierRenderer: FirModifierRenderer,
-    private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
-    private val propertyAccessorRenderer: FirPropertyAccessorRenderer?,
-    private val resolvePhaseRenderer: FirResolvePhaseRenderer?,
-    private val typeRenderer: ConeTypeRenderer,
-    private val valueParameterRenderer: FirValueParameterRenderer,
+class FirRenderer(
+    builder: StringBuilder = StringBuilder(),
+    private val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),
+    private val bodyRenderer: FirBodyRenderer? = FirBodyRenderer(),
+    private val callArgumentsRenderer: FirCallArgumentsRenderer = FirCallArgumentsRenderer(),
+    private val classMemberRenderer: FirClassMemberRenderer = FirClassMemberRenderer(),
+    private val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
+    private val declarationRenderer: FirDeclarationRenderer = FirDeclarationRenderer(),
+    private val idRenderer: ConeIdRenderer = ConeIdRendererForDebugging(),
+    private val modifierRenderer: FirModifierRenderer = FirAllModifierRenderer(),
+    private val packageDirectiveRenderer: FirPackageDirectiveRenderer? = null,
+    private val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
+    resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
+    private val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
+    private val valueParameterRenderer: FirValueParameterRenderer = FirValueParameterRenderer(),
 ) : FirPrinter(builder) {
 
     private val visitor = Visitor()
 
+    companion object {
+        fun noAnnotationBodiesAccessorAndArguments(): FirRenderer =
+            FirRenderer(
+                annotationRenderer = null, bodyRenderer = null, propertyAccessorRenderer = null,
+                callArgumentsRenderer = FirCallNoArgumentsRenderer()
+            )
+
+        fun withResolvePhase(): FirRenderer =
+            FirRenderer(resolvePhaseRenderer = FirResolvePhaseRenderer())
+
+        fun withDeclarationAttributes(): FirRenderer =
+            FirRenderer(declarationRenderer = FirDeclarationRendererWithAttributes())
+    }
+
     init {
+        val components = FirComponentsImpl()
         components.visitor = visitor
         components.annotationRenderer = annotationRenderer
         components.bodyRenderer = bodyRenderer
@@ -79,51 +93,6 @@ class FirRenderer private constructor(
         typeRenderer.idRenderer = idRenderer
         valueParameterRenderer.components = components
     }
-
-    private constructor(
-        builder: StringBuilder,
-        components: FirComponentsImpl,
-    ) : this(
-        builder,
-        components,
-        FirAnnotationRenderer(),
-        FirBodyRenderer(),
-        FirCallArgumentsRenderer(),
-        FirClassMemberRenderer(),
-        ConeContractRenderer(),
-        FirDeclarationRenderer(),
-        ConeIdRendererForDebugging(),
-        FirAllModifierRenderer(),
-        packageDirectiveRenderer = null,
-        FirPropertyAccessorRenderer(),
-        resolvePhaseRenderer = null,
-        ConeTypeRendererForDebugging(),
-        FirValueParameterRenderer(),
-    )
-
-    constructor(builder: StringBuilder = StringBuilder()) : this(builder, FirComponentsImpl())
-
-    fun with(
-        annotationRenderer: FirAnnotationRenderer? = this.annotationRenderer,
-        bodyRenderer: FirBodyRenderer? = this.bodyRenderer,
-        callArgumentsRenderer: FirCallArgumentsRenderer = this.callArgumentsRenderer,
-        classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
-        contractRenderer: ConeContractRenderer? = this.contractRenderer,
-        declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
-        idRenderer: ConeIdRenderer = this.idRenderer,
-        modifierRenderer: FirModifierRenderer = this.modifierRenderer,
-        packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
-        propertyAccessorRenderer: FirPropertyAccessorRenderer? = this.propertyAccessorRenderer,
-        resolvePhaseRenderer: FirResolvePhaseRenderer? = this.resolvePhaseRenderer,
-        typeRenderer: ConeTypeRenderer = this.typeRenderer,
-        valueParameterRenderer: FirValueParameterRenderer = this.valueParameterRenderer,
-    ): FirRenderer = FirRenderer(
-        builder, FirComponentsImpl(),
-        annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        contractRenderer, declarationRenderer, idRenderer, modifierRenderer,
-        packageDirectiveRenderer, propertyAccessorRenderer,
-        resolvePhaseRenderer, typeRenderer, valueParameterRenderer
-    )
 
     fun renderElementAsString(element: FirElement): String {
         element.accept(visitor)

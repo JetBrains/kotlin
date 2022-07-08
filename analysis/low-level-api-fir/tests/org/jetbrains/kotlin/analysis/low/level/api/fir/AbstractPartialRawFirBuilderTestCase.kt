@@ -127,7 +127,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
             null
         )
 
-        val firDump = FirRenderer().with(idRenderer = ConeIdFullRenderer()).renderElementAsString(firElement)
+        val firDump = FirRenderer(idRenderer = ConeIdFullRenderer()).renderElementAsString(firElement)
         JUnit5Assertions.assertEqualsToTestDataFileSibling(firDump)
     }
 

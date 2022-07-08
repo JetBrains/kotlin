@@ -66,7 +66,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
-        val firFileDump = FirRenderer().with(declarationRenderer = FirDeclarationRendererWithAttributes()).renderElementAsString(firFile)
+        val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }

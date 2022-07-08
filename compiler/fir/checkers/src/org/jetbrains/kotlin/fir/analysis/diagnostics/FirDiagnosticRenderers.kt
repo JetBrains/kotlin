@@ -27,7 +27,7 @@ object FirDiagnosticRenderers {
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol<*>,
-            is FirCallableSymbol<*> -> FirRenderer().with(
+            is FirCallableSymbol<*> -> FirRenderer(
                 typeRenderer = ConeTypeRenderer(),
                 idRenderer = ConeIdShortRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
@@ -103,7 +103,7 @@ object FirDiagnosticRenderers {
 
     val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
         @OptIn(SymbolInternals::class)
-        FirRenderer().with(
+        FirRenderer(
             annotationRenderer = null, bodyRenderer = null, idRenderer = ConeIdFullRenderer()
         ).renderElementAsString(symbol.fir)
     }

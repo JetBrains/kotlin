@@ -53,7 +53,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val resultBuilder = StringBuilder()
-        val renderer = FirRenderer(resultBuilder).with(
+        val renderer = FirRenderer(
+            builder = resultBuilder,
             declarationRenderer = FirDeclarationRendererWithAttributes(),
             resolvePhaseRenderer = FirResolvePhaseRenderer()
         )

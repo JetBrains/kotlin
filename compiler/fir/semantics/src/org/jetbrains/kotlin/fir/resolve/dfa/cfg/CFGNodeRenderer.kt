@@ -134,7 +134,7 @@ fun CFGNode<*>.render(): String =
 
 // NB: renderer has a state, so we have to create it each time
 private val CfgRenderer
-    get() = FirRenderer().with(annotationRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer())
+    get() = FirRenderer(annotationRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer())
 
 private fun FirFunction.name(): String = when (this) {
     is FirSimpleFunction -> name.asString()

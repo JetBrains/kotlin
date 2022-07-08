@@ -39,7 +39,8 @@ class FirDumpHandler(
             addAll(info.session.createFilesWithGeneratedDeclarations())
         }
 
-        val renderer = FirRenderer(builderForModule).with(
+        val renderer = FirRenderer(
+            builder = builderForModule,
             packageDirectiveRenderer = FirPackageDirectiveRenderer(),
             classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(info.session)
         )

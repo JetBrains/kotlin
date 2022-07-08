@@ -60,7 +60,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
     private fun render(firElement: FirElement?): String = when (firElement) {
         null -> "null"
         is FirImport -> "import ${firElement.importedFqName}"
-        else -> FirRenderer().with(packageDirectiveRenderer = FirPackageDirectiveRenderer()).renderElementAsString(firElement)
+        else -> FirRenderer(packageDirectiveRenderer = FirPackageDirectiveRenderer()).renderElementAsString(firElement)
     }
 
     private object Directives : SimpleDirectivesContainer() {
