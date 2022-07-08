@@ -9,18 +9,13 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtScript
 import javax.swing.Icon
 
@@ -157,27 +152,4 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
     }
 
     override fun toString() = "${KtLightClassForScript::class.java.simpleName}:${script.fqName}"
-
-    companion object {
-        fun create(script: KtScript): KtLightClassForScript? =
-            CachedValuesManager.getCachedValue(script) {
-                CachedValueProvider.Result
-                    .create(
-                        createNoCache(script),
-                        KotlinModificationTrackerService.getInstance(script.project).outOfBlockModificationTracker,
-                    )
-            }
-
-        fun createNoCache(script: KtScript): KtLightClassForScript? {
-            val containingFile = script.containingFile
-            if (containingFile is KtCodeFragment) {
-                // Avoid building light classes for code fragments
-                return null
-            }
-
-            return LightClassGenerationSupport.getInstance(script.project).run {
-                createUltraLightClassForScript(script)
-            }
-        }
-    }
 }

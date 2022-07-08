@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 
 object KotlinLightClassFactory {
     fun createClass(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
@@ -75,6 +76,26 @@ object KotlinLightClassFactory {
         val manager = PsiManager.getInstance(project)
         return LightClassGenerationSupport.getInstance(project).run {
             createUltraLightClassForFacade(manager, facadeClassFqName, listOf(file)) ?: error { "Unable to create UL class for facade" }
+        }
+    }
+
+    fun createScript(script: KtScript): KtLightClassForScript? =
+        CachedValuesManager.getCachedValue(script) {
+            CachedValueProvider.Result.create(
+                createScriptNoCache(script),
+                KotlinModificationTrackerService.getInstance(script.project).outOfBlockModificationTracker,
+            )
+        }
+
+    fun createScriptNoCache(script: KtScript): KtLightClassForScript? {
+        val containingFile = script.containingFile
+        if (containingFile is KtCodeFragment) {
+            // Avoid building light classes for code fragments
+            return null
+        }
+
+        return LightClassGenerationSupport.getInstance(script.project).run {
+            createUltraLightClassForScript(script)
         }
     }
 }
