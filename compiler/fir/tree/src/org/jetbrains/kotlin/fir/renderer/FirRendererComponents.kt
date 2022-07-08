@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
+
 internal interface FirRendererComponents {
     val visitor: FirRenderer.Visitor
     val printer: FirPrinter
@@ -13,6 +15,7 @@ internal interface FirRendererComponents {
     val bodyRenderer: FirBodyRenderer?
     val callArgumentsRenderer: FirCallArgumentsRenderer
     val classMemberRenderer: FirClassMemberRenderer
+    val contractRenderer: ConeContractRenderer?
     val modifierRenderer: FirModifierRenderer
     val packageDirectiveRenderer: FirPackageDirectiveRenderer?
     val propertyAccessorRenderer: FirPropertyAccessorRenderer?

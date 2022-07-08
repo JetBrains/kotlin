@@ -36,6 +36,7 @@ class FirRenderer private constructor(
     private val bodyRenderer: FirBodyRenderer?,
     private val callArgumentsRenderer: FirCallArgumentsRenderer,
     private val classMemberRenderer: FirClassMemberRenderer,
+    private val contractRenderer: ConeContractRenderer?,
     private val declarationRenderer: FirDeclarationRenderer,
     private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
@@ -64,6 +65,7 @@ class FirRenderer private constructor(
         bodyRenderer?.components = components
         callArgumentsRenderer.components = components
         classMemberRenderer.components = components
+        contractRenderer?.components = components
         declarationRenderer.components = components
         modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
@@ -84,6 +86,7 @@ class FirRenderer private constructor(
         FirBodyRenderer(),
         FirCallArgumentsRenderer(),
         FirClassMemberRenderer(),
+        ConeContractRenderer(),
         FirDeclarationRenderer(),
         FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
@@ -99,6 +102,7 @@ class FirRenderer private constructor(
         bodyRenderer: FirBodyRenderer? = this.bodyRenderer,
         callArgumentsRenderer: FirCallArgumentsRenderer = this.callArgumentsRenderer,
         classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
+        contractRenderer: ConeContractRenderer? = this.contractRenderer,
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
         modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
@@ -108,7 +112,7 @@ class FirRenderer private constructor(
     ): FirRenderer = FirRenderer(
         builder, mode, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        declarationRenderer, modifierRenderer, packageDirectiveRenderer,
+        contractRenderer, declarationRenderer, modifierRenderer, packageDirectiveRenderer,
         propertyAccessorRenderer, typeRenderer, valueParameterRenderer
     )
 
@@ -136,6 +140,8 @@ class FirRenderer private constructor(
         override var annotationRenderer: FirAnnotationRenderer? = null
 
         override var bodyRenderer: FirBodyRenderer? = null
+
+        override var contractRenderer: ConeContractRenderer? = null
 
         override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
 
@@ -1172,22 +1178,25 @@ class FirRenderer private constructor(
 
         override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
             newLine()
-            print("[Effect declaration]")
-            renderInBraces("<", ">") {
-                println(buildString { effectDeclaration.effect.accept(ConeContractRenderer(this), null) })
-            }
+            println("[Effect declaration] <")
+            contractRenderer?.let { effectDeclaration.effect.accept(it, null) }
+            println()
+            println(">")
         }
 
         override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription) {
             newLine()
             println("[R|Contract description]")
-            renderInBraces("<", ">") {
-                resolvedContractDescription.effects
-                    .map { it.effect }
-                    .forEach {
-                        println(buildString { it.accept(ConeContractRenderer(this), null) })
-                    }
+            println(" <")
+            pushIndent()
+            resolvedContractDescription.effects.forEach { declaration ->
+                contractRenderer?.let {
+                    declaration.effect.accept(it, null)
+                    println()
+                }
             }
+            popIndent()
+            println(">")
         }
 
         override fun visitContractDescription(contractDescription: FirContractDescription) {

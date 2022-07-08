@@ -5,61 +5,66 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.fir.renderer.FirRendererComponents
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDescriptionVisitor<Unit, Nothing?>() {
+class ConeContractRenderer : ConeContractDescriptionVisitor<Unit, Nothing?>() {
+
+    internal lateinit var components: FirRendererComponents
+    private val printer get() = components.printer
+
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
         conditionalEffect.effect.accept(this, data)
-        builder.append(" -> ")
+        printer.print(" -> ")
         conditionalEffect.condition.accept(this, data)
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Nothing?) {
-        builder.append("Returns(")
+        printer.print("Returns(")
         returnsEffect.value.accept(this, data)
-        builder.append(")")
+        printer.print(")")
     }
 
     override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Nothing?) {
-        builder.append("CallsInPlace(")
+        printer.print("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)
-        builder.append(", ${callsEffect.kind})")
+        printer.print(", ${callsEffect.kind})")
     }
 
     override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: ConeBinaryLogicExpression, data: Nothing?) {
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.left) { binaryLogicExpression.left.accept(this, data) }
-        builder.append(" ${binaryLogicExpression.kind.token} ")
+        printer.print(" ${binaryLogicExpression.kind.token} ")
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.right) { binaryLogicExpression.right.accept(this, data) }
     }
 
     override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Nothing?) {
-        inBracketsIfNecessary(logicalNot, logicalNot.arg) { builder.append("!") }
+        inBracketsIfNecessary(logicalNot, logicalNot.arg) { printer.print("!") }
         logicalNot.arg.accept(this, data)
     }
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Nothing?) {
         isInstancePredicate.arg.accept(this, data)
-        builder.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type.renderForDebugging()}")
+        printer.print(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type.renderForDebugging()}")
     }
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Nothing?) {
         isNullPredicate.arg.accept(this, data)
-        builder.append(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
+        printer.print(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
     }
 
     override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Nothing?) {
-        builder.append(constantReference.name)
+        printer.print(constantReference.name)
     }
 
     override fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: Nothing?) {
-        builder.append(valueParameterReference.name)
+        printer.print(valueParameterReference.name)
     }
 
     private fun inBracketsIfNecessary(parent: ConeContractDescriptionElement, child: ConeContractDescriptionElement, block: () -> Unit) {
         if (needsBrackets(parent, child)) {
-            builder.append("(")
+            printer.print("(")
             block()
-            builder.append(")")
+            printer.print(")")
         } else {
             block()
         }
