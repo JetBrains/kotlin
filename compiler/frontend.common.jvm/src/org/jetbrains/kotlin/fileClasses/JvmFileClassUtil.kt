@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fileClasses
@@ -19,19 +8,14 @@ package org.jetbrains.kotlin.fileClasses
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
-import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -68,9 +52,11 @@ object JvmFileClassUtil {
                         fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, file.name))),
                         facadeClassFqName = facadeClassFqName
                     )
+
                     else -> JvmSimpleFileClassInfo(facadeClassFqName, true)
                 }
             }
+
             else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file.name), false)
         }
     }
@@ -102,6 +88,7 @@ object JvmFileClassUtil {
                 else -> getArgumentExpression().safeAs<KtStringTemplateExpression>()
             }
         } ?: return null
+
         val singleEntry = stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
         return singleEntry.text
     }
@@ -135,24 +122,6 @@ private val LOG = Logger.getInstance("JvmFileClassUtil")
 
 fun KtDeclaration.isInsideJvmMultifileClassFile() =
     JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(containingKtFile, JVM_MULTIFILE_CLASS_SHORT) != null
-
-fun DeclarationDescriptor.isTopLevelInJvmMultifileClass(): Boolean {
-    if (containingDeclaration !is PackageFragmentDescriptor) return false
-
-    val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
-    if (declaration is KtDeclaration) {
-        return declaration.isInsideJvmMultifileClassFile()
-    }
-
-    if (this is DeserializedMemberDescriptor) {
-        val containerSource = containerSource
-        if (containerSource is JvmPackagePartSource && containerSource.facadeClassName != null) {
-            return true
-        }
-    }
-
-    return false
-}
 
 val FqName.internalNameWithoutInnerClasses: String
     get() = JvmClassName.byFqNameWithoutInnerClasses(this).internalName
