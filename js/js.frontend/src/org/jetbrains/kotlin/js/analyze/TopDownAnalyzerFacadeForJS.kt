@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.js.di.createContainerForJS
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractTopDownAnalyzerFacadeForJS {
 
@@ -51,11 +53,11 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         project: Project,
         configuration: CompilerConfiguration,
-        moduleDescriptors: List<ModuleDescriptorImpl>,
-        friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        moduleDescriptors: List<ModuleDescriptor>,
+        friendModuleDescriptors: List<ModuleDescriptor>,
         targetEnvironment: TargetEnvironment,
         thisIsBuiltInsModule: Boolean = false,
-        customBuiltInsModule: ModuleDescriptorImpl? = null
+        customBuiltInsModule: ModuleDescriptor? = null
     ): JsAnalysisResult {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
@@ -83,7 +85,8 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         }
 
         val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
-        context.module.setDependencies(dependencies.toList(), friendModuleDescriptors.toSet())
+        @Suppress("UNCHECKED_CAST")
+        context.module.safeAs<ModuleDescriptorImpl>()?.setDependencies(dependencies.toList() as List<ModuleDescriptorImpl>, friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>)
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 

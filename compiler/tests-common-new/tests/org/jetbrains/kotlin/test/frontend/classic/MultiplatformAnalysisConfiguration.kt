@@ -42,9 +42,9 @@ internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): Mul
 internal interface MultiplatformAnalysisConfiguration {
     fun getCompilerEnvironment(module: TestModule): TargetEnvironment
     fun getKtFilesForForSourceFiles(project: Project, module: TestModule): Map<TestFile, KtFile>
-    fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl>
-    fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl>
-    fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl>
+    fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor>
+    fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor>
+    fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor>
 }
 
 /**
@@ -63,18 +63,18 @@ internal class MultiplatformSeparateAnalysisConfiguration(
         return CompilerEnvironment
     }
 
-    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.allDependencies - module.dependsOnDependencies.toSet(),
             dependencyProvider, moduleDescriptorProvider
         )
     }
 
-    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
         return emptyList()
     }
 
-    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.friendDependencies, dependencyProvider, moduleDescriptorProvider
         )
@@ -121,7 +121,7 @@ internal class MultiplatformCompositeAnalysisConfiguration(
         return sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
     }
 
-    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         // Transitive dependsOn descriptors should also be returned as dependencies
         val allDependsOnDependencies = module.dependsOnDependencies.closure(preserveOrder = true) { dependsOnDependency ->
             dependencyProvider.getTestModule(dependsOnDependency.moduleName).dependsOnDependencies
@@ -130,11 +130,11 @@ internal class MultiplatformCompositeAnalysisConfiguration(
         return getDescriptors(allDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 
-    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(module.dependsOnDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 
-    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(module.friendDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 }
@@ -177,7 +177,7 @@ private fun getDescriptors(
     dependencies: Iterable<DependencyDescription>,
     dependencyProvider: DependencyProvider,
     moduleDescriptorProvider: ModuleDescriptorProvider
-): List<ModuleDescriptorImpl> {
+): List<ModuleDescriptor> {
     return dependencies.filter { it.kind == DependencyKind.Source }
         .map { dependencyDescription -> dependencyProvider.getTestModule(dependencyDescription.moduleName) }
         .map { dependencyModule -> moduleDescriptorProvider.getModuleDescriptor(dependencyModule) }

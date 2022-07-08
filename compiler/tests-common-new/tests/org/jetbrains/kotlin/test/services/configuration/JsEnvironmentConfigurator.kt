@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
@@ -176,7 +177,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
         }
 
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
             return getKlibDependencies(module, testServices, kind)
                 .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
         }
@@ -190,7 +191,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
             val visited = mutableSetOf<ModuleDescriptorImpl>()
-            fun getRecursive(descriptor: ModuleDescriptorImpl) {
+            fun getRecursive(descriptor: ModuleDescriptor) {
                 descriptor.allDependencyModules.forEach {
                     if (it is ModuleDescriptorImpl && it !in visited) {
                         visited += it
