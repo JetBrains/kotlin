@@ -28,7 +28,7 @@ open class FirValueParameterRenderer {
     }
 
     fun renderParameter(valueParameter: FirValueParameter) {
-        declarationRenderer.render(valueParameter)
+        declarationRenderer.renderPhaseAndAttributes(valueParameter)
         annotationRenderer?.render(valueParameter)
         modifierRenderer.renderModifiers(valueParameter)
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {

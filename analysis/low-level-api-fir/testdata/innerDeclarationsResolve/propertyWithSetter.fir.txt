@@ -5,8 +5,8 @@ FILE: propertyWithSetter.kt
         }
 
         public abstract [BODY_RESOLVE] var id: R|kotlin/Int|
-            [BODY_RESOLVE] public get(): R|kotlin/Int|
-            [BODY_RESOLVE] protected set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [BODY_RESOLVE] get(): R|kotlin/Int|
+            protected [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final [BODY_RESOLVE] class Bar : R|Foo| {
@@ -15,8 +15,8 @@ FILE: propertyWithSetter.kt
         }
 
         public final override [BODY_RESOLVE] var id: R|kotlin/Int| = Int(1)
-            [BODY_RESOLVE] public get(): R|kotlin/Int|
-            [BODY_RESOLVE] public set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [BODY_RESOLVE] get(): R|kotlin/Int|
+            public [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final [BODY_RESOLVE] fun test(): R|kotlin/Unit| {

@@ -5,14 +5,14 @@ FILE: propertyAccessorsContractDescription.kt
         }
 
         public? final? var myInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=MyClass] public? get(): Int
+            public? [ContainingClassKey=MyClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=MyClass] public? set(value: Int): R|kotlin/Unit| {
+            public? [ContainingClassKey=MyClass] set(value: Int): R|kotlin/Unit| {
                 field# = value#.times#(IntegerLiteral(10))
             }
 
@@ -23,14 +23,14 @@ FILE: propertyAccessorsContractDescription.kt
         }
 
         public? final? var anotherInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=AnotherClass] public? get(): Int
+            public? [ContainingClassKey=AnotherClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=AnotherClass] public? set(value: Int): R|kotlin/Unit|
+            public? [ContainingClassKey=AnotherClass] set(value: Int): R|kotlin/Unit|
                 [Contract description] <
                     returns#()
                 >
@@ -45,14 +45,14 @@ FILE: propertyAccessorsContractDescription.kt
         }
 
         public? final? var someInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=SomeClass] public? get(): Int
+            public? [ContainingClassKey=SomeClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=SomeClass] public? set(value: Int): R|kotlin/Unit|
+            public? [ContainingClassKey=SomeClass] set(value: Int): R|kotlin/Unit|
                 [Contract description] <
                     returns#().implies#(!=(value#, Null(null)))
                 >

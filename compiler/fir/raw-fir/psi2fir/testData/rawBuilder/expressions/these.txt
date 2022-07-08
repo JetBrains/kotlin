@@ -13,7 +13,7 @@ FILE: these.kt
         }
 
         public? final? val instance: Some
-            [ContainingClassKey=Some] public? get(): Some {
+            public? [ContainingClassKey=Some] get(): Some {
                 ^ this@Some#
             }
 

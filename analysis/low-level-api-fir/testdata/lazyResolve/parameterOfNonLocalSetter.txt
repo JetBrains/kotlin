@@ -7,8 +7,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): Int
-            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): Int
+            public? [RAW_FIR] [ContainingClassKey=X] set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -20,8 +20,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): Int
-            [RAW_FIR] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): Int
+            public? [RAW_FIR] [ContainingClassKey=X] set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -33,8 +33,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] var x: Int = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): Int
-            [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): Int
+            public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=X] set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -46,8 +46,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [COMPANION_GENERATION] var x: Int = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): Int
-            [COMPANION_GENERATION] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): Int
+            public? [COMPANION_GENERATION] [ContainingClassKey=X] set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -59,8 +59,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [SUPER_TYPES] var x: Int = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): Int
-            [SUPER_TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): Int
+            public? [SUPER_TYPES] [ContainingClassKey=X] set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -72,8 +72,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public? final? [TYPES] var x: R|kotlin/Int| = LAZY_EXPRESSION
-            [TYPES] [ContainingClassKey=X] public? get(): R|kotlin/Int|
-            [TYPES] [ContainingClassKey=X] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+            public? [TYPES] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public? [TYPES] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -85,8 +85,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [STATUS] var x: R|kotlin/Int| = LAZY_EXPRESSION
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [STATUS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [STATUS] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -98,8 +98,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = LAZY_EXPRESSION
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -111,8 +111,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [CONTRACTS] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [CONTRACTS] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -126,8 +126,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -141,8 +141,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 
@@ -156,8 +156,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [BODY_RESOLVE] [ContainingClassKey=X] set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 
@@ -171,8 +171,8 @@ FILE: parameterOfNonLocalSetter.kt
         }
 
         public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-            [BODY_RESOLVE] [ContainingClassKey=X] public get(): R|kotlin/Int|
-            [BODY_RESOLVE] [ContainingClassKey=X] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public [BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [BODY_RESOLVE] [ContainingClassKey=X] set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
 

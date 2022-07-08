@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
@@ -243,7 +242,7 @@ class FirRenderer(
 
         override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
             modifierRenderer.renderModifiers(memberDeclaration)
-            visitDeclaration(memberDeclaration as FirDeclaration)
+            declarationRenderer.render(memberDeclaration)
             when (memberDeclaration) {
                 is FirClassLikeDeclaration -> {
                     if (memberDeclaration is FirRegularClass) {
@@ -262,24 +261,6 @@ class FirRenderer(
                     }
                 }
             }
-        }
-
-        override fun visitDeclaration(declaration: FirDeclaration) {
-            declarationRenderer.render(declaration)
-            print(
-                when (declaration) {
-                    is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
-                    is FirTypeAlias -> "typealias"
-                    is FirSimpleFunction -> "fun"
-                    is FirProperty -> {
-                        val prefix = if (declaration.isLocal) "l" else ""
-                        prefix + if (declaration.isVal) "val" else "var"
-                    }
-                    is FirField -> "field"
-                    is FirEnumEntry -> "enum entry"
-                    else -> "unknown"
-                }
-            )
         }
 
         override fun visitRegularClass(regularClass: FirRegularClass) {
@@ -356,11 +337,6 @@ class FirRenderer(
             modifierRenderer.renderModifiers(constructor)
             declarationRenderer.render(constructor)
 
-            constructor.dispatchReceiverType?.let {
-                typeRenderer.render(it)
-                print(".")
-            }
-            print("constructor")
             constructor.typeParameters.renderTypeParameters()
             valueParameterRenderer.renderParameters(constructor.valueParameters)
             print(": ")
@@ -374,10 +350,9 @@ class FirRenderer(
         }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-            declarationRenderer.render(propertyAccessor)
             annotationRenderer?.render(propertyAccessor)
             modifierRenderer.renderModifiers(propertyAccessor)
-            print(if (propertyAccessor.isGetter) "get" else "set")
+            declarationRenderer.render(propertyAccessor)
             valueParameterRenderer.renderParameters(propertyAccessor.valueParameters)
             print(": ")
             propertyAccessor.returnTypeRef.accept(this)
@@ -390,13 +365,9 @@ class FirRenderer(
         }
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-            declarationRenderer.render(anonymousFunction)
             annotationRenderer?.render(anonymousFunction)
-            val label = anonymousFunction.label
-            if (label != null) {
-                print("${label.name}@")
-            }
-            print("fun ")
+            declarationRenderer.render(anonymousFunction)
+            print(" ")
             val receiverType = anonymousFunction.receiverTypeRef
             if (receiverType != null) {
                 receiverType.accept(this)
@@ -422,7 +393,7 @@ class FirRenderer(
 
         override fun visitFunction(function: FirFunction) {
             valueParameterRenderer.renderParameters(function.valueParameters)
-            visitDeclaration(function)
+            declarationRenderer.render(function)
             bodyRenderer?.render(function)
         }
 

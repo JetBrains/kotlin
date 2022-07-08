@@ -5,7 +5,7 @@ FILE: collectionLiterals.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val arr: IntArray = R|<local>/arr|
-            [ContainingClassKey=Ann1] public? get(): IntArray
+            public? [ContainingClassKey=Ann1] get(): IntArray
 
     }
     public? final? annotation class Ann2 : R|kotlin/Annotation| {
@@ -14,7 +14,7 @@ FILE: collectionLiterals.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val arr: DoubleArray = R|<local>/arr|
-            [ContainingClassKey=Ann2] public? get(): DoubleArray
+            public? [ContainingClassKey=Ann2] get(): DoubleArray
 
     }
     public? final? annotation class Ann3 : R|kotlin/Annotation| {
@@ -23,7 +23,7 @@ FILE: collectionLiterals.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val arr: Array<String> = R|<local>/arr|
-            [ContainingClassKey=Ann3] public? get(): Array<String>
+            public? [ContainingClassKey=Ann3] get(): Array<String>
 
     }
     @Ann1(<implicitArrayOf>()) @Ann2(<implicitArrayOf>()) @Ann3(<implicitArrayOf>()) public? final? class Zero : R|kotlin/Any| {

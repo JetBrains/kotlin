@@ -9,7 +9,7 @@ FILE: classMembers.kt
         public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [RAW_FIR] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -27,7 +27,7 @@ FILE: classMembers.kt
         public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [RAW_FIR] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -45,7 +45,7 @@ FILE: classMembers.kt
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [RAW_FIR] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -63,7 +63,7 @@ FILE: classMembers.kt
         public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [RAW_FIR] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -81,7 +81,7 @@ FILE: classMembers.kt
         public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [RAW_FIR] val x: Int = LAZY_EXPRESSION
-            [RAW_FIR] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [RAW_FIR] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -99,7 +99,7 @@ FILE: classMembers.kt
         public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
-            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -117,7 +117,7 @@ FILE: classMembers.kt
         public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
-            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -135,7 +135,7 @@ FILE: classMembers.kt
         public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
-            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -155,7 +155,7 @@ FILE: classMembers.kt
         }
 
         public? final? [SUPER_TYPES] val x: Int = LAZY_EXPRESSION
-            [SUPER_TYPES] [ContainingClassKey=A] public? get(): Int { LAZY_BLOCK }
+            public? [SUPER_TYPES] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
         public? final? [SUPER_TYPES] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -175,7 +175,7 @@ FILE: classMembers.kt
         }
 
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -195,7 +195,7 @@ FILE: classMembers.kt
         }
 
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final [STATUS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -215,7 +215,7 @@ FILE: classMembers.kt
         }
 
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            [STATUS] [ContainingClassKey=A] public get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/String|): R|kotlin/Unit| {
         }
@@ -238,7 +238,7 @@ FILE: classMembers.kt
         }
 
         public final [BODY_RESOLVE] [IsReferredViaField=true] val x: R|kotlin/Int| = Int(10)
-            [BODY_RESOLVE] [ContainingClassKey=A] public get(): R|kotlin/Int| {
+            public [BODY_RESOLVE] [ContainingClassKey=A] get(): R|kotlin/Int| {
                 ^ this@R|/A|.F|/A.x|
             }
 

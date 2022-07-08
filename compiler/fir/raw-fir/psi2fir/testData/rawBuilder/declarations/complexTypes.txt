@@ -14,6 +14,6 @@ FILE: complexTypes.kt
     }
     public? final? interface Test : R|kotlin/Any| {
         public? final? val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
-            [ContainingClassKey=Test] public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
+            public? [ContainingClassKey=Test] get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 
     }

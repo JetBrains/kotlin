@@ -5,10 +5,10 @@ FILE: lambda.kt
         }
 
         public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
-            [ContainingClassKey=Tuple] public? get(): Int
+            public? [ContainingClassKey=Tuple] get(): Int
 
         public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
-            [ContainingClassKey=Tuple] public? get(): Int
+            public? [ContainingClassKey=Tuple] get(): Int
 
         public final operator fun component1(): Int
 

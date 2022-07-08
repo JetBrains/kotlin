@@ -5,7 +5,7 @@ FILE: init.kt
         }
 
         public? final? val x: Int
-            [ContainingClassKey=WithInit] public? get(): Int
+            public? [ContainingClassKey=WithInit] get(): Int
 
         init {
             this#.x# = x#

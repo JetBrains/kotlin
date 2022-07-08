@@ -8,7 +8,7 @@ FILE: callableReferences.kt
         }
 
         public? final? val bar: <implicit> = IntegerLiteral(0)
-            [ContainingClassKey=A] public? get(): <implicit>
+            public? [ContainingClassKey=A] get(): <implicit>
 
     }
     public? final? fun A.qux(): R|kotlin/Unit| {

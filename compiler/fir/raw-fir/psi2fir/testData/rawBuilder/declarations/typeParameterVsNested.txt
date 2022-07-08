@@ -14,15 +14,15 @@ FILE: typeParameterVsNested.kt
         }
 
         public? abstract val x: T
-            [ContainingClassKey=My] public? get(): T
+            public? [ContainingClassKey=My] get(): T
 
         public? abstract fun foo(arg: T): R|kotlin/Unit|
 
         public? abstract val y: My.T
-            [ContainingClassKey=My] public? get(): My.T
+            public? [ContainingClassKey=My] get(): My.T
 
         public? abstract val z: test.My.T
-            [ContainingClassKey=My] public? get(): test.My.T
+            public? [ContainingClassKey=My] get(): test.My.T
 
         public? final? class Some : T {
             public? [ContainingClassKey=Some] constructor(): R|test/My.Some| {

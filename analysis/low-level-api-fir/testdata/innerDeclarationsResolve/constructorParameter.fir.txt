@@ -5,6 +5,6 @@ FILE: constructorParameter.kt
         }
 
         public final [BODY_RESOLVE] val x: R|kotlin/String| = R|<local>/x|
-            [BODY_RESOLVE] public get(): R|kotlin/String|
+            public [BODY_RESOLVE] get(): R|kotlin/String|
 
     }

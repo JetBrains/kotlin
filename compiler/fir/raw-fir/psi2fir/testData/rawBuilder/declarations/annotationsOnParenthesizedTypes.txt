@@ -16,19 +16,19 @@ FILE: annotationsOnParenthesizedTypes.kt
         public? final? fun returnArgument(): B<@A() C>
 
         public? final? val lambdaType: @A() ( () -> C )
-            [ContainingClassKey=AnnotationsOnParenthesizedTypes] public? get(): @A() ( () -> C )
+            public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): @A() ( () -> C )
 
         public? final? val lambdaParameter: ( (@A() C) -> C )
-            [ContainingClassKey=AnnotationsOnParenthesizedTypes] public? get(): ( (@A() C) -> C )
+            public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): ( (@A() C) -> C )
 
         public? final? val lambdaReturnValue: ( () -> @A() C )
-            [ContainingClassKey=AnnotationsOnParenthesizedTypes] public? get(): ( () -> @A() C )
+            public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): ( () -> @A() C )
 
         public? final? val lambdaReceiver: ( @A() C.() -> C )
-            [ContainingClassKey=AnnotationsOnParenthesizedTypes] public? get(): ( @A() C.() -> C )
+            public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): ( @A() C.() -> C )
 
         public? final? val lambdaParameterNP: ( (@A() C) -> C )
-            [ContainingClassKey=AnnotationsOnParenthesizedTypes] public? get(): ( (@A() C) -> C )
+            public? [ContainingClassKey=AnnotationsOnParenthesizedTypes] get(): ( (@A() C) -> C )
 
     }
     @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public? final? annotation class A : R|kotlin/Annotation| {

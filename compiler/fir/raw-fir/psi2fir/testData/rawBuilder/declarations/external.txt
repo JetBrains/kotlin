@@ -16,8 +16,8 @@ FILE: external.kt
         public? final? external fun bar(): String
 
         public? final? var y: Int
-            [ContainingClassKey=NotExternal] public? external get(): Int
-            [ContainingClassKey=NotExternal] public? set(value: Int): R|kotlin/Unit| {
+            public? external [ContainingClassKey=NotExternal] get(): Int
+            public? [ContainingClassKey=NotExternal] set(value: Int): R|kotlin/Unit| {
             }
 
     }
