@@ -4,7 +4,7 @@
  */
 
 fun interface Foo<T> {
-    fun bar(x: T): Any
+    fun bar(x: T): Int
 }
 
 fun baz(x: Any): Int = x.hashCode()

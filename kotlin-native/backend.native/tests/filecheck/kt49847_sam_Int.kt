@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-class C {
-    fun foo(x: Int) = x
+fun interface Foo {
+    fun bar(x: Int): Int
 }
+
+fun baz(x: Int): Int = x.hashCode()
 
 // CHECK: define void @"kfun:#main(){}"()
 // CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// TODO Invert next check after fix of https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
-// CHECK: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 // CHECK: ret void
 fun main() {
-    val c = C()
-    val fooref = c::foo
-    if( fooref(42) == 42)
-        println("ok")
+    val foo: Foo = Foo(::baz)
+    if( foo.bar(42) == 42 )
+        println("passed")
 }

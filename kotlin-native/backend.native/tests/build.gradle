@@ -6152,33 +6152,39 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
     annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
 }
 
-fileCheckTest("filecheck_kt49847_redundant_boxing_unboxing") {
-    annotatedSource = project.file('filecheck/kt49847_redundant_boxing_unboxing.kt')
+fileCheckTest("filecheck_kt49847_simple_function_reference") {
+    annotatedSource = project.file('filecheck/kt49847_simple_function_reference.kt')
     enabled = project.globalTestArgs.contains('-opt')
 }
 
-fileCheckTest("filecheck_kt49847_sam") {
-    annotatedSource = project.file('filecheck/kt49847_sam.kt')
+fileCheckTest("filecheck_kt49847_sam_Any") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Any.kt')
     enabled = project.globalTestArgs.contains('-opt')
 }
 
-fileCheckTest("filecheck_kt49847_sam_generic") {
-    annotatedSource = project.file('filecheck/kt49847_sam_generic.kt')
+fileCheckTest("filecheck_kt49847_sam_Int") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Int.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Any_generic") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Any_generic.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Int_generic") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Int_generic.kt')
     enabled = project.globalTestArgs.contains('-opt')
 }
 
 fileCheckTest("filecheck_kt49847_class") {
     annotatedSource = project.file('filecheck/kt49847_class.kt')
     enabled = project.globalTestArgs.contains('-opt')
-    // TODO add the following check to test file, after fix https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
-    // CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 }
 
 fileCheckTest("filecheck_kt49847_generic") {
     annotatedSource = project.file('filecheck/kt49847_generic.kt')
     enabled = project.globalTestArgs.contains('-opt')
-    // TODO add the following check to test file, after fix https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
-    // CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 }
 
 fileCheckTest("filecheck_intrinsics") {

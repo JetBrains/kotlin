@@ -186,7 +186,8 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 else -> context.irBuiltIns.anyNType
             }
         }
-        private val functionReturnType = if (samSuperType != null) referencedFunction.returnType else functionParameterAndReturnTypes.last()
+        private val functionParameterTypes = functionParameterAndReturnTypes.dropLast(1)
+        private val functionReturnType = functionParameterAndReturnTypes.last()
 
         private val isLambda = functionReference.origin.isLambda
         private val isKFunction = functionReference.type.isKFunction()
@@ -272,7 +273,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                         lastParameterType as IrSimpleType
                         // If the last parameter is Continuation<> inherit from SuspendFunction.
                         suspendFunctionClass = symbols.suspendFunctionN(numberOfParameters - 1).owner
-                        val suspendFunctionClassTypeParameters = functionParameterAndReturnTypes.dropLast(2) +
+                        val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                                 (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
                         superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)
                     }
@@ -437,9 +438,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         }
 
         private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction {
-            val typeSubstitution = superFunction.parentAsClass.typeParameters.withIndex().associate {
-                it.value.symbol to functionParameterAndReturnTypes[it.index]
-            }
             return IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
@@ -467,7 +465,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = parameter.type.substitute(typeSubstitution))
+                            type = functionParameterTypes[index])
                 }
 
                 overriddenSymbols += superFunction.symbol
