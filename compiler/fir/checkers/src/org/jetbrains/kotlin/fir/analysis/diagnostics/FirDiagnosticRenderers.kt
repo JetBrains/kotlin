@@ -35,6 +35,7 @@ object FirDiagnosticRenderers {
                 classMemberRenderer = FirNoClassMemberRenderer(),
                 bodyRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+                modifierRenderer = FirPartialModifierRenderer(),
             ).renderElementAsString(symbol.fir)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"

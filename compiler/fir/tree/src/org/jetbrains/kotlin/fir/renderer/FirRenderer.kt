@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
@@ -42,16 +38,10 @@ open class FirRenderer private constructor(
     private val callArgumentsRenderer: FirCallArgumentsRenderer,
     private val classMemberRenderer: FirClassMemberRenderer,
     private val declarationRenderer: FirDeclarationRenderer,
+    private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
     private val typeRenderer: ConeTypeRenderer
 ) : FirPrinter(builder) {
-
-    companion object {
-        private val visibilitiesToRenderEffectiveSet = setOf(
-            Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
-            Visibilities.Protected, Visibilities.Public, Visibilities.Local
-        )
-    }
 
     private val visitor = Visitor()
 
@@ -62,6 +52,7 @@ open class FirRenderer private constructor(
         components.callArgumentsRenderer = callArgumentsRenderer
         components.classMemberRenderer = classMemberRenderer
         components.declarationRenderer = declarationRenderer
+        components.modifierRenderer = modifierRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
         components.typeRenderer = typeRenderer
         @Suppress("LeakingThis")
@@ -71,6 +62,7 @@ open class FirRenderer private constructor(
         callArgumentsRenderer.components = components
         classMemberRenderer.components = components
         declarationRenderer.components = components
+        modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
         typeRenderer.builder = builder
     }
@@ -88,6 +80,7 @@ open class FirRenderer private constructor(
         FirCallArgumentsRenderer(),
         FirClassMemberRenderer(),
         FirDeclarationRenderer(),
+        FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
         ConeTypeRendererForDebugging(),
     )
@@ -100,12 +93,13 @@ open class FirRenderer private constructor(
         callArgumentsRenderer: FirCallArgumentsRenderer = this.callArgumentsRenderer,
         classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
+        modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
         typeRenderer: ConeTypeRenderer = this.typeRenderer
     ): FirRenderer = FirRenderer(
         builder, mode, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        declarationRenderer, packageDirectiveRenderer, typeRenderer
+        declarationRenderer, modifierRenderer, packageDirectiveRenderer, typeRenderer
     )
 
     fun renderElementAsString(element: FirElement): String {
@@ -141,6 +135,8 @@ open class FirRenderer private constructor(
 
         override lateinit var declarationRenderer: FirDeclarationRenderer
 
+        override lateinit var modifierRenderer: FirModifierRenderer
+
         override lateinit var typeRenderer: ConeTypeRenderer
 
         override lateinit var visitor: Visitor
@@ -152,7 +148,6 @@ open class FirRenderer private constructor(
         val renderCallableFqNames: Boolean,
         val renderPropertyAccessors: Boolean = true,
         val renderDefaultParameterValues: Boolean = true,
-        val renderAllModifiers: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -172,7 +167,6 @@ open class FirRenderer private constructor(
                 renderCallableFqNames = false,
                 renderPropertyAccessors = false,
                 renderDefaultParameterValues = false,
-                renderAllModifiers = false,
             )
         }
     }
@@ -215,29 +209,6 @@ open class FirRenderer private constructor(
         pushIndent()
         contractDescription.accept(visitor)
         popIndent()
-    }
-
-    private fun Visibility.asString(effectiveVisibility: EffectiveVisibility? = null): String {
-        val itself = when (this) {
-            Visibilities.Unknown -> return "public?"
-            else -> toString()
-        }
-        if (effectiveVisibility == null) return itself
-        val effectiveAsVisibility = effectiveVisibility.toVisibility()
-        if (effectiveAsVisibility == this) return itself
-        if (effectiveAsVisibility == Visibilities.Private && this == Visibilities.PrivateToThis) return itself
-        if (this !in visibilitiesToRenderEffectiveSet) return itself
-        return itself + "[${effectiveVisibility.name}]"
-    }
-
-    private fun FirMemberDeclaration.modalityAsString(): String {
-        return modality?.name?.toLowerCaseAsciiOnly() ?: run {
-            if (this is FirCallableDeclaration && this.isOverride) {
-                "open?"
-            } else {
-                "final?"
-            }
-        }
     }
 
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
@@ -350,73 +321,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-            if (mode.renderAllModifiers && (memberDeclaration !is FirProperty || !memberDeclaration.isLocal)) {
-                // we can't access session.effectiveVisibilityResolver from here!
-                // print(memberDeclaration.visibility.asString(memberDeclaration.getEffectiveVisibility(...)) + " ")
-                print(memberDeclaration.visibility.asString() + " ")
-                print(memberDeclaration.modalityAsString() + " ")
-            }
-            if (memberDeclaration.isExpect) {
-                print("expect ")
-            }
-            if (memberDeclaration.isActual) {
-                print("actual ")
-            }
-            if (mode.renderAllModifiers) {
-                if (memberDeclaration.isExternal) {
-                    print("external ")
-                }
-                if (memberDeclaration.isOverride) {
-                    print("override ")
-                }
-            }
-            if (memberDeclaration.isStatic) {
-                print("static ")
-            }
-            if (memberDeclaration.isInner) {
-                print("inner ")
-            }
-
-            // `companion/data/fun` modifiers are only valid for FirRegularClass, but we render them to make sure they are not
-            // incorrectly loaded for other declarations during deserialization.
-            if (memberDeclaration.status.isCompanion) {
-                print("companion ")
-            }
-            if (memberDeclaration.status.isData) {
-                print("data ")
-            }
-            // All Java interfaces are considered `fun` (functional interfaces) for resolution purposes
-            // (see JavaSymbolProvider.createFirJavaClass). Don't render `fun` for Java interfaces; it's not a modifier in Java.
-            val isJavaInterface =
-                memberDeclaration is FirRegularClass && memberDeclaration.classKind == ClassKind.INTERFACE && memberDeclaration.isJava
-            if (memberDeclaration.status.isFun && !isJavaInterface) {
-                print("fun ")
-            }
-
-            if (mode.renderAllModifiers) {
-                if (memberDeclaration.isInline) {
-                    print("inline ")
-                }
-                if (memberDeclaration.isOperator) {
-                    print("operator ")
-                }
-                if (memberDeclaration.isInfix) {
-                    print("infix ")
-                }
-                if (memberDeclaration.isTailRec) {
-                    print("tailrec ")
-                }
-                if (memberDeclaration.isSuspend) {
-                    print("suspend ")
-                }
-                if (memberDeclaration.isConst) {
-                    print("const ")
-                }
-                if (memberDeclaration.isLateInit) {
-                    print("lateinit ")
-                }
-            }
-
+            modifierRenderer.renderModifiers(memberDeclaration)
             visitDeclaration(memberDeclaration as FirDeclaration)
             when (memberDeclaration) {
                 is FirClassLikeDeclaration -> {
@@ -526,7 +431,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
-            print(backingField.visibility.asString() + " ")
+            modifierRenderer.renderModifiers(backingField)
             print("<explicit backing field>: ")
             backingField.returnTypeRef.accept(this)
 
@@ -546,15 +451,7 @@ open class FirRenderer private constructor(
 
         override fun visitConstructor(constructor: FirConstructor) {
             annotationRenderer?.render(constructor)
-            // we can't access session.effectiveVisibilityResolver from here!
-            // print(constructor.visibility.asString(constructor.getEffectiveVisibility(...)) + " ")
-            print(constructor.visibility.asString() + " ")
-            if (constructor.isExpect) {
-                print("expect ")
-            }
-            if (constructor.isActual) {
-                print("actual ")
-            }
+            modifierRenderer.renderModifiers(constructor)
             declarationRenderer.render(constructor)
 
             constructor.dispatchReceiverType?.let {
@@ -577,9 +474,7 @@ open class FirRenderer private constructor(
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
             declarationRenderer.render(propertyAccessor)
             annotationRenderer?.render(propertyAccessor)
-            print(propertyAccessor.visibility.asString() + " ")
-            print(if (propertyAccessor.isInline) "inline " else "")
-            print(if (propertyAccessor.isExternal) "external " else "")
+            modifierRenderer.renderModifiers(propertyAccessor)
             print(if (propertyAccessor.isGetter) "get" else "set")
             propertyAccessor.valueParameters.renderParameters()
             print(": ")
@@ -648,9 +543,7 @@ open class FirRenderer private constructor(
 
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
             annotationRenderer?.render(typeParameter)
-            if (typeParameter.isReified) {
-                print("reified ")
-            }
+            modifierRenderer.renderModifiers(typeParameter)
             typeParameter.variance.renderVariance()
             print(typeParameter.name)
 
@@ -681,15 +574,7 @@ open class FirRenderer private constructor(
         override fun visitValueParameter(valueParameter: FirValueParameter) {
             declarationRenderer.render(valueParameter)
             annotationRenderer?.render(valueParameter)
-            if (valueParameter.isCrossinline) {
-                print("crossinline ")
-            }
-            if (valueParameter.isNoinline) {
-                print("noinline ")
-            }
-            if (valueParameter.isVararg) {
-                print("vararg ")
-            }
+            modifierRenderer.renderModifiers(valueParameter)
             if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
                 print(valueParameter.name.toString() + ": ")
             }
@@ -974,9 +859,7 @@ open class FirRenderer private constructor(
 
             annotationRenderer?.renderAnnotations(functionTypeRef.annotations.dropExtensionFunctionAnnotation())
             print("( ")
-            if (functionTypeRef.isSuspend) {
-                print("suspend ")
-            }
+            modifierRenderer.renderModifiers(functionTypeRef)
             functionTypeRef.receiverTypeRef?.let {
                 it.accept(this)
                 print(".")
