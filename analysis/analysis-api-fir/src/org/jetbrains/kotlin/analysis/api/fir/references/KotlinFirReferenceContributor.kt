@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 

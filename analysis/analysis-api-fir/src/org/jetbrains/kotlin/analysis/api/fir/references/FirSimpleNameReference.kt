@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertyS
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression,

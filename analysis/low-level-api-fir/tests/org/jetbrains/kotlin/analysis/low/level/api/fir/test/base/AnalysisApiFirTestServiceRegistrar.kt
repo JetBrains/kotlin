@@ -12,6 +12,7 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
 import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -49,6 +51,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(SymbolLightClassFacadeCache::class.java)
             registerService(KotlinAsJavaSupport::class.java, KotlinAsJavaFirSupport(project))
             registerService(KtCompilerPluginsProvider::class.java, KtCompilerPluginsProviderForTests(project))
+            registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
         }
 
         with(PsiElementFinder.EP.getPoint(project)) {

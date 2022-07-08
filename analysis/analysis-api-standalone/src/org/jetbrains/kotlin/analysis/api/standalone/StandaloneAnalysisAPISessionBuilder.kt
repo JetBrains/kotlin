@@ -14,6 +14,7 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementDefaultLifetimeTokenProvider
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
 import org.jetbrains.kotlin.light.classes.symbol.KotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -152,6 +154,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(SymbolLightClassFacadeCache::class.java, SymbolLightClassFacadeCache(this))
             registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
             registerService(KotlinAsJavaSupport::class.java, KotlinAsJavaFirSupport(this))
+            registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
         }
 
         @Suppress("DEPRECATION")
