@@ -3,13 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:JvmName("KtLightModifierListDescriptorBasedKt")
+
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.psi.*
-import com.intellij.util.IncorrectOperationException
+import com.intellij.psi.CommonClassNames
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.fastCheckIsNullabilityApplied
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -21,46 +27,9 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
-    protected val owner: T
-) : KtLightElementBase(owner), PsiModifierList, KtLightElement<KtModifierList, PsiModifierList> {
-    private val _annotations by lazyPub {
-        val annotations = computeAnnotations()
-        annotationsFilter?.let(annotations::filter) ?: annotations
-    }
-
-    protected open val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean)? = null
-
-    override val kotlinOrigin: KtModifierList?
-        get() = owner.kotlinOrigin?.modifierList
-
-    override fun getParent() = owner
-
-    override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
-
-    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
-
-    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
-
-    override fun getApplicableAnnotations(): Array<out PsiAnnotation> = annotations
-
-    override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.toTypedArray()
-    override fun findAnnotation(qualifiedName: String) = _annotations.firstOrNull { it.fqNameMatches(qualifiedName) }
-
-    override fun isEquivalentTo(another: PsiElement?) =
-        another is KtLightModifierList<*> && owner == another.owner
-
-    override fun isWritable() = false
-
-    override fun toString() = "Light modifier list of $owner"
-
-    open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> = emptyList()
-
-    private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
+abstract class KtLightModifierListDescriptorBased<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner: T) :
+    KtLightModifierList<T>(owner) {
+    override fun computeAnnotations(): List<KtLightAbstractAnnotation> {
         val annotationsForEntries = owner.givenAnnotations ?: lightAnnotationsForEntries(this)
         //TODO: Hacky way to update wrong parents for annotations
         annotationsForEntries.forEach {
@@ -98,7 +67,7 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 class KtUltraLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
     private val modifiers: Set<String>,
-) : KtUltraLightModifierListBase<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
+) : KtLightModifierListDescriptorBased<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
     override fun hasModifierProperty(name: String) = name in modifiers
 
     override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers)
@@ -107,7 +76,7 @@ class KtUltraLightSimpleModifierList(
 abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     owner: T,
     protected val support: KtUltraLightSupport
-) : KtUltraLightModifierListBase<T>(owner) {
+) : KtLightModifierListDescriptorBased<T>(owner) {
 
     protected open fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = null
 
@@ -132,13 +101,9 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     }
 }
 
-abstract class KtUltraLightModifierListBase<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
-    owner: T
-) : KtLightModifierList<T>(owner)
-
 class KtLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
-) : KtLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
+) : KtLightModifierListDescriptorBased<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
     override fun hasModifierProperty(name: String) = name in modifiers
 
     override fun copy() = KtLightSimpleModifierList(owner, modifiers)

@@ -10,7 +10,7 @@ import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierListDescriptorBased
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
-    KtLightModifierList<KtLightClassForSourceDeclaration>(containingClass) {
+    KtLightModifierListDescriptorBased<KtLightClassForSourceDeclaration>(containingClass) {
 
     private val modifiers by lazyPub { computeModifiers() }
 
