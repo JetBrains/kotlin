@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
+
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
@@ -298,7 +300,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LIBRARIES_TO_CACHE, parseLibrariesToCache(arguments, configuration, outputKind))
                 val libraryToAddToCache = parseLibraryToAddToCache(arguments, configuration, outputKind)
                 if (libraryToAddToCache != null && !arguments.outputName.isNullOrEmpty())
-                    configuration.report(ERROR, "$ADD_CACHE already implicitly sets output file name")
+                    configuration.report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} already implicitly sets output file name")
                 val cacheDirectories = arguments.cacheDirectories.toNonNullList()
                 libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
                 put(CACHE_DIRECTORIES, cacheDirectories)
@@ -424,7 +426,7 @@ private fun selectFrameworkType(
     return if (outputKind != CompilerOutputKind.FRAMEWORK && arguments.staticFramework) {
         configuration.report(
             STRONG_WARNING,
-            "'$STATIC_FRAMEWORK_FLAG' is only supported when producing frameworks, " +
+            "'${K2NativeCompilerArguments.STATIC_FRAMEWORK_FLAG}' is only supported when producing frameworks, " +
             "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         false
@@ -454,7 +456,7 @@ private fun selectBitcodeEmbeddingMode(
         if (arguments.embedBitcode) {
             configuration.report(
                     STRONG_WARNING,
-                    "'$EMBED_BITCODE_FLAG' is ignored because '$EMBED_BITCODE_MARKER_FLAG' is specified"
+                    "'${K2NativeCompilerArguments.EMBED_BITCODE_FLAG}' is ignored because '${K2NativeCompilerArguments.EMBED_BITCODE_MARKER_FLAG}' is specified"
             )
         }
         BitcodeEmbedding.Mode.MARKER
@@ -494,7 +496,7 @@ private fun selectIncludes(
     return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
             ERROR,
-            "The $INCLUDE_ARG flag is not supported when producing ${outputKind.name.lowercase()}"
+            "The ${K2NativeCompilerArguments.INCLUDE_ARG} flag is not supported when producing ${outputKind.name.lowercase()}"
         )
         emptyList()
     } else {
@@ -510,7 +512,7 @@ private fun parseCachedLibraries(
     if (libraryAndCache.size != 2) {
         configuration.report(
                 ERROR,
-                "incorrect $CACHED_LIBRARY format: expected '<library>,<cache>', got '$it'"
+                "incorrect ${K2NativeCompilerArguments.CACHED_LIBRARY} format: expected '<library>,<cache>', got '$it'"
         )
         null
     } else {
@@ -526,10 +528,13 @@ private fun parseLibrariesToCache(
     val input = arguments.librariesToCache?.asList().orEmpty()
 
     return if (input.isNotEmpty() && !outputKind.isCache) {
-        configuration.report(ERROR, "$MAKE_CACHE can't be used when not producing cache")
+        configuration.report(ERROR, "${K2NativeCompilerArguments.MAKE_CACHE} can't be used when not producing cache")
         emptyList()
     } else if (input.isNotEmpty() && !arguments.libraryToAddToCache.isNullOrEmpty()) {
-        configuration.report(ERROR, "supplied both $MAKE_CACHE and $ADD_CACHE options")
+        configuration.report(
+                ERROR,
+                "supplied both ${K2NativeCompilerArguments.MAKE_CACHE} and ${K2NativeCompilerArguments.ADD_CACHE} options"
+        )
         emptyList()
     } else {
         input
@@ -544,7 +549,7 @@ private fun parseLibraryToAddToCache(
     val input = arguments.libraryToAddToCache
 
     return if (input != null && !outputKind.isCache) {
-        configuration.report(ERROR, "$ADD_CACHE can't be used when not producing cache")
+        configuration.report(ERROR, "${K2NativeCompilerArguments.ADD_CACHE} can't be used when not producing cache")
         null
     } else {
         input
@@ -562,7 +567,7 @@ private fun parseShortModuleName(
     return if (input != null && outputKind != CompilerOutputKind.LIBRARY) {
         configuration.report(
                 STRONG_WARNING,
-                "$SHORT_MODULE_NAME_ARG is only supported when producing a Kotlin library, " +
+                "${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG} is only supported when producing a Kotlin library, " +
                     "but the compiler is producing ${outputKind.name.lowercase()}"
         )
         null
