@@ -114,47 +114,35 @@ class FirRenderer(
         visitor.visitMemberDeclaration(firClass)
     }
 
-    private class FirComponentsImpl : FirRendererComponents {
-        override var annotationRenderer: FirAnnotationRenderer? = null
-
-        override var bodyRenderer: FirBodyRenderer? = null
-
-        override var contractRenderer: ConeContractRenderer? = null
-
-        override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
-
-        override var propertyAccessorRenderer: FirPropertyAccessorRenderer? = null
-
-        override var resolvePhaseRenderer: FirResolvePhaseRenderer? = null
-
-        override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
-
-        override lateinit var classMemberRenderer: FirClassMemberRenderer
-
-        override lateinit var declarationRenderer: FirDeclarationRenderer
-
-        override lateinit var idRenderer: ConeIdRenderer
-
-        override lateinit var modifierRenderer: FirModifierRenderer
-
-        override lateinit var typeRenderer: ConeTypeRenderer
-
-        override lateinit var valueParameterRenderer: FirValueParameterRenderer
-
-        override lateinit var visitor: Visitor
-
-        override lateinit var printer: FirPrinter
+    fun renderAnnotations(annotationContainer: FirAnnotationContainer) {
+        annotationRenderer?.render(annotationContainer)
     }
 
-    private fun List<ConeKotlinType>.renderTypesSeparated() {
-        for ((index, element) in this.withIndex()) {
-            if (index > 0) {
-                print(", ")
-            }
-            print(element.renderForDebugging())
+    fun renderSupertypes(regularClass: FirRegularClass) {
+        if (regularClass.superTypeRefs.isNotEmpty()) {
+            print(" : ")
+            renderSeparated(regularClass.superTypeRefs, visitor)
         }
     }
 
+    private class FirComponentsImpl : FirRendererComponents {
+        override var annotationRenderer: FirAnnotationRenderer? = null
+        override var bodyRenderer: FirBodyRenderer? = null
+        override var contractRenderer: ConeContractRenderer? = null
+        override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
+        override var propertyAccessorRenderer: FirPropertyAccessorRenderer? = null
+        override var resolvePhaseRenderer: FirResolvePhaseRenderer? = null
+
+        override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
+        override lateinit var classMemberRenderer: FirClassMemberRenderer
+        override lateinit var declarationRenderer: FirDeclarationRenderer
+        override lateinit var idRenderer: ConeIdRenderer
+        override lateinit var modifierRenderer: FirModifierRenderer
+        override lateinit var typeRenderer: ConeTypeRenderer
+        override lateinit var valueParameterRenderer: FirValueParameterRenderer
+        override lateinit var visitor: Visitor
+        override lateinit var printer: FirPrinter
+    }
 
     private fun Variance.renderVariance() {
         label.let {
@@ -173,13 +161,6 @@ class FirRenderer(
         newLine()
     }
 
-    private fun FirDeclaration.renderContractDescription() {
-        val contractDescription = (this as? FirContractDescriptionOwner)?.contractDescription ?: return
-        pushIndent()
-        contractDescription.accept(visitor)
-        popIndent()
-    }
-
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
         if (isNotEmpty()) {
             print("<")
@@ -194,27 +175,6 @@ class FirRenderer(
             renderSeparated(this, visitor)
             print(">")
         }
-    }
-
-    fun renderSupertypes(regularClass: FirRegularClass) {
-        if (regularClass.superTypeRefs.isNotEmpty()) {
-            print(" : ")
-            renderSeparated(regularClass.superTypeRefs, visitor)
-        }
-    }
-
-    fun renderAnnotations(annotationContainer: FirAnnotationContainer) {
-        annotationRenderer?.render(annotationContainer)
-    }
-
-    fun renderClassDeclarations(regularClass: FirRegularClass) {
-        classMemberRenderer.render(regularClass)
-    }
-
-    private fun visitAssignment(operation: FirOperation, rValue: FirExpression) {
-        print(operation.operator)
-        print(" ")
-        rValue.accept(visitor)
     }
 
     inner class Visitor internal constructor() : FirVisitorVoid() {
@@ -266,7 +226,7 @@ class FirRenderer(
             }
             print(": ")
             callableDeclaration.returnTypeRef.accept(this)
-            callableDeclaration.renderContractDescription()
+            contractRenderer?.render(callableDeclaration)
         }
 
         override fun visitContextReceiver(contextReceiver: FirContextReceiver) {
@@ -327,7 +287,7 @@ class FirRenderer(
             annotationRenderer?.render(regularClass)
             visitMemberDeclaration(regularClass)
             renderSupertypes(regularClass)
-            renderClassDeclarations(regularClass)
+            classMemberRenderer.render(regularClass)
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {
@@ -421,7 +381,7 @@ class FirRenderer(
             valueParameterRenderer.renderParameters(propertyAccessor.valueParameters)
             print(": ")
             propertyAccessor.returnTypeRef.accept(this)
-            propertyAccessor.renderContractDescription()
+            contractRenderer?.render(propertyAccessor)
             bodyRenderer?.render(propertyAccessor)
         }
 
@@ -879,9 +839,12 @@ class FirRenderer(
             if (resolvedNamedReference is FirResolvedCallableReference) {
                 if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
                     print("<")
-
-                    resolvedNamedReference.inferredTypeArguments.renderTypesSeparated()
-
+                    for ((index, element) in resolvedNamedReference.inferredTypeArguments.withIndex()) {
+                        if (index > 0) {
+                            print(", ")
+                        }
+                        typeRenderer.render(element)
+                    }
                     print(">")
                 }
             }
@@ -1007,7 +970,9 @@ class FirRenderer(
             visitQualifiedAccess(variableAssignment)
             variableAssignment.lValue.accept(this)
             print(" ")
-            visitAssignment(FirOperation.ASSIGN, variableAssignment.rValue)
+            print(FirOperation.ASSIGN.operator)
+            print(" ")
+            variableAssignment.rValue.accept(visitor)
         }
 
         override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
@@ -1118,45 +1083,8 @@ class FirRenderer(
             visitNamedReference(errorNamedReference)
         }
 
-        override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
-            newLine()
-            print("[Contract description]")
-            renderInBraces("<", ">") {
-                legacyRawContractDescription.contractCall.accept(this)
-                newLine()
-            }
-        }
-
-        override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription) {
-            newLine()
-            print("[Contract description]")
-            renderInBraces("<", ">") {
-                renderSeparatedWithNewlines(rawContractDescription.rawEffects, visitor)
-                newLine()
-            }
-        }
-
         override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
-            newLine()
-            println("[Effect declaration] <")
-            contractRenderer?.let { effectDeclaration.effect.accept(it, null) }
-            println()
-            println(">")
-        }
-
-        override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription) {
-            newLine()
-            println("[R|Contract description]")
-            println(" <")
-            pushIndent()
-            resolvedContractDescription.effects.forEach { declaration ->
-                contractRenderer?.let {
-                    declaration.effect.accept(it, null)
-                    println()
-                }
-            }
-            popIndent()
-            println(">")
+            contractRenderer?.render(effectDeclaration)
         }
 
         override fun visitContractDescription(contractDescription: FirContractDescription) {

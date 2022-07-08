@@ -48,6 +48,6 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: D): R =
         visitValue(valueParameterReference, data)
 
-   open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
+    open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
         visitValueParameterReference(booleanValueParameterReference, data)
 }

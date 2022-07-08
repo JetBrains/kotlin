@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.fir.contracts.*
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.renderer.FirRendererComponents
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
@@ -12,6 +16,63 @@ class ConeContractRenderer : ConeContractDescriptionVisitor<Unit, Nothing?>() {
 
     internal lateinit var components: FirRendererComponents
     private val printer get() = components.printer
+    private val visitor get() = components.visitor
+
+    fun render(declaration: FirDeclaration) {
+        val contractDescription = (declaration as? FirContractDescriptionOwner)?.contractDescription ?: return
+        render(contractDescription)
+    }
+
+    fun render(contractDescription: FirContractDescription) {
+        printer.pushIndent()
+        if (contractDescription !is FirEmptyContractDescription) {
+            printer.newLine()
+            val prefix = if (contractDescription is FirResolvedContractDescription) "R|" else ""
+            printer.print("[${prefix}Contract description]")
+        }
+        when (contractDescription) {
+            is FirLegacyRawContractDescription -> render(contractDescription)
+            is FirRawContractDescription -> render(contractDescription)
+            is FirResolvedContractDescription -> {
+                printer.println()
+                render(contractDescription)
+            }
+        }
+        printer.popIndent()
+    }
+
+    fun render(effectDeclaration: FirEffectDeclaration) {
+        printer.newLine()
+        printer.println("[Effect declaration] <")
+        effectDeclaration.effect.accept(this, null)
+        printer.println()
+        printer.println(">")
+    }
+
+    internal fun render(legacyRawContractDescription: FirLegacyRawContractDescription) {
+        printer.renderInBraces("<", ">") {
+            legacyRawContractDescription.contractCall.accept(visitor)
+            printer.newLine()
+        }
+    }
+
+    internal fun render(rawContractDescription: FirRawContractDescription) {
+        printer.renderInBraces("<", ">") {
+            printer.renderSeparatedWithNewlines(rawContractDescription.rawEffects, visitor)
+            printer.newLine()
+        }
+    }
+
+    internal fun render(resolvedContractDescription: FirResolvedContractDescription) {
+        printer.println(" <")
+        printer.pushIndent()
+        resolvedContractDescription.effects.forEach { declaration ->
+            declaration.effect.accept(this, null)
+            printer.println()
+        }
+        printer.popIndent()
+        printer.println(">")
+    }
 
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
         conditionalEffect.effect.accept(this, data)
