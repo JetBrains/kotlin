@@ -74,15 +74,6 @@ abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(sc
 
     override fun getInterfaces(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
 
-    override fun getOwnInnerClasses(): List<PsiClass> {
-        return script.declarations.filterIsInstance<KtClassOrObject>()
-            // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
-            // inner classes with null names can't be searched for and can't be used from java anyway
-            // we can't prohibit creating light classes with null names either since they can contain members
-            .filter { it.name != null }
-            .mapNotNull { KotlinLightClassFactory.createClass(it) }
-    }
-
     override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
 
     override fun getName() = script.fqName.shortName().asString()

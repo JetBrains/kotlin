@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
 import com.intellij.psi.impl.light.LightMethodBuilder
@@ -14,6 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtScript
@@ -127,4 +129,13 @@ class KtUltraLightClassForScript(
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun copy(): KtLightClassForScript = KtUltraLightClassForScript(script, support)
+
+    override fun getOwnInnerClasses(): List<PsiClass> {
+        return script.declarations.filterIsInstance<KtClassOrObject>()
+            // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
+            // inner classes with null names can't be searched for and can't be used from java anyway
+            // we can't prohibit creating light classes with null names either since they can contain members
+            .filter { it.name != null }
+            .mapNotNull { KotlinLightClassFactory.createClass(it) }
+    }
 }
