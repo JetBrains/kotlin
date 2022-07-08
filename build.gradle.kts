@@ -143,6 +143,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:psi",
     ":compiler:frontend.common-psi",
     ":compiler:light-classes", // TODO split this module to base and FE1.0 implementation modules
+    ":compiler:light-classes-base",
     ":compiler:frontend.common",
     ":compiler:util",
     ":compiler:config.jvm",
