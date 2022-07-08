@@ -29,6 +29,7 @@ interface TestingBuildLogger {
     fun invalidOrUnusedCache(chunk: KotlinChunk?, target: KotlinModuleBuildTarget<*>?, attributesDiff: CacheAttributesDiff<*>) = Unit
     fun chunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk) = Unit
     fun afterChunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk) = Unit
+    fun markedAsComplementaryFiles(files: Collection<File>) = Unit
     fun compilingFiles(files: Collection<File>, allRemovedFilesFiles: Collection<File>) = Unit
     fun addCustomMessage(message: String) = Unit
     fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) = Unit

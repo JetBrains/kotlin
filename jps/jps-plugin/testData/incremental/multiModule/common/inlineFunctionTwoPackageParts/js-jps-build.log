@@ -9,7 +9,7 @@ End of files
 Compiling files:
   module1/src/inlineF.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/usageF.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
@@ -38,7 +38,7 @@ End of files
 Compiling files:
   module1/src/inlineG.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/usageG.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------

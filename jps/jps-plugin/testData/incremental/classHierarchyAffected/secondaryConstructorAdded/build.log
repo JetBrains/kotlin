@@ -24,7 +24,7 @@ Compiling files:
   src/A.kt
   src/createAFromString.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/AChild.kt
   src/createAFromInt.kt
   src/useA.kt

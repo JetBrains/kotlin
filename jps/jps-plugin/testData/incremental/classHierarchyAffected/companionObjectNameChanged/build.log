@@ -1,6 +1,6 @@
 ================ Step #1 =================
 
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/A.kt
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
@@ -29,7 +29,7 @@ Compiling files:
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/companionReferenceImplicit.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------

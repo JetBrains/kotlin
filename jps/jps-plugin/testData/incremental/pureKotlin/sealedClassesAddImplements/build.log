@@ -7,17 +7,20 @@ End of files
 Compiling files:
   src/B.kt
 End of files
-Marked as dirty by Kotlin:
-  src/A.kt
-  src/B.kt
+After build round. Marked as dirty by Kotlin:
   src/Base.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Base.class
+End of files
+Complementary files. Marked as dirty by Kotlin:
+  src/A.kt
+  src/B.kt
+Cleaning output files:
   out/production/module/test/A.class
   out/production/module/test/B.class
-  out/production/module/test/Base.class
 End of files
 Compiling files:
   src/A.kt

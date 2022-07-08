@@ -8,7 +8,7 @@ End of files
 Compiling files:
   src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
   src/companionReferenceImplicit.kt

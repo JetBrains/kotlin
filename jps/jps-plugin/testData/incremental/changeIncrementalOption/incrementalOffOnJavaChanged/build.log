@@ -17,7 +17,7 @@ Exit code: NOTHING_DONE
 ================ Step #2 =================
 
 Lookups cache are INVALID
-Marked as dirty by Kotlin:
+ChunkBuildStarted. Marked as dirty by Kotlin:
   module1/src/a.kt
   module2/src/c.kt
   module3/src/d.kt

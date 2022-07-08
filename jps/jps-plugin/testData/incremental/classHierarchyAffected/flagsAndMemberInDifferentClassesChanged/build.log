@@ -10,7 +10,7 @@ Compiling files:
   src/AParent.kt
   src/B.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/AChild.kt
   src/importA.kt
   src/importAChild.kt

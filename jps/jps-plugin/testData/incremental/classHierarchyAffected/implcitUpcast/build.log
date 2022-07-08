@@ -7,7 +7,7 @@ End of files
 Compiling files:
   src/B.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/C.kt
   src/callUseAWithB.kt
   src/callUseAWithC.kt

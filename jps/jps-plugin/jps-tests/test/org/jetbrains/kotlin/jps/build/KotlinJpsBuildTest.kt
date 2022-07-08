@@ -908,6 +908,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 }
 
                 override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {}
+                override fun markedAsComplementaryFiles(files: Collection<File>) {}
                 override fun invalidOrUnusedCache(
                     chunk: KotlinChunk?,
                     target: KotlinModuleBuildTarget<*>?,

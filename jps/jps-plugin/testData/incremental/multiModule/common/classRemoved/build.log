@@ -8,7 +8,7 @@ Cleaning output files:
   out/production/module2/foo/A.class
 End of files
 Building module2
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   module2/src/B.kt
   module2/src/createA.kt
   module2/src/createB.kt
