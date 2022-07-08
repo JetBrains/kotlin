@@ -27,7 +27,7 @@ class KtUltraLightClassForFacade(
     facadeClassFqName: FqName,
     files: Collection<KtFile>,
     private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>
-) : KtLightClassForFacadeImpl(manager, facadeClassFqName, files) {
+) : KtLightClassForFacadeBase(manager, facadeClassFqName, files) {
     private val _modifierList: PsiModifierList by lazyPub {
         if (isMultiFileClass)
             LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
-abstract class KtLightClassForFacadeImpl constructor(
+abstract class KtLightClassForFacadeBase constructor(
     manager: PsiManager,
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>
@@ -181,7 +181,7 @@ abstract class KtLightClassForFacadeImpl constructor(
             return false
         }
 
-        val lightClass = other as KtLightClassForFacadeImpl
+        val lightClass = other as KtLightClassForFacadeBase
         if (this === other) return true
 
         if (facadeClassFqName != lightClass.facadeClassFqName) return false
@@ -190,7 +190,7 @@ abstract class KtLightClassForFacadeImpl constructor(
         return true
     }
 
-    override fun toString() = "${KtLightClassForFacadeImpl::class.java.simpleName}:$facadeClassFqName"
+    override fun toString() = "${KtLightClassForFacadeBase::class.java.simpleName}:$facadeClassFqName"
 
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
