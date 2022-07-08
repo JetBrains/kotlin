@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -96,6 +97,7 @@ class ClassicFrontendFacade(
         val ktFiles = ktFilesMap.values.toList()
 
         setupJavacIfNeeded(module, ktFiles, configuration)
+        @Suppress("UNCHECKED_CAST")
         val analysisResult = performResolve(
             module,
             project,
@@ -103,9 +105,9 @@ class ClassicFrontendFacade(
             packagePartProviderFactory,
             ktFiles,
             compilerEnvironment = multiplatformAnalysisConfiguration.getCompilerEnvironment(module),
-            dependencyDescriptors = multiplatformAnalysisConfiguration.getDependencyDescriptors(module),
-            friendsDescriptors = multiplatformAnalysisConfiguration.getFriendDescriptors(module),
-            dependsOnDescriptors = multiplatformAnalysisConfiguration.getDependsOnDescriptors(module)
+            dependencyDescriptors = multiplatformAnalysisConfiguration.getDependencyDescriptors(module) as List<ModuleDescriptorImpl>,
+            friendsDescriptors = multiplatformAnalysisConfiguration.getFriendDescriptors(module) as List<ModuleDescriptorImpl>,
+            dependsOnDescriptors = multiplatformAnalysisConfiguration.getDependsOnDescriptors(module) as List<ModuleDescriptorImpl>
         )
         moduleDescriptorProvider.replaceModuleDescriptorForModule(module, analysisResult.moduleDescriptor)
         return ClassicFrontendOutputArtifact(
@@ -254,7 +256,7 @@ class ClassicFrontendFacade(
         )
     }
 
-    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptorImpl> {
+    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptor> {
         val resolvedLibraries = jsResolveLibraries(
             names,
             configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
@@ -293,8 +295,8 @@ class ClassicFrontendFacade(
         configuration: CompilerConfiguration,
         compilerEnvironment: TargetEnvironment,
         files: List<KtFile>,
-        dependencyDescriptors: List<ModuleDescriptorImpl>,
-        friendsDescriptors: List<ModuleDescriptorImpl>,
+        dependencyDescriptors: List<ModuleDescriptor>,
+        friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
         val runtimeKlibsNames = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
