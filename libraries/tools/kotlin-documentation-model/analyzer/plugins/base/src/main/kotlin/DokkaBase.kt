@@ -34,6 +34,7 @@ import org.jetbrains.dokka.base.transformers.pages.tags.SinceKotlinTagContentPro
 import org.jetbrains.dokka.base.translators.descriptors.DefaultExternalDocumentablesProvider
 import org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator
 import org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider
+import org.jetbrains.dokka.base.utils.NoopIntellijLoggerFactory
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
@@ -271,5 +272,13 @@ class DokkaBase : DokkaPlugin() {
 
     val defaultExternalClasslikesTranslator by extending {
         externalClasslikesTranslator providing ::DefaultDescriptorToDocumentableTranslator
+    }
+
+    private companion object {
+        init {
+            // Suppress messages emitted by the IntelliJ logger since
+            // there's not much the end user can do about it
+            com.intellij.openapi.diagnostic.Logger.setFactory(NoopIntellijLoggerFactory())
+        }
     }
 }
