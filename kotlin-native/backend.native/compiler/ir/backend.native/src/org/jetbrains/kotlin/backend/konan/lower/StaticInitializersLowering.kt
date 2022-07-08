@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENTRY_POINT
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
 import org.jetbrains.kotlin.backend.konan.llvm.needsGCRegistration
 import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -23,34 +25,55 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasNonConstInitializer
 import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
-internal object DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("FILE_GLOBAL_INITIALIZER")
-internal object DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_THREAD_LOCAL_INITIALIZER")
-internal object DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("FILE_STANDALONE_THREAD_LOCAL_INITIALIZER")
+internal object DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_GLOBAL_INITIALIZER")
+internal object DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_THREAD_LOCAL_INITIALIZER")
+internal object DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER : IrDeclarationOriginImpl("STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER")
 
-internal val IrFunction.isFileInitializer: Boolean
-    get() = origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
-            || origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
-            || origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+internal val IrFunction.isStaticInitializer: Boolean
+    get() = origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+            || origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
+            || origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
 
 internal fun IrBuilderWithScope.irCallFileInitializer(initializer: IrFunctionSymbol) =
         irCall(initializer)
 
-internal val IrField.shouldBeInitializedEagerly: Boolean
-    get() {
-        val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
-        return annotations.hasAnnotation(KonanFqNames.eagerInitialization)
+internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean {
+    if (irField.parent is IrFile || irField.correspondingPropertySymbol?.owner?.parent is IrFile) {
+        if (!useLazyFileInitializers()) return true
     }
+    val annotations = irField.correspondingPropertySymbol?.owner?.annotations ?: irField.annotations
+    return annotations.hasAnnotation(KonanFqNames.eagerInitialization)
+}
 
 // TODO: ExplicitlyExported for IR proto are not longer needed.
 internal class StaticInitializersLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+            override fun visitFile(declaration: IrFile) {
+                processDeclarationContainter(declaration)
+                declaration.acceptChildrenVoid(this)
+            }
+            override fun visitClass(declaration: IrClass) {
+                processDeclarationContainter(declaration)
+                declaration.acceptChildrenVoid(this)
+            }
+        })
+    }
+
+    fun processDeclarationContainter(container: IrDeclarationContainer) {
         var requireGlobalInitializer = false
         var requireThreadLocalInitializer = false
-        for (declaration in irFile.declarations) {
+        for (declaration in container.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
-            if (irField == null || !irField.needsInitializationAtRuntime || irField.shouldBeInitializedEagerly) continue
+            if (irField == null || !irField.isStatic || !irField.needsInitializationAtRuntime || context.shouldBeInitializedEagerly(irField)) continue
             if (irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
                 requireGlobalInitializer = true
             } else {
@@ -64,18 +87,18 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
 
         val globalInitFunction =
                 if (requireGlobalInitializer)
-                    buildInitFileFunction(irFile, "\$init_global", DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER)
+                    buildInitFileFunction(container, "\$init_global", DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER)
                 else null
         val threadLocalInitFunction =
                 if (requireThreadLocalInitializer)
-                    buildInitFileFunction(irFile, "\$init_thread_local",
+                    buildInitFileFunction(container, "\$init_thread_local",
                             if (requireGlobalInitializer)
-                                DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
-                            else DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+                                DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
+                            else DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
                     )
                 else null
 
-        irFile.simpleFunctions()
+        container.simpleFunctions()
                 .filterNot { it.origin == DECLARATION_ORIGIN_ENTRY_POINT }
                 .forEach {
                     val body = it.body ?: return@forEach
@@ -89,7 +112,7 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
                 }
     }
 
-    private fun buildInitFileFunction(irFile: IrFile, name: String, origin: IrDeclarationOrigin) = context.irFactory.buildFun {
+    private fun buildInitFileFunction(container: IrDeclarationContainer, name: String, origin: IrDeclarationOrigin) = context.irFactory.buildFun {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
         this.origin = origin
@@ -97,8 +120,8 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
         visibility = DescriptorVisibilities.PRIVATE
         returnType = context.irBuiltIns.unitType
     }.apply {
-        parent = irFile
-        irFile.declarations.add(0, this)
+        parent = container
+        container.declarations.add(0, this)
     }
 
     private val IrField.needsInitializationAtRuntime: Boolean

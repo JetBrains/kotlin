@@ -235,25 +235,30 @@ internal interface ContextUtils : RuntimeAware {
  */
 internal fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
 
-internal class InitializersGenerationState {
-    val fileGlobalInitStates = mutableMapOf<IrFile, LLVMValueRef>()
-    val fileThreadLocalInitStates = mutableMapOf<IrFile, AddressAccess>()
-
+internal class ScopeInitializersGenerationState {
     val topLevelFields = mutableListOf<IrField>()
     var globalInitFunction: IrFunction? = null
     var globalInitState: LLVMValueRef? = null
     var threadLocalInitFunction: IrFunction? = null
     var threadLocalInitState: AddressAccess? = null
+    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
+    fun isEmpty() = topLevelFields.isEmpty() &&
+            globalInitState == null &&
+            threadLocalInitState == null &&
+            globalSharedObjects.isEmpty()
+}
 
-    fun reset() {
-        topLevelFields.clear()
-        globalInitFunction = null
-        globalInitState = null
-        threadLocalInitFunction = null
-        threadLocalInitState = null
+internal class InitializersGenerationState {
+    val fileGlobalInitStates = mutableMapOf<IrDeclarationContainer, LLVMValueRef>()
+    val fileThreadLocalInitStates = mutableMapOf<IrDeclarationContainer, AddressAccess>()
+
+    var scopeState = ScopeInitializersGenerationState()
+
+    fun reset(newState: ScopeInitializersGenerationState) : ScopeInitializersGenerationState {
+        val t = scopeState
+        scopeState = newState
+        return t
     }
-
-    fun isEmpty() = topLevelFields.isEmpty() && globalInitState == null && threadLocalInitState == null
 }
 
 internal class ConstInt1(llvm: Llvm, val value: Boolean) : ConstValue {

@@ -110,7 +110,7 @@ internal object DataFlowIR {
     }
 
     object FunctionAttributes {
-        val IS_TOP_LEVEL_FIELD_INITIALIZER = 1
+        val IS_STATIC_FIELD_INITIALIZER = 1
         val RETURNS_UNIT = 4
         val RETURNS_NOTHING = 8
         val EXPLICITLY_EXPORTED = 16
@@ -122,7 +122,7 @@ internal object DataFlowIR {
         lateinit var parameters: Array<FunctionParameter>
         lateinit var returnParameter: FunctionParameter
 
-        val isTopLevelFieldInitializer = attributes.and(FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER) != 0
+        val isStaticFieldInitializer = attributes.and(FunctionAttributes.IS_STATIC_FIELD_INITIALIZER) != 0
         val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
         val explicitlyExported = attributes.and(FunctionAttributes.EXPLICITLY_EXPORTED) != 0
@@ -656,8 +656,8 @@ internal object DataFlowIR {
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }
 
-            assert(irField.parent !is IrClass) { "All local properties initializers should've been lowered" }
-            val attributes = FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
+            assert(irField.isStatic) { "All local properties initializers should've been lowered" }
+            val attributes = FunctionAttributes.IS_STATIC_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
             val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, irField, null, takeName { "${irField.computeSymbolName()}_init" })
 
             functionMap[irField] = symbol

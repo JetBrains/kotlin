@@ -573,8 +573,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         }
         disableUnless(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
 
-        disableUnless(staticInitializersPhase, config.propertyLazyInitialization)
-        disableUnless(removeRedundantCallsToStaticInitializersPhase, config.propertyLazyInitialization)
 
         disableUnless(removeRedundantSafepointsPhase, config.memoryModel == MemoryModel.EXPERIMENTAL)
 

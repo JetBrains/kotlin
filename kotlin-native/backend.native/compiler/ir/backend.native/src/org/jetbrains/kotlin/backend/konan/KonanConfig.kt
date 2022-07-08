@@ -184,7 +184,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 
-    val mimallocUseCompaction by lazy {
+    val mimallocUseCompaction: Boolean by lazy {
         // Turned off by default, because it slows down allocation.
         configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
     }

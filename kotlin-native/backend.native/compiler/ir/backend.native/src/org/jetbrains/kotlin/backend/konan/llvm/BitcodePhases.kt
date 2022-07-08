@@ -101,11 +101,11 @@ internal val dcePhase = makeKonanModuleOpPhase(
 
             val referencedFunctions = mutableSetOf<IrFunction>()
             callGraph.rootExternalFunctions.forEach {
-                if (!it.isTopLevelFieldInitializer)
+                if (!it.isStaticFieldInitializer)
                     referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
             }
             for (node in callGraph.directEdges.values) {
-                if (!node.symbol.isTopLevelFieldInitializer)
+                if (!node.symbol.isStaticFieldInitializer)
                     referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
                 node.callSites.forEach {
                     assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }

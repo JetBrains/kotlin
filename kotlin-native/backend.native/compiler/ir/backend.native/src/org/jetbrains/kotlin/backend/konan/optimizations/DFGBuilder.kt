@@ -205,7 +205,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             }
 
             override fun visitField(declaration: IrField) {
-                if (declaration.parent is IrFile)
+                if (declaration.isStatic)
                     declaration.initializer?.let {
                         context.logMultiple {
                             +"Analysing global field ${declaration.descriptor}"

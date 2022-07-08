@@ -163,7 +163,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     }
 
     fun needGlobalInit(field: IrField): Boolean {
-        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
+        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return field.isStatic
         // TODO: add some smartness here. Maybe if package of the field is in never accessed
         // assume its global init can be actually omitted.
         return true
