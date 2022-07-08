@@ -30,7 +30,6 @@ import java.util.*
 
 class FirRenderer private constructor(
     private val builder: StringBuilder,
-    private val mode: RenderMode,
     components: FirComponentsImpl,
     private val annotationRenderer: FirAnnotationRenderer?,
     private val bodyRenderer: FirBodyRenderer?,
@@ -38,6 +37,7 @@ class FirRenderer private constructor(
     private val classMemberRenderer: FirClassMemberRenderer,
     private val contractRenderer: ConeContractRenderer?,
     private val declarationRenderer: FirDeclarationRenderer,
+    private val idRenderer: ConeIdRenderer,
     private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
     private val propertyAccessorRenderer: FirPropertyAccessorRenderer?,
@@ -54,6 +54,7 @@ class FirRenderer private constructor(
         components.callArgumentsRenderer = callArgumentsRenderer
         components.classMemberRenderer = classMemberRenderer
         components.declarationRenderer = declarationRenderer
+        components.idRenderer = idRenderer
         components.modifierRenderer = modifierRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
         components.propertyAccessorRenderer = propertyAccessorRenderer
@@ -67,20 +68,20 @@ class FirRenderer private constructor(
         classMemberRenderer.components = components
         contractRenderer?.components = components
         declarationRenderer.components = components
+        idRenderer.builder = builder
         modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
         propertyAccessorRenderer?.components = components
         typeRenderer.builder = builder
+        typeRenderer.idRenderer = idRenderer
         valueParameterRenderer.components = components
     }
 
     private constructor(
         builder: StringBuilder,
-        mode: RenderMode,
         components: FirComponentsImpl,
     ) : this(
         builder,
-        mode,
         components,
         FirAnnotationRenderer(),
         FirBodyRenderer(),
@@ -88,6 +89,7 @@ class FirRenderer private constructor(
         FirClassMemberRenderer(),
         ConeContractRenderer(),
         FirDeclarationRenderer(),
+        ConeIdRendererForDebugging(),
         FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
         FirPropertyAccessorRenderer(),
@@ -95,7 +97,7 @@ class FirRenderer private constructor(
         FirValueParameterRenderer(),
     )
 
-    constructor(builder: StringBuilder = StringBuilder(), mode: RenderMode = RenderMode.Normal) : this(builder, mode, FirComponentsImpl())
+    constructor(builder: StringBuilder = StringBuilder()) : this(builder, FirComponentsImpl())
 
     fun with(
         annotationRenderer: FirAnnotationRenderer? = this.annotationRenderer,
@@ -104,16 +106,17 @@ class FirRenderer private constructor(
         classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
         contractRenderer: ConeContractRenderer? = this.contractRenderer,
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
+        idRenderer: ConeIdRenderer = this.idRenderer,
         modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
         propertyAccessorRenderer: FirPropertyAccessorRenderer? = this.propertyAccessorRenderer,
         typeRenderer: ConeTypeRenderer = this.typeRenderer,
         valueParameterRenderer: FirValueParameterRenderer = this.valueParameterRenderer,
     ): FirRenderer = FirRenderer(
-        builder, mode, FirComponentsImpl(),
+        builder, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        contractRenderer, declarationRenderer, modifierRenderer, packageDirectiveRenderer,
-        propertyAccessorRenderer, typeRenderer, valueParameterRenderer
+        contractRenderer, declarationRenderer, idRenderer, modifierRenderer,
+        packageDirectiveRenderer, propertyAccessorRenderer, typeRenderer, valueParameterRenderer
     )
 
     fun renderElementAsString(element: FirElement): String {
@@ -153,6 +156,8 @@ class FirRenderer private constructor(
 
         override lateinit var declarationRenderer: FirDeclarationRenderer
 
+        override lateinit var idRenderer: ConeIdRenderer
+
         override lateinit var modifierRenderer: FirModifierRenderer
 
         override lateinit var typeRenderer: ConeTypeRenderer
@@ -162,20 +167,6 @@ class FirRenderer private constructor(
         override lateinit var visitor: Visitor
 
         override lateinit var printer: FirPrinter
-    }
-
-    data class RenderMode(
-        val renderCallableFqNames: Boolean,
-    ) {
-        companion object {
-            val Normal = RenderMode(
-                renderCallableFqNames = false,
-            )
-
-            val WithFqNames = RenderMode(
-                renderCallableFqNames = true,
-            )
-        }
     }
 
     private fun List<ConeKotlinType>.renderTypesSeparated() {
@@ -285,18 +276,10 @@ class FirRenderer private constructor(
             }
             when (callableDeclaration) {
                 is FirSimpleFunction -> {
-                    if (!mode.renderCallableFqNames) {
-                        print(callableDeclaration.name)
-                    } else {
-                        print(callableDeclaration.symbol.callableId)
-                    }
+                    idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
                 }
                 is FirVariable -> {
-                    if (!mode.renderCallableFqNames) {
-                        print(callableDeclaration.name)
-                    } else {
-                        print(callableDeclaration.symbol.callableId)
-                    }
+                    idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
                 }
                 else -> {}
             }

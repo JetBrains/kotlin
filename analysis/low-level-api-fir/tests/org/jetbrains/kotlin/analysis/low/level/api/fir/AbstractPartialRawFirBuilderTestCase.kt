@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -126,7 +127,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
             null
         )
 
-        val firDump = FirRenderer(mode = FirRenderer.RenderMode.WithFqNames).renderElementAsString(firElement)
+        val firDump = FirRenderer().with(idRenderer = ConeIdFullRenderer()).renderElementAsString(firElement)
         JUnit5Assertions.assertEqualsToTestDataFileSibling(firDump)
     }
 

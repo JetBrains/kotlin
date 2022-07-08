@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.Normal
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile

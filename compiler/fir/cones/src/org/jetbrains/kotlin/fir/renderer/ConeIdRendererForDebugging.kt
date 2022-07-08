@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-open class ConeTypeRendererWithFqNames() : ConeTypeRenderer() {
-
-    constructor(builder: StringBuilder) : this() {
-        this.builder = builder
+class ConeIdRendererForDebugging : ConeIdRenderer() {
+    override fun renderClassId(classId: ClassId) {
+        builder.append(classId.asString())
     }
 
-    override fun ClassId.render() {
-        builder.append(asString())
+    override fun renderCallableId(callableId: CallableId) {
+        builder.append(callableId.callableName)
     }
 }

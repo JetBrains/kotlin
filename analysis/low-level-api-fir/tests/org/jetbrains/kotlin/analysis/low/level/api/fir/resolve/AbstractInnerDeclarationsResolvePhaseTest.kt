@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.Normal
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices

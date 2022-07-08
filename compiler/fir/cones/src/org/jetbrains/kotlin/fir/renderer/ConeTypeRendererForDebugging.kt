@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 
-class ConeTypeRendererForDebugging() : ConeTypeRendererWithFqNames() {
+class ConeTypeRendererForDebugging() : ConeTypeRenderer() {
 
     constructor(builder: StringBuilder) : this() {
         this.builder = builder
+        this.idRenderer = ConeIdRendererForDebugging()
+        idRenderer.builder = builder
     }
 
     override fun renderAsPossibleFunctionType(type: ConeKotlinType, renderType: ConeTypeProjection.() -> Unit) {

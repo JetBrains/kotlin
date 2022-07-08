@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 open class ConeTypeRenderer() {
 
     lateinit var builder: StringBuilder
+    lateinit var idRenderer: ConeIdRenderer
 
-    constructor(builder: StringBuilder) : this() {
+    constructor(builder: StringBuilder, idRenderer: ConeIdRenderer) : this() {
         this.builder = builder
+        this.idRenderer = idRenderer
+        idRenderer.builder = builder
     }
 
     open fun renderAsPossibleFunctionType(
@@ -137,7 +139,7 @@ open class ConeTypeRenderer() {
     }
 
     private fun ConeClassLikeType.render() {
-        lookupTag.classId.render()
+        idRenderer.renderClassId(lookupTag.classId)
         if (typeArguments.isEmpty()) return
         builder.append("<")
         for ((index, typeArgument) in typeArguments.withIndex()) {
@@ -147,10 +149,6 @@ open class ConeTypeRenderer() {
             typeArgument.render()
         }
         builder.append(">")
-    }
-
-    protected open fun ClassId.render() {
-        builder.append(relativeClassName.asString())
     }
 
     private fun ConeFlexibleType.render() {
