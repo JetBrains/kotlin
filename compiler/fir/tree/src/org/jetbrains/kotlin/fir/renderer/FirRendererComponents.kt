@@ -16,4 +16,5 @@ internal interface FirRendererComponents {
     val modifierRenderer: FirModifierRenderer
     val packageDirectiveRenderer: FirPackageDirectiveRenderer?
     val typeRenderer: ConeTypeRenderer
+    val valueParameterRenderer: FirValueParameterRenderer
 }

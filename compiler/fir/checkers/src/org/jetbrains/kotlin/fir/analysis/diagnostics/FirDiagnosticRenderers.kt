@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.NoBodies
 import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.WithFqNames
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -29,13 +30,14 @@ object FirDiagnosticRenderers {
         when (symbol) {
             is FirClassLikeSymbol<*>,
             is FirCallableSymbol<*> -> FirRenderer(
-                mode = FirRenderer.RenderMode.DeclarationHeader
+                mode = NoBodies
             ).with(
                 typeRenderer = ConeTypeRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
                 bodyRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
                 modifierRenderer = FirPartialModifierRenderer(),
+                valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
             ).renderElementAsString(symbol.fir)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"

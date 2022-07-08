@@ -22,16 +22,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
-open class FirRenderer private constructor(
+class FirRenderer private constructor(
     private val builder: StringBuilder,
-    protected val mode: RenderMode,
+    private val mode: RenderMode,
     components: FirComponentsImpl,
     private val annotationRenderer: FirAnnotationRenderer?,
     private val bodyRenderer: FirBodyRenderer?,
@@ -40,7 +39,8 @@ open class FirRenderer private constructor(
     private val declarationRenderer: FirDeclarationRenderer,
     private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
-    private val typeRenderer: ConeTypeRenderer
+    private val typeRenderer: ConeTypeRenderer,
+    private val valueParameterRenderer: FirValueParameterRenderer,
 ) : FirPrinter(builder) {
 
     private val visitor = Visitor()
@@ -55,6 +55,7 @@ open class FirRenderer private constructor(
         components.modifierRenderer = modifierRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
         components.typeRenderer = typeRenderer
+        components.valueParameterRenderer = valueParameterRenderer
         @Suppress("LeakingThis")
         components.printer = this
         annotationRenderer?.components = components
@@ -65,6 +66,7 @@ open class FirRenderer private constructor(
         modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
         typeRenderer.builder = builder
+        valueParameterRenderer.components = components
     }
 
     private constructor(
@@ -83,6 +85,7 @@ open class FirRenderer private constructor(
         FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
         ConeTypeRendererForDebugging(),
+        FirValueParameterRenderer(),
     )
 
     constructor(builder: StringBuilder = StringBuilder(), mode: RenderMode = RenderMode.Normal) : this(builder, mode, FirComponentsImpl())
@@ -95,11 +98,12 @@ open class FirRenderer private constructor(
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
         modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
-        typeRenderer: ConeTypeRenderer = this.typeRenderer
+        typeRenderer: ConeTypeRenderer = this.typeRenderer,
+        valueParameterRenderer: FirValueParameterRenderer = this.valueParameterRenderer,
     ): FirRenderer = FirRenderer(
         builder, mode, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        declarationRenderer, modifierRenderer, packageDirectiveRenderer, typeRenderer
+        declarationRenderer, modifierRenderer, packageDirectiveRenderer, typeRenderer, valueParameterRenderer
     )
 
     fun renderElementAsString(element: FirElement): String {
@@ -139,6 +143,8 @@ open class FirRenderer private constructor(
 
         override lateinit var typeRenderer: ConeTypeRenderer
 
+        override lateinit var valueParameterRenderer: FirValueParameterRenderer
+
         override lateinit var visitor: Visitor
 
         override lateinit var printer: FirPrinter
@@ -147,7 +153,6 @@ open class FirRenderer private constructor(
     data class RenderMode(
         val renderCallableFqNames: Boolean,
         val renderPropertyAccessors: Boolean = true,
-        val renderDefaultParameterValues: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -162,12 +167,6 @@ open class FirRenderer private constructor(
                 renderCallableFqNames = false,
                 renderPropertyAccessors = false,
             )
-
-            val DeclarationHeader = RenderMode(
-                renderCallableFqNames = false,
-                renderPropertyAccessors = false,
-                renderDefaultParameterValues = false,
-            )
         }
     }
 
@@ -180,12 +179,6 @@ open class FirRenderer private constructor(
         }
     }
 
-
-    private fun List<FirValueParameter>.renderParameters() {
-        print("(")
-        renderSeparated(this, visitor)
-        print(")")
-    }
 
     private fun Variance.renderVariance() {
         label.let {
@@ -238,7 +231,7 @@ open class FirRenderer private constructor(
         annotationRenderer?.render(annotationContainer)
     }
 
-    protected open fun renderClassDeclarations(regularClass: FirRegularClass) {
+    fun renderClassDeclarations(regularClass: FirRegularClass) {
         classMemberRenderer.render(regularClass)
     }
 
@@ -301,7 +294,7 @@ open class FirRenderer private constructor(
             }
 
             if (callableDeclaration is FirFunction) {
-                callableDeclaration.valueParameters.renderParameters()
+                valueParameterRenderer.renderParameters(callableDeclaration.valueParameters)
             }
             print(": ")
             callableDeclaration.returnTypeRef.accept(this)
@@ -460,7 +453,7 @@ open class FirRenderer private constructor(
             }
             print("constructor")
             constructor.typeParameters.renderTypeParameters()
-            constructor.valueParameters.renderParameters()
+            valueParameterRenderer.renderParameters(constructor.valueParameters)
             print(": ")
             constructor.returnTypeRef.accept(this)
             val body = constructor.body
@@ -476,7 +469,7 @@ open class FirRenderer private constructor(
             annotationRenderer?.render(propertyAccessor)
             modifierRenderer.renderModifiers(propertyAccessor)
             print(if (propertyAccessor.isGetter) "get" else "set")
-            propertyAccessor.valueParameters.renderParameters()
+            valueParameterRenderer.renderParameters(propertyAccessor.valueParameters)
             print(": ")
             propertyAccessor.returnTypeRef.accept(this)
             propertyAccessor.renderContractDescription()
@@ -507,7 +500,7 @@ open class FirRenderer private constructor(
             ) {
                 print("(<no-parameters>)")
             }
-            anonymousFunction.valueParameters.renderParameters()
+            valueParameterRenderer.renderParameters(anonymousFunction.valueParameters)
             print(": ")
             anonymousFunction.returnTypeRef.accept(this)
             print(" <inline=${anonymousFunction.inlineStatus}")
@@ -519,7 +512,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitFunction(function: FirFunction) {
-            function.valueParameters.renderParameters()
+            valueParameterRenderer.renderParameters(function.valueParameters)
             visitDeclaration(function)
             bodyRenderer?.render(function)
         }
@@ -572,21 +565,7 @@ open class FirRenderer private constructor(
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter) {
-            declarationRenderer.render(valueParameter)
-            annotationRenderer?.render(valueParameter)
-            modifierRenderer.renderModifiers(valueParameter)
-            if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
-                print(valueParameter.name.toString() + ": ")
-            }
-            valueParameter.returnTypeRef.accept(this)
-            valueParameter.defaultValue?.let {
-                print(" = ")
-                if (mode.renderDefaultParameterValues) {
-                    it.accept(this)
-                } else {
-                    print("...")
-                }
-            }
+            valueParameterRenderer.renderParameter(valueParameter)
         }
 
         override fun visitImport(import: FirImport) {
@@ -864,7 +843,7 @@ open class FirRenderer private constructor(
                 it.accept(this)
                 print(".")
             }
-            functionTypeRef.valueParameters.renderParameters()
+            valueParameterRenderer.renderParameters(functionTypeRef.valueParameters)
             print(" -> ")
             functionTypeRef.returnTypeRef.accept(this)
             print(" )")
