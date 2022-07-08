@@ -5,10 +5,14 @@
 
 import Kt
 
-private func testComponentMethodsAreStillAccessible() throws {
-    let d = DataClassWithComponentMethods(x: 1, y: 2)
+private func testCustomComponentMethodsAreAccessible() throws {
+    let d = DataClassWithExplicitComponentMethod(x: 1, y: 2)
+    try assertEquals(actual: d.component1(arg: 3), expected: 4)
+}
+
+private func testDataClassWithInheritedComponentAreAccessible() throws {
+    let d = DataClassWithInheritedComponentMethod(x: 1)
     try assertEquals(actual: d.component1(), expected: 1)
-    try assertEquals(actual: d.component2(), expected: 2)
 }
 
 // Absence of deprecation attributes is checked by comparing "lazy header".
@@ -26,8 +30,8 @@ private func testTopLevelComponentMethodsAreAccessible() throws {
 class DataClassComponentMethodsTests : SimpleTestProvider {
     override init() {
         super.init()
-
-        test("testComponentMethodsAreStillAccessible", testComponentMethodsAreStillAccessible)
+        test("testDataClassWithInheritedComponentAreAccessible", testDataClassWithInheritedComponentAreAccessible)
+        test("testCustomComponentMethodsAreAccessible", testCustomComponentMethodsAreAccessible)
         test("testRegularComponentMethodsAreAccessible", testRegularComponentMethodsAreAccessible)
         test("testTopLevelComponentMethodsAreAccessible", testTopLevelComponentMethodsAreAccessible)
     }

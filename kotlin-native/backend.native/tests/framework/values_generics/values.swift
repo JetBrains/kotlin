@@ -33,20 +33,17 @@ func testDataClass() throws {
     let tripleVal = TripleVals<NSString>(first: f, second: s, third: t)
     try assertEquals(actual: tripleVal.first, expected: f, "Data class' value")
     try assertEquals(actual: tripleVal.first, expected: "1", "Data class' value literal")
-    try assertEquals(actual: tripleVal.component2(), expected: s, "Data class' component")
     print(tripleVal)
     try assertEquals(actual: String(describing: tripleVal), expected: "TripleVals(first=\(f), second=\(s), third=\(t))")
 
     let tripleVar = TripleVars<NSString>(first: f, second: s, third: t)
     try assertEquals(actual: tripleVar.first, expected: f, "Data class' value")
-    try assertEquals(actual: tripleVar.component2(), expected: s, "Data class' component")
     print(tripleVar)
     try assertEquals(actual: String(describing: tripleVar), expected: "[\(f), \(s), \(t)]")
 
     tripleVar.first = t
     tripleVar.second = f
     tripleVar.third = s
-    try assertEquals(actual: tripleVar.component2(), expected: f, "Data class' component")
     try assertEquals(actual: String(describing: tripleVar), expected: "[\(t), \(f), \(s)]")
 }
 

@@ -386,17 +386,34 @@ __attribute__((swift_name("CoroutinesKt")))
 @end
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("DataClassWithComponentMethods")))
-@interface KtDataClassWithComponentMethods : KtBase
+__attribute__((swift_name("DataClassWithExplicitComponentMethod")))
+@interface KtDataClassWithExplicitComponentMethod : KtBase
 - (instancetype)initWithX:(int32_t)x y:(int32_t)y __attribute__((swift_name("init(x:y:)"))) __attribute__((objc_designated_initializer));
+- (int32_t)component1Arg:(int32_t)arg __attribute__((swift_name("component1(arg:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
-- (int32_t)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
-- (KtDataClassWithComponentMethods *)doCopyX:(int32_t)x y:(int32_t)y __attribute__((swift_name("doCopy(x:y:)")));
+- (KtDataClassWithExplicitComponentMethod *)doCopyX:(int32_t)x y:(int32_t)y __attribute__((swift_name("doCopy(x:y:)")));
 @property (readonly) int32_t x __attribute__((swift_name("x")));
 @property (readonly) int32_t y __attribute__((swift_name("y")));
+@end
+
+__attribute__((swift_name("ComponentInterface")))
+@protocol KtComponentInterface
+@required
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DataClassWithInheritedComponentMethod")))
+@interface KtDataClassWithInheritedComponentMethod : KtBase <KtComponentInterface>
+- (instancetype)initWithX:(int32_t)x __attribute__((swift_name("init(x:)"))) __attribute__((objc_designated_initializer));
+- (int32_t)component1 __attribute__((swift_name("component1()")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (KtDataClassWithInheritedComponentMethod *)doCopyX:(int32_t)x __attribute__((swift_name("doCopy(x:)")));
+@property (readonly) int32_t x __attribute__((swift_name("x")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1221,7 +1238,6 @@ __attribute__((swift_name("Person.User")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonUser *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end
@@ -1241,7 +1257,6 @@ __attribute__((swift_name("Person.WorkerEmployee")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonWorkerEmployee *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end
@@ -1255,7 +1270,6 @@ __attribute__((swift_name("Person.WorkerContractor")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (int32_t)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtPersonWorkerContractor *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
 @end
@@ -1408,9 +1422,6 @@ __attribute__((swift_name("TripleVals")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (id _Nullable)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
-- (id _Nullable)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
-- (id _Nullable)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtTripleVals *)doCopyFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
 @property (readonly) id _Nullable first __attribute__((swift_name("first")));
 @property (readonly) id _Nullable second __attribute__((swift_name("second")));
@@ -1424,9 +1435,6 @@ __attribute__((swift_name("TripleVars")))
 - (NSString *)description __attribute__((swift_name("description()")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (id _Nullable)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
-- (id _Nullable)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
-- (id _Nullable)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtTripleVars *)doCopyFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("doCopy(first:second:third:)")));
 @property id _Nullable first __attribute__((swift_name("first")));
 @property id _Nullable second __attribute__((swift_name("second")));
@@ -1835,9 +1843,6 @@ __attribute__((swift_name("CKeywords")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (float)component1 __attribute__((swift_name("component1()"))) __attribute__((deprecated("use corresponding property instead")));
-- (int32_t)component2 __attribute__((swift_name("component2()"))) __attribute__((deprecated("use corresponding property instead")));
-- (BOOL)component3 __attribute__((swift_name("component3()"))) __attribute__((deprecated("use corresponding property instead")));
 - (KtCKeywords *)doCopyFloat:(float)float_ enum:(int32_t)enum_ goto:(BOOL)goto_ __attribute__((swift_name("doCopy(float:enum:goto:)")));
 @property (readonly, getter=float) float float_ __attribute__((swift_name("float_")));
 @property (readonly, getter=enum) int32_t enum_ __attribute__((swift_name("enum_")));
