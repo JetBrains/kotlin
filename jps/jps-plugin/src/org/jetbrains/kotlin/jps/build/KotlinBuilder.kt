@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 import kotlin.system.measureTimeMillis
 
@@ -595,7 +596,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 val targetDirtyFiles = dirtyFilesHolder.byTarget[jpsTarget]
                 if (cache != null && targetDirtyFiles != null) {
                     val complementaryFiles = cache.getComplementaryFilesRecursive(targetDirtyFiles.dirty.keys + targetDirtyFiles.removed)
-
+                    context.testingContext?.buildLogger?.markedAsComplementaryFiles(ArrayList(complementaryFiles))
                     fsOperations.markFilesForCurrentRound(jpsTarget, complementaryFiles)
 
                     cache.markDirty(targetDirtyFiles.dirty.keys + targetDirtyFiles.removed)

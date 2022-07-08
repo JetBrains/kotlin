@@ -62,6 +62,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
@@ -532,7 +533,7 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-            logDirtyFiles(markedDirtyBeforeRound) // files can be marked as dirty during build start (KotlinCompileContext initialization)
+            logDirtyFiles(markedDirtyBeforeRound, "ChunkBuildStarted") // files can be marked as dirty during build start (KotlinCompileContext initialization)
 
             if (!chunk.isDummy(context) && context.projectDescriptor.project.modules.size > 1) {
                 logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
@@ -540,7 +541,11 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-            logDirtyFiles(markedDirtyBeforeRound)
+            logDirtyFiles(markedDirtyBeforeRound, "After chunkBuildStarted")
+        }
+
+        override fun markedAsComplementaryFiles(files: Collection<File>) {
+            logDirtyFiles(ArrayList(files), "Complementary files")
         }
 
         override fun addCustomMessage(message: String) {
@@ -552,15 +557,15 @@ abstract class AbstractIncrementalJpsTest(
                 logLine(it)
             }
             customMessages.clear()
-            logDirtyFiles(markedDirtyAfterRound)
+            logDirtyFiles(markedDirtyAfterRound, "After build round")
             logLine("Exit code: $exitCode")
             logLine("------------------------------------------")
         }
 
-        private fun logDirtyFiles(files: MutableList<File>) {
+        private fun logDirtyFiles(files: MutableList<File>, phase: String) {
             if (files.isEmpty()) return
 
-            logLine("Marked as dirty by Kotlin:")
+            logLine("$phase. Marked as dirty by Kotlin:")
             files.apply {
                 map { FileUtil.toSystemIndependentName(it.path) }
                     .sorted()

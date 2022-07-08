@@ -36,7 +36,7 @@ Exit code: NOTHING_DONE
 ================ Step #2 =================
 
 Lookups cache are INVALID
-Marked as dirty by Kotlin:
+ChunkBuildStarted. Marked as dirty by Kotlin:
   module1/src/z.kt
   module2/src/a.kt
   module2/src/b.kt
@@ -101,7 +101,7 @@ End of files
 Compiling files:
   module2/src/a.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/b.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------

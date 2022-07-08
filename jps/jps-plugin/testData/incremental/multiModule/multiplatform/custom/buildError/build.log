@@ -7,6 +7,8 @@ Cleaning output files:
   out/production/pJs/pJs.meta.js
   out/production/pJs/pJs/root-package.kjsm
 End of files
+Complementary files. Marked as dirty by Kotlin:
+  pJs/src/fJs.kt
 Compiling files:
   c/src/f.kt
   pJs/src/fJs.kt
@@ -31,6 +33,8 @@ Building pJvm
 Cleaning output files:
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
+Complementary files. Marked as dirty by Kotlin:
+  pJvm/src/fJvm.kt
 Cleaning output files:
   out/production/pJvm/FJvmKt.class
 End of files

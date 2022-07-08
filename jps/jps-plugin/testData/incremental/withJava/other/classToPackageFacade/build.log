@@ -5,7 +5,7 @@ Cleaning output files:
   out/production/module/A.class
   out/production/module/META-INF/module.kotlin_module
 End of files
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/AChild.kt
   src/getA.kt
   src/getAChild.kt

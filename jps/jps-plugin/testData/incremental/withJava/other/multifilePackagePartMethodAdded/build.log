@@ -12,7 +12,7 @@ Compiling files:
   src/partB.kt
   src/partC.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/useFooF.kt
   src/useFooG.kt
 Exit code: ADDITIONAL_PASS_REQUIRED

@@ -1,6 +1,6 @@
 ================ Step #1 =================
 
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/A.kt
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
@@ -10,7 +10,7 @@ End of files
 Compiling files:
   src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/useA.kt
   src/useAbar.kt
   src/useAfoo.kt

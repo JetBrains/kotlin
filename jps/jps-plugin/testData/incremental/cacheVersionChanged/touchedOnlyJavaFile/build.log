@@ -1,7 +1,7 @@
 ================ Step #1 =================
 
 Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module' production) are INVALID
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/a.kt
   src/b.kt
   src/other.kt

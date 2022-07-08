@@ -9,7 +9,7 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/AChild.kt
   module3/src/AGrandChild.kt
   module3/src/importAGrandChild.kt
@@ -44,7 +44,7 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/AChild.kt
   module3/src/AGrandChild.kt
   module3/src/importAGrandChild.kt
