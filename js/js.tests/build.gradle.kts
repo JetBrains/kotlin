@@ -3,8 +3,8 @@ import de.undercouch.gradle.tasks.download.Download
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.ideaExt.idea
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
@@ -183,10 +183,11 @@ fun Test.setupSpiderMonkey() {
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
 }
 
+val d8Plugin = D8RootPlugin.apply(rootProject)
+d8Plugin.version = v8Version
+
 fun Test.setupV8() {
-    val d8Plugin = D8RootPlugin.apply(rootProject)
     dependsOn(d8Plugin.setupTaskProvider)
-    d8Plugin.version = v8Version
     doFirst {
         systemProperty("javascript.engine.path.V8", d8Plugin.requireConfigured().executablePath.absolutePath)
     }
