@@ -154,6 +154,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
@@ -285,6 +286,7 @@ fun composeSyntheticParamCount(
 
 interface IrChangedBitMaskValue {
     val used: Boolean
+    val declarations: List<IrValueDeclaration>
     fun irLowBit(): IrExpression
     fun irIsolateBitsAtSlot(slot: Int, includeStableBit: Boolean): IrExpression
     fun irSlotAnd(slot: Int, bits: Int): IrExpression
@@ -610,6 +612,35 @@ class ComposableFunctionBodyTransformer(
         ).map { it.owner }.first()
     }
 
+    private val isTraceInProgressFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.IS_TRACE_IN_PROGRESS)
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.isEmpty()
+        }
+    }
+
+    private val traceEventStartFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_START)
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.map { p -> p.type } == listOf(
+                context.irBuiltIns.intType,
+                context.irBuiltIns.intType,
+                context.irBuiltIns.intType,
+                context.irBuiltIns.stringType
+            )
+        }
+    }
+
+    private val traceEventEndFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_END)
+        ).map { it.owner }.singleOrNull {
+            it.valueParameters.isEmpty()
+        }
+    }
+
     private val sourceInformationMarkerEndFunction by guardedLazy {
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKEREND)
@@ -835,7 +866,10 @@ class ComposableFunctionBodyTransformer(
 
         var (transformed, returnVar) = body.asBodyAndResultVar()
 
-        transformed = transformed.apply { transformChildrenVoid() }
+        transformed = transformed.apply {
+            transformChildrenVoid()
+            wrapWithTraceEvents(irFunctionSourceKey(), scope)
+        }
 
         buildPreambleStatementsAndReturnIfSkippingPossible(
             body,
@@ -849,7 +883,14 @@ class ComposableFunctionBodyTransformer(
             defaultScope,
         )
 
-        if (!elideGroups) scope.realizeGroup(::irEndReplaceableGroup)
+        if (!elideGroups) {
+            scope.realizeGroup {
+                irComposite(statements = listOfNotNull(
+                    irTraceEventEnd(),
+                    irEndReplaceableGroup()
+                ))
+            }
+        }
 
         declaration.body = IrBlockBodyImpl(
             body.startOffset,
@@ -958,7 +999,10 @@ class ComposableFunctionBodyTransformer(
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
-        val transformed = nonReturningBody.apply { transformChildrenVoid() }
+        val transformed = nonReturningBody.apply {
+            transformChildrenVoid()
+            wrapWithTraceEvents(irFunctionSourceKey(), scope)
+        }
 
         canSkipExecution = buildPreambleStatementsAndReturnIfSkippingPossible(
             body,
@@ -976,6 +1020,13 @@ class ComposableFunctionBodyTransformer(
             skipPreamble.statements.addAll(0, dirty.asStatements())
             dirty
         } else changedParam
+
+        if (traceEventEndFunction != null) {
+            scope.realizeEndCalls {
+                irTraceEventEnd()!!
+            }
+        }
+
         if (canSkipExecution) {
             // We CANNOT skip if any of the following conditions are met
             // 1. if any of the stable parameters have *differences* from last execution.
@@ -1092,11 +1143,24 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
+        val endWithTraceEventEnd = {
+            irComposite(statements = listOfNotNull(
+                irTraceEventEnd(),
+                end()
+            ))
+        }
+
         val defaultScope = transformDefaults(scope)
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
-        val transformed = nonReturningBody.apply { transformChildrenVoid() }
+        val transformed = nonReturningBody.apply {
+            transformChildrenVoid()
+            wrapWithTraceEvents(
+                irFunctionSourceKey(),
+                scope,
+            )
+        }
 
         canSkipExecution = buildPreambleStatementsAndReturnIfSkippingPossible(
             body,
@@ -1168,7 +1232,7 @@ class ComposableFunctionBodyTransformer(
             statements = bodyPreamble.statements + transformed.statements
         )
 
-        scope.realizeGroup(end)
+        scope.realizeGroup(endWithTraceEventEnd)
 
         declaration.body = IrBlockBodyImpl(
             body.startOffset,
@@ -1753,6 +1817,18 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
+    private fun IrContainerExpression.wrapWithTraceEvents(
+        key: IrExpression,
+        scope: Scope.FunctionScope,
+    ) {
+        val start = irTraceEventStart(key, scope)
+        val end = irTraceEventEnd()
+        if (start != null && end != null) {
+            statements.add(0, start)
+            statements.add(end)
+        }
+    }
+
     private fun IrBody.asBodyAndResultVar(): Pair<IrContainerExpression, IrVariable?> {
         val original = IrCompositeImpl(
             startOffset,
@@ -1940,6 +2016,49 @@ class ComposableFunctionBodyTransformer(
             recordSourceParameter(it, 2, scope)
         }
     }
+
+    private fun irIsTraceInProgress(): IrExpression? =
+        isTraceInProgressFunction?.let { irCall(it) }
+
+    private fun irIfTraceInProgress(body: IrExpression): IrExpression? =
+        irIsTraceInProgress()?.let { isTraceInProgress ->
+            irIf(isTraceInProgress, body)
+        }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun irTraceEventStart(key: IrExpression, scope: Scope.FunctionScope): IrExpression? =
+        traceEventStartFunction?.let { traceEventStart ->
+            val declaration = scope.function
+            val startOffset = declaration.body!!.startOffset
+            val endOffset = declaration.body!!.endOffset
+
+            val name = declaration.kotlinFqName
+            val file = declaration.file.name
+            val line = declaration.file.fileEntry.getLineNumber(declaration.startOffset)
+            val traceInfo = "$name ($file:$line)" // TODO(174715171) decide on what to log
+            val dirty = scope.dirty
+            val changed = scope.changedParameter
+            val params = if (dirty != null && dirty.used)
+                dirty.declarations
+            else
+                changed?.declarations
+            val dirty1 = params?.getOrNull(0)?.let { irGet(it) } ?: irConst(-1)
+            val dirty2 = params?.getOrNull(1)?.let { irGet(it) } ?: irConst(-1)
+
+            irIfTraceInProgress(
+                irCall(traceEventStart, startOffset, endOffset).also {
+                    it.putValueArgument(0, key)
+                    it.putValueArgument(1, dirty1)
+                    it.putValueArgument(2, dirty2)
+                    it.putValueArgument(3, irConst(traceInfo))
+                }
+            )
+        }
+
+    private fun irTraceEventEnd(): IrExpression? =
+        traceEventEndFunction?.let {
+            irIfTraceInProgress(irCall(it))
+        }
 
     private fun irSourceInformationMarkerEnd(
         element: IrElement,
@@ -4027,6 +4146,9 @@ class ComposableFunctionBodyTransformer(
         }
 
         override var used: Boolean = false
+
+        override val declarations: List<IrValueDeclaration>
+            get() = params
 
         override fun irLowBit(): IrExpression {
             used = true

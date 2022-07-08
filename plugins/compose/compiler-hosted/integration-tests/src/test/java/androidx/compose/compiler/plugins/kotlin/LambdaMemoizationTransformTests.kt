@@ -38,7 +38,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val c: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   print(b)
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -69,10 +75,19 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example):Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 @Composable
                 fun A(%composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(A):Test.kt")
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                   %composer.endReplaceableGroup()
                 }
                 @Composable
@@ -80,22 +95,43 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(B)<conten...>:Test.kt")
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   content(%composer, 0b1110 and %changed)
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                   %composer.endReplaceableGroup()
                 }
                 @Composable
                 fun C(%composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(C)<B>:Test.kt")
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   B(composableLambda(%composer, <>, false) { %composer: Composer?, %changed: Int ->
                     sourceInformation(%composer, "C<A()>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
                       A(%composer, 0)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
                   }, %composer, 0b0110)
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                   %composer.endReplaceableGroup()
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -135,6 +171,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             fun Err(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Err):Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
               fun handler() {
                 { x: Int ->
                   x
@@ -142,6 +181,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               }
               {
                 handler()
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
               }
               %composer.endReplaceableGroup()
             }
@@ -174,6 +216,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Err)<{>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
               class Local {
                 val w: Int = z
                 fun something(x: Int): Int {
@@ -185,6 +230,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   Local().something(2)
                 }
               }, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
               %composer.endReplaceableGroup()
             }
         """,
@@ -213,6 +261,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             fun Example(z: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example)<{>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
               class Foo(val x: Int) {
                 val y: Int = z
               }
@@ -221,6 +272,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   Foo(1)
                 }
               }, %composer, 0b1110 and %changed)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
               %composer.endReplaceableGroup()
             }
         """,
@@ -252,16 +306,34 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(SimpleAnimatedContentSample)<Animat...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 @Composable
                 fun Foo(%composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(Foo):Test.kt")
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                   %composer.endReplaceableGroup()
                 }
                 AnimatedContent(1.0f, null, null, null, composableLambda(%composer, <>, false) { it: Float, %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<Foo()>:Test.kt")
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Foo(%composer, 0)
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 }, %composer, 0b0110000000000110, 0b1110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -294,15 +366,27 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<B>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 <<LOCALDELPROP>>
                 B(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
                     print(<get-x>())
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
                 }, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -333,7 +417,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -341,7 +431,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -370,10 +466,16 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<B(foo)>,<B(bar)>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 val foo = ComposableSingletons%TestKt.lambda-1
                 val bar = ComposableSingletons%TestKt.lambda-2
                 B(foo, %composer, 0b0110)
                 B(bar, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -385,7 +487,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -393,7 +501,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -421,7 +535,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<B>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 B(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -433,7 +553,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
                   Unit
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -480,13 +606,25 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   content = composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                     sourceInformation(%composer, "C<Displa...>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
                       Display("%enabled", %composer, 0)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
                   }
                 }
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
                 Wrap(content, %composer, 0b1110 and %dirty shr 0b0011)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -526,15 +664,27 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 val content = composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<Displa...>:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
                     Display("%enabled", %composer, 0)
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
                 }
                 Wrap(content, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -579,7 +729,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 content()
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -592,9 +748,15 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<TestLa...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 TestLambda({
                   println("Doesn't capture")
                 }, %composer, 0b0110)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -633,7 +795,13 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
             content()
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
           } else {
             %composer.skipToGroupEnd()
           }
@@ -650,11 +818,17 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %dirty, -1, <>)
+            }
             TestLambda(remember(a, {
               {
                 println("Captures a" + a)
               }
             }, %composer, 0b1110 and %dirty), %composer, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
           } else {
             %composer.skipToGroupEnd()
           }
@@ -685,12 +859,21 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)*<it()>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
                 var lambda = null
                 f { s: String ->
                   lambda = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                     sourceInformation(%composer, "C<Text(s...>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
                       Text(s, %composer, 0)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
@@ -708,6 +891,9 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 tmp0_group
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -746,11 +932,20 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(s)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %dirty, -1, <>)
+                }
                 remember({
                   composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                     sourceInformation(%composer, "C<Text(s...>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
                       Text(s, %composer, 0b1110 and %dirty)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
@@ -760,13 +955,22 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                   composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                     sourceInformation(%composer, "C<Text(s...>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
                       Text(s, %composer, 0b1110 and %dirty)
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
                   }
                 }
                 (%composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
               } else {
                 %composer.skipToGroupEnd()
               }
