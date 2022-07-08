@@ -143,14 +143,15 @@ private fun <D, T> buildTypeParameterList(
 }
 
 
-internal fun KtDeclaration.getKotlinType(): KotlinType? {
-    val descriptor = resolve()
-    return when (descriptor) {
-        is ValueDescriptor -> descriptor.type
-        is CallableDescriptor -> if (descriptor is FunctionDescriptor && descriptor.isSuspend)
-            descriptor.module.builtIns.nullableAnyType else descriptor.returnType
-        else -> null
-    }
+internal fun KtDeclaration.getKotlinType(): KotlinType? = when (val descriptor = resolve()) {
+    is ValueDescriptor -> descriptor.type
+    is CallableDescriptor ->
+        if (descriptor is FunctionDescriptor && descriptor.isSuspend)
+            descriptor.module.builtIns.nullableAnyType
+        else
+            descriptor.returnType
+
+    else -> null
 }
 
 internal fun KtDeclaration.resolve() = LightClassGenerationSupport.getInstance(project).resolveToDescriptor(this)
@@ -392,11 +393,12 @@ internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupp
     val annotations = annotationEntries.filter { annotation ->
         annotation.looksLikeDeprecated()
     }
-    if (annotations.isNotEmpty()) { // some candidates found
+
+    return if (annotations.isNotEmpty()) { // some candidates found
         val deprecated = support.findAnnotation(this, StandardNames.FqNames.deprecated)?.second
-        return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+        (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
     } else {
-        return false
+        false
     }
 }
 
@@ -506,6 +508,7 @@ private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
 
             "$canonicalText$arrayPart.class"
         }
+
         is EnumValue -> "${enumClassId.asSingleFqName().asString()}.$enumEntryName"
         else -> when (value) {
             is Long -> "${value}L"
