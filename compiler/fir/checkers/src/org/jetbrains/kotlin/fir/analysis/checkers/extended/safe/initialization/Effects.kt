@@ -22,6 +22,9 @@ open class Effects(private val collection: Collection<Effect>) : Collection<Effe
     operator fun plus(effect: Effect) = collectionsPlus(effect).fastToEffects()
 
     operator fun plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
+    override fun toString(): String =
+        "Φ=$collection"
+
 
     companion object {
         private fun Collection<Effect>.fastToEffects() = Effects(this)

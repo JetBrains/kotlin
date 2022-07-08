@@ -64,6 +64,9 @@ open class Potentials(protected val collection: Collection<Potential>) : Collect
 
     operator fun plus(effsAndPots: EffectsAndPotentials): EffectsAndPotentials = effsAndPots + this
 
+    override fun toString(): String = "Π=$collection"
+
+
     companion object {
         private fun Collection<Potential>.fastToPotentials() = Potentials(this)
 

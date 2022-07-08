@@ -21,37 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
-object ClassAnalyser {
-
-    fun StateOfClass.classTyping(firClass1: FirClass): EffectsAndPotentials {
-        // TODO: resolveSuperClasses
-        val state = StateOfClass(firClass1, context, this)
-        return state.firClass.declarations.fold(emptyEffsAndPots) { sum, d -> sum + state.analyseDeclaration(d) }
-    }
-
-    fun StateOfClass.fieldTyping(firProperty: FirProperty): EffectsAndPotentials =
-        analyseDeclaration(firProperty)
-
-    fun StateOfClass.methodTyping(firFunction: FirFunction): EffectsAndPotentials =
-        firFunction.body?.let(::analyser) ?: emptyEffsAndPots
-
-    fun StateOfClass.analyseDeclaration1(firDeclaration: FirDeclaration): EffectsAndPotentials {
-        return caches.getOrPut(firDeclaration) {
-            when (firDeclaration) {
-                is FirRegularClass -> classTyping(firDeclaration)
-                //                is FirConstructor(a: FirElement) {
-                //                TODO()}
-                is FirSimpleFunction -> methodTyping(firDeclaration)
-                is FirProperty -> fieldTyping(firDeclaration)
-                is FirField -> {
-                    TODO()
-                }
-                else -> emptyEffsAndPots
-            }
-        }
-    }
-}
-
 object Analyser {
 
     object ReferenceVisitor : FirDefaultVisitor<EffectsAndPotentials, Pair<StateOfClass, Potentials>>() {
@@ -301,3 +270,11 @@ fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
     return effsAndPots
 }
 
+class A {
+    var a = foo()
+
+    fun foo(): String {
+        a = "Hello"
+        return a.substring(1)
+    }
+}

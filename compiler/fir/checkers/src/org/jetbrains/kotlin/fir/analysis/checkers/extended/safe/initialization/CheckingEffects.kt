@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.Effect
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.FieldAccess
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.MethodAccess
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.anonymousInitializers
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenExitNode
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 class CheckingEffects {
@@ -99,6 +103,9 @@ object Checker {
 
         val errors = mutableListOf<Error<*>>()
 
+        private val initializationDeclarationVisitor = InitializationDeclarationVisitor()
+        private val declarationVisitor = DeclarationVisitor()
+
         @OptIn(SymbolInternals::class)
         fun FirAnonymousInitializer.initBlockAnalyser(propertySymbols: Set<FirPropertySymbol>) {
             val graph = controlFlowGraphReference?.controlFlowGraph ?: return
@@ -128,13 +135,7 @@ object Checker {
 
         fun checkClass(): Errors {
             val classErrors = declarations.flatMap { dec ->
-                when (dec) {
-                    is FirConstructor -> {
-                        if (dec.isPrimary)
-                            alreadyInitializedVariable + dec.valueParameters
-                    }
-                }
-                val effsAndPots = analyseDeclaration(dec)
+                val effsAndPots = dec.accept(initializationDeclarationVisitor, null)
                 val errors = effsAndPots.effects.flatMap { it.check(this) }
                 if (dec is FirProperty && dec.initializer != null) {
                     alreadyInitializedVariable.add(dec)
@@ -145,6 +146,51 @@ object Checker {
             errors.addAll(classErrors)
             return errors
         }
+
+        private open inner class InitializationDeclarationVisitor :
+            FirDefaultVisitor<EffectsAndPotentials, Nothing?>() {
+            override fun visitElement(element: FirElement, data: Nothing?): EffectsAndPotentials = emptyEffsAndPots
+
+            override fun visitConstructor(constructor: FirConstructor, data: Nothing?): EffectsAndPotentials {
+                if (constructor.isPrimary)
+                    alreadyInitializedVariable.addAll(constructor.valueParameters)
+                return analyseBody(constructor.body)
+            }
+
+            override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?): EffectsAndPotentials =
+                analyseBody(anonymousInitializer.body)
+
+            protected fun analyseBody(body: FirBlock?): EffectsAndPotentials =
+                body?.let(::analyser) ?: emptyEffsAndPots
+
+            override fun visitProperty(property: FirProperty, data: Nothing?): EffectsAndPotentials =
+                property.initializer?.let(::analyser) ?: emptyEffsAndPots
+
+            override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?): EffectsAndPotentials =
+                StateOfClass(regularClass, context, this@StateOfClass).run {
+                    errors.addAll(checkClass())
+                    analyseClass()
+                }
+
+            protected fun StateOfClass.analyseClass() =
+                firClass.declarations.fold(emptyEffsAndPots) { sum, d ->
+                    sum + d.accept(this.initializationDeclarationVisitor, null)
+                }
+        }
+
+        private inner class DeclarationVisitor : InitializationDeclarationVisitor() {
+
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): EffectsAndPotentials =
+                analyseBody(simpleFunction.body)
+
+            override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?): EffectsAndPotentials {
+                val stateOfClass = StateOfClass(regularClass, context, this@StateOfClass)
+                return stateOfClass.analyseClass()
+            }
+        }
+
+        fun analyseDeclaration1(firDeclaration: FirDeclaration): EffectsAndPotentials =
+            caches.getOrPut(firDeclaration) { firDeclaration.accept(declarationVisitor, null) }
     }
 }
 
