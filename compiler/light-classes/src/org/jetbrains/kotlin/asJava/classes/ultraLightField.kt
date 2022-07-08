@@ -87,7 +87,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val support: KtUltraLightSupport,
     modifiers: Set<String>,
 ) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
-    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiField> {
+    KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiField> {
 
     private val modifierList by lazyPub {
         KtUltraLightFieldModifierList(support, declaration, this, modifiers)

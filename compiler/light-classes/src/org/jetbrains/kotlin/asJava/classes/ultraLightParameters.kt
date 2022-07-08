@@ -37,7 +37,7 @@ internal class KtUltraLightSuspendContinuationParameter(
     method: KtLightMethod
 ) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
     KtLightParameter,
-    KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
+    KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter> {
 
     override val qualifiedNameForNullabilityAnnotation: String?
         get() = if (!ktFunction.isPrivate()) computeQualifiedNameForNullabilityAnnotation(ktType) else null
@@ -89,7 +89,7 @@ internal abstract class KtUltraLightParameter(
     PsiType.NULL,
     ultraLightMethod,
     ultraLightMethod.language
-), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
+), KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter>, KtLightParameter {
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return another is KtParameter && kotlinOrigin?.isEquivalentTo(another) == true || this == another
     }

@@ -76,7 +76,7 @@ internal abstract class KtUltraLightMethod(
 ) : KtLightMethodImpl(
     lightMemberOrigin,
     containingClass
-), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
+), KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiMethod> {
     private class KtUltraLightThrowsReferenceListBuilder(private val parentMethod: PsiMethod) :
         KotlinLightReferenceListBuilder(parentMethod.manager, parentMethod.language, PsiReferenceList.Role.THROWS_LIST) {
         override fun getParent(): PsiMethod = parentMethod
