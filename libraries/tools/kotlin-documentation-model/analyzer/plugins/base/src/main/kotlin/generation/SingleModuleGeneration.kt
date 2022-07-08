@@ -24,6 +24,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         report("Validity check")
         validityCheck(context)
 
+        // Step 1: translate sources into documentables & transform documentables (change internally)
         report("Creating documentation models")
         val modulesFromPlatforms = createDocumentationModels()
 
@@ -31,18 +32,20 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         val transformedDocumentationBeforeMerge = transformDocumentationModelBeforeMerge(modulesFromPlatforms)
 
         report("Merging documentation models")
-        val documentationModel = mergeDocumentationModels(transformedDocumentationBeforeMerge)
+        val transformedDocumentationAfterMerge = mergeDocumentationModels(transformedDocumentationBeforeMerge)
             ?: exitGenerationGracefully("Nothing to document")
 
         report("Transforming documentation model after merging")
-        val transformedDocumentation = transformDocumentationModelAfterMerge(documentationModel)
+        val transformedDocumentation = transformDocumentationModelAfterMerge(transformedDocumentationAfterMerge)
 
+        // Step 2: Generate pages & transform them (change internally)
         report("Creating pages")
         val pages = createPages(transformedDocumentation)
 
         report("Transforming pages")
         val transformedPages = transformPages(pages)
 
+        // Step 3: Rendering
         report("Rendering")
         render(transformedPages)
 
@@ -54,7 +57,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
     override val generationName = "documentation for ${context.configuration.moduleName}"
 
-    fun createDocumentationModels() = runBlocking(Dispatchers.Default) {
+    fun createDocumentationModels(): List<DModule> = runBlocking(Dispatchers.Default) {
         context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()
             .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
     }
@@ -69,10 +72,10 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
     fun transformDocumentationModelAfterMerge(documentationModel: DModule) =
         context[CoreExtensions.documentableTransformer].fold(documentationModel) { acc, t -> t(acc, context) }
 
-    fun createPages(transformedDocumentation: DModule) =
+    fun createPages(transformedDocumentation: DModule): RootPageNode =
         context.single(CoreExtensions.documentableToPageTranslator).invoke(transformedDocumentation)
 
-    fun transformPages(pages: RootPageNode) =
+    fun transformPages(pages: RootPageNode): RootPageNode =
         context[CoreExtensions.pageTransformer].fold(pages) { acc, t -> t(acc) }
 
     fun render(transformedPages: RootPageNode) {
