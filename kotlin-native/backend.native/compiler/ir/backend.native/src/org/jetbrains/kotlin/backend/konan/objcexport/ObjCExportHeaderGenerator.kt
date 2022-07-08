@@ -725,17 +725,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun getDeprecationAttribute(method: FunctionDescriptor): String? {
-        mapper.getDeprecation(method)?.toDeprecationAttribute()?.let { return it }
-
-        if (method.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            val parent = method.containingDeclaration
-            if (parent is ClassDescriptor && parent.isData && DataClassResolver.isComponentLike(method.name)) {
-                // componentN methods of data classes.
-                return renderDeprecationAttribute("deprecated", "use corresponding property instead")
-            }
-        }
-
-        return null
+        return mapper.getDeprecation(method)?.toDeprecationAttribute()
     }
 
     private fun splitSelector(selector: String): List<String> {

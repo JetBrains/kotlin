@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -73,10 +74,31 @@ internal fun ObjCExportMapper.getClassIfCategory(extensionReceiverType: KotlinTy
 
 private fun isSealedClassConstructor(descriptor: ConstructorDescriptor) = descriptor.constructedClass.isSealed()
 
+/**
+ * Check that given [method] is a synthetic .componentN() method of a data class.
+ */
+private fun isComponentNMethod(method: CallableMemberDescriptor): Boolean {
+    if (method.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+        val parent = method.containingDeclaration
+        if (parent is ClassDescriptor && parent.isData && DataClassResolver.isComponentLike(method.name)) {
+            // componentN method of data class.
+            return true
+        }
+    }
+    return false
+}
+
 // Note: partially duplicated in ObjCExportLazyImpl.translateTopLevels.
-internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
-        descriptor.isEffectivelyPublicApi && !descriptor.isExpect &&
-                !isHiddenByDeprecation(descriptor) && !(descriptor is ConstructorDescriptor && isSealedClassConstructor(descriptor))
+internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean = when {
+    !descriptor.isEffectivelyPublicApi -> false
+    descriptor.isExpect -> false
+    isHiddenByDeprecation(descriptor) -> false
+    descriptor is ConstructorDescriptor && isSealedClassConstructor(descriptor) -> false
+    // KT-42641. Don't expose componentN methods of data classes
+    // because they are useless in Objective-C/Swift.
+    isComponentNMethod(descriptor) && descriptor.overriddenDescriptors.isEmpty() -> false
+    else -> true
+}
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
         shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
