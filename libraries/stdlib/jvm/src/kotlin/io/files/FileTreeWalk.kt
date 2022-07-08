@@ -30,7 +30,7 @@ public enum class FileWalkDirection {
  * This class is intended to implement different file traversal methods.
  * It allows to iterate through all files inside a given directory.
  *
- * Use [File.walk], [File.walkTopDown] or [File.walkBottomUp] extension functions to instantiate a `FileTreeWalk` instance.
+ * Use [File.walk], [File.walkTopDown], [File.walkBottomUp] or [File.walkBreadthFirst] extension functions to instantiate a `FileTreeWalk` instance.
 
  * If the file path given is just a file, walker iterates only it.
  * If the file path given does not exist, walker iterates nothing, i.e. it's equivalent to an empty sequence.
