@@ -28,11 +28,11 @@ open class FirPrinter(builder: StringBuilder) {
         lineBeginning = true
     }
 
-    protected fun pushIndent() {
+    internal fun pushIndent() {
         printer.pushIndent()
     }
 
-    protected fun popIndent() {
+    internal fun popIndent() {
         printer.popIndent()
     }
 

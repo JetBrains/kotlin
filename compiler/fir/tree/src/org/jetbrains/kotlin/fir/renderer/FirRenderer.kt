@@ -39,6 +39,7 @@ class FirRenderer private constructor(
     private val declarationRenderer: FirDeclarationRenderer,
     private val modifierRenderer: FirModifierRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
+    private val propertyAccessorRenderer: FirPropertyAccessorRenderer?,
     private val typeRenderer: ConeTypeRenderer,
     private val valueParameterRenderer: FirValueParameterRenderer,
 ) : FirPrinter(builder) {
@@ -54,6 +55,7 @@ class FirRenderer private constructor(
         components.declarationRenderer = declarationRenderer
         components.modifierRenderer = modifierRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
+        components.propertyAccessorRenderer = propertyAccessorRenderer
         components.typeRenderer = typeRenderer
         components.valueParameterRenderer = valueParameterRenderer
         @Suppress("LeakingThis")
@@ -65,6 +67,7 @@ class FirRenderer private constructor(
         declarationRenderer.components = components
         modifierRenderer.components = components
         packageDirectiveRenderer?.components = components
+        propertyAccessorRenderer?.components = components
         typeRenderer.builder = builder
         valueParameterRenderer.components = components
     }
@@ -84,6 +87,7 @@ class FirRenderer private constructor(
         FirDeclarationRenderer(),
         FirAllModifierRenderer(),
         packageDirectiveRenderer = null,
+        FirPropertyAccessorRenderer(),
         ConeTypeRendererForDebugging(),
         FirValueParameterRenderer(),
     )
@@ -98,12 +102,14 @@ class FirRenderer private constructor(
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
         modifierRenderer: FirModifierRenderer = this.modifierRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
+        propertyAccessorRenderer: FirPropertyAccessorRenderer? = this.propertyAccessorRenderer,
         typeRenderer: ConeTypeRenderer = this.typeRenderer,
         valueParameterRenderer: FirValueParameterRenderer = this.valueParameterRenderer,
     ): FirRenderer = FirRenderer(
         builder, mode, FirComponentsImpl(),
         annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
-        declarationRenderer, modifierRenderer, packageDirectiveRenderer, typeRenderer, valueParameterRenderer
+        declarationRenderer, modifierRenderer, packageDirectiveRenderer,
+        propertyAccessorRenderer, typeRenderer, valueParameterRenderer
     )
 
     fun renderElementAsString(element: FirElement): String {
@@ -133,6 +139,8 @@ class FirRenderer private constructor(
 
         override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
 
+        override var propertyAccessorRenderer: FirPropertyAccessorRenderer? = null
+
         override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
 
         override lateinit var classMemberRenderer: FirClassMemberRenderer
@@ -152,7 +160,6 @@ class FirRenderer private constructor(
 
     data class RenderMode(
         val renderCallableFqNames: Boolean,
-        val renderPropertyAccessors: Boolean = true,
     ) {
         companion object {
             val Normal = RenderMode(
@@ -161,11 +168,6 @@ class FirRenderer private constructor(
 
             val WithFqNames = RenderMode(
                 renderCallableFqNames = true,
-            )
-
-            val NoBodies = RenderMode(
-                renderCallableFqNames = false,
-                renderPropertyAccessors = false,
             )
         }
     }
@@ -401,26 +403,7 @@ class FirRenderer private constructor(
         override fun visitProperty(property: FirProperty) {
             visitVariable(property)
             if (property.isLocal) return
-            if (!mode.renderPropertyAccessors) return
-            println()
-            pushIndent()
-
-            if (property.hasExplicitBackingField) {
-                property.backingField?.accept(this)
-                println()
-            }
-
-            property.getter?.accept(this)
-            if (property.getter?.body == null) {
-                println()
-            }
-            if (property.isVar) {
-                property.setter?.accept(this)
-                if (property.setter?.body == null) {
-                    println()
-                }
-            }
-            popIndent()
+            propertyAccessorRenderer?.render(property)
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
