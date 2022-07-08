@@ -6,13 +6,24 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.name.Name
 
-class FirAnnotationWithArgumentsRenderer() : FirAnnotationRenderer() {
-    override fun FirAnnotation.renderArgumentMapping() {
+open class FirCallArgumentsRenderer {
+    internal lateinit var components: FirRendererComponents
+    protected val visitor get() = components.visitor
+    protected val printer get() = components.printer
+
+    open fun renderArgumentMapping(argumentMapping: FirAnnotationArgumentMapping) {
         printer.print("(")
         argumentMapping.mapping.renderSeparated()
+        printer.print(")")
+    }
+
+    open fun renderArguments(arguments: List<FirExpression>) {
+        printer.print("(")
+        printer.renderSeparated(arguments, visitor)
         printer.print(")")
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 
 fun CFGNode<*>.render(): String =
@@ -133,12 +134,7 @@ fun CFGNode<*>.render(): String =
 
 // NB: renderer has a state, so we have to create it each time
 private val CfgRenderer
-    get() = FirRenderer(
-        mode = FirRenderer.RenderMode(
-            renderCallArguments = false,
-            renderCallableFqNames = false,
-        )
-    ).with(annotationRenderer = null)
+    get() = FirRenderer().with(annotationRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer())
 
 private fun FirFunction.name(): String = when (this) {
     is FirSimpleFunction -> name.asString()

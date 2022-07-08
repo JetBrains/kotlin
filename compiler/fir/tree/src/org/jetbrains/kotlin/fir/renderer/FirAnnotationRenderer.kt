@@ -17,6 +17,7 @@ open class FirAnnotationRenderer {
     internal lateinit var components: FirRendererComponents
     protected val visitor get() = components.visitor
     protected val printer get() = components.printer
+    protected val callArgumentsRenderer get() = components.callArgumentsRenderer
 
     fun render(annotationContainer: FirAnnotationContainer) {
         renderAnnotations(annotationContainer.annotations)
@@ -37,24 +38,17 @@ open class FirAnnotationRenderer {
         annotation.annotationTypeRef.accept(visitor)
         when (annotation) {
             is FirAnnotationCall -> if (annotation.calleeReference.let { it is FirResolvedNamedReference || it is FirErrorNamedReference }) {
-                annotation.renderArgumentMapping()
+                callArgumentsRenderer.renderArgumentMapping(annotation.argumentMapping)
             } else {
                 visitor.visitCall(annotation)
             }
-            else -> annotation.renderArgumentMapping()
+            else -> callArgumentsRenderer.renderArgumentMapping(annotation.argumentMapping)
+
         }
         if (annotation.useSiteTarget == AnnotationUseSiteTarget.FILE) {
             printer.println()
         } else {
             printer.print(" ")
         }
-    }
-
-    protected open fun FirAnnotation.renderArgumentMapping() {
-        printer.print("(")
-        if (argumentMapping.mapping.isNotEmpty()) {
-            printer.print("...")
-        }
-        printer.print(")")
     }
 }

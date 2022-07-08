@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -137,7 +138,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
         print("[${declaration.origin}]: ")
         val renderedDeclaration = FirRenderer(mode = FirRenderer.RenderMode.NoBodies).with(
-            annotationRenderer = null, bodyRenderer = null
+            annotationRenderer = null, bodyRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer()
         ).renderElementAsString(declaration).trim()
         print(renderedDeclaration)
         print(" from $scope")

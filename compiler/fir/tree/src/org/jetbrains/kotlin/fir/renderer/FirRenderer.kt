@@ -39,6 +39,7 @@ open class FirRenderer private constructor(
     components: FirComponentsImpl,
     private val annotationRenderer: FirAnnotationRenderer?,
     private val bodyRenderer: FirBodyRenderer?,
+    private val callArgumentsRenderer: FirCallArgumentsRenderer,
     private val classMemberRenderer: FirClassMemberRenderer,
     private val declarationRenderer: FirDeclarationRenderer,
     private val packageDirectiveRenderer: FirPackageDirectiveRenderer?,
@@ -58,6 +59,7 @@ open class FirRenderer private constructor(
         components.visitor = visitor
         components.annotationRenderer = annotationRenderer
         components.bodyRenderer = bodyRenderer
+        components.callArgumentsRenderer = callArgumentsRenderer
         components.classMemberRenderer = classMemberRenderer
         components.declarationRenderer = declarationRenderer
         components.packageDirectiveRenderer = packageDirectiveRenderer
@@ -66,6 +68,7 @@ open class FirRenderer private constructor(
         components.printer = this
         annotationRenderer?.components = components
         bodyRenderer?.components = components
+        callArgumentsRenderer.components = components
         classMemberRenderer.components = components
         declarationRenderer.components = components
         packageDirectiveRenderer?.components = components
@@ -80,8 +83,9 @@ open class FirRenderer private constructor(
         builder,
         mode,
         components,
-        FirAnnotationWithArgumentsRenderer(),
+        FirAnnotationRenderer(),
         FirBodyRenderer(),
+        FirCallArgumentsRenderer(),
         FirClassMemberRenderer(),
         FirDeclarationRenderer(),
         packageDirectiveRenderer = null,
@@ -93,13 +97,14 @@ open class FirRenderer private constructor(
     fun with(
         annotationRenderer: FirAnnotationRenderer? = this.annotationRenderer,
         bodyRenderer: FirBodyRenderer? = this.bodyRenderer,
+        callArgumentsRenderer: FirCallArgumentsRenderer = this.callArgumentsRenderer,
         classMemberRenderer: FirClassMemberRenderer = this.classMemberRenderer,
         declarationRenderer: FirDeclarationRenderer = this.declarationRenderer,
         packageDirectiveRenderer: FirPackageDirectiveRenderer? = this.packageDirectiveRenderer,
         typeRenderer: ConeTypeRenderer = this.typeRenderer
     ): FirRenderer = FirRenderer(
         builder, mode, FirComponentsImpl(),
-        annotationRenderer, bodyRenderer, classMemberRenderer,
+        annotationRenderer, bodyRenderer, callArgumentsRenderer, classMemberRenderer,
         declarationRenderer, packageDirectiveRenderer, typeRenderer
     )
 
@@ -130,6 +135,8 @@ open class FirRenderer private constructor(
 
         override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
 
+        override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
+
         override lateinit var classMemberRenderer: FirClassMemberRenderer
 
         override lateinit var declarationRenderer: FirDeclarationRenderer
@@ -142,7 +149,6 @@ open class FirRenderer private constructor(
     }
 
     data class RenderMode(
-        val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
         val renderPropertyAccessors: Boolean = true,
         val renderDefaultParameterValues: Boolean = true,
@@ -150,47 +156,24 @@ open class FirRenderer private constructor(
     ) {
         companion object {
             val Normal = RenderMode(
-                renderCallArguments = true,
                 renderCallableFqNames = false,
             )
 
             val WithFqNames = RenderMode(
-                renderCallArguments = true,
                 renderCallableFqNames = true,
             )
 
             val NoBodies = RenderMode(
-                renderCallArguments = false,
                 renderCallableFqNames = false,
                 renderPropertyAccessors = false,
             )
 
             val DeclarationHeader = RenderMode(
-                renderCallArguments = false,
                 renderCallableFqNames = false,
                 renderPropertyAccessors = false,
                 renderDefaultParameterValues = false,
                 renderAllModifiers = false,
             )
-        }
-    }
-
-    private fun List<FirElement>.renderSeparated() {
-        for ((index, element) in this.withIndex()) {
-            if (index > 0) {
-                print(", ")
-            }
-            element.accept(visitor)
-        }
-    }
-
-    private fun List<FirElement>.renderSeparatedWithNewlines() {
-        for ((index, element) in this.withIndex()) {
-            if (index > 0) {
-                print(",")
-                newLine()
-            }
-            element.accept(visitor)
         }
     }
 
@@ -206,7 +189,7 @@ open class FirRenderer private constructor(
 
     private fun List<FirValueParameter>.renderParameters() {
         print("(")
-        renderSeparated()
+        renderSeparated(this, visitor)
         print(")")
     }
 
@@ -222,7 +205,7 @@ open class FirRenderer private constructor(
     private fun renderContexts(contextReceivers: List<FirContextReceiver>) {
         if (contextReceivers.isEmpty()) return
         print("context(")
-        contextReceivers.renderSeparated()
+        renderSeparated(contextReceivers, visitor)
         print(")")
         newLine()
     }
@@ -260,7 +243,7 @@ open class FirRenderer private constructor(
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
         if (isNotEmpty()) {
             print("<")
-            renderSeparated()
+            renderSeparated(this, visitor)
             print(">")
         }
     }
@@ -268,7 +251,7 @@ open class FirRenderer private constructor(
     private fun List<FirTypeProjection>.renderTypeArguments() {
         if (isNotEmpty()) {
             print("<")
-            renderSeparated()
+            renderSeparated(this, visitor)
             print(">")
         }
     }
@@ -276,7 +259,7 @@ open class FirRenderer private constructor(
     fun renderSupertypes(regularClass: FirRegularClass) {
         if (regularClass.superTypeRefs.isNotEmpty()) {
             print(" : ")
-            regularClass.superTypeRefs.renderSeparated()
+            renderSeparated(regularClass.superTypeRefs, visitor)
         }
     }
 
@@ -496,7 +479,7 @@ open class FirRenderer private constructor(
         override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
             annotationRenderer?.render(anonymousObject)
             print("object : ")
-            anonymousObject.superTypeRefs.renderSeparated()
+            renderSeparated(anonymousObject.superTypeRefs, visitor)
             classMemberRenderer.render(anonymousObject.declarations)
         }
 
@@ -680,7 +663,7 @@ open class FirRenderer private constructor(
 
             if (meaningfulBounds.isNotEmpty()) {
                 print(" : ")
-                meaningfulBounds.renderSeparated()
+                renderSeparated(meaningfulBounds, visitor)
             }
         }
 
@@ -917,20 +900,12 @@ open class FirRenderer private constructor(
 
         override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
             print("vararg(")
-            varargArgumentsExpression.arguments.renderSeparated()
+            renderSeparated(varargArgumentsExpression.arguments, visitor)
             print(")")
         }
 
         override fun visitCall(call: FirCall) {
-            print("(")
-            if (mode.renderCallArguments) {
-                call.arguments.renderSeparated()
-            } else {
-                if (call.arguments.isNotEmpty()) {
-                    print("...")
-                }
-            }
-            print(")")
+            callArgumentsRenderer.renderArguments(call.arguments)
         }
 
         override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall) {
@@ -993,7 +968,7 @@ open class FirRenderer private constructor(
         override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
             if (functionTypeRef.contextReceiverTypeRefs.isNotEmpty()) {
                 print("context(")
-                functionTypeRef.contextReceiverTypeRefs.renderSeparated()
+                renderSeparated(functionTypeRef.contextReceiverTypeRefs, visitor)
                 print(")")
             }
 
@@ -1030,7 +1005,7 @@ open class FirRenderer private constructor(
                 print(qualifier.name)
                 if (qualifier.typeArgumentList.typeArguments.isNotEmpty()) {
                     print("<")
-                    qualifier.typeArgumentList.typeArguments.renderSeparated()
+                    renderSeparated(qualifier.typeArgumentList.typeArguments, visitor)
                     print(">")
                 }
             }
@@ -1345,7 +1320,7 @@ open class FirRenderer private constructor(
             newLine()
             print("[Contract description]")
             renderInBraces("<", ">") {
-                rawContractDescription.rawEffects.renderSeparatedWithNewlines()
+                renderSeparatedWithNewlines(rawContractDescription.rawEffects, visitor)
                 newLine()
             }
         }

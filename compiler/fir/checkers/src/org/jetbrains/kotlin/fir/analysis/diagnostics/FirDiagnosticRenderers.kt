@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
-import org.jetbrains.kotlin.fir.renderer.FirAnnotationRenderer
-import org.jetbrains.kotlin.fir.renderer.FirNoClassMemberRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.renderer.FirRenderer.RenderMode.Companion.WithFqNames
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -36,8 +33,8 @@ object FirDiagnosticRenderers {
             ).with(
                 typeRenderer = ConeTypeRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
-                annotationRenderer = FirAnnotationRenderer(),
                 bodyRenderer = null,
+                callArgumentsRenderer = FirCallNoArgumentsRenderer(),
             ).renderElementAsString(symbol.fir)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"

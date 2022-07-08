@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.utils.Printer
 
 open class FirPrinter(builder: StringBuilder) {
@@ -45,6 +46,25 @@ open class FirPrinter(builder: StringBuilder) {
         f()
         popIndent()
         println(rightBrace)
+    }
+
+    internal fun renderSeparated(elements: List<FirElement>, visitor: FirRenderer.Visitor) {
+        for ((index, element) in elements.withIndex()) {
+            if (index > 0) {
+                print(", ")
+            }
+            element.accept(visitor)
+        }
+    }
+
+    internal fun renderSeparatedWithNewlines(elements: List<FirElement>, visitor: FirRenderer.Visitor) {
+        for ((index, element) in elements.withIndex()) {
+            if (index > 0) {
+                print(",")
+                newLine()
+            }
+            element.accept(visitor)
+        }
     }
 
     override fun toString(): String {

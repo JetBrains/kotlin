@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -161,7 +161,7 @@ internal class KtFirTypeProvider(
 
         require(typeParameterSymbols.size == argumentTypes.size) {
             val renderedSymbol = FirRenderer(mode = FirRenderer.RenderMode.NoBodies).with(
-                annotationRenderer = null, bodyRenderer = null
+                annotationRenderer = null, bodyRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer()
             ).renderElementAsString(symbol.fir)
             "'$renderedSymbol' expects '${typeParameterSymbols.size}' type arguments " +
                     "but type '${this.renderForDebugging()}' has ${argumentTypes.size} type arguments."
