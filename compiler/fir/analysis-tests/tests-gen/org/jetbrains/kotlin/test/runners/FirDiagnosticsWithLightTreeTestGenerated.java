@@ -2637,9 +2637,21 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
-                @TestMetadata("innerClass.kt")
-                public void testInnerClass() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/innerClass.kt");
+                @TestMetadata("initBlocks3.kt")
+                public void testInitBlocks3() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks3.kt");
+                }
+
+                @Test
+                @TestMetadata("innerClass1.kt")
+                public void testInnerClass1() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/innerClass1.kt");
+                }
+
+                @Test
+                @TestMetadata("innerClass2.kt")
+                public void testInnerClass2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/innerClass2.kt");
                 }
 
                 @Test

@@ -1,0 +1,40 @@
+FILE: innerClass2.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|B.A| = this@R|/B|.R|/B.A.A|()
+            public get(): R|B.A|
+
+        public final val b: R|kotlin/Boolean| = Boolean(false)
+            public get(): R|kotlin/Boolean|
+
+        public final fun foo(): R|kotlin/Boolean| {
+            ^foo this@R|/B|.R|/B.a|.R|/B.A.a|.R|/B.b|
+        }
+
+        public final inner class A : R|kotlin/Any| {
+            public B.constructor(l: R|kotlin/Int|): R|B.A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|B| = this@R|/B|
+                public get(): R|B|
+
+            public B.constructor(b: R|kotlin/Boolean| = this@R|/B|.R|/B.foo|()): R|B.A| {
+                this@R|/B|.this<R|B.A|>(when () {
+                    this@R|/B|.R|/B.foo|() ->  {
+                        Int(5)
+                    }
+                    else ->  {
+                        Int(4)
+                    }
+                }
+                )
+                this@R|/B|.R|/B.a|
+            }
+
+        }
+
+    }

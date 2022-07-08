@@ -1,0 +1,34 @@
+FILE: initBlocks3.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(bool: R|kotlin/Boolean|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo this@R|/A|.R|/A.a|
+        }
+
+        public final var b: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        init {
+            lvar localA: R|kotlin/String| = this@R|/A|.R|/A.foo|()
+            when () {
+                R|<local>/bool| ->  {
+                    this@R|/A|.R|/A.b| = this@R|/A|.R|/A.foo|()
+                    R|<local>/localA| = this@R|/A|.R|/A.b|
+                    this@R|/A|.R|/A.a| = R|<local>/localA|
+                }
+                else ->  {
+                    this@R|/A|.R|/A.a| = R|<local>/localA|
+                }
+            }
+
+            this@R|/A|.R|/A.b| = this@R|/A|.R|/A.a|
+        }
+
+    }
