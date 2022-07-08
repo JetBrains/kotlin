@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ class FacadeCache(private val project: Project) {
     private inner class FacadeCacheData {
         val cache = object : SLRUCache<FacadeCacheKey, ValueWrapper>(20, 30) {
             override fun createValue(key: FacadeCacheKey): ValueWrapper =
-                KtLightClassForFacadeImpl.createForFacadeNoCache(key.fqName, key.searchScope, project)
+                KotlinLightClassFactory.createFacadeNoCache(key.fqName, key.searchScope, project)
                     ?.let { ValueWrapper(it) }
                     ?: ValueWrapper.Null
         }

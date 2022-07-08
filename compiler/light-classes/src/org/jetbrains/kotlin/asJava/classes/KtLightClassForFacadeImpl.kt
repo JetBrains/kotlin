@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -210,39 +206,4 @@ abstract class KtLightClassForFacadeImpl constructor(
     override fun isWritable() = files.all { it.isWritable }
 
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
-
-    companion object {
-
-        fun createForFacadeNoCache(fqName: FqName, searchScope: GlobalSearchScope, project: Project): KtLightClassForFacade? {
-            val sources = KotlinAsJavaSupport.getInstance(project).findFilesForFacade(fqName, searchScope)
-                .filterNot { it.isCompiled || it.isScript() }
-
-            if (sources.isEmpty()) return null
-            val manager = PsiManager.getInstance(project)
-            return LightClassGenerationSupport.getInstance(project).run {
-                if (!canCreateUltraLightClassForFacade(sources)) return null
-                createUltraLightClassForFacade(manager, fqName, sources)
-                    ?: error("Unable to create UL class for facade: $fqName for ${sources.joinToString { it.virtualFilePath }}")
-            }
-        }
-
-        fun createForFacade(
-            manager: PsiManager,
-            facadeClassFqName: FqName,
-            searchScope: GlobalSearchScope
-        ): KtLightClassForFacade? {
-            return FacadeCache.getInstance(manager.project)[facadeClassFqName, searchScope]
-        }
-
-        fun createForSyntheticFile(
-            facadeClassFqName: FqName,
-            file: KtFile
-        ): KtLightClassForFacade {
-            val project = file.project
-            val manager = PsiManager.getInstance(project)
-            return LightClassGenerationSupport.getInstance(project).run {
-                createUltraLightClassForFacade(manager, facadeClassFqName, listOf(file)) ?: error { "Unable to create UL class for facade" }
-            }
-        }
-    }
 }
