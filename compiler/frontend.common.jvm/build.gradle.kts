@@ -12,6 +12,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     implementation(project(":core:descriptors.jvm"))
+    api(project(":compiler:psi"))
 
 }
 
