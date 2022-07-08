@@ -15,36 +15,42 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtFile
 
 object PackagePartClassUtils {
-    @JvmStatic fun getPathHashCode(file: VirtualFile): Int =
-            file.path.lowercase().hashCode()
+    @JvmStatic
+    fun getPathHashCode(file: VirtualFile): Int = file.path.lowercase().hashCode()
 
-    private val PART_CLASS_NAME_SUFFIX = "Kt"
+    private const val PART_CLASS_NAME_SUFFIX = "Kt"
 
-    private @JvmStatic fun decapitalizeAsJavaClassName(str: String): String =
-            // NB use Locale.ENGLISH so that build is locale-independent.
-            // See Javadoc on java.lang.String.toUpperCase() for more details.
-            when {
-                Character.isJavaIdentifierStart(str[0]) -> str.substring(0, 1).lowercase() + str.substring(1)
-                str[0] == '_' -> str.substring(1)
-                else -> str
-            }
+    @JvmStatic
+    private fun decapitalizeAsJavaClassName(str: String): String =
+    // NB use Locale.ENGLISH so that build is locale-independent.
+        // See Javadoc on java.lang.String.toUpperCase() for more details.
+        when {
+            Character.isJavaIdentifierStart(str[0]) -> str.substring(0, 1).lowercase() + str.substring(1)
+            str[0] == '_' -> str.substring(1)
+            else -> str
+        }
 
     @TestOnly
-    @JvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
-            getPackagePartFqName(facadeClassFqName.parent(), file.name)
+    @JvmStatic
+    fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
+        getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
-    @JvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
+    @JvmStatic
+    fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
         val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
-    @JvmStatic fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
-            files.filter { it.hasTopLevelCallables() }
+    @JvmStatic
+    fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
+        files.filter { it.hasTopLevelCallables() }
 
-    @JvmStatic fun getFilePartShortName(fileName: String): String =
-            NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(fileName)) + PART_CLASS_NAME_SUFFIX
+    @JvmStatic
+    fun getFilePartShortName(fileName: String): String =
+        NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(fileName)) + PART_CLASS_NAME_SUFFIX
 
-    @JvmStatic fun getFileNameByFacadeName(facadeClassName: String): String? {
+    @JvmStatic
+    fun getFileNameByFacadeName(facadeClassName: String): String? {
         if (!facadeClassName.endsWith(PART_CLASS_NAME_SUFFIX)) return null
         val baseName = facadeClassName.substring(0, facadeClassName.length - PART_CLASS_NAME_SUFFIX.length)
         if (baseName == "_") return null
