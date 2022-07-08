@@ -6187,6 +6187,11 @@ fileCheckTest("filecheck_kt49847_generic") {
     enabled = project.globalTestArgs.contains('-opt')
 }
 
+fileCheckTest("filecheck_kt53100_value") {
+    annotatedSource = project.file('filecheck/kt53100_value.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
 }

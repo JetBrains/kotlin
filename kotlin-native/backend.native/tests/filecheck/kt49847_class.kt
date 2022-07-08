@@ -9,8 +9,7 @@ class C {
 
 // CHECK: define void @"kfun:#main(){}"()
 // CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// TODO Invert next check after fix of https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
-// CHECK: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
 // CHECK: ret void
 fun main() {
     val c = C()
