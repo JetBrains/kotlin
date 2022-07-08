@@ -485,7 +485,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return create(it) }
+        containingClass?.let { return KotlinLightClassFactory.createClass(it) }
 
         val containingBlock = classOrObject.parent as? KtBlockExpression
         val containingScript = containingBlock?.parent as? KtScript

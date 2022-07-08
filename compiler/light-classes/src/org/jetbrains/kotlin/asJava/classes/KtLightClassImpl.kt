@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
@@ -22,7 +19,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
@@ -138,7 +134,7 @@ abstract class KtLightClassImpl @JvmOverloads constructor(
     private val _containingFile: PsiFile by lazyPub {
         object : FakeFileForLightClass(
             classOrObject.containingKtFile,
-            { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
+            { if (classOrObject.isTopLevel()) this else KotlinLightClassFactory.createClass(getOutermostClassOrObject(classOrObject))!! },
         ) {
             override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 
@@ -173,7 +169,7 @@ abstract class KtLightClassImpl @JvmOverloads constructor(
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
             .mapNotNullTo(result) {
-                create(it)
+                KotlinLightClassFactory.createClass(it)
             }
 
         if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
@@ -190,7 +186,7 @@ abstract class KtLightClassImpl @JvmOverloads constructor(
 
         val containingClassOrObject = (classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject
         if (containingClassOrObject != null) {
-            return create(containingClassOrObject)
+            return KotlinLightClassFactory.createClass(containingClassOrObject)
         }
 
         // TODO: should return null
@@ -234,29 +230,5 @@ abstract class KtLightClassImpl @JvmOverloads constructor(
             KtTokens.PROTECTED_KEYWORD to PsiModifier.PROTECTED,
             KtTokens.FINAL_KEYWORD to PsiModifier.FINAL,
         )
-
-        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
-            CachedValuesManager.getCachedValue(classOrObject) {
-                CachedValueProvider.Result.create(
-                    createNoCache(classOrObject),
-                    KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker,
-                )
-            }
-
-        private fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            val containingFile = classOrObject.containingFile
-            if (containingFile is KtCodeFragment) {
-                // Avoid building light classes for code fragments
-                return null
-            }
-
-            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
-                return null
-            }
-
-            return LightClassGenerationSupport.getInstance(classOrObject.project).run {
-                createUltraLightClass(classOrObject)
-            }
-        }
     }
 }

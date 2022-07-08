@@ -22,7 +22,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
     override fun getParent() = containingClass
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject)
+    override fun getContainingClass(): KtLightClassForSourceDeclaration? = KotlinLightClassFactory.createClass(classOrObject)
     override fun getScope(): PsiElement? = containingClass
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnFields(): List<KtLightField> = emptyList()

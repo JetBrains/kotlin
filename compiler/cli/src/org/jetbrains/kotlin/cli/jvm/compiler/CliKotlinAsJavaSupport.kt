@@ -108,7 +108,7 @@ class CliKotlinAsJavaSupport(
         ).mapNotNull { member -> (member as? PackageViewDescriptor)?.fqName }
     }
 
-    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = KtLightClassImpl.create(classOrObject)
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? = KotlinLightClassFactory.createClass(classOrObject)
 
     override fun getLightClassForScript(script: KtScript): KtLightClassForScript? = KtLightClassForScript.create(script)
 
