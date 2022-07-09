@@ -44,8 +44,8 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
         testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
-            fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
-                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)
+            fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
+                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend, excludedPattern = excludePattern)
                 model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
@@ -53,9 +53,9 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
             testClass<AbstractIncrementalJvmOldBackendCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM))
-            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
-            testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
-            testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
+            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
+            testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
+            testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR, excludePattern = "^.*Expect.*"))
 
             testClass<AbstractIncrementalJsCompilerRunnerTest> {
                 model("incremental/pureKotlin", extension = null, recursive = false)
