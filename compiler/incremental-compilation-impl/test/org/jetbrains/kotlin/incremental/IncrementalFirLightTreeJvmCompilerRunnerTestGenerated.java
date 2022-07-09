@@ -64,7 +64,7 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^.*Expect.*"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
@@ -620,11 +620,6 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
         @TestMetadata("sealedClassesWhenExpression")
         public void testSealedClassesWhenExpression() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesWhenExpression/");
-        }
-
-        @TestMetadata("sealedClassesWithExpectActual")
-        public void testSealedClassesWithExpectActual() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesWithExpectActual/");
         }
 
         @TestMetadata("secondaryConstructorInlined")
