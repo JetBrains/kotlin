@@ -6,8 +6,8 @@
 fun plus1(x: Int) = x + 1
 
 // CHECK: define void @"kfun:#main(){}"()
-// CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK-NOT: Int-box
+// CHECK-NOT: Int-unbox
 // CHECK: ret void
 fun main() {
     val ref = ::plus1

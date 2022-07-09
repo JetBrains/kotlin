@@ -11,8 +11,8 @@ fun baz(x: Any): Int = x.hashCode()
 
 // CHECK: define void @"kfun:#main(){}"()
 // Boxing/unboxing need to be used now due to non-devirtualized call
-// CHECK: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// CHECK: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK: Int-box
+// CHECK: Int-unbox
 // CHECK: ret void
 fun main() {
     val foo: Foo = Foo(::baz)

@@ -10,8 +10,8 @@ fun interface Foo {
 fun baz(x: Int): Int = x.hashCode()
 
 // CHECK: define void @"kfun:#main(){}"()
-// CHECK-NOT: kfun:kotlin#<Int-box>(kotlin.Int){}kotlin.Any
-// CHECK-NOT: kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
+// CHECK-NOT: Int-box
+// CHECK-NOT: Int-unbox
 // CHECK: ret void
 fun main() {
     val foo: Foo = Foo(::baz)
