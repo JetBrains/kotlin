@@ -180,6 +180,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val boundFunctionParameters = functionReference.getArgumentsWithIr().map { it.first }
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
 
+        private val typeArgumentsMap = referencedFunction.typeParameters.associate { typeParam ->
+            typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
+        }
         private val functionParameterAndReturnTypes = (functionReference.type as IrSimpleType).arguments.map {
             when (it) {
                 is IrTypeProjection -> it.type
@@ -361,7 +364,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
                 valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                            type = parameter.type)
+                            type = parameter.type.substitute(typeArgumentsMap))
                 }
 
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
