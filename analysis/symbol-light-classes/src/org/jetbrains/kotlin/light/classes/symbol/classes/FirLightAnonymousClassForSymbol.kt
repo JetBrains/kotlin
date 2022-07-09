@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -88,6 +89,9 @@ internal class FirLightAnonymousClassForSymbol(
     }
 
     override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
+
+    override fun getParent(): PsiElement? =
+        kotlinOrigin?.let(::getParentForLocalDeclaration)
 
     override fun getScope(): PsiElement? = parent
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)

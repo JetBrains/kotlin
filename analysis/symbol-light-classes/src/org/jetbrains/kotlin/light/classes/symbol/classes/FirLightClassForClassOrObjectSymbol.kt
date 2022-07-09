@@ -15,7 +15,9 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
+import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 context(KtAnalysisSession)
 internal abstract class FirLightClassForClassOrObjectSymbol(
@@ -204,7 +207,12 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
         return null
     }
 
-    override fun getParent(): PsiElement? = containingClass ?: containingFile
+    override fun getParent(): PsiElement? {
+        if (classOrObjectSymbol.safeAs<KtSymbolWithKind>()?.symbolKind == KtSymbolKind.LOCAL) {
+            return kotlinOrigin?.let(::getParentForLocalDeclaration)
+        }
+        return containingClass ?: containingFile
+    }
 
     override fun getScope(): PsiElement? = parent
 
