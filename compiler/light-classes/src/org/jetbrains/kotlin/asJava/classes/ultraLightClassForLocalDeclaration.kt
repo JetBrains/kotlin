@@ -30,7 +30,7 @@ open class KtUltraLightClassForLocalDeclaration(
     override fun getParent() = _parent
 }
 
-private fun getParentForLocalDeclaration(classOrObject: KtClassOrObject): PsiElement? {
+fun getParentForLocalDeclaration(classOrObject: KtClassOrObject): PsiElement? {
     fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
         if (method == null || name == null) return null
 
