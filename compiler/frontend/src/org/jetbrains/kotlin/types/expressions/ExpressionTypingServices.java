@@ -382,7 +382,7 @@ public class ExpressionTypingServices {
                                              )
                                      );
 
-        if (!isUnitExpectedType && statementExpression instanceof KtCallableReferenceExpression) {
+        if (context.expectedType == NO_EXPECTED_TYPE && statementExpression instanceof KtCallableReferenceExpression) {
             KotlinTypeInfo typeInfo = createDontCareTypeInfoForNILambda(statementExpression, context);
             if (typeInfo != null) return typeInfo;
         }
