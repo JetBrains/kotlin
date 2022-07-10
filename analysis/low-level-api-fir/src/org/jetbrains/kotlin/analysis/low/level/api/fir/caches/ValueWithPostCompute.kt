@@ -92,7 +92,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 throw stateSnapshot.error
             }
             else -> {
-                return value as VALUE
+                return stateSnapshot as VALUE
             }
         }
     }
