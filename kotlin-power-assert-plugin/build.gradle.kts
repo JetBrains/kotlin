@@ -28,11 +28,6 @@ tasks.withType<Test> {
   useJUnitPlatform()
 }
 
-tasks.dokka {
-  outputFormat = "html"
-  outputDirectory = "$buildDir/javadoc"
-}
-
 tasks.register("sourcesJar", Jar::class) {
   group = "build"
   description = "Assembles Kotlin sources"
@@ -47,8 +42,8 @@ tasks.register("dokkaJar", Jar::class) {
   description = "Assembles Kotlin docs with Dokka"
 
   archiveClassifier.set("javadoc")
-  from(tasks.dokka)
-  dependsOn(tasks.dokka)
+  from(tasks.dokkaHtml)
+  dependsOn(tasks.dokkaHtml)
 }
 
 signing {
