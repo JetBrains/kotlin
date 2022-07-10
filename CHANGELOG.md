@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+## Version 0.12.0
+
+_2022-07-10_
+
+**New**
+* Support Kotlin 1.7.0 (#67).
+* Allow excluding Gradle source sets from transformation (#55).
+
+**Fixes**
+* Ignore smart casting from diagram (#60).
+* Properly align `is` operator result (#59).
+* Support JVM static functions for transformation (#52).
+
 ## Version 0.11.0
 
 _2021-11-18_

@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
   group = "com.bnorm.power"
-  version = "0.12.0-SNAPSHOT"
+  version = "0.12.0"
 }
 
 subprojects {
