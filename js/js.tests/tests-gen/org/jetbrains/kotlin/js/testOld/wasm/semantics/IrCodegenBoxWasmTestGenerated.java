@@ -22532,6 +22532,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testConstPropertyAccessor() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/constPropertyAccessor.kt");
             }
+
+            @TestMetadata("intermoduleInlineConst.kt")
+            public void testIntermoduleInlineConst() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/intermoduleInlineConst.kt");
+            }
+
+            @TestMetadata("kt52970.kt")
+            public void testKt52970() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/kt52970.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit")

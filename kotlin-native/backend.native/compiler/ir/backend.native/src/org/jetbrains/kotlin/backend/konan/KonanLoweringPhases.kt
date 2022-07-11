@@ -407,6 +407,12 @@ internal val expressionBodyTransformPhase = makeKonanFileLoweringPhase(
         description = "Replace IrExpressionBody with IrBlockBody"
 )
 
+internal val constantInliningPhase = makeKonanFileLoweringPhase(
+        ::ConstLowering,
+        name = "ConstantInlining",
+        description = "Inline const fields reads",
+)
+
 internal val fileInitializersPhase = makeKonanFileLoweringPhase(
         ::FileInitializersLowering,
         name = "FileInitializers",

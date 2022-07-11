@@ -29340,6 +29340,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/properties/const/interfaceCompanion.kt");
             }
 
+            @TestMetadata("intermoduleInlineConst.kt")
+            public void testIntermoduleInlineConst() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/intermoduleInlineConst.kt");
+            }
+
+            @TestMetadata("kt52970.kt")
+            public void testKt52970() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/kt52970.kt");
+            }
+
             @TestMetadata("nonConstValsAreProperlyInitialized.kt")
             public void testNonConstValsAreProperlyInitialized() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/nonConstValsAreProperlyInitialized.kt");

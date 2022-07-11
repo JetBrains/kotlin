@@ -28056,6 +28056,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testConstPropertyAccessor() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/const/constPropertyAccessor.kt");
                 }
+
+                @Test
+                @TestMetadata("intermoduleInlineConst.kt")
+                public void testIntermoduleInlineConst() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/const/intermoduleInlineConst.kt");
+                }
+
+                @Test
+                @TestMetadata("kt52970.kt")
+                public void testKt52970() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/const/kt52970.kt");
+                }
             }
 
             @Nested
