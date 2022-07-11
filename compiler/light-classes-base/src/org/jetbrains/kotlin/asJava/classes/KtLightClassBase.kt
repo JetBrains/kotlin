@@ -24,7 +24,8 @@ abstract class KtLightClassBase protected constructor(
         lazyCreator = LightClassesLazyCreator(project)
     )
 
-    override fun getDelegate() = invalidAccess()
+    override fun getDelegate() =
+        throw UnsupportedOperationException("Cls delegate shouldn't be loaded for ultra-light classes!")
 
     override fun getFields() = myInnersCache.fields
 
