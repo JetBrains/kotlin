@@ -13,9 +13,29 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.psi.*
 
+fun KtSuperTypeList.findEntry(fqNameToFind: String): KtSuperTypeListEntry? {
+    val name = fqNameToFind.substringAfterLast(delimiter = '.', missingDelimiterValue = "")
+    if (name.isEmpty()) {
+        return entries.find { it.typeAsUserType?.textMatches(fqNameToFind) == true }
+    }
+
+    val qualifier = fqNameToFind.substringBeforeLast('.')
+    val entries = entries.mapNotNull { entry -> entry.typeAsUserType?.let { entry to it } }
+        .filter { (_, type) -> type.referencedName == name && (type.qualifier?.textMatches(qualifier) != false) }
+        .ifEmpty { return null }
+
+    return if (entries.size == 1) {
+        entries.first().first
+    } else {
+        val entry = entries.firstOrNull { it.second.qualifier != null } ?: entries.firstOrNull()
+        entry?.first
+    }
+}
+
 // NOTE: avoid using blocking lazy in light classes, it leads to deadlocks
 fun <T> lazyPub(initializer: () -> T) = lazy(LazyThreadSafetyMode.PUBLICATION, initializer)
 
+@Suppress("UnusedReceiverParameter")
 fun LightElement.cannotModify(): Nothing {
     throw IncorrectOperationException("Modification not implemented.")
 }
