@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -194,6 +195,10 @@ private fun PsiAnnotation.withNestedAnnotations(): Sequence<PsiAnnotation> {
 fun demangleInternalName(name: String): String? {
     val indexOfDollar = name.indexOf('$')
     return if (indexOfDollar >= 0) name.substring(0, indexOfDollar) else null
+}
+
+fun mangleInternalName(name: String, moduleName: String): String {
+    return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
