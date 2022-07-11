@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,10 +32,6 @@ private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
 private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
 private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
 private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
-
-const val SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME = "\$completion"
-const val SUSPEND_CALL_RESULT_NAME = "\$result"
-const val ILLEGAL_STATE_ERROR_MESSAGE = "call to 'resume' before 'invoke' with coroutine"
 
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
