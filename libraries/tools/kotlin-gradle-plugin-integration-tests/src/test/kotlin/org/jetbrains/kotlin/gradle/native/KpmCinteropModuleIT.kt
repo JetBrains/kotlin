@@ -5,41 +5,44 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
+import kotlin.io.path.writeText
 
-class KpmCinteropModuleIT : BaseGradleIT() {
+@MppGradlePluginTests
+@DisplayName("KPM Cinterop integration")
+class KpmCinteropModuleIT : KGPBaseTest() {
 
-    @Test
-    fun `check cinterop and commonization for KPM module`() {
-        val project = transformProjectWithPluginsDsl("kpm-cinterop-module")
-        with(project) {
+    @GradleTest
+    fun `check cinterop and commonization for KPM module`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProject(
+            projectName = "kpm-cinterop-module",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ) {
             build("compileLinuxMainKotlinNativeMetadata") {
-                assertSuccessful()
                 assertTasksExecuted(
                     ":cinteropSampleInteropLinuxArm64",
                     ":cinteropSampleInteropLinuxX64",
                     ":commonizeSampleInterop",
                     ":commonizeSampleInteropForLinux"
-                )
-                assertTasksNotRegistered(
-                    ":cinteropSampleInteropMacosX64",
-                    ":commonizeSampleInteropForDesktop"
                 )
             }
 
-            projectDir.resolve("src/nativeInterop/cinterop/sampleInterop.h").writeText("")
-            build("compileLinuxMainKotlinNativeMetadata") {
-                assertFailed()
+            projectPath.resolve("src/nativeInterop/cinterop/sampleInterop.h").writeText("")
+            buildAndFail("compileLinuxMainKotlinNativeMetadata") {
+                assertTasksFailed(":compileLinuxMainKotlinNativeMetadata")
                 assertTasksExecuted(
                     ":cinteropSampleInteropLinuxArm64",
                     ":cinteropSampleInteropLinuxX64",
                     ":commonizeSampleInterop",
                     ":commonizeSampleInteropForLinux"
                 )
-                assertContains("e: ${projectDir.absolutePath}/src/linuxMain/kotlin/Main.kt: (3, 22): Unresolved reference: sampleInterop")
-                assertContains("e: ${projectDir.absolutePath}/src/linuxMain/kotlin/Main.kt: (6, 15): Unresolved reference: sampleInterop")
+                assertOutputContains("src/linuxMain/kotlin/Main.kt: (3, 22): Unresolved reference: sampleInterop")
+                assertOutputContains("src/linuxMain/kotlin/Main.kt: (6, 15): Unresolved reference: sampleInterop")
             }
         }
     }
