@@ -90,15 +90,20 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
 
         fun getEmptyPort(): ServerSocket {
-            for (port in 8080..8180) {
+            val startPort = 8080
+            val endPort = 8180
+            for (port in startPort..endPort) {
                 try {
-                    return ServerSocket(port).also { println("Use $port port") }
+                    return ServerSocket(port).also {
+                        println("Use $port port")
+                        it.close()
+                    }
                 } catch (_: IOException) {
                     continue // try next port
                 }
 
             }
-            throw IOException("no free port found")
+            throw IOException("Failed to find free IP port in range $startPort..$endPort")
         }
 
     }
