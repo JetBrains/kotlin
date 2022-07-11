@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
-    implementation(project(":compiler:light-classes"))
+    implementation(project(":compiler:light-classes-base"))
     implementation(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(intellijCore())
