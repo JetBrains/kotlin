@@ -191,6 +191,11 @@ private fun PsiAnnotation.withNestedAnnotations(): Sequence<PsiAnnotation> {
     return sequenceOf(this) + parameterList.attributes.asSequence().flatMap { handleValue(it.value) }
 }
 
+fun demangleInternalName(name: String): String? {
+    val indexOfDollar = name.indexOf('$')
+    return if (indexOfDollar >= 0) name.substring(0, indexOfDollar) else null
+}
+
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
     val toRename = accessor.kotlinOrigin ?: return null
     if (toRename !is KtProperty && toRename !is KtParameter) return null
