@@ -41265,6 +41265,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("genericFunctionReferenceSignature.kt")
+            public void testGenericFunctionReferenceSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/genericFunctionReferenceSignature.kt");
+            }
+
+            @Test
             @TestMetadata("genericMethodSignature.kt")
             public void testGenericMethodSignature() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/genericMethodSignature.kt");

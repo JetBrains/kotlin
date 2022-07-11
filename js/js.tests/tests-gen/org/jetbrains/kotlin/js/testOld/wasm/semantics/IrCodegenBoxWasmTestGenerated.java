@@ -27808,6 +27808,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInGenericSignature() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
+
+            @TestMetadata("genericFunctionReferenceSignature.kt")
+            public void testGenericFunctionReferenceSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/genericFunctionReferenceSignature.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")

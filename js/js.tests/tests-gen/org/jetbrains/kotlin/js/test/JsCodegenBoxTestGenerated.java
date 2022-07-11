@@ -30987,6 +30987,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInGenericSignature() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
+
+            @Test
+            @TestMetadata("genericFunctionReferenceSignature.kt")
+            public void testGenericFunctionReferenceSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/genericFunctionReferenceSignature.kt");
+            }
         }
 
         @Nested

@@ -34074,6 +34074,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 public void testAllFilesPresentInGenericSignature() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
+
+                @Test
+                @TestMetadata("genericFunctionReferenceSignature.kt")
+                public void testGenericFunctionReferenceSignature() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/genericSignature/genericFunctionReferenceSignature.kt");
+                }
             }
 
             @Nested

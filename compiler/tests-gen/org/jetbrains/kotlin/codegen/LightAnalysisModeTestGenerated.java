@@ -33110,6 +33110,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/genericBackingFieldSignature.kt");
             }
 
+            @TestMetadata("genericFunctionReferenceSignature.kt")
+            public void testGenericFunctionReferenceSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/genericFunctionReferenceSignature.kt");
+            }
+
             @TestMetadata("genericMethodSignature.kt")
             public void testGenericMethodSignature() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/genericMethodSignature.kt");
