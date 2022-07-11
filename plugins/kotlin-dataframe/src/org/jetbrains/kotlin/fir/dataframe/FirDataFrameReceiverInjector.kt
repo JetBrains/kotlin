@@ -7,25 +7,23 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlinx.dataframe.annotations.*
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.annotations.ColumnGroupTypeApproximation
+import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
+import org.jetbrains.kotlinx.dataframe.annotations.SchemaModificationInterpreter
+import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 
 class SchemaContext(val properties: List<SchemaProperty>, val coneTypeProjection: ConeTypeProjection)
 
@@ -65,145 +63,6 @@ class FirDataFrameReceiverInjector(
         return listOf(ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false))
     }
 
-    private fun <T> interpret(
-        functionCall: FirFunctionCall,
-        processor: Interpreter<T>,
-        additionalArguments: Map<String, Interpreter.Success<Any?>> = emptyMap()
-    ): Interpreter.Success<T>? {
-        fun loadInterpreter(call: FirFunctionCall): Interpreter<*>? {
-            val symbol =
-                (call.calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
-            val argName = Name.identifier("interpreter")
-            return symbol.annotations
-                .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
-                ?.let { annotation ->
-                    (annotation.findArgumentByName(argName) as FirGetClassCall).classId.load<Interpreter<*>>()
-                }
-
-        }
-
-        val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
-        val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
-        val expectedArgsMap = processor.expectedArguments.associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
-
-        if (expectedArgsMap.keys != actualArgsMap.keys) {
-            val message = buildString {
-                appendLine("ERROR: Different set of arguments")
-                appendLine("Implementation class: $processor")
-                appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
-                appendLine("Make sure all arguments are annotated")
-                val diff = actualArgsMap.keys - expectedArgsMap.keys
-                appendLine("Passed, but not expected: ${diff}")
-                appendLine("add arguments to an interpeter:")
-                appendLine(diff.map { actualArgsMap[it] })
-            }
-            error(message)
-        }
-
-        val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
-        arguments += additionalArguments
-        val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
-            val name = it.name.identifier
-            val expectedArgument = expectedArgsMap[name]!!
-            val expectedReturnType = expectedArgument.klass
-            val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
-                is Interpreter.Value -> {
-                     when (val expression = it.expression) {
-                        is FirConstExpression<*> -> Interpreter.Success(expression.value!!)
-                        is FirVarargArgumentsExpression -> {
-                            Interpreter.Success(expression.arguments.map { (it as FirConstExpression<*>).value })
-                        }
-                        else -> {
-                            val call = expression as FirFunctionCall
-                            val interpreter = loadInterpreter(call)
-                                ?: TODO("receiver ${call.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
-                            interpret(expression, interpreter, emptyMap())
-                        }
-                    }
-                }
-
-                is Interpreter.ReturnType -> {
-                    val returnType = it.expression.typeRef.coneType.returnType(session)
-                    Interpreter.Success(TypeApproximation(returnType.classId?.asFqNameString()!!, returnType.isNullable))
-                }
-
-                is Interpreter.Dsl -> {
-                    { receiver: Any ->
-                        ((it.expression as FirLambdaArgumentExpression).expression as FirAnonymousFunctionExpression)
-                            .anonymousFunction.body!!
-                            .statements.filterIsInstance<FirFunctionCall>()
-                            .forEach { call ->
-                                val schemaProcessor = loadInterpreter(call) ?: return@forEach
-                                interpret(call, schemaProcessor, mapOf("receiver" to Interpreter.Success(receiver)))
-                            }
-                    }.let { Interpreter.Success(it) }
-                }
-
-                is Interpreter.Schema -> {
-                    assert(expectedReturnType.toString() == PluginDataFrameSchema::class.qualifiedName!!) {
-                        "'$name' should be ${PluginDataFrameSchema::class.qualifiedName!!}, but plugin expect $expectedReturnType"
-                    }
-
-                    val arg = it.expression.getSchema().schemaArg
-                    val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
-                    if (schemaTypeArg.isStarProjection) {
-                        PluginDataFrameSchema(emptyList())
-                    } else {
-                        val declarationSymbols =
-                            ((schemaTypeArg.type as ConeClassLikeType).toSymbol(session) as FirRegularClassSymbol).declarationSymbols
-                        val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map {
-                            SimpleCol(
-                                it.name.identifier, TypeApproximationImpl(
-                                    it.resolvedReturnType.classId!!.asFqNameString(),
-                                    it.resolvedReturnType.isNullable
-                                )
-                            )
-                        }
-                        PluginDataFrameSchema(columns)
-                    }.let { Interpreter.Success(it) }
-                }
-            }
-            value?.let { value1 -> it.name.identifier to value1 }
-        }
-
-
-        return if (interpretationResults.size == refinedArguments.refinedArguments.size) {
-            arguments.putAll(interpretationResults)
-            when (val res = processor.interpret(arguments)) {
-                is Interpreter.Success -> res
-                is Interpreter.Error -> {
-                    // TODO Report errors
-                    null
-                }
-            }
-        } else {
-            null
-        }
-    }
-
-    private inline fun <reified T> ClassId.load(): T {
-        val constructor = Class.forName(asFqNameString())
-            .constructors
-            .firstOrNull { constructor -> constructor.parameterCount == 0 }
-            ?: error("Interpreter $this must have an empty constructor")
-
-        return constructor.newInstance() as T
-    }
-
-    fun FirExpression.getSchema(): ObjectWithSchema {
-        return typeRef.coneTypeSafe<ConeClassLikeType>()!!.toSymbol(session)!!.let {
-            it.annotations.firstNotNullOfOrNull {
-                runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
-                    val argumentName = Name.identifier(HasSchema::schemaArg.name)
-                    @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirConstExpression<Int>).value
-                    ObjectWithSchema(schemaArg)
-                }
-            } ?: error("Annotate ${it} with @HasSchema")
-        }
-    }
-
-    class ObjectWithSchema(val schemaArg: Int)
-
     private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {
         val firNamedFunctionSymbol = functionCall.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: error("cannot resolve symbol for ${functionCall.calleeReference.name}")
         val annotation = firNamedFunctionSymbol.annotations.firstOrNull {
@@ -215,27 +74,6 @@ class FirDataFrameReceiverInjector(
         val name = Name.identifier("processor")
         val getClassCall = (annotation.argumentMapping.mapping[name] as FirGetClassCall)
         return getClassCall.classId.load<SchemaModificationInterpreter>()
-    }
-
-    private val FirGetClassCall.classId: ClassId
-        get() {
-            return when (val argument = argument) {
-                is FirResolvedQualifier -> argument.classId!!
-                is FirClassReferenceExpression -> argument.classTypeRef.coneType.classId!!
-                else -> error("")
-            }
-        }
-
-    private fun FirFunctionCall.collectArgumentExpressions(): Arguments {
-        val refinedArgument = mutableListOf<RefinedArgument>()
-
-        val parameterName = Name.identifier("this")
-        refinedArgument += RefinedArgument(parameterName, explicitReceiver!!)
-
-        (argumentList as FirResolvedArgumentList).mapping.forEach { (expression, parameter) ->
-            refinedArgument += RefinedArgument(parameter.name, expression)
-        }
-        return Arguments(refinedArgument)
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
