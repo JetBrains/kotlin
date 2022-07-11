@@ -2574,6 +2574,11 @@ task boxing15(type: KonanLocalTest) {
     source = "codegen/boxing/boxing15.kt"
 }
 
+task kt53100_casts(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/boxing/kt53100_casts.kt"
+}
+
 task boxCache0(type: KonanLocalTest) {
     useGoldenData = true
     source = "codegen/boxing/box_cache0.kt"

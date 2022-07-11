@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -264,7 +265,13 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                     }
                 }
 
-            is IrConstantPrimitive -> PossiblyFoldedExpression(expression.value, true)
+            is IrConstantPrimitive ->
+                if (expression.value.type.classifierOrNull == coercion.type.classifierOrNull) {
+                    PossiblyFoldedExpression(expression.value, true)
+                } else {
+                    // Happens in kt53100_casts.kt and FloatingPointParser.parseFloat/parseDouble, when `unaryMinus(zero)` is inlined
+                    PossiblyFoldedExpression(expression.transformIfAsked(), false)
+                }
 
             else -> PossiblyFoldedExpression(expression.transformIfAsked(), false)
         }
