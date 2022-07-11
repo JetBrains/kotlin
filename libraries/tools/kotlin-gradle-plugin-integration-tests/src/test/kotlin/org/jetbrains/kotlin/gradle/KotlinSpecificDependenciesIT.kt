@@ -250,6 +250,42 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
+    @DisplayName("KT-41642: adding kotlin.test should not resolve dependencies eagerly")
+    @GradleTest
+    fun testKotlinTestEagerDependencies(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+
+            // Disabling auto-adding kotlin stdlib dependencies
+            gradleProperties.appendText(
+                """
+                
+                kotlin.stdlib.default.dependency=false
+                """.trimIndent()
+            )
+
+            buildGradle.appendText(
+                //language=Groovy
+                """
+
+                configurations.each { config ->
+                	config.dependencies.addAllLater(
+                        project.objects.listProperty(Dependency.class).value(
+                            project.provider {
+                		        throw new Throwable("Dependency resolved in ${'$'}{config.name}!")
+                	        }
+                        )
+                    )
+                }
+                """.trimIndent()
+            )
+
+            build("help") {
+                assertOutputDoesNotContain("Dependency resolved in")
+            }
+        }
+    }
+
     @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in unit tests")
     @GradleAndroidTest
