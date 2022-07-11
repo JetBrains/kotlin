@@ -9,7 +9,7 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "9204d7be944a57bd6c09053bc16b5eeea1bccac5"
+    gitCommitSha = "675de063cf065416536711a701eaee40b18f3e05"
 )
 
 import java.io.File
@@ -55,7 +55,7 @@ runAllBenchmarks(
         }
     },
     mapOf(
-        "1.6.20" to null,
-        "1.7.0" to  currentReleasePatch
+        "1.7.10" to null,
+        "1.7.20" to  currentReleasePatch
     )
 )
