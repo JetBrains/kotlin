@@ -21676,6 +21676,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("anyAnnotationDisablesIndyLambdaGeneration.kt")
+            public void testAnyAnnotationDisablesIndyLambdaGeneration() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/anyAnnotationDisablesIndyLambdaGeneration.kt");
+            }
+
             @TestMetadata("bigArityLambda.kt")
             public void testBigArityLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/bigArityLambda.kt");

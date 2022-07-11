@@ -26293,6 +26293,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("anyAnnotationDisablesIndyLambdaGeneration.kt")
+            public void testAnyAnnotationDisablesIndyLambdaGeneration() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/anyAnnotationDisablesIndyLambdaGeneration.kt");
+            }
+
+            @Test
             @TestMetadata("bigArityExtLambda.kt")
             public void testBigArityExtLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/bigArityExtLambda.kt");
@@ -26344,6 +26350,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("kt52875.kt")
             public void testKt52875() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaMetadataFactoryIsNotUsed.kt")
+            public void testLambdaMetadataFactoryIsNotUsed() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaMetadataFactoryIsNotUsed.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaMetafactoryIsUsed.kt")
+            public void testLambdaMetafactoryIsUsed() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaMetafactoryIsUsed.kt");
             }
 
             @Test

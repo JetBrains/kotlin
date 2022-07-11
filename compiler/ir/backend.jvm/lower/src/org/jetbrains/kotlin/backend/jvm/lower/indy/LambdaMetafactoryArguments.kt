@@ -326,7 +326,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return null
 
         adaptFakeInstanceMethodSignature(fakeInstanceMethod, signatureAdaptationConstraints)
-        if (implFun.origin in adaptableFunctionOrigins) {
+        if (implFun.isAdaptable()) {
             adaptLambdaSignature(implFun as IrSimpleFunction, fakeInstanceMethod, signatureAdaptationConstraints)
         } else if (
             !checkMethodSignatureCompliance(implFun, fakeInstanceMethod, signatureAdaptationConstraints, reference)
@@ -386,19 +386,22 @@ internal class LambdaMetafactoryArgumentsBuilder(
             TypeAdaptationConstraint.CONFLICT -> false
         }
 
-    private val adaptableFunctionOrigins = setOf(
-        IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-        JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY,
-        JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY
-    )
+    private fun IrFunction.isAdaptable() =
+        when (origin) {
+            IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+            JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY,
+            JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY -> true
+            IrDeclarationOrigin.LOCAL_FUNCTION -> isAnonymousFunction
+            else -> false
+        }
 
     private fun adaptLambdaSignature(
         implFun: IrSimpleFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints
     ) {
-        if (implFun.origin !in adaptableFunctionOrigins) {
-            throw AssertionError("Function origin should be one of ${adaptableFunctionOrigins}: ${implFun.dump()}")
+        if (!implFun.isAdaptable()) {
+            throw AssertionError("Function origin should be adaptable: ${implFun.dump()}")
         }
 
         val implParameters = collectValueParameters(implFun)

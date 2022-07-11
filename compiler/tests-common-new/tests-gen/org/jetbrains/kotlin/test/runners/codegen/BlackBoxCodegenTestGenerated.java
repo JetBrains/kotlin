@@ -25717,6 +25717,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("anyAnnotationDisablesIndyLambdaGeneration.kt")
+            public void testAnyAnnotationDisablesIndyLambdaGeneration() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/anyAnnotationDisablesIndyLambdaGeneration.kt");
+            }
+
+            @Test
             @TestMetadata("bigArityExtLambda.kt")
             public void testBigArityExtLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/bigArityExtLambda.kt");
