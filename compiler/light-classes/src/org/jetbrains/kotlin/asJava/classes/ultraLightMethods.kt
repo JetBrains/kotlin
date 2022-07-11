@@ -34,14 +34,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.RawType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-const val METHOD_INDEX_FOR_GETTER = 1
-const val METHOD_INDEX_FOR_SETTER = 2
-const val METHOD_INDEX_FOR_DEFAULT_CTOR = 3
-const val METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR = 4
-const val METHOD_INDEX_FOR_NON_ORIGIN_METHOD = 5
-const val METHOD_INDEX_FOR_SCRIPT_MAIN = 6
-const val METHOD_INDEX_BASE = 7
-
 private class KtUltraLightMethodModifierList(
     support: KtUltraLightSupport,
     owner: KtUltraLightMethod,
