@@ -1334,17 +1334,17 @@ internal object DevirtualizationAnalysis {
 
         // makes temporary val, in case tempName is specified
         fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression, tempName: String?, actualType: IrType) =
-                if (!expression.isBoxOrUnboxCall())
-                    if (tempName != null)
-                        PossiblyCoercedValue.OverVariable(irTemporary(expression, tempName, actualType), null)
-                    else PossiblyCoercedValue.OverExpression(expression, null)
-                else {
+                if (expression.isBoxOrUnboxCall()) {
                     val coercion = expression as IrCall
                     val argument = coercion.getValueArgument(0)!!
                     val symbol = coercion.symbol
                     if (tempName != null)
                         PossiblyCoercedValue.OverVariable(irTemporary(argument, tempName, symbol.owner.explicitParameters.single().type), symbol)
                     else PossiblyCoercedValue.OverExpression(argument, symbol)
+                } else {
+                    if (tempName != null)
+                        PossiblyCoercedValue.OverVariable(irTemporary(expression, tempName, actualType), null)
+                    else PossiblyCoercedValue.OverExpression(expression, null)
                 }
 
         fun getTypeConversion(actualType: DataFlowIR.FunctionParameter,
