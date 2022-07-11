@@ -217,7 +217,7 @@ class Fir2IrDeclarationStorage(
 
     private fun getIrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return builtInsFragmentCache.getOrPut(fqName) {
-            return symbolTable.declareExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
+            symbolTable.declareExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
         }
     }
 
@@ -232,7 +232,7 @@ class Fir2IrDeclarationStorage(
             val externalFragmentModuleDescriptor =
                 if (firOrigin == FirDeclarationOrigin.Precompiled) moduleDescriptor
                 else FirModuleDescriptor(session)
-            return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, externalFragmentModuleDescriptor))
+            symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, externalFragmentModuleDescriptor))
         }
     }
 
