@@ -321,7 +321,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 }
 
                 val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
-                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(functionReturnType) } }
+                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(referencedFunction.returnType) } }
                 addOverride("computeArity") { irInt(unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0) }
                 addOverride("computeFlags") { irInt(getFlags()) }
                 val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
