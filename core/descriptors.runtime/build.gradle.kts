@@ -5,17 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-tasks
-    .matching { it.name == "compileKotlin" && it is KotlinCompile }
-    .configureEach {
-        (this as KotlinCompile).configureTaskToolchain(chooseJdk18ForJpsBuild(JdkMajorVersion.JDK_1_6))
-    }
-
-tasks
-    .matching { it.name == "compileJava" && it is JavaCompile }
-    .configureEach {
-        (this as JavaCompile).configureTaskToolchain(chooseJdk18ForJpsBuild(JdkMajorVersion.JDK_1_6))
-    }
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     compileOnly(project(":core:util.runtime"))

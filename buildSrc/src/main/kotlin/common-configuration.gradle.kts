@@ -141,6 +141,7 @@ fun Project.configureKotlinCompilationOptions() {
         val jvmCompilerArgs = listOf(
             "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
+            // Should this suppression be removed ?
             "-Xsuppress-deprecated-jvm-target-warning" // Remove as soon as there are no modules for JDK 1.6 & 1.7
         )
 
@@ -200,6 +201,7 @@ fun Project.configureKotlinCompilationOptions() {
     }
 }
 
+// Should the workaround be removed ?
 // Still compile stdlib, reflect, kotlin.test and scripting runtimes
 // with JVM target 1.6 to simplify migration from Kotlin 1.6 to 1.7.
 fun Project.applyFixForStdlib16() {

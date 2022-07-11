@@ -5,7 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-project.updateJvmTarget("1.6")
+project.updateJvmTarget("1.8")
 
 sourceSets {
     "main" { projectDefault() }

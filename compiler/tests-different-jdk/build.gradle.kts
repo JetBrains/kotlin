@@ -50,6 +50,7 @@ fun Project.codegenTest(
     group = "verification"
 }
 
+// Should the tests with target = 6 be removed ?
 codegenTest(
     target = 6,
     jdk = JdkMajorVersion.JDK_1_8,

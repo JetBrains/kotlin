@@ -7,7 +7,7 @@ plugins {
     `maven-publish`
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val builtins by configurations.creating {
     isCanBeResolved = true

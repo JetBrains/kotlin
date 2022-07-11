@@ -4,7 +4,7 @@ apply plugin: 'kotlin-platform-jvm'
 
 archivesBaseName = 'kotlin-stdlib'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 configureJavadocJar()

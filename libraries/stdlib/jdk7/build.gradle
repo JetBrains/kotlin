@@ -2,8 +2,7 @@ description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_7)
-JvmToolchain.updateJvmTarget(project, "1.6")
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
 configurePublishing(project)
 configureSourcesJar()
