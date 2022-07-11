@@ -1263,6 +1263,35 @@ internal object DevirtualizationAnalysis {
 
     }
 
+    private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: IrFunctionSymbol?) =
+            if (coercion == null)
+                value
+            else irCall(coercion).apply {
+                addArguments(listOf(coercion.descriptor.explicitParameters.single() to value))
+            }
+
+    private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
+            if (coercion == null)
+                value
+            else irCall(coercion.irFunction!!).apply {
+                putValueArgument(0, value)
+            }
+
+    sealed class PossiblyCoercedValue(val coercion: IrFunctionSymbol?) {
+        abstract fun getFullValue(irBuilder: IrBuilderWithScope): IrExpression
+        class OverVariable(val value: IrVariable, coercion: IrFunctionSymbol?) : PossiblyCoercedValue(coercion) {
+            override fun getFullValue(irBuilder: IrBuilderWithScope) = irBuilder.run {
+                irCoerce(irGet(value), coercion)
+            }
+        }
+
+        class OverExpression(val value: IrExpression, coercion: IrFunctionSymbol?): PossiblyCoercedValue(coercion) {
+            override fun getFullValue(irBuilder: IrBuilderWithScope) = irBuilder.run {
+                irCoerce(value, coercion)
+            }
+        }
+    }
+
     class DevirtualizedCallee(val receiverType: DataFlowIR.Type, val callee: DataFlowIR.FunctionSymbol)
 
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
@@ -1291,26 +1320,6 @@ internal object DevirtualizationAnalysis {
             return this
         }
 
-        fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: IrFunctionSymbol?) =
-                if (coercion == null)
-                    value
-                else irCall(coercion).apply {
-                    addArguments(listOf(coercion.descriptor.explicitParameters.single() to value))
-                }
-
-        fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
-                if (coercion == null)
-                    value
-                else irCall(coercion.irFunction!!).apply {
-                    putValueArgument(0, value)
-                }
-
-        class PossiblyCoercedValue(val value: IrVariable, val coercion: IrFunctionSymbol?) {
-            fun getFullValue(irBuilder: IrBuilderWithScope) = irBuilder.run {
-                irCoerce(irGet(value), coercion)
-            }
-        }
-
         fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, tempName: String, type: IrType): IrVariable {
             val temporary = IrVariableImpl(
                 value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
@@ -1323,15 +1332,19 @@ internal object DevirtualizationAnalysis {
             return temporary
         }
 
-        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression, tempName: String, actualType: IrType) =
+        // makes temporary val, in case tempName is specified
+        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression, tempName: String?, actualType: IrType) =
                 if (!expression.isBoxOrUnboxCall())
-                    PossiblyCoercedValue(irTemporary(expression, tempName, actualType), null)
+                    if (tempName != null)
+                        PossiblyCoercedValue.OverVariable(irTemporary(expression, tempName, actualType), null)
+                    else PossiblyCoercedValue.OverExpression(expression, null)
                 else {
                     val coercion = expression as IrCall
-                    PossiblyCoercedValue(
-                            irTemporary(coercion.getValueArgument(0)!!, tempName,
-                                    coercion.symbol.owner.explicitParameters.single().type)
-                            , coercion.symbol)
+                    val argument = coercion.getValueArgument(0)!!
+                    val symbol = coercion.symbol
+                    if (tempName != null)
+                        PossiblyCoercedValue.OverVariable(irTemporary(argument, tempName, symbol.owner.explicitParameters.single().type), symbol)
+                    else PossiblyCoercedValue.OverExpression(argument, symbol)
                 }
 
         fun getTypeConversion(actualType: DataFlowIR.FunctionParameter,
@@ -1457,8 +1470,8 @@ internal object DevirtualizationAnalysis {
 
                         optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
                             irBlock(expression) {
-                                val parameters = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
-                                    irSplitCoercion(arg.second, "arg$index", arg.first.owner.type)
+                                val parameters = expression.getArgumentsWithSymbols().map { arg ->
+                                    irSplitCoercion(arg.second, null, arg.first.owner.type)
                                 }
                                 +irDevirtualizedCall(expression, type, possibleCallees[0], parameters)
                             }
