@@ -33729,6 +33729,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("privateToThis.kt")
+            public void testPrivateToThis() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/privateToThis.kt");
+            }
+
+            @Test
             @TestMetadata("protectedInternal.kt")
             public void testProtectedInternal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/protectedInternal.kt");
