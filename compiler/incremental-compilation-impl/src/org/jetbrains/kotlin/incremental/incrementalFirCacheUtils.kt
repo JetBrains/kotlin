@@ -142,5 +142,6 @@ internal fun collectNewDirtySources(
         if (!alreadyCompiledSources.containsAll(forceToRecompileFiles)) {
             addAll(forceToRecompileFiles)
         }
+        removeAll { !it.exists() }
     }
 }

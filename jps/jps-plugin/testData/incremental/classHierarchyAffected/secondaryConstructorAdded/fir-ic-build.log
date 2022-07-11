@@ -24,7 +24,6 @@ End of files
 Compiling files:
   src/A.kt
   src/AChild.kt
-  src/AConstructorFunction.kt
   src/createAFromInt.kt
   src/createAFromString.kt
   src/useA.kt
