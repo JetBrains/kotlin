@@ -7,6 +7,7 @@ kotlin {
     explicitApiWarning()
 }
 
+// test
 dependencies {
     implementation(kotlinxCollectionsImmutable())
     compileOnly(project(":kotlin-reflect-api"))
