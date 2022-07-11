@@ -15,7 +15,7 @@ internal fun insertString(array: CharArray, destinationIndex: Int, value: String
 internal fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String {
     val copy = WasmCharArray(size)
     copyWasmArray(array.storage, copy, start, 0, size)
-    return String.unsafeFromCharArray(copy)
+    return String(copy)
 }
 
 internal fun insertInt(array: CharArray, start: Int, value: Int): Int {

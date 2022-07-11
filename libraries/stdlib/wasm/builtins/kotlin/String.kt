@@ -12,30 +12,31 @@ import kotlin.math.min
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-public class String private constructor(internal val chars: WasmCharArray) : Comparable<String>, CharSequence {
-    public companion object {
-        // Note: doesn't copy the array, use with care.
-        internal fun unsafeFromCharArray(chars: WasmCharArray) = String(chars)
-    }
+public class String private constructor(
+    private var leftIfInSum: String?,
+    private var _chars: WasmCharArray,
+) : Comparable<String>, CharSequence {
+    public companion object {}
+
+    internal constructor(chars: WasmCharArray) : this(null, chars) { }
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     public operator fun plus(other: Any?): String {
-        val thisChars = chars
-        val otherChars = if (other is String) other.chars else other.toString().chars
-        val thisLen = thisChars.len()
-        val otherLen = otherChars.len()
-        if (otherLen == 0) return String(thisChars)
-
-        val newChars = WasmCharArray(thisLen + otherLen)
-        copyWasmArray(thisChars, newChars, 0, 0, thisLen)
-        copyWasmArray(otherChars, newChars, 0, thisLen, otherLen)
-        return String(newChars)
+        val right = if (other is String) other else other.toString()
+        return String(this, right.chars)
     }
 
-    public override val length: Int
-        get() = chars.len()
+    public override val length: Int get() {
+        var currentLeftString = leftIfInSum
+        var currentLength = _chars.len()
+        while (currentLeftString != null) {
+            currentLength += currentLeftString._chars.len()
+            currentLeftString = currentLeftString.leftIfInSum
+        }
+        return currentLength
+    }
 
     /**
      * Returns the character of this string at the specified [index].
@@ -44,8 +45,36 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
      * where the behavior is unspecified.
      */
     public override fun get(index: Int): Char {
-        if (index < 0 || index >= chars.len()) throw IndexOutOfBoundsException()
-        return chars.get(index)
+        if (index < 0) throw IndexOutOfBoundsException()
+        val folded = chars
+        val length = folded.len()
+        if (index >= length) throw IndexOutOfBoundsException()
+        return folded.get(index)
+    }
+
+    internal fun foldChars() {
+        val stringLength = this.length
+        val newArray = WasmCharArray(stringLength)
+
+        var currentStartIndex = stringLength
+        var currentLeftString: String? = this
+        while (currentLeftString != null) {
+            val currentLeftStringChars = currentLeftString._chars
+            val currentLeftStringLen = currentLeftStringChars.len()
+            currentStartIndex -= currentLeftStringLen
+            copyWasmArray(currentLeftStringChars, newArray, 0, currentStartIndex, currentLeftStringLen)
+            currentLeftString = currentLeftString.leftIfInSum
+        }
+        check(currentStartIndex == 0)
+        _chars = newArray
+        leftIfInSum = null
+    }
+
+    internal inline val chars: WasmCharArray get() {
+        if (leftIfInSum != null) {
+            foldChars()
+        }
+        return _chars
     }
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
@@ -84,17 +113,18 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
     public override fun toString(): String = this
 
     public override fun hashCode(): Int {
-        val thisLength = length
-
-        if (_hashCode != 0 || thisLength == null)
-            return _hashCode
+        if (_hashCode != 0) return _hashCode
+        val thisChars = chars
+        val thisLength = thisChars.len()
+        if (thisLength == 0) return 0
 
         var hash = 0
         var i = 0
         while (i < thisLength) {
-            hash = 31 * hash + chars.get(i).toInt()
+            hash = 31 * hash + thisChars.get(i).toInt()
             i++
         }
+
         _hashCode = hash
         return _hashCode
     }
@@ -103,5 +133,5 @@ public class String private constructor(internal val chars: WasmCharArray) : Com
 internal fun stringLiteral(startAddr: Int, length: Int): String {
     val array = WasmCharArray(length)
     unsafeRawMemoryToWasmCharArray(startAddr, 0, length, array)
-    return String.unsafeFromCharArray(array)
+    return String(array)
 }

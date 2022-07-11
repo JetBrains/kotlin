@@ -75,7 +75,7 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
 
     val copy = WasmCharArray(length)
     copyWasmArray(chars.storage, copy, offset, 0, length)
-    return String.unsafeFromCharArray(copy)
+    return String(copy)
 }
 
 /**
@@ -88,7 +88,7 @@ public actual fun CharArray.concatToString(): String {
     val thisLength = thisStorage.len()
     val copy = WasmCharArray(thisLength)
     copyWasmArray(this.storage, copy, 0, 0, thisLength)
-    return String.unsafeFromCharArray(copy)
+    return String(copy)
 }
 
 /**
@@ -109,7 +109,7 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
     val length = endIndex - startIndex
     val copy = WasmCharArray(length)
     copyWasmArray(this.storage, copy, startIndex, 0, length)
-    return String.unsafeFromCharArray(copy)
+    return String(copy)
 }
 
 /**
