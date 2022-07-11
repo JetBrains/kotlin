@@ -615,48 +615,137 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
-
     @DisplayName("source map is generated")
     @GradleTest
+    fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val mapFilePath = projectPath
+                    .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
+                assertFileContains(
+                    mapFilePath,
+                    "\"../../../../../app/src/main/kotlin/main.kt\"",
+                    "\"../../../../../lib/src/main/kotlin/foo.kt\"",
+                    "\"sourcesContent\":[null",
+                )
+            }
+        }
+    }
+
+    @DisplayName("prefix is added to paths in source map")
     @DisabledIf(
         "org.jetbrains.kotlin.gradle.AbstractKotlin2JsGradlePluginIT#getIrBackend",
         disabledReason = "Source maps are not supported in IR backend"
     )
-    fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
-        project("kotlin2JsNoOutputFileProject", gradleVersion) {
-            buildGradle.appendText(
+    @GradleTest
+    fun testKotlinJsSourceMapCustomPrefix(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            buildGradleKts.appendText(
                 """
+                |project("app") {
+                |   tasks.withType<KotlinJsCompile> {
+                |        kotlinOptions.sourceMapPrefix = "appPrefix/"
+                |   }
+                |}
                 |
-                |compileKotlin2Js.kotlinOptions.sourceMap = true
-                |compileKotlin2Js.kotlinOptions.sourceMapPrefix = "prefixprefix/"
-                |compileKotlin2Js.kotlinOptions.outputFile = "${'$'}{buildDir}/kotlin2js/main/app.js"
+                |project("lib") {
+                |   tasks.withType<KotlinJsCompile> {
+                |        kotlinOptions.sourceMapPrefix = "libPrefix/"
+                |   }
+                |}
+                |
                 """.trimMargin()
             )
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val mapFilePath = projectPath
+                    .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
+                assertFileContains(
+                    mapFilePath,
+                    "\"appPrefix/src/main/kotlin/main.kt\"",
+                    "\"appPrefix/libPrefix/src/main/kotlin/foo.kt\"",
+                )
+            }
+        }
+    }
 
-            build("build") {
-                val mapFilePath = projectPath.resolve("build/kotlin2js/main/app.js.map")
-                assertFileExists(mapFilePath)
-                val sourceFilePath = "prefixprefix/src/main/kotlin/example/Dummy.kt"
-                assertFileContains(mapFilePath, "\"$sourceFilePath\"")
+    @DisplayName("path in source maps are remapped for custom outputFile")
+    @DisabledIf(
+        "org.jetbrains.kotlin.gradle.AbstractKotlin2JsGradlePluginIT#getIrBackend",
+        disabledReason = "Source maps are not supported in IR backend"
+    )
+    @GradleTest
+    fun testKotlinJsSourceMapCustomOutputFile(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            val taskSelector = if (irBackend)
+                "named<KotlinJsIrLink>(\"compileDevelopmentExecutableKotlinJs\")"
+            else
+                "withType<KotlinJsCompile>"
+            buildGradleKts.appendText(
+                """
+                |project("app") {
+                |   tasks.$taskSelector {
+                |        kotlinOptions.outputFile = "${'$'}{buildDir}/kotlin2js/app.js"
+                |   }
+                |}
+                |
+                """.trimMargin()
+            )
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val mapFilePath = subProject("app").projectPath
+                    .resolve("build/kotlin2js/app.js.map")
+                assertFileContains(
+                    mapFilePath,
+                    "\"../../src/main/kotlin/main.kt\"",
+                    "\"../../../../../lib/src/main/kotlin/foo.kt\"",
+                )
+            }
+        }
+    }
+
+    @DisplayName("source map is not generated when disabled")
+    @GradleTest
+    fun testKotlinJsSourceMapDisabled(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |allprojects {
+                |   tasks.withType<KotlinJsCompile> {
+                |        kotlinOptions.sourceMap = false
+                |   }
+                |}
+                |
+                """.trimMargin()
+            )
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val jsFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js")
+                assertFileExists(jsFilePath)
+                assertFileNotExists(Path("$jsFilePath.map"))
             }
         }
     }
 
     @DisplayName("sources can be embedded into source map")
-    @GradleTest
     @DisabledIf(
         "org.jetbrains.kotlin.gradle.AbstractKotlin2JsGradlePluginIT#getIrBackend",
         disabledReason = "Source maps are not supported in IR backend"
     )
-    fun testKotlinJsSourceMapInline(gradleVersion: GradleVersion) {
-        project("kotlin2JsProjectWithSourceMapInline", gradleVersion) {
-            build("build") {
-                val mapFilePath = subProject("app").kotlinClassesDir().resolve("app.js.map")
-                assertFileExists(mapFilePath)
+    @GradleTest
+    fun testKotlinJsSourceMapEmbedSources(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |allprojects {
+                |    tasks.withType<KotlinJsCompile> {
+                |        kotlinOptions.sourceMapEmbedSources = "always"
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val mapFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
                 assertFileContains(
                     mapFilePath,
-                    "\"./src/main/kotlin/main.kt\"",
-                    "\"./src/main/kotlin/foo.kt\"",
                     "\"fun main(args: Array<String>) {",
                     "\"inline fun foo(): String {",
                 )
