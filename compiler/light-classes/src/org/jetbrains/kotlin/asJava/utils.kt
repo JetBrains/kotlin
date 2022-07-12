@@ -8,19 +8,11 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.runReadAction
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.TypeUtils
-
-fun KtLightMethod.checkIsMangled(): Boolean {
-    val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
-    val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
-    return originalName == kotlinOrigin?.name
-}
 
 fun computeExpression(expression: PsiElement): Any? {
     fun evalConstantValue(constantValue: ConstantValue<*>): Any? =

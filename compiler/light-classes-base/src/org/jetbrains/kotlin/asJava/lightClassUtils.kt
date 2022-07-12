@@ -201,6 +201,12 @@ fun mangleInternalName(name: String, moduleName: String): String {
     return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 
+fun KtLightMethod.checkIsMangled(): Boolean {
+    val demangledName = demangleInternalName(name) ?: return false
+    val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
+    return originalName == kotlinOrigin?.name
+}
+
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {
     val toRename = accessor.kotlinOrigin ?: return null
     if (toRename !is KtProperty && toRename !is KtParameter) return null

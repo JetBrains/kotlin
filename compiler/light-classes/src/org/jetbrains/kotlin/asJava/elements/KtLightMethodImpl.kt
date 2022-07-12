@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -50,7 +49,7 @@ abstract class KtLightMethodImpl protected constructor(
 
     override fun setName(name: String): PsiElement? {
         val jvmNameAnnotation = modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString())
-        val demangledName = (if (isMangled) KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) else null) ?: name
+        val demangledName = (if (isMangled) demangleInternalName(name) else null) ?: name
         val newNameForOrigin = propertyNameByAccessor(demangledName, this) ?: demangledName
         if (newNameForOrigin == kotlinOrigin?.name) {
             jvmNameAnnotation?.delete()
