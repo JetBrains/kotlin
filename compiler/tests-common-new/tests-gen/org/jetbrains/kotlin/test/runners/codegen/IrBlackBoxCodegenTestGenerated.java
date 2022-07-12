@@ -17788,6 +17788,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("externalInDependency.kt")
+        public void testExternalInDependency() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/externalInDependency.kt");
+        }
+
+        @Test
         @TestMetadata("FakeOverrideBuilder.kt")
         public void testFakeOverrideBuilder() throws Exception {
             runTest("compiler/testData/codegen/box/fir/FakeOverrideBuilder.kt");
