@@ -462,11 +462,14 @@ class OptInUsageChecker(project: Project) : CallChecker {
             }
 
             if (element.getParentOfType<KtImportDirective>(false) == null) {
+                val containingClass = element.getParentOfType<KtClassOrObject>(strict = true)
                 val descriptions = targetDescriptor.loadOptIns(
                     moduleAnnotationsResolver,
                     bindingContext,
                     context.languageVersionSettings,
-                    fromSupertype = element.getParentOfType<KtSuperTypeListEntry>(strict = true) != null
+                    fromSupertype = containingClass != null && containingClass.superTypeListEntries.any {
+                        it.typeAsUserType == element.parent
+                    }
                 )
                 reportNotAllowedOptIns(descriptions, element, context)
             }
