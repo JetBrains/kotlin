@@ -98,6 +98,7 @@ extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     mavenCentral()
+    maven("https://maven.google.com/")
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     gradlePluginPortal()
@@ -172,7 +173,7 @@ dependencies {
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
-    implementation("com.jakewharton.dex:dex-method-list:3.0.0")
+    implementation("com.jakewharton.dex:dex-member-list:4.1.1")
 
     implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
