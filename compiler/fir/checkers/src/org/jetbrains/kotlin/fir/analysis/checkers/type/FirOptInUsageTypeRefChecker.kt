@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -55,9 +56,13 @@ object FirOptInUsageTypeRefChecker : FirTypeRefChecker() {
             }
         }
 
+        val isSupertypeRef = typeRef in (context.containingDeclarations.lastOrNull() as? FirClass)?.superTypeRefs.orEmpty()
         with(FirOptInUsageBaseChecker) {
-            val experimentalities = symbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType = null) +
-                    loadExperimentalitiesFromConeArguments(context, coneType.typeArguments.toList())
+            val classifierExperimentalities =
+                if (isSupertypeRef) symbol.loadExperimentalitiesFromSupertype(context)
+                else symbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType = null)
+            val experimentalities =
+                classifierExperimentalities + loadExperimentalitiesFromConeArguments(context, coneType.typeArguments.toList())
             reportNotAcceptedExperimentalities(experimentalities, typeRef, context, reporter)
         }
     }

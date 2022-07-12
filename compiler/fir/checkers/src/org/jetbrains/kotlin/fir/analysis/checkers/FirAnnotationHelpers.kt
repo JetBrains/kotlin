@@ -92,10 +92,14 @@ fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
 
 fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
     return unfoldArrayOrVararg().mapNotNull {
-        if (it !is FirGetClassCall) return@mapNotNull null
-        val qualifier = it.argument as? FirResolvedQualifier ?: return@mapNotNull null
-        qualifier.symbol as? FirRegularClassSymbol
+        it.extractClassFromArgument()
     }
+}
+
+fun FirExpression.extractClassFromArgument(): FirRegularClassSymbol? {
+    if (this !is FirGetClassCall) return null
+    val qualifier = argument as? FirResolvedQualifier ?: return null
+    return qualifier.symbol as? FirRegularClassSymbol
 }
 
 fun checkRepeatedAnnotation(
