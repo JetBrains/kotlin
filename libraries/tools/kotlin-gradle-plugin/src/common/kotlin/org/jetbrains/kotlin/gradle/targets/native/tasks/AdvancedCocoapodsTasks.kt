@@ -478,17 +478,27 @@ open class PodGenTask : CocoapodsTask() {
                 buildString {
                     append("pod '${it.name}'")
 
-                    val pathType = when (it.source) {
-                        is Path -> "path"
-                        is Url -> "path"
-                        is Git -> "git"
-                        else -> null
-                    }
+                    val version = it.version
+                    val source = it.source
 
-                    val path = it.source?.getLocalPath(project, it.name)
+                    if (source != null) {
+                        val path = source.getLocalPath(project, it.name)
+                        when (source) {
+                            is Path, is Url -> {
+                                append(", :path => '$path'")
+                            }
 
-                    if (path != null && pathType != null) {
-                        append(", :$pathType => '$path'")
+                            is Git -> {
+                                append(", :git => '$path'")
+                                when {
+                                    source.branch != null -> append(", :branch => '${source.branch}'")
+                                    source.tag != null -> append(", :tag => '${source.tag}'")
+                                    source.commit != null -> append(", :commit => '${source.commit}'")
+                                }
+                            }
+                        }
+                    } else if (version != null) {
+                        append(", '$version'")
                     }
 
                 }
