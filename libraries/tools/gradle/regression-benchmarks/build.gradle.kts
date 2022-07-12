@@ -57,7 +57,7 @@ fun addBenchmarkTask(
         group = "Gradle Regression Benchmark"
         description = "Runs regression benchmark from $script"
 
-        dependsOn(":kotlin-gradle-plugin:install")
+        dependsOnKotlinGradlePluginInstall()
 
         outputs.upToDateWhen { false }
         javaLauncher.set(service.launcherFor {
