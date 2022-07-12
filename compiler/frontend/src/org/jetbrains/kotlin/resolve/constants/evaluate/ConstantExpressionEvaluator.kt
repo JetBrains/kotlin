@@ -324,7 +324,7 @@ class ConstantExpressionEvaluator(
 
         with(OptInUsageChecker) {
             val descriptor = constantType.constructor.declarationDescriptor ?: return
-            val optInDescriptions = descriptor.loadOptIns(moduleAnnotationsResolver, languageVersionSettings)
+            val optInDescriptions = descriptor.loadOptIns(moduleAnnotationsResolver, trace.bindingContext, languageVersionSettings)
 
             reportNotAllowedOptIns(
                 optInDescriptions, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS
