@@ -3,7 +3,6 @@ plugins {
 }
 
 val testModules = listOf(
-    ":compiler:tests-common-jvm6",
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-compiler-utils",

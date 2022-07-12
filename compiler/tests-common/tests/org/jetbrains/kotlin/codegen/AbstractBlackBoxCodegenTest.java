@@ -22,8 +22,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getBoxMethodOrNull;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getGeneratedClass;
 
 @ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {

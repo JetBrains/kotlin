@@ -14,7 +14,7 @@ import kotlin.contracts.contract
  */
 object KtAssert {
     @JvmStatic
-    fun fail(message: String) {
+    fun fail(message: String): Nothing {
         throw AssertionError(message)
     }
 

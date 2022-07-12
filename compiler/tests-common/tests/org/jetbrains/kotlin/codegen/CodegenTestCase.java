@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -54,7 +52,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.*;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.*;
 import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {

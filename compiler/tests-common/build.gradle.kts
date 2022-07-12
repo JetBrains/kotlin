@@ -52,7 +52,6 @@ dependencies {
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(projectTests(":compiler:tests-common-jvm6"))
     testApi(project(":kotlin-scripting-compiler-impl"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(commonDependency("junit:junit"))
