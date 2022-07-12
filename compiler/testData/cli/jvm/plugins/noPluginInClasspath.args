@@ -1,4 +1,5 @@
 -d
 $TEMP_DIR$
+-Xuse-k2
 -Xcompiler-plugin=dist/kotlinc/lib/kotlin-reflect.jar
 $TESTDATA_DIR$/noPluginInClasspath.kt

@@ -109,9 +109,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/plugins/pluginSimple_legacy.args");
         }
 
-        @TestMetadata("pluginSimple_modern.args")
-        public void testPluginSimple_modern() throws Exception {
-            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_modern.args");
+        @TestMetadata("pluginSimple_modern_noK2.args")
+        public void testPluginSimple_modern_noK2() throws Exception {
+            runTest("compiler/testData/cli/jvm/plugins/pluginSimple_modern_noK2.args");
         }
 
         @TestMetadata("pluginWithK2Error_legacy.args")

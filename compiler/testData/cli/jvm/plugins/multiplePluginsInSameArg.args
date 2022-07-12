@@ -1,4 +1,5 @@
 -d
 $TEMP_DIR$
+-Xuse-k2
 -Xcompiler-plugin=dist/kotlinc/lib/allopen-compiler-plugin.jar,dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.AllOpen
 $TESTDATA_DIR$/multiplePluginsInSameArg.kt

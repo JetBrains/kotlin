@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -48,13 +46,15 @@ import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
     companion object {
-        const val SCRIPT_PLUGIN_REGISTRAR_NAME = "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
+        const val SCRIPT_PLUGIN_REGISTRAR_NAME =
+            "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
         const val SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME = "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor"
     }
 
     abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
 
-    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager = defaultPerformanceManager
+    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager =
+        defaultPerformanceManager
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     fun execAndOutputXml(errStream: PrintStream, services: Services, vararg args: String): ExitCode {
@@ -179,23 +179,37 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             }
         }
 
-        if (pluginConfigurations.isNotEmpty() && (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty())) {
-            val message = buildString {
-                appendLine("Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax")
-                appendLine("Legacy arguments:")
-                if (pluginClasspaths.isNotEmpty()) {
-                    appendLine("  -Xplugin=${pluginClasspaths.joinToString(",")}")
-                }
-                pluginOptions.forEach {
-                    appendLine("  -P $it")
-                }
-                appendLine("Modern arguments:")
-                pluginConfigurations.forEach {
-                    appendLine("  -Xcompiler-plugin=$it")
-                }
+        if (pluginConfigurations.isNotEmpty()) {
+            var hasErrors = false
+            messageCollector.report(WARNING, "Argument -Xcompiler-plugin is experimental")
+            if (!arguments.useK2) {
+                hasErrors = true
+                messageCollector.report(
+                    ERROR,
+                    "-Xcompiler-plugin argument is allowed only for for K2 compiler. Please use -Xplugin argument or enable -Xuse-k2"
+                )
             }
-            messageCollector.report(ERROR, message)
-            return INTERNAL_ERROR
+            if (pluginClasspaths.isNotEmpty() || pluginOptions.isNotEmpty()) {
+                hasErrors = true
+                val message = buildString {
+                    appendLine("Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax")
+                    appendLine("Legacy arguments:")
+                    if (pluginClasspaths.isNotEmpty()) {
+                        appendLine("  -Xplugin=${pluginClasspaths.joinToString(",")}")
+                    }
+                    pluginOptions.forEach {
+                        appendLine("  -P $it")
+                    }
+                    appendLine("Modern arguments:")
+                    pluginConfigurations.forEach {
+                        appendLine("  -Xcompiler-plugin=$it")
+                    }
+                }
+                messageCollector.report(ERROR, message)
+            }
+            if (hasErrors) {
+                return INTERNAL_ERROR
+            }
         }
 
         if (!arguments.disableDefaultScriptingPlugin) {
