@@ -164,7 +164,7 @@ index 77b11869..9a6d9ea2 100644
 
      ext {
 -        kotlin_version = '1.6.21'
-+        kotlin_version = '1.8.255-SNAPSHOT'
++        kotlin_version = '<kotlin_version>'
          spotless = "6.1.2"
 -        anvil_version = "2.4.0"
 +        anvil_version = "2.4.1"
