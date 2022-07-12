@@ -22,7 +22,11 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
         RandomAccessFile(file, "r").use { randomAccessFile ->
             val mappedByteBuffer = randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length())
             try {
-                entries = mappedByteBuffer.parseCentralDirectory()
+                entries = try {
+                    mappedByteBuffer.parseCentralDirectory()
+                } catch (e: Exception) {
+                    throw IllegalStateException("Error while reading '${file.path}': $e", e)
+                }
                 cachedManifest =
                     entries.singleOrNull { StringUtil.equals(MANIFEST_PATH, it.relativePath) }
                         ?.let(mappedByteBuffer::contentsToByteArray)
