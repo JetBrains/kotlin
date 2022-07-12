@@ -287,10 +287,7 @@ class FirElementSerializer private constructor(
             }
 
             val nonSourceAnnotations = setter.nonSourceAnnotations(session, property)
-            if (setter !is FirDefaultPropertyAccessor ||
-                nonSourceAnnotations.isNotEmpty() ||
-                setter.visibility != property.visibility
-            ) {
+            if (Flags.IS_NOT_DEFAULT.get(accessorFlags)) {
                 val setterLocal = local.createChildSerializer(setter)
                 for (valueParameterDescriptor in setter.valueParameters) {
                     val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
