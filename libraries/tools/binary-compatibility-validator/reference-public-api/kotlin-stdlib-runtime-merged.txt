@@ -235,6 +235,10 @@ public abstract interface annotation class kotlin/SinceKotlin : java/lang/annota
 	public abstract fun version ()Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/SubclassOptInRequired : java/lang/annotation/Annotation {
+	public abstract fun markerClass ()Ljava/lang/Class;
+}
+
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
 	public abstract fun names ()[Ljava/lang/String;
 }

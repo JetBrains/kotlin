@@ -16,6 +16,8 @@ object OptInNames {
     val REQUIRES_OPT_IN_CLASS_ID = ClassId.topLevel(REQUIRES_OPT_IN_FQ_NAME)
     val OPT_IN_FQ_NAME = FqName("kotlin.OptIn")
     val OPT_IN_CLASS_ID = ClassId.topLevel(OPT_IN_FQ_NAME)
+    val SUBCLASS_OPT_IN_REQUIRED_FQ_NAME = FqName("kotlin.SubclassOptInRequired")
+    val SUBCLASS_OPT_IN_REQUIRED_CLASS_ID = ClassId.topLevel(SUBCLASS_OPT_IN_REQUIRED_FQ_NAME)
 
     val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
     val WAS_EXPERIMENTAL_CLASS_ID = ClassId.topLevel(WAS_EXPERIMENTAL_FQ_NAME)

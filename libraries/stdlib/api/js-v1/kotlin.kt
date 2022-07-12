@@ -2755,6 +2755,15 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "1.8")
+public final annotation class SubclassOptInRequired : kotlin.Annotation {
+    public constructor SubclassOptInRequired(markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)
+
+    public final val markerClass: kotlin.reflect.KClass<out kotlin.Annotation> { get; }
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS})
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 public final annotation class Suppress : kotlin.Annotation {
