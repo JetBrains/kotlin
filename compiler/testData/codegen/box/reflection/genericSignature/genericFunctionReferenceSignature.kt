@@ -1,3 +1,6 @@
+// TARGET_BACKEND: JVM
+// TARGET_BACKEND: NATIVE
+
 // WITH_REFLECT
 
 package test
