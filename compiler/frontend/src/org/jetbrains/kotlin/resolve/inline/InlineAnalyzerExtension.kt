@@ -159,10 +159,12 @@ class InlineAnalyzerExtension(
             }
         }
 
-        //TODO: actually it should be isEffectivelyFinal(false), but looks like it requires committee decision: KT-34372)
-        if (callableDescriptor.isEffectivelyFinal(true)) {
+        if (callableDescriptor.isEffectivelyFinal(ignoreEnumClassFinality = true)) {
             if (overridesAnything) {
                 trace.report(Errors.OVERRIDE_BY_INLINE.on(functionOrProperty))
+            }
+            if (!callableDescriptor.isEffectivelyFinal(ignoreEnumClassFinality = false)) {
+                trace.report(Errors.DECLARATION_CANT_BE_INLINED_WARNING.on(functionOrProperty))
             }
             return
         }

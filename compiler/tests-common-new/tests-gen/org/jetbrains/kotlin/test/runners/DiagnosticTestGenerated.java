@@ -17317,6 +17317,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("virtualMemberInEnum.kt")
+            public void testVirtualMemberInEnum() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/virtualMemberInEnum.kt");
+            }
+
+            @Test
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/when.kt");
