@@ -98,7 +98,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             kotlin("AnotherBuildConfig.kt") {
                 resolve("examples/classes/AnotherBuildConfig.kt")
             }
-            apiFile(projectName = rootProjectDir.name.toUpperCase()) {
+            apiFile(projectName = rootProjectDir.name.uppercase()) {
                 resolve("examples/classes/AnotherBuildConfig.dump")
             }
 
