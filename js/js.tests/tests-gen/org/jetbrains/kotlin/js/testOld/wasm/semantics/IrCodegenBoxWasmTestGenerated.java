@@ -22689,6 +22689,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 public void testTopLevelProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
                 }
+
+                @TestMetadata("topLevelPropertyMultiModule.kt")
+                public void testTopLevelPropertyMultiModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelPropertyMultiModule.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")

@@ -35200,6 +35200,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 public void testTopLevelProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
                 }
+
+                @Test
+                @TestMetadata("topLevelPropertyMultiModule.kt")
+                public void testTopLevelPropertyMultiModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelPropertyMultiModule.kt");
+                }
             }
 
             @Nested
