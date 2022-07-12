@@ -13,7 +13,7 @@ FILE: privateToThis.fir.kt
         }
 
         public final fun foo(a: R|A<kotlin/String>|): R|kotlin/Unit| {
-            lval x: R|kotlin/String| = R|<local>/a|.R|SubstitutionOverride</A.t: R|kotlin/String|>|
+            lval x: R|kotlin/String| = R|<local>/a|.<HIDDEN: /A.t is invisible>#
         }
 
     }

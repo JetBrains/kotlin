@@ -15,19 +15,19 @@ class Test<in I, out O> {
         apply(this.i)
         with(Test<I, O>()) {
             apply(i) // resolved to this@Test.i
-            apply(this.i)
-            apply(this@with.i)
+            apply(this.<!INVISIBLE_REFERENCE!>i<!>)
+            apply(this@with.<!INVISIBLE_REFERENCE!>i<!>)
             apply(this@Test.i)
         }
     }
 
     fun <I, O> test(t: Test<I, O>) {
-        t.apply(t.i)
+        t.apply(t.<!INVISIBLE_REFERENCE!>i<!>)
     }
 
     companion object {
         fun <I, O> test(t: Test<I, O>) {
-            t.apply(t.i)
+            t.apply(t.<!INVISIBLE_REFERENCE!>i<!>)
         }
     }
 }

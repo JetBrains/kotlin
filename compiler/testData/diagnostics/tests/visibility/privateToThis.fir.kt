@@ -9,6 +9,6 @@ class A<in T>(t: T) {
     }
 
     fun foo(a: A<String>) {
-        val x: String = a.t // Invisible!
+        val x: String = a.<!INVISIBLE_REFERENCE!>t<!> // Invisible!
     }
 }
