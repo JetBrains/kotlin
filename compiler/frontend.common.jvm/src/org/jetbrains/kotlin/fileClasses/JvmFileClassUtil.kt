@@ -81,7 +81,12 @@ object JvmFileClassUtil {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == shortName
         }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
+        return getLiteralStringEntryFromAnnotation(annotation)?.text
+    }
+
+    fun getLiteralStringEntryFromAnnotation(annotation: KtAnnotationEntry): KtLiteralStringTemplateEntry? {
         val stringTemplateExpression = annotation.valueArguments.firstOrNull()?.run {
             when (this) {
                 is KtValueArgument -> stringTemplateExpression
@@ -89,8 +94,7 @@ object JvmFileClassUtil {
             }
         } ?: return null
 
-        val singleEntry = stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
-        return singleEntry.text
+        return stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry
     }
 }
 

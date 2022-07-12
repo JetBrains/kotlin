@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KtLightMethodImpl protected constructor(
     lightMemberOrigin: LightMemberOriginForDeclaration?,
@@ -48,20 +48,22 @@ abstract class KtLightMethodImpl protected constructor(
     override val isMangled: Boolean get() = checkIsMangled()
 
     override fun setName(name: String): PsiElement? {
-        val jvmNameAnnotation = modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString())
+        val jvmNameAnnotation = modifierList.findAnnotation(JvmFileClassUtil.JVM_NAME.asString())?.unwrapped as? KtAnnotationEntry
         val demangledName = (if (isMangled) demangleInternalName(name) else null) ?: name
         val newNameForOrigin = propertyNameByAccessor(demangledName, this) ?: demangledName
         if (newNameForOrigin == kotlinOrigin?.name) {
             jvmNameAnnotation?.delete()
             return this
         }
-        val nameExpression = jvmNameAnnotation?.findAttributeValue("name")?.unwrapped as? KtStringTemplateExpression
+
+        val nameExpression = jvmNameAnnotation?.let { JvmFileClassUtil.getLiteralStringEntryFromAnnotation(it) }
         if (nameExpression != null) {
-            nameExpression.replace(KtPsiFactory(this).createStringTemplate(name))
+            nameExpression.replace(KtPsiFactory(this).createLiteralStringTemplateEntry(name))
         } else {
             val toRename = kotlinOrigin as? PsiNamedElement ?: cannotModify()
             toRename.setName(newNameForOrigin)
         }
+
         return this
     }
 
