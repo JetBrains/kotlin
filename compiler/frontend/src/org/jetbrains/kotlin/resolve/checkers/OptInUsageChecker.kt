@@ -417,15 +417,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             }
 
             if (element.getParentOfType<KtImportDirective>(false) == null) {
-                val descriptions = mutableSetOf<OptInDescription>()
-                descriptions += targetDescriptor.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
-                if (targetDescriptor is TypeAliasDescriptor) {
-                    descriptions.addAll(
-                        targetDescriptor.expandedType.loadOptIns(
-                            moduleAnnotationsResolver, context.languageVersionSettings, mutableSetOf(targetDescriptor)
-                        )
-                    )
-                }
+                val descriptions = targetDescriptor.loadOptIns(moduleAnnotationsResolver, context.languageVersionSettings)
                 reportNotAllowedOptIns(descriptions, element, context)
             }
         }
