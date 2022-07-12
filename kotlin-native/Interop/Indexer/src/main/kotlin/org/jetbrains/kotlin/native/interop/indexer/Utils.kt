@@ -770,6 +770,11 @@ private fun filterHeadersByPredefined(
 ) {
     // Note: suboptimal but simple.
     indexTranslationUnit(index, translationUnit, 0, object : Indexer {
+        override fun enteredMainFile(file: CXFile) {
+            ownHeaders += file
+            allHeaders += file
+        }
+
         override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
             val file = info.file
             allHeaders += file
