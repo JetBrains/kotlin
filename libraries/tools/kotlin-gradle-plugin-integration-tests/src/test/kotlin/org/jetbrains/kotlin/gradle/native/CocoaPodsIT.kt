@@ -29,6 +29,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -233,6 +234,27 @@ class CocoaPodsIT : BaseGradleIT() {
             addSpecRepo(podRepo)
         }
         project.testImportWithAsserts(listOf(podRepo))
+    }
+
+    @Test
+    fun testSyntheticProjectPodspecGeneration() {
+        val gradleProject = transformProjectWithPluginsDsl(cocoapodsSingleKtPod, gradleVersion)
+        gradleProject.gradleBuildScript().appendToCocoapodsBlock("""
+            pod("SSZipArchive")
+            pod("AFNetworking", "~> 4.0.1")
+            pod("Alamofire") {
+                source = git("https://github.com/Alamofire/Alamofire.git") {
+                    tag = "5.6.1"
+                }
+            }
+        """.trimIndent())
+        gradleProject.build("podGenIOS", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+            assertSuccessful()
+            val podfileText = gradleProject.projectDir.resolve("build/cocoapods/synthetic/IOS/Podfile").readText().trim()
+            assertTrue(podfileText.contains("pod 'SSZipArchive'"))
+            assertTrue(podfileText.contains("pod 'AFNetworking', '~> 4.0.1'"))
+            assertTrue(podfileText.contains("pod 'Alamofire', :git => '${gradleProject.projectDir.absolutePath}/build/cocoapods/externalSources/git/Alamofire', :tag => '5.6.1'"))
+        }
     }
 
     @Test
