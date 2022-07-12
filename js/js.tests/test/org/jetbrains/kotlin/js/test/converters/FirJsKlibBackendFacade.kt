@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.backend.js.toResolverLogger
@@ -13,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
@@ -24,6 +29,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
 class FirJsKlibBackendFacade(
@@ -78,11 +84,24 @@ class FirJsKlibBackendFacade(
             configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
         ).getFullResolvedList().last().library
 
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, inputArtifact.irModuleFragment.descriptor)
+        val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            lib,
+            configuration.languageVersionSettings,
+            LockBasedStorageManager("ModulesStructure"),
+            inputArtifact.irModuleFragment.descriptor.builtIns,
+            packageAccessHandler = null,
+            lookupTracker = LookupTracker.DO_NOTHING
+        )
+        // TODO: find out why it must be so weird
+        moduleDescriptor.safeAs<ModuleDescriptorImpl>()?.let {
+            it.setDependencies(inputArtifact.irModuleFragment.descriptor.allDependencyModules.filterIsInstance<ModuleDescriptorImpl>() + it)
+        }
+
+        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
         }
-        testServices.jsLibraryProvider.setDescriptorAndLibraryByName(outputFile, inputArtifact.irModuleFragment.descriptor, lib)
+        testServices.jsLibraryProvider.setDescriptorAndLibraryByName(outputFile, moduleDescriptor, lib)
 
         return BinaryArtifacts.KLib(File(outputFile))
     }
