@@ -156,7 +156,7 @@ index 0dc88554..7a8c4290 100644
 
          appReferrerDataStore.referrerCheckedPreviously = true
 diff --git a/build.gradle b/build.gradle
-index 77b11869..9a6d9ea2 100644
+index 77b11869..80075001 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -2,9 +2,9 @@
@@ -164,28 +164,14 @@ index 77b11869..9a6d9ea2 100644
 
      ext {
 -        kotlin_version = '1.6.21'
-+        kotlin_version = '1.8.255-SNAPSHOT'
++        kotlin_version = '1.7.10'
          spotless = "6.1.2"
 -        anvil_version = "2.4.0"
 +        anvil_version = "2.4.1"
          gradle_plugin = "7.0.4"
          min_sdk = 23
          target_sdk = 30
-@@ -13,6 +13,7 @@ buildscript {
-     }
-
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
-         maven { url "https://plugins.gradle.org/m2/" }
-@@ -34,11 +35,13 @@ plugins {
-
- allprojects {
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
+@@ -39,6 +39,7 @@ allprojects {
      }
      configurations.all {
          resolutionStrategy.force 'org.objenesis:objenesis:2.6'
@@ -193,7 +179,7 @@ index 77b11869..9a6d9ea2 100644
      }
  }
 
-@@ -68,4 +71,4 @@ fladle {
+@@ -68,4 +69,4 @@ fladle {
      }
  }
 
@@ -209,7 +195,7 @@ index 059622f0..89e01988 100644
  version.jakewharton.timber=5.0.1
 
 -version.kotlin=1.6.21
-+version.kotlin=<kotlin_version>
++version.kotlin=1.7.10
 
  version.kotlinx.coroutines=1.6.3
 
