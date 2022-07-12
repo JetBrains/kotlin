@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
@@ -27,16 +26,14 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class CliKotlinAsJavaSupport(
-    project: Project,
+    private val project: Project,
     private val traceHolder: CliTraceHolder
 ) : KotlinAsJavaSupport() {
-    private val psiManager = PsiManager.getInstance(project)
-
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         return findFacadeFilesInPackage(packageFqName, scope)
             .groupBy { it.javaFileFacadeFqName }
             .mapNotNull { (facadeClassFqName, _) ->
-                KotlinLightClassFactory.createFacade(psiManager, facadeClassFqName, scope)
+                KotlinLightClassFactory.createFacade(project, facadeClassFqName, scope)
             }
     }
 
@@ -53,7 +50,7 @@ class CliKotlinAsJavaSupport(
         .orEmpty()
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        return listOfNotNull(KotlinLightClassFactory.createFacade(psiManager, facadeFqName, scope))
+        return listOfNotNull(KotlinLightClassFactory.createFacade(project, facadeFqName, scope))
     }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
