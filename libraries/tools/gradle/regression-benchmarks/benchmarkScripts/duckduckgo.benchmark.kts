@@ -28,37 +28,34 @@ runAllBenchmarks(
             title = "Clean build"
             useGradleArgs("--no-build-cache")
 
-            warmups = 1
-            iterations = 1
-
             runTasks(":app:assemblePlayDebug")
             runCleanupTasks("clean")
         }
 
-//        scenario {
-//            title = "Incremental build with ABI change in common ViewModelFactory"
-//            useGradleArgs("--no-build-cache")
-//
-//            runTasks(":app:assemblePlayDebug")
-//            applyAbiChangeTo("common/src/main/java/com/duckduckgo/app/global/VpnViewModelFactory.kt")
-//        }
-//
-//        scenario {
-//            title = "Incremetal build with ABI change in Kapt component"
-//            useGradleArgs("--no-build-cache")
-//
-//            runTasks(":app:assemblePlayDebug")
-//            applyAbiChangeTo("vpn/src/main/java/com/duckduckgo/mobile/android/vpn/di/VpnModule.kt")
-//        }
-//
-//        scenario {
-//            title = "Incremental build with change in Android common string resource"
-//            useGradleArgs("--no-build-cache")
-//
-//            runTasks(":app:assemblePlayDebug")
-//
-//            applyAndroidResourceValueChange("common-ui/src/main/res/values/strings.xml")
-//        }
+        scenario {
+            title = "Incremental build with ABI change in common ViewModelFactory"
+            useGradleArgs("--no-build-cache")
+
+            runTasks(":app:assemblePlayDebug")
+            applyAbiChangeTo("common/src/main/java/com/duckduckgo/app/global/VpnViewModelFactory.kt")
+        }
+
+        scenario {
+            title = "Incremetal build with ABI change in Kapt component"
+            useGradleArgs("--no-build-cache")
+
+            runTasks(":app:assemblePlayDebug")
+            applyAbiChangeTo("vpn/src/main/java/com/duckduckgo/mobile/android/vpn/di/VpnModule.kt")
+        }
+
+        scenario {
+            title = "Incremental build with change in Android common string resource"
+            useGradleArgs("--no-build-cache")
+
+            runTasks(":app:assemblePlayDebug")
+
+            applyAndroidResourceValueChange("common-ui/src/main/res/values/strings.xml")
+        }
     },
     mapOf(
         "1.7.10" to stableReleasePatch,
