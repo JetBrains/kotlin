@@ -6152,6 +6152,46 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
     annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
 }
 
+fileCheckTest("filecheck_kt49847_simple_function_reference") {
+    annotatedSource = project.file('filecheck/kt49847_simple_function_reference.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Any") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Any.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Int") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Int.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Any_generic") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Any_generic.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_sam_Int_generic") {
+    annotatedSource = project.file('filecheck/kt49847_sam_Int_generic.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_class") {
+    annotatedSource = project.file('filecheck/kt49847_class.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_generic") {
+    annotatedSource = project.file('filecheck/kt49847_generic.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
+fileCheckTest("filecheck_kt49847_generic_receiver") {
+    annotatedSource = project.file('filecheck/kt49847_generic_receiver.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
 }
