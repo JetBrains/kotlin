@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.ir
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.js.test.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
@@ -195,7 +196,7 @@ abstract class AbstractFirJsTest(
         get() = ::Fir2IrJsResultsConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::JsKlibBackendFacade
+        get() = ::FirJsKlibBackendFacade
 
     override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
         get() = ::JsIrBackendFacade
@@ -209,14 +210,14 @@ abstract class AbstractFirJsTest(
         super.configure(builder)
         with (builder) {
             defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
-                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                val runIc = getBoolean("kotlin.js.ir.icMode")
-                if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
-                if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
-                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
-                if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
+//                +ConfigurationDirectives.WITH_STDLIB
+//                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+//                val runIc = getBoolean("kotlin.js.ir.icMode")
+//                if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
+//                if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
+//                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
+//                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
+//                if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
 
