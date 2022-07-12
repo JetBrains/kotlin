@@ -4366,6 +4366,10 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objc_kt50648") {
         it.defFile 'interop/objc/kt50648/objclib.def'
     }
+    createInterop("objc_kt53151") {
+        it.defFile 'interop/objc/kt53151/objclib.def'
+        it.compilerOpts "-F$projectDir/interop/objc/kt53151/testFramework"
+    }
 
     createInterop("kt49034_struct") {
         it.defFile 'interop/objc/kt49034/struct/kt49034.def'
@@ -5089,6 +5093,11 @@ if (PlatformInfo.isAppleTarget(project)) {
             it.contains("Converting Obj-C blocks with non-reference-typed return value to kotlin.Any is not supported (v)") &&
                     (it.contains("kfun:#main(){}") || project.globalTestArgs.contains('-opt')) // Stacktrace.
         }
+    }
+
+    interopTest("interop_objc_kt53151") {
+        source = "interop/objc/kt53151/main.kt"
+        interop = "objc_kt53151"
     }
 
     standaloneTest("objc_arc_contract") {
@@ -6352,5 +6361,3 @@ project.afterEvaluate {
         outputs.upToDateWhen { false }
     }
 }
-
-

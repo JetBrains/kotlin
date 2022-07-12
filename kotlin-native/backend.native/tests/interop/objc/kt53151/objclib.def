@@ -1,0 +1,6 @@
+language = Objective-C
+modules = Foo
+---
+static int getDefInt() {
+    return 2;
+}
