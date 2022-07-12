@@ -94,12 +94,12 @@ class TimeMarkTest {
     fun testLongDisplacement(timeSource: TimeSource, wait: (Duration) -> Unit) {
         val baseMark = timeSource.markNow()
         val longDuration = Long.MAX_VALUE.nanoseconds
-        val waitDuration = 10.milliseconds
+        val waitDuration = 20.milliseconds
         val pastMark = baseMark - longDuration
         wait(waitDuration)
         val elapsed = pastMark.elapsedNow()
         assertTrue(elapsed > longDuration)
-        assertTrue(elapsed >= longDuration + waitDuration)
+        assertTrue(elapsed >= longDuration + waitDuration, "$elapsed, $longDuration, $waitDuration")
     }
 
     @Test
