@@ -25,9 +25,12 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 fun DeclarationDescriptor.isInlineClass(): Boolean {
     val isJvmBackend = this.module.platform?.singleOrNull()?.oldFashionedDescription?.startsWith("JVM") == true
 
-    return this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation &&
+    return this is ClassDescriptor && isSingleFieldValueClass() &&
             (!isJvmBackend || isInline || (isValue && annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)))
 }
+
+fun DeclarationDescriptor.isSingleFieldValueClass(): Boolean =
+    this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
     this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
