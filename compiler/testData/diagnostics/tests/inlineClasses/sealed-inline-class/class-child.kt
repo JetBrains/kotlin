@@ -49,7 +49,7 @@ abstract class AC
 
 
 @JvmInline
-value class VC_SVC(val a: Int): SVC()
+value class VC_SVC(val a: <!INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE!>Int<!>): SVC()
 @JvmInline
 value class VC_SI(val a: Any): SI
 @JvmInline

@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +SealedInlineClasses
+// IGNORE_BACKEND: JVM
 
 interface IQ {
     fun ok(): String
