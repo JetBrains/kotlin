@@ -26311,6 +26311,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("jvmSerializableLambda.kt")
+            public void testJvmSerializableLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/jvmSerializableLambda.kt");
+            }
+
+            @Test
             @TestMetadata("kt52875.kt")
             public void testKt52875() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/kt52875.kt");
@@ -42072,6 +42078,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @Test
             public void testAllFilesPresentInLambdaClasses() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("lightweightLambdas.kt")
+            public void testLightweightLambdas() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/lightweightLambdas.kt");
             }
 
             @Test
