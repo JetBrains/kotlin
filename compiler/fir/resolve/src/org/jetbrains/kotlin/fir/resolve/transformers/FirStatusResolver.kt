@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
@@ -321,7 +323,9 @@ class FirStatusResolver(
             return !type.lookupTag.typeParameterSymbol.fir.variance.allowsPosition(requiredVariance)
         }
         if (type is ConeClassLikeType) {
-            for (argument in type.typeArguments) {
+            val classLike = type.lookupTag.toSymbol(session)?.fir
+            for ((index, argument) in type.typeArguments.withIndex()) {
+                if (classLike?.typeParameters?.getOrNull(index) is FirOuterClassTypeParameterRef) continue
                 val (argType, requiredVarianceForArgument) = when (argument) {
                     is ConeKotlinTypeProjectionOut -> argument.type to requiredVariance
                     is ConeKotlinTypeProjectionIn -> argument.type to requiredVariance.opposite()
