@@ -251,30 +251,3 @@ fun StateOfClass.analyser(firElement: FirElement): EffectsAndPotentials {
     val visitor = Analyser.ExpressionVisitor(this)
     return firElement.accept(visitor, null)
 }
-
-fun StateOfClass.analyseDeclaration(dec: FirDeclaration): EffectsAndPotentials {
-    val effsAndPots = when (dec) {
-        is FirConstructor -> dec.body?.let(::analyser) ?: emptyEffsAndPots
-        is FirAnonymousInitializer -> dec.body?.let(::analyser) ?: emptyEffsAndPots
-        is FirRegularClass -> {
-            val state = StateOfClass(dec, context, this)
-            this.errors.addAll(state.checkClass())
-            state.firClass.declarations.fold(emptyEffsAndPots) { sum, d -> sum + state.analyseDeclaration(d) }
-        }
-        is FirPropertyAccessor -> TODO()
-        //                is FirSimpleFunction -> checkBody(dec)
-        is FirField -> dec.initializer?.let(::analyser) ?: emptyEffsAndPots
-        is FirProperty -> dec.initializer?.let(::analyser) ?: emptyEffsAndPots
-        else -> emptyEffsAndPots
-    }
-    return effsAndPots
-}
-
-class A {
-    var a = foo()
-
-    fun foo(): String {
-        a = "Hello"
-        return a.substring(1)
-    }
-}
