@@ -39,7 +39,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("kotlin.caching.enabled flag should enable caching for Kotlin tasks")
     @GradleTest
     fun testKotlinCachingEnabledFlag(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project("simpleProject", gradleVersion, enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assemble") {
@@ -55,7 +55,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Kotlin JVM task should be taken from cache")
     @GradleTest
     fun testCacheHitAfterClean(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project("simpleProject", gradleVersion, enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assemble") {
@@ -71,7 +71,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Should correctly handle modification/restoration of source file")
     @GradleTest
     fun testCacheHitAfterCacheHit(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project("simpleProject", gradleVersion, enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assemble") {
@@ -107,7 +107,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Debug log level should not break build cache")
     @GradleTest
     fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project("simpleProject", gradleVersion, enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build(
@@ -126,7 +126,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Enabled statistic should not break build cache")
     @GradleTest
     fun testCacheWithStatistic(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project("simpleProject", gradleVersion, enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build(
@@ -148,7 +148,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
-        project("incrementalMultiproject", gradleVersion, buildOptions = defaultBuildOptions.copy(useICClasspathSnapshot = true)) {
+        project("incrementalMultiproject", gradleVersion, buildOptions = defaultBuildOptions.copy(useICClasspathSnapshot = true), enableGradleDebug = true) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
             build("clean", "assemble") {
