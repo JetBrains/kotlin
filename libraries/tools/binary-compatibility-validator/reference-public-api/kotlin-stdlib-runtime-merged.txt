@@ -4147,6 +4147,10 @@ public final class kotlin/jvm/internal/ShortSpreadBuilder : kotlin/jvm/internal/
 	public final fun toArray ()[S
 }
 
+public abstract interface annotation class kotlin/jvm/internal/SourceDebugExtension : java/lang/annotation/Annotation {
+	public abstract fun value ()[Ljava/lang/String;
+}
+
 public class kotlin/jvm/internal/SpreadBuilder {
 	public fun <init> (I)V
 	public fun add (Ljava/lang/Object;)V

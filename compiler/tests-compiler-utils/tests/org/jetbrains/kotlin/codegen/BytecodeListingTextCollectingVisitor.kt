@@ -250,7 +250,9 @@ class BytecodeListingTextCollectingVisitor(
 
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
         visitAnnotationImpl { args ->
-            classAnnotations.add("@" + renderAnnotation(desc, args))
+            renderClassAnnotation(desc, args)?.let {
+                classAnnotations.add("@$it")
+            }
         }
 
     private fun visitAnnotationImpl(end: (List<String>) -> Unit): AnnotationVisitor? =
@@ -300,11 +302,24 @@ class BytecodeListingTextCollectingVisitor(
 
     private fun renderAnnotation(desc: String, args: List<String>): String {
         val name = Type.getType(desc).className
-        return if (args.isEmpty() || desc == "Lkotlin/Metadata;" || desc == "Lkotlin/coroutines/jvm/internal/DebugMetadata;")
-            name
-        else
-            "$name(${args.joinToString(", ")})"
+        return renderAnnotationArguments(args, name)
     }
+
+    private fun renderClassAnnotation(desc: String, args: List<String>): String? {
+        // Don't render @SourceDebugExtension to avoid difference in text dumps of full and light analysis, because the compiler never
+        // generates it in the light analysis mode (since method bodies are not analyzed and we don't know if there's an inline call there).
+        if (desc == "Lkotlin/jvm/internal/SourceDebugExtension;") return null
+
+        val name = Type.getType(desc).className
+
+        // Don't render contents of @Metadata/@DebugMetadata because they're binary.
+        if (desc == "Lkotlin/Metadata;" || desc == "Lkotlin/coroutines/jvm/internal/DebugMetadata;") return name
+
+        return renderAnnotationArguments(args, name)
+    }
+
+    private fun renderAnnotationArguments(args: List<String>, name: String): String =
+        if (args.isEmpty()) name else "$name(${args.joinToString(", ")})"
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
         className = name
