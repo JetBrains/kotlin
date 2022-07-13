@@ -192,7 +192,7 @@ abstract class IncrementalCompilerRunner<
                 "Incremental compilation analysis failed: ${e.stackTraceToString()}.\nFalling back to non-incremental compilation."
             }
         } finally {
-            if (!caches.close()) {
+            if (!caches.close(flush = true)) {
                 reporter.report { "Unable to close IC caches. Cleaning internal state" }
                 cleanOutputsAndLocalStateOnRebuild(args)
             }
