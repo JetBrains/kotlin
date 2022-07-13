@@ -81,7 +81,7 @@ data class ExportedRegularClass(
     val isAbstract: Boolean = false,
     override val superClass: ExportedType? = null,
     override val superInterfaces: List<ExportedType> = emptyList(),
-    val typeParameters: List<String>,
+    val typeParameters: List<ExportedType.TypeParameter>,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,

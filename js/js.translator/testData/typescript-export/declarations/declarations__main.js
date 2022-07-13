@@ -37,6 +37,7 @@ var getParent = JS_TESTS.foo.getParent;
 var createNested1 = JS_TESTS.foo.createNested1;
 var createNested2 = JS_TESTS.foo.createNested2;
 var createNested3 = JS_TESTS.foo.createNested3;
+var GenericClassWithConstraint = JS_TESTS.foo.GenericClassWithConstraint;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -150,5 +151,7 @@ function box() {
     assert(createNested1() === nested1);
     assert(createNested2() !== nested2);
     assert(createNested3() !== nested3);
+    var genericClassInstance = new GenericClassWithConstraint(new TestInterfaceImpl("test"));
+    assert(processInterface(genericClassInstance.test) == "Owner TestInterfaceImpl has value 'test'");
     return "OK";
 }

@@ -234,6 +234,10 @@ declare namespace JS_TESTS {
         function createNested1(): typeof foo.Parent.Nested1;
         function createNested2(): foo.Parent.Nested1.Nested2;
         function createNested3(): foo.Parent.Nested1.Nested2.Companion.Nested3;
+        class GenericClassWithConstraint<T extends foo.TestInterface> {
+            constructor(test: T);
+            get test(): T;
+        }
     }
     namespace _objects_ {
         const foo$Parent$Nested1: {
