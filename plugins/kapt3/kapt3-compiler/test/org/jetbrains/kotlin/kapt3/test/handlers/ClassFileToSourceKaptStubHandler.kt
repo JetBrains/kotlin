@@ -12,17 +12,20 @@ import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
-import org.jetbrains.kotlin.kapt3.test.old.AbstractClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.old.AbstractKotlinKapt3Test
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NO_VALIDATION
+import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.util.*
 
 class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
+    companion object {
+        const val FILE_SEPARATOR = "\n\n////////////////////\n\n"
+    }
+
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
         val validate = NO_VALIDATION !in module.directives
@@ -37,11 +40,11 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
-            .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
 
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
-            .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
+            .let { removeMetadataAnnotationContents(it) }
 
         if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
             val log = Log.instance(kaptContext.context) as KaptJavaLogBase
@@ -73,7 +76,7 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
                 val expectedErrorsStr = expectedErrors.joinToString(lineSeparator) { it.toDirectiveView() }
                 if (expectedErrorsStr != actualErrorsStr) {
                     assertions.assertEquals(expectedErrorsStr, actualErrorsStr) {
-                        System.err.println(AbstractKotlinKapt3Test.ERR_BYTE_STREAM.toString("UTF8"))
+                        System.err.println(testServices.messageCollectorProvider.getErrorStream(module).toString("UTF8"))
                         "Expected error matching failed"
                     }
                 }
