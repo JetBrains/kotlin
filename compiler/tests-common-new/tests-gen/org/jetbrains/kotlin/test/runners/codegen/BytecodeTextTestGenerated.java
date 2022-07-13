@@ -5395,12 +5395,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("unsignedIntCompare_before.kt")
-        public void testUnsignedIntCompare_before() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_before.kt");
-        }
-
-        @Test
         @TestMetadata("unsignedIntCompare_jvm18.kt")
         public void testUnsignedIntCompare_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_jvm18.kt");
