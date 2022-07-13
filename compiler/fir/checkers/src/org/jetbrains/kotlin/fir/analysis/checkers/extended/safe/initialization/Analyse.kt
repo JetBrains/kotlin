@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.resolveThis
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Super
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -114,10 +115,9 @@ object Analyser {
         @OptIn(SymbolInternals::class)
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): EffectsAndPotentials {
             val firThisReference = thisReceiverExpression.calleeReference
-            val firClass = firThisReference.boundSymbol?.fir as FirClass
+            val firRegularClass = firThisReference.boundSymbol?.fir as? FirRegularClass ?: TODO()
             val effectsAndPotentials = firThisReference.accept(ReferenceVisitor, stateOfClass to EmptyPotentials)
-            return if (stateOfClass.superClasses.contains(firClass) || firClass === stateOfClass.firClass)
-                effectsAndPotentials else resolveThis(firClass, effectsAndPotentials, stateOfClass)
+            return stateOfClass.resolveThis(firRegularClass, effectsAndPotentials)
         }
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): EffectsAndPotentials {
