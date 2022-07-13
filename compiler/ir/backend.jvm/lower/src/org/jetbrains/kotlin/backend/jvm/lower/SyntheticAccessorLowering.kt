@@ -91,8 +91,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileL
             val scopeClassOrPackage = inlineScopeResolver.findContainer(currentScope!!.irElement) ?: return false
             val samePackage = ownerClass.getPackageFragment().fqName == scopeClassOrPackage.getPackageFragment()?.fqName
             return when {
-                jvmVisibility == 0 /* package only */ -> samePackage
                 jvmVisibility == Opcodes.ACC_PRIVATE -> ownerClass == scopeClassOrPackage
+                !withSuper && samePackage && jvmVisibility == 0 /* package only */ -> true
                 // JVM `protected`, unlike Kotlin `protected`, permits accesses from the same package,
                 // provided the call is not across class loader boundaries.
                 !withSuper && samePackage && !fromOtherClassLoader -> true
