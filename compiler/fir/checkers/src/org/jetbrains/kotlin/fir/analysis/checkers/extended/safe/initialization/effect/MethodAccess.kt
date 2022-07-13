@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential, method.symbol) {
     override fun Checker.StateOfClass.check(): Errors {
+        // C-Inv1
+        // C-Inv2
+        // invoke
         return when (potential) {
             is Warm -> potential.effectsOf(this, method).flatMap { eff ->
                 eff.viewChange(potential)

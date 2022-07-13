@@ -15,7 +15,7 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
             is Root.This, is Super -> {                                     // C-Acc1
-                if (field.isPropertyInitialized()) emptyList()
+                if (field.isFieldInitialized()) emptyList()
                 else listOf(Error.AccessError(this@FieldAccess))
             }
             is Warm -> emptyList()                              // C-Acc2

@@ -51,29 +51,25 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
             else -> EffectsAndPotentials(Promote(this))
         }
 
-    fun call(stateOfClass: StateOfClass, function: FirFunction): EffectsAndPotentials {
-        val potential = this
-        return when {
-            potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-            potential.length < 2 -> {
-                val f = stateOfClass.resolveMember(function)
+    fun call(stateOfClass: StateOfClass, function: FirFunction) =
+        when {
+            this is Root.Cold -> EffectsAndPotentials(Promote(this))
+            length < 2 -> {
+                val f = stateOfClass.resolveMember(this, function)
                 EffectsAndPotentials(
-                    MethodAccess(potential, f),
-                    MethodPotential(potential, f)
+                    MethodAccess(this, f),
+                    MethodPotential(this, f)
                 )
             }
-            else -> EffectsAndPotentials(Promote(potential))
+            else -> EffectsAndPotentials(Promote(this))
         }
-    }
 
-    fun outerSelection(clazz: FirClass): EffectsAndPotentials {
-        val potential = this@Potential
-        return when {
-            potential is Root.Cold -> EffectsAndPotentials(Promote(potential))
-            potential.length < 2 -> EffectsAndPotentials(OuterPotential(potential, clazz))
-            else -> EffectsAndPotentials(Promote(potential))
+    fun outerSelection(clazz: FirClass) =
+        when {
+            this is Root.Cold -> EffectsAndPotentials(Promote(this))
+            length < 2 -> EffectsAndPotentials(OuterPotential(this, clazz))
+            else -> EffectsAndPotentials(Promote(this))
         }
-    }
 
     fun toPotentials() = Potentials(this)
 }

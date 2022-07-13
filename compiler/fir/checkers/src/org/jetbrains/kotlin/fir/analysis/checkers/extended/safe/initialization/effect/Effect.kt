@@ -18,15 +18,15 @@ sealed class Effect(open val potential: Potential, open val symbol: FirBasedSymb
     protected abstract fun createEffectForPotential(pot: Potential): Effect
 
     @JvmName("check1")
-    fun check(stateOfClass: StateOfClass): Errors {
-        if (stateOfClass.effectsInProcess.contains(this@Effect)) return emptyList()
-        stateOfClass.effectsInProcess.add(this@Effect)
+    fun check(stateOfClass: StateOfClass): Errors = stateOfClass.run {
+        if (this@Effect in effectsInProcess) return emptyList()
+        effectsInProcess.add(this@Effect)
 
-        val errors = stateOfClass.check()
+        val errors = check()
 
         for (error in errors) error.addEffectToTrace(this@Effect)
 
-        stateOfClass.effectsInProcess.removeLast()
+        effectsInProcess.remove(this@Effect)
         return errors
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -23,11 +24,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.anonymousInitializers
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -43,15 +43,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 object Checker {
     data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
-
-        data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
-
-        val initializationOrder = mutableMapOf<FirExpression, InitializationPointInfo>()
-
         val alreadyInitializedVariable = mutableSetOf<FirVariable>()
-        val effectsInProcess: MutableList<Effect> = mutableListOf()
+        val effectsInProcess = mutableSetOf<Effect>()
 
-        val localInitedProperties = LinkedHashSet<FirVariable>()
+        val localInitedVariable = LinkedHashSet<FirVariable>()
         val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()
         val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
 
@@ -71,9 +66,9 @@ object Checker {
             }
 
         @OptIn(SymbolInternals::class)
-        val superClasses: List<FirRegularClass> =
+        private val superClasses: Set<FirRegularClass> =
             firClass.superTypeRefs.filterIsInstanceWithChecker<FirResolvedTypeRef> { it.delegatedTypeRef is FirUserTypeRef }
-                .mapNotNull { it.toRegularClassSymbol(context.session)?.fir }
+                .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol(context.session)?.fir }
 
         val declarations = (superClasses + firClass).flatMap(FirClass::declarations)
 
@@ -81,40 +76,43 @@ object Checker {
             StateOfClass(innerClass, context, this)
         }
 
-        val allProperties = declarations.filterIsInstance<FirProperty>()
+        private val allProperties = declarations.filterIsInstanceTo<FirProperty, MutableSet<FirProperty>>(mutableSetOf())
+
+        val initializationOrder = mutableMapOf<FirElement, InitializationPointInfo>()
+
+        data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
+
+        @OptIn(SymbolInternals::class)
+        private fun FirAnonymousInitializer.initBlockAnalyser(propertySymbols: Set<FirPropertySymbol>) {
+            fun nodesWithInitialisation(data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>) = data.filterKeys { it is WhenExitNode }
+
+            val graph = controlFlowGraphReference?.controlFlowGraph ?: return
+            val initLevel = graph.exitNode.level
+            val data = PropertyInitializationInfoCollector(propertySymbols).getData(graph)
+
+            nodesWithInitialisation(data).keys.associateTo(initializationOrder) { node ->
+                val propertyInitializationInfo = data[node]?.get(NormalPath) ?: PropertyInitializationInfo.EMPTY          // NormalPath ?
+                val assignmentPropertiesSymbols = propertyInitializationInfo.filterValues { it.isDefinitelyVisited() }
+
+                val assignmentProperties = assignmentPropertiesSymbols.keys.map { it.fir }.toSet()
+                node.fir to InitializationPointInfo(assignmentProperties, node.level == initLevel)
+            }
+        }
+
+        init {
+            val inits = declarations.filterIsInstance<FirAnonymousInitializer>()
+            val p = allProperties.mapTo(mutableSetOf()) { it.symbol }
+
+            for (init in inits) init.initBlockAnalyser(p)
+        }
 
         val errors = mutableListOf<Error>()
 
         private val initializationDeclarationVisitor = InitializationDeclarationVisitor()
         val declarationVisitor: FirVisitor<EffectsAndPotentials, Nothing?> = DeclarationVisitor()
 
-        @OptIn(SymbolInternals::class)
-        fun FirAnonymousInitializer.initBlockAnalyser(propertySymbols: Set<FirPropertySymbol>) {
-            val graph = controlFlowGraphReference?.controlFlowGraph ?: return
-            val initLevel = graph.exitNode.level
-            val data = PropertyInitializationInfoCollector(propertySymbols).getData(graph)
-
-            for (entry in data.filterKeys { it is WhenExitNode }) {
-                val propertyInitializationInfo = entry.value[NormalPath] ?: PropertyInitializationInfo.EMPTY              // NormalPath ?
-                val assignmentPropertiesSymbols = propertyInitializationInfo.filterValues { it.isDefinitelyVisited() }
-
-                val assignmentProperties = assignmentPropertiesSymbols.keys.map { it.fir }.toSet()
-                val whenExitNode = entry.key
-                initializationOrder[whenExitNode.fir as FirExpression] =
-                    InitializationPointInfo(assignmentProperties, whenExitNode.level == initLevel)
-            }
-        }
-
-        init {
-            val inits = firClass.anonymousInitializers
-            val p = allProperties.mapTo(mutableSetOf()) { it.symbol }
-
-            for (init in inits)
-                init.initBlockAnalyser(p)
-        }
-
-        fun FirVariable.isPropertyInitialized(): Boolean =
-            this in alreadyInitializedVariable || this in localInitedProperties
+        fun FirVariable.isFieldInitialized(): Boolean =
+            this in alreadyInitializedVariable || this in localInitedVariable
 
         @Suppress("UNCHECKED_CAST")
         fun <T : FirMemberDeclaration> resolveMember(potential: Potential, dec: T): T =

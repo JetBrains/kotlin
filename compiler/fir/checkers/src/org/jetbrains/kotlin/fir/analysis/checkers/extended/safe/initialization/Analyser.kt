@@ -55,8 +55,6 @@ object Analyser {
     }
 
     class ExpressionVisitor(private val stateOfClass: StateOfClass) : FirDefaultVisitor<EffectsAndPotentials, Nothing?>() {
-        override fun visitElement(element: FirElement, data: Nothing?): EffectsAndPotentials = emptyEffsAndPots
-
         private fun FirElement.accept(): EffectsAndPotentials = accept(this@ExpressionVisitor, null)
 
         private fun analyseArgumentList(argumentList: FirArgumentList): EffectsAndPotentials =
@@ -76,6 +74,8 @@ object Analyser {
                 sum + recEffsAndPots
             }
         }
+
+        override fun visitElement(element: FirElement, data: Nothing?): EffectsAndPotentials = emptyEffsAndPots
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): EffectsAndPotentials {
             TODO()
@@ -125,10 +125,10 @@ object Analyser {
                 val sub = (subject ?: subjectVariable)?.accept() ?: emptyEffsAndPots
 
                 val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch ->
-                    val localSize = stateOfClass.localInitedProperties.size
+                    val localSize = stateOfClass.localInitedVariable.size
                     val effsAndPots = branch.accept()
                     var i = localSize
-                    stateOfClass.localInitedProperties.removeIf { i++ >= localSize }
+                    stateOfClass.localInitedVariable.removeIf { i++ >= localSize }
                     sum + effsAndPots
                 }
                 stateOfClass.processLocalInitedProperties(whenExpression)
@@ -141,7 +141,7 @@ object Analyser {
             val (initedFirProperties, isPrimeInitialization) = initializationOrder[firExpression] ?: return
 
             if (isPrimeInitialization) alreadyInitializedVariable.addAll(initedFirProperties)
-            else localInitedProperties.addAll(initedFirProperties)
+            else localInitedVariable.addAll(initedFirProperties)
         }
 
         override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Nothing?): EffectsAndPotentials =
@@ -173,11 +173,11 @@ object Analyser {
             TODO()
         }
 
-        override fun visitTryExpression(tryExpression: FirTryExpression, data: Nothing?): EffectsAndPotentials {
-            return tryExpression.run {
-                tryBlock.accept() + catches.fold(emptyEffsAndPots) { sum, cache -> sum + cache.accept() } + (finallyBlock?.accept()
-                    ?: emptyEffsAndPots)
-            }
+        override fun visitTryExpression(tryExpression: FirTryExpression, data: Nothing?): EffectsAndPotentials = tryExpression.run {
+            val tryEffsAndPots = tryBlock.accept()
+            val catchesEffsAndPots = catches.fold(emptyEffsAndPots) { sum, cache -> sum + cache.accept() }
+            val finallyEffsAndPots = finallyBlock?.accept() ?: emptyEffsAndPots
+            tryEffsAndPots + catchesEffsAndPots + finallyEffsAndPots
         }
 
         override fun visitClassReferenceExpression(
@@ -200,7 +200,7 @@ object Analyser {
                 is FirProperty -> {
                     val prevEffsAndPots = stateOfClass.notFinalAssignments.getOrDefault(firDeclaration, emptyEffsAndPots)
 
-                    stateOfClass.localInitedProperties.add(firDeclaration)
+                    stateOfClass.localInitedVariable.add(firDeclaration)
 
                     val effsAndPots = prevEffsAndPots + pots
                     stateOfClass.notFinalAssignments[firDeclaration] = effsAndPots //
