@@ -10,7 +10,8 @@ import java.io.Serializable
 enum class BuildReportType : Serializable {
     FILE,
     HTTP,
-    BUILD_SCAN;
+    BUILD_SCAN,
+    SINGLE_FILE;
 
     companion object {
         const val serialVersionUID: Long = 0

@@ -49,8 +49,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
     }
 
+    @Deprecated(message = "Please use kotlin.build.report.output=SINGLE_FILE and kotlin.build.report.single_file ")
     val singleBuildMetricsFile: File?
         get() = property("kotlin.internal.single.build.metrics.file")?.let { File(it) }
+
+    val buildReportSingleFile: File?
+        get() = property("kotlin.build.report.single_file")?.let { File(it) }
 
     @Deprecated(message = "Please use kotlin.build.report.output instead ")
     val buildReportEnabled: Boolean

@@ -13,7 +13,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
     val buildReportOutputTypes = properties.buildReportOutputs.map {
         BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCase() }
             ?: throw IllegalStateException("Unknown output type: $it")
-    }
+    }.toMutableList() //temporary solution. support old property
     val buildReportMode =
         when {
             buildReportOutputTypes.isEmpty() -> BuildReportMode.NONE
@@ -36,14 +36,21 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
     } else {
         null
     }
-    val metricsOutputFile = properties.singleBuildMetricsFile
+
+    //temporary solution. support old property
+    val oldSingleBuildMetric =  properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
+
+    val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
+        properties.buildReportSingleFile ?: oldSingleBuildMetric
+    } else null
+
     return ReportingSettings(
-        metricsOutputFile = metricsOutputFile,
         buildReportMode = buildReportMode,
         buildReportLabel = properties.buildReportLabel,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
-        buildReportOutputs = buildReportOutputTypes
+        buildReportOutputs = buildReportOutputTypes,
+        singleOutputFile = singleOutputFile,
     )
 }
 
