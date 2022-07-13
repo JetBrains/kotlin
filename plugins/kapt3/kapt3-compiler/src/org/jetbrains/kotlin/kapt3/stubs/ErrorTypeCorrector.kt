@@ -99,11 +99,13 @@ class ErrorTypeCorrector(
                 val actualType = typeAlias?.getTypeReference() ?: return convert(target.expandedType)
                 return convert(actualType, typeAlias.getSubstitutions(type))
             }
+
             is ClassConstructorDescriptor -> {
                 val asmType = KaptTypeMapper.mapType(target.constructedClass.defaultType, TypeMappingMode.GENERIC_ARGUMENT)
 
                 baseExpression = converter.treeMaker.Type(asmType)
             }
+
             is ClassDescriptor -> {
                 // We only get here if some type were an error type. In other words, 'type' is either an error type or its argument,
                 // so it's impossible it to be unboxed primitive.
@@ -111,6 +113,7 @@ class ErrorTypeCorrector(
 
                 baseExpression = converter.treeMaker.Type(asmType)
             }
+
             else -> {
                 val referencedName = type.referencedName ?: return defaultType
                 val qualifier = type.qualifier
@@ -130,6 +133,7 @@ class ErrorTypeCorrector(
                         if (qualifierType === defaultType) return defaultType // Do not allow to use 'defaultType' as a qualifier
                         treeMaker.Select(qualifierType, treeMaker.name(referencedName))
                     }
+
                     else -> treeMaker.SimpleName(referencedName)
                 }
             }
@@ -186,8 +190,10 @@ class ErrorTypeCorrector(
             projectionKind === KtProjectionKind.STAR -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
             projectionKind === KtProjectionKind.IN || variance === Variance.IN_VARIANCE ->
                 treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argumentExpression)
+
             projectionKind === KtProjectionKind.OUT || variance === Variance.OUT_VARIANCE ->
                 treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argumentExpression)
+
             else -> argumentExpression // invariant
         }
     }

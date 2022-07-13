@@ -38,6 +38,7 @@ fun replaceAnonymousTypeWithSuperType(type: KotlinType): KotlinType {
                 type.builtIns.anyType
             }
         }
+
         else -> type
     }
 

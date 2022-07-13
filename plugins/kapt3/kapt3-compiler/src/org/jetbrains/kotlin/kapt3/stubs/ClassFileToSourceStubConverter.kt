@@ -678,6 +678,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${clazz.name}")
                 className
             }
+
             else -> if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString()
         }
     }
@@ -846,6 +847,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 annotationNode.values = values
                 return annotationNode
             }
+
             is ArrayValue -> {
                 val children = value.value
                 val result = ArrayList<Any?>(children.size)
@@ -858,6 +860,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 }
                 return result
             }
+
             is BooleanValue -> value.value
             is DoubleValue -> value.value
             is EnumValue -> {
@@ -865,6 +868,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 val enumType = AsmUtil.asmTypeByClassId(classId)
                 return arrayOf(enumType.descriptor, name.asString())
             }
+
             is FloatValue -> value.value
             is StringValue -> value.value
             is NullValue -> null
@@ -1276,6 +1280,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     val receiver = tryParseTypeExpression(expression.receiverExpression) ?: return null
                     return treeMaker.Select(receiver, treeMaker.name(selector.getReferencedName()))
                 }
+
                 else -> null
             }
         }
@@ -1296,6 +1301,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     else
                         null
                 }
+
                 is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
                 is KtDotQualifiedExpression -> listOf(singleArg)
                 null -> args
@@ -1372,13 +1378,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             is Float ->
                 when {
                     value.isFinite() -> treeMaker.Literal(value)
-                    else -> treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value.toDouble()).toFloat()), treeMaker.Literal(0.0F))
+                    else -> treeMaker.Binary(
+                        Tag.DIV,
+                        treeMaker.Literal(specialFpValueNumerator(value.toDouble()).toFloat()),
+                        treeMaker.Literal(0.0F)
+                    )
                 }
+
             is Double ->
                 when {
                     value.isFinite() -> treeMaker.Literal(value)
                     else -> treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
                 }
+
             else -> null
         }
     }
@@ -1410,11 +1422,13 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 // But enums can't extend other enums, so this should be enough.
                 desc is EnumValue && desc.enumEntryName.asString() == valueName
             }
+
             is List<*> -> {
                 desc is ArrayValue
                         && asm.size == desc.value.size
                         && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
             }
+
             is Type -> desc is KClassValue && typeMapper.mapType(desc.getArgumentType(kaptContext.generationState.module)) == asm
             is AnnotationNode -> {
                 val annotationDescriptor = (desc as? AnnotationValue)?.value ?: return false
@@ -1429,6 +1443,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
                 true
             }
+
             else -> false
         }
     }
@@ -1459,12 +1474,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
+
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value, ::convertDeeper))
 
             is Type -> {
                 checkIfValidTypeName(containingClass, value)
                 treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
             }
+
             is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null, filtered = false)!!
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
@@ -1504,6 +1521,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     if (replaced != it) replaced else null
                 }?.let(::convertKotlinType) ?: fieldType
             }
+
             else -> fieldType
         }
     }

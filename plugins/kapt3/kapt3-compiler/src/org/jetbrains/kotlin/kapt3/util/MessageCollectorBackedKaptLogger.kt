@@ -38,7 +38,7 @@ class MessageCollectorBackedKaptLogger(
             messageCollector.report(INFO, PREFIX + message)
         }
     }
-    
+
     override fun warn(message: String) {
         messageCollector.report(WARNING, PREFIX + message)
     }

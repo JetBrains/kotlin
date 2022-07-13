@@ -115,7 +115,8 @@ class ClasspathBasedKapt3Extension(
             val zipFileIndexCacheClass = Class.forName("com.sun.tools.javac.file.ZipFileIndexCache")
             val zipFileIndexCacheInstance = zipFileIndexCacheClass.getMethod("getSharedInstance").invoke(null)
             zipFileIndexCacheClass.getMethod("clearCache").invoke(zipFileIndexCacheInstance)
-        } catch (e: Throwable) {}
+        } catch (e: Throwable) {
+        }
     }
 }
 
@@ -316,7 +317,8 @@ abstract class AbstractKapt3Extension(
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
             val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
-            val packageDir = if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
+            val packageDir =
+                if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
 
             val sourceFile = File(packageDir, "$className.java")
