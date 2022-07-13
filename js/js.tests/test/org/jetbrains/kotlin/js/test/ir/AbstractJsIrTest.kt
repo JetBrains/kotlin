@@ -218,6 +218,7 @@ abstract class AbstractFirJsTest(
 //                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
 //                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
 //                if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
+                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
 
