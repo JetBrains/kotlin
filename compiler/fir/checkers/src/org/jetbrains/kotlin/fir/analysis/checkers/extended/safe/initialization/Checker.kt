@@ -77,26 +77,26 @@ object Checker {
         val notFinalAssignments = mutableMapOf<FirProperty, EffectsAndPotentials>()
         val caches = mutableMapOf<FirDeclaration, EffectsAndPotentials>()
 
-        val overriddenMembers = overriddenMembers()
+        private val overriddenMembers: Map<FirMemberDeclaration, FirMemberDeclaration> = overriddenMembers(mutableMapOf())
 
-        private fun overriddenMembers(): Map<FirMemberDeclaration, FirMemberDeclaration> {
-            val members = firClass.declarations.filterIsInstanceWithChecker(FirMemberDeclaration::isOverride)
-            val map = mutableMapOf<FirMemberDeclaration, FirMemberDeclaration>()
-            members.forEach { member ->
-                val getOverriddenMembers = when (member) {
-                    is FirSimpleFunction -> member::overriddenFunctions
-                    is FirProperty -> member::overriddenProperties
-                    else -> throw IllegalArgumentException()
-                }
+        @OptIn(SymbolInternals::class)
+        private fun overriddenMembers(map: MutableMap<FirMemberDeclaration, FirMemberDeclaration>) =
+            firClass.declarations.filterIsInstanceWithChecker(FirMemberDeclaration::isOverride).associateWithTo(map) { member ->
+                val getOverriddenMembers =
+                    when (member) {
+                        is FirSimpleFunction -> member::overriddenFunctions
+                        is FirProperty -> member::overriddenProperties
+                        else -> throw IllegalArgumentException()
+                    }
                 getOverriddenMembers(firClass.symbol, context).associateByTo(map, FirCallableSymbol<*>::fir) { member }
-                map[member] = member
+                member
             }
-            return map
-        }
 
-        val superClasses =
+        @OptIn(SymbolInternals::class)
+        val superClasses: List<FirRegularClass> =
             firClass.superTypeRefs.filterIsInstanceWithChecker<FirResolvedTypeRef> { it.delegatedTypeRef is FirUserTypeRef }
                 .mapNotNull { it.toRegularClassSymbol(context.session)?.fir }
+
         val declarations = (superClasses + firClass).flatMap(FirClass::declarations)
 
         val allProperties = declarations.filterIsInstance<FirProperty>()
