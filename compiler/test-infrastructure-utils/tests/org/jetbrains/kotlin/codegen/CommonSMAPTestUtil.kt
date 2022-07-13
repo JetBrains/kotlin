@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.inline.RangeMapping
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
 import org.jetbrains.kotlin.codegen.inline.toRange
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -21,14 +23,53 @@ object CommonSMAPTestUtil {
     fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.map { outputFile ->
             var debugInfo: String? = null
+            var sdeAnnotationValue: String? = null
             ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visitSource(source: String?, debug: String?) {
                     debugInfo = debug
                 }
+
+                override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
+                    if (descriptor != JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC) return super.visitAnnotation(descriptor, visible)
+                    return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                        override fun visitArray(name: String): AnnotationVisitor? {
+                            if (name != "value") return super.visitArray(name)
+                            check(sdeAnnotationValue == null) { outputFile.relativePath }
+                            return object : AnnotationVisitor(Opcodes.API_VERSION) {
+                                val result = mutableListOf<String>()
+
+                                override fun visit(name: String?, value: Any?) {
+                                    result.add(value as String)
+                                }
+
+                                override fun visitEnd() {
+                                    sdeAnnotationValue = result.joinToString("")
+                                }
+                            }
+                        }
+                    }
+                }
             }, 0)
+
+            checkSmapVsAnnotation(outputFile.relativePath, debugInfo, sdeAnnotationValue)
 
             SMAPAndFile(debugInfo, outputFile.sourceFiles.single(), outputFile.relativePath)
         }
+    }
+
+    private fun checkSmapVsAnnotation(relativePath: String, debugInfo: String?, sdeAnnotationValue: String?) {
+        if (debugInfo == sdeAnnotationValue) return
+
+        if (debugInfo == null) {
+            error("@SourceDebugExtension is incorrectly generated for a class without SMAP: $relativePath")
+        }
+        if (sdeAnnotationValue == null) {
+            error("Missing @SourceDebugExtension annotation for a class with SMAP: $relativePath")
+        }
+        error(
+            "SMAP and @SourceDebugExtension value differs for $relativePath.\n" +
+                    "SMAP:\n===\n$debugInfo\n===\n@SourceDebugExtension:\n===\n$sdeAnnotationValue\n"
+        )
     }
 
     fun checkNoConflictMappings(compiledSmap: List<SMAPAndFile>?, assertions: Assertions) {
