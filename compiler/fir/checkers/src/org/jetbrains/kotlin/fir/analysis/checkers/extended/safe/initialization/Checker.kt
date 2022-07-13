@@ -180,9 +180,7 @@ object Checker {
                 }
 
             protected fun StateOfClass.analyseClass() =
-                firClass.declarations.fold(emptyEffsAndPots) { sum, d ->
-                    sum + d.accept(this.initializationDeclarationVisitor, null)
-                }
+                declarations.fold(emptyEffsAndPots) { sum, dec -> sum + dec.accept(initializationDeclarationVisitor, null) }
         }
 
         private inner class DeclarationVisitor : InitializationDeclarationVisitor() {
