@@ -5,12 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.io.File
 
 internal class KotlinNativeCommonizerToolRunner(
@@ -20,17 +14,9 @@ internal class KotlinNativeCommonizerToolRunner(
 
     class Settings(
         val kotlinPluginVersion: String,
-        classpathProvider: () -> Set<File>,
+        val classpath: Set<File>,
         val customJvmArgs: List<String>
-    ) {
-        val classpath by lazy(classpathProvider)
-
-        constructor(project: Project) : this(
-            kotlinPluginVersion = project.getKotlinPluginVersion(),
-            classpathProvider = { buildClasspath(project) },
-            customJvmArgs = getCustomJvmArgs(project)
-        )
-    }
+    )
 
     override val displayName get() = "Kotlin/Native KLIB commonizer"
 
@@ -47,18 +33,3 @@ internal class KotlinNativeCommonizerToolRunner(
     override fun getCustomJvmArgs() = settings.customJvmArgs
 }
 
-private fun buildClasspath(project: Project): Set<File> {
-    try {
-        return project.configurations.getByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).resolve() as Set<File>
-    } catch (e: Exception) {
-        project.logger.error(
-            "Could not resolve KLIB commonizer classpath. Check if Kotlin Gradle plugin repository is configured in $project."
-        )
-        throw e
-    }
-}
-
-private fun getCustomJvmArgs(project: Project): List<String> = PropertiesProvider(project)
-    .commonizerJvmArgs
-    ?.split("\\s+".toRegex())
-    .orEmpty()

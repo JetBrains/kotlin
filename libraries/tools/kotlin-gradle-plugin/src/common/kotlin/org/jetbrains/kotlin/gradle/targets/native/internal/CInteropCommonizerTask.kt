@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -24,13 +27,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSetsIncludingDefault
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
 internal open class CInteropCommonizerTask
-@Inject constructor (
+@Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
 ) : AbstractCInteropCommonizerTask() {
@@ -76,7 +82,28 @@ internal open class CInteropCommonizerTask
 
     override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")
 
-    private val runnerSettings = KotlinNativeCommonizerToolRunner.Settings(project)
+    @get:Internal
+    internal val kotlinPluginVersion: Property<String> = objectFactory
+        .property<String>()
+        .chainedFinalizeValueOnRead()
+
+    @get:Internal
+    internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @get:Internal
+    internal val customJvmArgs: ListProperty<String> = objectFactory
+        .listProperty<String>()
+        .chainedFinalizeValueOnRead()
+
+    private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
+        .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
+            commonizerClasspath
+            KotlinNativeCommonizerToolRunner.Settings(
+                pluginVersion,
+                commonizerClasspath.files,
+                customJvmArgs
+            )
+        }
 
     private val konanHome = project.file(project.konanHome)
     private val commonizerLogLevel = project.commonizerLogLevel
@@ -135,7 +162,7 @@ internal open class CInteropCommonizerTask
 
         val commonizerRunner = KotlinNativeCommonizerToolRunner(
             context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-            settings = runnerSettings
+            settings = runnerSettings.get()
         )
 
         GradleCliCommonizer(commonizerRunner).commonizeLibraries(

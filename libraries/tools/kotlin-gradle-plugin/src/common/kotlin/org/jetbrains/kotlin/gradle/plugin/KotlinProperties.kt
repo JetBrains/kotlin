@@ -316,8 +316,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
      */
-    val commonizerJvmArgs: String?
+    val commonizerJvmArgs: List<String>
         get() = propertyWithDeprecatedVariant("kotlin.mpp.commonizerJvmArgs", "kotlin.commonizer.jvmArgs")
+            ?.split("\\s+".toRegex())
+            .orEmpty()
 
     /**
      * Enables experimental commonization of user defined c-interop libraries.
