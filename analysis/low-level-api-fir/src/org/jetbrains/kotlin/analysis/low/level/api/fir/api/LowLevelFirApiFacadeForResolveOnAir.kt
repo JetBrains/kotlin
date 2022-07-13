@@ -54,7 +54,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
     private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
-        require(!targetDeclaration.isPhysical)
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
         val originalDeclarationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
         val fakeDeclarationParents = targetDeclaration.parentsOfType<KtDeclaration>().toList()
@@ -69,7 +68,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
         elementToResolve: T,
     ): FirElement {
         require(firResolveSession is LLFirResolvableResolveSession)
-        require(place.isPhysical)
 
         val declaration = runBodyResolveOnAir(
             firResolveSession = firResolveSession,
@@ -120,7 +118,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
         firResolveSession: LLFirResolvableResolveSession,
         file: KtFile,
     ): FirTowerDataContext {
-        require(file.isPhysical)
         val session = firResolveSession.getSessionFor(file.getKtModule(firResolveSession.project)) as LLFirResolvableModuleSession
         val moduleComponents = session.moduleComponents
 
@@ -145,7 +142,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
     ): LLFirResolveSession {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
-        require(!elementToAnalyze.isPhysical) { "Depended session should be build only for non-physical elements" }
 
         val dependencyNonLocalDeclaration = findEnclosingNonLocalDeclaration(elementToAnalyze)
             ?: return LLFirResolveSessionDepended(
