@@ -13,27 +13,30 @@ FILE: simpleAccessToUninitializedValue1.kt
 
     }
     public final class B : R|kotlin/Any| {
-        public constructor(bb: R|B|): R|B| {
+        public constructor(bb: R|B|, bool: R|kotlin/Boolean|): R|B| {
             super<R|kotlin/Any|>()
         }
 
-        public final fun foo(b: R|B|): R|kotlin/String| {
+        public final val bool: R|kotlin/Boolean| = R|<local>/bool|
+            public get(): R|kotlin/Boolean|
+
+        public final fun foo(b: R|B|): R|kotlin/Int| {
             ^foo when () {
-                this@R|/B|.R|/B.d|.R|kotlin/text/isEmpty|() ->  {
-                    this@R|/B|.R|/B.d|.R|kotlin/text/substring|(Int(1))
+                this@R|/B|.R|/B.bool| ->  {
+                    this@R|/B|.R|/B.d|.R|kotlin/Any.hashCode|()
                 }
                 else ->  {
-                    String()
+                    Int(1)
                 }
             }
 
         }
 
-        public final val d: R|kotlin/String| = this@R|/B|.R|/B.foo|(this@R|/B|)
-            public get(): R|kotlin/String|
+        public final val d: R|kotlin/Int| = this@R|/B|.R|/B.foo|(this@R|/B|)
+            public get(): R|kotlin/Int|
 
-        public final val c: R|kotlin/String| = this@R|/B|.R|/B.foo|(R|<local>/bb|)
-            public get(): R|kotlin/String|
+        public final val c: R|kotlin/Int| = this@R|/B|.R|/B.foo|(R|<local>/bb|)
+            public get(): R|kotlin/Int|
 
         public final val hello: R|Hello| = R|/Hello.Hello|()
             public get(): R|Hello|
