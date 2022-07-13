@@ -83,7 +83,7 @@ object Checker {
 
         val allProperties = declarations.filterIsInstance<FirProperty>()
 
-        val errors = mutableListOf<Error<*>>()
+        val errors = mutableListOf<Error>()
 
         private val initializationDeclarationVisitor = InitializationDeclarationVisitor()
         val declarationVisitor: FirVisitor<EffectsAndPotentials, Nothing?> = DeclarationVisitor()
@@ -193,28 +193,43 @@ object Checker {
     }
 }
 
-typealias Errors = List<Error<*>>
+typealias Errors = List<Error>
 
-sealed class Error<T : Effect>(val effect: T) {
-    val trace = mutableListOf<Effect>()
+sealed class Error(val firElement: FirElement) {
+    private val trace = mutableListOf<Effect>()
 
-    fun traceToSymbols(): List<FirBasedSymbol<*>> = trace.mapNotNull(Effect::symbol)
+    fun addEffectToTrace(effect: Effect) = trace.add(effect)
 
-    class AccessError(effect: FieldAccess) : Error<FieldAccess>(effect) {
-        override fun toString(): String {
-            return "AccessError(property=${effect.field})"
+    protected fun traceToSymbols(): List<FirBasedSymbol<*>> = trace.mapNotNull(Effect::symbol)
+
+    abstract fun report(context: CheckerContext, reporter: DiagnosticReporter)
+
+    class AccessError(effect: FieldAccess) : Error(effect.field) {
+        override fun report(context: CheckerContext, reporter: DiagnosticReporter) {
+            reporter.reportOn(firElement.source, FirErrors.ACCESS_TO_UNINITIALIZED_VALUE, traceToSymbols(), context)
         }
+
+        override fun toString() =
+            "AccessError(property=$firElement)"
     }
 
-    class InvokeError(effect: MethodAccess) : Error<MethodAccess>(effect) {
-        override fun toString(): String {
-            return "InvokeError(method=${effect.method})"
+    class InvokeError(effect: MethodAccess) : Error(effect.method) {
+        override fun report(context: CheckerContext, reporter: DiagnosticReporter) {
+            reporter.reportOn(firElement.source, FirErrors.INVOKE_METHOD_ON_COLD_OBJECT, traceToSymbols(), context)
         }
+
+        override fun toString() =
+            "InvokeError(method=$firElement)"
     }
 
-    class PromoteError(effect: Promote) : Error<Promote>(effect) {
-        override fun toString(): String {
-            return "PromoteError(potential=${effect.potential})"
+    class PromoteError(effect: Promote) : Error(effect.potential.firElement) {
+        private val potential = effect.potential
+
+        override fun report(context: CheckerContext, reporter: DiagnosticReporter) {
+            reporter.reportOn(firElement.source, FirErrors.VALUE_CANNOT_BE_PROMOTED, traceToSymbols(), context)
         }
+
+        override fun toString() =
+            "PromoteError(potential=$potential)"
     }
 }

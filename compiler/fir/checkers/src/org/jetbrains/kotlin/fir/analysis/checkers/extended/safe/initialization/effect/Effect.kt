@@ -24,7 +24,7 @@ sealed class Effect(open val potential: Potential, open val symbol: FirBasedSymb
 
         val errors = stateOfClass.check()
 
-        for (error in errors) error.trace.add(this@Effect)
+        for (error in errors) error.addEffectToTrace(this@Effect)
 
         stateOfClass.effectsInProcess.removeLast()
         return errors
