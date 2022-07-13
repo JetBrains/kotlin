@@ -122,40 +122,30 @@ object Analyser {
 
         override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): EffectsAndPotentials {
             return whenExpression.run {
-                val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch -> sum + branch.accept() }
                 val sub = (subject ?: subjectVariable)?.accept() ?: emptyEffsAndPots
 
-                val (initedFirProperties, isPrimeInitialization) = stateOfClass.initializationOrder.getOrElse(whenExpression) { return sub + effsAndPots }
-
-                if (isPrimeInitialization) {
-                    stateOfClass.alreadyInitializedVariable.addAll(initedFirProperties)
-//                initedFirProperties.forEach {
-//                    caches[it] = notFinalAssignments[it] ?: throw java.lang.IllegalArgumentException()
-//                    notFinalAssignments.remove(it)
-//                }
-                    stateOfClass.localInitedProperties.removeIf(initedFirProperties::contains)
-                } else
-                    stateOfClass.localInitedProperties.addAll(initedFirProperties)
-
-                stateOfClass.notFinalAssignments.keys.removeIf {
-                    !(stateOfClass.localInitedProperties.contains(it) || stateOfClass.alreadyInitializedVariable.contains(it))
+                val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch ->
+                    val localSize = stateOfClass.localInitedProperties.size
+                    val effsAndPots = branch.accept()
+                    var i = localSize
+                    stateOfClass.localInitedProperties.removeIf { i++ >= localSize }
+                    sum + effsAndPots
                 }
+                stateOfClass.processLocalInitedProperties(whenExpression)
 
                 sub + effsAndPots
             }
         }
 
-        override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Nothing?): EffectsAndPotentials {
-            return whenBranch.run {
-                val localSize = stateOfClass.localInitedProperties.size
-                val effsAndPots = condition.accept().effects + result.accept()
+        private fun StateOfClass.processLocalInitedProperties(firExpression: FirExpression) {
+            val (initedFirProperties, isPrimeInitialization) = initializationOrder[firExpression] ?: return
 
-                var i = 0
-                stateOfClass.localInitedProperties.removeIf { i++ >= localSize }
-
-                effsAndPots
-            }
+            if (isPrimeInitialization) alreadyInitializedVariable.addAll(initedFirProperties)
+            else localInitedProperties.addAll(initedFirProperties)
         }
+
+        override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Nothing?): EffectsAndPotentials =
+            whenBranch.run { condition.accept().effects + result.accept() }
 
         override fun visitLoop(loop: FirLoop, data: Nothing?): EffectsAndPotentials =
             loop.run { condition.accept() + block.accept() }
