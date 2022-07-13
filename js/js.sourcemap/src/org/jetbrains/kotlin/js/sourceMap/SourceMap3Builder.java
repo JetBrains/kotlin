@@ -87,7 +87,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
             }
             catch (IOException e) {
                 //noinspection UseOfSystemOutOrSystemErr
-                System.err.println("An exception occured during embedding sources into source map");
+                System.err.println("An exception occurred during embedding sources into source map");
                 //noinspection CallToPrintStackTrace
                 e.printStackTrace();
                 // can't close the content reader or read from it

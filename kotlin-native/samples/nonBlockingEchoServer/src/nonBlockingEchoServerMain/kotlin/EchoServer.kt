@@ -133,13 +133,13 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                     .ensureUnixCallResult { it >= 0 }
             loop@for (socketFd in 0..maxfd) {
                 val waitingFor = waitingList[socketFd]
-                val errorOccured = posix_FD_ISSET(socketFd, errorfds.ptr) != 0
+                val errorOccurred = posix_FD_ISSET(socketFd, errorfds.ptr) != 0
                 if (posix_FD_ISSET(socketFd, readfds.ptr) != 0
 		    || posix_FD_ISSET(socketFd, writefds.ptr) != 0
-		    || errorOccured) {
+		    || errorOccurred) {
                     when (waitingFor) {
                         is WaitingFor.Accept -> {
-                            if (errorOccured)
+                            if (errorOccurred)
                                 throw Error("Socket has been closed externally")
 
                             // Accept new client.
@@ -156,7 +156,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                             block.startCoroutine(Client(clientFd, waitingList), EmptyContinuation)
                         }
                         is WaitingFor.Read -> {
-                            if (errorOccured)
+                            if (errorOccurred)
                                 waitingFor.continuation.resumeWithException(IOException("Connection was closed by peer"))
 
                             // Resume reading operation.
@@ -167,7 +167,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                             waitingFor.continuation.resume(length.toULong())
                         }
                         is WaitingFor.Write -> {
-                            if (errorOccured)
+                            if (errorOccurred)
                                 waitingFor.continuation.resumeWithException(IOException("Connection was closed by peer"))
 
                             // Resume writing operation.

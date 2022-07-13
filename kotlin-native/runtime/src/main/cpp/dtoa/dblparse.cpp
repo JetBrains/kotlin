@@ -179,7 +179,7 @@ static const KDouble tens[] = {
                         break; \
                 } \
         }
-#define ERROR_OCCURED(x) (HIGH_I32_FROM_VAR(x) < 0)
+#define ERROR_OCCURRED(x) (HIGH_I32_FROM_VAR(x) < 0)
 
 #define allocateU64(x, n) if (!((x) = (U_64*) std_support::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
 #define release(r) if ((r)) std_support::free((r));
@@ -666,7 +666,7 @@ KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
   const char *str = utf8.c_str();
   auto dbl = createDouble (str, e);
 
-  if (!ERROR_OCCURED (dbl))
+  if (!ERROR_OCCURRED (dbl))
     {
       return dbl;
     }
