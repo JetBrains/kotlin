@@ -253,7 +253,7 @@ class CocoaPodsIT : BaseGradleIT() {
             val podfileText = gradleProject.projectDir.resolve("build/cocoapods/synthetic/IOS/Podfile").readText().trim()
             assertTrue(podfileText.contains("pod 'SSZipArchive'"))
             assertTrue(podfileText.contains("pod 'AFNetworking', '~> 4.0.1'"))
-            assertTrue(podfileText.contains("pod 'Alamofire', :git => '${gradleProject.projectDir.absolutePath}/build/cocoapods/externalSources/git/Alamofire', :tag => '5.6.1'"))
+            assertTrue(podfileText.contains("pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '5.6.1'"))
         }
     }
 
