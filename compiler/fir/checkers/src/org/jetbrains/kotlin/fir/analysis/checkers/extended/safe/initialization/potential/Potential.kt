@@ -19,8 +19,8 @@ sealed class Potential(val firElement: FirElement, val length: Int = 0) {
         fun effectsOf(state: StateOfClass, firDeclaration: FirDeclaration) =
             state.analyseDeclaration1(firDeclaration).effects
 
-        fun potentialsOf(state: StateOfClass, firDeclaration: FirDeclaration) =
-            state.analyseDeclaration1(firDeclaration).potentials
+        private fun StateOfClass.analyseDeclaration(firDeclaration: FirDeclaration): EffectsAndPotentials =
+            caches.getOrPut(firDeclaration) { firDeclaration.accept(declarationVisitor, null) }
     }
 
     abstract fun propagate(): EffectsAndPotentials

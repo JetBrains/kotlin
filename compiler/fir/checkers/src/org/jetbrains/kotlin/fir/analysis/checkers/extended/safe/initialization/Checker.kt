@@ -36,9 +36,6 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
-class CheckingEffects {
-}
-
 object Checker {
 
     fun resolveThis(
@@ -63,14 +60,12 @@ object Checker {
 
     @OptIn(SymbolInternals::class)
     data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
-        fun FirVariable.isPropertyInitialized(): Boolean =
-            alreadyInitializedVariable.contains(this) || localInitedProperties.contains(this)
-
-        val alreadyInitializedVariable = mutableSetOf<FirVariable>()
 
         data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
 
         val initializationOrder = mutableMapOf<FirExpression, InitializationPointInfo>()
+
+        val alreadyInitializedVariable = mutableSetOf<FirVariable>()
         val effectsInProcess: MutableList<Effect> = mutableListOf()
 
         val localInitedProperties = LinkedHashSet<FirVariable>()
@@ -104,7 +99,7 @@ object Checker {
         val errors = mutableListOf<Error<*>>()
 
         private val initializationDeclarationVisitor = InitializationDeclarationVisitor()
-        private val declarationVisitor = DeclarationVisitor()
+        val declarationVisitor: FirVisitor<EffectsAndPotentials, Nothing?> = DeclarationVisitor()
 
         @OptIn(SymbolInternals::class)
         fun FirAnonymousInitializer.initBlockAnalyser(propertySymbols: Set<FirPropertySymbol>) {
@@ -129,21 +124,28 @@ object Checker {
 
             for (init in inits)
                 init.initBlockAnalyser(p)
+        }
+
+        fun FirVariable.isPropertyInitialized(): Boolean =
+            this in alreadyInitializedVariable || this in localInitedProperties
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T : FirMemberDeclaration> resolveMember(potential: Potential, dec: T): T =
+            if (potential is Super) dec else overriddenMembers[dec] as? T ?: dec
+
 
             alreadyCheckedClasses[firClass] = this
         }
 
         fun checkClass(): Errors {
-            val classErrors = declarations.flatMap { dec ->
+            for (dec in declarations) {
                 val effsAndPots = dec.accept(initializationDeclarationVisitor, null)
-                val errors = effsAndPots.effects.flatMap { it.check(this) }
-                if (dec is FirProperty && dec.initializer != null) {
+                val declarationInitializationErrors = effsAndPots.effects.flatMap { it.check(this) }
+                if (dec is FirProperty && dec.initializer != null)
                     alreadyInitializedVariable.add(dec)
-                }
-//                caches.putIfAbsent(dec, effsAndPots)
-                errors
+
+                errors.addAll(declarationInitializationErrors)
             }
-            errors.addAll(classErrors)
             return errors
         }
 
@@ -179,7 +181,6 @@ object Checker {
         }
 
         private inner class DeclarationVisitor : InitializationDeclarationVisitor() {
-
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): EffectsAndPotentials =
                 analyseBody(simpleFunction.body)
 
@@ -188,9 +189,6 @@ object Checker {
                 return stateOfClass.analyseClass()
             }
         }
-
-        fun analyseDeclaration1(firDeclaration: FirDeclaration): EffectsAndPotentials =
-            caches.getOrPut(firDeclaration) { firDeclaration.accept(declarationVisitor, null) }
     }
 }
 
