@@ -120,6 +120,16 @@ abstract class DownloadCocoapodsTask : CocoapodsTask() {
 }
 
 open class PodDownloadUrlTask : DownloadCocoapodsTask() {
+    companion object {
+        private val permittedFileExtensions = listOf("tar.gz", "tar.bz2", "tar.xz", "tar", "tgz", "tbz", "txz", "zip", "gzip", "jar")
+
+        internal fun getFileExtension(fileName: String): String? {
+            val permittedFileNameFormat = Regex(
+                ".*(\\.)(${permittedFileExtensions.joinToString("|") { it.replace(".", "\\.") }})"
+            )
+            return permittedFileNameFormat.matchEntire(fileName)?.groups?.lastOrNull()?.value
+        }
+    }
 
     @get:Nested
     internal lateinit var podSource: Provider<Url>
@@ -133,15 +143,11 @@ open class PodDownloadUrlTask : DownloadCocoapodsTask() {
         urlDir.resolve(podName.get())
     }
 
-    @get:Internal
-    internal val permittedFileExtensions = listOf("tar.gz", "tar.bz2", "tar.xz", "tar", "tgz", "tbz", "txz", "zip", "gzip", "jar")
-
     @TaskAction
     fun download() {
         val podLocation = podSource.get()
         val fileName = podLocation.url.toString().substringAfterLast("/")
-        val permittedFileNameFormat = Regex(".*(\\.)(${permittedFileExtensions.joinToString("|") { it.replace(".", "\\.") }})")
-        val extension = permittedFileNameFormat.matchEntire(fileName)?.groups?.lastOrNull()?.value
+        val extension = getFileExtension(fileName)
         require(extension != null) {
             """
                 $fileName has an unsupported file extension 
@@ -482,14 +488,14 @@ open class PodGenTask : CocoapodsTask() {
                     val source = it.source
 
                     if (source != null) {
-                        val path = source.getLocalPath(project, it.name)
                         when (source) {
                             is Path, is Url -> {
+                                val path = source.getLocalPath(project, it.name)
                                 append(", :path => '$path'")
                             }
 
                             is Git -> {
-                                append(", :git => '$path'")
+                                append(", :git => '${source.url}'")
                                 when {
                                     source.branch != null -> append(", :branch => '${source.branch}'")
                                     source.tag != null -> append(", :tag => '${source.tag}'")
