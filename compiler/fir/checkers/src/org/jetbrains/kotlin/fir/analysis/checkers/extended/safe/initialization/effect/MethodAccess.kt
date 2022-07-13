@@ -8,33 +8,24 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Error
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Root
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential, method.symbol) {
     override fun Checker.StateOfClass.check(): Errors {
         return when (potential) {
-            is Root.This -> {                                     // C-Inv1
-                val state = Checker.resolve(method)
-                potential.effectsOf(state, method).flatMap { it.check(this) }
+            is Warm -> potential.effectsOf(this, method).flatMap { eff ->
+                eff.viewChange(potential)
+                eff.check(this)
             }
-            is Warm -> {                                     // C-Inv2
-                val state = Checker.resolve(method)
-                potential.effectsOf(state, method).flatMap { eff ->
-                    eff.viewChange(potential)
-                    eff.check(this)
-                }
-            }
-            is LambdaPotential -> {                                 // invoke
-                potential.effsAndPots.effects.flatMap { it.check(this) }
-            }
+            is LambdaPotential -> potential.effsAndPots.effects.flatMap { it.check(this) }
             is Root.Cold -> listOf(Error.InvokeError(this@MethodAccess))              // illegal
-            is Super -> {
-                val state = potential.getRightStateOfClass()
-                potential.effectsOf(state, method).flatMap { it.check(this) }
-            }
+            is Potential.Propagatable -> potential.effectsOf(this, method).flatMap { it.check(this) }
             else ->                                                         // C-Inv3
-                ruleAcc3(potential.propagate())
+                ruleAcc3(potential.propagate(this))
         }
     }
 

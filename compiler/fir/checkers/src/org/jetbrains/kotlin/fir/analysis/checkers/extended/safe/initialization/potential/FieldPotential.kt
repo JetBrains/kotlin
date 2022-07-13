@@ -7,38 +7,31 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 data class FieldPotential(override val potential: Potential, val field: FirVariable) : WithPrefix(potential, field) {
 
     override fun createPotentialForPotential(pot: Potential) = FieldPotential(pot, field)
 
-    override fun propagate(): EffectsAndPotentials {
+    override fun propagate(stateOfClass: Checker.StateOfClass): EffectsAndPotentials {
         return when (potential) {
             is Root.This -> {                                  // P-Acc1
-                val state = Checker.resolve(field)
-                val potentials = potential.potentialsOf(state, field)
+                val potentials = potential.potentialsOf(stateOfClass, field)
                 EffectsAndPotentials(potentials = potentials.viewChange(potential))
             }
             is Warm -> {                                         // P-Acc2
-                val state = Checker.resolve(field)
-                val potentials = potential.potentialsOf(state, field)
+                val potentials = potential.potentialsOf(stateOfClass, field)
                 EffectsAndPotentials(potentials = potentials.viewChange(potential))
             }
-            is Root.Cold -> EffectsAndPotentials(potential = potential) // or exception or empty list
+            is Root.Cold -> EffectsAndPotentials(potential) // or exception or empty list
             is Super -> {
-                val state = potential.getRightStateOfClass()
-                val potentials = potential.potentialsOf(state, field)
+                val potentials = potential.potentialsOf(stateOfClass, field)
                 EffectsAndPotentials(potentials = potentials.viewChange(potential))
             }
             is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Acc3
-                val (effects, potentials) = potential.propagate()
-                val select = if (potentials.isNotEmpty()) {
-                    val state = Checker.resolve(field)
-                    potentials.select(state, field)
-                } else emptyEffsAndPots
+                val (effects, potentials) = potential.propagate(stateOfClass)
+                val select = potentials.select(stateOfClass, field) // there may be problems with inner classes with inheritance
 
                 select + effects
             }

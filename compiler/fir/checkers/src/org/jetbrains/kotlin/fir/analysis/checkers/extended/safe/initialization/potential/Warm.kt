@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirClass
 
@@ -18,7 +19,7 @@ data class Warm(val clazz: FirClass, override val potential: Potential) : WithPr
         else -> super.viewChange(root)
     }
 
-    override fun propagate() = EffectsAndPotentials(this)
+    override fun propagate(stateOfClass: Checker.StateOfClass) = EffectsAndPotentials(this)
 
     override fun createPotentialForPotential(pot: Potential) = Warm(clazz, pot)
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -14,7 +15,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
 
     override fun createPotentialForPotential(pot: Potential) = OuterPotential(pot, outerClass)
 
-    override fun propagate(): EffectsAndPotentials {
+    override fun propagate(stateOfClass: Checker.StateOfClass): EffectsAndPotentials {
         return when (potential) {
             is Root.This -> emptyEffsAndPots                // P-Out1
             is Warm -> {                               // P-Out2
@@ -28,7 +29,7 @@ data class OuterPotential(override val potential: Potential, val outerClass: Fir
             is Super -> TODO()
             is LambdaPotential -> throw IllegalArgumentException()
             else -> {                                                       // P-Out3
-                val (effects, potentials) = potential.propagate()
+                val (effects, potentials) = potential.propagate(stateOfClass)
                 val (_, outPots) = potentials.outerSelection(outerClass)
                 EffectsAndPotentials(effects, outPots)
             }

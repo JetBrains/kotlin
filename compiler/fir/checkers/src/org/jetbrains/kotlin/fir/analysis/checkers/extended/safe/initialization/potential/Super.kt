@@ -15,12 +15,10 @@ data class Super(val firSuperReference: FirSuperReference, val firClass: FirClas
     WithPrefix(potential, firSuperReference), Potential.Propagatable {
     override fun createPotentialForPotential(pot: Potential) = Super(firSuperReference, firClass, pot)
 
-    override fun propagate(): EffectsAndPotentials {
-        val (effs, pots) = potential.propagate()
+    override fun propagate(stateOfClass: Checker.StateOfClass): EffectsAndPotentials {
+        val (effs, pots) = potential.propagate(stateOfClass)
         return EffectsAndPotentials(effs, pots.wrapPots(::createPotentialForPotential))
     }
-
-    fun getRightStateOfClass() = Checker.alreadyCheckedClasses[firClass] ?: TODO()
 
     override fun toString(): String {
         return "super@${firSuperReference.superTypeRef.coneType}"

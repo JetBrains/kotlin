@@ -17,19 +17,16 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
     override fun propagate(): EffectsAndPotentials {
         return when (potential) {
             is Root.This -> {                                     // P-Inv1
-                val state = Checker.resolve(method)
-                val potentials = potential.potentialsOf(state, method)
+                val potentials = potential.potentialsOf(stateOfClass, method)
                 EffectsAndPotentials(potentials = potentials)
             }
             is Warm -> {                                     // P-Inv2
-                val state = Checker.resolve(method)
-                val potentials = potential.potentialsOf(state, method)  // find real state
+                val potentials = potential.potentialsOf(stateOfClass, method)  // find real state
                 EffectsAndPotentials(potentials = potentials.viewChange(potential))
             }
             is Root.Cold -> EffectsAndPotentials(potential = potential)
             is Super -> {
-                val state = potential.getRightStateOfClass()
-                val potentials = potential.potentialsOf(state, method)
+                val potentials = potential.potentialsOf(stateOfClass, method)
                 EffectsAndPotentials(potentials = potentials)
             }
             is LambdaPotential -> {
@@ -37,12 +34,8 @@ data class MethodPotential(override val potential: Potential, val method: FirFun
                 EffectsAndPotentials(potentials = pots)
             }
             else -> {                                                       // P-Inv3
-                val (effects, potentials) = potential.propagate()
-                val call =
-                    if (potentials.isNotEmpty()) {
-                        val state = Checker.resolve(method)
-                        potentials.call(state, method)
-                    } else emptyEffsAndPots
+                val (effects, potentials) = potential.propagate(stateOfClass)
+                val call = potentials.call(stateOfClass, method)
                 call + effects
             }
         }

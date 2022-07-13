@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Effects
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Potentials
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect.FieldAccess
@@ -16,25 +17,32 @@ import org.jetbrains.kotlin.fir.declarations.*
 
 sealed class Potential(val firElement: FirElement, val length: Int = 0) {
     sealed interface Propagatable {
-        fun effectsOf(state: StateOfClass, firDeclaration: FirDeclaration) =
-            state.analyseDeclaration1(firDeclaration).effects
+        fun effectsOf(stateOfClass: StateOfClass, firClass: FirClass): Effects =
+            stateOfClass.analyseDeclaration(firClass).effects
+
+        fun effectsOf(stateOfClass: StateOfClass, firDeclaration: FirCallableDeclaration): Effects {
+            val state = stateOfClass.resolve(firDeclaration)
+            return state.analyseDeclaration(firDeclaration).effects
+        }
+
+        fun potentialsOf(stateOfClass: StateOfClass, firDeclaration: FirCallableDeclaration): Potentials {
+            val state = stateOfClass.resolve(firDeclaration)
+            return state.analyseDeclaration(firDeclaration).potentials
+        }
 
         private fun StateOfClass.analyseDeclaration(firDeclaration: FirDeclaration): EffectsAndPotentials =
             caches.getOrPut(firDeclaration) { firDeclaration.accept(declarationVisitor, null) }
     }
 
-    abstract fun propagate(): EffectsAndPotentials
+    abstract fun propagate(stateOfClass: StateOfClass): EffectsAndPotentials
 
     abstract fun viewChange(root: Potential): Potential
 
-    inline fun <reified T : FirMemberDeclaration> StateOfClass.resolveMember(dec: T): T =
-        if (this@Potential is Super) dec else overriddenMembers.getOrDefault(dec, dec) as T
-
-    fun select(stateOfClass: StateOfClass, field: FirVariable): EffectsAndPotentials =
+    fun select(stateOfClass: StateOfClass, field: FirVariable) =
         when {
             this is Root.Cold -> EffectsAndPotentials(Promote(this))
             length < 4 -> {
-                val f = stateOfClass.resolveMember(field)
+                val f = stateOfClass.resolveMember(this, field)
                 EffectsAndPotentials(
                     FieldAccess(this, f),
                     FieldPotential(this, f)

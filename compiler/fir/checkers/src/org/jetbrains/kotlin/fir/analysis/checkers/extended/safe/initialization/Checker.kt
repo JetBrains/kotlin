@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization
 
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoCollector
@@ -19,8 +21,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.p
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenProperties
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.anonymousInitializers
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -34,31 +38,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 object Checker {
-
-    fun resolveThis(
-        clazz: FirClass,
-        effsAndPots: EffectsAndPotentials,
-        stateOfClass: StateOfClass,
-    ): EffectsAndPotentials {
-        val innerClass = stateOfClass.firClass
-        if (clazz === innerClass || stateOfClass.superClasses.contains(clazz))
-            return effsAndPots
-
-        val outerSelection = effsAndPots.potentials.outerSelection(innerClass)
-        // val outerClass =  // outerClass for innerClass
-        return stateOfClass.outerClassState?.let { resolveThis(clazz, outerSelection, it) } ?: TODO()
-    }
-
-    @OptIn(SymbolInternals::class)
-    fun resolve(dec: FirCallableDeclaration): StateOfClass =
-        dec.dispatchReceiverType?.toRegularClassSymbol(dec.moduleData.session)?.fir?.let(alreadyCheckedClasses::get) ?: TODO()
-
-    val alreadyCheckedClasses = mutableMapOf<FirClass, StateOfClass>()
-
-    @OptIn(SymbolInternals::class)
     data class StateOfClass(val firClass: FirClass, val context: CheckerContext, val outerClassState: StateOfClass? = null) {
 
         data class InitializationPointInfo(val firVariables: Set<FirVariable>, val isPrimeInitialization: Boolean)
@@ -93,6 +76,10 @@ object Checker {
                 .mapNotNull { it.toRegularClassSymbol(context.session)?.fir }
 
         val declarations = (superClasses + firClass).flatMap(FirClass::declarations)
+
+        val innerClassStates = declarations.filterIsInstanceWithChecker(FirRegularClass::isInner).associateWith { innerClass ->
+            StateOfClass(innerClass, context, this)
+        }
 
         val allProperties = declarations.filterIsInstance<FirProperty>()
 
@@ -134,8 +121,26 @@ object Checker {
             if (potential is Super) dec else overriddenMembers[dec] as? T ?: dec
 
 
-            alreadyCheckedClasses[firClass] = this
+        fun resolveThis(
+            clazz: FirRegularClass,
+            effsAndPots: EffectsAndPotentials,
+        ): EffectsAndPotentials {
+            val innerClass = firClass
+            if (clazz === innerClass || clazz in superClasses)
+                return effsAndPots
+
+            val outerSelection = effsAndPots.potentials.outerSelection(innerClass)
+            return outerClassState?.resolveThis(clazz, outerSelection) ?: TODO()
         }
+
+        @OptIn(SymbolInternals::class)
+        fun resolve(dec: FirCallableDeclaration): StateOfClass =
+            when (val firRegularClass = dec.dispatchReceiverType?.toRegularClassSymbol(context.session)?.fir) {
+                firClass -> this
+                in superClasses -> this
+                in innerClassStates -> innerClassStates[firRegularClass]!!
+                else -> TODO()
+            }
 
         fun checkClass(): Errors {
             for (dec in declarations) {
@@ -184,10 +189,8 @@ object Checker {
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): EffectsAndPotentials =
                 analyseBody(simpleFunction.body)
 
-            override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?): EffectsAndPotentials {
-                val stateOfClass = StateOfClass(regularClass, context, this@StateOfClass)
-                return stateOfClass.analyseClass()
-            }
+            override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?): EffectsAndPotentials =
+                innerClassStates[regularClass]?.analyseClass() ?: emptyEffsAndPots
         }
     }
 }

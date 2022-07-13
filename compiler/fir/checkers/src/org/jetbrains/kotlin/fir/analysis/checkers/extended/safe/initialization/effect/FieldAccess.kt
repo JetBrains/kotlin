@@ -22,7 +22,7 @@ data class FieldAccess(override val potential: Potential, val field: FirVariable
             is Root.Cold -> listOf(Error.AccessError(this@FieldAccess))           // illegal
             is LambdaPotential -> throw IllegalArgumentException()                  // impossible
             else ->                                                         // C-Acc3
-                ruleAcc3(potential.propagate())
+                ruleAcc3(potential.propagate(this))
         }
     }
 
