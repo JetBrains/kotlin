@@ -1,0 +1,94 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/MainKt.class
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/DatClass.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DataClass.kt
+End of files
+Marked as dirty by Kotlin:
+  src/main.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/MainKt.class
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #3 =================
+
+Cleaning output files:
+  out/production/module/DatClass.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DataClass.kt
+End of files
+Marked as dirty by Kotlin:
+  src/main.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/MainKt.class
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #4 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/MainKt.class
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #5 =================
+
+Cleaning output files:
+  out/production/module/DatClass.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/DataClass.kt
+End of files
+Marked as dirty by Kotlin:
+  src/main.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/MainKt.class
+End of files
+Compiling files:
+  src/main.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Cannot find a parameter with this name: b

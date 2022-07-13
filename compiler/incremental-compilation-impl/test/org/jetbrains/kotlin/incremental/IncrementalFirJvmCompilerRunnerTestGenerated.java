@@ -622,6 +622,11 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");
         }
 
+        @TestMetadata("sequentualAddingAndDeletingOfPropertyAndUsage")
+        public void testSequentualAddingAndDeletingOfPropertyAndUsage() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/sequentualAddingAndDeletingOfPropertyAndUsage/");
+        }
+
         @TestMetadata("serializedSubClassAndChangedInterfaces")
         public void testSerializedSubClassAndChangedInterfaces() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/serializedSubClassAndChangedInterfaces/");
