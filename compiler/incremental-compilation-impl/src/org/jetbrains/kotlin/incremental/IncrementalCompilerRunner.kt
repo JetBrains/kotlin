@@ -198,7 +198,7 @@ abstract class IncrementalCompilerRunner<
                         "Falling back to non-incremental compilation"
             }
         } finally {
-            if (!caches.close()) {
+            if (!caches.close(flush = true)) {
                 reporter.info { "Unable to close IC caches. Cleaning internal state" }
                 cleanOutputsAndLocalStateOnRebuild(args)
             }
