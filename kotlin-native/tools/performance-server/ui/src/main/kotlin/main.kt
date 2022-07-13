@@ -132,7 +132,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     previousBuild = builds.get(data.index - shift)
                     shift++
                 }
-                val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=" +
+                val linkToDetailedInfo = "https://kotlin-native-perf-summary.labs.jb.gg/compare?report=" +
                         "${currentBuild.buildNumber}:${parameters["target"]}" +
                         "${previousBuild?.let {
                             "&compareTo=${previousBuild.buildNumber}:${parameters["target"]}"
