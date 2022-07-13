@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials.Companion.emptyEffsAndPots
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodPotential(override val potential: Potential, val method: FirFunction) : WithPrefix(potential, method) {
 
     override fun createPotentialForPotential(pot: Potential) = MethodPotential(pot, method)
 
-    override fun propagate(): EffectsAndPotentials {
+    override fun propagate(stateOfClass: Checker.StateOfClass): EffectsAndPotentials {
         return when (potential) {
             is Root.This -> {                                     // P-Inv1
                 val potentials = potential.potentialsOf(stateOfClass, method)
