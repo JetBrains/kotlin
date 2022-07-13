@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
@@ -29,22 +28,23 @@ import java.util.*
 
 class FirRenderer(
     builder: StringBuilder = StringBuilder(),
-    private val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),
-    private val bodyRenderer: FirBodyRenderer? = FirBodyRenderer(),
-    private val callArgumentsRenderer: FirCallArgumentsRenderer = FirCallArgumentsRenderer(),
-    private val classMemberRenderer: FirClassMemberRenderer = FirClassMemberRenderer(),
-    private val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
-    private val declarationRenderer: FirDeclarationRenderer = FirDeclarationRenderer(),
-    private val idRenderer: ConeIdRenderer = ConeIdRendererForDebugging(),
-    private val modifierRenderer: FirModifierRenderer = FirAllModifierRenderer(),
-    private val packageDirectiveRenderer: FirPackageDirectiveRenderer? = null,
-    private val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
-    resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
-    private val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
-    private val valueParameterRenderer: FirValueParameterRenderer = FirValueParameterRenderer(),
-) : FirPrinter(builder) {
+    override val annotationRenderer: FirAnnotationRenderer? = FirAnnotationRenderer(),
+    override val bodyRenderer: FirBodyRenderer? = FirBodyRenderer(),
+    override val callArgumentsRenderer: FirCallArgumentsRenderer = FirCallArgumentsRenderer(),
+    override val classMemberRenderer: FirClassMemberRenderer = FirClassMemberRenderer(),
+    override val contractRenderer: ConeContractRenderer? = ConeContractRenderer(),
+    override val declarationRenderer: FirDeclarationRenderer = FirDeclarationRenderer(),
+    override val idRenderer: ConeIdRenderer = ConeIdRendererForDebugging(),
+    override val modifierRenderer: FirModifierRenderer = FirAllModifierRenderer(),
+    override val packageDirectiveRenderer: FirPackageDirectiveRenderer? = null,
+    override val propertyAccessorRenderer: FirPropertyAccessorRenderer? = FirPropertyAccessorRenderer(),
+    override val resolvePhaseRenderer: FirResolvePhaseRenderer? = null,
+    override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
+    override val valueParameterRenderer: FirValueParameterRenderer = FirValueParameterRenderer(),
+) : FirRendererComponents {
 
-    private val visitor = Visitor()
+    override val visitor = Visitor()
+    override val printer = FirPrinter(builder)
 
     companion object {
         fun noAnnotationBodiesAccessorAndArguments(): FirRenderer =
@@ -61,41 +61,25 @@ class FirRenderer(
     }
 
     init {
-        val components = FirComponentsImpl()
-        components.visitor = visitor
-        components.annotationRenderer = annotationRenderer
-        components.bodyRenderer = bodyRenderer
-        components.callArgumentsRenderer = callArgumentsRenderer
-        components.classMemberRenderer = classMemberRenderer
-        components.declarationRenderer = declarationRenderer
-        components.idRenderer = idRenderer
-        components.modifierRenderer = modifierRenderer
-        components.packageDirectiveRenderer = packageDirectiveRenderer
-        components.propertyAccessorRenderer = propertyAccessorRenderer
-        components.resolvePhaseRenderer = resolvePhaseRenderer
-        components.typeRenderer = typeRenderer
-        components.valueParameterRenderer = valueParameterRenderer
-        @Suppress("LeakingThis")
-        components.printer = this
-        annotationRenderer?.components = components
-        bodyRenderer?.components = components
-        callArgumentsRenderer.components = components
-        classMemberRenderer.components = components
-        contractRenderer?.components = components
-        declarationRenderer.components = components
+        annotationRenderer?.components = this
+        bodyRenderer?.components = this
+        callArgumentsRenderer.components = this
+        classMemberRenderer.components = this
+        contractRenderer?.components = this
+        declarationRenderer.components = this
         idRenderer.builder = builder
-        modifierRenderer.components = components
-        packageDirectiveRenderer?.components = components
-        propertyAccessorRenderer?.components = components
-        resolvePhaseRenderer?.components = components
+        modifierRenderer.components = this
+        packageDirectiveRenderer?.components = this
+        propertyAccessorRenderer?.components = this
+        resolvePhaseRenderer?.components = this
         typeRenderer.builder = builder
         typeRenderer.idRenderer = idRenderer
-        valueParameterRenderer.components = components
+        valueParameterRenderer.components = this
     }
 
     fun renderElementAsString(element: FirElement): String {
         element.accept(visitor)
-        return toString()
+        return printer.toString()
     }
 
     fun renderElementWithTypeAsString(element: FirElement): String {
@@ -106,7 +90,7 @@ class FirRenderer(
 
     fun renderAsCallableDeclarationString(callableDeclaration: FirCallableDeclaration): String {
         visitor.visitCallableDeclaration(callableDeclaration)
-        return toString()
+        return printer.toString()
     }
 
     fun renderMemberDeclarationClass(firClass: FirClass) {
@@ -124,25 +108,6 @@ class FirRenderer(
         }
     }
 
-    private class FirComponentsImpl : FirRendererComponents {
-        override var annotationRenderer: FirAnnotationRenderer? = null
-        override var bodyRenderer: FirBodyRenderer? = null
-        override var contractRenderer: ConeContractRenderer? = null
-        override var packageDirectiveRenderer: FirPackageDirectiveRenderer? = null
-        override var propertyAccessorRenderer: FirPropertyAccessorRenderer? = null
-        override var resolvePhaseRenderer: FirResolvePhaseRenderer? = null
-
-        override lateinit var callArgumentsRenderer: FirCallArgumentsRenderer
-        override lateinit var classMemberRenderer: FirClassMemberRenderer
-        override lateinit var declarationRenderer: FirDeclarationRenderer
-        override lateinit var idRenderer: ConeIdRenderer
-        override lateinit var modifierRenderer: FirModifierRenderer
-        override lateinit var typeRenderer: ConeTypeRenderer
-        override lateinit var valueParameterRenderer: FirValueParameterRenderer
-        override lateinit var visitor: Visitor
-        override lateinit var printer: FirPrinter
-    }
-
     private fun Variance.renderVariance() {
         label.let {
             print(it)
@@ -157,7 +122,7 @@ class FirRenderer(
         print("context(")
         renderSeparated(contextReceivers, visitor)
         print(")")
-        newLine()
+        printer.newLine()
     }
 
     private fun List<FirTypeParameterRef>.renderTypeParameters() {
@@ -176,6 +141,14 @@ class FirRenderer(
         }
     }
 
+    private fun print(s: Any) {
+        printer.print(s)
+    }
+
+    private fun renderSeparated(elements: List<FirElement>, visitor: Visitor) {
+        printer.renderSeparated(elements, visitor)
+    }
+
     inner class Visitor internal constructor() : FirVisitorVoid() {
 
         override fun visitElement(element: FirElement) {
@@ -183,13 +156,13 @@ class FirRenderer(
         }
 
         override fun visitFile(file: FirFile) {
-            println("FILE: ${file.name}")
-            pushIndent()
+            printer.println("FILE: ${file.name}")
+            printer.pushIndent()
             annotationRenderer?.render(file)
             visitPackageDirective(file.packageDirective)
             file.imports.forEach { it.accept(this) }
             file.declarations.forEach { it.accept(this) }
-            popIndent()
+            printer.popIndent()
         }
 
         override fun visitAnnotation(annotation: FirAnnotation) {
@@ -304,7 +277,7 @@ class FirRenderer(
 
         override fun visitField(field: FirField) {
             visitVariable(field)
-            println()
+            printer.newLine()
         }
 
         override fun visitProperty(property: FirProperty) {
@@ -328,7 +301,7 @@ class FirRenderer(
             visitCallableDeclaration(simpleFunction)
             bodyRenderer?.render(simpleFunction)
             if (simpleFunction.body == null) {
-                println()
+                printer.newLine()
             }
         }
 
@@ -411,7 +384,7 @@ class FirRenderer(
             visitMemberDeclaration(typeAlias)
             print(" = ")
             typeAlias.expandedTypeRef.accept(this)
-            println()
+            printer.newLine()
         }
 
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
@@ -497,13 +470,13 @@ class FirRenderer(
             } else {
                 whenExpression.subject?.accept(this)
             }
-            println(") {")
-            pushIndent()
+            printer.println(") {")
+            printer.pushIndent()
             for (branch in whenExpression.branches) {
                 branch.accept(this)
             }
-            popIndent()
-            println("}")
+            printer.popIndent()
+            printer.println("}")
         }
 
         override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {

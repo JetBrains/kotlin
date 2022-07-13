@@ -28,14 +28,14 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
     renderer.renderAnnotations(javaClass)
     renderer.renderMemberDeclarationClass(javaClass)
     renderer.renderSupertypes(javaClass)
-    renderer.renderInBraces {
+    renderer.printer.renderInBraces {
         val renderedDeclarations = mutableListOf<FirDeclaration>()
 
         fun renderAndCache(symbol: FirCallableSymbol<*>) {
             val enhanced = symbol.fir
             if (enhanced !in renderedDeclarations) {
                 renderer.renderElementAsString(enhanced)
-                renderer.newLine()
+                renderer.printer.newLine()
                 renderedDeclarations += enhanced
             }
         }
@@ -56,7 +56,7 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
                 is FirEnumEntry -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                 else -> {
                     renderer.renderElementAsString(declaration)
-                    renderer.newLine()
+                    renderer.printer.newLine()
                     renderedDeclarations += declaration
                 }
             }
