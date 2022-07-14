@@ -193,12 +193,21 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
     lateinit var legacyPreset: KotlinJsSingleTargetPreset
 
+    private val targetSetObservers = mutableListOf<(KotlinJsTargetDsl?) -> Unit>()
+
     // target is public property
     // Users can write kotlin.target and it should work
     // So call of target should init default configuration
     @Deprecated("Use `target` instead", ReplaceWith("target"))
     var _target: KotlinJsTargetDsl? = null
-        private set
+        private set(value) {
+            field = value
+            targetSetObservers.forEach { it(value) }
+        }
+
+    internal fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
+        targetSetObservers.add(observer)
+    }
 
     companion object {
         internal fun reportJsCompilerMode(compilerType: KotlinJsCompilerType) {
