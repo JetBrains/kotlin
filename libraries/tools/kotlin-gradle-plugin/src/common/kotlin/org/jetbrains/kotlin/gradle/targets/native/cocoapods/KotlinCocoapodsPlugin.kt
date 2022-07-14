@@ -457,6 +457,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             }
             families += family
 
+            val platformSettings = when (family) {
+                Family.IOS -> cocoapodsExtension.ios
+                Family.OSX -> cocoapodsExtension.osx
+                Family.TVOS -> cocoapodsExtension.tvos
+                Family.WATCHOS -> cocoapodsExtension.watchos
+                else -> error("Unknown cocoapods platform: $family")
+            }
+
             project.tasks.register(family.toPodGenTaskName, PodGenTask::class.java) {
                 it.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
                 it.podspec = podspecTaskProvider.map { task -> task.outputFile }
@@ -464,6 +472,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 it.useLibraries = project.provider { cocoapodsExtension.useLibraries }
                 it.specRepos = project.provider { cocoapodsExtension.specRepos }
                 it.family = family
+                it.platformSettings = platformSettings
                 it.pods.set(cocoapodsExtension.pods)
                 it.dependsOn(downloadPods)
             }
