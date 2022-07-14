@@ -2,7 +2,7 @@ interface Introspector {
 
     class SchemaRetriever(val transaction: String) {
         inline fun inSchema(crossinline modifier: (String) -> Unit) =
-                { modifier(transaction) }()
+                { modifier(transaction) }.let { it() }
 
         internal fun retrieve() {
             inSchema { schema -> "OK" }

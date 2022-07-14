@@ -1,6 +1,6 @@
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 0 invoke
+// 0 invoke\(
 
 fun ok(s: String) = "O" + s
 
