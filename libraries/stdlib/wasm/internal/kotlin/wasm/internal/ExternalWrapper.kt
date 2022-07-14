@@ -105,7 +105,6 @@ internal fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
 internal fun Any?.asWasmExternRef(): ExternalInterfaceType =
     implementedAsIntrinsic
 
-
 @JsFun("(ref) => ref == null")
 internal external fun isNullish(ref: ExternalInterfaceType): Boolean
 

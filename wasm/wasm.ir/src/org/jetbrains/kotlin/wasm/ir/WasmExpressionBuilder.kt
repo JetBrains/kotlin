@@ -59,6 +59,12 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.ELSE)
     }
 
+    fun buildBlock(resultType: WasmType? = null): Int {
+        buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+        numberOfNestedBlocks++
+        return numberOfNestedBlocks
+    }
+
     fun buildEnd() {
         numberOfNestedBlocks--
         buildInstr(WasmOp.END)
