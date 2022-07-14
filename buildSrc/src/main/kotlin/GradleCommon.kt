@@ -54,9 +54,11 @@ enum class GradlePluginVariant(
 /**
  * Configures common pom configuration parameters
  */
-fun Project.configureCommonPublicationSettingsForGradle() {
+fun Project.configureCommonPublicationSettingsForGradle(
+    signingRequired: Boolean
+) {
     plugins.withId("maven-publish") {
-        configureDefaultPublishing()
+        configureDefaultPublishing(signingRequired)
 
         extensions.configure<PublishingExtension> {
             publications

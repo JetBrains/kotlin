@@ -1,3 +1,5 @@
+import plugins.signLibraryPublication
+
 description = "Runtime library for the Atomicfu compiler plugin"
 
 plugins {
@@ -26,7 +28,7 @@ kotlin {
     }
 }
 
-configureCommonPublicationSettingsForGradle()
+configureCommonPublicationSettingsForGradle(signLibraryPublication)
 
 publishing {
     publications {

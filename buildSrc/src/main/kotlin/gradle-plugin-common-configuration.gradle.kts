@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 import com.gradle.publish.PluginBundleExtension
+import plugins.signLibraryPublication
 
 plugins {
     kotlin("jvm")
@@ -12,7 +13,11 @@ plugins {
     id("com.gradle.plugin-publish")
 }
 
-configureCommonPublicationSettingsForGradle()
+// Enable signing for publications into Gradle Plugin Portal
+val signPublication = !version.toString().contains("-SNAPSHOT") &&
+        (project.gradle.startParameter.taskNames.contains("publishPlugins") || signLibraryPublication)
+
+configureCommonPublicationSettingsForGradle(signPublication)
 configureKotlinCompileTasksGradleCompatibility()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
