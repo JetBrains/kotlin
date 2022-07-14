@@ -129,8 +129,14 @@ fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDesc
     }
 }
 
+val Project.signLibraryPublication: Boolean
+    get() = project.providers.gradleProperty("signingRequired").forUseAtConfigurationTime().orNull?.toBoolean()
+        ?: project.providers.gradleProperty("isSonatypeRelease").forUseAtConfigurationTime().orNull?.toBoolean()
+        ?: false
 
-fun Project.configureDefaultPublishing() {
+fun Project.configureDefaultPublishing(
+    signingRequired: Boolean = signLibraryPublication
+) {
     configure<PublishingExtension> {
         repositories {
             maven {
@@ -139,9 +145,6 @@ fun Project.configureDefaultPublishing() {
             }
         }
     }
-
-    val signingRequired = project.providers.gradleProperty("signingRequired").forUseAtConfigurationTime().orNull?.toBoolean()
-        ?: project.providers.gradleProperty("isSonatypeRelease").forUseAtConfigurationTime().orNull?.toBoolean() ?: false
 
     if (signingRequired) {
         apply<SigningPlugin>()

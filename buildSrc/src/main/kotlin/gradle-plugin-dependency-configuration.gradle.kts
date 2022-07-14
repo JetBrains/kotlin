@@ -4,6 +4,7 @@
  */
 
 import plugins.KotlinBuildPublishingPlugin.Companion.DEFAULT_MAIN_PUBLICATION_NAME
+import plugins.signLibraryPublication
 
 plugins {
     `java-library`
@@ -12,7 +13,7 @@ plugins {
     `maven-publish`
 }
 
-configureCommonPublicationSettingsForGradle()
+configureCommonPublicationSettingsForGradle(signLibraryPublication)
 configureKotlinCompileTasksGradleCompatibility()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
