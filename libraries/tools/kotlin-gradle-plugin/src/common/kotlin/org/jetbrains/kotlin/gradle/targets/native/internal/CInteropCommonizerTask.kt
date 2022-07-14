@@ -188,7 +188,6 @@ internal open class CInteropCommonizerTask
         return suitableGroups.firstOrNull()
     }
 
-    //@Internal
     private val allDependents: Set<CInteropCommonizerDependent> by lazy {
         val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptySet()
 
