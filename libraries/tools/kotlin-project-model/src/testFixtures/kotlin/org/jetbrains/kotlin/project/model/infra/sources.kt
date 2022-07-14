@@ -80,7 +80,7 @@ private fun TestKpmFragment.canonicalSourceFolderRelative(): File {
         fragmentName
     )
 
-    return File(pathParts.joinToString(separator = "/"))
+    return File(pathParts.joinToString(separator = File.separator))
 }
 
 fun KpmTestCase.addSources(sourcesForFragment: (TestKpmFragment) -> Iterable<File>): KpmTestCase {

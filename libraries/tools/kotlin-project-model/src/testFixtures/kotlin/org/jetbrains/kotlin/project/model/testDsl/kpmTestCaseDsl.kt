@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.project.model.testDsl
 
-import org.jetbrains.kotlin.project.model.coreCases.KpmCoreCase
+import org.jetbrains.kotlin.project.model.coreCases.KpmTestCaseWrapper
 import org.jetbrains.kotlin.project.model.infra.*
 
-fun KpmCoreCase.describeCase(
+fun KpmTestCaseWrapper.describeCase(
     applyDefaults: Boolean = true,
     configure: KpmTestCase.() -> Unit = { }
 ): KpmTestCase = describeCase(this::class.simpleName!!, applyDefaults, configure)
