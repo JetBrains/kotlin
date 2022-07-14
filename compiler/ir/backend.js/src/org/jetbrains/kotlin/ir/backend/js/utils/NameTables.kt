@@ -139,7 +139,13 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): S
     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
     declaration.typeParameters.ifNotEmpty {
         nameBuilder.append("_\$t")
-        joinTo(nameBuilder, "") { "_${it.name.asString()}" }
+        forEach { typeParam ->
+            nameBuilder.append("_").append(typeParam.name.asString())
+            typeParam.superTypes.ifNotEmpty {
+                nameBuilder.append("$")
+                joinTo(nameBuilder, "") { type -> type.asString() }
+            }
+        }
     }
     declaration.extensionReceiverParameter?.let {
         nameBuilder.append("_r$${it.type.asString()}")
