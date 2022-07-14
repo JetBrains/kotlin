@@ -298,4 +298,3 @@ fun createNested3(): Parent.Nested1.Nested2.Companion.Nested3 {
 
 @JsExport
 class GenericClassWithConstraint<T: TestInterface>(val test: T)
-}
