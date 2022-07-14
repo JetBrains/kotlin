@@ -24,6 +24,7 @@ import org.jetbrains.kotlinx.dataframe.annotations.ColumnGroupTypeApproximation
 import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
 import org.jetbrains.kotlinx.dataframe.annotations.SchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 
 class SchemaContext(val properties: List<SchemaProperty>, val coneTypeProjection: ConeTypeProjection)
 
@@ -43,11 +44,11 @@ class FirDataFrameReceiverInjector(
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-        val processor = findSchemaProcessor(functionCall) ?: return emptyList()
+        val processor = functionCall.loadInterpreter(session) ?: return emptyList()
 
-        val dataFrameSchema = interpret(functionCall, processor) ?: return emptyList()
+        val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
 
-        val properties = dataFrameSchema.value.columns().map {
+        val properties = dataFrameSchema.columns().map {
             val typeApproximation = when (val type = it.type) {
                 is TypeApproximationImpl -> type
                 ColumnGroupTypeApproximation -> TODO("support column groups in data schema")

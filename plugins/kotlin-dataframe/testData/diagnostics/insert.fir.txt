@@ -1,0 +1,222 @@
+FILE: insert.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface Person : R|kotlin/Any| {
+        public abstract val age: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final val df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(age))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|Person|>()
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>|
+    public final fun insert_properties(): R|kotlin/Unit| {
+        R|/df|.R|org/jetbrains/kotlinx/dataframe/api/insert|<R|Person|, R|kotlin/Int|>(String(year of birth), <L> = insert@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+            ^ Int(2021).R|kotlin/Int.minus|(this@R|special/anonymous|.R|/age|)
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/under|<R|Person|>(String(test))
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    local final class 0 {
+    }
+    local final class 1 {
+    }
+    local final class 2 {
+    }
+    local final class 3 {
+    }
+    local final class 4 {
+    }
+    local final class 5 {
+    }
+    local final class 6 {
+    }
+    local final class 7 {
+    }
+    local final class 8 {
+    }
+    local final class 9 {
+    }
+    local final class 10 {
+    }
+    local final class 11 {
+    }
+    local final class 12 {
+    }
+    local final class 13 {
+    }
+    local final class 14 {
+    }
+    local final class 15 {
+    }
+    local final class 16 {
+    }
+    local final class 17 {
+    }
+    local final class 18 {
+    }
+    local final class 19 {
+    }
+    local final class 20 {
+    }
+    local final class 21 {
+    }
+    local final class 22 {
+    }
+    local final class 23 {
+    }
+    local final class 24 {
+    }
+    local final class 25 {
+    }
+    local final class 26 {
+    }
+    local final class 27 {
+    }
+    local final class 28 {
+    }
+    local final class 29 {
+    }
+    local final class 30 {
+    }
+    local final class 31 {
+    }
+    local final class 32 {
+    }
+    local final class 33 {
+    }
+    local final class 34 {
+    }
+    local final class 35 {
+    }
+    local final class 36 {
+    }
+    local final class 37 {
+    }
+    local final class 38 {
+    }
+    local final class 39 {
+    }
+    local final class 40 {
+    }
+    local final class 41 {
+    }
+    local final class 42 {
+    }
+    local final class 43 {
+    }
+    local final class 44 {
+    }
+    local final class 45 {
+    }
+    local final class 46 {
+    }
+    local final class 47 {
+    }
+    local final class 48 {
+    }
+    local final class 49 {
+    }
+    local final class 50 {
+    }
+    local final class 51 {
+    }
+    local final class 52 {
+    }
+    local final class 53 {
+    }
+    local final class 54 {
+    }
+    local final class 55 {
+    }
+    local final class 56 {
+    }
+    local final class 57 {
+    }
+    local final class 58 {
+    }
+    local final class 59 {
+    }
+    local final class 60 {
+    }
+    local final class 61 {
+    }
+    local final class 62 {
+    }
+    local final class 63 {
+    }
+    local final class 64 {
+    }
+    local final class 65 {
+    }
+    local final class 66 {
+    }
+    local final class 67 {
+    }
+    local final class 68 {
+    }
+    local final class 69 {
+    }
+    local final class 70 {
+    }
+    local final class 71 {
+    }
+    local final class 72 {
+    }
+    local final class 73 {
+    }
+    local final class 74 {
+    }
+    local final class 75 {
+    }
+    local final class 76 {
+    }
+    local final class 77 {
+    }
+    local final class 78 {
+    }
+    local final class 79 {
+    }
+    local final class 80 {
+    }
+    local final class 81 {
+    }
+    local final class 82 {
+    }
+    local final class 83 {
+    }
+    local final class 84 {
+    }
+    local final class 85 {
+    }
+    local final class 86 {
+    }
+    local final class 87 {
+    }
+    local final class 88 {
+    }
+    local final class 89 {
+    }
+    local final class 90 {
+    }
+    local final class 91 {
+    }
+    local final class 92 {
+    }
+    local final class 93 {
+    }
+    local final class 94 {
+    }
+    local final class 95 {
+    }
+    local final class 96 {
+    }
+    local final class 97 {
+    }
+    local final class 98 {
+    }
+    local final class 99 {
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
