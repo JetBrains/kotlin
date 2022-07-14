@@ -30,6 +30,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
     }
 
     @Test
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/enum.kt");
+    }
+
+    @Test
     @TestMetadata("insertClause.kt")
     public void testInsertClause() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/interpretation/insertClause.kt");

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameCallableId
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 
@@ -65,6 +68,22 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         val interpreter = expression.loadInterpreter()
                             ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
                         interpret(expression, interpreter, emptyMap())
+                    }
+                    is FirPropertyAccessExpression -> {
+                        (expression.calleeReference as? FirResolvedNamedReference)?.let {
+                            val symbol = it.resolvedSymbol
+                            if (symbol is FirEnumEntrySymbol) {
+                                Interpreter.Success(
+                                    DataFrameCallableId(
+                                        packageName = symbol.callableId.packageName.asString(),
+                                        className = symbol.callableId.className!!.asString(),
+                                        callableName = symbol.callableId.callableName.asString()
+                                    )
+                                )
+                            } else {
+                                TODO(expression::class.toString())
+                            }
+                        }
                     }
                     else -> TODO(expression::class.toString())
                 }

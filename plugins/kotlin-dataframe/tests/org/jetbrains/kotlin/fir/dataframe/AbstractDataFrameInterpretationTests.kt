@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
+import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.InsertClauseApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
@@ -83,7 +84,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     PluginDataFrameSchema(columns = emptyList()),
                     SimpleCol("b", TypeApproximationImpl("kotlin.Int", false))
                 ),
-
+                "enum_1" to Infer.Type
             )
             return map[id]
         }
