@@ -36,6 +36,9 @@ open class StubIndexService protected constructor() {
     open fun indexFunction(stub: KotlinFunctionStub, sink: IndexSink) {
     }
 
+    open fun <T : KtConstructor<T>> indexConstructor(stub: KotlinConstructorStub<T>, sink: IndexSink) {
+    }
+
     open fun indexTypeAlias(stub: KotlinTypeAliasStub, sink: IndexSink) {
     }
 

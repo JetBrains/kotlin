@@ -78,8 +78,10 @@ open class RawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
-        return this.toKtPsiSourceElement(actualKind)
+        return runOnStabs {
+            val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+            return@runOnStabs this.toKtPsiSourceElement(actualKind)
+        }
     }
 
     override val PsiElement.elementType: IElementType
@@ -957,6 +959,7 @@ open class RawFirBuilder(
                         }, delegatedConstructorCall
                     )
                 }
+            }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
             fun defaultVisibility() = when {

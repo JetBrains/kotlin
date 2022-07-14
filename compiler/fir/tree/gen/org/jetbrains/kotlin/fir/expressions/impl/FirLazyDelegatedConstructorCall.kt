@@ -40,8 +40,8 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyDelegatedConstructorCall {
         constructedTypeRef = constructedTypeRef.transform(transformer, data)
-        return this
-    }
+                return this
+            }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyDelegatedConstructorCall {
         return this
