@@ -1,6 +1,6 @@
+// FILE: main.kt
 import kotlin.reflect.KClass
 
-// FILE: main.kt
 external abstract open class A(
     o: String
 ) {
