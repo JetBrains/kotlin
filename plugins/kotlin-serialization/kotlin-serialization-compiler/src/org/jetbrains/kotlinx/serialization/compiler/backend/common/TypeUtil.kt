@@ -170,6 +170,7 @@ fun findStandardKotlinTypeSerializer(module: ModuleDescriptor, kType: KotlinType
         "D" -> if (kType.isDouble()) "DoubleSerializer" else return null
         "C" -> if (kType.isChar()) "CharSerializer" else return null
         "kotlin.Unit" -> "UnitSerializer"
+        "kotlin.Nothing" -> "NothingSerializer"
         "kotlin.Boolean" -> "BooleanSerializer"
         "kotlin.Byte" -> "ByteSerializer"
         "kotlin.Short" -> "ShortSerializer"
