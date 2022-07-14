@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.WasmLocal
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
 
 interface WasmFunctionCodegenContext : WasmBaseCodegenContext {
     val irFunction: IrFunction

@@ -53,11 +53,17 @@ class WasmFunctionCodegenContextImpl(
         return wasmFunction.locals[index]
     }
 
+    private val SyntheticLocalType.wasmType
+        get() = when (this) {
+            SyntheticLocalType.IS_INTERFACE_PARAMETER -> WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass)))
+            SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
+        }
+
     override fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
         WasmLocal(
             wasmFunction.locals.size,
             type.name,
-            WasmRefNullType(WasmHeapType.Type(referenceGcType(backendContext.irBuiltIns.anyClass))),
+            type.wasmType,
             isParameter = false
         ).also {
             wasmFunction.locals += it
