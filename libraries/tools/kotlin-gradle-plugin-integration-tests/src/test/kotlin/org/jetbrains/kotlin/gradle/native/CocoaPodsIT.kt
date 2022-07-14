@@ -240,6 +240,7 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testSyntheticProjectPodspecGeneration() {
         val gradleProject = transformProjectWithPluginsDsl(cocoapodsSingleKtPod, gradleVersion)
         gradleProject.gradleBuildScript().appendToCocoapodsBlock("""
+            ios.deploymentTarget = "14.1"
             pod("SSZipArchive")
             pod("AFNetworking", "~> 4.0.1")
             pod("Alamofire") {
@@ -251,6 +252,7 @@ class CocoaPodsIT : BaseGradleIT() {
         gradleProject.build("podGenIOS", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
             assertSuccessful()
             val podfileText = gradleProject.projectDir.resolve("build/cocoapods/synthetic/IOS/Podfile").readText().trim()
+            assertTrue(podfileText.contains("platform :ios, '14.1'"))
             assertTrue(podfileText.contains("pod 'SSZipArchive'"))
             assertTrue(podfileText.contains("pod 'AFNetworking', '~> 4.0.1'"))
             assertTrue(podfileText.contains("pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '5.6.1'"))

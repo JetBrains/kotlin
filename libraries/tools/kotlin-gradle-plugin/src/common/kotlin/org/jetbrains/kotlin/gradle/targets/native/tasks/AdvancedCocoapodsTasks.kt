@@ -409,6 +409,9 @@ open class PodGenTask : CocoapodsTask() {
     lateinit var family: Family
 
     @get:Nested
+    internal lateinit var platformSettings: PodspecPlatformSettings
+
+    @get:Nested
     internal lateinit var specRepos: Provider<SpecRepos>
 
     @get:Nested
@@ -479,6 +482,12 @@ open class PodGenTask : CocoapodsTask() {
             appendLine("target '$xcodeTarget' do")
             if (useLibraries.get().not()) {
                 appendLine("\tuse_frameworks!")
+            }
+            val deploymentTarget = platformSettings.deploymentTarget
+            if (deploymentTarget != null) {
+                appendLine("\tplatform :${platformSettings.name}, '$deploymentTarget'")
+            } else {
+                appendLine("\tplatform :${platformSettings.name}")
             }
             pods.get().mapNotNull {
                 buildString {
