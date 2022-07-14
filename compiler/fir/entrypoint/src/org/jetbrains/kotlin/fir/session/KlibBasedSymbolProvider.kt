@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -80,6 +82,7 @@ class KlibBasedSymbolProvider(
         }
     }
 
+    @OptIn(SymbolInternals::class)
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val packageStringName = classId.packageFqName.asString()
 
@@ -99,24 +102,35 @@ class KlibBasedSymbolProvider(
             val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
             val classProto = finder.findClassData(classId)?.classProto ?: return@forEach
 
-            val source = object : DeserializedContainerSource {
-                override val incompatibility: IncompatibleVersionErrorData<*>? = null
-                override val isPreReleaseInvisible =
-                    deserializationConfiguration.reportErrorsOnPreReleaseDependencies && (moduleHeader.flags and 1) != 0
-                override val abiStability = DeserializedContainerAbiStability.STABLE
-                override val presentableString = "Package '${classId.packageFqName}'"
+            val moduleData = moduleDataProvider.getModuleData(libraryPath) ?: return null
 
-                override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
+            return ClassMetadataFindResult.NoMetadata { symbol ->
+                val source = object : DeserializedContainerSource {
+                    override val incompatibility: IncompatibleVersionErrorData<*>? = null
+                    override val isPreReleaseInvisible =
+                        deserializationConfiguration.reportErrorsOnPreReleaseDependencies && (moduleHeader.flags and 1) != 0
+                    override val abiStability = DeserializedContainerAbiStability.STABLE
+                    override val presentableString = "Package '${classId.packageFqName}'"
+
+                    override fun getContainingFile() = SourceFile.NO_SOURCE_FILE
+                }
+
+                deserializeClassToSymbol(
+                    classId,
+                    classProto,
+                    symbol,
+                    nameResolver,
+                    session,
+                    moduleData,
+                    annotationDeserializer,
+                    kotlinScopeProvider,
+                    parentContext,
+                    source,
+                    origin = defaultDeserializationOrigin,
+                    deserializeNestedClass = this::getClass,
+                )
+                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
             }
-
-            return ClassMetadataFindResult.Metadata(
-                nameResolver,
-                classProto,
-                annotationDeserializer,
-                moduleDataProvider.getModuleData(libraryPath),
-                source,
-                classPostProcessor = {}
-            )
         }
 
         return null
