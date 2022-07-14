@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.kpm
 
+import org.jetbrains.kotlin.gradle.AbstractTheoreticalMppTestsWithSources
 import org.jetbrains.kotlin.project.model.infra.generate.generateKpmTestCases
+import org.jetbrains.kotlin.project.model.infra.generate.kpmRunnerWithSources
 
 fun main() {
     generateKpmTestCases {
-        // Add generated tests here
+        kpmRunnerWithSources<AbstractTheoreticalMppTestsWithSources>(
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/java",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/testData/kpm"
+        )
     }
 }

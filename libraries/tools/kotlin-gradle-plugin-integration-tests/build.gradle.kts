@@ -10,6 +10,8 @@ pill {
     variant = PillExtension.Variant.FULL
 }
 
+testsJar { }
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
@@ -45,7 +47,7 @@ dependencies {
     }
     testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
-    testImplementation(project(":kotlin-project-model"))
+    testImplementation(testFixtures(project(":kotlin-project-model")))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
@@ -217,6 +219,7 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     useJUnitPlatform {
         excludeTags("DaemonsKGP")
         includeEngines("junit-jupiter")
+        workingDir = rootDir // needed for proper work with paths relative to project
     }
 }
 
