@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameCallableId
+import org.jetbrains.kotlinx.dataframe.plugin.KPropertyApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 
@@ -83,6 +85,20 @@ fun <T> FirExpressionResolutionExtension.interpret(
                             } else {
                                 TODO(expression::class.toString())
                             }
+                        }
+                    }
+                    is FirCallableReferenceAccess -> {
+                        val propertyName = expression.calleeReference.name.identifier
+                        (expression.calleeReference as FirResolvedCallableReference).let {
+                            val symbol = it.toResolvedCallableSymbol()!!
+                            val columnName = symbol.annotations
+                                .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
+                                ?.let {
+                                    (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirConstExpression<*>).value as String
+                                }
+                            val kotlinType = symbol.resolvedReturnTypeRef.type
+                            val type = kotlinType.classId?.asFqNameString()!!
+                            Interpreter.Success(KPropertyApproximation(columnName ?: propertyName, TypeApproximation(type, kotlinType.isNullable)))
                         }
                     }
                     else -> TODO(expression::class.toString())

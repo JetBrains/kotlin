@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.InsertClauseApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.KPropertyApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import kotlin.test.assertEquals
@@ -67,7 +68,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
                     val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
-                    assertEquals(expectedResult(id) ?: "no result for id $id", result)
+                    assertEquals(expectedResult(id) ?: "no result for id $id", result, message = id)
                 }
             }
             return emptyList()
@@ -84,7 +85,9 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     PluginDataFrameSchema(columns = emptyList()),
                     SimpleCol("b", TypeApproximationImpl("kotlin.Int", false))
                 ),
-                "enum_1" to Infer.Type
+                "enum_1" to Infer.Type,
+                "kproperty_1" to KPropertyApproximation("i", TypeApproximationImpl("kotlin.Int", false)),
+                "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
             )
             return map[id]
         }
