@@ -125,6 +125,43 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(explicitThisReferenceType, explicitSuperReferenceType)
         }
 
+        impl(delegatedConstructorCall, "FirLazyDelegatedConstructorCall") {
+            val error = """error("FirLazyDelegatedConstructorCallThis should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
+            default("annotations") {
+                value = error
+                withGetter = true
+            }
+            default("argumentList") {
+                value = error
+                withGetter = true
+            }
+            default("contextReceiverArguments") {
+                value = error
+                withGetter = true
+            }
+            default("constructedTypeRef") {
+                value = error
+                withGetter = true
+            }
+            default("dispatchReceiver") {
+                value = error
+                withGetter = true
+            }
+            default("calleeReference") {
+                value = error
+                withGetter = true
+            }
+            default("isSuper") {
+                value = "!isThis"
+                withGetter = true
+            }
+            publicImplementation()
+        }
+
         impl(expression, "FirElseIfTrueCondition") {
             defaultTypeRefWithSource("FirImplicitBooleanTypeRef")
             useTypes(implicitBooleanTypeRefType)
@@ -154,6 +191,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = error
                 withGetter = true
             }
+            default("source") {
+                value = error
+                withGetter = true
+            }
             publicImplementation()
         }
 
@@ -174,6 +215,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("annotations") {
+                value = error
+                withGetter = true
+            }
+            default("source") {
                 value = error
                 withGetter = true
             }

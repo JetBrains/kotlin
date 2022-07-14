@@ -23,26 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-@FirBuilderDsl
-class FirLazyExpressionBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
-
-    @OptIn(FirImplementationDetail::class)
-    override fun build(): FirExpression {
-        return FirLazyExpression(
-            source,
-        )
-    }
-
-
-    @Deprecated("Modification of 'annotations' has no impact for FirLazyExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildLazyExpression(init: FirLazyExpressionBuilder.() -> Unit = {}): FirExpression {
-    contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    return FirLazyExpressionBuilder().apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildLazyExpression(): FirExpression {
+    return FirLazyExpression()
 }

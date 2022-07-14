@@ -19,3 +19,6 @@ fun KtContractEffectList.getExpressions(): List<KtExpression> =
         .map {
             it.getExpression()
         }
+
+fun KtContractEffectList.getExpressionsCount(): Int =
+    getStubOrPsiChildrenAsList(KtStubElementTypes.CONTRACT_EFFECT).size

@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirLazyExpression @FirImplementationDetail constructor(
-    override val source: KtSourceElement?,
-) : FirExpression() {
+class FirLazyExpression : FirExpression() {
+    override val source: KtSourceElement? get() = error("FirLazyExpression should be calculated before accessing")
     override val typeRef: FirTypeRef get() = error("FirLazyExpression should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyExpression should be calculated before accessing")
 

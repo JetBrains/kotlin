@@ -1,44 +1,44 @@
 FILE: annotation.kt
-    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) public? final? annotation class base : R|kotlin/Annotation| {
+    @Target(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? annotation class base : R|kotlin/Annotation| {
         public? constructor(): R|base| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
     @base() public? final? annotation class derived : R|kotlin/Annotation| {
         public? constructor(): R|derived| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
     }
     @base() public? final? class correct : R|kotlin/Any| {
         public? constructor(@base() x: Int): R|correct| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         @base() public? final? val x: Int = R|<local>/x|
             public? get(): Int
 
         @base() public? constructor(): R|correct| {
-            this<R|correct|>(IntegerLiteral(0))
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_THIS
         }
 
     }
     @base() public? final? enum class My : R|kotlin/Enum<My>| {
         private constructor(): R|My| {
-            super<R|kotlin/Enum<My>|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         @base() public final static enum entry FIRST: R|My| = object : R|My| {
             private constructor(): R|<anonymous>| {
-                super<R|My|>()
+                LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
             }
 
         }
 
         @base() public final static enum entry SECOND: R|My| = object : R|My| {
             private constructor(): R|<anonymous>| {
-                super<R|My|>()
+                LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
             }
 
         }

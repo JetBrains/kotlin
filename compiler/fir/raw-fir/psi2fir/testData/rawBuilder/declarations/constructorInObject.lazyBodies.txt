@@ -1,25 +1,24 @@
 FILE: constructorInObject.kt
     public? final? object A : R|kotlin/Any| {
         public? constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_THIS
         }
 
-        init {
-        }
+        init { LAZY_BLOCK }
 
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
         private constructor(): R|B| {
-            super<R|kotlin/Enum<B>|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public final static enum entry X: R|B| = object : R|B| {
             private constructor(): R|<anonymous>| {
-                super<R|B|>()
+                LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
             }
 
             public? constructor(): R|<anonymous>| {
-                super<R|B|>()
+                LAZY_DELEGATED_CONSTRUCTOR_CALL_THIS
             }
 
         }
@@ -36,12 +35,12 @@ FILE: constructorInObject.kt
     }
     public? final? class C : R|kotlin/Any| {
         public? constructor(): R|C| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? companion object Companion : R|kotlin/Any| {
             public? constructor(): R|C.Companion| {
-                super<R|kotlin/Any|>()
+                LAZY_DELEGATED_CONSTRUCTOR_CALL_THIS
             }
 
         }

@@ -644,19 +644,27 @@ class FirRenderer(
         }
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
-            val dispatchReceiver = delegatedConstructorCall.dispatchReceiver
-            if (dispatchReceiver !is FirNoReceiverExpression) {
-                dispatchReceiver.accept(this)
-                print(".")
+            if (delegatedConstructorCall is FirLazyDelegatedConstructorCall) {
+                if (delegatedConstructorCall.isSuper) {
+                    print("LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER")
+                } else {
+                    print("LAZY_DELEGATED_CONSTRUCTOR_CALL_THIS")
+                }
+            } else {
+                val dispatchReceiver = delegatedConstructorCall.dispatchReceiver
+                if (dispatchReceiver !is FirNoReceiverExpression) {
+                    dispatchReceiver.accept(this)
+                    print(".")
+                }
+                if (delegatedConstructorCall.isSuper) {
+                    print("super<")
+                } else if (delegatedConstructorCall.isThis) {
+                    print("this<")
+                }
+                delegatedConstructorCall.constructedTypeRef.accept(this)
+                print(">")
+                visitCall(delegatedConstructorCall)
             }
-            if (delegatedConstructorCall.isSuper) {
-                print("super<")
-            } else if (delegatedConstructorCall.isThis) {
-                print("this<")
-            }
-            delegatedConstructorCall.constructedTypeRef.accept(this)
-            print(">")
-            visitCall(delegatedConstructorCall)
         }
 
         override fun visitTypeRef(typeRef: FirTypeRef) {
