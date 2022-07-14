@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.project.model.infra.generate
 import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.TestClassModel
-import org.jetbrains.kotlin.project.model.coreCases.KpmCoreCase
+import org.jetbrains.kotlin.project.model.coreCases.KpmTestCaseDescriptor
 import org.jetbrains.kotlin.project.model.infra.KpmTestCase
 import org.jetbrains.kotlin.project.model.infra.generateTemplateCanonicalFileStructure
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -55,7 +55,7 @@ class KpmCoreCasesTestClassModel(
         get() = emptyList() // Don't need to annotate with `@ExtendWith`, because we inherit [KpmCoreCasesTestRunner]
 
     private fun doCollectMethods(): Collection<MethodModel> {
-        val allCoreCasesNames: Set<String> = KpmCoreCase.allCasesNames
+        val allCoreCasesNames: Set<String> = KpmTestCaseDescriptor.allCasesNames
         val allAdditionalTestdata: Set<File> = additionalTestDataRoot.listFiles().orEmpty().toSet()
 
         val methodModelsForCoreCasesWithExistingTestData = allAdditionalTestdata.map { testDataForCase ->
@@ -83,9 +83,9 @@ class KpmCoreCasesTestClassModel(
 
         val methodModelsForCoreCasesWithoutTestData = coreCasesNamesWithoutTestData.map {
             val expectedTestDataPath = additionalTestDataRoot.resolve(it)
-            val kpmCoreCase = KpmCoreCase.allCasesByNames[it]!!
+            val kpmTestCaseDescriptor = KpmTestCaseDescriptor.allCaseDescriptorsByNames[it]!!
             println("Generating template sources testdata for uncovered KPM Core Case $it at ${additionalTestDataRoot.path}")
-            kpmCoreCase.case.generateTemplateCanonicalFileStructure(expectedTestDataPath)
+            kpmTestCaseDescriptor.generateTemplateCanonicalFileStructure(expectedTestDataPath)
 
             KpmCoreCaseTestMethodModel(it, additionalTestDataRoot, expectedTestDataPath)
         }

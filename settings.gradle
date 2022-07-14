@@ -243,6 +243,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":generators:test-generator",
         ":tools:kotlinp",
         ":kotlin-project-model",
+        ":kotlin-project-model-tests-generator",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin-idea",
         ":kotlin-gradle-plugin-idea-proto",
@@ -733,6 +734,7 @@ project(':kotlin-sam-with-receiver-compiler-plugin.cli').projectDir = "$rootDir/
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
+project(':kotlin-project-model-tests-generator').projectDir = "$rootDir/libraries/tools/kotlin-project-model-tests-generator" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-idea').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-idea" as File
 project(':kotlin-gradle-plugin-idea-proto').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-idea-proto" as File

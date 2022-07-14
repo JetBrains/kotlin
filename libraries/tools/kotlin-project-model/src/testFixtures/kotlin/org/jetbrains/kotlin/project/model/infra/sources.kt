@@ -99,7 +99,7 @@ private fun TestKpmFragment.canonicalSourceFolderRelative(): File {
         fragmentName
     )
 
-    return File(pathParts.joinToString(separator = "/"))
+    return File(pathParts.joinToString(separator = File.separator))
 }
 
 private val PLACEHOLDER_SOURCES_TEXT = """
