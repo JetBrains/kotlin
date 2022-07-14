@@ -47,9 +47,11 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.storage.StorageManager
 
 class CommonAnalysisParameters(
-    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
+    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider,
+    val klibMetadataPackageFragmentProviderFactory: KlibMetadataPackageFragmentProviderFactory? = null,
 ) : PlatformAnalysisParameters
 
 /**
@@ -105,12 +107,18 @@ class CommonResolverForModuleFactory(
             languageVersionSettings, targetPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
         )
 
+        val klibMetadataPackageFragmentProvider =
+            platformParameters.klibMetadataPackageFragmentProviderFactory?.createPackageFragmentProvider(
+                PackageFragmentProviderCreationContext(moduleInfo, moduleContext.storageManager, languageVersionSettings, moduleDescriptor)
+            )
+
         val packageFragmentProviders =
             /** If this is a dependency module that [commonDependenciesContainer] knows about, get the package fragments from there */
             commonDependenciesContainer?.packageFragmentProviderForModuleInfo(moduleInfo)?.let(::listOf)
-                ?: listOf(
+                ?: listOfNotNull(
                     container.get<ResolveSession>().packageFragmentProvider,
-                    container.get<MetadataPackageFragmentProvider>()
+                    container.get<MetadataPackageFragmentProvider>(),
+                    klibMetadataPackageFragmentProvider,
                 )
 
         return ResolverForModule(
@@ -154,7 +162,7 @@ class CommonResolverForModuleFactory(
             )
 
             val projectContext = ProjectContext(project, "metadata serializer")
-            @Suppress("NAME_SHADOWING")
+
             val resolver = ResolverForSingleModuleProject<ModuleInfo>(
                 "sources for metadata serializer",
                 projectContext,
@@ -209,6 +217,19 @@ interface CommonDependenciesContainer {
     val friendModuleInfos: List<ModuleInfo>
     val refinesModuleInfos: List<ModuleInfo>
 }
+
+fun interface KlibMetadataPackageFragmentProviderFactory {
+    fun createPackageFragmentProvider(
+        context: PackageFragmentProviderCreationContext
+    ): PackageFragmentProvider?
+}
+
+class PackageFragmentProviderCreationContext(
+    val moduleInfo: ModuleInfo,
+    val storageManager: StorageManager,
+    val languageVersionSettings: LanguageVersionSettings,
+    val moduleDescriptor: ModuleDescriptor,
+)
 
 private fun createContainerToResolveCommonCode(
     moduleContext: ModuleContext,
