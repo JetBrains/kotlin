@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
@@ -46,6 +47,8 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 open class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
@@ -56,6 +59,28 @@ open class JvmIrCodegenFactory(
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
 ) : CodegenFactory {
+
+    @IDEAPluginsCompatibilityAPI(IDEAPlatforms._221, message = "Please migrate to the other constructor", plugins = "Android Studio")
+    constructor(
+        configuration: CompilerConfiguration,
+        phaseConfig: PhaseConfig?,
+        externalMangler: JvmDescriptorMangler? = null,
+        externalSymbolTable: SymbolTable? = null,
+        jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
+        @Suppress("UNUSED_PARAMETER")
+        prefixPhases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>? = null,
+        evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
+        shouldStubAndNotLinkUnboundSymbols: Boolean = false,
+    ) : this(
+        configuration,
+        phaseConfig,
+        externalMangler,
+        externalSymbolTable,
+        jvmGeneratorExtensions,
+        evaluatorFragmentInfoForPsi2Ir,
+        shouldStubAndNotLinkUnboundSymbols
+    )
+
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
         val symbolTable: SymbolTable,
