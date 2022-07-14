@@ -95,7 +95,10 @@ internal fun ReportSeverity.getSeverity(
         ReportSeverity.ERROR -> if (mapErrorToWarning) {
             ICReporter.ReportSeverity.WARNING
         } else {
-            TODO("No mapping exists for `ReportSeverity.ERROR`. Add `ICReporter.ReportSeverity.ERROR` and fix this code, or set mapErrorToWarning = true.")
+            throw IllegalArgumentException(
+                "No mapping exists for `ReportSeverity.ERROR`." +
+                        " Add `ICReporter.ReportSeverity.ERROR` and remove mapErrorToWarning, or set mapErrorToWarning = true."
+            )
         }
         ReportSeverity.WARNING -> ICReporter.ReportSeverity.WARNING
         ReportSeverity.INFO -> if (mapInfoToWarning) {
