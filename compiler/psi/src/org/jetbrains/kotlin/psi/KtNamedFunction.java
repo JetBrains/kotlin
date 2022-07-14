@@ -204,7 +204,8 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
         if (contextReceiverList != null) {
             return contextReceiverList.contextReceivers();
-        } else {
+        }
+        else {
             return Collections.emptyList();
         }
     }
@@ -259,7 +260,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     public boolean mayHaveContract() {

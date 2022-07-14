@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -26,6 +27,10 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
         override fun visitElement(element: FirElement) {
             TestCase.assertFalse("${FirLazyBlock::class.qualifiedName} should not present in the tree", element is FirLazyBlock)
             TestCase.assertFalse("${FirLazyExpression::class.qualifiedName} should not present in the tree", element is FirLazyExpression)
+            TestCase.assertFalse(
+                "${FirLazyDelegatedConstructorCall::class.qualifiedName} should not present in the tree",
+                element is FirLazyDelegatedConstructorCall
+            )
             element.acceptChildren(this)
         }
     }

@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -33,6 +34,9 @@ open class StubIndexService protected constructor() {
     }
 
     open fun indexFunction(stub: KotlinFunctionStub, sink: IndexSink) {
+    }
+
+    open fun <T : KtConstructor<T>> indexConstructor(stub: KotlinConstructorStub<T>, sink: IndexSink) {
     }
 
     open fun indexTypeAlias(stub: KotlinTypeAliasStub, sink: IndexSink) {

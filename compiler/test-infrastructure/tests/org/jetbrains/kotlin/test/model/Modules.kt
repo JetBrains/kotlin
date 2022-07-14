@@ -59,7 +59,7 @@ class TestFile(
     val isAdditional: Boolean,
     val directives: RegisteredDirectives
 ) {
-    val name: String = relativePath.split("/").last()
+    val name: String = relativePath.split("/", "\\").last()
 }
 
 val TestFile.nameWithoutExtension: String

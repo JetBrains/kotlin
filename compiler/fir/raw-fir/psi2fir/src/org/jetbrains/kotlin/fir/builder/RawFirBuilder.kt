@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -58,32 +59,33 @@ open class RawFirBuilder(
     constructor(session: FirSession, baseScopeProvider: FirScopeProvider, mode: BodyBuildingMode = BodyBuildingMode.NORMAL) :
             this(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = mode)
 
-    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
+    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = runOnStabs { target.bind(function) }
 
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
-    private inline fun <T> disabledLazyMode(body: () -> T): T {
-        if (mode != BodyBuildingMode.LAZY_BODIES) return body()
-        return try {
-            mode = BodyBuildingMode.NORMAL
-            body()
-        } finally {
-            mode = BodyBuildingMode.LAZY_BODIES
+    private fun <T> runOnStabs(body: () -> T): T {
+        return when (mode) {
+            BodyBuildingMode.NORMAL -> body()
+            BodyBuildingMode.LAZY_BODIES -> {
+                AstLoadingFilter.disallowTreeLoading<T, Nothing> { body() }
+            }
         }
     }
 
     fun buildFirFile(file: KtFile): FirFile {
-        return file.accept(Visitor(), Unit) as FirFile
+        return runOnStabs { file.accept(Visitor(), Unit) as FirFile }
     }
 
     fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
-        return reference.accept(Visitor(), Unit) as FirTypeRef
+        return runOnStabs { reference.accept(Visitor(), Unit) as FirTypeRef }
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
-        return this.toKtPsiSourceElement(actualKind)
+        return runOnStabs {
+            val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+            return@runOnStabs this.toKtPsiSourceElement(actualKind)
+        }
     }
 
     override val PsiElement.elementType: IElementType
@@ -259,14 +261,12 @@ open class RawFirBuilder(
         ): FirDeclaration {
             return when (this) {
                 is KtSecondaryConstructor -> {
-                    disabledLazyMode {
-                        toFirConstructor(
-                            delegatedSuperType,
-                            delegatedSelfType,
-                            owner,
-                            ownerTypeParameters
-                        )
-                    }
+                    toFirConstructor(
+                        delegatedSuperType,
+                        delegatedSelfType,
+                        owner,
+                        ownerTypeParameters
+                    )
                 }
                 is KtEnumEntry -> {
                     val primaryConstructor = owner.primaryConstructor
@@ -274,9 +274,7 @@ open class RawFirBuilder(
                         primaryConstructor?.valueParameters?.isEmpty() ?: owner.secondaryConstructors.let { constructors ->
                             constructors.isEmpty() || constructors.any { it.valueParameters.isEmpty() }
                         }
-                    disabledLazyMode {
-                        toFirEnumEntry(delegatedSelfType, ownerClassHasDefaultConstructor)
-                    }
+                    toFirEnumEntry(delegatedSelfType, ownerClassHasDefaultConstructor)
                 }
                 is KtProperty -> {
                     convertProperty(
@@ -313,10 +311,7 @@ open class RawFirBuilder(
                 !hasBody() ->
                     null to null
                 mode == BodyBuildingMode.LAZY_BODIES -> {
-                    val block = buildLazyBlock {
-                        source = bodyExpression?.toFirSourceElement()
-                            ?: error("hasBody() == true but body is null")
-                    }
+                    val block = buildLazyBlock()
                     block to null
                 }
                 hasBlockBody() -> {
@@ -490,9 +485,7 @@ open class RawFirBuilder(
             }
             val status = obtainPropertyComponentStatus(componentVisibility, this, property)
             val backingFieldInitializer = when {
-                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
-                    source = this@toFirBackingField?.initializer?.toFirSourceElement()
-                }
+                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
                 this?.hasInitializer() != true -> null
                 else -> this@toFirBackingField.initializer?.toFirExpression("Should have initializer")
             }
@@ -530,7 +523,7 @@ open class RawFirBuilder(
             valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation>
         ): FirValueParameter {
-            val name = convertValueParameterName(nameAsSafeName, nameIdentifier?.node?.text, valueParameterDeclaration)
+            val name = convertValueParameterName(nameAsSafeName, getName(), valueParameterDeclaration)
             return buildValueParameter {
                 source = toFirSourceElement()
                 moduleData = baseModuleData
@@ -543,9 +536,11 @@ open class RawFirBuilder(
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
                 defaultValue = if (hasDefaultValue()) {
-                    disabledLazyMode {
-                        // TODO build lazy initializers here
-                        { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
+                    when (mode) {
+                        BodyBuildingMode.NORMAL -> {
+                            { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
+                        }
+                        BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
                     }
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
@@ -738,7 +733,10 @@ open class RawFirBuilder(
             val argumentList = buildArgumentList {
                 source = valueArgumentList?.toFirSourceElement()
                 for (argument in valueArguments) {
-                    val argumentExpression = disabledLazyMode { argument.toFirExpression() }
+                    val argumentExpression = when (mode) {
+                        BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
+                        BodyBuildingMode.NORMAL -> argument.toFirExpression()
+                    }
                     arguments += when (argument) {
                         is KtLambdaArgument -> buildLambdaArgumentExpression {
                             source = argument.toFirSourceElement()
@@ -863,17 +861,26 @@ open class RawFirBuilder(
             val constructorCall = superTypeCallEntry?.toFirSourceElement()
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
-            val firDelegatedCall = if (containingClassIsExpectClass) null else buildDelegatedConstructorCall {
-                source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-                isThis = false
-                calleeReference = buildExplicitSuperReference {
-                    source = superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                        ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
-                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+            val firDelegatedCall =
+                if (containingClassIsExpectClass) null else {
+                    when (mode) {
+                        BodyBuildingMode.NORMAL -> {
+                            buildDelegatedConstructorCall {
+                                source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                                isThis = false
+                                calleeReference = buildExplicitSuperReference {
+                                    source =
+                                        superTypeCallEntry?.calleeExpression?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                            ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                                }
+                                superTypeCallEntry?.extractArgumentsTo(this)
+                            }
+                        }
+                        BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall({ isThis = false })
+                    }
                 }
-                superTypeCallEntry?.extractArgumentsTo(this)
-            }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
             fun defaultVisibility() = when {
@@ -913,7 +920,10 @@ open class RawFirBuilder(
             if (hasModifier(INNER_KEYWORD)) dispatchReceiverForInnerClassConstructor() else null
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            context.packageFqName = if (psiMode == PsiHandlingMode.COMPILER) file.packageFqNameByTree else file.packageFqName
+            context.packageFqName = when (psiMode) {
+                PsiHandlingMode.COMPILER -> file.packageFqNameByTree
+                PsiHandlingMode.IDE -> file.packageFqName
+            }
             return buildFile {
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1024,17 +1034,11 @@ open class RawFirBuilder(
             }
         }
 
-        override fun visitClassInitializer(initializer: KtClassInitializer, data: Unit?): FirElement {
-            return disabledLazyMode {
-                super.visitClassInitializer(initializer, data)
-            }
-        }
-
         private fun convertContextReceivers(receivers: List<KtContextReceiver>): List<FirContextReceiver> {
             return receivers.map { contextReceiverElement ->
                 buildContextReceiver {
                     this.source = contextReceiverElement.toFirSourceElement()
-                    this.customLabelName = contextReceiverElement.labelNameAsName()
+                    this.customLabelName = contextReceiverElement.labelName()?.let(Name::identifier)
                     this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
 
                     contextReceiverElement.typeReference().convertSafe<FirTypeRef>()?.let {
@@ -1357,8 +1361,17 @@ open class RawFirBuilder(
         }
 
         private fun KtContractEffectList.extractRawEffects(destination: MutableList<FirExpression>) {
-            getExpressions()
-                .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
+            when (mode) {
+                BodyBuildingMode.NORMAL -> {
+                    getExpressions()
+                        .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
+                }
+                BodyBuildingMode.LAZY_BODIES -> {
+                    for (_i in 0 until getExpressionsCount()) {
+                        destination.add(buildLazyExpression())
+                    }
+                }
+            }
         }
 
         override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit): FirElement {
@@ -1478,10 +1491,10 @@ open class RawFirBuilder(
                 }
                 dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
-                delegatedConstructor = getDelegationCall().convert(
-                    delegatedSuperTypeRef,
-                    delegatedSelfTypeRef,
-                )
+                delegatedConstructor = when (mode) {
+                    BodyBuildingMode.NORMAL -> getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
+                    BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall({ isThis = true })
+                }
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
@@ -1543,9 +1556,7 @@ open class RawFirBuilder(
             val isVar = isVar
             val propertyInitializer = when {
                 !hasInitializer() -> null
-                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression {
-                    source = initializer?.toFirSourceElement()
-                }
+                mode == BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
                 else -> initializer.toFirExpression("Should have initializer")
 
             }
@@ -1641,16 +1652,15 @@ open class RawFirBuilder(
                         if (hasDelegate()) {
                             fun extractDelegateExpression() = when (mode) {
                                 BodyBuildingMode.NORMAL -> this@toFirProperty.delegate?.expression.toFirExpression("Should have delegate")
-                                BodyBuildingMode.LAZY_BODIES -> this@toFirProperty.delegate?.expression?.let {
-                                    buildLazyExpression { source = it.toFirSourceElement() }
-                                } ?: buildErrorExpression {
-                                    ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
-                                }
+                                BodyBuildingMode.LAZY_BODIES -> buildLazyExpression()
                             }
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
-                                source = delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                                source = when (mode) {
+                                    BodyBuildingMode.NORMAL -> delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
+                                    BodyBuildingMode.LAZY_BODIES -> null
+                                }
                                 expression = extractDelegateExpression()
                             }
 
@@ -1683,7 +1693,12 @@ open class RawFirBuilder(
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                body = initializer.body.toFirBlock()
+                body =
+                    when (mode) {
+                        BodyBuildingMode.NORMAL -> initializer.body.toFirBlock()
+                        BodyBuildingMode.LAZY_BODIES -> buildLazyBlock()
+                    }
+
             }
         }
 
@@ -1878,10 +1893,6 @@ open class RawFirBuilder(
 
             val expressionSource = expression.toFirSourceElement()
             var diagnostic: ConeDiagnostic? = null
-            val rawText = expression.getReferencedNameElement().node.text
-            if (rawText.isUnderscore) {
-                diagnostic = ConeUnderscoreUsageWithoutBackticks(expressionSource)
-            }
 
             return generateAccessExpression(
                 qualifiedSource,

@@ -25,33 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-@FirBuilderDsl
-class FirLazyBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: KtSourceElement? = null
-
-    @OptIn(FirImplementationDetail::class)
-    override fun build(): FirBlock {
-        return FirLazyBlock(
-            source,
-        )
-    }
-
-
-    @Deprecated("Modification of 'annotations' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirLazyBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildLazyBlock(init: FirLazyBlockBuilder.() -> Unit = {}): FirBlock {
-    contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
-    }
-    return FirLazyBlockBuilder().apply(init).build()
+@OptIn(FirImplementationDetail::class)
+fun buildLazyBlock(): FirBlock {
+    return FirLazyBlock()
 }

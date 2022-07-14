@@ -4,7 +4,7 @@ FILE: arrayAccess.kt
     public? final? fun foo(): <implicit> { LAZY_BLOCK }
     public? final? class Wrapper : R|kotlin/Any| {
         public? constructor(v: IntArray): R|Wrapper| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? val v: IntArray = R|<local>/v|

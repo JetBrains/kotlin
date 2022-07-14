@@ -1,7 +1,7 @@
 FILE: destructuring.kt
     public? final? data class Some : R|kotlin/Any| {
         public? constructor(first: Int, second: Double, third: String): R|Some| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? val first: Int = R|<local>/first|
