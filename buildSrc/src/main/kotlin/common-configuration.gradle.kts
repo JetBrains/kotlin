@@ -139,6 +139,7 @@ fun Project.configureKotlinCompilationOptions() {
         }
 
         val jvmCompilerArgs = listOf(
+            "-Xlambdas=indy",
             "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
             "-Xsuppress-deprecated-jvm-target-warning" // Remove as soon as there are no modules for JDK 1.6 & 1.7
