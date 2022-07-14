@@ -10,7 +10,7 @@ FILE: nestedClass.kt
     }
     public? final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
-            super<R|kotlin/Any|>()
+            LAZY_DELEGATED_CONSTRUCTOR_CALL_SUPER
         }
 
         public? final? class Derived : Base {

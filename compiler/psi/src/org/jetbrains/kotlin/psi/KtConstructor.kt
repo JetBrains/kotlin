@@ -68,9 +68,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     override fun hasBody(): Boolean {
-        if (stub != null) {
-            return stub!!.hasBody()
-        }
+        stub?.let { return it.hasBody() }
         return bodyExpression != null
     }
 
