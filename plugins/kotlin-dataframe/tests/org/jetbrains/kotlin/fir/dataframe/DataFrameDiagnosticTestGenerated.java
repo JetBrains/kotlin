@@ -54,14 +54,14 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
-    @TestMetadata("OuterClass.kt")
-    public void testOuterClass() throws Exception {
-        runTest("plugins/kotlin-dataframe/testData/diagnostics/OuterClass.kt");
+    @TestMetadata("insert.kt")
+    public void testInsert() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/diagnostics/insert.kt");
     }
 
     @Test
-    @TestMetadata("processDslWithExtensionFun.kt")
-    public void testProcessDslWithExtensionFun() throws Exception {
-        runTest("plugins/kotlin-dataframe/testData/diagnostics/processDslWithExtensionFun.kt");
+    @TestMetadata("OuterClass.kt")
+    public void testOuterClass() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/diagnostics/OuterClass.kt");
     }
 }

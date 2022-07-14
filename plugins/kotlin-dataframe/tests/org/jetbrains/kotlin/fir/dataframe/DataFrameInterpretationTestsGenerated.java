@@ -24,8 +24,26 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
     }
 
     @Test
+    @TestMetadata("dataFrame.kt")
+    public void testDataFrame() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/dataFrame.kt");
+    }
+
+    @Test
+    @TestMetadata("insertClause.kt")
+    public void testInsertClause() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/insertClause.kt");
+    }
+
+    @Test
     @TestMetadata("string.kt")
     public void testString() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/interpretation/string.kt");
+    }
+
+    @Test
+    @TestMetadata("type.kt")
+    public void testType() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/type.kt");
     }
 }

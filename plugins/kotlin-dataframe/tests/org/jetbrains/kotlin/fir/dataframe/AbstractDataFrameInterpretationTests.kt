@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
+import org.jetbrains.kotlinx.dataframe.plugin.InsertClauseApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import kotlin.test.assertEquals
 
 abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest() {
@@ -62,7 +66,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
                     val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
-                    assertEquals(expectedResult(id), result)
+                    assertEquals(expectedResult(id) ?: "no result for id $id", result)
                 }
             }
             return emptyList()
@@ -70,7 +74,16 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
 
         fun expectedResult(id: String): Any? {
             val map = mapOf(
-                "string_1" to "42"
+                "string_1" to "42",
+                "string_2" to "42",
+                "dataFrame_1" to PluginDataFrameSchema(listOf(SimpleCol("i", TypeApproximationImpl("kotlin.Int", false)))),
+                "dataFrame_2" to PluginDataFrameSchema(emptyList()),
+                "type_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+                "insert_1" to InsertClauseApproximation(
+                    PluginDataFrameSchema(columns = emptyList()),
+                    SimpleCol("b", TypeApproximationImpl("kotlin.Int", false))
+                ),
+
             )
             return map[id]
         }

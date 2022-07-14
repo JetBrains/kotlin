@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -13,13 +14,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
-import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
-import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
-import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
+import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 
@@ -31,14 +30,15 @@ fun <T> FirExpressionResolutionExtension.interpret(
 
     val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
-    val expectedArgsMap = processor.expectedArguments.associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
+    val expectedArgsMap = processor.expectedArguments
+        .filter { it.defaultValue is Absent }
+        .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
     if (expectedArgsMap.keys != actualArgsMap.keys) {
         val message = buildString {
             appendLine("ERROR: Different set of arguments")
             appendLine("Implementation class: $processor")
             appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
-            appendLine("Make sure all arguments are annotated")
             val diff = actualArgsMap.keys - expectedArgsMap.keys
             appendLine("Passed, but not expected: ${diff}")
             appendLine("add arguments to an interpeter:")
@@ -61,12 +61,12 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         Interpreter.Success(expression.arguments.map { (it as FirConstExpression<*>).value })
                     }
 
-                    else -> {
-                        val call = expression as FirFunctionCall
-                        val interpreter = call.loadInterpreter()
-                            ?: TODO("receiver ${call.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
+                    is FirFunctionCall -> {
+                        val interpreter = expression.loadInterpreter()
+                            ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable. It can be DataFrame instance, but it's not supported rn")
                         interpret(expression, interpreter, emptyMap())
                     }
+                    else -> TODO(expression::class.toString())
                 }
             }
 
@@ -92,8 +92,9 @@ fun <T> FirExpressionResolutionExtension.interpret(
                     "'$name' should be ${PluginDataFrameSchema::class.qualifiedName!!}, but plugin expect $expectedReturnType"
                 }
 
-                val arg = it.expression.getSchema().schemaArg
-                val schemaTypeArg = (it.expression.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
+                val objectWithSchema = it.expression.getSchema()
+                val arg = objectWithSchema.schemaArg
+                val schemaTypeArg = (objectWithSchema.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
                 if (schemaTypeArg.isStarProjection) {
                     PluginDataFrameSchema(emptyList())
                 } else {
@@ -146,15 +147,20 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
 internal val FirExpressionResolutionExtension.getSchema: FirExpression.() -> ObjectWithSchema get() = { getSchema(session) }
 
 internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema {
-    return typeRef.coneTypeSafe<ConeClassLikeType>()!!.toSymbol(session)!!.let {
-        it.annotations.firstNotNullOfOrNull {
+    return typeRef.toClassLikeSymbol(session)!!.let {
+        val (typeRef, symbol) = if (it is FirTypeAliasSymbol) {
+            it.resolvedExpandedTypeRef to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
+        } else {
+            typeRef to it
+        }
+        symbol.annotations.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 @Suppress("UNCHECKED_CAST") val schemaArg = (it.findArgumentByName(argumentName) as FirConstExpression<Int>).value
-                ObjectWithSchema(schemaArg)
+                ObjectWithSchema(schemaArg, typeRef)
             }
-        } ?: error("Annotate ${it} with @HasSchema")
+        } ?: error("Annotate ${symbol} with @HasSchema")
     }
 }
 
-internal class ObjectWithSchema(val schemaArg: Int)
+internal class ObjectWithSchema(val schemaArg: Int, val typeRef: FirTypeRef)
