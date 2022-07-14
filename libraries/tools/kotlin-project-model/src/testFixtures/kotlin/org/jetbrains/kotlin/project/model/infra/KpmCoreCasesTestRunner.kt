@@ -11,11 +11,33 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+/**
+ * Base class for testing KPM Core cases
+ *
+ * All core cases are listed here as abstract tests and will be required,
+ * to be overridden introducing a compile-time check that as soon as new
+ * case is added, it will be covered in all inheritors.
+ *
+ * For situation when a new Core Case is added, but is mistakenly not added
+ * to this interface, there's a [checkAllCoreCasesCovered], which will enforce
+ * that all Core Cases have a respective method in this interface
+ *
+ * Additionally, this interface uses [KpmCoreCasesJunitParameterResolver], which
+ * will inject a corresponding [KpmTestCase] into a test-method based on the
+ * method's name
+ */
 @ExtendWith(KpmCoreCasesJunitParameterResolver::class)
 interface KpmCoreCasesTestRunner {
-    fun runTest(kpmTestCase: KpmTestCase)
+    @Test
+    @Throws(Exception::class)
+    fun testSimpleProjectToProject(case: KpmTestCase)
 
     @Test
+    @Throws(Exception::class)
+    fun testSimpleTwoLevel(case: KpmTestCase)
+
+    @Test
+    @Throws(Exception::class)
     fun checkAllCoreCasesCovered() {
         val testRunnerClass = this::class.java
 
