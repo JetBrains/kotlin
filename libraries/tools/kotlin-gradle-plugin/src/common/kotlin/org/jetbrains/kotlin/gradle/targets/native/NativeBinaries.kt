@@ -136,8 +136,24 @@ class Executable constructor(
             }
         }
 
+    /**
+     * The fully qualified name of the main function. For an example:
+     *
+     * - "main"
+     * - "com.example.main"
+     *
+     *  The main function can either take no arguments or an Array<String>.
+     */
     var entryPoint: String? = null
 
+    /**
+     * Set the fully qualified name of the main function. For an example:
+     *
+     * - "main"
+     * - "com.example.main"
+     *
+     *  The main function can either take no arguments or an Array<String>.
+     */
     fun entryPoint(point: String?) {
         entryPoint = point
     }
