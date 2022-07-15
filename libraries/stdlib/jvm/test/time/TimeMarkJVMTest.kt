@@ -14,7 +14,7 @@ class TimeMarkJVMTest {
 
     @Test
     fun longDurationElapsed() {
-        TimeMarkTest().testLongDisplacement(TimeSource.Monotonic, { waitDuration -> Thread.sleep(waitDuration.inWholeMilliseconds) })
+        TimeMarkTest().testLongDisplacement(TimeSource.Monotonic, { waitDuration -> Thread.sleep((waitDuration * 1.1).inWholeMilliseconds) })
     }
 
     @Test
