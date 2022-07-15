@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -493,7 +494,7 @@ class Fir2IrConverter(
             val irBuiltIns =
                 IrBuiltInsOverFir(
                     components, languageVersionSettings, moduleDescriptor, irMangler,
-                    languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources)
+                    languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
                 )
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()
