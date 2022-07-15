@@ -10,18 +10,8 @@ fun interface Foo {
 fun baz(x: Any): Int = x.hashCode()
 
 // CHECK: define void @"kfun:#main(){}"()
-// Boxing/unboxing need to be used now due to non-devirtualized call
+// Boxing needs to be used now due to non-devirtualized call
 // CHECK: Int-box
-
-//  TODO  Remove two next checks, when advanced optimization of Int-unbox(Int-box(x)) would be done for snippet like:
-//  TODO  VAR IR_TEMPORARY_VARIABLE name:arg0 type:kotlin.Any [val]
-//  TODO    BLOCK type=kotlin.Any origin=null
-//  TODO      CALL <Int-box>
-//  TODO        GET_VAR 'val arg1: kotlin.Int [val]'
-//  TODO  CALL <Int-unbox>
-//  TODO    GET_VAR 'val arg0: kotlin.Any [val]'
-// CHECK: Int-box
-// CHECK: Int-unbox
 
 // CHECK-NOT: Int-box
 // CHECK-NOT: Int-unbox

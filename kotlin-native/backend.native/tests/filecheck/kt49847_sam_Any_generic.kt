@@ -10,12 +10,8 @@ fun interface Foo<T> {
 fun baz(x: Any): Int = x.hashCode()
 
 // CHECK: define void @"kfun:#main(){}"()
-// Boxing/unboxing need to be used now due to non-devirtualized call
-// CHECK: Int-box
 // CHECK-NOT: Int-box
-// CHECK: Int-unbox
 // CHECK-NOT: Int-unbox
-// CHECK-NOT: Int-box
 // CHECK: ret void
 fun main() {
     val foo: Foo<Int> = Foo(::baz)
