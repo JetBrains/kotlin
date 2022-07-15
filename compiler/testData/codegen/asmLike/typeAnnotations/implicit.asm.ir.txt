@@ -30,6 +30,10 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
+    private final static java.lang.String foo4$lambda$0(foo.Kotlin this$0)
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+
     public final void foo5()
 }
 

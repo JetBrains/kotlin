@@ -149,6 +149,8 @@ class JvmBackendContext(
 
     val inlineMethodGenerationLock = Any()
 
+    val directInvokedLambdas = mutableListOf<IrAttributeContainer>()
+
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
 
     init {

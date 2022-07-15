@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val functionReferencePhase = makeIrFilePhase(
     ::FunctionReferenceLowering,
@@ -98,6 +101,108 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         return FunctionReferenceBuilder(reference).build()
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.symbol.owner.isInvokeOperator()) {
+            when (val receiver = expression.dispatchReceiver) {
+                is IrFunctionReference -> {
+                    rewriteDirectInvokeToFunctionReference(expression, receiver)?.let {
+                        it.transformChildrenVoid()
+                        return it
+                    }
+                }
+                is IrBlock -> {
+                    val last = receiver.statements.last()
+                    if (last is IrFunctionReference) {
+                        rewriteDirectInvokeToLambda(expression, receiver, last)?.let {
+                            it.transformChildrenVoid()
+                            return it
+                        }
+                    }
+                }
+            }
+        }
+
+        expression.transformChildrenVoid(this)
+        return expression
+    }
+
+    private fun IrFunction.isInvokeOperator(): Boolean {
+        // For now, it's enough to check that the function name is 'invoke',
+        // because later we are looking at the dispatch receiver and check whether it's a function reference
+        // or a block returning a function reference.
+        return name == OperatorNameConventions.INVOKE
+    }
+
+    private fun rewriteDirectInvokeToLambda(irInvokeCall: IrCall, irBlock: IrBlock, lastFunRef: IrFunctionReference): IrExpression? {
+        val callee = lastFunRef.symbol.owner
+        if (callee.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && !callee.isAnonymousFunction)
+            return null
+        if (callee.parents.any { it is IrSimpleFunction && it.isInline }) {
+            // TODO investigate why inliner gets confused when we pass it a function with some optimized direct invoke.
+            return null
+        }
+        val irDirectCall = rewriteDirectInvokeToFunctionReference(irInvokeCall, lastFunRef)
+            ?: return null
+
+        // We track instances of IrFunctionImpl corresponding to direct invoked lambdas,
+        // so we can perform optimization on it later in ExpressionCodegen.kt
+        if (callee is IrFunctionImpl) context.directInvokedLambdas.add(callee.attributeOwnerId)
+        val newBlock = IrBlockImpl(irBlock.startOffset, irBlock.endOffset, irDirectCall.type)
+        newBlock.statements.addAll(irBlock.statements)
+        newBlock.statements[newBlock.statements.lastIndex] = irDirectCall
+        return newBlock
+    }
+
+    private fun rewriteDirectInvokeToFunctionReference(irInvokeCall: IrCall, irFunRef: IrFunctionReference): IrExpression? {
+        // TODO deal with type parameters somehow?
+        // It seems we can't encounter them in the code written by user,
+        // but this might be important later if we actually perform inlining and optimizations on IR.
+        return when (val irFun = irFunRef.symbol.owner) {
+            is IrSimpleFunction -> {
+                if (irFun.typeParameters.isNotEmpty()) return null
+                IrCallImpl(
+                    irInvokeCall.startOffset, irInvokeCall.endOffset, irInvokeCall.type,
+                    irFun.symbol,
+                    typeArgumentsCount = irFun.typeParameters.size, valueArgumentsCount = irFun.valueParameters.size
+                ).apply {
+                    copyReceiverAndValueArgumentsForDirectInvoke(irFunRef, irInvokeCall)
+                }
+            }
+            is IrConstructor ->
+                IrConstructorCallImpl(
+                    irInvokeCall.startOffset, irInvokeCall.endOffset, irInvokeCall.type,
+                    irFun.symbol,
+                    typeArgumentsCount = irFun.typeParameters.size,
+                    constructorTypeArgumentsCount = 0,
+                    valueArgumentsCount = irFun.valueParameters.size
+                ).apply {
+                    copyReceiverAndValueArgumentsForDirectInvoke(irFunRef, irInvokeCall)
+                }
+            else ->
+                throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
+        }
+    }
+
+    private fun IrFunctionAccessExpression.copyReceiverAndValueArgumentsForDirectInvoke(
+        irFunRef: IrFunctionReference,
+        irInvokeCall: IrFunctionAccessExpression
+    ) {
+        val irFun = irFunRef.symbol.owner
+        var invokeArgIndex = 0
+        if (irFun.dispatchReceiverParameter != null) {
+            dispatchReceiver = irFunRef.dispatchReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
+        }
+        if (irFun.extensionReceiverParameter != null) {
+            extensionReceiver = irFunRef.extensionReceiver ?: irInvokeCall.getValueArgument(invokeArgIndex++)
+        }
+        if (invokeArgIndex + valueArgumentsCount != irInvokeCall.valueArgumentsCount) {
+            throw AssertionError("Mismatching value arguments: $invokeArgIndex arguments used for receivers\n${irInvokeCall.dump()}")
+        }
+        for (i in 0 until valueArgumentsCount) {
+            putValueArgument(i, irInvokeCall.getValueArgument(invokeArgIndex++))
+        }
     }
 
     private fun wrapLambdaReferenceWithIndySamConversion(
