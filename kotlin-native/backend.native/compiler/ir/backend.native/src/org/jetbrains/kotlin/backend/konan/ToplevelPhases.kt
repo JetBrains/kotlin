@@ -302,7 +302,8 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                         coroutinesPhase,
                         typeOperatorPhase,
                         expressionBodyTransformPhase,
-                        constantInliningPhase,
+//                        Disabled for now because it leads to problems with Double.NaN and Float.NaN on macOS AArch 64.
+//                        constantInliningPhase,
                         fileInitializersPhase,
                         bridgesPhase,
                         autoboxPhase,
