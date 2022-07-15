@@ -11086,6 +11086,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("twoReceiverCandidatesError.kt")
+                public void testTwoReceiverCandidatesError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/twoReceiverCandidatesError.kt");
+                }
+
+                @Test
                 @TestMetadata("typeParameterAsContextReceiver.kt")
                 public void testTypeParameterAsContextReceiver() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterAsContextReceiver.kt");

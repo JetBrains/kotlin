@@ -704,7 +704,10 @@ internal object CheckReceivers : ResolutionPart() {
         val extensionReceiverParameter = candidateDescriptor.extensionReceiverParameter ?: return null
         val compatible = receiverCandidates.mapNotNull { getReceiverArgumentWithConstraintIfCompatible(it, extensionReceiverParameter) }
         return when (compatible.size) {
-            0 -> null
+            0 -> {
+                addDiagnostic(NoMatchingContextReceiver())
+                null
+            }
             1 -> compatible.single().argument
             else -> {
                 addDiagnostic(ContextReceiverAmbiguity())
