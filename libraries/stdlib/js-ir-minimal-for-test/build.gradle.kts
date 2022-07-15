@@ -47,7 +47,8 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/src/kotlin/text/**",
                 "libraries/stdlib/src/kotlin/time/**",
                 "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
-                "libraries/stdlib/src/kotlin/util/Tuples.kt"
+                "libraries/stdlib/src/kotlin/util/Tuples.kt",
+                "libraries/stdlib/src/kotlin/enums/EnumEntries.kt"
             )
         )
         fullCommonMainSources.outputs.files.singleFile
