@@ -433,20 +433,23 @@ fun generateSingleWrappedModuleBody(
     )
 }
 
-class SourceMapsInfo(
+data class SourceMapsInfo(
     val sourceMapPrefix: String,
     val sourceRoots: List<String>,
     val outputDir: File?,
     val sourceMapContentEmbedding: SourceMapSourceEmbedding,
 ) {
     companion object {
-        fun from(configuration: CompilerConfiguration) : SourceMapsInfo {
-            return SourceMapsInfo(
-                configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, ""),
-                configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()),
-                configuration.get(JSConfigurationKeys.OUTPUT_DIR),
-                configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
-            )
-        }
+        fun from(configuration: CompilerConfiguration): SourceMapsInfo? =
+            if (configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
+                SourceMapsInfo(
+                    configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, ""),
+                    configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()),
+                    configuration.get(JSConfigurationKeys.OUTPUT_DIR),
+                    configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
+                )
+            } else {
+                null
+            }
     }
 }
