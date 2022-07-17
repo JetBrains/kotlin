@@ -54,7 +54,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             get() = if (name == null) workingDir.resolve("javaOut") else workingDir.resolve("$name/javaOut")
 
         val directives: File
-            get() = workingDir.resolve("directives.txt")
+            get() = projectDir.resolve("directives.txt")
 
         override fun toString(): String =
             "compilation '$name'"
@@ -69,6 +69,8 @@ abstract class BaseJvmAbiTest : TestCase() {
             dep.abiDir
         }
 
+        val directives = if (compilation.directives.exists()) compilation.directives.readText() else null
+
         val messageCollector = LocationReportingTestMessageCollector()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
@@ -81,9 +83,12 @@ abstract class BaseJvmAbiTest : TestCase() {
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             useOldBackend = !useIrBackend
-            languageVersion = if (!compilation.directives.exists()) null else {
-                InTextDirectivesUtils.findStringWithPrefixes(compilation.directives.readText(), "// LANGUAGE_VERSION:")
-            }
+            languageVersion =
+                if (directives != null)
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// LANGUAGE_VERSION:")
+                else null
+            noSourceDebugExtension =
+                directives != null && InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
