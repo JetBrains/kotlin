@@ -196,7 +196,7 @@ class ClassCodegen private constructor(
 
         addReifiedParametersFromSignature()
 
-        visitor.done()
+        visitor.done(state.generateSmapCopyToAnnotation)
         jvmSignatureClashDetector.reportErrors(classOrigin)
     }
 

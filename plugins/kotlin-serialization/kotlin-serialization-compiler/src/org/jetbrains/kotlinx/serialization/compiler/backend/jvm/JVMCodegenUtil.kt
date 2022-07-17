@@ -768,7 +768,7 @@ internal fun createSingletonLambda(
     }
 
     writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state, false)
-    lambdaClassBuilder.done()
+    lambdaClassBuilder.done(lambdaCodegen.state.generateSmapCopyToAnnotation)
 
     return lambdaType
 }

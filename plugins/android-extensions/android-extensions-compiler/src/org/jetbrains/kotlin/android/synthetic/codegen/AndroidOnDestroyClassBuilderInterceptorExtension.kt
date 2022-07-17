@@ -78,7 +78,7 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             if (hasCache && !hasOnDestroy) {
                 val mv = newMethod(
                     JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PUBLIC or Opcodes.ACC_SYNTHETIC, ON_DESTROY_METHOD_NAME, "()V",
@@ -91,7 +91,7 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
                 mv.visitMaxs(1, 1)
                 mv.visitEnd()
             }
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
 
         override fun newMethod(

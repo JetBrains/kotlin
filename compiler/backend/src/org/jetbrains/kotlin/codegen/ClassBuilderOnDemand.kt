@@ -30,9 +30,9 @@ class ClassBuilderOnDemand(createClassBuilder: () -> ClassBuilder) : DelegatingC
         classBuilder()
     }
 
-    override fun done() {
+    override fun done(generateSmapCopyToAnnotation: Boolean) {
         if (isComputed) {
-            classBuilder().done()
+            classBuilder().done(generateSmapCopyToAnnotation)
         }
     }
 }

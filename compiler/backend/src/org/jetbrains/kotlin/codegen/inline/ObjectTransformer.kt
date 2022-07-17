@@ -97,7 +97,7 @@ class WhenMappingTransformer(
             transformedClinit.signature, transformedClinit.exceptions.toTypedArray()
         )
         transformedClinit.accept(result)
-        classBuilder.done()
+        classBuilder.done(state.generateSmapCopyToAnnotation)
 
         return transformationResult
     }

@@ -435,6 +435,12 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     var noUnifiedNullChecks: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xno-source-debug-extension",
+        description = "Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP"
+    )
+    var noSourceDebugExtension: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xprofile",
         valueDescription = "<profilerPath:command:outputDir>",
         description = "Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.\n" +

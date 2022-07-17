@@ -95,7 +95,7 @@ class SignatureDumpingBuilderFactory(
             return super.newField(origin, access, name, desc, signature, value)
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             if (firstClassWritten) outputStream.append(",\n") else firstClassWritten = true
             outputStream.append("\t{\n")
             origin.descriptor?.let {
@@ -122,7 +122,7 @@ class SignatureDumpingBuilderFactory(
             }}
             outputStream.append("\n\t\t]\n\t}")
 
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
     }
 }

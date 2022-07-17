@@ -71,7 +71,7 @@ abstract class SignatureCollectingClassBuilderFactory(
             return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             for ((signature, elementsAndDescriptors) in signatures.entrySet()) {
                 if (elementsAndDescriptors.size == 1) continue // no clash
                 handleClashingSignatures(ConflictingJvmDeclarationsData(
@@ -82,7 +82,7 @@ abstract class SignatureCollectingClassBuilderFactory(
                 ))
             }
             onClassDone(classCreatedFor, classInternalName, signatures)
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
 
     }

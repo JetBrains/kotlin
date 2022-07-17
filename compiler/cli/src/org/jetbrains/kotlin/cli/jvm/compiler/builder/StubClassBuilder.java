@@ -193,11 +193,11 @@ public class StubClassBuilder extends AbstractClassBuilder {
     }
 
     @Override
-    public void done() {
+    public void done(boolean generateSmapCopyToAnnotation) {
         if (!isPackageClass) {
             StubElement pop = parentStack.pop();
             assert pop == v.getResult() : "parentStack: got " + pop + ", expected " + v.getResult();
         }
-        super.done();
+        super.done(generateSmapCopyToAnnotation);
     }
 }
