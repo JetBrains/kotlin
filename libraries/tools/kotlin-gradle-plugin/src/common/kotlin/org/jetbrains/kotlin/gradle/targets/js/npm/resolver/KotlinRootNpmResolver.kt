@@ -246,9 +246,6 @@ internal class KotlinRootNpmResolver internal constructor(
      */
     internal fun prepareInstallation(logger: Logger): Installation {
         synchronized(projectResolvers) {
-            check(state == State.CONFIGURING) {
-                "Projects must be configuring"
-            }
             state = State.PROJECTS_CLOSED
 
             val projectResolutions = projectResolvers.values
