@@ -172,7 +172,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             }
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             // Remove local or anonymous classes unless they are in the scope of an inline function and
             // strip non-inline methods from all other classes.
             when {
@@ -185,7 +185,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
                     abiClassInfo[internalName] = AbiClassInfo.Stripped(methodInfos)
                 }
             }
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
 
         private val isWhenMappingClass: Boolean

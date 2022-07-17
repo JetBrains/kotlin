@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -345,7 +344,7 @@ class MultifileClassCodegenImpl(
         }
 
     private fun done() {
-        classBuilder.done()
+        classBuilder.done(state.generateSmapCopyToAnnotation)
         if (classBuilder.isComputed) {
             state.afterIndependentPart()
         }

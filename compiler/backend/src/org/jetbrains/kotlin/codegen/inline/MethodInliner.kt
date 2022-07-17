@@ -207,7 +207,7 @@ class MethodInliner(
                     }
 
                     for (classBuilder in childInliningContext.continuationBuilders.values) {
-                        classBuilder.done()
+                        classBuilder.done(inliningContext.state.generateSmapCopyToAnnotation)
                     }
                 } else {
                     result.addNotChangedClass(oldClassName)

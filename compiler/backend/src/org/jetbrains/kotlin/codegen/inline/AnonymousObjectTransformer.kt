@@ -228,7 +228,7 @@ class AnonymousObjectTransformer(
         if (continuationClassName == transformationInfo.oldClassName) {
             coroutineTransformer.registerClassBuilder(continuationClassName)
         } else {
-            classBuilder.done()
+            classBuilder.done(state.generateSmapCopyToAnnotation)
         }
 
         return transformationResult

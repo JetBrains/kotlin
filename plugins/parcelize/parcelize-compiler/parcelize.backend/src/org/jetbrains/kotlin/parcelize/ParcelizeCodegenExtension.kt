@@ -340,7 +340,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
             parcelAsmType, parcelerObject, properties
         )
 
-        classBuilderForCreator.done()
+        classBuilderForCreator.done(codegen.state.generateSmapCopyToAnnotation)
     }
 
     private fun writeCreatorConstructor(codegen: ImplementationBodyCodegen, creatorClass: ClassDescriptor, creatorAsmType: Type) {

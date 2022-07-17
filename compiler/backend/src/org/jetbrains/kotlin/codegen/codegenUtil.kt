@@ -656,7 +656,7 @@ private fun generateLambdaForRunSuspend(
 
     writeSyntheticClassMetadata(lambdaBuilder, state, false)
 
-    lambdaBuilder.done()
+    lambdaBuilder.done(state.generateSmapCopyToAnnotation)
     return lambdaBuilder.thisName
 }
 
