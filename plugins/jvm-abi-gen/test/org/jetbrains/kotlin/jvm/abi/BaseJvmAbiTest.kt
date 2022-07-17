@@ -83,10 +83,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             useOldBackend = !useIrBackend
-            languageVersion =
-                if (directives != null)
-                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// LANGUAGE_VERSION:")
-                else null
             noSourceDebugExtension =
                 directives != null && InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
         }
