@@ -35,8 +35,8 @@ fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSessi
     }
     return when (val moduleData = target.firModuleData) {
         is LLFirKtModuleBasedModuleData -> moduleData.ktModule
-        is LLFirBuiltinsModuleData -> firResolveSession.project.getService(ProjectStructureProvider::class.java).getStdlibWithBuiltinsModule(moduleData.useSiteKtModule)
-            ?: error("Builtins not found for the ${moduleData.useSiteKtModule.moduleDescription}")
+        is LLFirBuiltinsModuleData -> firResolveSession.project.getService(ProjectStructureProvider::class.java).getStdlibWithBuiltinsModule(moduleData.platform)
+            ?: error("Builtins not found for the $moduleData")
     }
 }
 

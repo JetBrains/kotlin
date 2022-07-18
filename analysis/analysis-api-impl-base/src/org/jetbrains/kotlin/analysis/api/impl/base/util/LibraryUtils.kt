@@ -66,7 +66,7 @@ object LibraryUtils {
             ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
     }
 
-    private fun getAllVirtualFilesFromRoot(
+    fun getAllVirtualFilesFromRoot(
         root: VirtualFile,
         includeRoot: Boolean,
     ): Collection<VirtualFile> {

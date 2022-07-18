@@ -16,35 +16,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.createLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.utils.caches.getValue
-import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 
 class LLFirSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<KtModule, FromModuleViewSessionCache>()
 
-    private val librariesFactoryByUseSiteModule by softCachedValue(project, project.createLibrariesModificationTracker()) {
-        ConcurrentHashMap<KtModule, LLFirLibrarySessionFactory>()
-    }
+    private val librariesSessionFactory = LLFirLibrarySessionFactory.getInstance(project)
+    private val builtInsSessionFactopry = LLFirBuiltinsSessionFactory.getInstance(project)
 
     fun getSessionProvider(
         useSiteKtModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSessionProvider {
         val globalComponents = LLFirGlobalResolveComponents(useSiteKtModule, project)
-
-        val librariesSessionFactory = librariesFactoryByUseSiteModule.getOrPut(useSiteKtModule) {
-            val languageVersionSettings = when (useSiteKtModule) {
-                is KtSourceModule -> useSiteKtModule.languageVersionSettings
-                is KtLibraryModule, is KtLibrarySourceModule -> LanguageVersionSettingsImpl.DEFAULT
-                else -> unexpectedElementError("module", useSiteKtModule)
-            }
-            LLFirLibrarySessionFactory(project, useSiteKtModule, languageVersionSettings)
-        }
 
         val cache = sessionsCache.getOrPut(useSiteKtModule) { FromModuleViewSessionCache() }
         val (sessions, session) = cache.withMappings(project) { mappings ->
@@ -58,7 +44,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                             globalComponents,
                             cache.sessionInvalidator,
                             sessions,
-                            librariesSessionFactory = librariesSessionFactory,
+                            librariesSessionFactory,
                             configureSession = configureSession,
                         )
                     }
@@ -66,10 +52,9 @@ class LLFirSessionProviderStorage(val project: Project) {
                         LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
                             project,
                             useSiteKtModule,
-                            librariesSessionFactory.builtinsAndCloneableSession,
                             globalComponents,
                             cache.sessionInvalidator,
-                            librariesSessionFactory.builtInTypes,
+                            builtInsSessionFactopry.getBuiltinsSession(useSiteKtModule.platform),
                             sessions,
                             configureSession = configureSession,
                         )

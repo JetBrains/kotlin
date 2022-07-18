@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 internal class KtModuleProviderImpl(
     internal val mainModules: List<KtModule>,
@@ -37,10 +38,10 @@ internal class KtModuleProviderImpl(
         return binaryModules
     }
 
-    override fun getStdlibWithBuiltinsModule(module: KtModule): KtLibraryModule? {
+    override fun getStdlibWithBuiltinsModule(platform: TargetPlatform): KtLibraryModule? {
         return binaryModules
             .filterIsInstance<KtLibraryModuleImpl>()
-            .firstOrNull { it.isBuiltinsContainingStdlib }
+            .firstOrNull { it.isBuiltinsContainingStdlib && it.platform == platform }
     }
 
     internal fun allSourceFiles(): List<PsiFileSystemItem> = buildList {

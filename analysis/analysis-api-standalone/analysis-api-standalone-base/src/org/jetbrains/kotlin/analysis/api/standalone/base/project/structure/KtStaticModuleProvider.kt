@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KtStaticModuleProvider(
@@ -23,7 +24,7 @@ class KtStaticModuleProvider(
         return projectStructure.allKtModules().filterIsInstance<KtBinaryModule>()
     }
 
-    override fun getStdlibWithBuiltinsModule(module: KtModule): KtLibraryModule {
-        return projectStructure.stdlibFor(module)
+    override fun getStdlibWithBuiltinsModule(platform: TargetPlatform): KtLibraryModule {
+        return projectStructure.stdlibFor(platform)
     }
 }

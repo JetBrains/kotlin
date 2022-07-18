@@ -9,9 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -85,8 +86,8 @@ object TestModuleStructureFactory {
             addModuleDependencies(testModule, moduleByName, ktModule)
 
             buildList {
-                addIfNotNull(getJdkModule(testModule, project))
-                addAll(getStdlibModules(testModule, project))
+                addIfNotNull(getJdkModule(testModule, project, testServices))
+                addAll(getStdlibModules(testModule, project, testServices))
                 addAll(getLibraryModules(testServices, testModule, project))
                 addAll(createLibrariesByCompilerConfigurators(testModule, testServices, project))
             }.forEach { library ->
@@ -95,8 +96,11 @@ object TestModuleStructureFactory {
             }
 
         }
-        return KtModuleProjectStructure(modulesFromTestServices, binaryModulesBySourceRoots.values) { module ->
-            module.allDirectDependenciesOfType<KtLibraryModuleImpl>().first { it.isBuitinsContainingStdlib }
+        val allStdLibCandidates = modulesFromTestServices.flatMap { module ->
+            module.ktModule.allDirectDependenciesOfType<KtLibraryModuleImpl>()
+        }.filter { it.isBuitinsContainingStdlib }
+        return KtModuleProjectStructure(modulesFromTestServices, binaryModulesBySourceRoots.values) { platform ->
+            allStdLibCandidates.first { it.platform == platform }
         }
     }
 
@@ -110,7 +114,7 @@ object TestModuleStructureFactory {
         val contentRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
         return contentRoots
             .filterIsInstance<JvmClasspathRoot>()
-            .map { root -> createKtLibraryModuleByJar(root.file.toPath(), project, isBuitinsContainingStdlib = false) }
+            .map { root -> createKtLibraryModuleByJar(root.file.toPath(), testServices, project, isBuitinsContainingStdlib = false) }
     }
 
 
@@ -144,11 +148,12 @@ object TestModuleStructureFactory {
     ): List<KtLibraryModuleImpl> {
         val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(testModule.directives)
         return JvmEnvironmentConfigurator
-            .getLibraryFilesExceptRealRuntime( testServices, configurationKind, testModule.directives)
+            .getLibraryFilesExceptRealRuntime(testServices, configurationKind, testModule.directives)
             .map { it.toPath().toAbsolutePath() }
             .map { jar ->
                 createKtLibraryModuleByJar(
                     jar,
+                    testServices,
                     project,
                     isBuitinsContainingStdlib = jar.nameWithoutExtension == "kotlin-stdlib-jvm-minimal-for-test"
                 )
@@ -157,6 +162,7 @@ object TestModuleStructureFactory {
 
     private fun createKtLibraryModuleByJar(
         jar: Path,
+        testServices: TestServices,
         project: Project,
         libraryName: String = jar.nameWithoutExtension,
         isBuitinsContainingStdlib: Boolean = false,
@@ -166,7 +172,7 @@ object TestModuleStructureFactory {
         return KtLibraryModuleImpl(
             libraryName,
             JvmPlatforms.defaultJvmPlatform,
-            ProjectScope.getLibrariesScope(project),
+            getScopeForLibraryByRoots(listOf(jar), project, testServices),
             project,
             listOf(jar),
             librarySources = null,
@@ -176,7 +182,8 @@ object TestModuleStructureFactory {
 
     private fun getStdlibModules(
         testModule: TestModule,
-        project: Project
+        project: Project,
+        testServices: TestServices,
     ): List<KtLibraryModule> {
         val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(testModule.directives)
         if (!configurationKind.withRuntime) return emptyList()
@@ -184,13 +191,14 @@ object TestModuleStructureFactory {
             KotlinPaths.Jar.StdLib to PathUtil.KOTLIN_JAVA_STDLIB_NAME,
         ).map { (jar, name) ->
             val lib = PathUtil.kotlinPathsForDistDirectory.jar(jar).toPath().toAbsolutePath()
-            createKtLibraryModuleByJar(lib, project, name, isBuitinsContainingStdlib = jar == KotlinPaths.Jar.StdLib)
+            createKtLibraryModuleByJar(lib, testServices, project, name, isBuitinsContainingStdlib = jar == KotlinPaths.Jar.StdLib)
         }
     }
 
     private fun getJdkModule(
         testModule: TestModule,
-        project: Project
+        project: Project,
+        testServices: TestServices,
     ): KtJdkModuleImpl? {
         val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(testModule.directives)
 
@@ -204,9 +212,23 @@ object TestModuleStructureFactory {
         return KtJdkModuleImpl(
             "jdk",
             JvmPlatforms.defaultJvmPlatform,
-            ProjectScope.getLibrariesScope(project),
+            getScopeForLibraryByRoots(jdkSourceRoots, project, testServices),
             project,
             jdkSourceRoots
+        )
+    }
+
+    private fun getScopeForLibraryByRoots(roots: Collection<Path>, project: Project, testServices: TestServices): GlobalSearchScope {
+        val virtualFileRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+            roots,
+            testServices.environmentManager.getProjectEnvironment()
+        )
+        return GlobalSearchScope.filesScope(
+            project,
+            buildList {
+                addAll(virtualFileRoots)
+                virtualFileRoots.flatMapTo(this) { LibraryUtils.getAllVirtualFilesFromRoot(it, includeRoot = true) }
+            }
         )
     }
 

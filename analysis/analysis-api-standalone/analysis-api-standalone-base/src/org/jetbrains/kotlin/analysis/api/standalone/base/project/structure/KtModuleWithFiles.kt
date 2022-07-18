@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 data class KtModuleProjectStructure(
     val mainModules: List<KtModuleWithFiles>,
     val binaryModules: Iterable<KtBinaryModule>,
-    val stdlibFor: (KtModule) -> KtLibraryModule,
+    val stdlibFor: (TargetPlatform) -> KtLibraryModule,
 ) {
     fun allKtModules(): List<KtModule> = buildList {
         mainModules.mapTo(this) { it.ktModule }

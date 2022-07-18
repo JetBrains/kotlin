@@ -14,6 +14,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.roots.PackageIndex
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFileSystemItem
@@ -181,6 +182,28 @@ object StandaloneProjectFactory {
         .filterIsInstance<KtBinaryModule>()
         .flatMap { it.getJavaRoots(environment) }
 
+    fun getVirtualFilesForLibraryRoots(
+        roots: Collection<Path>,
+        environment: KotlinCoreProjectEnvironment
+    ): List<VirtualFile> {
+        return roots.mapNotNull { path ->
+            val pathString = path.toAbsolutePath().toString()
+            when {
+                pathString.endsWith(JAR_PROTOCOL) -> {
+                    environment.environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
+                }
+
+                pathString.contains(JAR_SEPARATOR) -> {
+                    environment.environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
+                }
+
+                else -> {
+                    VirtualFileManager.getInstance().findFileByNioPath(path)
+                }
+            }
+        }
+    }
+
     private fun withAllTransitiveDependencies(ktModules: List<KtModule>): List<KtModule> {
         val visited = hashSetOf<KtModule>()
         val stack = ktModules.toMutableList()
@@ -212,24 +235,7 @@ object StandaloneProjectFactory {
     private fun KtBinaryModule.getJavaRoots(
         environment: KotlinCoreProjectEnvironment,
     ): List<JavaRoot> {
-        return buildList {
-            getBinaryRoots().forEach { path ->
-                val pathString = path.toAbsolutePath().toString()
-                when {
-                    pathString.endsWith(JAR_PROTOCOL) -> {
-                        environment.environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
-                    }
-                    pathString.contains(JAR_SEPARATOR) -> {
-                        environment.environment.jrtFileSystem?.findFileByPath(adjustModulePath(pathString))
-                    }
-                    else -> {
-                        VirtualFileManager.getInstance().findFileByNioPath(path)
-                    }
-                }?.let { root ->
-                    add(JavaRoot(root, JavaRoot.RootType.BINARY))
-                }
-            }
-        }
+        return getVirtualFilesForLibraryRoots(getBinaryRoots(), environment).map { root -> JavaRoot(root, JavaRoot.RootType.BINARY)}
     }
 
     private fun adjustModulePath(pathString: String): String {

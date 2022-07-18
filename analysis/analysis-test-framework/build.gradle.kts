@@ -17,6 +17,7 @@ dependencies {
     testApi(project(":analysis:analysis-api"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testApi(project(":analysis:analysis-api-impl-barebone"))
+    testApi(project(":analysis:analysis-api-impl-base"))
 }
 
 sourceSets {

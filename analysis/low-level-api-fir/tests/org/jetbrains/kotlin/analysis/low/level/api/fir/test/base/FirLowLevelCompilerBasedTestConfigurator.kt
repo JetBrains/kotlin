@@ -58,18 +58,18 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         return KtModuleProjectStructure(
             mainModules = mainModules,
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtLibraryModule>() }.asIterable(),
-            stdlibFor = { module ->
-                createFakeStdlibModule(module, project)
+            stdlibFor = { platform ->
+                createFakeStdlibModule(platform, project)
             }
         )
     }
 
     private fun createFakeStdlibModule(
-        module: KtModule,
+        platform: TargetPlatform,
         project: Project
     ): KtLibraryModule = KtLibraryModuleImpl(
         libraryName = "fake-std-lib",
-        platform = module.platform,
+        platform = platform,
         contentScope = ProjectScope.getLibrariesScope(project),
         project = project,
         binaryRoots = emptyList(),

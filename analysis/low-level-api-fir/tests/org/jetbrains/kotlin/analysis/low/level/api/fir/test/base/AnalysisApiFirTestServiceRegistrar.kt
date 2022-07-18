@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.KtCompilerPluginsProviderForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
@@ -46,6 +47,8 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(FirSealedClassInheritorsProcessorFactory::class.java, LLFirSealedClassInheritorsProcessorFactoryForTests())
             registerService(LLFirResolveSessionService::class.java)
+            registerService(LLFirLibrarySessionFactory::class.java)
+            registerService(LLFirBuiltinsSessionFactory::class.java)
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
 
             registerService(SymbolLightClassFacadeCache::class.java)

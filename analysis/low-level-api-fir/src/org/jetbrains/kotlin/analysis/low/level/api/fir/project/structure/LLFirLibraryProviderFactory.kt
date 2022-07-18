@@ -11,15 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createPackag
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.utils.errors.checkIsInstance
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.deserialization.EmptyModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -28,56 +21,55 @@ import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
 internal object LLFirLibraryProviderFactory {
-    fun createProvidersByModuleLibraryDependencies(
+    fun createLibraryProvidersForSingleBinaryModule(
         session: LLFirSession,
-        module: KtModule,
+        moduleData: LLFirModuleData,
+        module: KtBinaryModule,
         kotlinScopeProvider: FirKotlinScopeProvider,
         project: Project,
         builtinTypes: BuiltinTypes,
-        createSearchScopeForModules: (List<KtBinaryModule>) -> GlobalSearchScope
-    ): List<FirSymbolProvider> = buildList {
-        module
-            .allDirectDependenciesOfType<KtBinaryModule>()
-            .groupBy { it.platform }
-            .forEach { (_, binaryDependencies) ->
-                val moduleDataProvider = createModuleDataProviderWithLibraryDependencies(module, binaryDependencies, session)
-                val scope = createSearchScopeForModules(binaryDependencies)
-                val packagePartProvider = project.createPackagePartProviderForLibrary(scope)
-                add(
-                    JvmClassFileBasedSymbolProvider(
-                        session,
-                        moduleDataProvider,
-                        kotlinScopeProvider,
-                        packagePartProvider,
-                        VirtualFileFinderFactory.getInstance(project).create(scope),
-                        LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-                    )
+    ): List<FirSymbolProvider> {
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
+        val scope = module.contentScope
+        val packagePartProvider = project.createPackagePartProviderForLibrary(scope)
+        return buildList {
+            add(
+                JvmClassFileBasedSymbolProvider(
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    packagePartProvider,
+                    VirtualFileFinderFactory.getInstance(project).create(scope),
+                    LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
                 )
-                add(OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
-            }
-    }
-
-    private fun createModuleDataProviderWithLibraryDependencies(
-        sourceModule: KtModule,
-        binaryDependencies: List<KtBinaryModule>,
-        session: LLFirSession
-    ): ModuleDataProvider {
-        val moduleDatas = binaryDependencies.map { LLFirKtModuleBasedModuleData(it) }
-
-        if (moduleDatas.isEmpty()) {
-            return EmptyModuleDataProvider(sourceModule.platform, sourceModule.analyzerServices)
+            )
+            add(OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
         }
-
-        moduleDatas.forEach { it.bindSession(session) }
-
-        val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter.LibraryList> =
-            moduleDatas.associateWith { moduleData ->
-                checkIsInstance<LLFirKtModuleBasedModuleData>(moduleData)
-                val ktBinaryModule = moduleData.ktModule as KtBinaryModule
-                val moduleBinaryRoots = ktBinaryModule.getBinaryRoots().mapTo(mutableSetOf()) { it.toAbsolutePath() }
-                LibraryPathFilter.LibraryList(moduleBinaryRoots)
-            }
-
-        return MultipleModuleDataProvider(moduleDataWithFilters)
     }
+
+    fun createLibraryProvidersForAllProjectLibraries(
+        session: LLFirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        project: Project,
+        builtinTypes: BuiltinTypes,
+        scope: GlobalSearchScope,
+    ): List<FirSymbolProvider> {
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
+        val packagePartProvider = project.createPackagePartProviderForLibrary(scope)
+        return buildList {
+            add(
+                JvmClassFileBasedSymbolProvider(
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    packagePartProvider,
+                    VirtualFileFinderFactory.getInstance(project).create(scope),
+                    LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
+                )
+            )
+            add(OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
+        }
+    }
+
 }
