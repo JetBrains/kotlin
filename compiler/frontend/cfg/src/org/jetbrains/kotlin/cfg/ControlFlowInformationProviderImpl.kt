@@ -484,7 +484,7 @@ class ControlFlowInformationProviderImpl private constructor(
         val variableDescriptor = ctxt.variableDescriptor
         val mayBeInitializedNotHere = ctxt.enterInitState?.mayBeInitialized() ?: false
         val hasBackingField = (variableDescriptor as? PropertyDescriptor)?.let {
-            trace.get(BACKING_FIELD_REQUIRED, it)
+            trace.get(BACKING_FIELD_REQUIRED, it) ?: false
         } ?: true
         if (variableDescriptor is PropertyDescriptor && variableDescriptor.isVar) {
             val descriptor = getEnclosingDescriptor(trace.bindingContext, expression)

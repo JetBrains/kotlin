@@ -192,7 +192,7 @@ public interface BindingContext {
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
-    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new SetSlice<PropertyDescriptor>(DO_NOTHING) {
+    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new BasicWritableSlice<PropertyDescriptor, Boolean>(DO_NOTHING) {
         @Override
         public Boolean computeValue(
                 SlicedMap map,
@@ -203,7 +203,6 @@ public interface BindingContext {
             if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
                 return false;
             }
-            backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             PsiElement declarationPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
             if (declarationPsiElement instanceof KtParameter) {
                 KtParameter jetParameter = (KtParameter) declarationPsiElement;
