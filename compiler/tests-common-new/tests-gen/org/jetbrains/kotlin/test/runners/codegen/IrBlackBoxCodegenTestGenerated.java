@@ -17818,6 +17818,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("findAnnotationOnDefaultMethodParameter.kt")
+        public void testFindAnnotationOnDefaultMethodParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/findAnnotationOnDefaultMethodParameter.kt");
+        }
+
+        @Test
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");

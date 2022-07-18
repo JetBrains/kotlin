@@ -556,12 +556,12 @@ class Fir2IrDeclarationStorage(
                     containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
-                    convertAnnotationsForNonDeclaredMembers(function, origin)
                     enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
                         thisReceiverOwner, isStatic = simpleFunction?.isStatic == true
                     )
+                    convertAnnotationsForNonDeclaredMembers(function, origin)
                     leaveScope(this)
                 }
             }
@@ -1595,6 +1595,11 @@ class Fir2IrDeclarationStorage(
             || origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ) {
             annotationGenerator.generate(this, firAnnotationContainer)
+            if (this is IrFunction && firAnnotationContainer is FirSimpleFunction) {
+                valueParameters.zip(firAnnotationContainer.valueParameters).forEach { (irParameter, firParameter) ->
+                    annotationGenerator.generate(irParameter, firParameter, isInConstructor = false)
+                }
+            }
         }
     }
 

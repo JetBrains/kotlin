@@ -1,0 +1,36 @@
+fun box(): String {
+  val impl: <no name provided> = { // BLOCK
+    local class <no name provided> : I {
+      private constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }
+  val method: @FlexibleNullability Method? = impl.<get-javaClass><<no name provided>>().getMethod(p0 = "m", p1 = [String::class.<get-java><String>()])
+  val parameter: @FlexibleNullability Parameter? = method.getParameters().get(index = 0)
+  val size: Int = parameter.getAnnotations().<get-size>()
+  when {
+    EQEQ(arg0 = size, arg1 = 1) -> return "OK"
+  }
+  return "ERR: " + size
+}
+
+open annotation class Ann : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface I {
+  fun m(@Ann s: String) {
+  }
+
+}

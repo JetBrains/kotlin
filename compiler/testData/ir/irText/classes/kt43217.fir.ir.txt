@@ -37,6 +37,8 @@ FILE fqName:<root> fileName:/kt43217.kt
                   public open fun isEqualTo (value: @[EnhancedNullability] kotlin.Double): @[EnhancedNullability] kotlin.Any [fake_override] declared in <root>.DoubleExpression
                 $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<T of <root>.ObservableValue>
                 VALUE_PARAMETER name:value index:0 type:@[EnhancedNullability] kotlin.Double
+                  annotations:
+                    NotNull(value = <null>)
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.DoubleExpression
@@ -99,6 +101,8 @@ FILE fqName:<root> fileName:/kt43217.kt
         public open fun isEqualTo (value: @[EnhancedNullability] kotlin.Double): @[EnhancedNullability] kotlin.Any [fake_override] declared in <root>.DoubleExpression
       $this: VALUE_PARAMETER name:<this> type:<root>.ObservableValue<T of <root>.ObservableValue>
       VALUE_PARAMETER name:value index:0 type:@[EnhancedNullability] kotlin.Double
+        annotations:
+          NotNull(value = <null>)
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.DoubleExpression

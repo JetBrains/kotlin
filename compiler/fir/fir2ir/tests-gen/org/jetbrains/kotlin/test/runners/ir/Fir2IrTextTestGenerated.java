@@ -2633,6 +2633,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("reflectFindAnnotationOnDefaultMethodParameter.kt")
+        public void testReflectFindAnnotationOnDefaultMethodParameter() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/reflectFindAnnotationOnDefaultMethodParameter.kt");
+        }
+
+        @Test
         @TestMetadata("reflectGetOnNullableTypeAlias.kt")
         public void testReflectGetOnNullableTypeAlias() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/reflectGetOnNullableTypeAlias.kt");
