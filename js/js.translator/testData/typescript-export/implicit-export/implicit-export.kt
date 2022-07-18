@@ -16,7 +16,7 @@ package notQualified
 
 external interface Console
 
-// FILE: declarations.kt
+// FILE: member-properties.kt
 
 package foo
 

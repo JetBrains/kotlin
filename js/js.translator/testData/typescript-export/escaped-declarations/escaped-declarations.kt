@@ -6,7 +6,7 @@
 // !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
-// FILE: escapedDeclarations.kt
+// FILE: escaped-interfaces.kt
 
 @file:JsExport
 

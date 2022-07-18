@@ -7,6 +7,9 @@
         <ImportPathEntry>
           <option name="location" value="file://$PROJECT_DIR$/libraries/tools/kotlin-gradle-plugin-idea-proto/src/main/proto" />
         </ImportPathEntry>
+        <ImportPathEntry>
+          <option name="location" value="file://$USER_HOME$/.cache/JetBrains/IntelliJIdea2022.3/protoeditor" />
+        </ImportPathEntry>
       </list>
     </option>
   </component>
