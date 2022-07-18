@@ -36,16 +36,17 @@ val FirSession.firKtModuleBasedModuleData: LLFirKtModuleBasedModuleData
 val FirBasedSymbol<*>.firModuleData: LLFirModuleData
     get() = fir.firModuleData
 
-class LLFirBuiltinsModuleData(val useSiteKtModule: KtModule) : LLFirModuleData() {
+class LLFirBuiltinsModuleData(
+    override val platform: TargetPlatform,
+    override val analyzerServices: PlatformDependentAnalyzerServices
+) : LLFirModuleData() {
     override val name: Name
-        get() = Name.special("<builtins for ${useSiteKtModule.moduleDescription}>")
+        get() = Name.special("<builtins for $platform>")
 
     override val dependencies: List<FirModuleData> get() = emptyList()
     override val dependsOnDependencies: List<FirModuleData> get() = emptyList()
     override val friendDependencies: List<FirModuleData> get() = emptyList()
 
-    override val platform: TargetPlatform get() = useSiteKtModule.platform
-    override val analyzerServices: PlatformDependentAnalyzerServices get() = useSiteKtModule.analyzerServices
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -53,13 +54,13 @@ class LLFirBuiltinsModuleData(val useSiteKtModule: KtModule) : LLFirModuleData()
 
         other as LLFirBuiltinsModuleData
 
-        if (useSiteKtModule != other.useSiteKtModule) return false
+        if (platform != other.platform) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return useSiteKtModule.hashCode()
+        return platform.hashCode()
     }
 }
 

@@ -52,7 +52,8 @@ abstract class FirModuleData : FirSessionComponent {
 
     private var _session: FirSession? = null
     val session: FirSession
-        get() = _session ?: error("module data not bound to session")
+        get() = _session
+            ?: error("module data ${this::class.simpleName}:${name} not bound to session")
 
     fun bindSession(session: FirSession) {
         if (_session != null) {
