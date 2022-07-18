@@ -13020,6 +13020,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/directInvokeOptimization/contructorRef.kt");
         }
 
+        @TestMetadata("kt53202.kt")
+        public void testKt53202() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202.kt");
+        }
+
+        @TestMetadata("kt53202_funLiteral.kt")
+        public void testKt53202_funLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_funLiteral.kt");
+        }
+
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
