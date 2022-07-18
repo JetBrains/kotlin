@@ -38,6 +38,9 @@ val VOLATILE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Volatile")
 @JvmField
 val TRANSIENT_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Transient")
 
+@JvmField
+val JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSerializableLambda")
+
 fun DeclarationDescriptor.findJvmOverloadsAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)
 

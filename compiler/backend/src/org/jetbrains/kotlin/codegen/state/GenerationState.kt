@@ -253,13 +253,12 @@ class GenerationState private constructor(
             JvmClosureGenerationScheme.CLASS
     }
 
-    val lambdasScheme = run {
-        val fromConfig = configuration.get(JVMConfigurationKeys.LAMBDAS)
-            ?: JvmClosureGenerationScheme.DEFAULT
-        if (target >= fromConfig.minJvmTarget)
-            fromConfig
-        else
-            JvmClosureGenerationScheme.DEFAULT
+    val lambdasScheme = configuration.get(JVMConfigurationKeys.LAMBDAS).let { fromConfig ->
+        if (fromConfig == null || target < fromConfig.minJvmTarget) {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas) && target >= JvmClosureGenerationScheme.INDY.minJvmTarget)
+                JvmClosureGenerationScheme.INDY
+            else JvmClosureGenerationScheme.CLASS
+        } else fromConfig
     }
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)

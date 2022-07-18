@@ -166,3 +166,13 @@ public expect annotation class Synchronized()
 @SinceKotlin("1.2")
 @OptionalExpectation
 internal expect annotation class JvmPackageName(val name: String)
+
+
+/**
+ * Makes the annotated lambda function `java.io.Serializable`, generates a pretty `toString` implementation and adds reflection metadata.
+ */
+@Target(EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("1.8")
+@OptionalExpectation
+public expect annotation class JvmSerializableLambda
