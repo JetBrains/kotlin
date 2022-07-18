@@ -111,7 +111,7 @@ internal class NativeTestGroupingMessageCollector(
     }
 
     private fun isPartialLinkageWarning(message: String): Boolean =
-        PARTIAL_LINKAGE_WARNING_REGEXES.any { regex -> message.matches(regex) } && partialLinkageEnabled
+        partialLinkageEnabled && PARTIAL_LINKAGE_WARNING_REGEXES.any { regex -> message.matches(regex) }
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
@@ -123,7 +123,7 @@ internal class NativeTestGroupingMessageCollector(
         private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
             Regex("Accessing declaration with unlinked symbol .+"),
             Regex("Expression type contains unlinked symbol"),
-            Regex("\\S+ declaration \\S+ contains unlinked symbols")
+            Regex("\\S+ declaration .+ contains unlinked symbols")
         )
 
         private fun parseLanguageFeatureArg(arg: String): String? =
