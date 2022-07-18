@@ -159,7 +159,6 @@ class Fir2IrLazyProperty(
     }
 
     override var getter: IrSimpleFunction? by lazyVar(lock) {
-        if (fir.isConst) return@lazyVar null
         val signature = signatureComposer.composeAccessorSignature(
             fir,
             isSetter = false,
