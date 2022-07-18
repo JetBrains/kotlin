@@ -62,7 +62,6 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
                 project,
                 binaryRoots = listOf(libraryJar),
                 librarySources = null,
-                isBuitinsContainingStdlib = false,
             )
 
             val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromTheJar(librarySourcesJar, project)

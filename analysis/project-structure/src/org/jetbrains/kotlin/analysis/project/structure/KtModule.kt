@@ -151,6 +151,27 @@ public interface KtLibrarySourceModule : KtModuleWithProject {
 }
 
 /**
+ * Module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for specific platform
+ * Kotlin builtins are usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty
+ */
+public class KtBuiltinsModule(
+    override val platform: TargetPlatform,
+    override val analyzerServices: PlatformDependentAnalyzerServices,
+    override val project: Project
+) : KtBinaryModule {
+    override val directRegularDependencies: List<KtModule> get() = emptyList()
+    override val directRefinementDependencies: List<KtModule> get() = emptyList()
+    override val directFriendDependencies: List<KtModule> get() = emptyList()
+    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.EMPTY_SCOPE
+    override fun getBinaryRoots(): Collection<Path> = emptyList()
+    override val moduleDescription: String get() = "Builtins for $platform"
+
+    override fun equals(other: Any?): Boolean = other is KtBuiltinsModule && this.platform == other.platform
+    override fun hashCode(): Int = platform.hashCode()
+}
+
+
+/**
  * A set of sources which lives outside project content root. E.g, testdata files or source files of some other project.
  */
 public interface KtNotUnderContentRootModule : KtModule {

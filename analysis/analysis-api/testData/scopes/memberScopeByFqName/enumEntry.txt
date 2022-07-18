@@ -56,7 +56,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Protected
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -114,7 +114,7 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -141,7 +141,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -168,7 +168,7 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KtKotlinPropertySymbol:
@@ -201,7 +201,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getName
@@ -235,7 +235,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): kotlin/Enum<E>
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getOrdinal

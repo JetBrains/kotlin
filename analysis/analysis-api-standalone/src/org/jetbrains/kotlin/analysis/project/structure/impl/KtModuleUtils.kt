@@ -130,9 +130,6 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
                         this.project = project
                         binaryRoots = listOf(root)
                         libraryName = getNameWithoutExtension(root.toString())
-                        isBuiltinsContainingStdlib =
-                            libraryName.startsWith("kotlin-stdlib") &&
-                                    !libraryName.contains("common") && !libraryName.contains("jdk")
                     }
                 )
             }

@@ -20,8 +20,6 @@ public abstract class ProjectStructureProvider {
      */
     // TODO: We rather need a session or facade that maintains this information.
     public abstract fun getKtBinaryModules(): Collection<KtBinaryModule>
-
-    public abstract fun getStdlibWithBuiltinsModule(platform: TargetPlatform): KtLibraryModule?
 }
 
 /**

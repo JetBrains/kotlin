@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
+import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -25,6 +27,9 @@ import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -39,8 +44,9 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
     }
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
+        val builtinsModule = KtBuiltinsModule(platform, platform.getAnalyzerServices(), project)
         return LLFirBuiltinsAndCloneableSession(project, builtInTypes).apply session@{
-            val moduleData = LLFirBuiltinsModuleData(platform, JvmPlatformAnalyzerServices/*TODO*/).apply {
+            val moduleData = LLFirKtModuleBasedModuleData(builtinsModule).apply {
                 bindSession(this@session)
             }
             registerIdeComponents(project)
@@ -65,4 +71,12 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
         fun getInstance(project: Project): LLFirBuiltinsSessionFactory =
             project.getService(LLFirBuiltinsSessionFactory::class.java)
     }
+}
+
+private fun TargetPlatform.getAnalyzerServices() = when {
+    isJvm() -> JvmPlatformAnalyzerServices
+    isJs() -> JvmPlatformAnalyzerServices/*TODO*/
+//    isNative() -> NativePlatformAnalyzerServices
+    isCommon() -> CommonPlatformAnalyzerServices
+    else -> JvmPlatformAnalyzerServices/*TODO*/
 }

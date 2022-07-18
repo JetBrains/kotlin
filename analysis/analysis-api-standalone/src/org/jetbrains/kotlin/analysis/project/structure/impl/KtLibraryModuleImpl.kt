@@ -24,7 +24,6 @@ internal class KtLibraryModuleImpl(
     private val binaryRoots: Collection<Path>,
     override val libraryName: String,
     override val librarySources: KtLibrarySourceModule?,
-    internal val isBuiltinsContainingStdlib: Boolean,
 ) : KtLibraryModule, KtModuleWithPlatform {
     override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 

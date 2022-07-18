@@ -38,12 +38,6 @@ internal class KtModuleProviderImpl(
         return binaryModules
     }
 
-    override fun getStdlibWithBuiltinsModule(platform: TargetPlatform): KtLibraryModule? {
-        return binaryModules
-            .filterIsInstance<KtLibraryModuleImpl>()
-            .firstOrNull { it.isBuiltinsContainingStdlib && it.platform == platform }
-    }
-
     internal fun allSourceFiles(): List<PsiFileSystemItem> = buildList {
         val files = mainModules.mapNotNull { (it as? KtSourceModuleImpl)?.sourceRoots }.flatten()
         addAll(files)

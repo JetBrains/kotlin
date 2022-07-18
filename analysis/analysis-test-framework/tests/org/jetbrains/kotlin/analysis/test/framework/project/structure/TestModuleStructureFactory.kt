@@ -96,12 +96,8 @@ object TestModuleStructureFactory {
             }
 
         }
-        val allStdLibCandidates = modulesFromTestServices.flatMap { module ->
-            module.ktModule.allDirectDependenciesOfType<KtLibraryModuleImpl>()
-        }.filter { it.isBuitinsContainingStdlib }
-        return KtModuleProjectStructure(modulesFromTestServices, binaryModulesBySourceRoots.values) { platform ->
-            allStdLibCandidates.first { it.platform == platform }
-        }
+
+        return KtModuleProjectStructure(modulesFromTestServices, binaryModulesBySourceRoots.values)
     }
 
     @OptIn(TestInfrastructureInternals::class)
@@ -114,7 +110,7 @@ object TestModuleStructureFactory {
         val contentRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
         return contentRoots
             .filterIsInstance<JvmClasspathRoot>()
-            .map { root -> createKtLibraryModuleByJar(root.file.toPath(), testServices, project, isBuitinsContainingStdlib = false) }
+            .map { root -> createKtLibraryModuleByJar(root.file.toPath(), testServices, project) }
     }
 
 
@@ -155,7 +151,6 @@ object TestModuleStructureFactory {
                     jar,
                     testServices,
                     project,
-                    isBuitinsContainingStdlib = jar.nameWithoutExtension == "kotlin-stdlib-jvm-minimal-for-test"
                 )
             }
     }
@@ -165,7 +160,6 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project,
         libraryName: String = jar.nameWithoutExtension,
-        isBuitinsContainingStdlib: Boolean = false,
     ): KtLibraryModuleImpl {
         check(jar.extension == "jar")
         check(jar.exists())
@@ -176,7 +170,6 @@ object TestModuleStructureFactory {
             project,
             listOf(jar),
             librarySources = null,
-            isBuitinsContainingStdlib,
         )
     }
 
@@ -191,7 +184,7 @@ object TestModuleStructureFactory {
             KotlinPaths.Jar.StdLib to PathUtil.KOTLIN_JAVA_STDLIB_NAME,
         ).map { (jar, name) ->
             val lib = PathUtil.kotlinPathsForDistDirectory.jar(jar).toPath().toAbsolutePath()
-            createKtLibraryModuleByJar(lib, testServices, project, name, isBuitinsContainingStdlib = jar == KotlinPaths.Jar.StdLib)
+            createKtLibraryModuleByJar(lib, testServices, project, name)
         }
     }
 

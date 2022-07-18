@@ -58,9 +58,6 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         return KtModuleProjectStructure(
             mainModules = mainModules,
             binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtLibraryModule>() }.asIterable(),
-            stdlibFor = { platform ->
-                createFakeStdlibModule(platform, project)
-            }
         )
     }
 
@@ -74,7 +71,6 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         project = project,
         binaryRoots = emptyList(),
         librarySources = null,
-        isBuitinsContainingStdlib = true
     )
 
     override fun doOutOfBlockModification(file: KtFile) {

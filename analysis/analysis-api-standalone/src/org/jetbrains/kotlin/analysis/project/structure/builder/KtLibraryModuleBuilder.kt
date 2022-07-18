@@ -16,7 +16,6 @@ import kotlin.contracts.contract
 public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
     public lateinit var libraryName: String
     public var librarySources: KtLibrarySourceModule? = null
-    public var isBuiltinsContainingStdlib: Boolean = false
 
     override fun build(): KtLibraryModule {
         return KtLibraryModuleImpl(
@@ -29,7 +28,6 @@ public class KtLibraryModuleBuilder : KtBinaryModuleBuilder() {
             binaryRoots,
             libraryName,
             librarySources,
-            isBuiltinsContainingStdlib,
         )
     }
 }

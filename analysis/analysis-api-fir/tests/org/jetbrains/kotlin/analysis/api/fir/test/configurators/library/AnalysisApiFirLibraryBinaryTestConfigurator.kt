@@ -56,7 +56,6 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
                     project,
                     binaryRoots = listOf(library),
                     librarySources = null,
-                    isBuitinsContainingStdlib = false,
                 ),
                 decompiledFiles
             )

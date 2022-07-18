@@ -58,7 +58,6 @@ class KtLibraryModuleImpl(
     override val project: Project,
     private val binaryRoots: Collection<Path>,
     override var librarySources: KtLibrarySourceModule?,
-    val isBuitinsContainingStdlib: Boolean,
 ) : KtLibraryModule, KtModuleWithModifiableDependencies {
     override val analyzerServices: PlatformDependentAnalyzerServices get() = platform.getAnalyzerServices()
     override fun getBinaryRoots(): Collection<Path> = binaryRoots

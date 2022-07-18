@@ -52,6 +52,7 @@ class AnalysisApiKtModuleProviderImpl(
         is KtLibrarySourceModule -> ktModule.libraryName
         is KtSourceModule -> ktModule.moduleName
         is KtNotUnderContentRootModule -> TODO()
+        is KtBuiltinsModule -> "Builtins for ${ktModule.platform}"
     }
 
 
