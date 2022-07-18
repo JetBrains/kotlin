@@ -19,9 +19,9 @@ class GradleStyleMessageRenderer : MessageRenderer {
             append("$prefix: ")
 
             location?.apply {
-                append("$path: ")
+                append("file://$path")
                 if (line > 0 && column > 0) {
-                    append("($line, $column): ")
+                    append(":$line:$column ")
                 }
             }
 
