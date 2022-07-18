@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -144,6 +145,19 @@ constructor(
             )
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))
+
+            // Rewrite relative paths in sourcemaps in the target directory
+            task.eachFile {
+                if (it.name.endsWith(".js.map")) {
+                    it.filter(
+                        mapOf(
+                            "srcSourceRoot" to it.file.parentFile,
+                            "targetSourceRoot" to npmProject.dist
+                        ),
+                        RewriteSourceMapFilterReader::class.java
+                    )
+                }
+            }
 
             task.into(npmProject.dist)
         }

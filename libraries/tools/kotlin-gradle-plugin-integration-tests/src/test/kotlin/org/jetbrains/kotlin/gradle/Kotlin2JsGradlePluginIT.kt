@@ -620,10 +620,30 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
             build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
-                val mapFilePath = projectPath
-                    .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
+                if (irBackend) {
+                    assertFileContains(
+                        subProject("app").projectPath
+                            .resolve("build/compileSync/main/developmentExecutable/kotlin/$projectName-app.js.map"),
+                        "\"../../../../../src/main/kotlin/main.kt\"",
+                        "\"../../../../../../lib/src/main/kotlin/foo.kt\"",
+                        "\"sourcesContent\":[null",
+                    )
+                    assertFileContains(
+                        subProject("app").projectPath
+                            .resolve("build/compileSync/main/developmentExecutable/kotlin/$projectName-lib.js.map"),
+                        "\"../../../../../../lib/src/main/kotlin/foo.kt\"",
+                        "\"sourcesContent\":[null",
+                    )
+                    assertFileContains(
+                        projectPath
+                            .resolve("build/js/packages/$projectName-app/kotlin/$projectName-lib.js.map"),
+                        "\"../../../../../lib/src/main/kotlin/foo.kt\"",
+                        "\"sourcesContent\":[null",
+                    )
+                }
                 assertFileContains(
-                    mapFilePath,
+                    projectPath
+                        .resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map"),
                     "\"../../../../../app/src/main/kotlin/main.kt\"",
                     "\"../../../../../lib/src/main/kotlin/foo.kt\"",
                     "\"sourcesContent\":[null",
@@ -669,10 +689,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     }
 
     @DisplayName("path in source maps are remapped for custom outputFile")
-    @DisabledIf(
-        "org.jetbrains.kotlin.gradle.AbstractKotlin2JsGradlePluginIT#getIrBackend",
-        disabledReason = "Source maps are not supported in IR backend"
-    )
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFile(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
@@ -693,11 +709,14 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
                 val mapFilePath = subProject("app").projectPath
                     .resolve("build/kotlin2js/app.js.map")
-                assertFileContains(
-                    mapFilePath,
-                    "\"../../src/main/kotlin/main.kt\"",
-                    "\"../../../../../lib/src/main/kotlin/foo.kt\"",
-                )
+                assertFileContains(mapFilePath,"\"../../src/main/kotlin/main.kt\"")
+                if (irBackend) {
+                    // The IR BE generates correct paths for dependencies
+                    assertFileContains(mapFilePath, "\"../../../lib/src/main/kotlin/foo.kt\"")
+                } else {
+                    // The legacy BE doesn't.
+                    assertFileContains(mapFilePath, "\"../../../../../lib/src/main/kotlin/foo.kt\"")
+                }
             }
         }
     }

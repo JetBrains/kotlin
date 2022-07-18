@@ -128,17 +128,6 @@ open class KotlinJsIrTargetConfigurator() :
                 .all { binary ->
                     binary.linkTask.configure { linkTask ->
                         linkTask.kotlinOptions.configureOptions()
-
-                        val rootDir = binary.project.rootDir
-                        linkTask.kotlinOptions.freeCompilerArgs += listOf(
-                            "-source-map-base-dirs",
-                            rootDir.absolutePath
-                        )
-
-                        linkTask.kotlinOptions.freeCompilerArgs += listOf(
-                            "-source-map-prefix",
-                            rootDir.toRelativeString(binary.compilation.npmProject.dist) + File.separator
-                        )
                     }
                 }
         }

@@ -190,12 +190,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val moduleName = arguments.irModuleName ?: FileUtil.getNameWithoutExtension(outputFile)
         configurationJs.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
 
-        // TODO: in this method at least 3 different compiler configurations are used (original, env.configuration, jsConfig.configuration)
-        // Such situation seems a bit buggy...
-        val config = JsConfig(projectJs, configurationJs, CompilerEnvironment)
         val outputDir: File = outputFile.parentFile ?: outputFile.absoluteFile.parentFile!!
         try {
-            config.configuration.put(JSConfigurationKeys.OUTPUT_DIR, outputDir.canonicalFile)
+            configurationJs.put(JSConfigurationKeys.OUTPUT_DIR, outputDir.canonicalFile)
         } catch (e: IOException) {
             messageCollector.report(ERROR, "Could not resolve output directory", null)
             return ExitCode.COMPILATION_ERROR
@@ -262,7 +259,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     configurationJs,
                     libraries,
                     friendLibraries,
-                    AnalyzerWithCompilerReport(config.configuration)
+                    AnalyzerWithCompilerReport(configurationJs)
                 )
                 val result = sourceModule.jsFrontEndResult.jsAnalysisResult
                 if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
