@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_DEFAUL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -87,6 +88,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
             "Only nullable properties of external interfaces are allowed to be non-abstract"
+        )
+        map.put(
+            WRONG_MULTIPLE_INHERITANCE,
+            "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
+            SYMBOL
         )
 
         map.checkMissingMessages(FirJsErrors)

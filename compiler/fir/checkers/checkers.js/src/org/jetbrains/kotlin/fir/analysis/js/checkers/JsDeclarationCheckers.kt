@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 
 object JsDeclarationCheckers : DeclarationCheckers() {
@@ -29,5 +26,10 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsInheritanceChecker,
             FirJsRuntimeAnnotationChecker,
             FirJsExternalChecker,
+        )
+
+    override val classCheckers: Set<FirClassChecker>
+        get() = setOf(
+            FirJsMultipleInheritanceChecker,
         )
 }
