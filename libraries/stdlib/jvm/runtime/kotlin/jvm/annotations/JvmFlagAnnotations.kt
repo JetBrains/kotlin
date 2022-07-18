@@ -44,3 +44,12 @@ public actual annotation class Strictfp
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public actual annotation class Synchronized
+
+/**
+ * Makes the annotated lambda function implement `java.io.Serializable`,
+ * generates a pretty `toString` implementation and adds reflection metadata.
+ */
+@Target(EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("1.8")
+public actual annotation class JvmSerializableLambda

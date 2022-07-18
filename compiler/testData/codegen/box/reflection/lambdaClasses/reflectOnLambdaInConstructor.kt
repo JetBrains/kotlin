@@ -1,3 +1,4 @@
+// LAMBDAS: CLASS
 // !OPT_IN: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM
 // WITH_REFLECT

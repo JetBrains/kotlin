@@ -16,8 +16,6 @@ enum class JvmClosureGenerationScheme(
     ;
 
     companion object {
-        val DEFAULT = CLASS
-
         @JvmStatic
         fun fromString(string: String?): JvmClosureGenerationScheme? {
             val lowerStr = string?.toLowerCaseAsciiOnly() ?: return null

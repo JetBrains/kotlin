@@ -1,0 +1,11 @@
+package
+
+public val bad1: kotlin.Int
+public val bad2: kotlin.Any
+public val bad3: kotlin.reflect.KFunction0<() -> kotlin.Unit>
+public val bad4: kotlin.Int
+public val good1: () -> kotlin.Unit
+public val good2: () -> kotlin.Unit
+public val good3: kotlin.Any.() -> kotlin.Unit
+public val good4: () -> kotlin.Unit
+public fun foo(): () -> kotlin.Unit

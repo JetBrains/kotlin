@@ -119,6 +119,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
+        container.useInstance(JvmSerializableLambdaAnnotationChecker)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
