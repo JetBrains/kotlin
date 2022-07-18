@@ -2633,6 +2633,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("reflectGetOnNullableTypeAlias.kt")
+        public void testReflectGetOnNullableTypeAlias() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/reflectGetOnNullableTypeAlias.kt");
+        }
+
+        @Test
         @TestMetadata("SafeLetWithReturn.kt")
         public void testSafeLetWithReturn() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SafeLetWithReturn.kt");

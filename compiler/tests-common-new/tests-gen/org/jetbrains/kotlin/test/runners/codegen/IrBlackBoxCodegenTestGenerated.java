@@ -17830,6 +17830,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("getOnNullableTypeAlias.kt")
+        public void testGetOnNullableTypeAlias() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/getOnNullableTypeAlias.kt");
+        }
+
+        @Test
         @TestMetadata("implicitNothingInDelegate.kt")
         public void testImplicitNothingInDelegate() throws Exception {
             runTest("compiler/testData/codegen/box/fir/implicitNothingInDelegate.kt");

@@ -1932,6 +1932,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
         }
 
+        @TestMetadata("reflectGetOnNullableTypeAlias.kt")
+        public void testReflectGetOnNullableTypeAlias() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/reflectGetOnNullableTypeAlias.kt");
+        }
+
         @TestMetadata("SafeLetWithReturn.kt")
         public void testSafeLetWithReturn() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SafeLetWithReturn.kt");

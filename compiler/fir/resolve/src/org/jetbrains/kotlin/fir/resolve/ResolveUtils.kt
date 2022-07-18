@@ -361,10 +361,10 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
             SmartcastStability.STABLE_VALUE
         }
 
-    val originalType = expression.resultType.coneType
+    val originalType = expression.resultType.coneType.fullyExpandedType(session)
     val allTypes = typesFromSmartCast.also {
         if (originalType !is ConeStubType) {
-            it += originalType
+            it += originalType.fullyExpandedType(session)
         }
     }
     if (allTypes.all { it is ConeDynamicType }) return null
