@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -648,6 +649,21 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
         if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
             sink.yieldDiagnostic(HiddenCandidate)
+        }
+    }
+}
+
+private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)
+
+internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (candidate.symbol.origin === FirDeclarationOrigin.DynamicScope) return
+        val extensionReceiver = candidate.chosenExtensionReceiverValue ?: return
+        val argumentIsDynamic = extensionReceiver.type is ConeDynamicType
+        val parameterIsDynamic = (candidate.symbol as? FirCallableSymbol)?.resolvedReceiverTypeRef?.type is ConeDynamicType
+        if (parameterIsDynamic != argumentIsDynamic ||
+            parameterIsDynamic && !candidate.symbol.hasAnnotation(DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID)) {
+            candidate.addDiagnostic(HiddenCandidate)
         }
     }
 }
