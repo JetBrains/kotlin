@@ -1824,6 +1824,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateStringConst(value: IrConst<String>) =
             context.llvm.staticData.kotlinStringLiteral(value.value)
 
+    /*
+     * Different NaNs aren't really stable in java, in particular writing to klib and reading back
+     * can alter its value. So for better codegen stability, we are replacing all constant values, which are NaNs
+     * to Double.NaN or Float.NaN. Anyway, there is no way to find difference between them, except .toRawBits(),
+     * and this behaviour for compile-time-constants is consistent with jvm.
+     */
+    private fun normalizeNan(x: Double) = if (x.isNaN()) Double.NaN else x
+    private fun normalizeNan(x: Float) = if (x.isNaN()) Float.NaN else x
+
     private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
         /* This suppression against IrConst<String> */
@@ -1840,8 +1849,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Int    -> return Int32(value.value as Int)
             IrConstKind.Long   -> return Int64(value.value as Long)
             IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
-            IrConstKind.Float  -> return Float32(value.value as Float)
-            IrConstKind.Double -> return Float64(value.value as Double)
+            IrConstKind.Float  -> return Float32(normalizeNan(value.value as Float))
+            IrConstKind.Double -> return Float64(normalizeNan(value.value as Double))
         }
         TODO(ir2string(value))
     }
