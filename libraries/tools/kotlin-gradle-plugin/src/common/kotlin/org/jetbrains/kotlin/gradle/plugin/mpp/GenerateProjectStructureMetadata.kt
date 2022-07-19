@@ -15,10 +15,6 @@ import java.io.File
 
 open class GenerateProjectStructureMetadata : DefaultTask() {
 
-    init {
-        notCompatibleWithConfigurationCache("Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info")
-    }
-
     @get:Internal
     internal lateinit var lazyKotlinProjectStructureMetadata: Lazy<KotlinProjectStructureMetadata>
 
@@ -27,8 +23,7 @@ open class GenerateProjectStructureMetadata : DefaultTask() {
         get() = lazyKotlinProjectStructureMetadata.value
 
     @get:OutputFile
-    val resultFile: File
-        get() = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
+    val resultFile: File = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
 
     @TaskAction
     fun generateMetadataXml() {
