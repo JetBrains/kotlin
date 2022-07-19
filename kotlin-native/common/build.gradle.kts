@@ -8,8 +8,12 @@ plugins {
 }
 
 bitcode {
-    module("files")
-    module("env")
+    module("files") {
+        headersDirs.from(layout.projectDirectory.dir("src/files/headers"))
+    }
+    module("env") {
+        headersDirs.from(layout.projectDirectory.dir("src/env/headers"))
+    }
 }
 
 val hostName: String by project

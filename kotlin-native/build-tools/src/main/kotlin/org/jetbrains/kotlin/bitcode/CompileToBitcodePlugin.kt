@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bitcode
 
+import kotlinBuildProperties
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -47,6 +48,17 @@ open class CompileToBitcodePlugin : Plugin<Project> {
 }
 
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
+    // TODO: These should be set by the plugin users.
+    private val DEFAULT_CPP_FLAGS = listOfNotNull(
+            "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
+            "-std=c++17",
+            "-Werror",
+            "-O2",
+            "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
+            "-Wall",
+            "-Wextra",
+            "-Wno-unused-parameter",  // False positives with polymorphic functions.
+    )
 
     private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
     private val execClang = project.extensions.getByType<ExecClang>()
@@ -97,11 +109,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         }
         compilationDatabase.target(konanTarget) {
             entry {
-                val args = listOf(execClang.resolveExecutable(compileTask.executable)) + compileTask.compilerFlags + execClang.clangArgsForCppRuntime(konanTarget.name)
-                directory.set(compileTask.objDir)
+                val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(konanTarget.name)
+                directory.set(compileTask.outputDirectory)
                 files.setFrom(compileTask.inputFiles)
                 arguments.set(args)
-                output.set(compileTask.outFile.absolutePath)
+                output.set(compileTask.outputFile.asFile.map { it.absolutePath })
             }
         }
     }
@@ -113,16 +125,21 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
             val allMainModulesTask = allMainModulesTasks[targetName]!!
             sanitizers.forEach { sanitizer ->
                 val taskName = fullTaskName(name, targetName, sanitizer)
-                val task = project.tasks.create(taskName, CompileToBitcode::class.java, name, targetName, outputGroup).apply {
-                    srcDirs = project.files(srcRoot.resolve("cpp"))
-                    headersDirs = srcDirs + project.files(srcRoot.resolve("headers"))
-
-                    this.sanitizer = sanitizer
+                val task = project.tasks.create(taskName, CompileToBitcode::class.java, target, sanitizer.asMaybe).apply {
+                    this.moduleName.set(name)
+                    this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it.bc") })
+                    this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/$outputGroup/$target${sanitizer.dirSuffix}/$it") })
+                    this.compiler.convention("clang++")
+                    this.compilerArgs.set(DEFAULT_CPP_FLAGS)
+                    this.inputFiles.from(srcRoot.resolve("cpp"))
+                    this.inputFiles.include("**/*.cpp", "**/*.mm")
+                    this.inputFiles.exclude("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
+                    this.headersDirs.from(this.inputFiles.dir)
                     when (outputGroup) {
-                        "test" -> group = VERIFICATION_BUILD_TASK_GROUP
-                        "main" -> group = BUILD_TASK_GROUP
+                        "test" -> this.group = VERIFICATION_BUILD_TASK_GROUP
+                        "main" -> this.group = BUILD_TASK_GROUP
                     }
-                    description = "Compiles '$name' to bitcode for $targetName${sanitizer.description}"
+                    this.description = "Compiles '$name' to bitcode for $targetName${sanitizer.description}"
                     dependsOn(":kotlin-native:dependencies:update")
                     configurationBlock()
                 }
@@ -161,19 +178,21 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         val compileToBitcodeTasks = testedTasks.mapNotNull {
             val name = "${it.name}TestBitcode"
             val task = project.tasks.findByName(name) as? CompileToBitcode
-                    ?: project.tasks.create(name, CompileToBitcode::class.java, "${it.folderName}Tests", target.name, "test").apply {
-                        srcDirs = it.srcDirs
-                        headersDirs = it.headersDirs + googleTestExtension.headersDirs
+                    ?: project.tasks.create(name, CompileToBitcode::class.java, it.target, it.sanitizer.asMaybe).apply {
+                        this.moduleName.set(it.moduleName)
+                        this.outputFile.convention(moduleName.flatMap { project.layout.buildDirectory.file("bitcode/test/$target${sanitizer.dirSuffix}/${it}Tests.bc") })
+                        this.outputDirectory.convention(moduleName.flatMap { project.layout.buildDirectory.dir("bitcode/test/$target${sanitizer.dirSuffix}/${it}Tests") })
+                        this.compiler.convention("clang++")
+                        this.compilerArgs.set(it.compilerArgs)
+                        this.inputFiles.from(it.inputFiles.dir)
+                        this.inputFiles.include("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
+                        this.headersDirs.setFrom(it.headersDirs)
+                        this.headersDirs.from(googleTestExtension.headersDirs)
+                        this.group = VERIFICATION_BUILD_TASK_GROUP
+                        this.description = "Compiles '${it.name}' tests to bitcode for $target${sanitizer.description}"
 
-                        group = VERIFICATION_BUILD_TASK_GROUP
-                        description = "Compiles '${it.name}' tests to bitcode for $target${sanitizer.description}"
-
-                        this.sanitizer = sanitizer
-                        excludeFiles = emptyList()
-                        includeFiles = listOf("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
                         dependsOn(":kotlin-native:dependencies:update")
                         dependsOn("downloadGoogleTest")
-                        compilerArgs.addAll(it.compilerArgs)
 
                         addToCompdb(this, target)
                     }
@@ -200,11 +219,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
             this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))
             this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
             this.mimallocEnabled.set(testsGroup.testedModules.get().any { it.contains("mimalloc") })
-            this.mainFile.set(testSupportTask.outFile)
-            dependsOn(testSupportTask)
+            this.mainFile.set(testSupportTask.outputFile)
             val tasksToLink = (compileToBitcodeTasks + testedTasks + testFrameworkTasks)
-            this.inputFiles.setFrom(tasksToLink.map { it.outFile })
-            dependsOn(tasksToLink)
+            this.inputFiles.setFrom(tasksToLink.map { it.outputFile })
 
             usesService(compileTestsSemaphore)
         }
@@ -257,13 +274,20 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
         private fun String.snakeCaseToUpperCamelCase() = split('_').joinToString(separator = "") { it.capitalized }
 
-        private fun fullTaskName(name: String, targetName: String, sanitizer: SanitizerKind?) = "${targetName}${name.snakeCaseToUpperCamelCase()}${sanitizer.suffix}"
+        private fun fullTaskName(name: String, targetName: String, sanitizer: SanitizerKind?) = "${targetName}${name.snakeCaseToUpperCamelCase()}${sanitizer.taskSuffix}"
 
-        private val SanitizerKind?.suffix
+        private val SanitizerKind?.taskSuffix
             get() = when (this) {
                 null -> ""
                 SanitizerKind.ADDRESS -> "_ASAN"
                 SanitizerKind.THREAD -> "_TSAN"
+            }
+
+        private val SanitizerKind?.dirSuffix
+            get() = when (this) {
+                null -> ""
+                SanitizerKind.ADDRESS -> "-asan"
+                SanitizerKind.THREAD -> "-tsan"
             }
 
         private val SanitizerKind?.description

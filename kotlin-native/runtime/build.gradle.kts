@@ -33,42 +33,67 @@ googletest {
     refresh = project.hasProperty("refresh-gtest")
 }
 
-fun CompileToBitcode.includeRuntime() {
-    headersDirs += files("src/main/cpp")
-}
-
 val hostName: String by project
 val targetList: List<String> by project
 
 bitcode {
     module("main") {
-        includeRuntime()
-
-        outputName = "runtime.bc"
+        // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
+        if (sanitizer == null) {
+            outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
+        }
     }
 
     module("mimalloc") {
         val srcRoot = file("src/mimalloc")
-        language = CompileToBitcode.Language.C
-        includeFiles = listOf("**/*.c")
-        excludeFiles += listOf("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
-        srcDirs = files("$srcRoot/c")
-        compilerArgs.addAll(listOf("-DKONAN_MI_MALLOC=1", "-Wno-unknown-pragmas", "-ftls-model=initial-exec",
-                "-Wno-unused-function", "-Wno-error=atomic-alignment",
-                "-Wno-unused-parameter" /* for windows 32*/))
-        extraSanitizerArgs[SanitizerKind.THREAD] = listOf("-DMI_TSAN=1")
-        headersDirs = files("$srcRoot/c/include")
+        compiler.set("clang")
+        compilerArgs.set(listOfNotNull(
+                "-std=gnu11",
+                if (sanitizer == SanitizerKind.THREAD) { "-O1" } else { "-O3" },
+                "-DKONAN_MI_MALLOC=1",
+                "-Wno-unknown-pragmas",
+                "-ftls-model=initial-exec",
+                "-Wno-unused-function",
+                "-Wno-error=atomic-alignment",
+                "-Wno-unused-parameter", /* for windows 32 */
+                "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
+        ))
+        inputFiles.from("$srcRoot/c")
+        inputFiles.include("**/*.c")
+        inputFiles.exclude("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
+        headersDirs.setFrom("$srcRoot/c/include")
 
-        onlyIf { targetSupportsMimallocAllocator(target) }
+        onlyIf { targetSupportsMimallocAllocator(target.name) }
     }
 
     module("libbacktrace") {
         val srcRoot = file("src/libbacktrace")
-        val targetInfo = HostManager().targetByName(target)
-        language = CompileToBitcode.Language.C
-        val useMachO = targetInfo.family.isAppleFamily
-        val useElf = targetInfo.family in listOf(Family.LINUX, Family.ANDROID)
-        includeFiles = listOfNotNull(
+        val elfSize = when (target.architecture) {
+            TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
+            TargetArchitecture.X86, TargetArchitecture.ARM32,
+            TargetArchitecture.MIPS32, TargetArchitecture.MIPSEL32,
+            TargetArchitecture.WASM32 -> 32
+        }
+        val useMachO = target.family.isAppleFamily
+        val useElf = target.family in listOf(Family.LINUX, Family.ANDROID)
+        compiler.set("clang")
+        compilerArgs.set(listOfNotNull(
+                "-std=gnu11",
+                "-funwind-tables",
+                "-W",
+                "-Wall",
+                "-Wwrite-strings",
+                "-Wstrict-prototypes",
+                "-Wmissing-prototypes",
+                "-Wold-style-definition",
+                "-Wmissing-format-attribute",
+                "-Wcast-qual",
+                "-O2",
+                "-DBACKTRACE_ELF_SIZE=$elfSize".takeIf { useElf },
+                "-Wno-atomic-alignment"
+        ))
+        inputFiles.from("$srcRoot/c")
+        inputFiles.include(listOfNotNull(
                 "atomic.c",
                 "backtrace.c",
                 "dwarf.c",
@@ -82,105 +107,84 @@ bitcode {
                 "simple.c",
                 "sort.c",
                 "state.c"
-        )
-        srcDirs = files("$srcRoot/c")
-        val elfSize = when (targetInfo.architecture) {
-            TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
-            TargetArchitecture.X86, TargetArchitecture.ARM32,
-            TargetArchitecture.MIPS32, TargetArchitecture.MIPSEL32,
-            TargetArchitecture.WASM32 -> 32
-        }
-        compilerArgs.addAll(listOfNotNull(
-                "-funwind-tables",
-                "-W", "-Wall", "-Wwrite-strings", "-Wstrict-prototypes", "-Wmissing-prototypes",
-                "-Wold-style-definition", "-Wmissing-format-attribute", "-Wcast-qual", "-O2",
-                "-DBACKTRACE_ELF_SIZE=$elfSize".takeIf { useElf }, "-Wno-atomic-alignment"
         ))
-        headersDirs = files("$srcRoot/c/include")
+        headersDirs.setFrom("$srcRoot/c/include")
 
-        onlyIf { targetSupportsLibBacktrace(target) }
+        onlyIf { targetSupportsLibBacktrace(target.name) }
     }
 
-
     module("launcher") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("debug") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("std_alloc") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("opt_alloc") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("exceptionsSupport", file("src/exceptions_support")) {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("source_info_core_symbolication", file("src/source_info/core_symbolication")) {
-        includeRuntime()
-        onlyIf { targetSupportsCoreSymbolication(target) }
+        headersDirs.from(files("src/main/cpp"))
+        onlyIf { targetSupportsCoreSymbolication(target.name) }
     }
     module("source_info_libbacktrace", file("src/source_info/libbacktrace")) {
-        includeRuntime()
-        headersDirs += files("src/libbacktrace/c/include")
-        onlyIf { targetSupportsLibBacktrace(target) }
+        headersDirs.from(files("src/main/cpp", "src/libbacktrace/c/include"))
+        onlyIf { targetSupportsLibBacktrace(target.name) }
     }
 
     module("strict") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("relaxed") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("profileRuntime", file("src/profile_runtime"))
 
     module("objc") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("test_support", outputGroup = "test") {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"), googletest.headersDirs)
         dependsOn("downloadGoogleTest")
-        headersDirs += googletest.headersDirs
     }
 
     module("legacy_memory_manager", file("src/legacymm")) {
-        includeRuntime()
+        headersDirs.from(files("src/main/cpp"))
     }
 
     module("experimental_memory_manager", file("src/mm")) {
-        headersDirs += files("src/gc/common/cpp")
-        includeRuntime()
+        headersDirs.from(files("src/gc/common/cpp", "src/main/cpp"))
     }
 
     module("common_gc", file("src/gc/common")) {
-        headersDirs += files("src/mm/cpp")
-        includeRuntime()
+        headersDirs.from(files("src/mm/cpp", "src/main/cpp"))
     }
 
     module("noop_gc", file("src/gc/noop")) {
-        headersDirs += files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp")
-        includeRuntime()
+        headersDirs.from(files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
     }
 
     module("same_thread_ms_gc", file("src/gc/stms")) {
-        headersDirs += files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp")
-        includeRuntime()
+        headersDirs.from(files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
     }
 
     module("concurrent_ms_gc", file("src/gc/cms")) {
-        headersDirs += files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp")
-        includeRuntime()
+        headersDirs.from(files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
 
-        onlyIf { targetSupportsThreads(target) }
+        onlyIf { targetSupportsThreads(target.name) }
     }
 
     testsGroup("std_alloc_runtime_tests") {
