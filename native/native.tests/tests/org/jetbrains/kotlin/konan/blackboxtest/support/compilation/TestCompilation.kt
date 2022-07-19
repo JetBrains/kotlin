@@ -36,6 +36,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
+    protected abstract val binaryOptions: Map<String, String>
 
     // Runs the compiler and memorizes the result on property access.
     final override val result: TestCompilationResult<out A> by lazy {
@@ -52,9 +53,9 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         add(
             "-enable-assertions",
             "-Xskip-prerelease-check",
-            "-Xverify-ir",
-            "-Xbinary=runtimeAssertionsMode=panic"
+            "-Xverify-ir"
         )
+        addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
     }
 
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
@@ -170,6 +171,8 @@ internal class LibraryCompilation(
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
             "-produce", "library",
@@ -201,6 +204,7 @@ internal class ExecutableCompilation(
     expectedArtifact = expectedArtifact
 ) {
     private val cacheMode: CacheMode = settings.get()
+    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
@@ -281,6 +285,7 @@ internal class StaticCacheCompilation(
     }
 
     override val sourceModules get() = emptyList<TestModule>()
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.forUseWithCache
 
     private val cacheRootDir: File = run {
         val cacheMode = settings.get<CacheMode>()
@@ -354,5 +359,15 @@ internal class CategorizedDependencies(uncategorizedDependencies: Iterable<TestC
         }
 
         return mapNotNull { dependency -> if (dependencyTypeMatcher(dependency.type)) dependency.artifact as A else null }
+    }
+}
+
+private object BinaryOptions {
+    object RuntimeAssertionsMode {
+        // Here the 'default' is in the sense the default for testing, not the default for the compiler.
+        val defaultForTesting: Map<String, String> = mapOf("runtimeAssertionsMode" to "panic")
+        val forUseWithCache: Map<String, String> = mapOf("runtimeAssertionsMode" to "ignore")
+
+        fun chooseFor(cacheMode: CacheMode) = if (cacheMode.staticCacheRootDir != null) forUseWithCache else defaultForTesting
     }
 }
