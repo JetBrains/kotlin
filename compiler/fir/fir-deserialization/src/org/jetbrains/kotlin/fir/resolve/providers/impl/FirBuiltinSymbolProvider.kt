@@ -118,7 +118,7 @@ open class FirBuiltinSymbolProvider(
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, moduleData,
                 FirBuiltinAnnotationDeserializer(moduleData.session),
-                FirConstDeserializer(moduleData.session),
+                FirConstDeserializer(moduleData.session, BuiltInSerializerProtocol),
                 containerSource = null
             ).memberDeserializer
         }
@@ -131,7 +131,7 @@ open class FirBuiltinSymbolProvider(
 
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, kotlinScopeProvider, parentContext,
+                null, kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
                 null,
                 origin = FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
