@@ -94,7 +94,7 @@ private class FromModuleViewSessionCache {
         val wasSessionInvalidated = sessions.associateWithTo(hashMapOf()) { false }
 
         val reversedDependencies = sessions.reversedDependencies { session ->
-            session.firSession.module.directRegularDependencies.mapNotNull { mappings[it] }
+            session.firSession.ktModule.directRegularDependencies.mapNotNull { mappings[it] }
         }
 
         fun markAsInvalidWithDfs(session: FirSessionWithModificationTracker) {

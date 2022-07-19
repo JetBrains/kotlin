@@ -9,28 +9,37 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.Immutable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProviders
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSessionProvider
+import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 
 @Immutable
 class LLFirSessionProvider internal constructor(
     val project: Project,
     internal val rootModuleSession: LLFirResolvableModuleSession,
-    private val moduleToSession: Map<KtModule, LLFirResolvableModuleSession>
+    private val moduleToResolvableSession: Map<KtModule, LLFirResolvableModuleSession>
 ) : FirSessionProvider() {
+
+    private val moduleToSession = moduleToResolvableSession + moduleToResolvableSession.values.flatMap { module ->
+        (module.dependenciesSymbolProvider as LLFirDependentModuleProviders).dependenciesAsSessions
+    }.associateBy { it.ktModule }
 
     override fun getSession(moduleData: FirModuleData): LLFirSession {
         requireIsInstance<LLFirModuleData>(moduleData)
         return when (moduleData) {
-            is LLFirKtModuleBasedModuleData -> getSession(moduleData.ktModule)
+            is LLFirKtModuleBasedModuleData -> getResolvableSession(moduleData.ktModule)
         }
     }
 
-    fun getSession(module: KtModule): LLFirResolvableModuleSession =
+    fun getSession(module: KtModule): LLFirSession =
         moduleToSession.getValue(module)
 
+    fun getResolvableSession(module: KtModule): LLFirResolvableModuleSession =
+        moduleToResolvableSession.getValue(module)
+
     val allSessions: Collection<LLFirModuleSession>
-        get() = moduleToSession.values
+        get() = moduleToResolvableSession.values
 }

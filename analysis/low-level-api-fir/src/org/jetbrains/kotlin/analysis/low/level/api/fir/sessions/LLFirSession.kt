@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -19,14 +17,12 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 @OptIn(PrivateSessionConstructor::class)
 abstract class LLFirSession(override val builtinTypes: BuiltinTypes, kind: Kind) : FirSession(sessionProvider = null, kind) {
     abstract val project: Project
+    abstract val ktModule: KtModule
 
     abstract fun getScopeSession(): ScopeSession
 }
 
-@OptIn(PrivateSessionConstructor::class)
-abstract class LLFirModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : LLFirSession(builtinTypes, kind) {
-    abstract val module: KtModule
-}
+abstract class LLFirModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : LLFirSession(builtinTypes, kind)
 
 val FirDeclaration.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession

@@ -56,7 +56,7 @@ internal class LLFirLibrarySessionFactory(
     ): LLFirLibrarySession {
         val platform = ktLibraryModule.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
-        return LLFirLibrarySession(project, builtinsSession.builtinTypes).apply session@{
+        return LLFirLibrarySession(ktLibraryModule, project, builtinsSession.builtinTypes).apply session@{
             val moduleData = LLFirKtModuleBasedModuleData(ktLibraryModule).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             registerIdeComponents(project)

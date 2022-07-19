@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         val builtinsModule = KtBuiltinsModule(platform, platform.getAnalyzerServices(), project)
-        return LLFirBuiltinsAndCloneableSession(project, builtInTypes).apply session@{
+        return LLFirBuiltinsAndCloneableSession(builtinsModule, project, builtInTypes).apply session@{
             val moduleData = LLFirKtModuleBasedModuleData(builtinsModule).apply {
                 bindSession(this@session)
             }

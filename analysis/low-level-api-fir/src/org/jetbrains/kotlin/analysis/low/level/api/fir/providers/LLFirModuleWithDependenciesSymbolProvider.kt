@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -81,6 +82,11 @@ internal class LLFirDependentModuleProviders(
     session: FirSession,
     private val providers: List<FirSymbolProvider>
 ) : FirDependenciesSymbolProvider(session) {
+
+    val dependenciesAsSessions: List<LLFirSession>
+        get() = buildList {
+            providers.mapTo(this) { it.session as LLFirSession }
+        }
 
     constructor(session: FirSession, createSubProviders: MutableList<FirSymbolProvider>.() -> Unit)
             : this(session, buildList { createSubProviders() })
