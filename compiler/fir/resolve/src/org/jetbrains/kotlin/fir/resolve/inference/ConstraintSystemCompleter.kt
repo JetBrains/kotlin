@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
@@ -305,11 +307,16 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         val resultErrorType = when (typeVariable) {
             is ConeTypeParameterBasedTypeVariable ->
                 createCannotInferErrorType(
+                    typeVariable.typeParameterSymbol,
                     "Cannot infer argument for type parameter ${typeVariable.typeParameterSymbol.name}",
                     isUninferredParameter = true,
                 )
-            is ConeTypeVariableForLambdaParameterType -> createCannotInferErrorType("Cannot infer lambda parameter type")
-            else -> createCannotInferErrorType("Cannot infer type variable $typeVariable")
+
+            is ConeTypeVariableForLambdaParameterType -> createCannotInferErrorType(
+                typeParameterSymbol = null,
+                message = "Cannot infer lambda parameter type"
+            )
+            else -> createCannotInferErrorType(typeParameterSymbol = null, "Cannot infer type variable $typeVariable")
         }
 
         fixVariable(typeVariable, resultErrorType, ConeFixVariableConstraintPosition(typeVariable))
@@ -445,14 +452,20 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             return topLevelAtoms.firstNotNullOfOrNull(FirStatement::findFirstAtomContainingVariable)
         }
 
-        private fun createCannotInferErrorType(message: String, isUninferredParameter: Boolean = false) =
-            ConeErrorType(
-                ConeSimpleDiagnostic(
+        private fun createCannotInferErrorType(
+            typeParameterSymbol: FirTypeParameterSymbol?,
+            message: String,
+            isUninferredParameter: Boolean = false
+        ): ConeErrorType {
+            val diagnostic = when (typeParameterSymbol) {
+                null -> ConeSimpleDiagnostic(message, DiagnosticKind.CannotInferParameterType)
+                else -> ConeCannotInferParameterType(
+                    typeParameterSymbol,
                     message,
-                    DiagnosticKind.CannotInferParameterType,
-                ),
-                isUninferredParameter,
-            )
+                )
+            }
+            return ConeErrorType(diagnostic, isUninferredParameter,)
+        }
 
 
     }

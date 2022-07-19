@@ -105,6 +105,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
+    is ConeCannotInferParameterType ->  FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null

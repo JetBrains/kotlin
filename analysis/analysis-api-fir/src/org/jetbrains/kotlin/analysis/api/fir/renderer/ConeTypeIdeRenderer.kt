@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
@@ -96,9 +97,21 @@ internal class ConeTypeIdeRenderer(
 
     private fun StringBuilder.renderErrorType(type: ConeErrorType) {
         val diagnostic = type.diagnostic
-        if (options.renderUnresolvedTypeAsResolved && diagnostic is ConeUnresolvedError) {
-            val qualifierRendered = diagnostic.qualifier?.let { FqName(it).render() }.orEmpty()
-            append(qualifierRendered)
+        if (options.renderUnresolvedTypeAsResolved) {
+            when (diagnostic) {
+                is ConeUnresolvedError -> {
+                    val qualifierRendered = diagnostic.qualifier?.let { FqName(it).render() }.orEmpty()
+                    append(qualifierRendered)
+                }
+
+                is ConeCannotInferParameterType -> {
+                    append(diagnostic.typeParameter.name.render())
+                }
+
+                else -> {
+                    appendError(diagnostic.reason)
+                }
+            }
         } else {
             appendError(diagnostic.reason)
         }
