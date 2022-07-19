@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-internal class LLFirSourcesSession @PrivateSessionConstructor constructor(
-    override val ktModule: KtSourceModule,
+internal class LLFirNonUnderContentRootSession @PrivateSessionConstructor constructor(
+    override val ktModule: KtNotUnderContentRootModule,
     override val project: Project,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
