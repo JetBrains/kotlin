@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(project(":kotlin-reflect"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
@@ -25,7 +25,7 @@ dependencies {
     testApi(commonDependency("junit:junit"))
     testApi(protobufFull())
     testApi(kotlinStdlib())
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {

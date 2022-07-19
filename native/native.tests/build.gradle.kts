@@ -9,7 +9,7 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_11)
 
 dependencies {
     testImplementation(kotlinStdlib())
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(intellijCore())
     testImplementation(commonDependency("commons-lang:commons-lang"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))

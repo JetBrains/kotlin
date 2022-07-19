@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
-    compileOnly(project(":kotlin-reflect"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
@@ -33,7 +33,7 @@ dependencies {
 
     testImplementation(intellijCore())
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()

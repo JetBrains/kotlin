@@ -57,7 +57,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(commonDependency("junit:junit"))
     testApi(commonDependency("com.android.tools:r8"))
-    testCompileOnly(project(":kotlin-reflect"))
+    testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCore())
 

@@ -23,7 +23,7 @@ dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
 
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testCompileOnly(intellijCore())

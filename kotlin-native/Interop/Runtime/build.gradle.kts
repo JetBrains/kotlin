@@ -66,7 +66,7 @@ native {
 dependencies {
     implementation(project(":kotlin-native:utilities:basic-utils"))
     implementation(project(":kotlin-stdlib"))
-    implementation(project(":kotlin-reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets.main.get().java.srcDir("src/jvm/kotlin")

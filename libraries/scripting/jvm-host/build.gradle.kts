@@ -13,11 +13,11 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":kotlin-reflect"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))
-    publishedRuntime(project(":kotlin-reflect"))
+    publishedRuntime(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     publishedRuntime(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 

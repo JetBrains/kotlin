@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
     implementation(project(":compiler:resolution.common"))
-    implementation(project(":kotlin-reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     /*
      We do not need guava in the generator, but because of a bug in the IJ project importing, we need to have a dependency on intellijCore

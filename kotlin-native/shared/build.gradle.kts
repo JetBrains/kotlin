@@ -52,7 +52,7 @@ dependencies {
     kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
 
     implementation(kotlinStdlib())
-    implementation(project(":kotlin-reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion")
 }

@@ -32,7 +32,7 @@ dependencies {
     compileOnly(project(":kotlin-scripting-dependencies-maven"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(kotlinStdlib())
-    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
@@ -46,7 +46,7 @@ dependencies {
     }
 
     proguardLibraryJars(kotlinStdlib())
-    proguardLibraryJars(project(":kotlin-reflect"))
+    proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
 
     relocatedJarContents(embedded)
