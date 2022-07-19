@@ -11,30 +11,29 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 
 class LLFirSessionProviderStorage(val project: Project) {
-    private val sessionsCache = ConcurrentHashMap<KtModule, FromModuleViewSessionCache>()
+    private val sessionsCache = LLFirSessionsCache()
 
     private val librariesSessionFactory = LLFirLibrarySessionFactory.getInstance(project)
-    private val builtInsSessionFactopry = LLFirBuiltinsSessionFactory.getInstance(project)
+    private val builtInsSessionFactory = LLFirBuiltinsSessionFactory.getInstance(project)
+
+    private val globalComponents = LLFirGlobalResolveComponents(project)
 
     fun getSessionProvider(
         useSiteKtModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)? = null
     ): LLFirSessionProvider {
-        val globalComponents = LLFirGlobalResolveComponents(useSiteKtModule, project)
-
-        val cache = sessionsCache.getOrPut(useSiteKtModule) { FromModuleViewSessionCache() }
-        val (sessions, session) = cache.withMappings(project) { mappings ->
+        val (sessions, session) = sessionsCache.withMappings(project) { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirResolvableModuleSession>().apply { putAll(mappings) }
             val session = executeWithoutPCE {
                 when (useSiteKtModule) {
@@ -43,26 +42,29 @@ class LLFirSessionProviderStorage(val project: Project) {
                             project,
                             useSiteKtModule,
                             globalComponents,
-                            cache.sessionInvalidator,
+                            sessionsCache.sessionInvalidator,
                             sessions,
                             librariesSessionFactory,
                             configureSession = configureSession,
                         )
                     }
+
                     is KtLibraryModule, is KtLibrarySourceModule -> {
                         LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
                             project,
                             useSiteKtModule,
                             globalComponents,
-                            cache.sessionInvalidator,
-                            builtInsSessionFactopry.getBuiltinsSession(useSiteKtModule.platform),
+                            sessionsCache.sessionInvalidator,
+                            builtInsSessionFactory.getBuiltinsSession(useSiteKtModule.platform),
                             sessions,
                             configureSession = configureSession,
                         )
                     }
+
                     is KtNotUnderContentRootModule ->
                         LLFirNonUnderContentRootSessionFactory.getInstance(project)
                             .getNonUnderContentRootSession(useSiteKtModule, sessions)
+
                     else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
                 }
 
@@ -74,7 +76,7 @@ class LLFirSessionProviderStorage(val project: Project) {
     }
 }
 
-private class FromModuleViewSessionCache {
+private class LLFirSessionsCache {
     @Volatile
     private var mappings: PersistentMap<KtModule, FirSessionWithModificationTracker> = persistentMapOf()
 

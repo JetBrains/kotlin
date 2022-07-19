@@ -54,7 +54,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        val globalResolveComponents = LLFirGlobalResolveComponents(module, project)
+        val globalResolveComponents = LLFirGlobalResolveComponents(project)
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
         val contentScope = module.contentScope
         val session = LLFirNonUnderContentRootSession(module, project, components, builtinsSession.builtinTypes)
