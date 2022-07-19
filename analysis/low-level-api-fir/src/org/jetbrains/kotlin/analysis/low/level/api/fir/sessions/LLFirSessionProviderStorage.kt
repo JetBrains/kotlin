@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 
 class LLFirSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<KtModule, FromModuleViewSessionCache>()
@@ -59,6 +60,9 @@ class LLFirSessionProviderStorage(val project: Project) {
                             configureSession = configureSession,
                         )
                     }
+                    is KtNotUnderContentRootModule ->
+                        LLFirNonUnderContentRootSessionFactory.getInstance(project)
+                            .getNonUnderContentRootSession(useSiteKtModule, sessions)
                     else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
                 }
 

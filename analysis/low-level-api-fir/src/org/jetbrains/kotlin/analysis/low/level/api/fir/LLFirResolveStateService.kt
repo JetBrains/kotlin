@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import java.util.concurrent.ConcurrentHashMap
@@ -58,6 +56,14 @@ internal class LLFirResolveSessionService(project: Project) {
                 }
                 is KtLibraryModule, is KtLibrarySourceModule -> {
                     LLFirLibraryOrLibrarySourceResolvableResolveSession(
+                        useSiteSession.moduleComponents.globalResolveComponents,
+                        sessionProviderStorage.project,
+                        useSiteKtModule,
+                        sessionProvider,
+                    )
+                }
+                is KtNotUnderContentRootModule -> {
+                    LLFirNotUnderContentRootResolvableResolveSession(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
                         useSiteKtModule,
