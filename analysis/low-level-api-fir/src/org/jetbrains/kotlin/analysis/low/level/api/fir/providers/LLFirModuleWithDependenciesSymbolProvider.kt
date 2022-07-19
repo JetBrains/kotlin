@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -15,9 +16,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.SmartSet
 
 internal class LLFirModuleWithDependenciesSymbolProvider(
     session: FirSession,
@@ -97,37 +101,45 @@ internal abstract class LLFirDependentModuleProviders(
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        dependentProviders.forEach { provider ->
-            when (provider) {
-                is LLFirModuleWithDependenciesSymbolProvider ->
-                    provider.getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
-
-                else -> provider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
+        val facades = SmartSet.create<JvmClassName>()
+        for (provider in dependentProviders) {
+            val newSymbols = buildSmartList {
+                when (provider) {
+                    is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, name)
+                    else -> provider.getTopLevelCallableSymbolsTo(this, packageFqName, name)
+                }
             }
+            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
         }
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        dependentProviders.forEach { provider ->
-            when (provider) {
-                is LLFirModuleWithDependenciesSymbolProvider ->
-                    provider.getTopLevelFunctionSymbolsToWithoutDependencies(destination, packageFqName, name)
-
-                else -> provider.getTopLevelFunctionSymbolsTo(destination, packageFqName, name)
+        val facades = SmartSet.create<JvmClassName>()
+        for (provider in dependentProviders) {
+            val newSymbols = buildSmartList {
+                when (provider) {
+                    is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelFunctionSymbolsToWithoutDependencies(this, packageFqName, name)
+                    else -> provider.getTopLevelFunctionSymbolsTo(this, packageFqName, name)
+                }
             }
+
+            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
         }
+
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        dependentProviders.forEach { provider ->
-            when (provider) {
-                is LLFirModuleWithDependenciesSymbolProvider ->
-                    provider.getTopLevelPropertySymbolsToWithoutDependencies(destination, packageFqName, name)
-
-                else -> provider.getTopLevelPropertySymbolsTo(destination, packageFqName, name)
+        val facades = SmartSet.create<JvmClassName>()
+        for (provider in dependentProviders) {
+            val newSymbols = buildSmartList {
+                when (provider) {
+                    is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelPropertySymbolsToWithoutDependencies(this, packageFqName, name)
+                    else -> provider.getTopLevelPropertySymbolsTo(this, packageFqName, name)
+                }
             }
+            addNewSymbolsConsideringJvmFacades(destination, newSymbols, facades)
         }
     }
 
@@ -138,6 +150,32 @@ internal abstract class LLFirDependentModuleProviders(
                 else -> provider.getPackage(fqName)
             }
         }
+
+
+    private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
+        destination: MutableList<S>,
+        newSymbols: List<S>,
+        facades: MutableSet<JvmClassName>,
+    ) {
+        if (newSymbols.isEmpty()) return
+        val newFacades = SmartSet.create<JvmClassName>()
+        for (symbol in newSymbols) {
+            val facade = symbol.jvmClassName()
+            if (facade != null) {
+                newFacades += facade
+                if (facade !in facades) {
+                    destination += symbol
+                }
+            } else {
+                destination += symbol
+            }
+        }
+        facades += newFacades
+    }
+
+    private fun FirCallableSymbol<*>.jvmClassName(): JvmClassName? =
+        (fir.containerSource as? JvmPackagePartSource)?.facadeClassName
+
 }
 
 internal class LLFirDependentModuleProvidersBySessions(
