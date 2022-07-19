@@ -639,8 +639,11 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
 
 internal object LowerPriorityIfDynamic : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        if (candidate.symbol.origin is FirDeclarationOrigin.DynamicScope) {
-            candidate.addDiagnostic(LowerPriorityForDynamic)
+        when {
+            candidate.symbol.origin is FirDeclarationOrigin.DynamicScope ->
+                candidate.addDiagnostic(LowerPriorityForDynamic)
+            candidate.callInfo.isImplicitInvoke && candidate.callInfo.explicitReceiver?.typeRef?.coneTypeSafe<ConeDynamicType>() != null ->
+                candidate.addDiagnostic(LowerPriorityForDynamic)
         }
     }
 }
