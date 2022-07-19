@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -20,6 +23,11 @@ abstract class ConeDiagnosticWithSource(val source: KtSourceElement) : ConeDiagn
 class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
 }
+
+class ConeCannotInferParameterType(
+    val typeParameter: FirTypeParameterSymbol,
+    override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"
+) : ConeDiagnostic
 
 class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
