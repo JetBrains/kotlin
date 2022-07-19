@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -49,7 +50,9 @@ class JvmClassFileBasedSymbolProvider(
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
+) : AbstractFirDeserializedSymbolProvider(
+    session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
+) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
@@ -81,7 +84,7 @@ class JvmClassFileBasedSymbolProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
-                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
+                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass, BuiltInSerializerProtocol),
                     source
                 ),
             )

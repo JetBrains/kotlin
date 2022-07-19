@@ -36,18 +36,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class AbstractAnnotationDeserializer(
-    private val session: FirSession
+    private val session: FirSession,
+    protected val protocol: SerializerExtensionProtocol
 ) {
-    protected open val protocol: SerializerExtensionProtocol
-        get() = BuiltInSerializerProtocol
-
     open fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
     }
 
