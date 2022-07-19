@@ -154,6 +154,22 @@ internal open class GradleCompilerRunner(
                         report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
                         report(StringMetrics.USE_OLD_BACKEND, args.useOldBackend.toString())
                         report(StringMetrics.USE_FIR, args.useK2.toString())
+
+                        val pluginPatterns = listOf(Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
+                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
+                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER, "kotlin-sam-with-receiver-.*jar"),
+                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_LOMBOK, "kotlin-lombok-.*jar"),
+                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
+                                                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar")
+                        )
+                        val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
+                        if (pluginJars != null) {
+                            for (pluginPattern in pluginPatterns) {
+                                if (pluginJars.any { it.matches(pluginPattern.second.toRegex())}) {
+                                    report(pluginPattern.first, true)
+                                }
+                            }
+                        }
                     }
                 }
                 is K2JSCompilerArguments -> {
