@@ -37735,6 +37735,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("nullableUnitLiteral.kt")
+            public void testNullableUnitLiteral() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/functionLiterals/nullableUnitLiteral.kt");
+            }
+
+            @Test
             @TestMetadata("pseudocodeMemoryOverhead.kt")
             public void testPseudocodeMemoryOverhead() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/functionLiterals/pseudocodeMemoryOverhead.kt");

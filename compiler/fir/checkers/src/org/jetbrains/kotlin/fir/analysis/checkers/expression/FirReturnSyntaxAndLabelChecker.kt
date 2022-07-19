@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source
-        if (source?.kind == KtFakeSourceElementKind.ImplicitReturn) return
+        if (source?.kind is KtFakeSourceElementKind.ImplicitReturn) return
 
         val labeledElement = expression.target.labeledElement
         val targetSymbol = labeledElement.symbol

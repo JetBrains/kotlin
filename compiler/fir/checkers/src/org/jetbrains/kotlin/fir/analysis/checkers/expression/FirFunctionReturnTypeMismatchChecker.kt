@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -36,6 +37,13 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             context.session.builtinTypes.unitType.coneType
         else
             targetElement.returnTypeRef.coneType
+        if (targetElement is FirAnonymousFunction &&
+            expression.source?.kind is KtFakeSourceElementKind.ImplicitReturn.FromLastStatement &&
+            functionReturnType.isUnit
+        ) {
+            return
+        }
+
         val typeContext = context.session.typeContext
         val returnExpressionType = resultExpression.typeRef.coneType
 

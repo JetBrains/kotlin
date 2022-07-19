@@ -944,7 +944,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
                         if (element == lastStatement) {
                             val returnExpression = buildReturnExpression {
-                                source = element.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn)
+                                source = element.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
                                 result = lastStatement
                                 target = FirFunctionTarget(null, isLambda = this@addReturn.isLambda).also {
                                     it.bind(this@addReturn)

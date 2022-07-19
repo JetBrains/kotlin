@@ -192,7 +192,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             source =
                 if (fromKtReturnExpression) baseSource?.realElement()
-                else baseSource?.fakeElement(KtFakeSourceElementKind.ImplicitReturn)
+                else baseSource?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
             result = this@toReturn
             if (labelName == null) {
                 target = context.firFunctionTargets.lastOrNull { !it.isLambda } ?: FirFunctionTarget(labelName, isLambda = false).apply {

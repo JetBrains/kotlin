@@ -40,7 +40,8 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
     }
 
     private val sourceKindsToSkip = setOf(
-        KtFakeSourceElementKind.ImplicitReturn,
+        KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody,
+        KtFakeSourceElementKind.ImplicitReturn.FromLastStatement,
         KtFakeSourceElementKind.DesugaredForLoop
     )
 

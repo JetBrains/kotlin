@@ -59,7 +59,11 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // for lambdas & functions with expression bodies the return statement is added
     // with a fake sources which refers to the return target
-    object ImplicitReturn : KtFakeSourceElementKind()
+    sealed class ImplicitReturn : KtFakeSourceElementKind() {
+        object FromExpressionBody : ImplicitReturn()
+
+        object FromLastStatement : ImplicitReturn()
+    }
 
     // return expression in procedures -> return Unit
     // with a fake sources which refers to the return statement

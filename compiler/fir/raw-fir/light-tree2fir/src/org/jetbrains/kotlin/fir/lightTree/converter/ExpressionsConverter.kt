@@ -195,7 +195,7 @@ class ExpressionsConverter(
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn)
+                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
                                     this.target = target
                                     result = buildUnitExpression {
                                         source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
