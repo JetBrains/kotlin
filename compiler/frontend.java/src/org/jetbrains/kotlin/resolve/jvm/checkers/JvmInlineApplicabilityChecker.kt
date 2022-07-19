@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -29,7 +26,12 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.isSealedInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isClassTypeConstructor
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isInterface
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isInterfaceOrAnnotationClass
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class JvmInlineApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -63,7 +65,6 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
         val baseParameterType = descriptor.defaultType.substitutedUnderlyingTypes().singleOrNull()
         val baseParameterTypeReference = declaration.primaryConstructor?.valueParameters?.singleOrNull()?.typeReference
         if (baseParameterType != null && baseParameterTypeReference != null) {
-            // TODO: compute intersection types and check, that they are Nothing.
             val children = parent.sealedSubclasses.filter { it.isInlineClass() }
             for (child in children) {
                 if (child == descriptor) continue
@@ -71,9 +72,9 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
                     if (child.modality == Modality.SEALED) context.moduleDescriptor.builtIns.nullableAnyType
                     else child.defaultType.substitutedUnderlyingType()
                 if (anotherType == null) continue
-                if (baseParameterType.isSubtypeOf(anotherType)) {
+                if (baseParameterType.cannotDistinguishFrom(anotherType)) {
                     context.trace.report(
-                        ErrorsJvm.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(baseParameterTypeReference)
+                        ErrorsJvm.SEALED_INLINE_CHILD_OVERLAPPING_TYPE.on(baseParameterTypeReference)
                     )
                     break
                 }
@@ -85,11 +86,30 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
             ) {
                 val sealedKeyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: declaration
                 context.trace.report(
-                    ErrorsJvm.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(sealedKeyword)
+                    ErrorsJvm.SEALED_INLINE_CHILD_OVERLAPPING_TYPE.on(sealedKeyword)
                 )
             }
         }
     }
+}
+
+private fun KotlinType.cannotDistinguishFrom(secondType: KotlinType): Boolean {
+    val first = constructor
+    val second = secondType.constructor
+
+    if (first.isFinal && second.isFinal) {
+        return first == second
+    }
+    if (first.isFinal && second.isClassTypeConstructor()) {
+        return makeNotNullable().isSubtypeOf(secondType.makeNotNullable())
+    }
+    if (first.isClassTypeConstructor() && !first.isInterface() && second.isClassTypeConstructor()) {
+        return makeNotNullable().isSubtypeOf(secondType.makeNotNullable())
+    }
+    if (first.isInterface() && second.isInterface()) {
+        return true
+    }
+    return false
 }
 
 val ClassDescriptor.isValueClass: Boolean

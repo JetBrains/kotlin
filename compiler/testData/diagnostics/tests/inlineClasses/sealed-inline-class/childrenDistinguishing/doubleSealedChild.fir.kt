@@ -9,7 +9,7 @@ annotation class JvmInline
 sealed value class IC
 
 @JvmInline
-sealed value class ICC: IC()
+sealed <!SEALED_INLINE_CHILD_OVERLAPPING_TYPE!>value<!> class ICC: IC()
 
 @JvmInline
-sealed value class ICC2: IC()
+sealed <!SEALED_INLINE_CHILD_OVERLAPPING_TYPE!>value<!> class ICC2: IC()

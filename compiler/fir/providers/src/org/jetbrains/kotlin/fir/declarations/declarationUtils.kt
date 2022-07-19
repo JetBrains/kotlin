@@ -98,3 +98,5 @@ fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
 
     return isInline
 }
+
+fun FirRegularClassSymbol.isValueObject(): Boolean = classKind == ClassKind.OBJECT && isInline

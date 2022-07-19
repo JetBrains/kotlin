@@ -17864,12 +17864,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("doubleSealedChild.kt")
-                public void testDoubleSealedChild() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/doubleSealedChild.kt");
-                }
-
-                @Test
                 @TestMetadata("flat.kt")
                 public void testFlat() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/flat.kt");
@@ -17897,6 +17891,64 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("with-value.kt")
                 public void testWith_value() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/with-value.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing")
+                @TestDataPath("$PROJECT_ROOT")
+                public class ChildrenDistinguishing {
+                    @Test
+                    public void testAllFilesPresentInChildrenDistinguishing() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("doubleSealedChild.kt")
+                    public void testDoubleSealedChild() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/doubleSealedChild.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("finalClassAndFinalClass.kt")
+                    public void testFinalClassAndFinalClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/finalClassAndFinalClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("finalClassAndInterface.kt")
+                    public void testFinalClassAndInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/finalClassAndInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("finalClassAndOpenClass.kt")
+                    public void testFinalClassAndOpenClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/finalClassAndOpenClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("interfaceAndInterface.kt")
+                    public void testInterfaceAndInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/interfaceAndInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("openClassAndInterface.kt")
+                    public void testOpenClassAndInterface() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/openClassAndInterface.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("openClassAndOpenClass.kt")
+                    public void testOpenClassAndOpenClass() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/openClassAndOpenClass.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("sealedInlineClassChild.kt")
+                    public void testSealedInlineClassChild() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/childrenDistinguishing/sealedInlineClassChild.kt");
+                    }
                 }
             }
         }

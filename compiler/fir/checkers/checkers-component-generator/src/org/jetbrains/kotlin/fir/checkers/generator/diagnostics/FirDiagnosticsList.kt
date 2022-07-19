@@ -425,6 +425,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
         val INNER_CLASS_INSIDE_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val VALUE_OBJECT_NOT_SEALED_INLINE_CHILD by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val SEALED_INLINE_CHILD_NOT_VALUE by error<KtDeclaration>()
+        val SEALED_INLINE_CHILD_OVERLAPPING_TYPE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {

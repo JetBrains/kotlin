@@ -986,6 +986,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
     }
 
+    abstract class ValueObjectNotSealedInlineChild : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ValueObjectNotSealedInlineChild::class
+    }
+
+    abstract class SealedInlineChildNotValue : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineChildNotValue::class
+    }
+
+    abstract class SealedInlineChildOverlappingType : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineChildOverlappingType::class
+    }
+
     abstract class NoneApplicable : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NoneApplicable::class
         abstract val candidates: List<KtSymbol>

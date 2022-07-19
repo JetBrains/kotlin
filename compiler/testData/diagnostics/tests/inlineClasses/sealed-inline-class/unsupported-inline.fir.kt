@@ -9,7 +9,7 @@ annotation class JvmInline
 
 sealed inline class SIC
 
-inline object IO
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD, WRONG_MODIFIER_TARGET!>inline<!> object IO
 
 @JvmInline
-value object JVO
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object JVO

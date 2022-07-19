@@ -110,6 +110,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunInterfaceDeclarationChecker,
             FirNestedClassChecker,
             FirInlineClassDeclarationChecker,
+            FirSealedInlineClassChildChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
         )

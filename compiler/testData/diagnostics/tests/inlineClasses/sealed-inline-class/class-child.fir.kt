@@ -49,37 +49,37 @@ abstract class AC
 
 
 @JvmInline
-value class VC_SVC(val a: Int): SVC()
+<!SEALED_INLINE_CHILD_OVERLAPPING_TYPE!>value<!> class VC_SVC(val a: Int): SVC()
 @JvmInline
 value class VC_SI(val a: Any): SI
 @JvmInline
 value class VC_I(val a: Any): I
 
 @JvmInline
-value class VC_VC(val b: Any): VC(b)
+value class VC_VC(val b: Any): <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>VC<!>(b)
 @JvmInline
-value class VC_IC(val b: Any): IC(b)
+value class VC_IC(val b: Any): <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>IC<!>(b)
 @JvmInline
-value class VC_OC(val a: Any): OC()
+value class VC_OC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
 @JvmInline
-value class VC_SC(val a: Any): SC()
+value class VC_SC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
 @JvmInline
-value class VC_AC(val a: Any): AC()
+value class VC_AC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()
 
-class C_SVC: SVC()
-class C_VC: VC("")
-class C_IC: IC("")
+<!SEALED_INLINE_CHILD_NOT_VALUE!>class C_SVC: SVC()<!>
+class C_VC: <!FINAL_SUPERTYPE!>VC<!>("")
+class C_IC: <!FINAL_SUPERTYPE!>IC<!>("")
 
 
 inline class IC_SVC(val a: String): SVC()
 inline class IC_SI(val a: Any): SI
 inline class IC_I(val a: Any): I
 
-inline class IC_VC(val b: Any): VC(b)
-inline class IC_IC(val b: Any): IC(b)
-inline class IC_OC(val a: Any): OC()
-inline class IC_SC(val a: Any): SC()
-inline class IC_AC(val a: Any): AC()
+inline class IC_VC(val b: Any): <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>VC<!>(b)
+inline class IC_IC(val b: Any): <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>IC<!>(b)
+inline class IC_OC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
+inline class IC_SC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
+inline class IC_AC(val a: Any): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()
 
 
 @JvmInline
@@ -90,29 +90,29 @@ sealed value class SVC_SI: SI
 sealed value class SVC_I: I
 
 @JvmInline
-sealed value class SVC_VC: VC("")
+sealed value class SVC_VC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>VC<!>("")
 @JvmInline
-sealed value class SVC_IC: IC("")
+sealed value class SVC_IC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>IC<!>("")
 @JvmInline
-sealed value class SVC_OC: OC()
+sealed value class SVC_OC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
 @JvmInline
-sealed value class SVC_SC: SC()
+sealed value class SVC_SC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
 @JvmInline
-sealed value class SVC_AC: AC()
+sealed value class SVC_AC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()
 
 @JvmInline
-open value class OVC_SVC: SVC()
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_SVC: SVC()
 @JvmInline
-open value class OVC_SI: SI
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_SI: SI
 @JvmInline
-open value class OVC_I: I
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_I: I
 @JvmInline
-open value class OVC_VC: VC("")
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_VC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>VC<!>("")
 @JvmInline
-open value class OVC_IC: IC("")
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_IC: <!FINAL_SUPERTYPE, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>IC<!>("")
 @JvmInline
-open value class OVC_OC: OC()
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_OC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>OC<!>()
 @JvmInline
-open value class OVC_SC: SC()
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_SC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>SC<!>()
 @JvmInline
-open value class OVC_AC: AC()
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class OVC_AC: <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()

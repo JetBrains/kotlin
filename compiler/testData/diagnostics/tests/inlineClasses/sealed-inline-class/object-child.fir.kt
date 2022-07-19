@@ -50,14 +50,14 @@ abstract class AC
 
 value object VO_SVC: SVC()
 
-value object VO_VC: VC("")
-value object VO_IC: IC("")
-value object VO_SI: SI
-value object VO_I: I
-value object VO_OC: OC()
-value object VO_SC: SC()
-value object VO_AC: AC()
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_VC: <!FINAL_SUPERTYPE!>VC<!>("")
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_IC: <!FINAL_SUPERTYPE!>IC<!>("")
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_SI: SI
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_I: I
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_OC: OC()
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_SC: SC()
+<!VALUE_OBJECT_NOT_SEALED_INLINE_CHILD!>value<!> object VO_AC: AC()
 
-object O_SVC: SVC()
-object O_VC: VC("")
-object O_IC: IC("")
+<!SEALED_INLINE_CHILD_NOT_VALUE!>object O_SVC<!>: SVC()
+object O_VC: <!FINAL_SUPERTYPE!>VC<!>("")
+object O_IC: <!FINAL_SUPERTYPE!>IC<!>("")
