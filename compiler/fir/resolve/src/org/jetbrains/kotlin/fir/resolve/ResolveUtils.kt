@@ -571,9 +571,9 @@ fun createConeDiagnosticForCandidateWithError(
 ): ConeDiagnostic {
     return when (applicability) {
         CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
-        CandidateApplicability.VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
+        CandidateApplicability.K2_VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
-        CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
+        CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> ConeInapplicableCandidateError(applicability, candidate)
     }
 }

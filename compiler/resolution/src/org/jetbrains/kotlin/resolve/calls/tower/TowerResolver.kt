@@ -457,7 +457,7 @@ class TowerResolver {
 
         private fun isSuccessfulCandidate(candidate: C): Boolean {
             return candidate.resultingApplicability == CandidateApplicability.RESOLVED
-                    || candidate.resultingApplicability == CandidateApplicability.RESOLVED_WITH_ERROR
+                    || candidate.resultingApplicability == CandidateApplicability.K1_RESOLVED_WITH_ERROR
         }
 
         private fun isSuccessfulPreserveCompatibility(candidate: C): Boolean =

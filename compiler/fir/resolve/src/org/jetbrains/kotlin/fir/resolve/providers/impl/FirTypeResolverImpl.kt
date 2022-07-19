@@ -123,7 +123,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             var diagnostic: ConeDiagnostic? = null
 
             if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
-                symbolApplicability = minOf(CandidateApplicability.VISIBILITY_ERROR, symbolApplicability)
+                symbolApplicability = minOf(CandidateApplicability.K2_VISIBILITY_ERROR, symbolApplicability)
                 diagnostic = ConeVisibilityError(symbol)
             }
 

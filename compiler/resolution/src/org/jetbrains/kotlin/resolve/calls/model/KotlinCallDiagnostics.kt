@@ -157,7 +157,7 @@ class NotCallableExpectedType(
 ) : CallableReferenceInapplicableDiagnostic(argument)
 
 class AdaptedCallableReferenceIsUsedWithReflection(val argument: CallableReferenceResolutionAtom) :
-    CallableReferenceInapplicableDiagnostic(argument, RESOLVED_WITH_ERROR)
+    CallableReferenceInapplicableDiagnostic(argument, K1_RESOLVED_WITH_ERROR)
 
 // SmartCasts
 class SmartCastDiagnostic(
@@ -194,7 +194,7 @@ class UnstableSmartCastResolutionError(
 class UnstableSmartCastDiagnosticError(
     argument: ExpressionKotlinCallArgument,
     targetType: UnwrappedType,
-) : UnstableSmartCast(argument, targetType, RESOLVED_WITH_ERROR)
+) : UnstableSmartCast(argument, targetType, K1_RESOLVED_WITH_ERROR)
 
 class UnsafeCallError(
     val receiver: SimpleKotlinCallArgument,
@@ -204,23 +204,23 @@ class UnsafeCallError(
 }
 
 // Other
-object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
+object InstantiationOfAbstractClass : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
-class AbstractSuperCall(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+class AbstractSuperCall(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallReceiver(receiver, this)
     }
@@ -273,7 +273,7 @@ class ArgumentNullabilityWarningDiagnostic(
     }
 }
 
-class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RESOLVED_TO_SAM_WITH_VARARG) {
+class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(K1_RESOLVED_TO_SAM_WITH_VARARG) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
     }
@@ -282,7 +282,7 @@ class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : Kotl
 class NotEnoughInformationForLambdaParameter(
     val lambdaArgument: LambdaKotlinCallArgument,
     val parameterIndex: Int
-) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
+) : KotlinCallDiagnostic(K1_RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(lambdaArgument, this)
     }

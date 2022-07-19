@@ -408,7 +408,7 @@ class FirCallResolver(
             noSuccessfulCandidates -> {
                 val errorReference = buildErrorReference(
                     info,
-                    if (applicability == CandidateApplicability.UNSUPPORTED) {
+                    if (applicability == CandidateApplicability.K2_UNSUPPORTED) {
                         val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
                         ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
                     } else {
