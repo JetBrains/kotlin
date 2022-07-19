@@ -137,7 +137,7 @@ configurations.all {
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-script-runtime"))
-    api(project(":kotlin-reflect"))
+    api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))

@@ -60,7 +60,7 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin"))
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
-    implementation(project(":kotlin-reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
     implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {

@@ -11,8 +11,8 @@ dependencies {
     testApi(testFixtures(project(":kotlin-project-model")))
     testApi(project(":kotlin-project-model"))
     testApi(projectTests(":kotlin-gradle-plugin-integration-tests"))
-    testCompileOnly(project(":kotlin-reflect"))
-    testImplementation(project(":kotlin-reflect"))
+    testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))

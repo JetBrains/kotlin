@@ -17,7 +17,7 @@ dependencies {
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":core:util.runtime"))
     testFixturesImplementation(projectTests(":generators:test-generator"))
-    testFixturesImplementation(project(":kotlin-reflect"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {

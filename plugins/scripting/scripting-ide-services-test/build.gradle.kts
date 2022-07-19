@@ -28,7 +28,7 @@ dependencies {
 
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(intellijCore())

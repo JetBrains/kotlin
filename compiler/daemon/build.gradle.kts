@@ -16,7 +16,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
-    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     embedded(project(":daemon-common")) { isTransitive = false }
     api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {

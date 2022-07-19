@@ -27,7 +27,7 @@ dependencies {
     testApi(project(":kotlin-compiler-embeddable"))
     testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
-    compilerClasspath(project(":kotlin-reflect"))
+    compilerClasspath(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compilerClasspath(kotlinStdlib())
     compilerClasspath(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     compilerClasspath(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))

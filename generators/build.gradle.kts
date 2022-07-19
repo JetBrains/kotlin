@@ -71,7 +71,7 @@ dependencies {
     testApi(projectTests(":plugins:fir-plugin-prototype"))
     testApi(projectTests(":plugins:fir-plugin-prototype:fir-plugin-ic-test"))
     testApi(projectTests(":generators:test-generator"))
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))

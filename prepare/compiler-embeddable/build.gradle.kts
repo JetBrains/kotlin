@@ -24,7 +24,7 @@ val testCompilerClasspath by configurations.creating {
 dependencies {
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-script-runtime"))
-    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
     runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     Platform[203].orHigher {
