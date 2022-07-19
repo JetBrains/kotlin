@@ -422,7 +422,9 @@ class CallAndReferenceGenerator(
             // resolve into members of `Any`.
             val convertedExplicitReceiver = if (explicitReceiverExpression?.type is IrDynamicType) {
                 qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
-                    val targetType = (firSymbol?.fir as? FirCallableDeclaration)?.dispatchReceiverType?.toIrType()
+                    val callableDeclaration = firSymbol?.fir as? FirCallableDeclaration
+                    val targetType = callableDeclaration?.dispatchReceiverType?.toIrType()
+                        ?: callableDeclaration?.receiverTypeRef?.toIrType()
                         ?: error("Couldn't get the proper receiver")
                     IrTypeOperatorCallImpl(
                         startOffset, endOffset, targetType,
