@@ -12,6 +12,9 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirJsInlineDeclarationChecker,
+            FirJsNativeInvokeChecker,
+            FirJsNativeGetterChecker,
+            FirJsNativeSetterChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>

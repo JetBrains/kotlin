@@ -51,7 +51,7 @@ external class C {
     @nativeGetter
     fun bar(a: String): <!NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE!>Int<!> = definedExternally
 
-    @nativeGetter
-    fun baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: String = definedExternally<!>): Int? = definedExternally
+    <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>@nativeGetter
+    fun baz(a: String = definedExternally): Int?<!> = definedExternally
 
 }

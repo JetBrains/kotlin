@@ -9,8 +9,8 @@ fun Int.get2(a: Number): String? = "OK"
 @nativeGetter
 fun Int.get3(a: Int): String? = "OK"
 
-@nativeGetter
-fun Int.baz(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Int = 0<!>): String? = "OK"
+<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>@nativeGetter
+fun Int.baz(a: Int = 0): String?<!> = "OK"
 
 @nativeGetter
 fun Int.get(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: Any<!>): Int? = 1
