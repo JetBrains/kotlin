@@ -450,6 +450,7 @@ internal object CheckArguments : CheckerStage() {
             candidate.system.hasContradiction && callInfo.arguments.isNotEmpty() -> {
                 sink.yieldDiagnostic(InapplicableCandidate)
             }
+
             candidate.usesSAM && !candidate.isJavaApplicableCandidate() -> {
                 sink.markCandidateForCompatibilityResolve(context)
             }
@@ -458,9 +459,12 @@ internal object CheckArguments : CheckerStage() {
 }
 
 private fun Candidate.isJavaApplicableCandidate(): Boolean {
-    val symbol = symbol as? FirNamedFunctionSymbol ?: return false
+    val symbol = symbol as? FirFunctionSymbol ?: return false
     if (symbol.origin == FirDeclarationOrigin.Enhancement) return true
     if (originScope !is FirTypeScope) return false
+    // Note: constructor can also be Java applicable with enhancement origin, but it doesn't have overridden functions
+    // See samConstructorVsFun.kt diagnostic test
+    if (symbol !is FirNamedFunctionSymbol) return false
 
     var result = false
 
