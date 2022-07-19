@@ -9,9 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
+import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -108,10 +113,15 @@ internal object FirDeserializedDeclarationSourceProvider {
     }
 
     private fun FirDeclaration.scope(project: Project): GlobalSearchScope {
-        return GlobalSearchScope.allScope(project)
-        /* TODO:
-         val session = session as? FirLibrarySession
-         return session?.scope ?: GlobalSearchScope.allScope(project)*/
+        val original = when (this) {
+            is FirCallableDeclaration -> unwrapFakeOverrides()
+            else -> this
+        }
+        val moduleData = original.firModuleData as LLFirKtModuleBasedModuleData
+        return when (val ktModule = moduleData.ktModule) {
+            is KtBuiltinsModule -> GlobalSearchScope.allScope(project)
+            else -> ktModule.contentScope
+        }
     }
 
     private fun FirCallableDeclaration.containingKtClass(project: Project): KtClassOrObject? =
