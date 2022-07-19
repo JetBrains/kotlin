@@ -174,3 +174,7 @@ fun BuildResult.assertKotlinDaemonJvmOptions(
         "${argsStrings.toList()} does not contain expected args: $expectedJvmArgs"
     }
 }
+
+fun BuildResult.assertBuildReportPathIsPrinted() {
+    assertOutputContains("Kotlin build report is written to file://")
+}

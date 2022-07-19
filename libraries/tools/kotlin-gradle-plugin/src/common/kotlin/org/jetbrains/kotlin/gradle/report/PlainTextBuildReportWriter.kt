@@ -43,6 +43,7 @@ internal class PlainTextBuildReportWriter(
     private lateinit var p: Printer
 
     fun process(build: BuildExecutionData, log: Logger) {
+        val buildReportPath = outputFile.toPath().toUri().toString()
         try {
             outputFile.parentFile.mkdirs()
             if (!(outputFile.parentFile.exists() && outputFile.parentFile.isDirectory)) {
@@ -55,9 +56,9 @@ internal class PlainTextBuildReportWriter(
                 printBuildReport(build)
             }
 
-            log.lifecycle("Kotlin build report is written to ${outputFile.canonicalPath}")
+            log.lifecycle("Kotlin build report is written to $buildReportPath")
         } catch (e: Exception) {
-            log.error("Could not write Kotlin build report to ${outputFile.canonicalPath}", e)
+            log.error("Could not write Kotlin build report to $buildReportPath", e)
         }
     }
 

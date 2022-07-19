@@ -28,11 +28,11 @@ class BuildReportsIT : KGPBaseTest() {
     fun testBuildReportSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble") {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
 
             build("clean", "assemble") {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
         }
     }
@@ -52,7 +52,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble") {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
             val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
             val reports = reportFolder.listFiles()
@@ -79,7 +79,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testCompilerBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble") {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
             val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
             val reports = reportFolder.listFiles()

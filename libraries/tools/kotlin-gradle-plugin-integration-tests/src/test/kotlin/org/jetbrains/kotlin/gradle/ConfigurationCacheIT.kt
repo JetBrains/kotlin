@@ -190,11 +190,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project("simpleProject", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
             build("assemble", buildOptions = buildOptions) {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
 
             build("assemble", buildOptions = buildOptions) {
-                assertOutputContains("Kotlin build report is written to")
+                assertBuildReportPathIsPrinted()
             }
         }
     }
