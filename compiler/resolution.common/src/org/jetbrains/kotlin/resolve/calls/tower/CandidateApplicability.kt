@@ -13,13 +13,12 @@ enum class CandidateApplicability {
     INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
     INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
     INAPPLICABLE, // arguments have wrong types
-    INAPPLICABLE_MODIFIER, // no expected modifier (eg infix call on non-infix function)
     NO_COMPANION_OBJECT, // Classifier does not have a companion object
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
     RUNTIME_ERROR, // TODO: FE 1.0 uses this as catch-all for all other errors. Consider re-assigning those diagnostics.
     UNSAFE_CALL, // receiver or argument nullability doesn't match
     UNSTABLE_SMARTCAST, // unstable smart cast
-    CONVENTION_ERROR, // missing infix, operator etc
+    CONVENTION_ERROR, // missing infix, operator etc (= no expected modifier)
 
     // Below has shouldStopResolve = true
     DSL_SCOPE_VIOLATION, // Skip other levels for DSL_SCOPE_VIOLATION because if the candidate is marked DSL_SCOPE_VIOLATION with an inner receiver, one should not keep going to outer receivers.

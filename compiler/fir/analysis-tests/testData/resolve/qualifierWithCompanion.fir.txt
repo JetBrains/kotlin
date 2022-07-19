@@ -26,5 +26,5 @@ FILE: qualifierWithCompanion.kt
         local final fun R|my/A|.invoke(): R|kotlin/Unit| {
         }
 
-        Q|my|.R|my/xx|.<Inapplicable(INAPPLICABLE_MODIFIER): <local>/invoke>#()
+        Q|my|.R|my/xx|.<Inapplicable(CONVENTION_ERROR): <local>/invoke>#()
     }
