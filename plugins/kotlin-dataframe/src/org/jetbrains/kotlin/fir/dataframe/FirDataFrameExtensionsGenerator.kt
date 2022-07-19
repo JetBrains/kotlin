@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -110,6 +109,7 @@ class FirDataFrameExtensionsGenerator(
         classTypeProjection: ConeTypeProjection
     ): List<FirPropertySymbol> {
 
+        val firPropertySymbol = FirPropertySymbol(callableId)
         val rowExtension = buildProperty {
             val rowClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
             val receiverType =
@@ -126,66 +126,28 @@ class FirDataFrameExtensionsGenerator(
                 Modality.FINAL,
                 EffectiveVisibility.Public
             )
-            val target = FirFunctionTarget(null, false)
+            val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
             getter = buildPropertyAccessor {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 returnTypeRef = resolvedReturnTypeRef
                 dispatchReceiverType = receiverType
-                symbol = FirPropertyAccessorSymbol()
+                symbol = firPropertyAccessorSymbol
+                propertySymbol = firPropertySymbol
                 isGetter = true
                 status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
-//                body = buildBlock {
-//                    statements += buildReturnExpression {
-//                        result = buildTypeOperatorCall {
-////                            buildResolvedArgumentList()
-//                            argumentList = buildUnaryArgumentList(argument = buildFunctionCall {
-//                                this.typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), session.builtinTypes.nullableAnyType.type, null)
-//                                explicitReceiver = buildThisReceiverExpression {
-//                                    this.typeRef = typeRef
-//                                    calleeReference = buildExplicitThisReference()
-//                                }
-//                                dispatchReceiver = buildThisReceiverExpression {
-//                                    this.typeRef = typeRef
-//                                    calleeReference = buildExplicitThisReference()
-//                                }
-//                                argumentList = buildUnaryArgumentList(
-//                                    argument = buildConstExpression(null, ConstantValueKind.String, propertyName.asString())
-//                                )
-//                                calleeReference = buildSimpleNamedReference {
-//                                    name = Name.identifier("get")
-//                                }
-//                            })
-//                            operation = FirOperation.AS
-//                            conversionTypeRef = resolvedReturnTypeRef
-//                        }.transformOtherChildren(object : FirTransformer<Nothing?>() {
-//                            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
-//                                if (element is FirImplicitTypeRef) {
-//                                    @Suppress("UNCHECKED_CAST")
-//                                    return resolvedReturnTypeRef as E
-//                                }
-//
-//                                return element
-//                            }
-//
-//                            override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): FirTypeRef {
-//                                return resolvedReturnTypeRef
-//                            }
-//                        }, null)
-//                        this.target = target
-//                    }
-//                }
-            }.also { target.bind(it) }
+            }.also { firPropertyAccessorSymbol.bind(it) }
             name = propertyName
-            symbol = FirPropertySymbol(callableId)
+            symbol = firPropertySymbol
             isVar = false
             isLocal = false
-        }
+        }.also { firPropertySymbol.bind(it) }
 
+        val firPropertySymbol1 = FirPropertySymbol(callableId)
         val frameExtension = buildProperty {
             val frameClassId =
                 ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("ColumnsContainer"))
@@ -211,24 +173,26 @@ class FirDataFrameExtensionsGenerator(
                 Modality.FINAL,
                 EffectiveVisibility.Public
             )
+            val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
             getter = buildPropertyAccessor {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 returnTypeRef = retTypeRef
                 dispatchReceiverType = receiverType
-                symbol = FirPropertyAccessorSymbol()
+                symbol = firPropertyAccessorSymbol
+                propertySymbol = firPropertySymbol1
                 isGetter = true
                 status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
                     Modality.FINAL,
                     EffectiveVisibility.Public
                 )
-            }
+            }.also { firPropertyAccessorSymbol.bind(it) }
             name = propertyName
-            symbol = FirPropertySymbol(callableId)
+            symbol = firPropertySymbol1
             isVar = false
             isLocal = false
-        }
+        }.also { firPropertySymbol1.bind(it) }
         return listOf(rowExtension.symbol, frameExtension.symbol)
     }
 

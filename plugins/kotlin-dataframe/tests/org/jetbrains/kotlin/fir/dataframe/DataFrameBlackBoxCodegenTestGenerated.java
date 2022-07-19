@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.fir.dataframe;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -23,6 +22,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     @Test
     public void testAllFilesPresentInBox() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("extensionPropertiesIrExample.kt")
+    public void testExtensionPropertiesIrExample() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/box/extensionPropertiesIrExample.kt");
+    }
+
+    @Test
+    @TestMetadata("lowerGeneratedImplicitReceiver.kt")
+    public void testLowerGeneratedImplicitReceiver() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/box/lowerGeneratedImplicitReceiver.kt");
     }
 
     @Test
