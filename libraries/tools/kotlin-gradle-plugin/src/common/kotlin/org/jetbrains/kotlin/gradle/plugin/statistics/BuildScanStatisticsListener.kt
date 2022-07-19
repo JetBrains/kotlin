@@ -12,7 +12,7 @@ import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.SizeMetricType
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
-import org.jetbrains.kotlin.gradle.report.formatSize
+import org.jetbrains.kotlin.gradle.utils.formatSize
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import java.util.*

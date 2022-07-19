@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.utils.Printer
+import org.jetbrains.kotlin.gradle.utils.asString
+import org.jetbrains.kotlin.gradle.utils.formatSize
+import org.jetbrains.kotlin.gradle.utils.formatTime
 import java.io.File
 import java.io.Serializable
 import java.text.SimpleDateFormat
