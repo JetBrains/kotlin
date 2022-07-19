@@ -9,9 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
-@Suppress("unused")
 internal class LLFirGlobalResolveComponents(
-    val useSiteKtModule: KtModule,
     val project: Project,
 ) {
     val phaseRunner: LLFirPhaseRunner = LLFirPhaseRunner()
