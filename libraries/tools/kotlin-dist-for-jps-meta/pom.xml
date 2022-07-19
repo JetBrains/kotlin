@@ -64,7 +64,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>kotlin-reflect</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.10</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
