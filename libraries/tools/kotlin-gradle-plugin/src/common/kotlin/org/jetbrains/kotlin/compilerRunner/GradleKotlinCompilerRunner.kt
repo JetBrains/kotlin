@@ -325,7 +325,6 @@ internal open class GradleCompilerRunner(
 
                     if (task is Kotlin2JsCompile) {
                         (jarForJavaSourceSet(project, task.sourceSetName.get()) ?: jarForSingleTargetJs(project, task.sourceSetName.get()))?.let {
-                            project.logger.info("iteration jarToModule[$it] = $module")
                             jarToModule[it] = module
                         }
                     }
