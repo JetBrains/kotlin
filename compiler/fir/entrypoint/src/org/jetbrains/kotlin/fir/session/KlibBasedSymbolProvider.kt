@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.metadata.KlibMetadataClassDataFinder
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -31,7 +32,9 @@ class KlibBasedSymbolProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val resolvedLibrary: KotlinResolvedLibrary,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
+) : AbstractFirDeserializedSymbolProvider(
+    session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, KlibMetadataSerializerProtocol
+) {
     private val moduleHeader by lazy {
         resolvedLibrary.loadModuleHeader(resolvedLibrary.library)
     }
@@ -41,7 +44,7 @@ class KlibBasedSymbolProvider(
     }
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
-    private val constDeserializer = FirConstDeserializer(session)
+    private val constDeserializer = FirConstDeserializer(session, KlibMetadataSerializerProtocol)
     private val deserializationConfiguration = CompilerDeserializationConfiguration(session.languageVersionSettings)
     private val cachedFragments = mutableMapOf<Pair<String, String>, ProtoBuf.PackageFragment>()
 
@@ -124,6 +127,7 @@ class KlibBasedSymbolProvider(
                     moduleData,
                     annotationDeserializer,
                     kotlinScopeProvider,
+                    KlibMetadataSerializerProtocol,
                     parentContext,
                     source,
                     origin = defaultDeserializationOrigin,
