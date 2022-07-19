@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
@@ -38,25 +35,74 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                if (!expression.symbol.owner.isInline)
-                    return super.visitCall(expression)
+        irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent> {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
+                super.visitDeclaration(declaration, (declaration as? IrDeclarationParent) ?: data)
 
+            override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement {
+                val rootCallee = expression.symbol.owner
+                if (!rootCallee.isInline)
+                    return super.visitCall(expression, data)
+
+                val inlineLambdas = (0 until expression.valueArgumentsCount)
+                    .mapNotNull { index ->
+                        (expression.getValueArgument(index) as? IrFunctionExpression)?.function
+                            ?.takeIf { rootCallee.valueParameters[index].isInlineParameter() }
+                    }
                 val localClasses = mutableSetOf<IrClass>()
-                expression.acceptChildrenVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
+                val localFunctions = mutableSetOf<IrFunction>()
+                val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
+                val transformer = this
+                for (lambda in inlineLambdas) {
+                    lambda.acceptChildrenVoid(object : IrElementVisitorVoid {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
 
-                    override fun visitClass(declaration: IrClass) {
-                        localClasses.add(declaration)
-                    }
-                })
-                if (localClasses.isEmpty())
+                        override fun visitClass(declaration: IrClass) {
+                            localClasses.add(declaration)
+                        }
+
+                        override fun visitFunctionExpression(expression: IrFunctionExpression) {
+                            expression.function.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitFunction(declaration: IrFunction) {
+                            declaration.transformChildren(transformer, declaration)
+
+                            localFunctions.add(declaration)
+                        }
+
+                        override fun visitCall(expression: IrCall) {
+                            val callee = expression.symbol.owner
+                            if (!callee.isInline) {
+                                expression.acceptChildrenVoid(this)
+                                return
+                            }
+
+                            expression.extensionReceiver?.acceptVoid(this)
+                            expression.dispatchReceiver?.acceptVoid(this)
+                            (0 until expression.valueArgumentsCount).forEach { index ->
+                                val argument = expression.getValueArgument(index)
+                                val parameter = callee.valueParameters[index]
+                                // Skip adapted function references - they will be inlined later.
+                                if (parameter.isInlineParameter() && argument?.isAdaptedFunctionReference() == true)
+                                    adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
+                                else
+                                    argument?.acceptVoid(this)
+                            }
+                        }
+                    })
+                }
+
+                if (localClasses.isEmpty() && localFunctions.isEmpty())
                     return expression
 
-                LocalDeclarationsLowering(context).lower(expression, container, localClasses)
+                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
+                    statements += expression
+                }
+                LocalDeclarationsLowering(context).lower(irBlock, container, data, localClasses, adaptedFunctions)
+                irBlock.statements.addAll(0, localClasses)
 
                 expression.transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitClass(declaration: IrClass): IrStatement {
@@ -66,19 +112,11 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                         )
                     }
                 })
-                localClasses.forEach {
-                    it.setDeclarationsParent(
-                        currentDeclarationParent
-                            ?: (container as? IrDeclarationParent)
-                            ?: container.parent
-                    )
-                }
-                return IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
-                    statements += localClasses
-                    statements += expression
-                }
+                localClasses.forEach { it.setDeclarationsParent(data) }
+
+                return irBlock
             }
-        })
+        }, container as? IrDeclarationParent ?: container.parent)
     }
 }
 
