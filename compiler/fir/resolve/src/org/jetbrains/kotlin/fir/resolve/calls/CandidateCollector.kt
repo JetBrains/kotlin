@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.DSL_SCOPE_VIOLATION
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.K2_SYNTHETIC_RESOLVED
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -48,10 +49,12 @@ open class CandidateCollector(
 
     fun bestCandidates(): List<Candidate> = candidates
 
-    open fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
-        currentApplicability.shouldStopResolve && bestGroup < group
+    open fun shouldStopAtTheGroup(group: TowerGroup): Boolean =
+        shouldStopResolve && bestGroup < group
 
-    fun isSuccess(): Boolean {
-        return currentApplicability.isSuccess
-    }
+    private val shouldStopResolve: Boolean
+        get() = currentApplicability == DSL_SCOPE_VIOLATION || currentApplicability >= K2_SYNTHETIC_RESOLVED
+
+    val isSuccess: Boolean
+        get() = currentApplicability.isSuccess
 }

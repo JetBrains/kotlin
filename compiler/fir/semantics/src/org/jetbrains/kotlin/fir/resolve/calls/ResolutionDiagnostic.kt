@@ -84,6 +84,8 @@ object VisibilityError : ResolutionDiagnostic(VISIBILITY_ERROR)
 
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
+object ResolvedWithSynthetic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)
+
 class InapplicableWrongReceiver(
     val expectedType: ConeKotlinType? = null,
     val actualType: ConeKotlinType? = null,
@@ -123,7 +125,7 @@ class OperatorCallOfNonOperatorFunction(val function: FirNamedFunctionSymbol) : 
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
 class Unsupported(val message: String, val source: KtSourceElement? = null) : ResolutionDiagnostic(UNSUPPORTED)
 
-object PropertyAsOperator : ResolutionDiagnostic(PROPERTY_AS_OPERATOR)
+object PropertyAsOperator : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(DSL_SCOPE_VIOLATION)
 

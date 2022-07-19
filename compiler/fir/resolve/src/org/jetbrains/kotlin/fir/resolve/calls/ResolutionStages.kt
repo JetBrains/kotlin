@@ -504,7 +504,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
 internal object DiscriminateSynthetics : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.symbol is SyntheticSymbol) {
-            sink.reportDiagnostic(ResolvedWithLowPriority)
+            sink.reportDiagnostic(ResolvedWithSynthetic)
         }
     }
 }

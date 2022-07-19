@@ -149,7 +149,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         result.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
-        if (result is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.PROPERTY_AS_OPERATOR) {
+        if (result is FirPropertyAccessExpressionImpl && calleeReference.candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
             result.nonFatalDiagnostics.add(ConePropertyAsOperator(calleeReference.candidate.symbol as FirPropertySymbol))
         }
 

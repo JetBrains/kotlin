@@ -26,14 +26,12 @@ enum class CandidateApplicability {
 
     // Below has isSuccess = true
     RESOLVED_LOW_PRIORITY,
-    PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
+    K2_PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
     RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
+    K2_SYNTHETIC_RESOLVED, // used in K2 for (Java) synthetic discrimination at the same level
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
 }
 
 val CandidateApplicability.isSuccess: Boolean
     get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
-
-val CandidateApplicability.shouldStopResolve: Boolean
-    get() = this >= CandidateApplicability.DSL_SCOPE_VIOLATION

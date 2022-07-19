@@ -17,7 +17,7 @@ import kotlin.coroutines.resume
 
 class TowerResolveManager private constructor(private val shouldStopAtTheLevel: (TowerGroup) -> Boolean) {
 
-    constructor(collector: CandidateCollector) : this(collector::shouldStopAtTheLevel)
+    constructor(collector: CandidateCollector) : this(collector::shouldStopAtTheGroup)
 
     private val queue = PriorityQueue<SuspendedResolverTask>()
 

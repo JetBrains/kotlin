@@ -835,7 +835,7 @@ class AllCandidatesCollector(
     }
 
     // We want to get candidates at all tower levels.
-    override fun shouldStopAtTheLevel(group: TowerGroup): Boolean = false
+    override fun shouldStopAtTheGroup(group: TowerGroup): Boolean = false
 
     val allCandidates: List<Candidate>
         get() = allCandidatesSet.toList()
