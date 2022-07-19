@@ -107,7 +107,7 @@ dependencies {
     trove4j_jar "org.jetbrains.intellij.deps:trove4j:1.0.20181211@jar"
     kotlin_compiler_jar project(kotlinCompilerModule)
     kotlin_stdlib_jar kotlinStdLibModule
-    kotlin_reflect_jar kotlinReflectModule
+    kotlin_reflect_jar project(":kotlin-reflect")
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     compilerApi project(":kotlin-native:utilities:basic-utils")
