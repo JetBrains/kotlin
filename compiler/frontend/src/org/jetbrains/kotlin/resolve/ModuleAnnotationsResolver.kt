@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -19,6 +18,6 @@ interface ModuleAnnotationsResolver {
 
     companion object {
         fun getInstance(project: Project): ModuleAnnotationsResolver =
-            ServiceManager.getService(project, ModuleAnnotationsResolver::class.java)
+            project.getService(ModuleAnnotationsResolver::class.java)
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -45,7 +44,7 @@ abstract class DeclarationProviderFactoryService {
             moduleContentScope: GlobalSearchScope,
             moduleInfo: ModuleInfo
         ): DeclarationProviderFactory {
-            return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
+            return project.getService(DeclarationProviderFactoryService::class.java)!!
                 .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, moduleContentScope), moduleInfo)
         }
 

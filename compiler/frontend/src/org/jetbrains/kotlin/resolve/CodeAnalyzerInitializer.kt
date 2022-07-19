@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 
 interface CodeAnalyzerInitializer {
@@ -24,7 +23,7 @@ interface CodeAnalyzerInitializer {
 
     companion object {
         fun getInstance(project: Project): CodeAnalyzerInitializer =
-            ServiceManager.getService(project, CodeAnalyzerInitializer::class.java)!!
+            project.getService(CodeAnalyzerInitializer::class.java)!!
     }
 }
 

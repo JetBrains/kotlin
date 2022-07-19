@@ -17,7 +17,8 @@ open class ApplicationExtensionDescriptor<T : Any>(name: String, private val ext
         ApplicationManager.getApplication().extensionArea.registerExtensionPoint(
             extensionPointName.name,
             extensionClass.name,
-            ExtensionPoint.Kind.INTERFACE
+            ExtensionPoint.Kind.INTERFACE,
+            false
         )
     }
 

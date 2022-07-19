@@ -21,7 +21,7 @@ interface KotlinReferenceProviderContributor {
 
     companion object {
         fun getInstance(project: Project): KotlinReferenceProviderContributor =
-            ServiceManager.getService(project, KotlinReferenceProviderContributor::class.java)
+            project.getService(KotlinReferenceProviderContributor::class.java)
     }
 }
 

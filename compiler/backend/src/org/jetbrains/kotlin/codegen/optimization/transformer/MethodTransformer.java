@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization.transformer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;

@@ -41,7 +41,7 @@ class CtSymClassVirtualFile(
 
     override fun refresh(p0: Boolean, p1: Boolean, p2: Runnable?) = file.refresh(p0, p1, p2)
 
-    override fun getInputStream(): InputStream? = file.inputStream
+    override fun getInputStream(): InputStream = file.inputStream
 
     override fun getFileType(): FileType = JavaClassFileType.INSTANCE
 

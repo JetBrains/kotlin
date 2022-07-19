@@ -30,8 +30,8 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
             .toTypedArray()
 
     override fun methodAnnotationsChanged(
-        context: DependencyContext,
-        method: MethodRepr,
+        context: NamingContext,
+        method: ProtoMethodEntity,
         annotationsDiff: Difference.Specifier<ClassType, Difference>,
         paramAnnotationsDiff: Difference.Specifier<ParamAnnotation, Difference>
     ): Set<Recompile> {
@@ -43,7 +43,7 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
 
     override fun fieldAnnotationsChanged(
         context: NamingContext,
-        field: FieldRepr,
+        field: ProtoFieldEntity,
         annotationsDiff: Difference.Specifier<ClassType, Difference>
     ): Set<Recompile> {
         return handleNullAnnotationsChanges(context, field, annotationsDiff.addedOrRemoved())
@@ -51,7 +51,7 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
 
     private fun handleNullAnnotationsChanges(
         context: NamingContext,
-        protoMember: ProtoMember,
+        protoMember: ProtoEntity,
         annotations: Sequence<TypeRepr.ClassType>
     ): Set<Recompile> {
         val n = this.annotations.size

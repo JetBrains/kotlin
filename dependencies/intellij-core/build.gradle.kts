@@ -23,13 +23,12 @@ dependencies {
     api("com.jetbrains.intellij.platform:util-rt:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-class-loader:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util-text-matching:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-diagnostic:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:util:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.platform:util-base:$intellijVersion") { isTransitive = false }
+    api("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:extensions:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-strings:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-collections:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
 }

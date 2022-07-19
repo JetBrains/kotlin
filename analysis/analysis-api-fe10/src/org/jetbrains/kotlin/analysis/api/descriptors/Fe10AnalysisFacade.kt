@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 interface Fe10AnalysisFacade {
     companion object {
         fun getInstance(project: Project): Fe10AnalysisFacade {
-            return ServiceManager.getService(project, Fe10AnalysisFacade::class.java)
+            return project.getService(Fe10AnalysisFacade::class.java)
         }
     }
 

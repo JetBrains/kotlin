@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -87,7 +86,7 @@ public class KotlinJavaPsiFacade implements Disposable {
     private final LightModifierList emptyModifierList;
 
     public static KotlinJavaPsiFacade getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinJavaPsiFacade.class);
+        return project.getService(KotlinJavaPsiFacade.class);
     }
 
     public KotlinJavaPsiFacade(@NotNull Project project) {
@@ -322,7 +321,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     @NotNull
     private static JavaFileManager findJavaFileManager(@NotNull Project project) {
-        JavaFileManager javaFileManager = ServiceManager.getService(project, JavaFileManager.class);
+        JavaFileManager javaFileManager = project.getService(JavaFileManager.class);
         if (javaFileManager == null) {
             throw new IllegalStateException("JavaFileManager component is not found in project");
         }

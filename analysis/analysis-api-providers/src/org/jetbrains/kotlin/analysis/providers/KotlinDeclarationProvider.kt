@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.providers
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.CallableId
@@ -47,5 +46,5 @@ public abstract class KotlinDeclarationProviderFactory {
 }
 
 public fun Project.createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider =
-    ServiceManager.getService(this, KotlinDeclarationProviderFactory::class.java)
+    this.getService(KotlinDeclarationProviderFactory::class.java)
         .createDeclarationProvider(searchScope)

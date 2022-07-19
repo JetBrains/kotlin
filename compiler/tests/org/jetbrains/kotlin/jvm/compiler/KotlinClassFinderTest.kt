@@ -69,7 +69,7 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         assertEquals("test/A.B.C", binaryClass.classId.toString())
     }
 
-    private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
+    private fun createEnvironment(tmpdir: File): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),

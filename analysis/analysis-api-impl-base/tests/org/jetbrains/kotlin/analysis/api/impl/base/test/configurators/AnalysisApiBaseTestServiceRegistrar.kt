@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
+        @Suppress("UnstableApiUsage")
         project.extensionArea.apply {
             registerExtensionPoint(
                 KtResolveExtensionProvider.EP_NAME.name,
                 KtResolveExtensionProvider::class.java.name,
                 ExtensionPoint.Kind.INTERFACE,
+                false
             )
         }
     }

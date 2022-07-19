@@ -29,7 +29,7 @@ dependencies {
     testApi(jpsBuildTest())
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 
     testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
 }

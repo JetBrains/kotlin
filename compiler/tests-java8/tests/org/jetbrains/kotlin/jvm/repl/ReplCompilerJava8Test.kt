@@ -44,7 +44,7 @@ private const val library = "inline fun<T> foo(fn: () -> T): T = fn()"
 private const val script = "import foo\nval x = foo { 0 }"
 
 class ReplCompilerJava8Test : KtUsefulTestCase() {
-    private var tmpdir: File? = null
+    private lateinit var tmpdir: File
 
     override fun setUp() {
         super.setUp()
@@ -54,8 +54,8 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
-            addKotlinSourceRoot(tmpdir!!.absolutePath)
-            put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir!!)
+            addKotlinSourceRoot(tmpdir.absolutePath)
+            put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
             loadScriptingPlugin(this)
         }

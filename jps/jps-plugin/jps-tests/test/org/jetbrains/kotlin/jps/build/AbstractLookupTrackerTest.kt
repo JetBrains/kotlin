@@ -352,7 +352,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
 class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
-    private val interner = Interner.createStringInterner<String>()
+    private val interner = Interner.createStringInterner()
 
     override val requiresPosition: Boolean
         get() = true
