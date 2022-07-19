@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
+
 internal val androidPluginIds = listOf(
     "com.android.application",
     "com.android.library",
@@ -18,3 +20,7 @@ internal val androidPluginIds = listOf(
     //"com.android.asset-pack",
     //"com.android.asset-pack-bundle",
 )
+
+internal fun Project.findAppliedAndroidPluginIdOrNull(): String? {
+    return androidPluginIds.firstOrNull { androidPluginId -> plugins.findPlugin(androidPluginId) != null }
+}
