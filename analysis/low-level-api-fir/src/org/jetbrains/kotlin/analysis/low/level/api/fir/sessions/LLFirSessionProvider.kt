@@ -24,7 +24,7 @@ class LLFirSessionProvider internal constructor(
 ) : FirSessionProvider() {
 
     private val moduleToSession = moduleToResolvableSession + moduleToResolvableSession.values.flatMap { module ->
-        (module.dependenciesSymbolProvider as LLFirDependentModuleProviders).dependenciesAsSessions
+        (module.dependenciesSymbolProvider as LLFirDependentModuleProviders).dependentSessions
     }.associateBy { it.ktModule }
 
     override fun getSession(moduleData: FirModuleData): LLFirSession {

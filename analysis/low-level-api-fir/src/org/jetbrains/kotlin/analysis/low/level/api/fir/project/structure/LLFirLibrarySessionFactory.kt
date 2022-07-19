@@ -41,12 +41,7 @@ internal class LLFirLibrarySessionFactory(
         ConcurrentHashMap<KtBinaryModule, LLFirLibrarySession>()
     }
 
-    fun getLibrarySessionsForModule(module: KtModule): List<LLFirLibraryLikeSession> = buildList {
-        LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(module.platform).let(::add)
-        return module.allDirectDependenciesOfType<KtBinaryModule>().mapTo(this) { getLibrarySession(it) }
-    }
-
-    private fun getLibrarySession(ktBinaryModule: KtBinaryModule): LLFirLibrarySession {
+    fun getLibrarySession(ktBinaryModule: KtBinaryModule): LLFirLibrarySession {
         return librarySessionByModule.getOrPut(ktBinaryModule) { createModuleLibrariesSession(ktBinaryModule) }
     }
 

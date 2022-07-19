@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -78,21 +79,15 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         providers.firstNotNullOfOrNull { it.getPackage(fqName) }
 }
 
-internal class LLFirDependentModuleProviders(
+internal abstract class LLFirDependentModuleProviders(
     session: FirSession,
-    private val providers: List<FirSymbolProvider>
 ) : FirDependenciesSymbolProvider(session) {
 
-    val dependenciesAsSessions: List<LLFirSession>
-        get() = buildList {
-            providers.mapTo(this) { it.session as LLFirSession }
-        }
-
-    constructor(session: FirSession, createSubProviders: MutableList<FirSymbolProvider>.() -> Unit)
-            : this(session, buildList { createSubProviders() })
+    abstract val dependentProviders: List<FirSymbolProvider>
+    abstract val dependentSessions: List<LLFirSession>
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { provider ->
+        dependentProviders.firstNotNullOfOrNull { provider ->
             when (provider) {
                 is LLFirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
                 else -> provider.getClassLikeSymbolByClassId(classId)
@@ -102,10 +97,11 @@ internal class LLFirDependentModuleProviders(
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        providers.forEach { provider ->
+        dependentProviders.forEach { provider ->
             when (provider) {
                 is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
+
                 else -> provider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
             }
         }
@@ -113,10 +109,11 @@ internal class LLFirDependentModuleProviders(
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        providers.forEach { provider ->
+        dependentProviders.forEach { provider ->
             when (provider) {
                 is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelFunctionSymbolsToWithoutDependencies(destination, packageFqName, name)
+
                 else -> provider.getTopLevelFunctionSymbolsTo(destination, packageFqName, name)
             }
         }
@@ -124,20 +121,47 @@ internal class LLFirDependentModuleProviders(
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        providers.forEach { provider ->
+        dependentProviders.forEach { provider ->
             when (provider) {
                 is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelPropertySymbolsToWithoutDependencies(destination, packageFqName, name)
+
                 else -> provider.getTopLevelPropertySymbolsTo(destination, packageFqName, name)
             }
         }
     }
 
     override fun getPackage(fqName: FqName): FqName? =
-        providers.firstNotNullOfOrNull { provider ->
+        dependentProviders.firstNotNullOfOrNull { provider ->
             when (provider) {
                 is LLFirModuleWithDependenciesSymbolProvider -> provider.getPackageWithoutDependencies(fqName)
                 else -> provider.getPackage(fqName)
             }
         }
+}
+
+internal class LLFirDependentModuleProvidersBySessions(
+    session: FirSession,
+    override val dependentSessions: List<LLFirSession>
+) : LLFirDependentModuleProviders(session) {
+
+    override val dependentProviders: List<FirSymbolProvider> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        dependentSessions.map { it.symbolProvider }
+    }
+
+    constructor(session: FirSession, createSessions: MutableList<LLFirSession>.() -> Unit)
+            : this(session, buildList { createSessions() })
+}
+
+
+internal class LLFirDependentModuleProvidersByProviders(
+    session: FirSession,
+    override val dependentProviders: List<FirSymbolProvider>,
+) : LLFirDependentModuleProviders(session) {
+
+    override val dependentSessions: List<LLFirSession>
+        get() = dependentProviders.map { it.session as LLFirSession }
+
+    constructor(session: FirSession, createProviders: MutableList<FirSymbolProvider>.() -> Unit)
+            : this(session, buildList { createProviders() })
 }
