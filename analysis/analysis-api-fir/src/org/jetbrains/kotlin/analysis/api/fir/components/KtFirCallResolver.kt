@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnos
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
+import org.jetbrains.kotlin.analysis.api.fir.scopes.getConstructors
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
@@ -26,8 +27,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.expandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -209,6 +212,9 @@ internal class KtFirCallResolver(
 
         val call = psiElement.getPossiblyQualifiedCallExpression() ?: return null
         if (call.typeArgumentList == null || call.valueArgumentList != null) return null
+
+        val parentReferenceExpression = psiElement.parent as? KtCallableReferenceExpression ?: return null
+        if (parentReferenceExpression.lhs != psiElement) return null
 
         return KtSuccessCallInfo(KtGenericTypeQualifier(token, psiElement))
     }
@@ -411,13 +417,26 @@ internal class KtFirCallResolver(
                 )
             }
             is FirPropertyAccessExpression -> {
-                if (unsubstitutedKtSignature.symbol !is KtVariableLikeSymbol) return null
-                @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KtSimpleVariableAccessCall(
-                    partiallyAppliedSymbol as KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
-                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
-                    KtSimpleVariableAccess.Read
-                )
+                when (unsubstitutedKtSignature.symbol) {
+                    is KtVariableLikeSymbol -> {
+                        @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
+                        KtSimpleVariableAccessCall(
+                            partiallyAppliedSymbol as KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
+                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                            KtSimpleVariableAccess.Read
+                        )
+                    }
+                    // if errorsness call without ()
+                    is KtFunctionLikeSymbol -> {
+                        @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
+                        KtSimpleFunctionCall(
+                            partiallyAppliedSymbol as KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
+                            LinkedHashMap(),
+                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                            _isImplicitInvoke = false,
+                        )
+                    }
+                }
             }
             is FirFunctionCall -> {
                 if (unsubstitutedKtSignature.symbol !is KtFunctionLikeSymbol) return null
@@ -733,6 +752,19 @@ internal class KtFirCallResolver(
     private fun FirQualifiedAccess.toTypeArgumentsMapping(
         partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
     ): Map<KtTypeParameterSymbol, KtType> {
+        return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
+    }
+
+    private fun FirResolvedQualifier.toTypeArgumentsMapping(
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+    ): Map<KtTypeParameterSymbol, KtType> {
+        return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
+    }
+
+    private fun toTypeArgumentsMapping(
+        typeArguments: List<FirTypeProjection>,
+        partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
+    ): Map<KtTypeParameterSymbol, KtType> {
         val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
         if (typeParameters.isEmpty()) return emptyMap()
         if (typeParameters.size != typeArguments.size) return emptyMap()
@@ -802,12 +834,36 @@ internal class KtFirCallResolver(
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
             )
-            is FirArrayOfCall, is FirComparisonExpression, is FirEqualityOperatorCall -> {
+            is FirArrayOfCall, is FirEqualityOperatorCall -> {
                 toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
-            else -> {
-                // TODO: FirDelegatedConstructorCall, FirAnnotationCall, FirPropertyAccessExpression, FirVariableAssignment
-                listOf()
+            is FirComparisonExpression -> compareToCall.toKtCallInfo(
+                psi,
+                resolveCalleeExpressionOfFunctionCall,
+                resolveFragmentOfCall
+            ).toKtCallCandidateInfos()
+            is FirResolvedQualifier -> toKtCallCandidateInfos()
+            else -> toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
+        }
+    }
+
+    private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptyList()
+        val constructors = classSymbol.unsubstitutedScope(
+            analysisSession.useSiteSession,
+            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+            withForcedTypeCalculator = true
+        )
+            .getConstructors(analysisSession.firSymbolBuilder)
+            .toList()
+        analysisSession.apply {
+            return constructors.map { constructor ->
+                val partiallyAppliedSymbol = KtPartiallyAppliedFunctionSymbol(constructor.asSignature(), null, null)
+                KtInapplicableCallCandidateInfo(
+                    KtSimpleFunctionCall(partiallyAppliedSymbol, LinkedHashMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false),
+                    isInBestCandidates = false,
+                    _diagnostic = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
+                )
             }
         }
     }
