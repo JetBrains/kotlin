@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.internal.DefaultJavaSourceSetsAccessorVariantFactory
@@ -292,6 +294,11 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
     override fun getPlugin(project: Project): Plugin<Project> =
         KotlinMultiplatformPlugin()
 
+    override fun apply(project: Project) {
+        super.apply(project)
+        project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied()
+    }
+
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
         get() = KotlinMultiplatformExtension::class
 
@@ -305,6 +312,11 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
 abstract class AbstractKotlinPm20PluginWrapper(
     private val objectFactory: ObjectFactory
 ) : KotlinBasePluginWrapper() {
+    override fun apply(project: Project) {
+        super.apply(project)
+        project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied()
+    }
+
     override fun getPlugin(project: Project): Plugin<Project> =
         objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
 
