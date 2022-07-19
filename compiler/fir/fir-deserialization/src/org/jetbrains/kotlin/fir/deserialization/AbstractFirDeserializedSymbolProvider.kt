@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import java.nio.file.Path
@@ -68,6 +69,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     val moduleDataProvider: ModuleDataProvider,
     val kotlinScopeProvider: FirKotlinScopeProvider,
     val defaultDeserializationOrigin: FirDeclarationOrigin,
+    private val serializerExtensionProtocol: SerializerExtensionProtocol
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
@@ -146,6 +148,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     moduleData,
                     annotationDeserializer,
                     kotlinScopeProvider,
+                    serializerExtensionProtocol,
                     parentContext,
                     sourceElement,
                     origin = defaultDeserializationOrigin,
