@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.*
@@ -112,7 +111,7 @@ fun FirClass.scopeForClass(
     scopeSession: ScopeSession
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
-    skipPrivateMembers = false,
+    skipInvisibleMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
     isFromExpectClass = false
@@ -131,7 +130,7 @@ fun ConeKotlinType.scopeForSupertype(
             substitutor(symbol, this, useSiteSession),
             useSiteSession,
             scopeSession,
-            skipPrivateMembers = true,
+            skipInvisibleMembers = true,
             classFirDispatchReceiver = subClass,
             isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
         )
@@ -150,7 +149,7 @@ private fun FirClass.scopeForClassImpl(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    skipPrivateMembers: Boolean,
+    skipInvisibleMembers: Boolean,
     classFirDispatchReceiver: FirClass,
     isFromExpectClass: Boolean
 ): FirTypeScope {
@@ -166,7 +165,7 @@ private fun FirClass.scopeForClassImpl(
             basicScope,
             key, substitutor,
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()) as ConeClassLikeType,
-            skipPrivateMembers,
+            skipInvisibleMembers,
             makeExpect = isFromExpectClass
         )
     }

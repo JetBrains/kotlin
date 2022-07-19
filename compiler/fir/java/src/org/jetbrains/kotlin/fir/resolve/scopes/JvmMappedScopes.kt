@@ -80,7 +80,7 @@ private fun wrapSubstitutionScopeIfNeed(
         FirClassSubstitutionScope(
             session, useSiteMemberScope, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY, substitutor,
             dispatchReceiverTypeForSubstitutedMembers = derivedClass.defaultType(),
-            skipPrivateMembers = true,
+            skipInvisibleMembers = true,
         )
     }
 }

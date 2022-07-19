@@ -484,3 +484,16 @@ fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag?
 fun FirBasedSymbol<*>.isVariableOrNamedFunction(): Boolean {
     return this is FirVariableSymbol || this is FirNamedFunctionSymbol || this is FirPropertyAccessorSymbol
 }
+
+
+fun FirCallableDeclaration.isVisibleFromDerivedClass(derivedClassModuleData: FirModuleData): Boolean {
+    return when (visibility) {
+        Visibilities.Private, Visibilities.PrivateToThis ->
+            false
+        Visibilities.Internal ->
+            derivedClassModuleData == this@isVisibleFromDerivedClass.moduleData
+        else ->
+            true
+    }
+}
+

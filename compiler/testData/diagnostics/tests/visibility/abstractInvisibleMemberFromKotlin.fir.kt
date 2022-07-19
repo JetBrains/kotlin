@@ -33,8 +33,8 @@ import intermediate.*
 
 class ImplDirectFromBaseWithOverride : BaseWithOverride()
 
-class ImplDirectFromBaseWithOverrid : Base() {
-    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun internalFoo(): String = ""
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class ImplDirectFromBaseWithOverrid<!> : Base() {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun internalFoo(): String = ""
 }
 
 <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class ImplViaIntermediate<!> : Intermediate()
