@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -31,9 +31,12 @@ class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
     }
 }
 
-class FirDataFrameComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        FirExtensionRegistrar.registerExtension(project, FirDataFrameExtensionRegistrar())
-        IrGenerationExtension.registerExtension(project, DataFrameIrBodyFiller())
+class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
+
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar())
+        IrGenerationExtension.registerExtension(DataFrameIrBodyFiller())
     }
+
+    override val supportsK2: Boolean = true
 }

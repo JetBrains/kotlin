@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -51,8 +52,11 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
     }
 
     class Configurator(testServices: TestServices, val function: () -> String) : EnvironmentConfigurator(testServices) {
-        override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-            FirExtensionRegistrar.registerExtension(project, object : FirExtensionRegistrar() {
+        override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+            module: TestModule,
+            configuration: CompilerConfiguration
+        ) {
+            FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
                     +{ session: FirSession -> InterpretersRunner(session, function) }
                 }

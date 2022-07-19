@@ -39,6 +39,8 @@ dependencies {
 
 }
 
+optInToExperimentalCompilerApi()
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.FirImplementationDetail"

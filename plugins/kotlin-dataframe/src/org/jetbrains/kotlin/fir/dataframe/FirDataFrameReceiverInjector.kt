@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.dataframe.annotations.ColumnGroupTypeApproximation
-import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
-import org.jetbrains.kotlinx.dataframe.annotations.SchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
+import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 
 class SchemaContext(val properties: List<SchemaProperty>, val coneTypeProjection: ConeTypeProjection)
@@ -48,10 +45,12 @@ class FirDataFrameReceiverInjector(
 
         val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
 
+        // region generate code
         val properties = dataFrameSchema.columns().map {
             val typeApproximation = when (val type = it.type) {
                 is TypeApproximationImpl -> type
                 ColumnGroupTypeApproximation -> TODO("support column groups in data schema")
+                FrameColumnTypeApproximation -> TODO()
             }
             val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(typeApproximation.fqName))).constructType(
                 emptyArray(), false
@@ -62,6 +61,7 @@ class FirDataFrameReceiverInjector(
         val id = ids.removeLast()
         state[id] = SchemaContext(properties, callReturnType.typeArguments[0])
         return listOf(ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false))
+        // endregion
     }
 
     private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {

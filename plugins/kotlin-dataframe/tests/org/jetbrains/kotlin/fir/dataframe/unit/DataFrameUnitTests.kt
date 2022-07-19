@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe.unit
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.DataFramePluginAnnotationsProvider
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.dataframe.functionSymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -42,21 +43,24 @@ abstract class DataFrameUnitTests(val assertion: List<(FirFunctionCall) -> Unit>
         }
 
         class Subject(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-            override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-                FirExtensionRegistrar.registerExtension(project, object : FirExtensionRegistrar() {
+            override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+                module: TestModule,
+                configuration: CompilerConfiguration
+            ) {
+                FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                     override fun ExtensionRegistrarContext.configurePlugin() {
                         +{ it: FirSession -> object : FirExpressionResolutionExtension(it) {
-                                var i = 0
-                                override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-                                    if (assertion.size == 1) {
-                                        assertion[0](functionCall)
-                                    } else {
-                                        assertion[i](functionCall)
-                                        i++
-                                    }
-                                    return emptyList()
+                            var i = 0
+                            override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
+                                if (assertion.size == 1) {
+                                    assertion[0](functionCall)
+                                } else {
+                                    assertion[i](functionCall)
+                                    i++
                                 }
+                                return emptyList()
                             }
+                        }
                         }
                     }
                 })
