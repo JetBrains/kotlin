@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
@@ -38,7 +37,7 @@ internal class LLFirResolveSessionService(project: Project) {
 
     companion object {
         fun getInstance(project: Project): LLFirResolveSessionService =
-            ServiceManager.getService(project, LLFirResolveSessionService::class.java)
+            project.getService(LLFirResolveSessionService::class.java)
 
         internal fun createFirResolveSessionFor(
             useSiteKtModule: KtModule,

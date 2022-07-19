@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
@@ -50,7 +49,7 @@ class AnalysisApiFirSourceTestConfigurator(override val analyseInDependentSessio
     }
 
     override fun doOutOfBlockModification(file: KtFile) {
-        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
+        file.project.getService(KotlinModificationTrackerFactory::class.java)
             .incrementModificationsCount()
     }
 }

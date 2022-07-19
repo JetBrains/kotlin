@@ -12,7 +12,6 @@ import com.intellij.core.CorePackageIndex
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -62,7 +61,7 @@ object StandaloneProjectFactory {
         with(project) {
             registerService(
                 CoreJavaFileManager::class.java,
-                ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
+                this.getService(JavaFileManager::class.java) as CoreJavaFileManager
             )
 
             registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())

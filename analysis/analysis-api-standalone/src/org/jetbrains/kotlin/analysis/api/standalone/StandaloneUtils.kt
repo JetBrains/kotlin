@@ -100,8 +100,8 @@ internal fun configureProjectEnvironment(
 ) {
     reRegisterJavaElementFinder(project)
 
-    project.picoContainer.registerComponentInstance(
-        KotlinModificationTrackerFactory::class.qualifiedName,
+    project.registerService(
+        KotlinModificationTrackerFactory::class.java,
         KotlinStaticModificationTrackerFactory()
     )
 
@@ -121,37 +121,37 @@ internal fun configureProjectEnvironment(
     )
 
     RegisterComponentService.registerLLFirResolveSessionService(project)
-    project.picoContainer.registerComponentInstance(
-        FirSealedClassInheritorsProcessorFactory::class.qualifiedName,
+    project.registerService(
+        FirSealedClassInheritorsProcessorFactory::class.java,
         object : FirSealedClassInheritorsProcessorFactory() {
             override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
                 return SealedClassInheritorsProviderImpl
             }
         }
     )
-    project.picoContainer.registerComponentInstance(
-        KtModuleScopeProvider::class.qualifiedName,
+    project.registerService(
+        KtModuleScopeProvider::class.java,
         KtModuleScopeProviderImpl()
     )
 
-    project.picoContainer.registerComponentInstance(
-        ProjectStructureProvider::class.qualifiedName,
+    project.registerService(
+        ProjectStructureProvider::class.java,
         buildKtModuleProviderByCompilerConfiguration(
             compilerConfig,
             project,
             ktFiles,
         )
     )
-    project.picoContainer.registerComponentInstance(
-        KotlinDeclarationProviderFactory::class.qualifiedName,
+    project.registerService(
+        KotlinDeclarationProviderFactory::class.java,
         KotlinStaticDeclarationProviderFactory(ktFiles)
     )
-    project.picoContainer.registerComponentInstance(
-        KotlinPackageProviderFactory::class.qualifiedName,
+    project.registerService(
+        KotlinPackageProviderFactory::class.java,
         KotlinStaticPackageProviderFactory(ktFiles)
     )
-    project.picoContainer.registerComponentInstance(
-        PackagePartProviderFactory::class.qualifiedName,
+    project.registerService(
+        PackagePartProviderFactory::class.java,
         object : PackagePartProviderFactory() {
             override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
                 return packagePartProvider(scope)
@@ -164,13 +164,13 @@ internal fun configureProjectEnvironment(
 private fun reRegisterJavaElementFinder(project: Project) {
     PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
     with(project as MockProject) {
-        picoContainer.registerComponentInstance(
-            KtAnalysisSessionProvider::class.qualifiedName,
+        registerService(
+            KtAnalysisSessionProvider::class.java,
             KtFirAnalysisSessionProvider(this)
         )
         picoContainer.unregisterComponent(KotlinAsJavaSupport::class.qualifiedName)
-        picoContainer.registerComponentInstance(
-            KotlinAsJavaSupport::class.qualifiedName,
+        registerService(
+            KotlinAsJavaSupport::class.java,
             KotlinAsJavaFirSupport(project)
         )
     }

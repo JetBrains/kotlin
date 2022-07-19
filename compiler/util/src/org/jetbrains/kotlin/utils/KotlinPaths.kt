@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.utils
 
 import java.io.File
 import java.lang.IllegalStateException
-import com.intellij.openapi.util.SystemInfo
+import com.intellij.util.lang.JavaVersion
 
 interface KotlinPaths {
     val homePath: File
@@ -115,8 +115,8 @@ interface KotlinPaths {
         Empty(),
         StdLib(Jar.StdLib, gen = {
             when {
-                SystemInfo.isJavaVersionAtLeast(1, 8, 0) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
-                SystemInfo.isJavaVersionAtLeast(1, 7, 0) -> listOf(Jar.StdLibJdk7)
+                JavaVersion.current() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
+                JavaVersion.current() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
                 else -> emptyList()
             }
         }),

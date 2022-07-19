@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.FqName
@@ -23,7 +23,7 @@ interface KotlinLightClassFactory {
 
     companion object {
         private val instance: KotlinLightClassFactory
-            get() = ServiceManager.getService(KotlinLightClassFactory::class.java)
+            get() = ApplicationManager.getApplication().getService(KotlinLightClassFactory::class.java)
 
         fun createClass(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             return instance.createClass(classOrObject)

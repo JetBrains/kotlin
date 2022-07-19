@@ -168,7 +168,7 @@ class KotlinCoreEnvironment private constructor(
             with(project) {
                 registerService(
                     CoreJavaFileManager::class.java,
-                    ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
+                    this.getService(JavaFileManager::class.java) as CoreJavaFileManager
                 )
 
                 registerKotlinLightClassSupport(project)
@@ -199,7 +199,7 @@ class KotlinCoreEnvironment private constructor(
 
         sourceFiles.sortBy { it.virtualFile.path }
 
-        val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+        val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 

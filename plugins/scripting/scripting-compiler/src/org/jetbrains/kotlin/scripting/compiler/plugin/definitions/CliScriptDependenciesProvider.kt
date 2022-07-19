@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
@@ -46,7 +45,7 @@ class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
                         KtFileScriptSource(file), scriptDef, project, providedConfiguration, knownVirtualFileSources
                     )
 
-                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file.virtualFile, result.reports)
+                project.getService(ScriptReportSink::class.java)?.attachReports(file.virtualFile, result.reports)
 
                 cacheLock.write {
                     cache.put(path, result)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.classes.*
@@ -87,7 +86,7 @@ abstract class LightClassGenerationSupport {
     companion object {
         @JvmStatic
         fun getInstance(project: Project): LightClassGenerationSupport {
-            return ServiceManager.getService(project, LightClassGenerationSupport::class.java)
+            return project.getService(LightClassGenerationSupport::class.java)
         }
     }
 }

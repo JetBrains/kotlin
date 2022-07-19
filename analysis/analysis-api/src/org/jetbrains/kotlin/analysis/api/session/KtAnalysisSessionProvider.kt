@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.session
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -92,6 +90,6 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
     public companion object {
         @KtAnalysisApiInternals
         public fun getInstance(project: Project): KtAnalysisSessionProvider =
-            ServiceManager.getService(project, KtAnalysisSessionProvider::class.java)
+            project.getService(KtAnalysisSessionProvider::class.java)
     }
 }

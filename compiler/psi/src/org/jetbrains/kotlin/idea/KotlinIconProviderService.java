@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +37,7 @@ public abstract class KotlinIconProviderService {
     }
 
     public static KotlinIconProviderService getInstance() {
-        KotlinIconProviderService service = ServiceManager.getService(KotlinIconProviderService.class);
+        KotlinIconProviderService service = ApplicationManager.getApplication().getService(KotlinIconProviderService.class);
         return service != null ? service : new CompilerKotlinFileIconProviderService();
     }
 }

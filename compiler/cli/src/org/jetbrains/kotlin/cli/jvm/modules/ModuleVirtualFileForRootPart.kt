@@ -58,5 +58,5 @@ class ModuleVirtualFileForRootPart(
 
     override fun refresh(p0: Boolean, p1: Boolean, p2: Runnable?) = virtualFile.refresh(p0, p1, p2)
 
-    override fun getInputStream(): InputStream? = virtualFile.inputStream
+    override fun getInputStream(): InputStream = virtualFile.inputStream
 }

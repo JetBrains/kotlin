@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 
@@ -17,7 +17,7 @@ open class KotlinReferenceProvidersService {
 
         @JvmStatic
         fun getInstance(): KotlinReferenceProvidersService {
-            return ServiceManager.getService(KotlinReferenceProvidersService::class.java) ?: NO_REFERENCES_SERVICE
+            return ApplicationManager.getApplication().getService(KotlinReferenceProvidersService::class.java) ?: NO_REFERENCES_SERVICE
         }
 
         @JvmStatic

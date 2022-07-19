@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.providers
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.annotations.TestOnly
@@ -75,7 +74,7 @@ public abstract class KotlinModificationTrackerFactory {
  * @see ModificationTracker
  */
 public fun Project.createProjectWideOutOfBlockModificationTracker(): ModificationTracker =
-    ServiceManager.getService(this, KotlinModificationTrackerFactory::class.java)
+    this.getService(KotlinModificationTrackerFactory::class.java)
         .createProjectWideOutOfBlockModificationTracker()
 
 /**
@@ -85,7 +84,7 @@ public fun Project.createProjectWideOutOfBlockModificationTracker(): Modificatio
  * @see ModificationTracker
  */
 public fun KtSourceModule.createModuleWithoutDependenciesOutOfBlockModificationTracker(project: Project): ModificationTracker =
-    ServiceManager.getService(project, KotlinModificationTrackerFactory::class.java)
+    project.getService(KotlinModificationTrackerFactory::class.java)
         .createModuleWithoutDependenciesOutOfBlockModificationTracker(this)
 
 /**
@@ -95,5 +94,5 @@ public fun KtSourceModule.createModuleWithoutDependenciesOutOfBlockModificationT
  * @see ModificationTracker
  */
 public fun Project.createLibrariesModificationTracker(): ModificationTracker =
-    ServiceManager.getService(this, KotlinModificationTrackerFactory::class.java)
+    this.getService(KotlinModificationTrackerFactory::class.java)
         .createLibrariesModificationTracker()

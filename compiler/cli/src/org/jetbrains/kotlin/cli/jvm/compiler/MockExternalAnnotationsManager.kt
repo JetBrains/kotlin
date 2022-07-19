@@ -59,4 +59,6 @@ class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
     override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass): List<PsiAnnotation> = emptyList()
 
     override fun findExternalAnnotations(listOwner: PsiModifierListOwner, annotationFQN: String): List<PsiAnnotation> = emptyList()
+
+    override fun hasConfiguredAnnotationRoot(owner: PsiModifierListOwner): Boolean = false
 }

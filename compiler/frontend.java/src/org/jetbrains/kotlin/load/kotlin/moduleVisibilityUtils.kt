@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -39,7 +37,7 @@ interface ModuleVisibilityManager {
 
     object SERVICE {
         @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
-                ServiceManager.getService(project, ModuleVisibilityManager::class.java)
+            project.getService(ModuleVisibilityManager::class.java)
     }
 }
 

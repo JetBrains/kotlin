@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.asJava.unwrapped
@@ -44,7 +44,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         getKtReferenceMutateService().bindToElement(this, element)
 
     protected fun getKtReferenceMutateService(): KtReferenceMutateService =
-        ServiceManager.getService(KtReferenceMutateService::class.java)
+        ApplicationManager.getApplication().getService(KtReferenceMutateService::class.java)
             ?: throw IllegalStateException("Cannot handle element rename because KtReferenceMutateService is missing")
 
     @Suppress("UNCHECKED_CAST")

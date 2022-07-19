@@ -20,7 +20,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.util.findImplementationFromInterface
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
@@ -168,7 +167,7 @@ class InterfaceImplBodyCodegen(
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: JvmMethodExceptionTypes
+                exceptions: Array<out String>?
         ): MethodVisitor {
             if (shouldCount) {
                 isAnythingGenerated = true

@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.IOUtil
-import com.intellij.util.io.KeyDescriptor
-import com.intellij.util.io.PersistentHashMap
+import com.intellij.util.CommonProcessors
+import com.intellij.util.io.*
 import java.io.File
 import java.io.IOException
-
 
 class NonCachingLazyStorage<K, V>(
     private val storageFile: File,
@@ -52,7 +49,9 @@ class NonCachingLazyStorage<K, V>(
 
     override val keys: Collection<K>
         @Synchronized
-        get() = getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
+        get() = buildList {
+            getStorageIfExists()?.processKeysWithExistingMapping(CommonProcessors.CollectProcessor(this))
+        }
 
     @Synchronized
     override operator fun contains(key: K): Boolean =
@@ -74,7 +73,9 @@ class NonCachingLazyStorage<K, V>(
 
     @Synchronized
     override fun append(key: K, value: V) {
-        getStorageOrCreateNew().appendData(key) { dataOutput -> valueExternalizer.save(dataOutput, value) }
+        getStorageOrCreateNew().appendData(key, AppendablePersistentMap.ValueDataAppender { dataOutput ->
+            valueExternalizer.save(dataOutput, value)
+        })
     }
 
     @Synchronized

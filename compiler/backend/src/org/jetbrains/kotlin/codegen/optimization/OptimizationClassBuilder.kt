@@ -33,7 +33,7 @@ class OptimizationClassBuilder(private val delegate: ClassBuilder, private val g
         name: String,
         desc: String,
         signature: String?,
-        exceptions: Array<String>?
+        exceptions: Array<out String>?
     ): MethodVisitor {
         return OptimizationMethodVisitor(
             super.newMethod(origin, access, name, desc, signature, exceptions),

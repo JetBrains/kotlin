@@ -427,6 +427,7 @@ allprojects {
 
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies/")
         maven("https://dl.google.com/dl/android/maven2")
 
         maven("https://download.jetbrains.com/teamcity-repository/")

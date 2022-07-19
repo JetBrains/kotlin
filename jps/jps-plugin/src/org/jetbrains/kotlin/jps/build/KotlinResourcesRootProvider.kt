@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.util.io.FileFilters
 import org.jetbrains.jps.builders.AdditionalRootsProviderService
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.java.ResourceRootDescriptor
@@ -34,7 +35,8 @@ class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootD
                     it.file,
                     target,
                     it.properties.packagePrefix,
-                    setOf()
+                    setOf(),
+                    FileFilters.EVERYTHING,
                 )
             )
         }
