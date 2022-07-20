@@ -83,7 +83,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
-        if (!context.config.produce.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        if (!context.config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(

@@ -627,7 +627,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableUnless(optimizeTLSDataLoadsPhase, config.optimizationsEnabled)
-        if (!config.produce.involvesLinkStage) {
+        if (!config.involvesLinkStage) {
             disable(bitcodePostprocessingPhase)
             disable(linkBitcodeDependenciesPhase)
             disable(objectFilesPhase)

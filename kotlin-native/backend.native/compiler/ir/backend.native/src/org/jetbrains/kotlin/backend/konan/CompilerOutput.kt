@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 /**
  * Supposed to be true for a single LLVM module within final binary.
  */
-val CompilerOutputKind.isFinalBinary: Boolean get() = when (this) {
+val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
     CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
@@ -41,8 +41,8 @@ val CompilerOutputKind.involvesBitcodeGeneration: Boolean
 internal val Context.producedLlvmModuleContainsStdlib: Boolean
     get() = this.llvmModuleSpecification.containsModule(this.stdlibModule)
 
-val CompilerOutputKind.involvesLinkStage: Boolean
-    get() = when (this) {
+val KonanConfig.involvesLinkStage: Boolean
+    get() = when (this.produce) {
         CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
         CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true

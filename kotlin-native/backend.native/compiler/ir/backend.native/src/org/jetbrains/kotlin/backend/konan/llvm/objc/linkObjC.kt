@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 
 internal fun patchObjCRuntimeModule(context: Context): LLVMModuleRef? {
     val config = context.config
-    if (!(config.produce.isFinalBinary && config.target.family.isAppleFamily)) return null
+    if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
     val patchBuilder = PatchBuilder(context)
     patchBuilder.addObjCPatches()

@@ -2748,7 +2748,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun overrideRuntimeGlobals() {
-        if (!context.config.produce.isFinalBinary)
+        if (!context.config.isFinalBinary)
             return
 
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
@@ -2882,7 +2882,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun appendGlobalCtors(ctorFunctions: List<LLVMValueRef>) {
-        if (context.config.produce.isFinalBinary) {
+        if (context.config.isFinalBinary) {
             // Generate function calling all [ctorFunctions].
             val globalCtorFunction = generateFunctionNoRuntime(codegen, kVoidFuncType, "_Konan_constructors") {
                 ctorFunctions.forEach {
