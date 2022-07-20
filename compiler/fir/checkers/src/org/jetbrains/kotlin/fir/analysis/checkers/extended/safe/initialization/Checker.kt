@@ -172,10 +172,10 @@ object Checker {
                 property.initializer?.let(::analyser) ?: emptyEffsAndPots
 
             override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?): EffectsAndPotentials =
-                StateOfClass(regularClass, context, this@StateOfClass).run {
+                innerClassStates[regularClass]?.run {
                     errors.addAll(checkClass())
                     analyseClass()
-                }
+                } ?: emptyEffsAndPots
 
             protected fun StateOfClass.analyseClass() =
                 declarations.fold(emptyEffsAndPots) { sum, dec -> sum + dec.accept(initializationDeclarationVisitor, null) }

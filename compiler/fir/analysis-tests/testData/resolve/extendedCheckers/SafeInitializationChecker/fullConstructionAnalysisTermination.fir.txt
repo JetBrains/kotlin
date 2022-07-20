@@ -15,3 +15,19 @@ FILE: fullConstructionAnalysisTermination.kt
             public get(): R|B.C|
 
     }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class C : R|B| {
+            public A.constructor(): R|A.C| {
+                super<R|B|>()
+            }
+
+        }
+
+        public final val c: R|A.C| = this@R|/A|.R|/A.C.C|()
+            public get(): R|A.C|
+
+    }
