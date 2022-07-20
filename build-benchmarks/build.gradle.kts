@@ -7,7 +7,7 @@ plugins {
 }
 
 buildscript {
-    val kotlinVersion = System.getenv("KOTLIN_VERSION") ?: "1.5.31"
+    val kotlinVersion = System.getenv("KOTLIN_VERSION") ?: "1.7.10"
     val kotlinRepo = "https://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinDev_CompilerDistAndMavenArtifacts),number:$kotlinVersion,branch:default:any/artifacts/content/maven"
     extra["kotlinRepo"] = kotlinRepo
 
@@ -54,12 +54,4 @@ tasks.register("runGavra0", JavaExec::class) {
 tasks.register("runAbiSnapshot", JavaExec::class) {
     classpath = sourceSets.main.get().runtimeClasspath
     main = "RunAbiSnapshotsBenchmarksKt"
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
-        )
-    }
 }
