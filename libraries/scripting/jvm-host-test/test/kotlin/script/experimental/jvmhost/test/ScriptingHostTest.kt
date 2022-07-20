@@ -373,7 +373,7 @@ class ScriptingHostTest : TestCase() {
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        val report = res.reports.find { it.message.startsWith("Source file or directory not found") }
+        val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)
         assertEquals("script.kts", report?.sourcePath)
     }
