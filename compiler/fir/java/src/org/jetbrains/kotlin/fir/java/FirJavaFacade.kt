@@ -468,6 +468,7 @@ abstract class FirJavaFacade(
 
             javaClass.recordComponents.mapTo(valueParameters) { component ->
                 buildJavaValueParameter {
+                    containingFunctionSymbol = this@buildJavaConstructor.symbol
                     source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
                     this.moduleData = moduleData
                     isFromSource = component.isFromSource
@@ -578,7 +579,7 @@ abstract class FirJavaFacade(
             isStatic = javaMethod.isStatic
             typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack, methodSymbol, moduleData)
             for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
-                valueParameters += valueParameter.toFirValueParameter(session, moduleData, index, javaTypeParameterStack)
+                valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index, javaTypeParameterStack)
             }
             annotationBuilder = { javaMethod.convertAnnotationsToFir(session, javaTypeParameterStack) }
             status = FirResolvedDeclarationStatusImpl(
@@ -623,6 +624,7 @@ abstract class FirJavaFacade(
             this.moduleData = moduleData
             isFromSource = javaMethod.isFromSource
             returnTypeRef = firJavaMethod.returnTypeRef
+            containingFunctionSymbol = firJavaMethod.symbol
             name = javaMethod.name
             isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == VALUE_METHOD_NAME
             annotationBuilder = { emptyList() }
@@ -669,7 +671,7 @@ abstract class FirJavaFacade(
                 this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack, constructorSymbol, moduleData)
                 annotationBuilder = { javaConstructor.convertAnnotationsToFir(session, javaTypeParameterStack) }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
-                    valueParameters += valueParameter.toFirValueParameter(session, moduleData, index, javaTypeParameterStack)
+                    valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index, javaTypeParameterStack)
                 }
             } else {
                 annotationBuilder = { emptyList() }

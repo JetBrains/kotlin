@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -58,6 +59,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
+    open lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     open var isCrossinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var isNoinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var isVararg: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -79,6 +81,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             annotations,
             symbol,
             defaultValue,
+            containingFunctionSymbol,
             isCrossinline,
             isNoinline,
             isVararg,
@@ -116,6 +119,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.symbol = original.symbol
     copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isCrossinline = original.isCrossinline
     copyBuilder.isNoinline = original.isNoinline
     copyBuilder.isVararg = original.isVararg

@@ -91,6 +91,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
         valueParameters += buildValueParameter vp@{
             source = sourceElement
+            containingFunctionSymbol = this@buildSimpleFunction.symbol
             origin = FirDeclarationOrigin.Source
             this.moduleData = moduleData
             returnTypeRef = buildResolvedTypeRef {

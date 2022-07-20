@@ -264,10 +264,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             returnType: IrType,
             otherParameterNeeded: Boolean = false
         ): IrFunction {
+            val functionSymbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
             val firFunction = buildSimpleFunction {
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
-                this.symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
+                this.symbol = functionSymbol
                 this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                 moduleData = components.session.moduleData
                 this.returnTypeRef = when (returnType) {
@@ -284,6 +285,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                             moduleData = components.session.moduleData
                             this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                             this.symbol = FirValueParameterSymbol(this.name)
+                            containingFunctionSymbol = functionSymbol
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false

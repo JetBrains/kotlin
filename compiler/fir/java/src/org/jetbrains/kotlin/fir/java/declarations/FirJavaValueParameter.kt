@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,6 +41,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val symbol: FirValueParameterSymbol,
     annotationBuilder: () -> List<FirAnnotation>,
     override var defaultValue: FirExpression?,
+    override val containingFunctionSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
     init {
@@ -197,6 +199,7 @@ class FirJavaValueParameterBuilder {
     lateinit var name: Name
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var defaultValue: FirExpression? = null
+    lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
 
@@ -213,6 +216,7 @@ class FirJavaValueParameterBuilder {
             symbol = FirValueParameterSymbol(name),
             annotationBuilder,
             defaultValue,
+            containingFunctionSymbol,
             isVararg,
         )
     }
@@ -237,6 +241,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }
     copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()
 }

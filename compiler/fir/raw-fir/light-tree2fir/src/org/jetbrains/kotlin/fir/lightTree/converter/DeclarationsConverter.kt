@@ -861,12 +861,13 @@ class DeclarationsConverter(
         ) return null
         if (primaryConstructor == null && classWrapper.isInterface()) return null
 
+        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         var modifiers = Modifier()
         val valueParameters = mutableListOf<ValueParameter>()
         primaryConstructor?.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
+                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, constructorSymbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
             }
         }
 
@@ -915,7 +916,7 @@ class DeclarationsConverter(
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
                 dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
-                symbol = FirConstructorSymbol(callableIdForClassConstructor())
+                symbol = constructorSymbol
                 annotations += modifiers.annotations
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 this.valueParameters += valueParameters.map { it.firValueParameter }
@@ -957,10 +958,11 @@ class DeclarationsConverter(
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
         var block: LighterASTNode? = null
 
+        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         secondaryConstructor.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it, ValueParameterDeclaration.FUNCTION)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it, constructorSymbol, ValueParameterDeclaration.FUNCTION)
                 CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
                 BLOCK -> block = it
             }
@@ -985,7 +987,7 @@ class DeclarationsConverter(
             returnTypeRef = delegatedSelfTypeRef
             dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
             this.status = status
-            symbol = FirConstructorSymbol(callableIdForClassConstructor())
+            symbol = constructorSymbol
             delegatedConstructor = constructorDelegationCall
 
             context.firFunctionTargets += target
@@ -1346,8 +1348,10 @@ class DeclarationsConverter(
         var isGetter = true
         var returnType: FirTypeRef? = null
         val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        val accessorSymbol = FirPropertyAccessorSymbol()
         var firValueParameters: FirValueParameter = buildDefaultSetterValueParameter {
             moduleData = baseModuleData
+            containingFunctionSymbol = accessorSymbol
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
             symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
@@ -1355,6 +1359,8 @@ class DeclarationsConverter(
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
         var outerContractDescription: FirContractDescription? = null
+
+
         getterOrSetter.forEachChildren {
             if (it.asText == "set") isGetter = false
             when (it.tokenType) {
@@ -1362,7 +1368,7 @@ class DeclarationsConverter(
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(
-                    it, propertyTypeRefToUse, propertyModifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
+                    it, accessorSymbol, propertyTypeRefToUse, propertyModifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
                 )
                 CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
@@ -1409,7 +1415,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRefToUse else implicitUnitType
-            symbol = FirPropertyAccessorSymbol()
+            symbol = accessorSymbol
             this.isGetter = isGetter
             this.status = status
             context.firFunctionTargets += target
@@ -1536,6 +1542,7 @@ class DeclarationsConverter(
      */
     private fun convertSetterParameter(
         setterParameter: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>,
         propertyTypeRef: FirTypeRef,
         additionalAnnotations: List<FirAnnotation>
     ): FirValueParameter {
@@ -1544,12 +1551,13 @@ class DeclarationsConverter(
         setterParameter.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it, ValueParameterDeclaration.SETTER).firValueParameter
+                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it, functionSymbol, ValueParameterDeclaration.SETTER).firValueParameter
             }
         }
 
         return buildValueParameter {
             source = firValueParameter.source
+            containingFunctionSymbol = functionSymbol
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
@@ -1672,6 +1680,7 @@ class DeclarationsConverter(
                 valueParametersList?.let { list ->
                     valueParameters += convertValueParameters(
                         list,
+                        functionSymbol,
                         if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
                     ).map { it.firValueParameter }
                 }
@@ -2224,12 +2233,13 @@ class DeclarationsConverter(
      */
     fun convertValueParameters(
         valueParameters: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>,
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                VALUE_PARAMETER -> container += convertValueParameter(node, valueParameterDeclaration, additionalAnnotations)
+                VALUE_PARAMETER -> container += convertValueParameter(node, functionSymbol, valueParameterDeclaration, additionalAnnotations)
             }
         }
     }
@@ -2239,6 +2249,7 @@ class DeclarationsConverter(
      */
     fun convertValueParameter(
         valueParameter: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>?,
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
@@ -2278,6 +2289,7 @@ class DeclarationsConverter(
             additionalAnnotations = additionalAnnotations,
             name = name,
             defaultValue = firExpression,
+            containingFunctionSymbol = functionSymbol,
             destructuringDeclaration = destructuringDeclaration
         )
     }
