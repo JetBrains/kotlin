@@ -101,9 +101,9 @@ fun BuildResult.assertNonIncrementalCompilation() {
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  */
-fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<String>) {
+fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<Path>) {
     assertOutputDoesNotContain("Non-incremental compilation will be performed")
 
     val actualCompiledKotlinFiles = extractCompiledKotlinFiles(output)
-    assertSameFiles(expectedCompiledKotlinFiles.toPaths(), actualCompiledKotlinFiles, "Compiled Kotlin files differ:\n")
+    assertSameFiles(expectedCompiledKotlinFiles, actualCompiledKotlinFiles, "Compiled Kotlin files differ:\n")
 }
