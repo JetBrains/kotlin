@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.name.SpecialNames
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
@@ -127,7 +126,7 @@ class FirDefaultPropertySetter(
     propertySymbol: FirPropertySymbol,
     modality: Modality = Modality.FINAL,
     effectiveVisibility: EffectiveVisibility? = null,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterAnnotations: List<FirAnnotation> = emptyList(),
 ) : FirDefaultPropertyAccessor(
     source,
@@ -137,6 +136,7 @@ class FirDefaultPropertySetter(
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
             this@builder.source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            this@builder.containingFunctionSymbol = propertyAccessorSymbol
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
@@ -149,5 +149,5 @@ class FirDefaultPropertySetter(
     visibility = visibility,
     modality = modality,
     effectiveVisibility = effectiveVisibility,
-    symbol = symbol
+    symbol = propertyAccessorSymbol
 )

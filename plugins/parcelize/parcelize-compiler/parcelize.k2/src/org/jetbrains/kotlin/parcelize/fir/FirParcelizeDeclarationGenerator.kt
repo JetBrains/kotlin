@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.parcelize.fir
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.isInt
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
@@ -104,12 +104,14 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
 
     private fun generateWriteToParcel(owner: FirRegularClassSymbol, callableId: CallableId): FirNamedFunctionSymbol {
         return createFunction(owner, callableId) {
+            val functionSymbol = this.symbol
             returnTypeRef = session.builtinTypes.unitType
 
             valueParameters += buildValueParameter {
                 moduleData = session.moduleData
                 origin = key.origin
                 name = DEST_NAME
+                containingFunctionSymbol = functionSymbol
                 returnTypeRef = buildResolvedTypeRef {
                     type = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(PARCEL_ID),
@@ -127,6 +129,7 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
                 moduleData = session.moduleData
                 origin = key.origin
                 name = FLAGS_NAME
+                containingFunctionSymbol = functionSymbol
                 returnTypeRef = session.builtinTypes.intType
                 symbol = FirValueParameterSymbol(name)
                 isCrossinline = false

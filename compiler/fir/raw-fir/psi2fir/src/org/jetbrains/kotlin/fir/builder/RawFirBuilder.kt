@@ -202,10 +202,11 @@ open class RawFirBuilder(
 
         open fun convertValueParameter(
             valueParameter: KtParameter,
+            functionSymbol: FirFunctionSymbol<*>,
             defaultTypeRef: FirTypeRef? = null,
             valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation> = emptyList()
-        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, valueParameterDeclaration, additionalAnnotations)
+        ): FirValueParameter = valueParameter.toFirValueParameter(defaultTypeRef, functionSymbol, valueParameterDeclaration, additionalAnnotations)
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
             convertSafe() ?: buildImplicitTypeRef {
@@ -430,8 +431,9 @@ open class RawFirBuilder(
                         extractAnnotationsTo(this)
                         annotations += accessorAnnotationsFromProperty
                         this@RawFirBuilder.context.firFunctionTargets += accessorTarget
+                        symbol = FirPropertyAccessorSymbol()
                         extractValueParametersTo(
-                            this, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
+                            this, symbol, ValueParameterDeclaration.SETTER, propertyTypeRefToUse, parameterAnnotationsFromProperty
                         )
                         if (!isGetter && valueParameters.isEmpty()) {
                             valueParameters += buildDefaultSetterValueParameter {
@@ -443,7 +445,6 @@ open class RawFirBuilder(
                                 annotations += parameterAnnotationsFromProperty
                             }
                         }
-                        symbol = FirPropertyAccessorSymbol()
                         val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
                         val bodyWithContractDescription = this@toFirPropertyAccessor.buildFirBody()
                         this.body = bodyWithContractDescription.first
@@ -546,8 +547,9 @@ open class RawFirBuilder(
 
         private fun KtParameter.toFirValueParameter(
             defaultTypeRef: FirTypeRef?,
+            functionSymbol: FirFunctionSymbol<*>,
             valueParameterDeclaration: ValueParameterDeclaration,
-            additionalAnnotations: List<FirAnnotation>
+            additionalAnnotations: List<FirAnnotation>,
         ): FirValueParameter {
             val name = convertValueParameterName(nameAsSafeName, nameIdentifier?.node?.text, valueParameterDeclaration)
             return buildValueParameter {
@@ -571,6 +573,7 @@ open class RawFirBuilder(
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
                 isVararg = isVarArg
+                containingFunctionSymbol = functionSymbol
                 val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
                 for (annotationEntry in annotationEntries) {
                     annotationEntry.convert<FirAnnotation>().takeIf {
@@ -771,13 +774,14 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithBody.extractValueParametersTo(
             container: FirFunctionBuilder,
+            functionSymbol: FirFunctionSymbol<*>,
             valueParameterDeclaration: ValueParameterDeclaration,
             defaultTypeRef: FirTypeRef? = null,
             additionalAnnotations: List<FirAnnotation> = emptyList(),
         ) {
             for (valueParameter in valueParameters) {
                 container.valueParameters += convertValueParameter(
-                    valueParameter, defaultTypeRef, valueParameterDeclaration, additionalAnnotations = additionalAnnotations
+                    valueParameter, functionSymbol, defaultTypeRef, valueParameterDeclaration, additionalAnnotations = additionalAnnotations
                 )
             }
         }
@@ -950,7 +954,7 @@ open class RawFirBuilder(
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 this.contextReceivers.addAll(convertContextReceivers(owner.contextReceivers))
                 this@toFirConstructor?.extractAnnotationsTo(this)
-                this@toFirConstructor?.extractValueParametersTo(this, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
+                this@toFirConstructor?.extractValueParametersTo(this, symbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                 this.body = null
             }.apply {
                 containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
@@ -1312,10 +1316,11 @@ open class RawFirBuilder(
 
             val labelName: String?
             val isAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
+            val functionSymbol: FirFunctionSymbol<*>
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     receiverParameter = receiverType?.convertToReceiverParameter()
-                    symbol = FirAnonymousFunctionSymbol()
+                    symbol = FirAnonymousFunctionSymbol().also { functionSymbol = it }
                     isLambda = false
                     hasExplicitParameterList = true
                     label = context.getLastLabel(function)
@@ -1326,7 +1331,7 @@ open class RawFirBuilder(
                     receiverParameter = receiverType?.convertToReceiverParameter()
                     name = function.nameAsSafeName
                     labelName = runIf(!name.isSpecial) { name.identifier }
-                    symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName))
+                    symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName)).also { functionSymbol = it }
                     dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(
                         if (function.isLocal) Visibilities.Local else function.visibility,
@@ -1363,6 +1368,7 @@ open class RawFirBuilder(
                 for (valueParameter in function.valueParameters) {
                     valueParameters += convertValueParameter(
                         valueParameter,
+                        functionSymbol,
                         null,
                         if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
                     )
@@ -1444,6 +1450,7 @@ open class RawFirBuilder(
                         val name = SpecialNames.DESTRUCT
                         val multiParameter = buildValueParameter {
                             source = valueParameter.toFirSourceElement()
+                            containingFunctionSymbol = this@buildAnonymousFunction.symbol
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
@@ -1467,7 +1474,7 @@ open class RawFirBuilder(
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
                             source = implicitTypeRefSource
                         }
-                        convertValueParameter(valueParameter, typeRef, ValueParameterDeclaration.LAMBDA)
+                        convertValueParameter(valueParameter, symbol, typeRef, ValueParameterDeclaration.LAMBDA)
                     }
                 }
                 val expressionSource = expression.toFirSourceElement()
@@ -1539,7 +1546,7 @@ open class RawFirBuilder(
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
-                extractValueParametersTo(this, ValueParameterDeclaration.FUNCTION)
+                extractValueParametersTo(this, symbol, ValueParameterDeclaration.FUNCTION)
 
 
                 val (body, _) = buildFirBody()

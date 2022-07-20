@@ -136,9 +136,11 @@ class ExpressionsConverter(
         val valueParameterList = mutableListOf<ValueParameter>()
         var block: LighterASTNode? = null
         var hasArrow = false
+
+        val functionSymbol = FirAnonymousFunctionSymbol()
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.LAMBDA)
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
                 BLOCK -> block = it
                 ARROW -> hasArrow = true
             }
@@ -152,7 +154,7 @@ class ExpressionsConverter(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = implicitType
             receiverParameter = implicitType.asReceiverParameter()
-            symbol = FirAnonymousFunctionSymbol()
+            symbol = functionSymbol
             isLambda = true
             hasExplicitParameterList = hasArrow
             label = context.getLastLabel(lambdaExpression) ?: context.calleeNamesForLambda.lastOrNull()?.let {
@@ -170,6 +172,7 @@ class ExpressionsConverter(
                     val name = SpecialNames.DESTRUCT
                     val multiParameter = buildValueParameter {
                         source = valueParameter.firValueParameter.source
+                        containingFunctionSymbol = functionSymbol
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
@@ -1074,7 +1077,7 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         forLoop.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it, ValueParameterDeclaration.FOR_LOOP)
+                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
                 LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
                 BODY -> blockNode = it
             }
@@ -1229,7 +1232,7 @@ class ExpressionsConverter(
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, ValueParameterDeclaration.CATCH)
+                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it, FirAnonymousFunctionSymbol()/*TODO*/, ValueParameterDeclaration.CATCH)
                     .firstOrNull() ?: return null
                 BLOCK -> blockNode = it
             }

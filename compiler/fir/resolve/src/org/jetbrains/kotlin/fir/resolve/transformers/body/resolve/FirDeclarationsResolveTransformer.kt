@@ -915,6 +915,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 val name = Name.identifier("it")
                 val itParam = buildValueParameter {
                     source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
+                    containingFunctionSymbol = resolvedLambdaAtom.atom.symbol
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = singleParameterType.toFirResolvedTypeRef()
