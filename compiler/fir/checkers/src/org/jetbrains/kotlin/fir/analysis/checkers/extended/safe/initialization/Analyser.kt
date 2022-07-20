@@ -127,7 +127,7 @@ object Analyser {
                 val effsAndPots = branches.fold(emptyEffsAndPots) { sum, branch ->
                     val localSize = stateOfClass.localInitedVariable.size
                     val effsAndPots = branch.accept()
-                    var i = localSize
+                    var i = 0
                     stateOfClass.localInitedVariable.removeIf { i++ >= localSize }
                     sum + effsAndPots
                 }
