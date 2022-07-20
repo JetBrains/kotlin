@@ -75,7 +75,7 @@ abstract class KotlinNativeTest : KotlinTest() {
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
 
     private val hasTCProjectProperty = if (isConfigurationCacheAvailable(project.gradle)) {
-        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        project.providers.gradleProperty(TC_PROJECT_PROPERTY).isPresent
     } else {
         project.hasProperty(TC_PROJECT_PROPERTY)
     }
