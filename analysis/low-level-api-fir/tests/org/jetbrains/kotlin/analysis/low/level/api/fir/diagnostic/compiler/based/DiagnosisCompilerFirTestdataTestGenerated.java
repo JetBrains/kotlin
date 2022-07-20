@@ -4210,6 +4210,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             public void testSingleWarning() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleWarning.kt");
             }
+
+            @Test
+            @TestMetadata("withSuppression.kt")
+            public void testWithSuppression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
+            }
         }
 
         @Nested

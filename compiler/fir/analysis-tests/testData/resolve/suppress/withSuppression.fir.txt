@@ -1,0 +1,36 @@
+FILE: withSuppression.kt
+    public final const val x: R|kotlin/String| = String(123)
+        @R|kotlin/Suppress|(names = vararg(String(CONST_VAL_WITH_GETTER))) public get(): R|kotlin/String| {
+            ^ F|/x|
+        }
+    public final val y: R|kotlin/String| = String(789)
+        public get(): R|kotlin/String|
+    public final const val z: R|kotlin/String| = @R|kotlin/Suppress|(names = vararg(String(CONST_VAL_WITH_NON_CONST_INITIALIZER))) R|/y|
+        public get(): R|kotlin/String|
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|@R|kotlin/Suppress|(names = vararg(String(REPEATED_ANNOTATION)))  @R|Ann|()  @R|Ann|()  kotlin/Int| {
+        ^foo Int(42)
+    }
+    public final typealias Alias<T> = R|@R|kotlin/Suppress|(names = vararg(String(TYPEALIAS_SHOULD_EXPAND_TO_CLASS)))  T|
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|@R|kotlin/Suppress|(names = vararg(String(SUPERTYPE_INITIALIZED_IN_INTERFACE)))  A| {
+    }
+    public final data class D : R|kotlin/Any| {
+        @R|kotlin/Suppress|(names = vararg(String(DATA_CLASS_VARARG_PARAMETER))) public constructor(vararg x: R|kotlin/Array<out kotlin/String>|): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Array<out kotlin/String>| = R|<local>/x|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/D|.R|/D.x|): R|D|
+
+    }
