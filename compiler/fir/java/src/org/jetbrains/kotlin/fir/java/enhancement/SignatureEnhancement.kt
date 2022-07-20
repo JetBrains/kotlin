@@ -236,29 +236,12 @@ class FirSignatureEnhancement(
             )
         }
 
-        val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
-            valueParameter.defaultValue?.replaceTypeRef(enhancedReturnType)
-
-            buildValueParameter {
-                source = valueParameter.source
-                moduleData = this@FirSignatureEnhancement.moduleData
-                origin = FirDeclarationOrigin.Enhancement
-                returnTypeRef = enhancedReturnType
-                this.name = valueParameter.name
-                symbol = FirValueParameterSymbol(this.name)
-                defaultValue = valueParameter.defaultValue
-                isCrossinline = valueParameter.isCrossinline
-                isNoinline = valueParameter.isNoinline
-                isVararg = valueParameter.isVararg
-                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                annotations += valueParameter.annotations
-            }
-        }
+        val functionSymbol: FirFunctionSymbol<*>
         var isJavaRecordComponent = false
 
         val function = when (firMethod) {
             is FirJavaConstructor -> {
-                val symbol = FirConstructorSymbol(methodId)
+                val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
                         returnTypeRef = newReturnTypeRef
@@ -294,7 +277,6 @@ class FirSignatureEnhancement(
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Enhancement
-                    this.valueParameters += newValueParameters
                     this.typeParameters += firMethod.typeParameters
                 }
             }
@@ -315,9 +297,8 @@ class FirSignatureEnhancement(
 
                     this.name = name!!
                     status = firMethod.status
-                    symbol = FirNamedFunctionSymbol(methodId)
+                    symbol = FirNamedFunctionSymbol(methodId).also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    valueParameters += newValueParameters
                     typeParameters += firMethod.typeParameters
                     dispatchReceiverType = firMethod.dispatchReceiverType
                     attributes = firMethod.attributes.copy()
@@ -325,6 +306,26 @@ class FirSignatureEnhancement(
             }
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
         }.apply {
+            val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
+                valueParameter.defaultValue?.replaceTypeRef(enhancedReturnType)
+
+                buildValueParameter {
+                    source = valueParameter.source
+                    containingFunctionSymbol = functionSymbol
+                    moduleData = this@FirSignatureEnhancement.moduleData
+                    origin = FirDeclarationOrigin.Enhancement
+                    returnTypeRef = enhancedReturnType
+                    this.name = valueParameter.name
+                    symbol = FirValueParameterSymbol(this.name)
+                    defaultValue = valueParameter.defaultValue
+                    isCrossinline = valueParameter.isCrossinline
+                    isNoinline = valueParameter.isNoinline
+                    isVararg = valueParameter.isVararg
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    annotations += valueParameter.annotations
+                }
+            }
+            this.valueParameters += newValueParameters
             annotations += firMethod.annotations
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(fromJava = true, session.firCachesFactory)
         }.build().apply {

@@ -447,8 +447,10 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             status = FirDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = setterStatus?.isInline ?: isInline
             }
+            symbol = FirPropertyAccessorSymbol()
             val parameter = buildValueParameter {
                 source = fakeSource
+                containingFunctionSymbol = this@buildPropertyAccessor.symbol
                 this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
@@ -462,7 +464,6 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 }
             }
             valueParameters += parameter
-            symbol = FirPropertyAccessorSymbol()
             body = FirSingleExpressionBlock(
                 buildFunctionCall {
                     source = fakeSource

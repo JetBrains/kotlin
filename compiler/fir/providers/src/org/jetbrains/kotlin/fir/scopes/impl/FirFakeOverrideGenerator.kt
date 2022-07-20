@@ -191,12 +191,13 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?,
-        symbolForOverride: FirBasedSymbol<*>,
+        symbolForOverride: FirFunctionSymbol<*>,
     ): List<FirTypeParameterRef> {
         return when {
             baseFunction.typeParameters.isEmpty() -> {
                 configureAnnotationsAndSignature(
                     baseFunction,
+                    symbolForOverride,
                     newParameterTypes,
                     newReceiverType,
                     newContextReceiverTypes,
@@ -222,6 +223,7 @@ object FirFakeOverrideGenerator {
                 }
                 configureAnnotationsAndSignature(
                     baseFunction,
+                    symbolForOverride,
                     copiedParameterTypes,
                     copiedReceiverType,
                     copiedContextReceiverTypes,
@@ -233,6 +235,7 @@ object FirFakeOverrideGenerator {
             else -> {
                 configureAnnotationsAndSignature(
                     baseFunction,
+                    symbolForOverride,
                     newParameterTypes,
                     newReceiverType,
                     newContextReceiverTypes,
@@ -246,6 +249,7 @@ object FirFakeOverrideGenerator {
 
     private fun FirFunctionBuilder.configureAnnotationsAndSignature(
         baseFunction: FirFunction,
+        fakeFunctionSymbol: FirFunctionSymbol<*>,
         newParameterTypes: List<ConeKotlinType?>?,
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
@@ -280,6 +284,7 @@ object FirFakeOverrideGenerator {
                 origin = FirDeclarationOrigin.SubstitutionOverride
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirValueParameterSymbol(valueParameter.name)
+                containingFunctionSymbol = fakeFunctionSymbol
             }.apply {
                 originalForSubstitutionOverrideAttr = valueParameter
             }

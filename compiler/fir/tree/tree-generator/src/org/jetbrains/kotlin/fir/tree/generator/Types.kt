@@ -66,6 +66,7 @@ val propertyBodyResolveStateType = type("fir.declarations", "FirPropertyBodyReso
 val stubReferenceType = generatedType("references.impl", "FirStubReference", firType = true)
 
 val firBasedSymbolType = type("fir.symbols", "FirBasedSymbol")
+val functionSymbolType = type("fir.symbols.impl", "FirFunctionSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")

@@ -208,6 +208,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 newSimpleValueParameter(
                     session,
                     kSerializerId.constructClassLikeType(arrayOf(parametersAsArguments[i]), false).toFirResolvedTypeRef(),
+                    symbol,
                     Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                 )
             })
@@ -280,6 +281,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     newSimpleValueParameter(
                         session,
                         kSerializerId.constructClassLikeType(arrayOf(typeParam.toConeType()), false).toFirResolvedTypeRef(),
+                        symbol,
                         Name.identifier("${SerialEntityNames.typeArgPrefix}$i")
                     )
                 })

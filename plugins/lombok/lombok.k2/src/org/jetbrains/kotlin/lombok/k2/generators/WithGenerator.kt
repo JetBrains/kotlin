@@ -73,6 +73,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
                 valueParameters += buildJavaValueParameter {
                     moduleData = field.moduleData
+                    containingFunctionSymbol = this@buildJavaMethod.symbol
                     returnTypeRef = field.returnTypeRef
                     name = field.name
                     annotationBuilder = { emptyList() }

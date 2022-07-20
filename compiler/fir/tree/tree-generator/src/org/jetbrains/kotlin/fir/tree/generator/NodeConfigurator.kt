@@ -389,6 +389,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         valueParameter.configure {
             +symbol("FirValueParameterSymbol")
             +field("defaultValue", expression, nullable = true)
+            +field("containingFunctionSymbol", functionSymbolType, "*").apply {
+                withBindThis = false
+            }
             generateBooleanFields("crossinline", "noinline", "vararg")
         }
 

@@ -328,6 +328,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                                 val parameterName = Name.identifier("p${index + 1}")
                                 buildValueParameter {
                                     moduleData = this@SyntheticFunctionalInterfaceCache.moduleData
+                                    containingFunctionSymbol = this@buildSimpleFunction.symbol
                                     origin = FirDeclarationOrigin.BuiltIns
                                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                     returnTypeRef = typeArgument

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
@@ -47,11 +44,12 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
         val substitutor: JavaTypeSubstitutor
+        val constructorSymbol: FirFunctionSymbol<*>
         val builder = if (staticName == null) {
             FirJavaConstructorBuilder().apply {
-                symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor())
+                symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor()).also { constructorSymbol = it }
                 classSymbol.fir.typeParameters.mapTo(typeParameters) {
-                    buildConstructedClassTypeParameterRef { symbol = it.symbol }
+                    buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
                 }
                 substitutor = JavaTypeSubstitutor.Empty
                 returnTypeRef = buildResolvedTypeRef {
@@ -65,13 +63,13 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         } else {
             FirJavaMethodBuilder().apply {
                 name = staticName
-                val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName))
+                val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName)).also { constructorSymbol = it }
                 symbol = methodSymbol
 
                 val classTypeParameterSymbols = classSymbol.fir.typeParameters.map { it.symbol }
                 classTypeParameterSymbols.mapTo(typeParameters) {
                     buildTypeParameterCopy(it.fir) {
-                        symbol = FirTypeParameterSymbol()
+                        this.symbol = FirTypeParameterSymbol()
                         containingDeclarationSymbol = methodSymbol
                     }
                 }
@@ -128,6 +126,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                         }
                         else -> typeRef
                     }
+                    containingFunctionSymbol = constructorSymbol
                     name = field.name
                     annotationBuilder = { emptyList() }
                     isVararg = false
