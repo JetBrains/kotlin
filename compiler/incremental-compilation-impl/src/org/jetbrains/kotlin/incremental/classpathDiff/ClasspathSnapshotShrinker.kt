@@ -200,6 +200,7 @@ private sealed class ShrinkMode {
 }
 
 internal fun shrinkAndSaveClasspathSnapshot(
+    compilationWasIncremental: Boolean,
     classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
     lookupStorage: LookupStorage,
     currentClasspathSnapshot: List<AccessibleClassSnapshot>?, // Not null iff classpathChanges is ToBeComputedByIncrementalCompiler
@@ -210,7 +211,9 @@ internal fun shrinkAndSaveClasspathSnapshot(
     // For incremental shrinking, we currently use only lookupStorage.addedLookupSymbols, not lookupStorage.removedLookupSymbols. It is
     // because updating the shrunk classpath snapshot for removedLookupSymbols is expensive. Therefore, the shrunk classpath snapshot may be
     // larger than necessary (and non-deterministic), but it is okay for it to be an over-approximation.
-    val shrinkMode = when (classpathChanges) {
+    val shrinkMode = if (!compilationWasIncremental) {
+        ShrinkMode.NonIncremental
+    } else when (classpathChanges) {
         is NoChanges -> {
             val addedLookupSymbols = lookupStorage.addedLookupSymbols
             if (addedLookupSymbols.isEmpty()) {
@@ -234,7 +237,8 @@ internal fun shrinkAndSaveClasspathSnapshot(
                 )
             }
         }
-        is NotAvailableDueToMissingClasspathSnapshot, is NotAvailableForNonIncrementalRun -> ShrinkMode.NonIncremental
+        is NotAvailableDueToMissingClasspathSnapshot -> ShrinkMode.NonIncremental
+        is NotAvailableForNonIncrementalRun -> error("NotAvailableForNonIncrementalRun is not expected as compilationWasIncremental==true")
     }
 
     // Shrink current classpath against current lookups
