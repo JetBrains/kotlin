@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 
@@ -14,7 +14,7 @@ data class LambdaPotential(
     val anonymousFunction: FirAnonymousFunction
 ) : Potential(anonymousFunction, effsAndPots.maxLength()) {
 
-    override fun propagate(stateOfClass: Checker.StateOfClass) = effsAndPots
+    override fun propagate(stateOfClass: StateOfClass) = effsAndPots
 
     override fun viewChange(root: Potential): Potential {
         val (effs, pots) = effsAndPots

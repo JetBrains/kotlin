@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Error
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.p
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 data class MethodAccess(override val potential: Potential, var method: FirFunction) : Effect(potential, method.symbol) {
-    override fun Checker.StateOfClass.check(): Errors {
-        // C-Inv1
-        // C-Inv2
-        // invoke
-        return when (potential) {
+    override fun StateOfClass.check(): Errors =
+        when (potential) {
             is Warm -> potential.effectsOf(this, method).flatMap { eff ->
                 eff.viewChange(potential)
                 eff.check(this)
@@ -30,7 +27,6 @@ data class MethodAccess(override val potential: Potential, var method: FirFuncti
             else ->                                                         // C-Inv3
                 ruleAcc3(potential.propagate(this))
         }
-    }
 
     override fun createEffectForPotential(pot: Potential) = MethodAccess(pot, method)
 

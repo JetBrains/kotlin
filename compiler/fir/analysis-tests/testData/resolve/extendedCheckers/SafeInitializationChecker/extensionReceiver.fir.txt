@@ -22,15 +22,12 @@ FILE: extensionReceiver.kt
             ^foo this@R|/Outer.foo|.R|/Outer.Nested.x|
         }
 
-        public final class Nested : R|kotlin/Any| {
-            public constructor(outer: R|Outer|): R|Outer.Nested| {
+        public final inner class Nested : R|kotlin/Any| {
+            public Outer.constructor(outer: R|Outer|): R|Outer.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public final val x: R|kotlin/String| = R|kotlin/with|<R|Outer|, R|kotlin/String|>(R|<local>/outer|, <L> = with@fun R|Outer|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ (this@R|special/anonymous|, this@R|/Outer.Nested|).R|/Outer.foo|()
-            }
-            )
+            public final val x: R|kotlin/String| = (this@R|/Outer|, this@R|/Outer.Nested|).R|/Outer.foo|()
                 public get(): R|kotlin/String|
 
         }

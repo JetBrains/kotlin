@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Error
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.LambdaPotential
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 
 @OptIn(DfaInternals::class)
 data class Promote(override val potential: Potential) : Effect(potential, potential.firElement.symbol) {
-    override fun Checker.StateOfClass.check(): Errors = // C-Up2
+    override fun StateOfClass.check(): Errors = // C-Up2
         when (potential) {
             is Warm -> {                                     // C-Up1
                 potential.clazz.declarations.map {
