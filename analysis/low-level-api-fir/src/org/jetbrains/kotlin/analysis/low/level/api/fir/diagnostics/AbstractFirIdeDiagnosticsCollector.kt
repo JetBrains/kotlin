@@ -62,6 +62,7 @@ private object CheckersFactory {
             add(ExpressionCheckersDiagnosticComponent(session, reporter, expressionCheckers))
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
+            add(ReportCommitterDiagnosticComponent(session, reporter))
         }
     }
 

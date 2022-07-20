@@ -188,7 +188,7 @@ class IncrementalFirJvmCompilerRunner(
                 else allPlatformSourceFiles.add(file)
             }
 
-            val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
             val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 

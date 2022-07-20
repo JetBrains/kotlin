@@ -172,7 +172,7 @@ object FirKotlinToJvmBytecodeCompiler {
 
         val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
-        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
         val firResult = runFrontend(allSources, diagnosticsReporter).also {
             performanceManager?.notifyAnalysisFinished()
         }

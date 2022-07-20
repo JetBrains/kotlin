@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,19 +18,6 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
     return resolveProcessor.scopeSession to firFiles
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>): Map<FirFile, List<KtDiagnostic>> {
-    val collector = FirDiagnosticsCollector.create(this, scopeSession)
-    return buildMap {
-        for (file in firFiles) {
-            val reporter = DiagnosticReporterFactory.createReporter()
-            collector.collectDiagnostics(file, reporter)
-            put(file, reporter.diagnostics)
-        }
-    }
-}
-
-@OptIn(ExperimentalStdlibApi::class)
 fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
     val collector = FirDiagnosticsCollector.create(this, scopeSession)
     for (file in firFiles) {

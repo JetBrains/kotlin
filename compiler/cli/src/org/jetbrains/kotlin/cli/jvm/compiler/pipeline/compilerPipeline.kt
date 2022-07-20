@@ -120,7 +120,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
         }
 
         val renderDiagnosticName = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
         val compilerInput = ModuleCompilerInput(
             TargetId(module),

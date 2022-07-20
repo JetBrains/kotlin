@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 
 open class CheckerRunningDiagnosticCollectorVisitor(
     context: CheckerContext,
@@ -17,6 +19,13 @@ open class CheckerRunningDiagnosticCollectorVisitor(
     override fun checkElement(element: FirElement) {
         components.forEach {
             element.accept(it, context)
+        }
+    }
+
+    override fun onDeclarationExit(declaration: FirDeclaration) {
+        if (declaration !is FirFile) return
+        components.forEach {
+            it.endOfFile(declaration)
         }
     }
 }

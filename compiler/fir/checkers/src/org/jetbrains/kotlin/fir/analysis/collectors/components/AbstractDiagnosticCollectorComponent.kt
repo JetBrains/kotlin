@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class AbstractDiagnosticCollectorComponent(
@@ -16,4 +19,13 @@ abstract class AbstractDiagnosticCollectorComponent(
     protected val reporter: DiagnosticReporter,
 ) : FirVisitor<Unit, CheckerContext>() {
     override fun visitElement(element: FirElement, data: CheckerContext) {}
+
+    protected fun checkAndCommitReportsOn(element: FirElement, context: DiagnosticContext?) {
+        if (reporter is PendingDiagnosticsCollectorWithSuppress) {
+            val source = element.source ?: return
+            reporter.checkAndCommitReportsOn(source, context, context == null)
+        }
+    }
+
+    open fun endOfFile(file: FirFile) {}
 }

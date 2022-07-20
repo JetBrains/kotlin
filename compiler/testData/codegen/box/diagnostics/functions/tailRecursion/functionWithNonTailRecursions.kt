@@ -3,7 +3,6 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun badTails(x : Int) : Int {
     if (x < 50 && x != 10 && x > 0) {

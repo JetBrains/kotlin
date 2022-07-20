@@ -32,12 +32,12 @@ class ErrorNodeDiagnosticCollectorComponent(
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
-        reportFirDiagnostic(errorLoop.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorLoop.diagnostic, source, data)
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
-        reportFirDiagnostic(errorTypeRef.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorTypeRef.diagnostic, source, data)
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
@@ -71,7 +71,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data, qualifiedAccessOrAnnotationCall?.source)
+        reportFirDiagnostic(errorNamedReference.diagnostic, source, data, qualifiedAccessOrAnnotationCall?.source)
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
@@ -86,28 +86,27 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
         val source = errorExpression.source ?: return
-        reportFirDiagnostic(errorExpression.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorExpression.diagnostic, source, data)
     }
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
-        reportFirDiagnostic(errorFunction.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorFunction.diagnostic, source, data)
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
         val source = errorResolvedQualifier.source ?: return
-        reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, data)
     }
 
     override fun visitErrorImport(errorImport: FirErrorImport, data: CheckerContext) {
         val source = errorImport.source ?: return
-        reportFirDiagnostic(errorImport.diagnostic, source, reporter, data)
+        reportFirDiagnostic(errorImport.diagnostic, source, data)
     }
 
     private fun reportFirDiagnostic(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement,
-        reporter: DiagnosticReporter,
         context: CheckerContext,
         qualifiedAccessSource: KtSourceElement? = null
     ) {

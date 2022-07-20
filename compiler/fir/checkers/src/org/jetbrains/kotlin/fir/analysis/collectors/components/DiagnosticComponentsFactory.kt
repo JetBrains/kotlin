@@ -16,6 +16,7 @@ object DiagnosticComponentsFactory {
             TypeCheckersDiagnosticComponent(session, reporter),
             ErrorNodeDiagnosticCollectorComponent(session, reporter),
             ControlFlowAnalysisDiagnosticComponent(session, reporter),
+            ReportCommitterDiagnosticComponent(session, reporter)
         )
     }
 
