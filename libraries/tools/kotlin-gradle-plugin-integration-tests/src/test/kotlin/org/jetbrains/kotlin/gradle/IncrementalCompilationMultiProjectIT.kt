@@ -2,9 +2,9 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.test.KtAssert.assertTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -38,8 +38,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
         get() = "caches-js"
 
     //compileKotlin2Js's modification doe not work
-    override fun testIncrementalBuildWithCompilationError(gradleVersion: GradleVersion) {}
-    override fun testValidOutputsWithCacheCorrupted(gradleVersion: GradleVersion) {}
+    override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 }
 
 @JvmGradlePluginTests
@@ -502,44 +501,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("compile error in lib project")
-    @GradleTest
-    fun testCompileErrorInLib(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
-            build("assemble")
-
-            val bKt = subProject("lib").kotlinSourcesDir().resolve("bar/B.kt")
-            val bKtContent = bKt.readText()
-            bKt.deleteExisting()
-
-            fun runFailingBuild() {
-                buildAndFail("assemble") {
-                    assertOutputContains("B.kt has been removed")
-                    assertTasksFailed(":lib:$compileKotlinTaskName")
-                    assertCompiledKotlinSources(
-                        getExpectedKotlinSourcesForDefaultProject(
-                            libSources = listOf("bar/barUseAB.kt", "bar/barUseB.kt")
-                        ),
-                        output
-                    )
-                }
-            }
-
-            runFailingBuild()
-            runFailingBuild()
-
-            bKt.writeText(bKtContent.replace("fun b", "open fun b"))
-
-            build("assemble") {
-                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"),
-                    appSources = listOf("foo/BB.kt", "foo/fooUseB.kt")
-                )
-                assertCompiledKotlinSources(expectedSources, output)
-            }
-        }
-    }
-
     @DisplayName("Remove library from classpath")
     @GradleTest
     fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
@@ -687,62 +648,79 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("KT-49780: Valid outputs after cache corruption exception")
+    @DisplayName("Test handling of failures caused by user errors")
     @GradleTest
-    open fun testValidOutputsWithCacheCorrupted(gradleVersion: GradleVersion) {
+    fun testFailureHandling_UserError(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
-            breakCachesAfterCompileKotlinExecution(this)
+            // Perform the first non-incremental build
+            build(":lib:compileKotlin")
 
-            build("assemble")
-
-            subProject("lib").kotlinSourcesDir().resolve("bar/B.kt").modify {
-                it.replace("fun b() {}", "fun b() = 123")
+            // Make a compile error in the source code
+            var classAKtContents: String? = null
+            subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").modify {
+                classAKtContents = it
+                it.replace("fun a() {}", "fun a() { // Compile error: Missing closing bracket")
             }
 
-            build("assemble") {
-                assertOutputContains("Non-incremental compilation will be performed: INCREMENTAL_COMPILATION_FAILED")
+            // In the next build, compilation should be incremental and fail, and not fall back to non-incremental compilation
+            buildAndFail(":lib:compileKotlin") {
+                assertTasksFailed(":lib:$compileKotlinTaskName")
+                assertOutputContains("Compilation error. See log for more details")
+                assertOutputDoesNotContain("Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
             }
 
-            val lookupFile = projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/file-to-id.tab")
-            assertTrue("Output is empty", lookupFile.exists())
+            // Fix the compile error in the source code
+            subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").writeText(classAKtContents!!)
+            changeMethodSignatureInLib()
 
-        }
-    }
-
-    @DisplayName("KT-49780: No need to rebuild invalid code due to cache corruption")
-    @GradleTest
-    open fun testIncrementalBuildWithCompilationError(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
-            breakCachesAfterCompileKotlinExecution(this)
-
-            build("assemble")
-
-            subProject("lib").kotlinSourcesDir().resolve("bar/B.kt").modify {
-                it.replace("fun b() {}", "fun a() = 123")
-            }
-
-            buildAndFail("assemble") {
-                printBuildOutput()
-                assertOutputDoesNotContain("Possible caches corruption:")
-                assertOutputDoesNotContain("Non-incremental compilation will be performed:")
+            // In the next build, compilation should be incremental and succeed
+            build(":lib:compileKotlin") {
+                assertIncrementalCompilation(
+                    expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/A.kt", "bar/B.kt", "bar/barUseA.kt")
+                    )
+                )
             }
         }
     }
 
-    private fun breakCachesAfterCompileKotlinExecution(testProject: TestProject) {
-        listOf("app", "lib").forEach {
-            testProject.subProject(it).buildGradle.appendText(
-                """
-                    $compileKotlinTaskName {
-                        doLast {
-                            def file = new File(projectDir.path, "/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/file-to-id.tab")
-                            println("Update lookup file " + file.path)
-                            file.write("la-la")
-                        }
-                    }
-                """.trimIndent()
-            )
+    @DisplayName("Test handling of failures caused by tool errors")
+    @GradleTest
+    open fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            // Simulate a tool error by registering a doLast that breaks caches in the KotlinCompile task
+            val lookupFile =
+                projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/cacheable/${compileCacheFolderName}/lookups/file-to-id.tab")
+            breakCachesAfterKotlinCompile(subProject("lib"), lookupFile)
+
+            // Perform the first non-incremental build
+            build(":lib:compileKotlin") {
+                // Caches should be in a corrupted state, which will ensure the next build will fail
+                assertFileContains(lookupFile, "Invalid contents")
+            }
+
+            // Make a change in the source code
+            changeMethodSignatureInLib()
+
+            // In the next build, compilation should be incremental and fail, then fall back to non-incremental compilation and succeed
+            build(":lib:compileKotlin") {
+                assertOutputContains("Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
+                // Also check that the output is not deleted (regression test for KT-49780)
+                assertFileExists(lookupFile)
+            }
         }
+    }
+
+    private fun breakCachesAfterKotlinCompile(gradleProject: GradleProject, lookupFile: Path) {
+        gradleProject.buildGradle.appendText(
+            """
+            $compileKotlinTaskName {
+                doLast {
+                    new File("$lookupFile").write("Invalid contents")
+                }
+            }
+            """.trimIndent()
+        )
     }
 
 }
