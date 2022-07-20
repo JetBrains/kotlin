@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.expandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -843,6 +842,7 @@ internal class KtFirCallResolver(
                 resolveFragmentOfCall
             ).toKtCallCandidateInfos()
             is FirResolvedQualifier -> toKtCallCandidateInfos()
+            is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)
             else -> toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
         }
     }
@@ -912,6 +912,26 @@ internal class KtFirCallResolver(
         }
     }
 
+    private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
+        psi: KtElement,
+        resolveFragmentOfCall: Boolean
+    ): List<KtCallCandidateInfo> {
+        val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidatesForDelegatedConstructor(
+            analysisSession.firResolveSession,
+            this,
+            psi
+        )
+        return candidates.mapNotNull {
+            convertToKtCallCandidateInfo(
+                this,
+                psi,
+                it.candidate,
+                it.isInBestCandidates,
+                resolveFragmentOfCall
+            )
+        }
+    }
+
     private fun KtCallInfo?.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
         return when (this) {
             is KtSuccessCallInfo -> listOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
@@ -921,13 +941,13 @@ internal class KtFirCallResolver(
     }
 
     private fun convertToKtCallCandidateInfo(
-        functionCall: FirFunctionCall,
+        resolvable: FirResolvable,
         element: KtElement,
         candidate: Candidate,
         isInBestCandidates: Boolean,
         resolveFragmentOfCall: Boolean
     ): KtCallCandidateInfo? {
-        val call = createKtCall(element, functionCall, candidate, resolveFragmentOfCall)
+        val call = createKtCall(element, resolvable, candidate, resolveFragmentOfCall)
             ?: error("expect `createKtCall` to succeed for candidate")
         if (candidate.isSuccessful) {
             return KtApplicableCallCandidateInfo(call, isInBestCandidates)
@@ -936,7 +956,7 @@ internal class KtFirCallResolver(
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
-            functionCall.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
+            resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         return KtInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }

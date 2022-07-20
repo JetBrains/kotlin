@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 class FirTowerResolver(
     private val components: BodyResolveComponents,
     resolutionStageRunner: ResolutionStageRunner,
+    private val collector: CandidateCollector = CandidateCollector(components, resolutionStageRunner)
 ) {
-    private val collector = CandidateCollector(components, resolutionStageRunner)
     private val manager = TowerResolveManager(collector)
 
     fun runResolver(

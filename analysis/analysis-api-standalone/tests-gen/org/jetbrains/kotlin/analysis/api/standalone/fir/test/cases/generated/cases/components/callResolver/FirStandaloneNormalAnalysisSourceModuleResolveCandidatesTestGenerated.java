@@ -80,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
         }
 
         @Test
+        @TestMetadata("delegatedConstructor.kt")
+        public void testDelegatedConstructor() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/delegatedConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("implicitInvoke.kt")
         public void testImplicitInvoke() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/implicitInvoke.kt");
@@ -205,6 +211,24 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
         @TestMetadata("consecutiveImplicitInvoke3.kt")
         public void testConsecutiveImplicitInvoke3() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/consecutiveImplicitInvoke3.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedConstructorApplicable.kt")
+        public void testDelegatedConstructorApplicable() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/delegatedConstructorApplicable.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedConstructorInapplicable.kt")
+        public void testDelegatedConstructorInapplicable() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/delegatedConstructorInapplicable.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedConstructorInapplicableDifferentParametersCount.kt")
+        public void testDelegatedConstructorInapplicableDifferentParametersCount() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/delegatedConstructorInapplicableDifferentParametersCount.kt");
         }
 
         @Test
