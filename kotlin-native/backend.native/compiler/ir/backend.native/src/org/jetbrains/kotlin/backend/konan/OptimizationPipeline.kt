@@ -215,7 +215,6 @@ class LlvmOptimizationPipeline(
         LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
         // TargetTransformInfo pass.
         LLVMAddAnalysisPasses(targetMachine, modulePasses)
-        LLVMAddAlwaysInlinerPass(modulePasses)
         if (config.internalize) {
             LLVMAddInternalizePass(modulePasses, 0)
         }
