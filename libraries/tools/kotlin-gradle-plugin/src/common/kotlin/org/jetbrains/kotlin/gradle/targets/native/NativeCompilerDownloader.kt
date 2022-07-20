@@ -11,16 +11,20 @@ import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
+import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.isAtLeast
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import java.nio.file.Files
@@ -169,5 +173,27 @@ class NativeCompilerDownloader(
         if (classpath.isEmpty() || classpath.any { !it.exists() }) {
             downloadAndExtract()
         }
+    }
+}
+
+internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
+    val isKonanHomeOverridden = kotlinPropertiesProvider.nativeHome != null
+    if (!isKonanHomeOverridden) {
+        val downloader = NativeCompilerDownloader(this)
+
+        if (kotlinPropertiesProvider.nativeReinstall) {
+            logger.info("Reinstall Kotlin/Native distribution")
+            downloader.compilerDirectory.deleteRecursively()
+        }
+
+        downloader.downloadIfNeeded()
+        logger.info("Kotlin/Native distribution: $konanHome")
+    } else {
+        logger.info("User-provided Kotlin/Native distribution: $konanHome")
+    }
+
+    val distributionType = NativeDistributionTypeProvider(project).getDistributionType(konanVersion)
+    if (distributionType.mustGeneratePlatformLibs) {
+        PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
     }
 }

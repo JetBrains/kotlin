@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -41,38 +42,12 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome)
     }
 
-    private val propertiesProvider = PropertiesProvider(project)
-
-    private val isKonanHomeOverridden: Boolean
-        get() = propertiesProvider.nativeHome != null
-
-    private fun setupNativeCompiler() = with(project) {
-        if (!isKonanHomeOverridden) {
-            val downloader = NativeCompilerDownloader(this)
-
-            if (propertiesProvider.nativeReinstall) {
-                logger.info("Reinstall Kotlin/Native distribution")
-                downloader.compilerDirectory.deleteRecursively()
-            }
-
-            downloader.downloadIfNeeded()
-            logger.info("Kotlin/Native distribution: $konanHome")
-        } else {
-            logger.info("User-provided Kotlin/Native distribution: $konanHome")
-        }
-
-        val distributionType = NativeDistributionTypeProvider(project).getDistributionType(konanVersion)
-        if (distributionType.mustGeneratePlatformLibs) {
-            PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
-        }
-    }
-
     protected abstract fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<T>
 
     protected abstract fun instantiateTarget(name: String): T
 
     override fun createTarget(name: String): T {
-        setupNativeCompiler()
+        project.setupNativeCompiler(konanTarget)
 
         val result = instantiateTarget(name).apply {
             targetName = name

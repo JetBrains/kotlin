@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 
 fun <T : GradleKpmNativeVariantInternal> GradleKpmNativeVariantFactory(
     module: GradleKpmModule,
@@ -80,6 +81,8 @@ class GradleKpmNativeVariantConfigurator<T : GradleKpmNativeVariantInternal>(
 ) : GradleKpmFragmentFactory.FragmentConfigurator<T> {
 
     override fun configure(fragment: T) {
+        fragment.project.setupNativeCompiler(fragment.konanTarget)
+
         fragment.compileDependenciesConfiguration.configure(config.compileDependencies, fragment)
         fragment.apiElementsConfiguration.configure(config.apiElements, fragment)
         fragment.hostSpecificMetadataElementsConfiguration?.configure(config.hostSpecificMetadataElements, fragment)
