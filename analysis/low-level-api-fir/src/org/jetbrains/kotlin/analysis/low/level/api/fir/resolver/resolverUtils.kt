@@ -38,7 +38,7 @@ internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstrac
     )
 }
 
-private class StubBodyResolveTransformerComponents(
+internal open class StubBodyResolveTransformerComponents(
     session: FirSession,
     scopeSession: ScopeSession,
     transformer: FirBodyResolveTransformer,

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
+    private val towerResolver: FirTowerResolver = FirTowerResolver(components, components.resolutionStageRunner)
 ) {
     private val session = components.session
     private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
@@ -62,10 +63,6 @@ class FirCallResolver(
     fun initTransformer(transformer: FirExpressionsResolveTransformer) {
         this.transformer = transformer
     }
-
-    private val towerResolver = FirTowerResolver(
-        components, components.resolutionStageRunner,
-    )
 
     val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
@@ -168,24 +165,6 @@ class FirCallResolver(
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
         resolutionContext: ResolutionContext = transformer.resolutionContext
     ): List<OverloadCandidate> {
-        class AllCandidatesCollector(
-            components: BodyResolveComponents,
-            resolutionStageRunner: ResolutionStageRunner
-        ) : CandidateCollector(components, resolutionStageRunner) {
-            private val allCandidatesSet = mutableSetOf<Candidate>()
-
-            override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
-                allCandidatesSet += candidate
-                return super.consumeCandidate(group, candidate, context)
-            }
-
-            // We want to get candidates at all tower levels.
-            override fun shouldStopAtTheLevel(group: TowerGroup): Boolean = false
-
-            val allCandidates: List<Candidate>
-                get() = allCandidatesSet.toList()
-        }
-
         val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
         val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
         val result =
@@ -843,3 +822,21 @@ class FirCallResolver(
 
 /** A candidate in the overload candidate set. */
 data class OverloadCandidate(val candidate: Candidate, val isInBestCandidates: Boolean)
+
+class AllCandidatesCollector(
+    components: BodyResolveComponents,
+    resolutionStageRunner: ResolutionStageRunner
+) : CandidateCollector(components, resolutionStageRunner) {
+    private val allCandidatesSet = mutableSetOf<Candidate>()
+
+    override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
+        allCandidatesSet += candidate
+        return super.consumeCandidate(group, candidate, context)
+    }
+
+    // We want to get candidates at all tower levels.
+    override fun shouldStopAtTheLevel(group: TowerGroup): Boolean = false
+
+    val allCandidates: List<Candidate>
+        get() = allCandidatesSet.toList()
+}
