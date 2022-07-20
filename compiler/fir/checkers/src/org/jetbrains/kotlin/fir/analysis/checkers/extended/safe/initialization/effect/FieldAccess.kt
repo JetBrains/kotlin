@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Error
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.*
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 
 data class FieldAccess(override val potential: Potential, val field: FirVariable) : Effect(potential, field.symbol) {
-    override fun Checker.StateOfClass.check(): Errors {
+    override fun StateOfClass.check(): Errors {
         return when (potential) {
             is Root.This, is Super -> {                                     // C-Acc1
                 if (field.isFieldInitialized()) emptyList()

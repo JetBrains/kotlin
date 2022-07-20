@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.effect
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Errors
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Potential
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential.Warm
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 data class Init(override val potential: Warm, val clazz: FirClass, override val symbol: FirBasedSymbol<*>?) : Effect(potential, symbol) {
-    override fun Checker.StateOfClass.check(): Errors {                                                     // C-Init
+    override fun StateOfClass.check(): Errors {                                                     // C-Init
         val effects = potential.effectsOf(this, clazz)
         return effects.flatMap { eff ->
             val eff1 = eff.viewChange(potential)

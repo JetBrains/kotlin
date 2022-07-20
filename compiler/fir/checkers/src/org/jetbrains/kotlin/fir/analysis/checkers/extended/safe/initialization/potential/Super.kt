@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.potential
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.Checker.StateOfClass
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.safe.initialization.EffectsAndPotentials
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -15,7 +15,7 @@ data class Super(val firSuperReference: FirSuperReference, val firClass: FirClas
     WithPrefix(potential, firSuperReference), Potential.Propagatable {
     override fun createPotentialForPotential(pot: Potential) = Super(firSuperReference, firClass, pot)
 
-    override fun propagate(stateOfClass: Checker.StateOfClass): EffectsAndPotentials {
+    override fun propagate(stateOfClass: StateOfClass): EffectsAndPotentials {
         val (effs, pots) = potential.propagate(stateOfClass)
         return EffectsAndPotentials(effs, pots.wrapPots(::createPotentialForPotential))
     }
