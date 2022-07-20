@@ -776,17 +776,21 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
-    @DisplayName("sources can be embedded into source map")
-    @DisabledIf(
-        "org.jetbrains.kotlin.gradle.AbstractKotlin2JsGradlePluginIT#getIrBackend",
-        disabledReason = "Source maps are not supported in IR backend"
-    )
+    @DisplayName("sources of all modules are embedded into source map")
     @GradleTest
-    fun testKotlinJsSourceMapEmbedSources(gradleVersion: GradleVersion) {
+    fun testKotlinJsSourceMapEmbedSourcesAlways(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
             buildGradleKts.appendText(
                 """
-                |allprojects {
+                |project("lib") {
+                |   tasks.withType<KotlinJsCompile>() {
+                |        kotlinOptions {
+                |            sourceMap = true
+                |            sourceMapEmbedSources = "always"
+                |        }
+                |    }
+                |}
+                |project("app") {
                 |    tasks.withType<KotlinJsCompile> {
                 |        kotlinOptions.sourceMapEmbedSources = "always"
                 |    }
@@ -799,6 +803,42 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertFileContains(
                     mapFilePath,
                     "\"fun main(args: Array<String>) {",
+                    "\"inline fun foo(): String {",
+                )
+            }
+        }
+    }
+
+    @DisplayName("only sources of external modules are embedded into source map")
+    @GradleTest
+    fun testKotlinJsSourceMapEmbedSourcesInlining(gradleVersion: GradleVersion) {
+        project("kotlin2JsProjectWithSourceMap", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                |project("lib") {
+                |   tasks.withType<KotlinJsCompile>() {
+                |        kotlinOptions {
+                |            sourceMap = true
+                |            sourceMapEmbedSources = "always"
+                |        }
+                |    }
+                |}
+                |project("app") {
+                |    tasks.withType<KotlinJsCompile> {
+                |        kotlinOptions.sourceMapEmbedSources = "inlining"
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+            build(if (irBackend) "compileDevelopmentExecutableKotlinJs" else "compileKotlinJs") {
+                val mapFilePath = projectPath.resolve("build/js/packages/$projectName-app/kotlin/$projectName-app.js.map")
+                assertFileDoesNotContain(
+                    mapFilePath,
+                    "\"fun main(args: Array<String>) {"
+                )
+                assertFileContains(
+                    mapFilePath,
                     "\"inline fun foo(): String {",
                 )
             }

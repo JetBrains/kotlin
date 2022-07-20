@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.*
@@ -471,23 +470,3 @@ fun generateSingleWrappedModuleBody(
     )
 }
 
-data class SourceMapsInfo(
-    val sourceMapPrefix: String,
-    val sourceRoots: List<String>,
-    val outputDir: File?,
-    val sourceMapContentEmbedding: SourceMapSourceEmbedding,
-) {
-    companion object {
-        fun from(configuration: CompilerConfiguration): SourceMapsInfo? =
-            if (configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-                SourceMapsInfo(
-                    configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, ""),
-                    configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList<String>()),
-                    configuration.get(JSConfigurationKeys.OUTPUT_DIR),
-                    configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
-                )
-            } else {
-                null
-            }
-    }
-}

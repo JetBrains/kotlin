@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -23,8 +23,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
@@ -492,17 +497,33 @@ internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationCon
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext) {
-    if (!context.staticContext.genSourcemaps) return
 
-    var cachedLocation = context.getLocationFromCache(node)
-    if (cachedLocation == null) {
-        cachedLocation = node.getSourceInfo(context.currentFile.fileEntry) ?: return
-        context.saveLocationToCache(node, cachedLocation)
-    }
+    val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
+
+    val location = context.getLocationForIrElement(node) ?: return
+
+    val isNodeFromCurrentModule = context.currentFile.module.descriptor == context.staticContext.backendContext.module
 
     // TODO maybe it's better to fix in JsExpressionStatement
     val locationTarget = if (this is JsExpressionStatement) this.expression else this
-    locationTarget.source = cachedLocation
+
+    locationTarget.source = when (sourceMapsInfo.sourceMapContentEmbedding) {
+        SourceMapSourceEmbedding.NEVER -> location
+        SourceMapSourceEmbedding.INLINING -> if (isNodeFromCurrentModule) location else location.withEmbeddedSource(context)
+        SourceMapSourceEmbedding.ALWAYS -> location.withEmbeddedSource(context)
+    }
+}
+
+private fun JsLocation.withEmbeddedSource(
+    context: JsGenerationContext
+) = JsLocationWithEmbeddedSource(this, identityObject = context.currentFile) {
+    try {
+        InputStreamReader(FileInputStream(file), StandardCharsets.UTF_8)
+    } catch (e: IOException) {
+        // TODO: If the source file is not available at path (e. g. it's an stdlib file), use heuristics to find it.
+        // If all heuristics fail, use dumpKotlinLike() on freshly deserialized IrFile.
+        null
+    }
 }
 
 fun IrElement.getSourceInfo(container: IrDeclaration): JsLocation? {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceInfo
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -86,7 +87,9 @@ class JsGenerationContext(
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
 
-    fun getLocationFromCache(node: IrElement) = locationCache[node.startOffset]
-
-    fun saveLocationToCache(node: IrElement, location: JsLocation) = locationCache.put(node.startOffset, location)
+    fun getLocationForIrElement(irElement: IrElement): JsLocation? {
+        return locationCache.getOrPut(irElement.startOffset) {
+            irElement.getSourceInfo(currentFile.fileEntry) ?: return null
+        }
+    }
 }

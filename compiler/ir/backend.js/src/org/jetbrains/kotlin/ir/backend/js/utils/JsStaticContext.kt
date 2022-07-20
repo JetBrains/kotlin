@@ -24,6 +24,4 @@ class JsStaticContext(
     val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner
 
     val initializerBlock = JsCompositeBlock()
-
-    val genSourcemaps = backendContext.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 }
