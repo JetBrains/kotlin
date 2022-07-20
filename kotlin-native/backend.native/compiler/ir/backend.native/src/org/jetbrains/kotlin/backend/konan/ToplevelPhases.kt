@@ -623,27 +623,31 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
         disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY)
-        disableUnless(bitcodePostprocessingPhase, config.produce.involvesLinkStage)
-        disableUnless(linkBitcodeDependenciesPhase, config.produce.involvesLinkStage)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
         disableUnless(optimizeTLSDataLoadsPhase, config.optimizationsEnabled)
-        disableUnless(objectFilesPhase, config.produce.involvesLinkStage)
-        disableUnless(linkerPhase, config.produce.involvesLinkStage)
+        if (!config.produce.involvesLinkStage) {
+            disable(bitcodePostprocessingPhase)
+            disable(linkBitcodeDependenciesPhase)
+            disable(objectFilesPhase)
+            disable(linkerPhase)
+        }
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
         disableIf(dumpTestsPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE || config.testDumpFile == null)
-        disableUnless(buildDFGPhase, config.optimizationsEnabled)
-        disableUnless(devirtualizationAnalysisPhase, config.optimizationsEnabled)
-        disableUnless(devirtualizationPhase, config.optimizationsEnabled)
-        disableUnless(escapeAnalysisPhase, config.optimizationsEnabled)
-        // Inline accessors only in optimized builds due to separate compilation and possibility to get broken
-        // debug information.
-        disableUnless(propertyAccessorInlinePhase, config.optimizationsEnabled)
-        disableUnless(inlineClassPropertyAccessorsPhase, config.optimizationsEnabled)
-        disableUnless(dcePhase, config.optimizationsEnabled)
-        disableUnless(removeRedundantCallsToFileInitializersPhase, config.optimizationsEnabled)
-        disableUnless(ghaPhase, config.optimizationsEnabled)
+        if (!config.optimizationsEnabled) {
+            disable(buildDFGPhase)
+            disable(devirtualizationAnalysisPhase)
+            disable(devirtualizationPhase)
+            disable(escapeAnalysisPhase)
+            // Inline accessors only in optimized builds due to separate compilation and possibility to get broken
+            // debug information.
+            disable(propertyAccessorInlinePhase)
+            disable(inlineClassPropertyAccessorsPhase)
+            disable(dcePhase)
+            disable(removeRedundantCallsToFileInitializersPhase)
+            disable(ghaPhase)
+        }
         disableUnless(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
 
         disableUnless(fileInitializersPhase, config.propertyLazyInitialization)
@@ -651,10 +655,11 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disableUnless(removeRedundantSafepointsPhase, config.memoryModel == MemoryModel.EXPERIMENTAL)
 
-        val isDescriptorsOnlyLibrary = config.metadataKlib == true
-        disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)
-        disableIf(copyDefaultValuesToActualPhase, isDescriptorsOnlyLibrary)
-        disableIf(specialBackendChecksPhase, isDescriptorsOnlyLibrary)
-        disableIf(checkSamSuperTypesPhase, isDescriptorsOnlyLibrary)
+        if (config.metadataKlib) {
+            disable(psiToIrPhase)
+            disable(copyDefaultValuesToActualPhase)
+            disable(specialBackendChecksPhase)
+            disable(checkSamSuperTypesPhase)
+        }
     }
 }
