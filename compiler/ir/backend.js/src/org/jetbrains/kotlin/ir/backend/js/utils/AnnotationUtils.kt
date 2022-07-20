@@ -66,13 +66,25 @@ fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotati
 
 fun IrAnnotationContainer.isAnnotatedWithJsFun(): Boolean = hasAnnotation(JsAnnotations.jsFunFqn)
 
+private fun IrOverridableDeclaration<*>.dfsOverridableJsNameOrNull(): String? {
+    for (overriddenSymbol in overriddenSymbols) {
+        val symbolOwner = overriddenSymbol.owner
+        if (symbolOwner is IrAnnotationContainer) {
+            symbolOwner.getJsName()?.let { return it }
+        }
+        if (symbolOwner is IrOverridableDeclaration<*>) {
+            symbolOwner.dfsOverridableJsNameOrNull()?.let { return it }
+        }
+    }
+    return null
+}
+
 fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
     val jsName = getJsName()
 
     return when {
         jsName != null -> jsName
-        this is IrOverridableDeclaration<*> ->
-            overriddenSymbols.firstNotNullOfOrNull { (it.owner as? IrAnnotationContainer)?.getJsName() }
+        this is IrOverridableDeclaration<*> -> dfsOverridableJsNameOrNull()
         else -> null
     }
 }

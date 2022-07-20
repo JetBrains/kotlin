@@ -146,8 +146,10 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
             copyReceiverParametersFrom(bridge, substitutionMap)
             copyValueParametersFrom(bridge, substitutionMap)
             annotations += bridge.annotations
-            overriddenSymbols += delegateTo.overriddenSymbols
+            // the js function signature building process (jsFunctionSignature()) uses dfs throught overriddenSymbols for getting js name,
+            // therefore it is very important to put bridge symbol at the beginning, it allows to get correct js function name
             overriddenSymbols += bridge.symbol
+            overriddenSymbols += delegateTo.overriddenSymbols
         }
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
