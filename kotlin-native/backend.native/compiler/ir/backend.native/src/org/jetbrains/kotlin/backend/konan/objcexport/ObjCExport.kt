@@ -47,8 +47,6 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private fun produceInterface(): ObjCExportedInterface? {
         if (!target.family.isAppleFamily) return null
 
-        if (!context.config.produce.isFinalBinary) return null
-
         // TODO: emit RTTI to the same modules as classes belong to.
         //   Not possible yet, since ObjCExport translates the entire "world" API at once
         //   and can't do this per-module, e.g. due to global name conflict resolution.
@@ -98,14 +96,19 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
-        if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
-
-            exportedInterface.generateWorkaroundForSwiftSR10177()
-        }
+        exportedInterface?.generateWorkaroundForSwiftSR10177()
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
+    }
+
+    /**
+     * Populate framework directory with headers, module and info.plist.
+     */
+    fun produceFrameworkInterface() {
+        if (exportedInterface != null) {
+            produceFrameworkSpecific(exportedInterface.headerLines)
+        }
     }
 
     private fun produceFrameworkSpecific(headerLines: List<String>) {

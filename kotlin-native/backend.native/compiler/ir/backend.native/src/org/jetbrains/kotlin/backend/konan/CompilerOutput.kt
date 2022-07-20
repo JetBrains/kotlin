@@ -181,7 +181,9 @@ internal fun produceOutput(context: Context) {
     val config = context.config.configuration
     val tempFiles = context.config.tempFiles
     val produce = config.get(KonanConfigKeys.PRODUCE)
-
+    if (produce == CompilerOutputKind.FRAMEWORK) {
+        context.objCExport.produceFrameworkInterface()
+    }
     when (produce) {
         CompilerOutputKind.STATIC,
         CompilerOutputKind.DYNAMIC,
