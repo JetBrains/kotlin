@@ -1,4 +1,4 @@
-FILE: initBlocks4.kt
+FILE: initBlock4.kt
     public final class B : R|kotlin/Any| {
         public constructor(bool: R|kotlin/Boolean|): R|B| {
             super<R|kotlin/Any|>()

@@ -2631,21 +2631,21 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
-                @TestMetadata("initBlocks2.kt")
-                public void testInitBlocks2() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks2.kt");
+                @TestMetadata("initBlock2.kt")
+                public void testInitBlock2() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlock2.kt");
                 }
 
                 @Test
-                @TestMetadata("initBlocks3.kt")
-                public void testInitBlocks3() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks3.kt");
+                @TestMetadata("initBlock3.kt")
+                public void testInitBlock3() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlock3.kt");
                 }
 
                 @Test
-                @TestMetadata("initBlocks4.kt")
-                public void testInitBlocks4() throws Exception {
-                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks4.kt");
+                @TestMetadata("initBlock4.kt")
+                public void testInitBlock4() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlock4.kt");
                 }
 
                 @Test
