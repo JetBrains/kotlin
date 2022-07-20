@@ -251,7 +251,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
      * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
      * a lazy manner
      */
-    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+    protected fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
         project.configurations.named(this).configure { receiverConfiguration ->
             receiverConfiguration.dependencies.addAllLater(
                 project.objects.listProperty(Dependency::class.java).apply {
@@ -527,6 +527,30 @@ class AndroidCompilationDetails(
 
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
+
+    /*
+    * Android is supposed to build test compilations against main JAR artifact,
+    * not against classpath as it's currently done for all other MPP targets.
+    * So, theoretically, Android test classpaths shouldn't matter, and this override should be empty.
+    * However, there is an implicit dependency on configuration names, revealed by a fix for KT-35916.
+    * After disambiguation of configurations for test compilation and its default source set,
+    * Android dependencies no longer work correctly. To mitigate the issue classpaths are explicitly populated.
+    */
+    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        compilation.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.compileOnlyConfigurationName
+        )
+
+        compilation.runtimeDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.runtimeOnlyConfigurationName
+        )
+    }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = object : HasKotlinDependencies by super.kotlinDependenciesHolder {
