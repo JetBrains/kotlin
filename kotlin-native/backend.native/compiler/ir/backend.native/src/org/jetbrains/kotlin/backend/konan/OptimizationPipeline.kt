@@ -215,6 +215,7 @@ class LlvmOptimizationPipeline(
         LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
         // TargetTransformInfo pass.
         LLVMAddAnalysisPasses(targetMachine, modulePasses)
+        LLVMAddAlwaysInlinerPass(modulePasses)
         if (config.internalize) {
             LLVMAddInternalizePass(modulePasses, 0)
         }
@@ -227,6 +228,7 @@ class LlvmOptimizationPipeline(
         config.inlineThreshold?.let { threshold ->
             LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
         }
+        LLVMAddAlwaysInlinerPass(modulePasses)
 
         // Pipeline that is similar to `llvm-lto`.
         LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
@@ -238,7 +240,6 @@ class LlvmOptimizationPipeline(
             // TODO: Consider adding other ObjC passes.
             LLVMAddObjCARCContractPass(modulePasses)
         }
-        LLVMAddAlwaysInlinerPass(modulePasses)
     }
 
     fun run() {
