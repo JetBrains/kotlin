@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-internal class LLFirLibrarySessionFactory(
+class LLFirLibrarySessionFactory(
     private val project: Project,
 ) {
 
-    fun getLibrarySession(ktBinaryModule: KtBinaryModule, sessionsCache: MutableMap<KtModule, LLFirSession>): LLFirLibrarySession {
+    internal fun getLibrarySession(ktBinaryModule: KtBinaryModule, sessionsCache: MutableMap<KtModule, LLFirSession>): LLFirLibrarySession {
         return sessionsCache.getOrPut(ktBinaryModule) { createModuleLibrariesSession(ktBinaryModule) } as LLFirLibrarySession
     }
 

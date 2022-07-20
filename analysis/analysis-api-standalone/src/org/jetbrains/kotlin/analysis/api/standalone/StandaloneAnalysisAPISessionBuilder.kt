@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
