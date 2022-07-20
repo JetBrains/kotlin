@@ -116,7 +116,7 @@ abstract class IncrementalCompilerRunner<
                 classpathAbiSnapshot = classpathAbiSnapshot
             ).also {
                 if (it == ExitCode.OK) {
-                    performWorkAfterSuccessfulCompilation(caches)
+                    performWorkAfterSuccessfulCompilation(caches, wasIncremental = false)
                 }
             }
         } finally {
@@ -179,7 +179,7 @@ abstract class IncrementalCompilerRunner<
                             compileIncrementally(args, caches, allSourceFiles, compilationMode, messageCollector, withAbiSnapshot)
                         }
                         if (exitCode == ExitCode.OK) {
-                            performWorkAfterSuccessfulCompilation(caches)
+                            performWorkAfterSuccessfulCompilation(caches, wasIncremental = true)
                         }
                         return exitCode
                     } catch (e: Throwable) {
@@ -516,11 +516,13 @@ abstract class IncrementalCompilerRunner<
     }
 
     /**
-     * Performs some work after a compilation if the compilation completed successfully.
+     * Performs some work after a compilation if the compilation completed successfully (no exceptions were thrown AND exit code == 0).
      *
-     * This method MUST NOT be called when the compilation failed because the results produced by the work here would be incorrect.
+     * This method MUST NOT be called when the compilation failed because the results produced by the work here would be invalid.
+     *
+     * @wasIncremental whether the compilation was incremental or non-incremental
      */
-    protected open fun performWorkAfterSuccessfulCompilation(caches: CacheManager) {}
+    protected open fun performWorkAfterSuccessfulCompilation(caches: CacheManager, wasIncremental: Boolean) {}
 
     companion object {
         const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
@@ -543,4 +545,3 @@ abstract class IncrementalCompilerRunner<
         }
     }
 }
-
