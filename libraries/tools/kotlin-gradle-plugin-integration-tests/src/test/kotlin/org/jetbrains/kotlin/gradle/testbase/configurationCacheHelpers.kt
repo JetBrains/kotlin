@@ -32,7 +32,6 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
             "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
         )
 
-        //assertOutputContains("0 problems were found storing the configuration cache.")
         assertOutputContains("Configuration cache entry stored.")
         if (checkConfigurationCacheFileReport) assertConfigurationCacheReportNotCreated()
     }
