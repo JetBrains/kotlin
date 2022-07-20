@@ -653,7 +653,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         val isDescriptorsOnlyLibrary = config.metadataKlib == true
         disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)
-        disableIf(destroySymbolTablePhase, isDescriptorsOnlyLibrary)
         disableIf(copyDefaultValuesToActualPhase, isDescriptorsOnlyLibrary)
         disableIf(specialBackendChecksPhase, isDescriptorsOnlyLibrary)
         disableIf(checkSamSuperTypesPhase, isDescriptorsOnlyLibrary)
