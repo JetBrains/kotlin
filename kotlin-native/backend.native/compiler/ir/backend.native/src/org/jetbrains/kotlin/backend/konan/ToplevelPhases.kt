@@ -622,7 +622,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableUnless(buildAdditionalCacheInfoPhase, config.produce.isCache && config.lazyIrForCaches)
         disableUnless(exportInternalAbiPhase, config.produce.isCache)
-        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY)
+        disableIf(backendCodegen, config.produce == CompilerOutputKind.LIBRARY || config.omitFrameworkBinary)
         disableUnless(checkExternalCallsPhase, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(rewriteExternalCallsCheckerGlobals, getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS))
         disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
@@ -655,7 +655,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
 
         disableUnless(removeRedundantSafepointsPhase, config.memoryModel == MemoryModel.EXPERIMENTAL)
 
-        if (config.metadataKlib) {
+        if (config.metadataKlib || config.omitFrameworkBinary) {
             disable(psiToIrPhase)
             disable(copyDefaultValuesToActualPhase)
             disable(specialBackendChecksPhase)

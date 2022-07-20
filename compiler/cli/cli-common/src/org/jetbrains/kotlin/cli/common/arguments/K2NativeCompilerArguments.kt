@@ -387,6 +387,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
     var partialLinkage: Boolean = false
 
+    @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
+    var omitFrameworkBinary: Boolean = false
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>

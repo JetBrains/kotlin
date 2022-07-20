@@ -386,6 +386,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, configuration))
                 arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
                 put(PARTIAL_LINKAGE, arguments.partialLinkage)
+                put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
             }
         }
     }

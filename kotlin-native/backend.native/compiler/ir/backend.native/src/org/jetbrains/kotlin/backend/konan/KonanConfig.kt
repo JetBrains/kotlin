@@ -397,6 +397,18 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             && librariesToCache.isEmpty()
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
 
+    /**
+     * Do not compile binary when compiling framework.
+     * This is useful when user care only about framework's interface.
+     */
+    internal val omitFrameworkBinary: Boolean by lazy {
+        configuration.getBoolean(KonanConfigKeys.OMIT_FRAMEWORK_BINARY).also {
+            if (it && produce != CompilerOutputKind.FRAMEWORK) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
+            }
+        }
+    }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
