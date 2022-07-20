@@ -5,7 +5,7 @@
 
 fun plus1(x: Int) = x + 1
 
-// CHECK: define void @"kfun:#main(){}"()
+// CHECK-LABEL: define void @"kfun:#main(){}"()
 // CHECK-NOT: Int-box
 // CHECK-NOT: Int-unbox
 // CHECK: ret void

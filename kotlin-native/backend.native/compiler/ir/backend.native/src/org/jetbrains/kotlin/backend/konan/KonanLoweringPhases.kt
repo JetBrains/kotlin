@@ -210,6 +210,13 @@ internal val stringConcatenationPhase = makeKonanFileLoweringPhase(
         description = "String concatenation lowering"
 )
 
+internal val stringConcatenationTypeNarrowingPhase = makeKonanFileLoweringPhase(
+        ::StringConcatenationTypeNarrowing,
+        name = "StringConcatenationTypeNarrowing",
+        description = "String concatenation type narrowing",
+        prerequisite = setOf(stringConcatenationPhase)
+)
+
 internal val kotlinNothingValueExceptionPhase = makeKonanFileLoweringPhase(
         ::KotlinNothingValueExceptionLowering,
         name = "KotlinNothingValueException",

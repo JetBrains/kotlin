@@ -6222,6 +6222,66 @@ fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
 }
 
+task kt53119_side_effect(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_side_effect.kt"
+}
+
+fileCheckTest("filecheck_kt53119_plus_generated_noescape") {
+    annotatedSource = project.file('codegen/stringConcatenationTypeNarrowing/kt53119_plus_generated_noescape.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    extraOpts = ["-tr"]
+}
+
+task kt53119_plus_generated_noescape(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_plus_generated_noescape.kt"
+}
+
+fileCheckTest("filecheck_kt53119_plus_member") {
+    annotatedSource = project.file('codegen/stringConcatenationTypeNarrowing/kt53119_plus_member.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    extraOpts = ["-tr"]
+}
+
+task kt53119_plus_member(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_plus_member.kt"
+}
+
+fileCheckTest("filecheck_kt53119_plus_extension") {
+    annotatedSource = project.file('codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    extraOpts = ["-tr"]
+}
+
+task kt53119_plus_extension(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_plus_extension.kt"
+}
+
+fileCheckTest("filecheck_kt53119_append_generated") {
+    annotatedSource = project.file('codegen/stringConcatenationTypeNarrowing/kt53119_append_generated.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    extraOpts = ["-tr"]
+}
+
+task kt53119_append_generated(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_append_generated.kt"
+}
+
+fileCheckTest("filecheck_kt53119_append_manual") {
+    annotatedSource = project.file('codegen/stringConcatenationTypeNarrowing/kt53119_append_manual.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+    extraOpts = ["-tr"]
+}
+
+task kt53119_append_manual(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/stringConcatenationTypeNarrowing/kt53119_append_manual.kt"
+}
+
 fileCheckTest("filecheck_escape_analysis_enabled") {
     annotatedSource = project.file('filecheck/escape_analysis.kt')
     enabled = project.globalTestArgs.contains('-opt')

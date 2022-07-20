@@ -1,0 +1,6 @@
+Foo(bar=42),Foo(bar=42)
+null,null
+Foo(bar=42),bar
+null,null
+Foo(bar=42),bar
+null,bar

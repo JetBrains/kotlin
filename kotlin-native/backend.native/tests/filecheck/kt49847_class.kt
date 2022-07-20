@@ -7,7 +7,7 @@ class C {
     fun foo(x: Int) = x
 }
 
-// CHECK: define void @"kfun:#main(){}"()
+// CHECK-LABEL: define void @"kfun:#main(){}"()
 // CHECK-NOT: Int-box
 //   TODO Remove next check after fix of https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
 // CHECK: Int-unbox

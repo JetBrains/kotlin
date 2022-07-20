@@ -9,7 +9,7 @@ fun interface Foo {
 
 fun baz(x: Any): Int = x.hashCode()
 
-// CHECK: define void @"kfun:#main(){}"()
+// CHECK-LABEL: define void @"kfun:#main(){}"()
 // Boxing needs to be used now due to non-devirtualized call
 // CHECK: Int-box
 

@@ -8,6 +8,8 @@ package kotlin
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.Frozen
 import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.TypedIntrinsic
 
 @ExportTypeInfo("theStringTypeInfo")
 @OptIn(FreezingIsDeprecated::class)
@@ -23,6 +25,7 @@ public final class String : Comparable<String>, CharSequence {
         return plusImpl(other.toString())
     }
 
+    @TypedIntrinsic(IntrinsicType.IDENTITY)
     override public fun toString(): String {
         return this
     }
@@ -47,8 +50,9 @@ public final class String : Comparable<String>, CharSequence {
     @GCUnsafeCall("Kotlin_String_getStringLength")
     private external fun getStringLength(): Int
 
+    @PublishedApi
     @GCUnsafeCall("Kotlin_String_plusImpl")
-    private external fun plusImpl(other: String): String
+    internal external fun plusImpl(other: String): String
 
     @GCUnsafeCall("Kotlin_String_equals")
     external override fun equals(other: Any?): Boolean
