@@ -2643,6 +2643,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("initBlocks4.kt")
+                public void testInitBlocks4() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/initBlocks4.kt");
+                }
+
+                @Test
                 @TestMetadata("innerClass1.kt")
                 public void testInnerClass1() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/SafeInitializationChecker/innerClass1.kt");
