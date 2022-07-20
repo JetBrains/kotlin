@@ -9,9 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
+import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
 import java.net.URL
@@ -38,6 +37,7 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapToDiagnostics
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.impl.toDependencies
+import kotlin.script.experimental.util.PropertiesCollection
 
 internal fun VirtualFile.loadAnnotations(
     acceptedAnnotations: List<KClass<out Annotation>>,
@@ -146,7 +146,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             get() = configuration?.get(ScriptCompilationConfiguration.defaultImports).orEmpty()
 
         override val importedScripts: List<SourceCode>
-            get() = configuration?.get(ScriptCompilationConfiguration.importScripts).orEmpty()
+            get() = (configuration?.get(ScriptCompilationConfiguration.resolvedImportScripts) ?: configuration?.get(ScriptCompilationConfiguration.importScripts)).orEmpty()
 
         @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
         override val legacyDependencies: ScriptDependencies?
@@ -217,12 +217,15 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
 
 typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
 
+val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
+
 @Suppress("DEPRECATION")
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
     project: Project,
-    providedConfiguration: ScriptCompilationConfiguration? = null // if null - take from definition
+    providedConfiguration: ScriptCompilationConfiguration? = null, // if null - take from definition
+    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>? = null
 ): ScriptCompilationConfigurationResult {
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
@@ -236,6 +239,8 @@ fun refineScriptCompilationConfiguration(
         return compilationConfiguration.refineOnAnnotations(script, collectedData)
             .onSuccess {
                 it.refineBeforeCompiling(script, collectedData)
+            }.onSuccess {
+                it.resolveImportsToVirtualFiles(knownVirtualFileSources)
             }.onSuccess {
                 ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                     ktFileSource,
@@ -292,6 +297,50 @@ fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefiniti
 private fun additionalClasspath(definition: ScriptDefinition): List<File> {
     return (definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.templateClasspath
         ?: definition.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty())
+}
+
+fun ScriptCompilationConfiguration.resolveImportsToVirtualFiles(
+    knownFileBasedSources: MutableMap<String, VirtualFileScriptSource>?
+)
+: ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    // the resolving is needed while CoreVirtualFS does not cache the files, so attempt to find vf and then PSI by path leads
+    // to different PSI files, which breaks mappings needed by script descriptor
+    // resolving only to virtual file allows to simplify serialization and maybe a bit more future proof
+
+    val localFS: VirtualFileSystem by lazy(LazyThreadSafetyMode.NONE) {
+        val fileManager = VirtualFileManager.getInstance()
+        fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+    }
+
+    val resolvedImports = get(ScriptCompilationConfiguration.importScripts)?.map { sourceCode ->
+        when (sourceCode) {
+            is VirtualFileScriptSource -> sourceCode
+            is FileBasedScriptSource -> {
+                val path = sourceCode.file.normalize().absolutePath
+                knownFileBasedSources?.get(path) ?: run {
+                    val virtualFile = localFS.findFileByPath(path)
+                        ?: return@resolveImportsToVirtualFiles makeFailureResult("Imported source file not found: ${sourceCode.file}".asErrorDiagnostics())
+                    VirtualFileScriptSource(virtualFile).also {
+                        knownFileBasedSources?.set(path, it)
+                    }
+                }
+            }
+
+            else -> {
+                // TODO: support knownFileBasedSources here as well
+                val scriptFileName = sourceCode.scriptFileName(sourceCode, this)
+                val virtualFile = ScriptLightVirtualFile(
+                    scriptFileName,
+                    sourceCode.locationId,
+                    sourceCode.text
+                )
+                VirtualFileScriptSource(virtualFile)
+            }
+        }
+    }
+
+    val updatedConfiguration = if (resolvedImports.isNullOrEmpty()) this else this.with { resolvedImportScripts(resolvedImports) }
+    return updatedConfiguration.asSuccess()
 }
 
 internal fun makeScriptContents(
