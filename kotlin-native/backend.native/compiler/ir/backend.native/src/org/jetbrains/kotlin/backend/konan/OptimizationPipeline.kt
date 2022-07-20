@@ -238,6 +238,7 @@ class LlvmOptimizationPipeline(
             // TODO: Consider adding other ObjC passes.
             LLVMAddObjCARCContractPass(modulePasses)
         }
+        LLVMAddAlwaysInlinerPass(modulePasses)
     }
 
     fun run() {
