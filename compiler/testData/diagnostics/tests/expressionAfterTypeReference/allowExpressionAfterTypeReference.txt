@@ -1,0 +1,15 @@
+package
+
+public val reportedProperty: A<kotlin.String>
+public val unreportedProperty0: A<kotlin.String>
+public val unreportedProperty1: kotlin.String = ""
+public fun reportedFunction(/*0*/ a: A<kotlin.String> = ...): A<kotlin.String>
+public fun unreportedFunction0(/*0*/ a: A<kotlin.String> = ...): A<kotlin.String>
+public fun unreportedFunction1(/*0*/ a: kotlin.Int = ...): kotlin.Int
+
+public final class A</*0*/ T> {
+    public constructor A</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
