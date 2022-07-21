@@ -44,6 +44,7 @@ val KpmFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<String>>
     }
 
 val KpmVariant.platform get() = variantAttributes[KotlinPlatformTypeAttribute]
+val KpmVariant.nativeTarget get() = variantAttributes[KotlinNativeTargetAttribute]
 
 open class KpmBasicFragment(
     override val containingModule: KpmModule,
