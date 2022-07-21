@@ -29,11 +29,11 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
         }
     }
 
-    fun checkAndCommitReportsOn(
+    override fun checkAndCommitReportsOn(
         element: AbstractKtSourceElement,
-        context: DiagnosticContext?,
-        commitEverything: Boolean
+        context: DiagnosticContext?
     ) {
+        val commitEverything = context == null
         for ((path, pendingList) in pendingDiagnosticsByFilePath) {
             val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
             val iterator = pendingList.iterator()

@@ -27,6 +27,9 @@ abstract class MutableDiagnosticContext : DiagnosticContext {
 
 abstract class DiagnosticReporter {
     abstract fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext)
+
+    open fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+    }
 }
 
 open class KtDiagnosticReporterWithContext(

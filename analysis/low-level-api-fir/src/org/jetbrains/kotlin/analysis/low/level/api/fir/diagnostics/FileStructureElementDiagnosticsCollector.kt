@@ -27,6 +27,10 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
             useExtendedCheckers,
         )
         collector.collectDiagnostics(firDeclaration, reporter)
-        return FileStructureElementDiagnosticList(reporter.diagnostics)
+        val source = firDeclaration.source
+        if (source != null) {
+            reporter.checkAndCommitReportsOn(source, null)
+        }
+        return FileStructureElementDiagnosticList(reporter.committedDiagnostics)
     }
 }
