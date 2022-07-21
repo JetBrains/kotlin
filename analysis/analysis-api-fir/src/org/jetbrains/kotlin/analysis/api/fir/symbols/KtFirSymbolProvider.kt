@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -21,11 +23,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolProvider(
-    override val analysisSession: KtAnalysisSession,
+    override val analysisSession: KtFirAnalysisSession,
     private val firSymbolProvider: FirSymbolProvider,
-    private val firResolveSession: LLFirResolveSession,
-    private val firSymbolBuilder: KtSymbolByFirBuilder,
-) : KtSymbolProvider() {
+) : KtSymbolProvider(), KtFirAnalysisSessionComponent {
 
     override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol {
         return when {
@@ -114,7 +114,10 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
-        return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(psi.resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession))
+        val firClass = psi.resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)
+            .fullyExpandedClass(firResolveSession.useSiteFirSession)
+            ?: error("Not-expended type-alias")
+        return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(firClass)
     }
 
     override fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KtNamedClassOrObjectSymbol? {

@@ -63,7 +63,7 @@ private constructor(
     override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveSession) }
 
     override val symbolProviderImpl =
-        KtFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider, firResolveSession, firSymbolBuilder)
+        KtFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
 
     override val completionCandidateCheckerImpl = KtFirCompletionCandidateChecker(this, token)
 
