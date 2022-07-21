@@ -55,6 +55,7 @@ class JvmSymbols(
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
+    private val kotlinEnumPackage: IrPackageFragment = createPackage(FqName("kotlin.enums"))
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
@@ -96,6 +97,7 @@ class JvmSymbols(
                 "kotlin" -> kotlinPackage
                 "kotlin.coroutines" -> kotlinCoroutinesPackage
                 "kotlin.coroutines.jvm.internal" -> kotlinCoroutinesJvmInternalPackage
+                "kotlin.enums" -> kotlinEnumPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
                 "kotlin.jvm" -> kotlinJvmPackage
@@ -213,6 +215,20 @@ class JvmSymbols(
             }
         }
     }
+
+    val enumEntries: IrClassSymbol = createClass(FqName("kotlin.enums.EnumEntries"), ClassKind.INTERFACE) { klass ->
+        // Actually it is E : Enum<E>, but doesn't seem to have any effect yet
+        klass.addTypeParameter("E", irBuiltIns.anyNType)
+    }
+
+    private val enumEntriesKt: IrClassSymbol = createClass(FqName("kotlin.enums.EnumEntriesKt")) { klass ->
+        klass.addFunction("enumEntries", enumEntries.defaultType, isStatic = true).apply {
+            addValueParameter("entriesProvider",
+                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType })))
+        }
+    }
+
+    val createEnumEntries: IrSimpleFunctionSymbol = enumEntriesKt.functions.single { it.owner.name.asString() == "enumEntries" }
 
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker"))

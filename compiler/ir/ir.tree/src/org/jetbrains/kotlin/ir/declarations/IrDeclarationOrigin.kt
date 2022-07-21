@@ -60,7 +60,10 @@ interface IrDeclarationOrigin {
 
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object SYNTHETIC_HELPER_FOR_ENUM_VALUES : IrDeclarationOriginImpl("SYNTHETIC_HELPER_FOR_ENUM_VALUES", isSynthetic = true)
+    object SYNTHETIC_HELPER_FOR_ENUM_ENTRIES : IrDeclarationOriginImpl("SYNTHETIC_HELPER_FOR_ENUM_ENTRIES", isSynthetic = true)
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES", isSynthetic = true)
+    object FIELD_FOR_ENUM_ENTRIES: IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRIES", isSynthetic = true)
+    object PROPERTY_FOR_ENUM_ENTRIES: IrDeclarationOriginImpl("PROPERTY_FOR_ENUM_ENTRIES", isSynthetic = false)
     object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
     object FIELD_FOR_CLASS_CONTEXT_RECEIVER : IrDeclarationOriginImpl("FIELD_FOR_CLASS_CONTEXT_RECEIVER", isSynthetic = true)
 

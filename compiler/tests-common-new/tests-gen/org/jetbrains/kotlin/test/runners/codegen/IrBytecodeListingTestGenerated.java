@@ -110,6 +110,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
+    @TestMetadata("enumEntries.kt")
+    public void testEnumEntries() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/enumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("extension.kt")
     public void testExtension() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/extension.kt");
