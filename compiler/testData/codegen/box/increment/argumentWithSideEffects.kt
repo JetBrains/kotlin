@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: don't support legacy feature; questionable test, probably should not support.
 // Currently fails because prefix increment only calls getter once.
 var log = ""

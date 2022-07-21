@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: don't support legacy feature (prefix increment calls getter twice). fail 2: anone1
 var inc: String = ""
 
