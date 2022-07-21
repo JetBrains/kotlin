@@ -984,4 +984,48 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             @Composable fun Text(s: String) {}
         """
     )
+
+    @Test
+    fun memoizeLambdaInsideFunctionReturningValue() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Test(foo: Foo): Int =
+              Consume { foo.value }
+        """,
+        """
+            @Composable
+            fun Test(foo: Foo, %composer: Composer?, %changed: Int): Int {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)<{>,<Consum...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              val tmp0 = Consume(remember(foo, {
+                {
+                  foo.value
+                }
+              }, %composer, 0b1110 and %changed), %composer, 0)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+
+        """.trimIndent(),
+        """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.Stable
+
+            @Composable
+            fun Consume(block: () -> Int): Int = block()
+
+            @Stable
+            class Foo {
+                val value: Int = 0
+            }
+        """.trimIndent()
+    )
 }
