@@ -259,15 +259,16 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
     override fun recordCapture(local: IrValueDeclaration?): Boolean {
         val isThis = local == thisParam
         val isCtorParam = (local?.parent as? IrConstructor)?.parent === declaration
-        if (local != null && collectors.isNotEmpty() && isThis) {
+        val isClassParam = isThis || isCtorParam
+        if (local != null && collectors.isNotEmpty() && isClassParam) {
             for (collector in collectors) {
                 collector.recordCapture(local)
             }
         }
-        if (local != null && declaration.isLocal && !isThis && !isCtorParam) {
+        if (local != null && declaration.isLocal && !isClassParam) {
             captures.add(local)
         }
-        return isThis || isCtorParam
+        return isClassParam
     }
     override fun recordCapture(local: IrSymbolOwner?) { }
     override fun pushCollector(collector: CaptureCollector) {
