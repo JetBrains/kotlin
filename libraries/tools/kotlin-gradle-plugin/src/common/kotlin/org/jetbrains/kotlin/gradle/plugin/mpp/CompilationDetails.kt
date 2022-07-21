@@ -529,12 +529,14 @@ class AndroidCompilationDetails(
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
 
     /*
-    * Android is supposed to build test compilations against main JAR artifact,
-    * not against classpath as it's currently done for all other MPP targets.
-    * So, theoretically, Android test classpaths shouldn't matter, and this override should be empty.
-    * However, there is an implicit dependency on configuration names, revealed by a fix for KT-35916.
-    * After disambiguation of configurations for test compilation and its default source set,
-    * Android dependencies no longer work correctly. To mitigate the issue classpaths are explicitly populated.
+    * Multiplatform dependencies from common used to get to Android test classpath through the following chain:
+    * commonMainImplementation -> (1) androidImplementation -> (2) androidTestImplementation -> (3) e.g. debugAndroidTestCompileClasspath
+    * The last step can be substituted with other Android test classpaths.
+    * The fix for KT-35916 disconnects MPP compilation and source set configurations, since the step (2) isn't correct from the MPP view.
+    * androidTestImplementation still remains a source set configuration, but no longer contains compilation dependencies.
+    * Therefore, it doesn't get dependencies from common source sets.
+    * We now explicitly add associate compilation dependencies to the Kotlin test compilation configurations (test classpaths).
+    * This helps, because the Android test classpath configurations extend from the Kotlin test compilations'.
     */
     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
         compilation.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
