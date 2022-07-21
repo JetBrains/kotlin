@@ -27598,6 +27598,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/operatorConventions/annotatedAssignment.kt");
         }
 
+        @TestMetadata("assignOperatorOverload.kt")
+        public void testAssignOperatorOverload() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignOperatorOverload.kt");
+        }
+
+        @TestMetadata("assignOperatorOverload_notWorkingWithFir.kt")
+        public void testAssignOperatorOverload_notWorkingWithFir() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignOperatorOverload_notWorkingWithFir.kt");
+        }
+
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");

@@ -4,9 +4,11 @@ public fun test(): kotlin.Unit
 public operator fun B.assign(/*0*/ a: kotlin.String): kotlin.Unit
 public operator fun C.assign(/*0*/ a: kotlin.Int): kotlin.Unit
 public operator fun C.assign(/*0*/ a: kotlin.String): kotlin.Unit
+public operator fun DContainer.assign(/*0*/ other: kotlin.Int): kotlin.Unit
 public operator fun NullCheckContainer.assign(/*0*/ value: kotlin.String): kotlin.Unit
 public operator fun kotlin.Int.assign(/*0*/ a: kotlin.String): kotlin.Unit
 public operator fun kotlin.String.assign(/*0*/ a: kotlin.String): kotlin.String
+public operator fun D.get(/*0*/ i: kotlin.Int): DContainer
 
 public final class A {
     public constructor A()
@@ -25,6 +27,23 @@ public final class B {
 public final class C {
     public constructor C()
     public final fun assign(/*0*/ a: A): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class D {
+    public constructor D(/*0*/ x: DContainer = ...)
+    public final val x: DContainer
+    public final operator /*synthesized*/ fun component1(): DContainer
+    public final /*synthesized*/ fun copy(/*0*/ x: DContainer = ...): D
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final class DContainer {
+    public constructor DContainer()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

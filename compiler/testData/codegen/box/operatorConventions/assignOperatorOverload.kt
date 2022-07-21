@@ -1,7 +1,6 @@
 import kotlin.reflect.KProperty
 
-// TARGET_BACKEND: JVM_IR
-// !LANGUAGE:+AssignOperatorOverloadForJvm
+// !LANGUAGE:+AssignOperatorOverload
 
 var result: String = "Fail"
 
@@ -58,18 +57,44 @@ class SelectAssignTest {
 }
 
 class SelectAssignTest2 {
-    fun assign(value: Int) {
-        result = "Fail.SelectAssignTest2.assign"
+    operator fun assign(value: Int) {
+        result = "OK.operator.SelectAssignTest2.assign"
     }
-
     fun test() {
         val s = SelectAssignTest2()
         s = 1
     }
 }
-
 operator fun SelectAssignTest2.assign(i: Int) {
-    result = "OK.operator.SelectAssignTest2.assign"
+    result = "Fail.operator.SelectAssignTest2.assign"
+}
+
+class SelectAssignTest3 {
+    fun assign(value: Int) {
+        result = "Fail.SelectAssignTest3.assign"
+    }
+    fun test() {
+        val s = SelectAssignTest3()
+        s = 1
+    }
+}
+operator fun SelectAssignTest3.assign(i: Int) {
+    result = "OK.operator.SelectAssignTest3.assign"
+}
+
+class LambaContainer
+operator fun LambaContainer.assign(r: Runnable): Unit {
+    r.run()
+}
+
+data class FunctionReference(var result: String)
+operator fun FunctionReference.assign(r: (FunctionReference) -> Unit): Unit {
+    r.invoke(this)
+}
+
+data class GenericParameter(var result: String)
+operator fun <T> GenericParameter.assign(v: T): Unit {
+    this.result = "OK.GenericParameter.${v!!::class.simpleName}"
 }
 
 fun box(): String {
@@ -103,15 +128,20 @@ fun box(): String {
     foo.x[1] = 2L
     if (foo.x.value != "OK.Container.set2") return "Fail: ${foo.x.value}"
 
-    // Test operator String.assign is selected over SelectAssignTest.String.assign
+    // Test `operator String.assign` is selected over SelectAssignTest class method `String.assign` without `operator` keyword
     result = "Fail"
     SelectAssignTest().test()
     if (result != "OK.operator.String.assign") return "Fail: ${result}"
 
-    // Test operator SelectAssignTest2.assign is selected over SelectAssignTest2.assign
+    // Test SelectAssignTest2 class method `operator assign` is selected over `operator assign` outside the class
     result = "Fail"
     SelectAssignTest2().test()
     if (result != "OK.operator.SelectAssignTest2.assign") return "Fail: ${result}"
+
+    // Test `operator SelectAssignTest3.assign` is selected and not SelectAssignTest3 class `assign` method without `operator` keyword
+    result = "Fail"
+    SelectAssignTest3().test()
+    if (result != "OK.operator.SelectAssignTest3.assign") return "Fail: ${result}"
 
     // Test reference on null is not called
     result = "OK"
@@ -130,6 +160,27 @@ fun box(): String {
     val delegate: ByDelegate = ByDelegate()
     delegate.v = "OK"
     if (result != "OK") return "Fail: $result"
+
+    // Test lambdas
+    result = "Fail"
+    val lambdaContainer = LambaContainer()
+    lambdaContainer = { result = "OK.Runnable" }
+    if (result != "OK.Runnable") return "Fail: $result"
+
+    // Test function references
+    val functionReference = FunctionReference(result = "Fail")
+    val function: (FunctionReference) -> Unit = { it.result = "OK.FunctionReference" }
+    functionReference = function
+    if (functionReference.result != "OK.FunctionReference") return "Fail: ${functionReference.result}"
+
+    // Test generic parameters
+    val genericParameter = GenericParameter(result = "Fail")
+    genericParameter = "string"
+    if (genericParameter.result != "OK.GenericParameter.String") return "Fail: ${genericParameter.result}"
+    genericParameter = 42
+    if (genericParameter.result != "OK.GenericParameter.Int") return "Fail: ${genericParameter.result}"
+    genericParameter = GenericParameter(result = "")
+    if (genericParameter.result != "OK.GenericParameter.GenericParameter") return "Fail: ${genericParameter.result}"
 
     return "OK"
 }

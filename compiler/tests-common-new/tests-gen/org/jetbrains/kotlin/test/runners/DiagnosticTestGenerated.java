@@ -22387,9 +22387,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("assignOperatorOverloadDisabled.kt")
-            public void testAssignOperatorOverloadDisabled() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverloadDisabled.kt");
+            @TestMetadata("assignOperatorOverload_disabled.kt")
+            public void testAssignOperatorOverload_disabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/assignOperatorOverload_disabled.kt");
             }
 
             @Test

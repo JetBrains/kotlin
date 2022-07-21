@@ -23618,6 +23618,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("assignOperatorOverload.kt")
+        public void testAssignOperatorOverload() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignOperatorOverload.kt");
+        }
+
+        @Test
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");

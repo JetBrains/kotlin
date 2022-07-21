@@ -1,0 +1,51 @@
+/assignOperatorOverload.kt:37:1: error: 'operator' modifier is inapplicable on this function: must return Unit
+operator fun String.assign(a: String): String {
+^
+/assignOperatorOverload.kt:49:5: error: val cannot be reassigned
+    a = "5"
+    ^
+/assignOperatorOverload.kt:49:9: error: type mismatch: inferred type is String but A was expected
+    a = "5"
+        ^
+/assignOperatorOverload.kt:53:5: error: val cannot be reassigned
+    b = A()
+    ^
+/assignOperatorOverload.kt:53:9: error: type mismatch: inferred type is A but B was expected
+    b = A()
+        ^
+/assignOperatorOverload.kt:55:5: error: val cannot be reassigned
+    c = A()
+    ^
+/assignOperatorOverload.kt:55:9: error: type mismatch: inferred type is A but C was expected
+    c = A()
+        ^
+/assignOperatorOverload.kt:56:9: error: the integer literal does not conform to the expected type C
+    c = 1L
+        ^
+/assignOperatorOverload.kt:62:6: error: unresolved reference: d[0]
+    d[0] = 42
+     ^
+/assignOperatorOverload.kt:62:6: error: no set method providing array access
+    d[0] = 42
+     ^
+/assignOperatorOverload.kt:63:7: error: variable expected
+    d.get(0) = 42
+      ^
+/assignOperatorOverload.kt:63:16: error: the integer literal does not conform to the expected type DContainer
+    d.get(0) = 42
+               ^
+/assignOperatorOverload.kt:67:5: error: val cannot be reassigned
+    x = ""
+    ^
+/assignOperatorOverload.kt:67:7: error: function 'assign' should return Unit to be used by corresponding operator '='
+    x = ""
+      ^
+/assignOperatorOverload.kt:71:14: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type NullCheck?
+    nullCheck.x = "Fail"
+             ^
+/assignOperatorOverload.kt:72:5: error: val cannot be reassigned
+    nullCheck?.x = "Fail"
+    ^
+/assignOperatorOverload.kt:72:20: error: type mismatch: inferred type is String but NullCheckContainer? was expected
+    nullCheck?.x = "Fail"
+                   ^

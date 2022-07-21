@@ -1,3 +1,6 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !RENDER_DIAGNOSTICS_FULL_TEXT
+
 class A
 
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun A.assign(a: String) {

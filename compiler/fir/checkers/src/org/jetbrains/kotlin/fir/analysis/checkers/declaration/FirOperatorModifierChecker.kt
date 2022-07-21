@@ -220,7 +220,7 @@ private object OperatorFunctionChecks {
             Returns.unit,
             ValueParametersCount.single,
             noDefaultAndVarargs,
-            isSupportedLanguageFeature(LanguageFeature.AssignOperatorOverloadForJvm)
+            isSupportedLanguageFeature(LanguageFeature.AssignOperatorOverload)
         )
     }
 

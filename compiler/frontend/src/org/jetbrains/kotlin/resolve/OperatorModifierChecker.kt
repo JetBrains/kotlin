@@ -94,7 +94,7 @@ object OperatorModifierChecker {
         checkResult: CheckResult,
         modifier: PsiElement
     ) {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverload)) {
             reportInapplicableOperatorModifier(diagnosticHolder, checkResult, modifier)
         }
     }

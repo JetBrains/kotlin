@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature.AssignOperatorOverloadForJvm
+import org.jetbrains.kotlin.config.LanguageFeature.AssignOperatorOverload
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -48,7 +48,7 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker() {
 
     private fun getAssignOperatorIfSupported(resolvedCalleeName: Name, context: CheckerContext): String? {
         return if (resolvedCalleeName == OperatorNameConventions.ASSIGN
-            && context.languageVersionSettings.supportsFeature(AssignOperatorOverloadForJvm)
+            && context.languageVersionSettings.supportsFeature(AssignOperatorOverload)
         ) {
             return FirOperation.ASSIGN.operator
         } else {

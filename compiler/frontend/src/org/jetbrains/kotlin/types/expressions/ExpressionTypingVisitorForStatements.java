@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.results.NameNotFoundResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
@@ -443,7 +442,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
         // Resolve assign operator overload
-        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+        if (components.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverload)) {
             KotlinTypeInfo assignOperatorOverload = resolveAssignOperatorOverload(bindingContext, expression, contextWithExpectedType, leftOperand, left, leftInfo, context);
             if (assignOperatorOverload != null) {
                 return assignOperatorOverload;
@@ -495,18 +494,17 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             KotlinTypeInfo leftInfo,
             ExpressionTypingContext context
     ) {
-        KotlinType leftType = leftInfo.getType();
-        KotlinType assignmentOperationType = null;
-        TemporaryTraceAndCache temporaryForAssignmentOperation = null;
         VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
-        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = new NameNotFoundResolutionResult<>();
-        if (descriptor != null && !descriptor.isVar()) {
-            ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
-            temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
-            ExpressionTypingContext temporaryContext = context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope);
-            assignmentOperationDescriptors = components.callResolver.resolveAssignOperatorCall(temporaryContext, receiver, expression);
-            assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
+        if (descriptor == null || descriptor.isVar()) {
+            return null;
         }
+
+        KotlinType leftType = leftInfo.getType();
+        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
+        TemporaryTraceAndCache temporaryForAssignmentOperation = TemporaryTraceAndCache.create(context, "trace to check assignment operation like '=' for", expression);
+        ExpressionTypingContext temporaryContext = context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = components.callResolver.resolveAssignOperatorCall(temporaryContext, receiver, expression);
+        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
 
         boolean isAssignOperatorResolved = assignmentOperationType != null && assignmentOperationDescriptors.isSuccess();
         if (isAssignOperatorResolved) {

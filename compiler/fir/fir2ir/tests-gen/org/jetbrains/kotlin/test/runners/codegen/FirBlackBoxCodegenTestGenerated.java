@@ -32952,6 +32952,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("assignOperatorOverload_notWorkingWithFir.kt")
+        public void testAssignOperatorOverload_notWorkingWithFir() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignOperatorOverload_notWorkingWithFir.kt");
+        }
+
+        @Test
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");

@@ -870,7 +870,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     private fun resolveAssignOperatorFunctionCallIfSupported(resolvedAssignment: FirVariableAssignment): FirFunctionCall? {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverloadForJvm)) {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AssignOperatorOverload)) {
             return null
         }
         val leftArgument = resolvedAssignment.lValue

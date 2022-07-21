@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE:+AssignOperatorOverloadForJvm
+// !RENDER_DIAGNOSTICS_FULL_TEXT
+// !LANGUAGE:+AssignOperatorOverload
 
 import kotlin.reflect.KProperty
 
@@ -21,6 +22,14 @@ operator fun C.assign(a: Int) {
 
 operator fun Int.assign(a: String) {
 }
+
+operator fun DContainer.assign(other: Int) {
+}
+operator fun D.get(i: Int): DContainer {
+    return this.x
+}
+data class D(val x: DContainer = DContainer())
+class DContainer
 
 /**
  * Test that if return type is not Unit then method has an error
@@ -45,6 +54,13 @@ fun test() {
     val c = C()
     <!VAL_REASSIGNMENT!>c<!> = <!ASSIGNMENT_TYPE_MISMATCH!>A()<!>
     <!VAL_REASSIGNMENT!>c<!> = <!ASSIGNMENT_TYPE_MISMATCH!>1L<!>
+
+    // Test that d.get(0).assign(42) is not possible with operators and thus not ambigious with d.set(0, 42)
+    val d = D()
+    val dContainer = d[0]
+    dContainer = 42
+    d<!NO_SET_METHOD!>[0]<!> = 42
+    d.<!FUNCTION_CALL_EXPECTED!>get<!>(0) = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
 
     // Test "operator fun assign" return type diagnostics
     val x = ""

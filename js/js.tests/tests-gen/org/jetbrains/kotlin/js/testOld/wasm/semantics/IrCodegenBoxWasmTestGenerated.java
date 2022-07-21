@@ -21101,6 +21101,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/operatorConventions/annotatedAssignment.kt");
         }
 
+        @TestMetadata("assignOperatorOverload.kt")
+        public void testAssignOperatorOverload() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/assignOperatorOverload.kt");
+        }
+
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");

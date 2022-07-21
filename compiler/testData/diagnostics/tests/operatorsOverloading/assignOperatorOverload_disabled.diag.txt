@@ -1,0 +1,22 @@
+/assignOperatorOverload_disabled.kt:6:1: error: 'operator' modifier is inapplicable on this function: illegal function name
+operator fun A.assign(a: String) {
+^
+/assignOperatorOverload_disabled.kt:9:1: error: 'operator' modifier is inapplicable on this function: illegal function name
+operator fun Int.assign(a: String) {
+^
+/assignOperatorOverload_disabled.kt:17:5: error: val cannot be reassigned
+    a = "hello"
+    ^
+/assignOperatorOverload_disabled.kt:17:9: error: type mismatch: inferred type is String but A was expected
+    a = "hello"
+        ^
+/assignOperatorOverload_disabled.kt:18:9: error: the integer literal does not conform to the expected type A
+    a = 1
+        ^
+/assignOperatorOverload_disabled.kt:21:5: error: val cannot be reassigned
+    integer = "Five"
+    ^
+/assignOperatorOverload_disabled.kt:21:15: error: type mismatch: inferred type is String but Int was expected
+    integer = "Five"
+              ^
+
