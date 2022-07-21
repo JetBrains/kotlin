@@ -348,6 +348,7 @@ abstract class FirJavaFacade(
                     classId.relativeClassName
                 )
                 generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
+                generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
             }
             if (classIsAnnotation) {
                 declarations +=

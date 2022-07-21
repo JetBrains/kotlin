@@ -22,6 +22,8 @@ object StandardNames {
 
     @JvmField val ENUM_VALUES = Name.identifier("values")
 
+    @JvmField val ENUM_ENTRIES = Name.identifier("entries")
+
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")
 
     @JvmField val DATA_CLASS_COPY = Name.identifier("copy")

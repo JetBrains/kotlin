@@ -590,6 +590,12 @@ class DeclarationsConverter(
                             context.className,
                             modifiers.hasExpect()
                         )
+                        generateEntriesGetter(
+                            baseModuleData,
+                            context.packageFqName,
+                            context.className,
+                            modifiers.hasExpect()
+                        )
                     }
                     initCompanionObjectSymbolAttr()
 

@@ -137,6 +137,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/enumEntries.kt");
+        }
+
+        @Test
         @TestMetadata("enumWithMultipleCtors.kt")
         public void testEnumWithMultipleCtors() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enumWithMultipleCtors.kt");

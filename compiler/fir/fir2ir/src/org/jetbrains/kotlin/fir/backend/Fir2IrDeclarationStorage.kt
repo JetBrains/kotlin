@@ -740,7 +740,8 @@ class Fir2IrDeclarationStorage(
                 }
                 bindAndDeclareParameters(
                     propertyAccessor, irParent,
-                    thisReceiverOwner, isStatic = irParent !is IrClass, parentPropertyReceiverType = property.receiverTypeRef
+                    thisReceiverOwner, isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true,
+                    parentPropertyReceiverType = property.receiverTypeRef
                 )
                 leaveScope(this)
                 if (irParent != null) {
@@ -853,7 +854,9 @@ class Fir2IrDeclarationStorage(
         containingClass: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { ConeClassLikeLookupTagImpl(it) },
         forceTopLevelPrivate: Boolean = false,
     ): IrProperty = convertCatching(property) {
-        val origin = property.computeIrOrigin(predefinedOrigin)
+        val origin = if (property.isStatic && property.name in ENUM_SYNTHETIC_NAMES)
+            IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+            else property.computeIrOrigin(predefinedOrigin)
         // See similar comments in createIrFunction above
         val signature =
             runUnless(
@@ -1606,7 +1609,8 @@ class Fir2IrDeclarationStorage(
     companion object {
         internal val ENUM_SYNTHETIC_NAMES = mapOf(
             Name.identifier("values") to IrSyntheticBodyKind.ENUM_VALUES,
-            Name.identifier("valueOf") to IrSyntheticBodyKind.ENUM_VALUEOF
+            Name.identifier("valueOf") to IrSyntheticBodyKind.ENUM_VALUEOF,
+            Name.identifier("entries") to IrSyntheticBodyKind.ENUM_ENTRIES
         )
     }
 
