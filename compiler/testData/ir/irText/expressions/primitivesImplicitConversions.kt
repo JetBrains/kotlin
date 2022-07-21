@@ -1,5 +1,5 @@
 // LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_BACKEND_FIR: ANY
+// IGNORE_BACKEND_K2: ANY
 // For reasons this test is ignored, go to KT-46419
 
 val test1: Long = 42

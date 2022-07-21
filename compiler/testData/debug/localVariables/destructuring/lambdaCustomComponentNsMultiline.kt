@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 
 // FILE: test.kt
 class MyPair(val x: String, val y: String) {

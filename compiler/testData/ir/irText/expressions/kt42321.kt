@@ -1,5 +1,5 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // SKIP_KT_DUMP
 // This test exists only to check that we don't accidentally break the buggy behavior of the old JVM backend in JVM IR (KT-42321).
 // Feel free to remove it as soon as there's no language version where such code is allowed (KT-38895).
