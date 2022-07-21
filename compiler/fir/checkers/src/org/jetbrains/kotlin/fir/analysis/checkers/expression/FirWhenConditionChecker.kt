@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -24,9 +23,7 @@ object FirWhenConditionChecker : FirWhenExpressionChecker() {
         for (branch in expression.branches) {
             val condition = branch.condition
             if (condition is FirElseIfTrueCondition) continue
-            withSuppressedDiagnostics(condition, context) {
-                checkCondition(condition, it, reporter)
-            }
+            checkCondition(condition, context, reporter)
         }
         if (expression.subject != null) {
             checkDuplicatedLabels(expression, context, reporter)

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -52,9 +51,7 @@ object FirOverrideChecker : FirClassChecker() {
         for (it in declaration.declarations) {
             if (it is FirSimpleFunction || it is FirProperty) {
                 val callable = it as FirCallableDeclaration
-                withSuppressedDiagnostics(callable, context) {
-                    checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, it)
-                }
+                checkMember(callable.symbol, declaration, reporter, typeCheckerState, firTypeScope, context)
             }
         }
     }

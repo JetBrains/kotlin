@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -24,13 +23,11 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
         if (typeRef !is FirResolvedTypeRef) return
 
         for (annotation in typeRef.annotations) {
-            withSuppressedDiagnostics(annotation, context) {
-                val annotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-                if (KotlinTarget.TYPE !in annotationTargets) {
-                    val useSiteTarget = annotation.useSiteTarget
-                    if (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] !in annotationTargets) {
-                        reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", it)
-                    }
+            val annotationTargets = annotation.getAllowedAnnotationTargets(context.session)
+            if (KotlinTarget.TYPE !in annotationTargets) {
+                val useSiteTarget = annotation.useSiteTarget
+                if (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] !in annotationTargets) {
+                    reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
                 }
             }
             if (annotation.classId == StandardClassIds.Annotations.ExtensionFunctionType) {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
@@ -234,23 +233,21 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
                 val source = conflictingDeclaration.source
                 if (source != null && symbols.isNotEmpty()) {
-                    withSuppressedDiagnostics(conflictingDeclaration, context) { ctx ->
-                        when (conflictingDeclaration) {
-                            is FirSimpleFunction,
-                            is FirConstructor -> {
-                                reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, ctx)
+                    when (conflictingDeclaration) {
+                        is FirSimpleFunction,
+                        is FirConstructor -> {
+                            reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+                        }
+                        else -> {
+                            val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
+                                conflictingDeclaration.getContainingDeclaration(context.session) == null &&
+                                symbols.any { it is FirClassLikeSymbol<*> }
+                            ) {
+                                FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                            } else {
+                                FirErrors.REDECLARATION
                             }
-                            else -> {
-                                val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
-                                    conflictingDeclaration.getContainingDeclaration(ctx.session) == null &&
-                                    symbols.any { it is FirClassLikeSymbol<*> }
-                                ) {
-                                    FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
-                                } else {
-                                    FirErrors.REDECLARATION
-                                }
-                                reporter.reportOn(source, factory, symbols, ctx)
-                            }
+                            reporter.reportOn(source, factory, symbols, context)
                         }
                     }
                 }

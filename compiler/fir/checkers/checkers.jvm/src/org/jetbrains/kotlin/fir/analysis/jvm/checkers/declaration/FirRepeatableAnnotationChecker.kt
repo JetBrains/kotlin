@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -87,15 +86,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         if (declaration is FirRegularClass) {
             val javaRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Java.Repeatable }
             if (javaRepeatable != null) {
-                withSuppressedDiagnostics(javaRepeatable, context) {
-                    checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, it, reporter)
-                }
+                checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
                 val kotlinRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Repeatable }
                 if (kotlinRepeatable != null) {
-                    withSuppressedDiagnostics(kotlinRepeatable, context) {
-                        checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, it, reporter)
-                    }
+                    checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
                 }
             }
         }

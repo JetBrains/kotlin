@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -54,7 +52,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
-                reporter.reportOnWithSuppression(supertypeEntry, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
+                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
             }
         }
 
@@ -80,25 +78,23 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
                         innerDeclaration.body != null -> {
                             val body = innerDeclaration.body!!
-                            withSuppressedDiagnostics(innerDeclaration, context) { context ->
-                                reporter.reportOnWithSuppression(
-                                    body, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
-                                )
-                            }
+                            reporter.reportOn(
+                                body.source, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, context
+                            )
                         }
                     }
                 }
                 is FirRegularClass -> {
                     if (innerDeclaration.isInner) {
-                        reporter.reportOnWithSuppression(innerDeclaration, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
+                        reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
                 is FirSimpleFunction -> {
                     val functionName = innerDeclaration.name.asString()
 
                     if (functionName in reservedFunctionNames) {
-                        reporter.reportOnWithSuppression(
-                            innerDeclaration, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
+                        reporter.reportOn(
+                            innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
                         )
                     }
                 }
@@ -111,13 +107,11 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                             continue
                         }
                         val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
-                        withSuppressedDiagnostics(innerDeclaration, context) { context ->
-                            reporter.reportOn(
-                                delegatedTypeRefSource,
-                                FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
-                                context
-                            )
-                        }
+                        reporter.reportOn(
+                            delegatedTypeRefSource,
+                            FirErrors.VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION,
+                            context
+                        )
                     }
                 }
                 is FirProperty -> {
@@ -126,21 +120,19 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     } else {
                         when {
                             innerDeclaration.delegate != null ->
-                                withSuppressedDiagnostics(innerDeclaration, context) { context ->
-                                    reporter.reportOn(
-                                        innerDeclaration.delegate!!.source,
-                                        FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
-                                        context
-                                    )
-                                }
-
-                            innerDeclaration.hasBackingField &&
-                                    innerDeclaration.source?.kind !is KtFakeSourceElementKind ->
-                                reporter.reportOnWithSuppression(
-                                    innerDeclaration,
-                                    FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS,
+                                reporter.reportOn(
+                                    innerDeclaration.delegate!!.source,
+                                    FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS,
                                     context
                                 )
+
+                            innerDeclaration.hasBackingField &&
+                                    innerDeclaration.source?.kind !is KtFakeSourceElementKind -> {
+                                reporter.reportOn(
+                                    innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS,
+                                    context
+                                )
+                            }
                         }
                     }
                 }
@@ -155,48 +147,44 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
             if (primaryConstructorParametersByName.isEmpty()) {
-                reporter.reportOnWithSuppression(primaryConstructor, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, context)
+                reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, context)
                 return
             }
         } else if (primaryConstructorParametersByName.size != 1) {
-            reporter.reportOnWithSuppression(primaryConstructor, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
+            reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
             return
         }
 
         for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
-            withSuppressedDiagnostics(primaryConstructor, context) { context ->
-                withSuppressedDiagnostics(primaryConstructorParameter, context) { context ->
-                    when {
-                        primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
-                            reporter.reportOn(
-                                primaryConstructorParameter.source,
-                                FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                                context
-                            )
+            when {
+                primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                    reporter.reportOn(
+                        primaryConstructorParameter.source,
+                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+                        context
+                    )
 
-                        primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
-                            val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
-                                (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
-                            }
-                            if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                                        inlineClassHasGenericUnderlyingType)
-                            ) {
-                                reporter.reportOn(
-                                    primaryConstructorParameter.returnTypeRef.source,
-                                    FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                                    primaryConstructorParameter.returnTypeRef.coneType,
-                                    context
-                                )
-                            }
-                        }
-
-                        primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
-                            reporter.reportOnWithSuppression(
-                                primaryConstructorParameter.returnTypeRef,
-                                FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
-                                context
-                            )
+                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
+                    val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
+                        (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
                     }
+                    if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                                inlineClassHasGenericUnderlyingType)
+                    ) {
+                        reporter.reportOn(
+                            primaryConstructorParameter.returnTypeRef.source,
+                            FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                            primaryConstructorParameter.returnTypeRef.coneType,
+                            context
+                        )
+                    }
+                }
+
+                primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) -> {
+                    reporter.reportOn(
+                        primaryConstructorParameter.returnTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                        context
+                    )
                 }
             }
         }

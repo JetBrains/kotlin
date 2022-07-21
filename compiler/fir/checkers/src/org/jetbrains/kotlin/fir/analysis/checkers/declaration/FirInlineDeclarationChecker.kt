@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -54,10 +53,8 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
-        withSuppressedDiagnostics(declaration, context) { ctx ->
-            checkInlineFunctionBody(declaration, effectiveVisibility, ctx, reporter)
-            checkCallableDeclaration(declaration, ctx, reporter)
-        }
+        checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
+        checkCallableDeclaration(declaration, context, reporter)
     }
 
     protected fun checkInlineFunctionBody(

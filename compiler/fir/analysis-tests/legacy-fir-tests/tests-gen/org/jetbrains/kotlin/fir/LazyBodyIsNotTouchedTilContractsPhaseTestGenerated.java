@@ -3763,6 +3763,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testWithSuppression() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
         }
+
+        @TestMetadata("withSuppression2.kt")
+        public void testWithSuppression2() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression2.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/types")

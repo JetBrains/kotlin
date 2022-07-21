@@ -4216,6 +4216,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testWithSuppression() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression.kt");
             }
+
+            @Test
+            @TestMetadata("withSuppression2.kt")
+            public void testWithSuppression2() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/withSuppression2.kt");
+            }
         }
 
         @Nested

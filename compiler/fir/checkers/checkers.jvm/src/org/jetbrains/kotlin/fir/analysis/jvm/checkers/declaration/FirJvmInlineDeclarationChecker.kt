@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -35,10 +34,8 @@ object FirJvmInlineDeclarationChecker : FirInlineDeclarationChecker() {
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         val effectiveVisibility = declaration.effectiveVisibility
-        withSuppressedDiagnostics(declaration, context) { ctx ->
-            checkInlineFunctionBody(declaration, effectiveVisibility, ctx, reporter)
-            checkCallableDeclaration(declaration, ctx, reporter)
-        }
+        checkInlineFunctionBody(declaration, effectiveVisibility, context, reporter)
+        checkCallableDeclaration(declaration, context, reporter)
     }
 
     override val inlineVisitor get() = ::InlineVisitor

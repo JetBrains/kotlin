@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -169,61 +168,59 @@ object FirMemberPropertiesChecker : FirClassChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = property.source.getModifierList()
 
-        withSuppressedDiagnostics(property, context) { ctx ->
-            checkPropertyInitializer(
-                containingDeclaration,
-                property,
-                modifierList,
-                isInitialized,
-                reporter,
-                ctx,
-                reachable
-            )
-            checkExpectDeclarationVisibilityAndBody(property, source, reporter, ctx)
+        checkPropertyInitializer(
+            containingDeclaration,
+            property,
+            modifierList,
+            isInitialized,
+            reporter,
+            context,
+            reachable
+        )
+        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
-            val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
-            val isAbstract = property.isAbstract || hasAbstractModifier
-            if (containingDeclaration.isInterface &&
-                Visibilities.isPrivate(property.visibility) &&
-                !isAbstract &&
-                (property.getter == null || property.getter is FirDefaultPropertyAccessor)
-            ) {
+        val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+        val isAbstract = property.isAbstract || hasAbstractModifier
+        if (containingDeclaration.isInterface &&
+            Visibilities.isPrivate(property.visibility) &&
+            !isAbstract &&
+            (property.getter == null || property.getter is FirDefaultPropertyAccessor)
+        ) {
+            property.source?.let {
+                reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
+            }
+        }
+
+        if (isAbstract) {
+            if (containingDeclaration is FirRegularClass && !containingDeclaration.canHaveAbstractDeclaration) {
                 property.source?.let {
-                    reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, ctx)
+                    reporter.reportOn(
+                        it,
+                        FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
+                        property.symbol,
+                        containingDeclaration.symbol,
+                        context
+                    )
+                    return
                 }
             }
-
-            if (isAbstract) {
-                if (containingDeclaration is FirRegularClass && !containingDeclaration.canHaveAbstractDeclaration) {
-                    property.source?.let {
-                        reporter.reportOn(
-                            it,
-                            FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
-                            property.symbol,
-                            containingDeclaration.symbol,
-                            ctx
-                        )
-                        return
-                    }
-                }
-                property.initializer?.source?.let {
-                    reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, ctx)
-                }
-                property.delegate?.source?.let {
-                    reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, ctx)
-                }
+            property.initializer?.source?.let {
+                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
             }
+            property.delegate?.source?.let {
+                reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
+            }
+        }
 
-            val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
-            if (hasOpenModifier &&
-                containingDeclaration.isInterface &&
-                !hasAbstractModifier &&
-                property.isAbstract &&
-                !isInsideExpectClass(containingDeclaration, ctx)
-            ) {
-                property.source?.let {
-                    reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, ctx)
-                }
+        val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
+        if (hasOpenModifier &&
+            containingDeclaration.isInterface &&
+            !hasAbstractModifier &&
+            property.isAbstract &&
+            !isInsideExpectClass(containingDeclaration, context)
+        ) {
+            property.source?.let {
+                reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
             }
         }
     }

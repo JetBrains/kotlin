@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -47,9 +46,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
 
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
-                reporter.reportOnWithSuppression(
-                    valueParameter,
-                    FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
+                reporter.reportOn(
+                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
                     context
                 )
             }
@@ -60,7 +58,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         val varargParameters = function.valueParameters.filter { it.isVararg }
         if (varargParameters.size > 1) {
             for (parameter in varargParameters) {
-                reporter.reportOnWithSuppression(parameter, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
+                reporter.reportOn(parameter.source, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
             }
         }
 
@@ -72,9 +70,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
-                reporter.reportOnWithSuppression(
-                    varargParameter,
-                    FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
+                reporter.reportOn(
+                    varargParameter.source, FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
                     varargParameterType,
                     context
                 )
@@ -100,9 +97,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                     if (referredParameterIndex < 0) return
 
                     if (index <= referredParameterIndex) {
-                        reporter.reportOnWithSuppression(
-                            qualifiedAccessExpression,
-                            FirErrors.UNINITIALIZED_PARAMETER,
+                        reporter.reportOn(
+                            qualifiedAccessExpression.source, FirErrors.UNINITIALIZED_PARAMETER,
                             referredParameter.symbol,
                             context
                         )

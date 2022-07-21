@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.constructors
@@ -105,15 +104,13 @@ object FirParcelizeClassChecker : FirClassChecker() {
     private fun checkParcelerClass(klass: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (klass !is FirRegularClass || klass.isCompanion) return
         for (superTypeRef in klass.superTypeRefs) {
-            withSuppressedDiagnostics(superTypeRef, context) {
-                if (superTypeRef.coneType.classId == OLD_PARCELER_ID) {
-                    val strategy = if (klass.name == SpecialNames.NO_NAME_PROVIDED) {
-                        SourceElementPositioningStrategies.OBJECT_KEYWORD
-                    } else {
-                        SourceElementPositioningStrategies.NAME_IDENTIFIER
-                    }
-                    reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, it, positioningStrategy = strategy)
+            if (superTypeRef.coneType.classId == OLD_PARCELER_ID) {
+                val strategy = if (klass.name == SpecialNames.NO_NAME_PROVIDED) {
+                    SourceElementPositioningStrategies.OBJECT_KEYWORD
+                } else {
+                    SourceElementPositioningStrategies.NAME_IDENTIFIER
                 }
+                reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, context, positioningStrategy = strategy)
             }
         }
     }

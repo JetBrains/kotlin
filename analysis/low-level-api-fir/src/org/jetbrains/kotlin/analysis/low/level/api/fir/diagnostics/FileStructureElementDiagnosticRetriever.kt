@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 
 internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
@@ -60,6 +61,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
             return when {
                 structureElementDeclaration !is FirRegularClass -> true
                 structureElementDeclaration == declaration -> true
+                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress) -> true
                 else -> false
             }
         }
