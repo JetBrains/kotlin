@@ -1028,4 +1028,49 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             }
         """.trimIndent()
     )
+
+    @Test
+    fun testComposableCaptureInDelegates() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            class Test(val value: Int) : Delegate by Impl({
+                value
+            })
+        """,
+        """
+            @StabilityInferred(parameters = 0)
+            class Test(val value: Int) : Delegate {
+              private val %%delegate_0: Impl = Impl(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+                sourceInformation(%composer, "C:Test.kt")
+                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (isTraceInProgress()) {
+                    traceEventStart(<>, %changed, -1, <>)
+                  }
+                  value
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
+                } else {
+                  %composer.skipToGroupEnd()
+                }
+              }
+              )
+              val content: Function2<Composer, Int, Unit>
+                get() {
+                  return <this>.%%delegate_0.content
+                }
+              static val %stable: Int = 0
+            }
+        """,
+        """
+            import androidx.compose.runtime.Composable
+
+            interface Delegate {
+                val content: @Composable () -> Unit
+            }
+
+            class Impl(override val content: @Composable () -> Unit) : Delegate
+        """
+    )
 }
