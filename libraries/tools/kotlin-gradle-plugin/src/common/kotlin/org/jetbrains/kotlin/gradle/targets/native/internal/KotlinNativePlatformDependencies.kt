@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
@@ -121,9 +123,12 @@ internal val Project.isNativeDependencyPropagationEnabled: Boolean
 @JvmName("isAllowCommonizer")
 internal fun Project.isAllowCommonizer(): Boolean {
     assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
-    multiplatformExtensionOrNull ?: return false
+    val hasNativePlatform = multiplatformExtensionOrNull?.targets?.any { it.platformType == KotlinPlatformType.native }
+        ?: pm20ExtensionOrNull?.main?.variants?.any { it.platformType == KotlinPlatformType.native }
+        ?: return false
 
-    return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
-            && isKotlinGranularMetadataEnabled
+    val hmppSupportEnabled = isKotlinGranularMetadataEnabled
             && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
+
+    return hasNativePlatform && (hasKpmModel || hmppSupportEnabled)
 }

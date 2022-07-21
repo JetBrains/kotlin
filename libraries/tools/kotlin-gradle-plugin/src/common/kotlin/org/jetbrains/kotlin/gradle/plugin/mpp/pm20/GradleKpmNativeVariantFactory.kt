@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistributionTask
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 
 fun <T : GradleKpmNativeVariantInternal> GradleKpmNativeVariantFactory(
@@ -82,6 +83,7 @@ class GradleKpmNativeVariantConfigurator<T : GradleKpmNativeVariantInternal>(
 
     override fun configure(fragment: T) {
         fragment.project.setupNativeCompiler(fragment.konanTarget)
+        fragment.project.commonizeNativeDistributionTask
 
         fragment.compileDependenciesConfiguration.configure(config.compileDependencies, fragment)
         fragment.apiElementsConfiguration.configure(config.apiElements, fragment)

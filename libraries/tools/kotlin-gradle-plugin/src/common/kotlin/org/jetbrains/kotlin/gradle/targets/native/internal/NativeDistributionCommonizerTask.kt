@@ -9,12 +9,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
@@ -70,8 +72,10 @@ private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedComm
 }
 
 private fun Project.collectAllSharedCommonizerTargetsFromProject(): Set<SharedCommonizerTarget> {
-    return (project.multiplatformExtensionOrNull ?: return emptySet()).sourceSets
-        .mapNotNull { sourceSet -> project.getCommonizerTarget(sourceSet) }
-        .filterIsInstance<SharedCommonizerTarget>()
-        .toSet()
+    val targets: List<CommonizerTarget> =
+        multiplatformExtensionOrNull?.sourceSets?.mapNotNull { sourceSet -> project.getCommonizerTarget(sourceSet) }
+            ?: pm20ExtensionOrNull?.main?.fragments?.mapNotNull { fragment -> project.getCommonizerTarget(fragment) }
+            ?: emptyList()
+
+    return targets.filterIsInstance<SharedCommonizerTarget>().toSet()
 }
