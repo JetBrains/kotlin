@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -19,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -264,6 +263,16 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                         else
                             PossiblyFoldedExpression(expression.apply { argument = foldedArgument.expression }, false)
                     }
+                }
+
+            is IrConstantPrimitive ->
+                if (expression.value.type == coercion.type) {
+                    // In case the initial and final types are equal, then
+                    // the whole sequence of transformations is no-op, and we can remove them all
+                    PossiblyFoldedExpression(expression.value, true)
+                } else {
+                    // Types are not equal for ex. in kt53100_casts.kt
+                    PossiblyFoldedExpression(expression.transformIfAsked(), false)
                 }
 
             else -> PossiblyFoldedExpression(expression.transformIfAsked(), false)

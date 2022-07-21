@@ -9,8 +9,6 @@ class C<T> {
 
 // CHECK-LABEL: define void @"kfun:#main(){}"()
 // CHECK-NOT: Int-box
-//   TODO Remove next check after fix of https://youtrack.jetbrains.com/issue/KT-53100/Optimization-needed-T-unboxCONSTANTPRIMITIVEx-T-x
-// CHECK: Int-unbox
 // CHECK-NOT: Int-unbox
 // CHECK: ret void
 fun main() {
