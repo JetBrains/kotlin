@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.RESTORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 import java.io.Serializable
@@ -72,6 +75,14 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
     val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>?
         get() = rootProject?.tasks?.withType(KotlinNpmCachesSetup::class.java)?.named(KotlinNpmCachesSetup.NAME)
+
+    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    val storeYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
+        get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(STORE_YARN_LOCK_NAME)
+
+    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    val restoreYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
+        get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(RESTORE_YARN_LOCK_NAME)
 
     val rootPackageDir: File by lazy {
         rootProject.buildDir.resolve("js")

@@ -133,6 +133,7 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
             nodeJs.rootPackageJsonTaskProvider!!.configure { it.mustRunAfter(packageJsonTask) }
 
             compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask!!)
+            compilation.compileKotlinTaskProvider.dependsOn(nodeJs.storeYarnLockTaskProvider!!)
             compilation.compileKotlinTaskProvider.dependsOn(packageJsonTask)
 
             return packageJsonTask

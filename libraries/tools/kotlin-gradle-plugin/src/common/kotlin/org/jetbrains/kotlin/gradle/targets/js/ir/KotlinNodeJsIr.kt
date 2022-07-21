@@ -47,7 +47,11 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
+        test.dependsOn(
+            nodeJs.npmInstallTaskProvider,
+            nodeJs.storeYarnLockTaskProvider,
+            nodeJs.nodeJsSetupTaskProvider
+        )
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {

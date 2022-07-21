@@ -17,4 +17,7 @@ data class YarnEnv(
     val ivyDependency: String,
     val standalone: Boolean,
     val ignoreScripts: Boolean,
+    val yarnLockMismatchReport: YarnLockMismatchReport,
+    val reportNewYarnLock: Boolean,
+    val yarnLockAutoReplace: Boolean,
 ) : Serializable

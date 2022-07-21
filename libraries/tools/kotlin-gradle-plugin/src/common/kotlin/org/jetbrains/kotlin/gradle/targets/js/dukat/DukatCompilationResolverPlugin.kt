@@ -52,7 +52,11 @@ internal class DukatCompilationResolverPlugin(
             it.group = DUKAT_TASK_GROUP
             it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in $compilation"
             it.externalsOutputFormat = externalsOutputFormat
-            it.dependsOn(nodeJs_.npmInstallTaskProvider, npmProject.packageJsonTask)
+            it.dependsOn(
+                nodeJs_.npmInstallTaskProvider,
+                nodeJs_.storeYarnLockTaskProvider,
+                npmProject.packageJsonTask
+            )
         }
     }
 
@@ -82,7 +86,11 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = DUKAT_TASK_GROUP
             it.description = "Generate Kotlin/JS external declarations for .d.ts files of all NPM dependencies in ${compilation}"
-            it.dependsOn(nodeJs_.npmInstallTaskProvider, npmProject.packageJsonTask)
+            it.dependsOn(
+                nodeJs_.npmInstallTaskProvider,
+                nodeJs_.storeYarnLockTaskProvider,
+                npmProject.packageJsonTask
+            )
         }
     }
 

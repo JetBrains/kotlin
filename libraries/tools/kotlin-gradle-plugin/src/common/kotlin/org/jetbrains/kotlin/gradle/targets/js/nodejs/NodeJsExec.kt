@@ -100,7 +100,10 @@ constructor(
                 it.nodeJs = nodeJs
                 it.executable = nodeJs.requireConfigured().nodeExecutable
                 it.workingDir = npmProject.dir
-                it.dependsOn(nodeJs.npmInstallTaskProvider)
+                it.dependsOn(
+                    nodeJs.npmInstallTaskProvider,
+                    nodeJs.storeYarnLockTaskProvider,
+                )
                 it.dependsOn(compilation.compileKotlinTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {
                     it.nodeArgs.addWasmExperimentalArguments()

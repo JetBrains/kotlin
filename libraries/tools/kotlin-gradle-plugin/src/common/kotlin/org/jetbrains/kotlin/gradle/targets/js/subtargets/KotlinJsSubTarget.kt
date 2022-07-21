@@ -106,7 +106,12 @@ abstract class KotlinJsSubTarget(
             val compileOutputFile = compileTask.flatMap { it.outputFileProperty }
             testJs.inputFileProperty.fileProvider(compileOutputFile)
 
-            testJs.dependsOn(nodeJs.npmInstallTaskProvider, compileTask, nodeJs.nodeJsSetupTaskProvider)
+            testJs.dependsOn(
+                nodeJs.npmInstallTaskProvider,
+                nodeJs.storeYarnLockTaskProvider,
+                compileTask,
+                nodeJs.nodeJsSetupTaskProvider
+            )
 
             testJs.onlyIf {
                 compileOutputFile.get().exists()

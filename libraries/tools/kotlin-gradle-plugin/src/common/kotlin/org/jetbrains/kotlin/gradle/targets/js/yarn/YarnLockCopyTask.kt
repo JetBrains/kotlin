@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.gradle.utils.contentEquals
 import java.io.File
 import javax.inject.Inject
 
 abstract class YarnLockCopyTask : DefaultTask() {
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputFile: RegularFileProperty
@@ -35,11 +38,66 @@ abstract class YarnLockCopyTask : DefaultTask() {
     abstract val fs: FileSystemOperations
 
     @TaskAction
-    fun copy() {
+    open fun copy() {
         fs.copy { copy ->
             copy.from(inputFile)
             copy.rename { fileName.get() }
             copy.into(outputDirectory)
         }
     }
+
+    companion object {
+        val STORE_YARN_LOCK_NAME = "kotlinStoreYarnLock"
+        val RESTORE_YARN_LOCK_NAME = "kotlinRestoreYarnLock"
+        val UPGRADE_YARN_LOCK = "kotlinUpgradeYarnLock"
+    }
+}
+
+abstract class YarnLockStoreTask : YarnLockCopyTask() {
+    @get:Internal
+    abstract val yarnLockMismatchReportService: Property<YarnLockMismatchReportService>
+
+    @Input
+    lateinit var yarnLockMismatchReport: Provider<YarnLockMismatchReport>
+
+    @Input
+    lateinit var reportNewYarnLock: Provider<Boolean>
+
+    @Input
+    lateinit var yarnLockAutoReplace: Provider<Boolean>
+
+    override fun copy() {
+        val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
+
+        val shouldReportMismatch = if (!outputFile.exists()) {
+            reportNewYarnLock.get()
+        } else {
+            yarnLockMismatchReport.get() != YarnLockMismatchReport.NONE && !contentEquals(inputFile.get().asFile, outputFile)
+        }
+
+        if (!outputFile.exists() || yarnLockAutoReplace.get()) {
+            super.copy()
+        }
+
+        if (shouldReportMismatch) {
+            when (yarnLockMismatchReport.get()) {
+                YarnLockMismatchReport.NONE -> {}
+                YarnLockMismatchReport.WARNING -> {
+                    logger.warn(YARN_LOCK_MISMATCH_MESSAGE)
+                }
+                YarnLockMismatchReport.FAIL -> throw GradleException(YARN_LOCK_MISMATCH_MESSAGE)
+                YarnLockMismatchReport.FAIL_AFTER_BUILD -> {
+                    yarnLockMismatchReportService.get().failOnClose()
+                }
+                else -> error("Unknown yarn.lock mismatch report kind")
+            }
+        }
+    }
+}
+
+enum class YarnLockMismatchReport {
+    NONE,
+    WARNING,
+    FAIL,
+    FAIL_AFTER_BUILD,
 }

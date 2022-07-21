@@ -95,3 +95,23 @@ internal inline fun <T> withTemporaryDirectory(prefix: String, action: (director
         directory.deleteRecursively()
     }
 }
+
+fun contentEquals(file1: File, file2: File): Boolean {
+    file1.useLines { seq1 ->
+        file2.useLines { seq2 ->
+            val iterator1 = seq1.iterator()
+            val iterator2 = seq2.iterator()
+
+            while(iterator1.hasNext() == iterator2.hasNext()) {
+
+                if (!iterator1.hasNext()) return true
+
+                if (iterator1.next() != iterator2.next()) {
+                    return false
+                }
+            }
+
+            return true
+        }
+    }
+}

@@ -9,12 +9,16 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.RESTORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
@@ -69,14 +73,42 @@ open class YarnPlugin : Plugin<Project> {
             it.dependsOn(packageJsonUmbrella)
         }
 
-        val storeYarnLock = tasks.register("kotlinStoreYarnLock", YarnLockCopyTask::class.java) {
-            it.dependsOn(kotlinNpmInstall)
-            it.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
-            it.outputDirectory.set(yarnRootExtension.lockFileDirectory)
-            it.fileName.set(yarnRootExtension.lockFileName)
+        val service = project.gradle.sharedServices
+            .registerIfAbsent("kotlin-store-yarn-lock-mismatch-reporter", YarnLockMismatchReportService::class.java) {
+                it.parameters.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+                it.parameters.outputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
+                it.parameters.shouldFailOnClose.set(
+                    provider { yarnRootExtension.requireConfigured().yarnLockMismatchReport == YarnLockMismatchReport.FAIL_AFTER_BUILD }
+                )
+                it.parameters.reportNewYarnLock.set(
+                    provider { yarnRootExtension.requireConfigured().reportNewYarnLock }
+                )
+            }
+
+        BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry
+            .onTaskCompletion(service)
+
+        val storeYarnLock = tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
+            task.dependsOn(kotlinNpmInstall)
+            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
+            task.fileName.set(yarnRootExtension.lockFileName)
+
+            task.yarnLockMismatchReportService.set(service)
+
+            task.yarnLockMismatchReport = provider { yarnRootExtension.requireConfigured().yarnLockMismatchReport }
+            task.reportNewYarnLock = provider { yarnRootExtension.requireConfigured().reportNewYarnLock }
+            task.yarnLockAutoReplace = provider { yarnRootExtension.requireConfigured().yarnLockAutoReplace }
         }
 
-        val restoreYarnLock = tasks.register("kotlinRestoreYarnLock", YarnLockCopyTask::class.java) {
+        tasks.register(UPGRADE_YARN_LOCK, YarnLockCopyTask::class.java) { task ->
+            task.dependsOn(kotlinNpmInstall)
+            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
+            task.fileName.set(yarnRootExtension.lockFileName)
+        }
+
+        val restoreYarnLock = tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
             it.outputDirectory.set(nodeJs.rootPackageDir)
@@ -88,7 +120,6 @@ open class YarnPlugin : Plugin<Project> {
 
         kotlinNpmInstall.configure {
             it.dependsOn(restoreYarnLock)
-            it.finalizedBy(storeYarnLock)
         }
     }
 

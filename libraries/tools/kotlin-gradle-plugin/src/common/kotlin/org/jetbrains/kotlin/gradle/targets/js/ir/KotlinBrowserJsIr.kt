@@ -47,7 +47,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
+        test.dependsOn(
+            nodeJs.npmInstallTaskProvider,
+            nodeJs.storeYarnLockTaskProvider,
+            nodeJs.nodeJsSetupTaskProvider
+        )
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
@@ -256,6 +260,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ) {
         dependsOn(
             nodeJs.npmInstallTaskProvider,
+            nodeJs.storeYarnLockTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 

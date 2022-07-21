@@ -278,6 +278,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     ) {
         dependsOn(
             nodeJs.npmInstallTaskProvider,
+            nodeJs.storeYarnLockTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 

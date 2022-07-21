@@ -80,7 +80,10 @@ internal class KotlinCompilationNpmResolver(
             npmProject.publicPackageJsonTaskName,
             listOf(compilation)
         ) {
-            it.dependsOn(nodeJs_.npmInstallTaskProvider)
+            it.dependsOn(
+                nodeJs_.npmInstallTaskProvider,
+                nodeJs_.storeYarnLockTaskProvider,
+            )
             it.dependsOn(packageJsonTaskHolder)
         }.also { packageJsonTask ->
             if (compilation.isMain()) {

@@ -44,6 +44,12 @@ open class YarnRootExtension(
 
     var ignoreScripts by Property(true)
 
+    var yarnLockMismatchReport: YarnLockMismatchReport by Property(YarnLockMismatchReport.FAIL)
+
+    var reportNewYarnLock: Boolean by Property(false)
+
+    var yarnLockAutoReplace: Boolean by Property(false)
+
     val yarnSetupTaskProvider: TaskProvider<YarnSetupTask>
         get() = project.tasks
             .withType(YarnSetupTask::class.java)
@@ -107,6 +113,9 @@ open class YarnRootExtension(
             standalone = !download,
             ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",
             ignoreScripts = ignoreScripts,
+            yarnLockMismatchReport = yarnLockMismatchReport,
+            reportNewYarnLock = reportNewYarnLock,
+            yarnLockAutoReplace = yarnLockAutoReplace,
         )
     }
 
