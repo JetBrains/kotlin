@@ -35,7 +35,7 @@ private fun KtModule.collectAllDependenciesWithSelf(): List<KtModule> {
 
     while (stack.isNotEmpty()) {
         val current = stack.removeLast()
-        if (visited.add(current)) continue
+        if (!visited.add(current)) continue
 
         current.allDirectDependencies().forEach { dependency ->
             if (dependency !in visited) stack += dependency
