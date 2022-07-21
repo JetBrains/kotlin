@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.ComposedTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
@@ -46,7 +47,7 @@ private object CheckersFactory {
         session: FirSession,
         reporter: DiagnosticReporter,
         useExtendedCheckers: Boolean
-    ): List<AbstractDiagnosticCollectorComponent> {
+    ): DiagnosticCollectorComponents {
         val module = session.firKtModuleBasedModuleData.ktModule
         val platform = module.platform.componentPlatforms.first()
         val extensionCheckers = session.extensionService.additionalCheckers
@@ -54,7 +55,7 @@ private object CheckersFactory {
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)
         val typeCheckers = createTypeCheckers(useExtendedCheckers, platform, extensionCheckers)
 
-        return buildList {
+        val regularComponents = buildList {
             if (!useExtendedCheckers) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
             }
@@ -62,8 +63,8 @@ private object CheckersFactory {
             add(ExpressionCheckersDiagnosticComponent(session, reporter, expressionCheckers))
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
-            add(ReportCommitterDiagnosticComponent(session, reporter))
         }
+        return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
     }
 
 

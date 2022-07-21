@@ -8,15 +8,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContext,
-    components: List<AbstractDiagnosticCollectorComponent>,
+    components: DiagnosticCollectorComponents,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler
+
+    protected var useRegularComponents = true
 
     override fun visitNestedElements(element: FirElement) {
         if (element is FirDeclaration) {
@@ -26,10 +28,14 @@ internal open class LLFirDiagnosticVisitor(
     }
 
     override fun checkElement(element: FirElement) {
-        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-        components.forEach {
-            checkCanceled()
-            element.accept(it, context)
+        if (useRegularComponents) {
+            beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
+            components.regularComponents.forEach {
+                checkCanceled()
+                element.accept(it, context)
+            }
         }
+        checkCanceled()
+        element.accept(components.reportCommitter, context)
     }
 }

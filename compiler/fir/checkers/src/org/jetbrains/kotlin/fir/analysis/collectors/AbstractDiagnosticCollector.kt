@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession(),
-    protected val createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
+    protected val createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : SessionHolder {
     fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
         val components = createComponents(reporter)
@@ -31,7 +31,7 @@ abstract class AbstractDiagnosticCollector(
         firDeclaration.accept(visitor, null)
     }
 
-    protected abstract fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor
+    protected abstract fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor
 
     companion object {
         const val SUPPRESS_ALL_INFOS = "infos"

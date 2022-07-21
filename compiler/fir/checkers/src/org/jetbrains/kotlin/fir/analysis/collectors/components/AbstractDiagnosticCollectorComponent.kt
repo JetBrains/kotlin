@@ -23,6 +23,4 @@ abstract class AbstractDiagnosticCollectorComponent(
         val source = element.source ?: return
         reporter.checkAndCommitReportsOn(source, context)
     }
-
-    open fun endOfFile(file: FirFile) {}
 }

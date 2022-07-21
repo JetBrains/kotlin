@@ -7,17 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
 object DiagnosticComponentsFactory {
-    fun createAllDiagnosticComponents(session: FirSession, reporter: DiagnosticReporter): List<AbstractDiagnosticCollectorComponent> {
-        return listOf(
+    fun createAllDiagnosticComponents(session: FirSession, reporter: DiagnosticReporter): DiagnosticCollectorComponents {
+        val regularComponents = listOf(
             DeclarationCheckersDiagnosticComponent(session, reporter),
             ExpressionCheckersDiagnosticComponent(session, reporter),
             TypeCheckersDiagnosticComponent(session, reporter),
             ErrorNodeDiagnosticCollectorComponent(session, reporter),
             ControlFlowAnalysisDiagnosticComponent(session, reporter),
-            ReportCommitterDiagnosticComponent(session, reporter)
         )
+        return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
     }
 
 }

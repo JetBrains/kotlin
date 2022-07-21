@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 class SimpleDiagnosticsCollector(
     session: FirSession,
     scopeSession: ScopeSession,
-    createComponents: (DiagnosticReporter) -> List<AbstractDiagnosticCollectorComponent>,
+    createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : AbstractDiagnosticCollector(session, scopeSession, createComponents) {
-    override fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor {
+    override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return CheckerRunningDiagnosticCollectorVisitor(
             MutableCheckerContext(
                 this,

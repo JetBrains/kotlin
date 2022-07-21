@@ -13,19 +13,18 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 
 open class CheckerRunningDiagnosticCollectorVisitor(
     context: CheckerContext,
-    protected val components: List<AbstractDiagnosticCollectorComponent>
+    protected val components: DiagnosticCollectorComponents
 ) : AbstractDiagnosticCollectorVisitor(context) {
 
     override fun checkElement(element: FirElement) {
-        components.forEach {
+        components.regularComponents.forEach {
             element.accept(it, context)
         }
+        element.accept(components.reportCommitter, context)
     }
 
     override fun onDeclarationExit(declaration: FirDeclaration) {
         if (declaration !is FirFile) return
-        components.forEach {
-            it.endOfFile(declaration)
-        }
+        components.reportCommitter.endOfFile(declaration)
     }
 }

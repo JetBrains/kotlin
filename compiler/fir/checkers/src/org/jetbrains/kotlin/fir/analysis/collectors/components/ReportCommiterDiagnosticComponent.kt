@@ -19,7 +19,7 @@ class ReportCommitterDiagnosticComponent(
         checkAndCommitReportsOn(element, data)
     }
 
-    override fun endOfFile(file: FirFile) {
+    fun endOfFile(file: FirFile) {
         checkAndCommitReportsOn(file, null)
     }
 }
