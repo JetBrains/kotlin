@@ -353,6 +353,7 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     enumClassPhase,
+    enumExternalEntriesPhase,
     objectClassPhase,
     readResolveForDataObjectsPhase,
     staticInitializersPhase,

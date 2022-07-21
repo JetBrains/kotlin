@@ -127,14 +127,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
         super.visitClassNew(declaration)
 
         for ((enum, mapping) in mappingState.mappings) {
-            val enumValues = enum.functions.single {
-                it.name.toString() == "values"
-                        && it.dispatchReceiverParameter == null
-                        && it.extensionReceiverParameter == null
-                        && it.valueParameters.isEmpty()
-                        && it.returnType.isBoxedArray
-                        && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == enum.symbol
-            }
+            val enumValues = enum.findEnumValuesFunction(context)
             val builder = context.createIrBuilder(mapping.field.symbol)
             mapping.field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
@@ -174,4 +167,13 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
         state = oldState
         return declaration
     }
+}
+
+internal fun IrClass.findEnumValuesFunction(context: JvmBackendContext) = functions.single {
+    it.name.toString() == "values"
+            && it.dispatchReceiverParameter == null
+            && it.extensionReceiverParameter == null
+            && it.valueParameters.isEmpty()
+            && it.returnType.isBoxedArray
+            && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
 }
