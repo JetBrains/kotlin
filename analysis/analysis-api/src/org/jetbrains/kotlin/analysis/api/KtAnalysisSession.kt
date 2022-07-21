@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.analysis.api
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderMixIn
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -28,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * To create analysis session consider using [analyse]
  */
+@OptIn(KtAnalysisApiInternals::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
 public abstract class KtAnalysisSession(final override val token: KtLifetimeToken) : KtLifetimeOwner,
     KtSmartCastProviderMixIn,
@@ -59,7 +58,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtTypeCreatorMixIn,
     KtAnalysisScopeProviderMixIn,
     KtSignatureSubstitutorMixIn,
-    KtScopeSubstitutionMixIn {
+    KtScopeSubstitutionMixIn,
+    KtSymbolProviderByJavaPsiMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -154,6 +154,11 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     @KtAnalysisApiInternals
     public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl
     protected abstract val substitutorFactoryImpl: KtSubstitutorFactory
+
+    @KtAnalysisApiInternals
+    public val symbolProviderByJavaPsi: KtSymbolProviderByJavaPsi get() = symbolProviderByJavaPsiImpl
+    @KtAnalysisApiInternals
+    protected abstract val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi
 
 
     @PublishedApi

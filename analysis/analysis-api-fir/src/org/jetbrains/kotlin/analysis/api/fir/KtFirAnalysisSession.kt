@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.*
@@ -27,10 +28,11 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
+@OptIn(KtAnalysisApiInternals::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
 internal class KtFirAnalysisSession
 private constructor(
-    private val project: Project,
+    val project: Project,
     val firResolveSession: LLFirResolveSession,
     token: KtLifetimeToken,
     private val mode: AnalysisSessionMode,
@@ -108,6 +110,8 @@ private constructor(
     override val scopeSubstitutionImpl: KtScopeSubstitution = KtFirScopeSubstitution(this)
 
     override val substitutorFactoryImpl: KtSubstitutorFactory = KtFirSubstitutorFactory(this)
+
+    override val symbolProviderByJavaPsiImpl = KtFirSymbolProviderByJavaPsi(this)
 
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {

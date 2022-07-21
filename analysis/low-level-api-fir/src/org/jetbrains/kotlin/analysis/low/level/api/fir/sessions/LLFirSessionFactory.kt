@@ -150,6 +150,7 @@ internal object LLFirSessionFactory {
 
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             configureSession?.invoke(this)
             extensionService.additionalCheckers.forEach(session.checkersComponent::register)
