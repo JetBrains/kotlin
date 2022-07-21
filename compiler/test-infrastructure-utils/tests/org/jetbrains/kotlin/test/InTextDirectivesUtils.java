@@ -12,7 +12,6 @@ import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.BufferedReader;
@@ -27,6 +26,9 @@ public final class InTextDirectivesUtils {
     private static final String DIRECTIVES_FILE_NAME = "directives.txt";
 
     public static final String IGNORE_BACKEND_DIRECTIVE_PREFIX = "// IGNORE_BACKEND: ";
+    public static final String IGNORE_BACKEND_K1_DIRECTIVE_PREFIX = "// IGNORE_BACKEND_K1: ";
+
+    public static final String[] IGNORE_BACKEND_DIRECTIVE_PREFIXES = { IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX };
 
     private InTextDirectivesUtils() {
     }
@@ -241,13 +243,13 @@ public final class InTextDirectivesUtils {
         return backends.isEmpty() || backends.contains(targetBackend.name()) || isCompatibleTargetExceptAny(targetBackend.getCompatibleWith(), backends);
     }
 
-    public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file, @NotNull String ignoreBackendDirectivePrefix) {
-        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefix);
+    public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file, String... ignoreBackendDirectivePrefixes) {
+        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefixes);
         return ignoredBackends.contains(targetBackend.name());
     }
 
     public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
-        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIXES);
     }
 
     public static boolean dontRunGeneratedCode(@NotNull TargetBackend targetBackend, @NotNull File file) {

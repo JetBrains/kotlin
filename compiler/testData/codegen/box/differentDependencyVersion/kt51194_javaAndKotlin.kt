@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-51194
 // DIAGNOSTICS: +CONFLICTING_INHERITED_MEMBERS_WARNING
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: FIR correctly reports CONFLICTING_INHERITED_MEMBERS, so this test should not pass design
 //   For details see related issue
 
