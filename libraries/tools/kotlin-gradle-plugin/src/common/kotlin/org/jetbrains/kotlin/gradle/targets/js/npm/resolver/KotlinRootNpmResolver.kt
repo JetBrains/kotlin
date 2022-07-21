@@ -58,15 +58,9 @@ internal class KotlinRootNpmResolver internal constructor(
         rootProject_.version.toString()
     }
 
-    enum class State {
-        CONFIGURING,
-        PROJECTS_CLOSED,
-        INSTALLED
-    }
-
     @Transient
     @Volatile
-    private var state_: State? = State.CONFIGURING
+    private var state_: RootResolverState? = RootResolverState.CONFIGURING
 
     private var state
         get() = state_ ?: resolverStateHolder.get().state
@@ -191,7 +185,7 @@ internal class KotlinRootNpmResolver internal constructor(
 
     fun addProject(target: Project) {
         synchronized(projectResolvers) {
-            check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
+            check(state == RootResolverState.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
             projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
         }
     }
@@ -246,10 +240,10 @@ internal class KotlinRootNpmResolver internal constructor(
      */
     internal fun prepareInstallation(logger: Logger): Installation {
         synchronized(projectResolvers) {
-            check(state == State.CONFIGURING) {
+            check(state == RootResolverState.CONFIGURING) {
                 "Projects must be configuring"
             }
-            state = State.PROJECTS_CLOSED
+            state = RootResolverState.PROJECTS_CLOSED
 
             val projectResolutions = projectResolvers.values
                 .map { it.close() }
@@ -288,10 +282,10 @@ internal class KotlinRootNpmResolver internal constructor(
             logger: Logger
         ): KotlinRootNpmResolution {
             synchronized(projectResolvers) {
-                check(state == State.PROJECTS_CLOSED) {
+                check(state == RootResolverState.PROJECTS_CLOSED) {
                     "Projects must be closed"
                 }
-                state = State.INSTALLED
+                state = RootResolverState.INSTALLED
 
                 val allNpmPackages = projectResolutions
                     .values
@@ -325,6 +319,12 @@ internal class KotlinRootNpmResolver internal constructor(
             }
         }
     }
+}
+
+enum class RootResolverState {
+    CONFIGURING,
+    PROJECTS_CLOSED,
+    INSTALLED
 }
 
 const val PACKAGE_JSON_UMBRELLA_TASK_NAME = "packageJsonUmbrella"

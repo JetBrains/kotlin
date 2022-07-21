@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 
 // We use this service as a single storage for duplicated data in configuration cache
-internal abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRootNpmResolverStateHolder.Parameters> {
-    interface Parameters : BuildServiceParameters {
+abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRootNpmResolverStateHolder.Parameters> {
+    internal interface Parameters : BuildServiceParameters {
         val plugins: ListProperty<RootResolverPlugin>
         val projectResolvers: MapProperty<String, KotlinProjectNpmResolver>
         val packageManager: Property<NpmApi>
@@ -36,5 +36,5 @@ internal abstract class KotlinRootNpmResolverStateHolder : BuildService<KotlinRo
     var initialized = false
 
     @Volatile
-    var state = KotlinRootNpmResolver.State.CONFIGURING
+    var state = RootResolverState.CONFIGURING
 }
