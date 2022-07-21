@@ -28,6 +28,7 @@
 #include "Worker.h"
 #include "KString.h"
 #include "std_support/New.hpp"
+#include <atomic>
 
 #ifndef KONAN_NO_THREADS
 #include <thread>
@@ -471,7 +472,10 @@ RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
     }
 }
 
-void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
+}  // extern "C"
+
+namespace {
+void callInitGlobalPossiblyLockImpl(int volatile* state, void (*init)()) {
     int localState = *state;
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
@@ -502,6 +506,7 @@ void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
             throw;
         }
 #endif
+        std::atomic_thread_fence(std::memory_order_release);
         *state = FILE_INITIALIZED;
     } else {
         // Switch to the native state to avoid dead-locks.
@@ -513,6 +518,16 @@ void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
                 kotlin::CallWithThreadState<kotlin::ThreadState::kRunnable>(ThrowFileFailedToInitializeException);
         } while (localState != FILE_INITIALIZED);
     }
+}
+}
+
+extern "C" {
+
+NO_INLINE void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
+    callInitGlobalPossiblyLockImpl(state, init);
+    // Ensure proper synchronization around reading/writing of [state] (release barrier defined in callInitGlobalPossiblyLockImpl),
+    // also there is an acquire load of [state] in IrToBitcode.kt::evaluateFileGlobalInitializerCall.
+    std::atomic_thread_fence(std::memory_order_acquire);
 }
 
 void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)()) {

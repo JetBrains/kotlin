@@ -2421,9 +2421,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbExit = basicBlock("label_continue", null)
         moveBlockAfterEntry(bbExit)
         moveBlockAfterEntry(bbInit)
-        // TODO: Is it ok to use non-volatile read here since once value is FILE_INITIALIZED, it is no longer change?
         val state = load(statePtr)
-        LLVMSetVolatile(state, 1)
+        LLVMSetOrdering(state, LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         condBr(icmpEq(state, Int32(FILE_INITIALIZED).llvm), bbExit, bbInit)
         positionAtEnd(bbInit)
         call(context.llvm.callInitGlobalPossiblyLock, listOf(statePtr, initializerPtr),
