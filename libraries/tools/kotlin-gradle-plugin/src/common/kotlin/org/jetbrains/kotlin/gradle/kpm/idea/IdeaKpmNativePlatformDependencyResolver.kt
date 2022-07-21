@@ -6,32 +6,21 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.commonizer.KonanDistribution
-import org.jetbrains.kotlin.commonizer.platformLibsDir
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantInternal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.containingVariants
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.library.shortName
-import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
+import org.jetbrains.kotlin.library.*
 import java.io.File
 
 internal class IdeaKpmNativePlatformDependencyResolver : IdeaKpmDependencyResolver {
     override fun resolve(fragment: GradleKpmFragment): Set<IdeaKpmDependency> {
-        val konanTargets = fragment.containingVariants
-            .map { it as? GradleKpmNativeVariantInternal ?: return emptySet() }
-            .map { it.konanTarget }
-            .toSet()
+        val project = fragment.project
+        val commonizerTarget = project.getCommonizerTarget(fragment) ?: return emptySet()
 
-        /* Fragments with multiple konan targets will receive commonized klibs */
-        val konanTarget = konanTargets.singleOrNull() ?: return emptySet()
-
-        return fragment.project.konanDistribution.platformLibsDir.resolve(konanTarget.name)
-            .listLibraryFiles()
-            .mapNotNull { libraryFile -> fragment.project.resolveKlib(libraryFile) }
+        return project.getNativeDistributionDependencies(commonizerTarget).files
+            .filter { it.isDirectory || it.extension == "klib" }
+            .mapNotNull { libraryFile -> project.resolveKlib(libraryFile) }
             .toSet()
     }
 }
@@ -43,12 +32,17 @@ private fun Project.resolveKlib(file: File): IdeaKpmResolvedBinaryDependency? {
             strategy = ToolingSingleFileKlibResolveStrategy
         )
 
+        val nativeTargets = kotlinLibrary.nativeTargets.sorted().joinToString(
+            prefix = "(",
+            postfix = ")"
+        )
+
         return IdeaKpmResolvedBinaryDependencyImpl(
             binaryType = IdeaKpmDependency.CLASSPATH_BINARY_TYPE,
             binaryFile = file,
             coordinates = IdeaKpmBinaryCoordinatesImpl(
                 group = "org.jetbrains.kotlin.native",
-                module = kotlinLibrary.shortName ?: kotlinLibrary.uniqueName,
+                module = (kotlinLibrary.shortName ?: kotlinLibrary.uniqueName) + "-" + nativeTargets,
                 version = project.getKotlinPluginVersion()
             )
         )
@@ -57,10 +51,3 @@ private fun Project.resolveKlib(file: File): IdeaKpmResolvedBinaryDependency? {
         return null
     }
 }
-
-private val Project.konanDistribution: KonanDistribution
-    get() = KonanDistribution(project.file(konanHome))
-
-private fun File.listLibraryFiles(): Set<File> = listFiles().orEmpty()
-    .filter { it.isDirectory || it.extension == "klib" }
-    .toSet()
