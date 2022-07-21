@@ -659,7 +659,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         }
     }
 
-    protected String getIgnoreBackendDirectivePrefix() {
-        return InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX;
+    protected String[] getIgnoreBackendDirectivePrefix() {
+        return InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
     }
 }
