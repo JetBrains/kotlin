@@ -358,6 +358,8 @@ public class RangeTest {
         assertEquals(2.toByte()..1.toByte(), 1.toByte()..0.toByte())
         assertEquals(0f..-3.14f, 3.14f..0f)
         assertEquals(-2.0..-3.0, 3.0..2.0)
+        assertEquals(0.0..Double.NaN, 1.0..0.0)
+        assertEquals(0.0F..Float.NaN, 1.0F..0.0F)
         assertEquals('b'..'a', 'c'..'b')
 
         assertTrue(1 downTo 2 == 2 downTo 3)
@@ -388,6 +390,24 @@ public class RangeTest {
         assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
 
         assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())
+    }
+
+    @Suppress("EmptyRange")
+    @Test fun emptyOpenEquals() {
+        assertEquals(0..<0, 1..<1)
+        assertEquals(0..-1, 1..<1)
+        assertEquals(0L..<0L, 1L..<1L)
+        assertEquals(0L..-1L, 1L..<1L)
+
+        assertEquals(0u..<0u, 1u..<1u)
+        assertEquals(1u..0u, 2u..<2u)
+        assertEquals(0uL..<0uL, 1uL..<1uL)
+        assertEquals(1uL..0uL, 2uL..<2uL)
+
+        assertEquals(Double.NaN..<0.0, 0.0..<0.0)
+        assertEquals(0.0F..<Float.NaN, 0.0F..<0.0F)
+        assertNotEquals<Any>(1.0..0.0, 1.0..<0.0)
+        assertNotEquals<Any>(1.0F..0.0F, 1.0F..<0.0F)
     }
 
     @Test fun comparableRange() {
