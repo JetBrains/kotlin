@@ -1,6 +1,6 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // ENABLE_JVM_PREVIEW
 // FILE: JavaClass.java
 public class JavaClass {

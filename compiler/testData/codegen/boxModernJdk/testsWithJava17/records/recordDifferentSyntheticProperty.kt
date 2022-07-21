@@ -1,5 +1,5 @@
 // ENABLE_JVM_PREVIEW
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FILE: MyRec.java
 public record MyRec(String name) {
     public String getName() {

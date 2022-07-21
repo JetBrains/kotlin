@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_BACKEND by enumDirective<TargetBackend>(
@@ -19,8 +22,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val IGNORE_BACKEND_FIR by enumDirective<TargetBackend>(
-        description = "Ignore specific backend if test uses FIR",
+    val IGNORE_BACKEND_K1 by enumDirective<TargetBackend>(
+        description = "Ignore specific backend if test uses K1 frontend",
+        applicability = Global
+    )
+
+    val IGNORE_BACKEND_K2 by enumDirective<TargetBackend>(
+        description = "Ignore specific backend if test uses K2 frontend",
         applicability = Global
     )
 
@@ -29,8 +37,8 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val IGNORE_BACKEND_FIR_MULTI_MODULE by enumDirective<TargetBackend>(
-        description = "Ignore failures of multimodule test on target backend if test uses FIR",
+    val IGNORE_BACKEND_K2_MULTI_MODULE by enumDirective<TargetBackend>(
+        description = "Ignore failures of multimodule test on target backend if test uses K2 frontend",
         applicability = Global
     )
 
@@ -177,3 +185,28 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 }
+
+fun extractIgnoredDirectiveForTargetBackend(
+    module: TestModule,
+    targetBackend: TargetBackend,
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null
+): ValueDirective<TargetBackend>? =
+    when (module.frontendKind) {
+        FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
+        FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_BACKEND_K2
+        else -> null
+    }?.let { specificIgnoreDirective ->
+        when {
+            customIgnoreDirective != null -> customIgnoreDirective
+            !module.directives.contains(specificIgnoreDirective) -> CodegenTestDirectives.IGNORE_BACKEND
+            else -> {
+                val inCommonIgnored = module.directives[CodegenTestDirectives.IGNORE_BACKEND].let { targetBackend in it || TargetBackend.ANY in it }
+                val inSpecificIgnored = module.directives[ specificIgnoreDirective].let { targetBackend in it || TargetBackend.ANY in it }
+                if (inCommonIgnored && inSpecificIgnored) {
+                    throw AssertionError("Both, IGNORE_BACKEND and ${specificIgnoreDirective.name} contain target backend ${targetBackend.name}. Please remove one of them.")
+                }
+                if (inCommonIgnored) CodegenTestDirectives.IGNORE_BACKEND else specificIgnoreDirective
+            }
+        }
+    }
+
