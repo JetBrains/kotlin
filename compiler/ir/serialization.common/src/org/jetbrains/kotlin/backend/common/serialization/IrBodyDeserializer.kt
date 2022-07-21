@@ -117,6 +117,7 @@ class IrBodyDeserializer(
         val kind = when (proto.kind!!) {
             ProtoSyntheticBodyKind.ENUM_VALUES -> IrSyntheticBodyKind.ENUM_VALUES
             ProtoSyntheticBodyKind.ENUM_VALUEOF -> IrSyntheticBodyKind.ENUM_VALUEOF
+            ProtoSyntheticBodyKind.ENUM_ENTRIES -> IrSyntheticBodyKind.ENUM_ENTRIES
         }
         return IrSyntheticBodyImpl(start, end, kind)
     }

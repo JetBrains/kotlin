@@ -777,6 +777,7 @@ open class IrFileSerializer(
             when (expression.kind) {
                 IrSyntheticBodyKind.ENUM_VALUES -> ProtoSyntheticBodyKind.ENUM_VALUES
                 IrSyntheticBodyKind.ENUM_VALUEOF -> ProtoSyntheticBodyKind.ENUM_VALUEOF
+                IrSyntheticBodyKind.ENUM_ENTRIES -> ProtoSyntheticBodyKind.ENUM_ENTRIES
             }
         )
         .build()
