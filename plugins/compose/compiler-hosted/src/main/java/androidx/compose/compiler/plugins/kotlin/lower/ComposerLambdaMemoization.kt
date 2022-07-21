@@ -415,10 +415,7 @@ class ComposerLambdaMemoization(
         val composable = declaration.allowsComposableCalls
         val canRemember = composable &&
             // Don't use remember in an inline function
-            !descriptor.isInline &&
-            // Don't use remember if in a composable that returns a value
-            // TODO(b/150390108): Consider allowing remember in effects
-            descriptor.returnType.let { it != null && it.isUnit() }
+            !descriptor.isInline
 
         val context = FunctionContext(declaration, composable, canRemember)
         declarationContextStack.push(context)
