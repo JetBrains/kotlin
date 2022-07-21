@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 
 // FILE: test.kt
 fun box(): String {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM, JVM_IR
 // ^ TODO support new mangling rules in optimizer

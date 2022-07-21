@@ -27,6 +27,7 @@ public final class InTextDirectivesUtils {
     private static final String DIRECTIVES_FILE_NAME = "directives.txt";
 
     public static final String IGNORE_BACKEND_DIRECTIVE_PREFIX = "// IGNORE_BACKEND: ";
+    public static final String IGNORE_BACKEND_K1_DIRECTIVE_PREFIX = "// IGNORE_BACKEND_K1: ";
 
     private InTextDirectivesUtils() {
     }
@@ -247,7 +248,8 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isIgnoredTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
-        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX) ||
+               isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX);
     }
 
     public static boolean dontRunGeneratedCode(@NotNull TargetBackend targetBackend, @NotNull File file) {
