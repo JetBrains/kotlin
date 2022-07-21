@@ -170,6 +170,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                     declaration.body = createSyntheticValueOfMethodBody(declaration)
                                 IrSyntheticBodyKind.ENUM_VALUES ->
                                     declaration.body = createSyntheticValuesMethodBody(declaration)
+                                IrSyntheticBodyKind.ENUM_ENTRIES -> TODO("KT-48872 is not yet supported")
                             }
                         }
                     }
