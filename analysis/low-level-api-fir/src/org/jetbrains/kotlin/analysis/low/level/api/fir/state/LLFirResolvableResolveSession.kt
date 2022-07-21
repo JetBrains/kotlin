@@ -40,8 +40,8 @@ internal abstract class LLFirResolvableResolveSession(
 
     final override val useSiteFirSession = sessionProvider.rootModuleSession
 
-    override fun getSessionFor(module: KtModule): FirSession =
-        sessionProvider.getResolvableSession(module)
+    override fun getSessionFor(module: KtModule): LLFirSession =
+        sessionProvider.getSession(module)
 
     override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         requireIsInstance<LLFirSession>(firSession)

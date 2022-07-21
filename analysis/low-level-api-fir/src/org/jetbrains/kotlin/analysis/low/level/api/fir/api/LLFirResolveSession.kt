@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
@@ -30,7 +31,7 @@ abstract class LLFirResolveSession {
 
     abstract val useSiteKtModule: KtModule
 
-    internal abstract fun getSessionFor(module: KtModule): FirSession
+    abstract fun getSessionFor(module: KtModule): LLFirSession
 
     abstract fun getScopeSessionFor(firSession: FirSession): ScopeSession
 

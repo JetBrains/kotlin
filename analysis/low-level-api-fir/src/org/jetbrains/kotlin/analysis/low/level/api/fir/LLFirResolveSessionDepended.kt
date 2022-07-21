@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.TowerProviderForElementForState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
@@ -54,7 +55,7 @@ internal class LLFirResolveSessionDepended(
             .getScopeSession()
     }
 
-    override fun getSessionFor(module: KtModule): FirSession =
+    override fun getSessionFor(module: KtModule): LLFirSession =
         originalFirResolveSession.getSessionFor(module)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {

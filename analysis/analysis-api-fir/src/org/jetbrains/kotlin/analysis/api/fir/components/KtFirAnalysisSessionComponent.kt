@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
 import org.jetbrains.kotlin.analysis.api.KtTypeArgument
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal interface KtFirAnalysisSessionComponent {
     val analysisSession: KtFirAnalysisSession
 
+    val project: Project get() = analysisSession.project
     val rootModuleSession: FirSession get() = analysisSession.firResolveSession.useSiteFirSession
     val typeContext: ConeInferenceContext get() = rootModuleSession.typeContext
     val firSymbolBuilder get() = analysisSession.firSymbolBuilder
