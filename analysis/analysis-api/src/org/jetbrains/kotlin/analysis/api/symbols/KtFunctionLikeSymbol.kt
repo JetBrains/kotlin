@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-public abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
+public sealed class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
     public abstract val valueParameters: List<KtValueParameterSymbol>
 
     /**
