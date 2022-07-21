@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: Fail 3: (kotlin.collections.MutableList<kotlin.Any?>..kotlin.collections.MutableList<*>?)
 // WITH_REFLECT
 // FILE: box.kt

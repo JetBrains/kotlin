@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: the test passes but LambdaMetafactory is used, so bytecode text check fails.
 // In this case FIR behavior is fine but it works because of a hack in
 

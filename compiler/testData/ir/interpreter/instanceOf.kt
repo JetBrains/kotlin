@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 interface Base
 
 @CompileTimeCalculation

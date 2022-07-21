@@ -1,10 +1,9 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: not supported in JVM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
+// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM
 
 // FILE: lib.kt

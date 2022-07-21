@@ -1,5 +1,5 @@
 // LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR status: don't support legacy feature; for reasons this test is ignored, go to KT-46419
 
 fun box(): String {
