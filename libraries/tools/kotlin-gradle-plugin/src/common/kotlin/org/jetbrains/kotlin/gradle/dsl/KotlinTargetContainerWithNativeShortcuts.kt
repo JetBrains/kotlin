@@ -114,4 +114,22 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
     fun watchos(namePrefix: String) = watchos(namePrefix) { }
     fun watchos(namePrefix: String, configure: Action<KotlinNativeTarget>) = watchos(namePrefix) { configure.execute(this) }
     fun watchos(configure: Action<KotlinNativeTarget>) = watchos { configure.execute(this) }
+
+    fun macos(
+        namePrefix: String = "macos",
+        configure: KotlinNativeTarget.() -> Unit = {}
+    ) {
+        val targets = listOf(
+            macosArm64("${namePrefix}Arm64"),
+            macosX64("${namePrefix}X64")
+        )
+        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
+        targets.forEach { it.configure() }
+    }
+
+    fun macos() = macos("macos") { }
+    fun macos(namePrefix: String) = macos(namePrefix) { }
+    fun macos(namePrefix: String, configure: Action<KotlinNativeTarget>) = macos(namePrefix) { configure.execute(this) }
+    fun macos(configure: Action<KotlinNativeTarget>) = macos { configure.execute(this) }
+
 }
