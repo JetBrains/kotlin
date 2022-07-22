@@ -128,6 +128,7 @@ fun TestProject.build(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
@@ -140,7 +141,8 @@ fun TestProject.build(
         buildOptions,
         enableBuildCacheDebug,
         enableBuildScan,
-        gradleVersion
+        gradleVersion,
+        kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
@@ -160,6 +162,7 @@ fun TestProject.buildAndFail(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
     enableGradleDebug: Boolean = this.enableGradleDebug,
+    kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
@@ -172,7 +175,8 @@ fun TestProject.buildAndFail(
         buildOptions,
         enableBuildCacheDebug,
         enableBuildScan,
-        gradleVersion
+        gradleVersion,
+        kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
@@ -287,9 +291,18 @@ class TestProject(
     projectPath: Path,
     val buildOptions: BuildOptions,
     val gradleVersion: GradleVersion,
-    val enableGradleDebug: Boolean,
     val forceOutput: Boolean,
-    val enableBuildScan: Boolean
+    val enableBuildScan: Boolean,
+    /**
+     * Whether the test and the Gradle build launched by the test should be executed in the same process so that we can use the same
+     * debugger for both (see https://docs.gradle.org/current/javadoc/org/gradle/testkit/runner/GradleRunner.html#isDebug--).
+     */
+    val enableGradleDebug: Boolean,
+    /**
+     * A port to debug the Kotlin daemon at.
+     * Note that we'll need to let the debugger start listening at this port first *before* the Kotlin daemon is launched.
+     */
+    val kotlinDaemonDebugPort: Int? = null
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
@@ -331,18 +344,20 @@ private fun commonBuildSetup(
     buildOptions: BuildOptions,
     enableBuildCacheDebug: Boolean,
     enableBuildScan: Boolean,
-    gradleVersion: GradleVersion
+    gradleVersion: GradleVersion,
+    kotlinDaemonDebugPort: Int? = null
 ): List<String> {
-    val buildOptionsArguments = buildOptions.toArguments(gradleVersion)
-    val buildCacheDebugOption = if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null
-    val buildScanOption = if (enableBuildScan) "--scan" else null
-    return buildOptionsArguments +
-            buildArguments +
-            listOfNotNull(
-                "--full-stacktrace",
-                buildCacheDebugOption,
-                buildScanOption
-            )
+    return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
+        "--full-stacktrace",
+        if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
+        if (enableBuildScan) "--scan" else null,
+        kotlinDaemonDebugPort?.let {
+            // Note that we pass "server=n", meaning that we'll need to let the debugger start listening at this port first *before* the
+            // Kotlin daemon is launched. That is usually easier than trying to attach the debugger when the Kotlin daemon is launched
+            // (currently if we don't attach fast enough, the Kotlin daemon will fail to launch).
+            "-Pkotlin.daemon.jvmargs=-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=$it"
+        }
+    )
 }
 
 private fun TestProject.withBuildSummary(
