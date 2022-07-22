@@ -81,8 +81,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = buildOptions.copy(
-                configurationCache = true,
+            val buildOptions = defaultBuildOptions.copy(
                 configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
                 warningMode = WarningMode.All
             )
