@@ -108,14 +108,17 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 NAME
         );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-                "Unsafe use of a nullable receiver of type {0}. See https://youtrack.jetbrains.com/issue/KT-36770 for details", RENDER_TYPE);
+                "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
 
         MAP.put(WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
-                "Override ''{0}'' has incorrect nullability in its signature comparing with overridden ''{1}''", COMPACT, COMPACT);
+                "Override ''{0}'' has incorrect nullability in its signature comparing with overridden ''{1}''" +
+                "This warning will become an error soon. " +
+                "See https://youtrack.jetbrains.com/issue/KT-36770 for details", COMPACT, COMPACT);
 
         MAP.put(WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE,
                 "Type parameter ''{0}'' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. " +
-                "Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details",
+                "Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds and https://youtrack.jetbrains.com/issue/KT-36770 for more details. " +
+                "This warning will become an error soon.",
                 NAME);
 
         MAP.put(ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
