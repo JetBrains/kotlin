@@ -36,10 +36,10 @@ class SerializableCompanionIrGenerator(
     override val compilerContext: SerializationPluginContext,
 ) : SerializableCompanionCodegen(irClass.descriptor, null), IrBuilderExtension {
 
-    override fun getSerializerGetterDescriptor(): FunctionDescriptor { // todo: remove .toKotlinType()
+    override fun getSerializerGetterDescriptor(): FunctionDescriptor {
         return irClass.findDeclaration<IrSimpleFunction> {
             (it.valueParameters.size == serializableDescriptor.declaredTypeParameters.size
-                    && it.valueParameters.all { p -> isKSerializer(p.type.toKotlinType()) }) && isKSerializer(it.returnType.toKotlinType())
+                    && it.valueParameters.all { p -> isKSerializer(p.type) }) && isKSerializer(it.returnType)
         }?.descriptor ?: throw IllegalStateException(
             "Can't find synthesized 'Companion.serializer()' function to generate, " +
                     "probably clash with user-defined function has occurred"

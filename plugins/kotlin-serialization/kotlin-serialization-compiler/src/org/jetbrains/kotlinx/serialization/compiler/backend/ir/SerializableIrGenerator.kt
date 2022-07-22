@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,13 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.isStaticSerializable
@@ -75,7 +68,7 @@ class SerializableIrGenerator(
             val serialDescs = serializableProperties.map { it.descriptor }.toSet()
 
             val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
-                createPropertyByParamReplacer(irClass, serializableProperties, thiz, bindingContext)
+                createPropertyByParamReplacer(irClass, serializableProperties, thiz)
 
             val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer)
 
@@ -196,9 +189,6 @@ class SerializableIrGenerator(
     private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
         val serializerIrClass = irClass.classSerializer(compilerContext)!!.owner
         // internally generated serializer always declared inside serializable class
-//        val serializerIrClass = irClass.declarations
-//            .filterIsInstanceAnd<IrClass> { it.name == serializer.name }
-//            .singleOrNull() ?: throw Exception("No class with name ${serializer.fqNameSafe}")
 
         val serialDescriptorGetter =
             serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!
@@ -282,7 +272,7 @@ class SerializableIrGenerator(
     ): Int {
         check(superClass.isInternalSerializable)
         val superCtorRef = serializableSyntheticConstructor(superClass)!!
-        val superProperties = bindingContext.serializablePropertiesFor(superClass.descriptor).serializableProperties
+        val superProperties = bindingContext.serializablePropertiesForIrBackend(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
                 allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
@@ -308,7 +298,7 @@ class SerializableIrGenerator(
             val kOutputClass = compilerContext.getClassFromRuntime(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
 
             val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
-                createPropertyByParamReplacer(irClass, serializableProperties, objectToSerialize, bindingContext)
+                createPropertyByParamReplacer(irClass, serializableProperties, objectToSerialize)
 
             // Since writeSelf is a static method, we have to replace all references to this in property initializers
             val thisSymbol = irClass.thisReceiver!!.symbol
@@ -319,7 +309,7 @@ class SerializableIrGenerator(
             var ignoreIndexTo = -1
             val superClass = irClass.getSuperClassOrAny()
             if (superClass.descriptor.isInternalSerializable) {
-                ignoreIndexTo = bindingContext.serializablePropertiesFor(superClass.descriptor).size
+                ignoreIndexTo = bindingContext.serializablePropertiesForIrBackend(superClass).serializableProperties.size
 
                 // call super.writeSelf
                 var superWriteSelfF = superClass.findWriteSelfMethod()

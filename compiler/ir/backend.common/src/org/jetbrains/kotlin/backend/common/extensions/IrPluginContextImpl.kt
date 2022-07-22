@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 open class IrPluginContextImpl constructor(
     private val module: ModuleDescriptor,
     @Deprecated("", level = DeprecationLevel.ERROR)
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override val bindingContext: BindingContext,
     override val languageVersionSettings: LanguageVersionSettings,
     private val st: ReferenceSymbolTable,
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
@@ -98,8 +98,7 @@ open class IrPluginContextImpl constructor(
         return symbols
     }
 
-    @Deprecated("Use classId overload instead")
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         assert(!fqName.isRoot)
         return resolveSymbol(fqName.parent()) { scope ->
@@ -110,7 +109,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
         assert(!fqName.isRoot)
         return resolveSymbol(fqName.parent()) { scope ->
@@ -121,15 +120,14 @@ open class IrPluginContextImpl constructor(
         }
     }
 
-    @Deprecated("Use classId overload instead")
+    @OptIn(FirIncompatiblePluginAPI::class)
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         @Suppress("DEPRECATION")
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
     }
 
-    @Deprecated("Use callableId overload instead")
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->
@@ -138,8 +136,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
-    @Deprecated("Use callableId overload instead")
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         assert(!fqName.isRoot)
         return resolveSymbolCollection(fqName.parent()) { scope ->
@@ -149,7 +146,6 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
-        @Suppress("DEPRECATION")
         return referenceClass(classId.asSingleFqName())
     }
 
@@ -158,17 +154,14 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
-        @Suppress("DEPRECATION")
         return referenceConstructors(classId.asSingleFqName())
     }
 
     override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
-        @Suppress("DEPRECATION")
         return referenceFunctions(callableId.asSingleFqName())
     }
 
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
-        @Suppress("DEPRECATION")
         return referenceProperties(callableId.asSingleFqName())
     }
 

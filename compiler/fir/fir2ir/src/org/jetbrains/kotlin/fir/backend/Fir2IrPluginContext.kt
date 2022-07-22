@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -39,15 +40,17 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
     }
 
     @ObsoleteDescriptorBasedAPI
+    @FirIncompatiblePluginAPI
     override val moduleDescriptor: ModuleDescriptor
         get() = error(ERROR_MESSAGE)
 
-    @Suppress("OVERRIDE_DEPRECATION")
     @ObsoleteDescriptorBasedAPI
+    @FirIncompatiblePluginAPI
     override val bindingContext: BindingContext
         get() = error(ERROR_MESSAGE)
 
     @ObsoleteDescriptorBasedAPI
+    @FirIncompatiblePluginAPI
     override val typeTranslator: TypeTranslator
         get() = error(ERROR_MESSAGE)
 
@@ -139,26 +142,27 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
     }
 
 
-    @Deprecated("Use classId overload instead")
+    @FirIncompatiblePluginAPI
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         error(ERROR_MESSAGE)
     }
 
+    @FirIncompatiblePluginAPI
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
         error(ERROR_MESSAGE)
     }
 
-    @Deprecated("Use classId overload instead")
+    @FirIncompatiblePluginAPI
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         error(ERROR_MESSAGE)
     }
 
-    @Deprecated("Use callableId overload instead")
+    @FirIncompatiblePluginAPI
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         error(ERROR_MESSAGE)
     }
 
-    @Deprecated("Use callableId overload instead")
+    @FirIncompatiblePluginAPI
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         error(ERROR_MESSAGE)
     }

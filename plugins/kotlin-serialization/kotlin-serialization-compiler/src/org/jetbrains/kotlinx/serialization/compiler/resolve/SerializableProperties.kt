@@ -42,7 +42,7 @@ interface ISerializableProperties<D, T, S : ISerializableProperty<D, T>> {
     val serializableStandaloneProperties: List<S>
 }
 
-class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext?) :
+class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) :
     ISerializableProperties<PropertyDescriptor, KotlinType, SerializableProperty> {
     private val primaryConstructorParameters: List<ValueParameterDescriptor> =
         serializableClass.unsubstitutedPrimaryConstructor?.valueParameters ?: emptyList()
@@ -55,15 +55,9 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
         val descriptorsSequence = serializableClass.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES)
             .asSequence()
         // call to any BindingContext.get should be only AFTER MemberScope.getContributedDescriptors
-        // TODO: fix binding context shit
         primaryConstructorProperties =
             primaryConstructorParameters.asSequence()
-                .map { parameter ->
-                    bindingContext?.get(
-                        BindingContext.VALUE_PARAMETER_AS_PROPERTY,
-                        parameter
-                    ) to parameter.declaresDefaultValue()
-                }
+                .map { parameter -> bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter] to parameter.declaresDefaultValue() }
                 .mapNotNull { (a, b) -> if (a == null) null else a to b }
                 .toMap()
 
@@ -84,8 +78,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                     prop.hasBackingField(bindingContext) || (prop is DeserializedPropertyDescriptor && prop.backingField != null) // workaround for TODO in .hasBackingField
                             // workaround for overridden getter (val) and getter+setter (var) - in this case hasBackingField returning false
                             // but initializer presents only for property with backing field
-                            || declaresDefaultValue
-                            || prop.backingField != null, // todo: find out what happens next
+                            || declaresDefaultValue,
                     declaresDefaultValue
                 )
             }
@@ -172,11 +165,8 @@ internal val ISerializableProperties<*, *, *>.goldenMaskList: List<Int>
 internal fun List<ISerializableProperty<*, *>>.bitMaskSlotCount() = size / 32 + 1
 internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32
 
-internal fun BindingContext?.serializablePropertiesFor(
-    classDescriptor: ClassDescriptor,
-    serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null
-): SerializableProperties {
-    val props = this?.get(SERIALIZABLE_PROPERTIES, classDescriptor) ?: SerializableProperties(classDescriptor, this)
+internal fun BindingContext.serializablePropertiesFor(classDescriptor: ClassDescriptor, serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null): SerializableProperties {
+    val props = this.get(SERIALIZABLE_PROPERTIES, classDescriptor) ?: SerializableProperties(classDescriptor, this)
     serializationDescriptorSerializer?.putIfNeeded(classDescriptor, props)
     return props
 }

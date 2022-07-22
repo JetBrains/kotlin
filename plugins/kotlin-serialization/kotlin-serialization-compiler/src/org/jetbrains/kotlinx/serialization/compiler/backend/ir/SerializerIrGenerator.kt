@@ -293,7 +293,7 @@ open class SerializerIrGenerator(
             +irInvoke(null, writeSelfFunction.symbol, typeArgs, args)
         } else {
             val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
-                createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize, bindingContext)
+                createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize)
 
             val thisSymbol = serializableIrClass.thisReceiver!!.symbol
             val initializerAdapter: (IrExpressionBody) -> IrExpression =
