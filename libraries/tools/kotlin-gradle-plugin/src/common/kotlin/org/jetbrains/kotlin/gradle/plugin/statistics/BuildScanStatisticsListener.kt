@@ -27,10 +27,12 @@ class BuildScanStatisticsListener(
 ) : OperationCompletionListener, AutoCloseable {
     companion object {
         const val lengthLimit = 100_000
+        const val customValuesLimit = 950 //git plugin and others can add custom values as well
     }
 
     private val tags = LinkedHashSet<String>()
     private val log = Logging.getLogger(this.javaClass)
+    private var customValues = 0 // doesn't need to be thread-safe
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
@@ -50,25 +52,34 @@ class BuildScanStatisticsListener(
 
     fun report(data: CompileStatisticsData) {
         val elapsedTime = measureTimeMillis {
-
-            readableString(data).forEach { buildScan.value(data.taskName, it) }
-
             if (!tags.contains(buildUuid)) {
                 tags.add(buildUuid)
             }
-
             data.label?.takeIf { !tags.contains(it) }?.also {
                 buildScan.tag(it)
                 tags.add(it)
             }
-
             data.tags
                 .filter { !tags.contains(it) }
                 .forEach {
                     buildScan.tag(it)
                     tags.add(it)
                 }
+
+            if (customValues < customValuesLimit) {
+                readableString(data).forEach {
+                    if (customValues < customValuesLimit) {
+                        buildScan.value(data.taskName, it)
+                        customValues++
+                    } else {
+                        log.debug("Statistic data for ${data.taskName} was cut due to custom values limit.")
+                    }
+                }
+            } else {
+                log.debug("Can't add any more custom values into build scan.")
+            }
         }
+
         log.debug("Report statistic to build scan takes $elapsedTime ms")
     }
 
