@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
@@ -24,8 +25,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
-abstract class KotlinNativeTest : KotlinTest() {
+abstract class KotlinNativeTest: KotlinTest() {
+    @get:Inject
+    abstract val providerFactory: ProviderFactory
+
     @Suppress("LeakingThis")
     private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
@@ -74,11 +79,6 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
 
-    private val hasTCProjectProperty = if (isConfigurationCacheAvailable(project.gradle)) {
-        project.providers.gradleProperty(TC_PROJECT_PROPERTY).isPresent
-    } else {
-        project.hasProperty(TC_PROJECT_PROPERTY)
-    }
 
     private val konanVersion = project.konanVersion
 
@@ -144,7 +144,7 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = hasTCProjectProperty
+            escapeTCMessagesInLog = providerFactory.gradleProperty(TC_PROJECT_PROPERTY).isPresent
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
@@ -202,7 +202,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 /**
  * A task running Kotlin/Native tests on a host machine.
  */
-open class KotlinNativeHostTest : KotlinNativeTest() {
+abstract class KotlinNativeHostTest : KotlinNativeTest() {
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -221,7 +221,7 @@ open class KotlinNativeHostTest : KotlinNativeTest() {
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
-open class KotlinNativeSimulatorTest : KotlinNativeTest() {
+abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Input
     @Option(option = "device", description = "Sets a simulated device used to execute tests.")
     lateinit var deviceId: String
