@@ -1,0 +1,29 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+
+plugins {
+    kotlin("multiplatform.pm20")
+}
+
+kotlin {
+    mainAndTest {
+        val iosX64 by fragments.creating(GradleKpmIosX64Variant::class)
+        val iosArm32 by fragments.creating(GradleKpmIosArm64Variant::class)
+        val linuxX64 by fragments.creating(GradleKpmLinuxX64Variant::class)
+        val linuxArm64 by fragments.creating(GradleKpmLinuxArm64Variant::class)
+        val mingwX64 by fragments.creating(GradleKpmMingwX64Variant::class)
+        val mingwX86 by fragments.creating(GradleKpmMingwX86Variant::class)
+
+        val ios by fragments.creating
+        val linux by fragments.creating
+        val windows by fragments.creating
+
+        iosX64.refines(ios)
+        iosArm32.refines(ios)
+
+        linuxX64.refines(linux)
+        linuxArm64.refines(linux)
+
+        mingwX64.refines(windows)
+        mingwX86.refines(windows)
+    }
+}
