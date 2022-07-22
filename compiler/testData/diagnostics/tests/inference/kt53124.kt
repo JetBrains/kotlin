@@ -23,4 +23,4 @@ public final class Ns {
 package exp
 
 val Ns.Foo<*>.name
-    get() = this.bar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>name<!>
+    get() = this.bar.name
