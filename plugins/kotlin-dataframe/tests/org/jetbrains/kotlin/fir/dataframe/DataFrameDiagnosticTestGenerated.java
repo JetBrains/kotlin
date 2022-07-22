@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.dataframe;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -63,5 +64,21 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/diagnostics/OuterClass.kt");
+    }
+
+    @Nested
+    @TestMetadata("plugins/kotlin-dataframe/testData/diagnostics/schemaRender")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SchemaRender {
+        @Test
+        public void testAllFilesPresentInSchemaRender() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/diagnostics/schemaRender"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("Schema1.kt")
+        public void testSchema1() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/diagnostics/schemaRender/Schema1.kt");
+        }
     }
 }

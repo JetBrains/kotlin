@@ -17,13 +17,17 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 
-class SchemaContext(val properties: List<SchemaProperty>, val coneTypeProjection: ConeTypeProjection)
+class SchemaContext(val properties: List<SchemaProperty>)
 
 
 class FirDataFrameReceiverInjector(
@@ -37,7 +41,6 @@ class FirDataFrameReceiverInjector(
         val INTERPRETABLE_FQNAME = FqName(Interpretable::class.qualifiedName!!)
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
@@ -45,27 +48,60 @@ class FirDataFrameReceiverInjector(
 
         val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
 
-        // region generate code
-        val properties = dataFrameSchema.columns().map {
-            val typeApproximation = when (val type = it.type) {
-                is TypeApproximationImpl -> type
-                ColumnGroupTypeApproximation -> TODO("support column groups in data schema")
-                FrameColumnTypeApproximation -> TODO()
+        val types: MutableList<ConeClassLikeType> = mutableListOf()
+
+        // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
+        val rootMarker = callReturnType.typeArguments[0]
+
+        fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
+            val id = ids.removeLast()
+            val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
+                .constructClassType(emptyArray(), isNullable = false)
+            val properties = columns().map {
+                @Suppress("USELESS_IS_CHECK")
+                when (it) {
+                    is SimpleColumnGroup -> {
+                        val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                        val groupClassId =
+                            ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnGroup"))
+                        val columnGroupReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(groupClassId),
+                                typeArguments = arrayOf(nestedClassMarker),
+                                isNullable = false
+                            )
+                        SchemaProperty(marker, it.name, columnGroupReturnType)
+                    }
+
+                    is SimpleFrameColumn -> {
+                        val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                        val frameClassId =
+                            ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataFrame"))
+                        val frameColumnReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(frameClassId),
+                                typeArguments = arrayOf(nestedClassMarker),
+                                isNullable = it.nullable
+                            )
+
+                        SchemaProperty(marker, it.name, frameColumnReturnType)
+                    }
+                    is SimpleCol -> SchemaProperty(marker, it.name, it.type.convert())
+                    else -> TODO("shouldn't happen")
+                }
             }
-            val type = ConeClassLikeLookupTagImpl(ClassId.topLevel(FqName(typeApproximation.fqName))).constructType(
-                emptyArray(), false
-            )
-            SchemaProperty(false, it.name(), type, callReturnType.typeArguments[0])
+            state[id] = SchemaContext(properties)
+            types += ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false)
+            return marker
         }
 
-        val id = ids.removeLast()
-        state[id] = SchemaContext(properties, callReturnType.typeArguments[0])
-        return listOf(ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false))
-        // endregion
+        dataFrameSchema.materialize(rootMarker)
+        return types
     }
 
     private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {
-        val firNamedFunctionSymbol = functionCall.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: error("cannot resolve symbol for ${functionCall.calleeReference.name}")
+        val firNamedFunctionSymbol = functionCall.calleeReference.resolvedSymbol as? FirNamedFunctionSymbol
+            ?: error("cannot resolve symbol for ${functionCall.calleeReference.name}")
         val annotation = firNamedFunctionSymbol.annotations.firstOrNull {
             val name1 = it.fqName(session)!!
             val name2 = FqName("org.jetbrains.kotlinx.dataframe.annotations.SchemaProcessor")
@@ -78,6 +114,19 @@ class FirDataFrameReceiverInjector(
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
+}
+
+private fun TypeApproximation.convert(): ConeKotlinType {
+    return when (this) {
+        is ColumnGroupTypeApproximation -> TODO()
+        is FrameColumnTypeApproximation -> TODO()
+        is TypeApproximationImpl -> ConeClassLikeLookupTagImpl(
+            ClassId(
+                FqName(fqName.substringBeforeLast(".")),
+                Name.identifier(fqName.substringAfterLast("."))
+            )
+        ).constructType(emptyArray(), this.nullable)
+    }
 }
 
 fun FirFunctionCall.functionSymbol(): FirNamedFunctionSymbol {
@@ -94,4 +143,4 @@ data class RefinedArgument(val name: Name, val expression: FirExpression) {
     }
 }
 
-data class SchemaProperty(val override: Boolean, val name: String, val type: ConeKotlinType, val coneTypeProjection: ConeTypeProjection)
+data class SchemaProperty(val marker: ConeTypeProjection, val name: String, val returnType: ConeKotlinType, val override: Boolean = false)

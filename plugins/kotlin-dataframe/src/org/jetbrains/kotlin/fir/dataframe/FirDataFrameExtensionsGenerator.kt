@@ -93,10 +93,10 @@ class FirDataFrameExtensionsGenerator(
                 }
                 .flatMap { schemaProperty ->
                     firPropertySymbols(
-                        schemaProperty.type.toFirResolvedTypeRef(),
+                        schemaProperty.returnType.toFirResolvedTypeRef(),
                         Name.identifier(schemaProperty.name),
                         callableId,
-                        schemaProperty.coneTypeProjection
+                        schemaProperty.marker
                     )
                 }
         }
@@ -106,14 +106,14 @@ class FirDataFrameExtensionsGenerator(
         resolvedReturnTypeRef: FirResolvedTypeRef,
         propertyName: Name,
         callableId: CallableId,
-        classTypeProjection: ConeTypeProjection
+        marker: ConeTypeProjection
     ): List<FirPropertySymbol> {
 
         val firPropertySymbol = FirPropertySymbol(callableId)
         val rowExtension = buildProperty {
             val rowClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), arrayOf(classTypeProjection), isNullable = false)
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), typeArguments = arrayOf(marker), isNullable = false)
 
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
             moduleData = session.moduleData
@@ -152,7 +152,7 @@ class FirDataFrameExtensionsGenerator(
             val frameClassId =
                 ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("ColumnsContainer"))
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), arrayOf(classTypeProjection), isNullable = false)
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), typeArguments = arrayOf(marker), isNullable = false)
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
 
             val columnClassId = ClassId(
