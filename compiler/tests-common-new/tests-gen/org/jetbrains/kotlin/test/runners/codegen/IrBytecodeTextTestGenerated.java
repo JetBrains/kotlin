@@ -2201,6 +2201,18 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("enumEntriesMapping.kt")
+        public void testEnumEntriesMapping() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesMapping.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesMultiMapping.kt")
+        public void testEnumEntriesMultiMapping() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesMultiMapping.kt");
+        }
+
+        @Test
         @TestMetadata("kt18731.kt")
         public void testKt18731() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731.kt");

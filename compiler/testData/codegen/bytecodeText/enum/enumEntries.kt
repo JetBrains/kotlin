@@ -10,3 +10,4 @@ enum class MyEnum {
 // 1 private final static synthetic Lkotlin/enums/EnumEntries; \$ENTRIES
 // 1 public final static getEntries\(\)Lkotlin/enums/EnumEntries;
 // 0 [^\$]entries
+// 0 class [a-zA-Z]+\$EntriesMappings

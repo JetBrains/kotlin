@@ -342,6 +342,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/emptySources.args");
         }
 
+        @TestMetadata("enumEntriesForJavaNotEnabled.args")
+        public void testEnumEntriesForJavaNotEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
+        }
+
+        @TestMetadata("enumEntriesNotEnabled.args")
+        public void testEnumEntriesNotEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
+        }
+
         @TestMetadata("experimentalDeprecated.args")
         public void testExperimentalDeprecated() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalDeprecated.args");
