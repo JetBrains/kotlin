@@ -489,6 +489,40 @@ public class IrSerializeCompileKotlinAgainstInlineKotlinTestGenerated extends Ab
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumEntries {
+            @Test
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("callSite.kt")
+            public void testCallSite() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/callSite.kt");
+            }
+
+            @Test
+            @TestMetadata("declSite.kt")
+            public void testDeclSite() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSite.kt");
+            }
+
+            @Test
+            @TestMetadata("declSiteSeveralMappings.kt")
+            public void testDeclSiteSeveralMappings() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappings.kt");
+            }
+
+            @Test
+            @TestMetadata("declSiteSeveralMappingsDifOrder.kt")
+            public void testDeclSiteSeveralMappingsDifOrder() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/enumEntries/declSiteSeveralMappingsDifOrder.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
         @TestDataPath("$PROJECT_ROOT")
         public class EnumWhen {

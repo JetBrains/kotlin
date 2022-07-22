@@ -385,6 +385,19 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumEntries extends AbstractIrCodegenBoxInlineWasmTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

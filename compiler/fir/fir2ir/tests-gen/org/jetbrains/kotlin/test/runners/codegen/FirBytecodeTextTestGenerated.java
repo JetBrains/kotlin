@@ -3415,6 +3415,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("entriesMappingOnCallSite.kt")
+        public void testEntriesMappingOnCallSite() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/entriesMappingOnCallSite.kt");
+        }
+
+        @Test
         @TestMetadata("finallyMarkers.kt")
         public void testFinallyMarkers() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/finallyMarkers.kt");

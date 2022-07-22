@@ -40479,6 +40479,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class EnumEntries {
+                @Test
+                public void testAllFilesPresentInEnumEntries() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("codegen")

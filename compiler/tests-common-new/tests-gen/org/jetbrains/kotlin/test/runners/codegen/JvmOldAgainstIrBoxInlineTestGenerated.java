@@ -489,6 +489,16 @@ public class JvmOldAgainstIrBoxInlineTestGenerated extends AbstractJvmOldAgainst
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
+        @TestDataPath("$PROJECT_ROOT")
+        public class EnumEntries {
+            @Test
+            public void testAllFilesPresentInEnumEntries() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
         @TestDataPath("$PROJECT_ROOT")
         public class EnumWhen {
