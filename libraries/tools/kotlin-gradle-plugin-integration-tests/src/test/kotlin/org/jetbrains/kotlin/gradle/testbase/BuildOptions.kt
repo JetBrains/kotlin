@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.junit.jupiter.api.condition.OS
 import java.util.*
 
 data class BuildOptions(
@@ -26,7 +27,8 @@ data class BuildOptions(
     val useGradleClasspathSnapshot: Boolean? = null,
     val useICClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
-    val fileSystemWatchEnabled: Boolean = false,
+    // On Windows OS enabling watch-fs prevents deleting temp directory, which fails the tests
+    val fileSystemWatchEnabled: Boolean = !OS.WINDOWS.isCurrentOs,
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
@@ -69,10 +71,9 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        if (gradleVersion >= GradleVersion.version("6.6.0")) {
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
-        }
+        arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
+        arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
+
         if (gradleVersion >= GradleVersion.version("7.1")) {
             arguments.add("-Dorg.gradle.unsafe.isolated-projects=$projectIsolation")
         }
@@ -90,12 +91,10 @@ data class BuildOptions(
         useGradleClasspathSnapshot?.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
         useICClasspathSnapshot?.let { arguments.add("-Pkotlin.incremental.classpath.snapshot.enabled=$it") }
 
-        if (gradleVersion >= GradleVersion.version("6.5")) {
-            if (fileSystemWatchEnabled) {
-                arguments.add("--watch-fs")
-            } else {
-                arguments.add("--no-watch-fs")
-            }
+        if (fileSystemWatchEnabled) {
+            arguments.add("--watch-fs")
+        } else {
+            arguments.add("--no-watch-fs")
         }
 
         arguments.add(if (buildCacheEnabled) "--build-cache" else "--no-build-cache")
