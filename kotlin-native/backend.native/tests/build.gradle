@@ -101,7 +101,7 @@ ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=a
 ext.isCmsGC = project.globalTestArgs.contains("-Xgc=cms") || !project.globalTestArgs.any { it.startsWith("-Xgc=") }
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
-if (project.globalTestArgs.contains("-g")) {
+if (project.globalTestArgs.contains("-g") && (cacheTesting == null)) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         extraOpts "-Xbinary=runtimeAssertionsMode=panic"
     }
