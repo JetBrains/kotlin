@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
@@ -452,6 +454,13 @@ internal class KtSymbolByFirBuilder constructor(
                     KtFirTypeParameterType(coneTypeParameterType, token, this@KtSymbolByFirBuilder)
                 }
 
+                is ConeTypeVariableType -> {
+                    val diagnostic = when ( val typeParameter = coneType.lookupTag.originalTypeParameter) {
+                        null -> ConeSimpleDiagnostic("Cannot infer parameter type for ${coneType.lookupTag.debugName}")
+                        else -> ConeCannotInferParameterType((typeParameter as ConeTypeParameterLookupTag).typeParameterSymbol)
+                    }
+                    buildKtType(ConeErrorType(diagnostic, isUninferredParameter = true, attributes = coneType.attributes))
+                }
                 else -> throwUnexpectedElementError(coneType)
             }
         }
