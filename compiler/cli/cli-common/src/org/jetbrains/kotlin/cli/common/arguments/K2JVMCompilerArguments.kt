@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import kotlin.reflect.KVisibility
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -37,7 +36,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jdkHome: String? by NullableStringFreezableVar(null)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
@@ -64,13 +66,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var scriptTemplates: Array<String>? by FreezableVar(null)
 
-    @GradleOption(DefaultValues.StringNullDefault::class)
+    @GradleOption(
+        value = DefaultValues.StringNullDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
         value = DefaultValues.JvmTargetVersions::class,
-        backingFieldVisibility = KVisibility.INTERNAL
+        gradleInputType = GradleInputTypes.INPUT
     )
     @Argument(
         value = "-jvm-target",
@@ -79,7 +84,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jvmTarget: String? by NullableStringFreezableVar(null)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-java-parameters", description = "Generate metadata for Java 1.8 reflection on method parameters")
     var javaParameters: Boolean by FreezableVar(false)
 

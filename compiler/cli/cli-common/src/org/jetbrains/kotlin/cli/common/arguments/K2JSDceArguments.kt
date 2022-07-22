@@ -13,12 +13,20 @@ class K2JSDceArguments : CommonToolArguments() {
         @JvmStatic private val serialVersionUID = 0L
     }
 
+    @GradleOption(
+        value = DefaultValues.StringNullDefault::class,
+        gradleInputType = GradleInputTypes.INTERNAL // handled by 'destinationDirectory'
+    )
+    @GradleDeprecatedOption(
+        message = "Use task 'destinationDirectory' to configure output directory",
+        level = DeprecationLevel.WARNING,
+        removeAfter = "1.9.0"
+    )
     @Argument(
             value = "-output-dir",
             valueDescription = "<path>",
             description = "Output directory"
     )
-    @GradleOption(DefaultValues.StringNullDefault::class)
     var outputDirectory: String? by NullableStringFreezableVar(null)
 
     @Argument(
@@ -34,11 +42,14 @@ class K2JSDceArguments : CommonToolArguments() {
     )
     var printReachabilityInfo: Boolean by FreezableVar(false)
 
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
             value = "-dev-mode",
             description = "Development mode: don't strip out any code, just copy dependencies"
     )
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     var devMode: Boolean by FreezableVar(false)
 
     @Argument(

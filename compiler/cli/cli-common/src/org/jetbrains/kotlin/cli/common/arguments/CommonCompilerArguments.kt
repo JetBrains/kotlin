@@ -31,7 +31,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @get:Transient
     var autoAdvanceLanguageVersion: Boolean by FreezableVar(true)
 
-    @GradleOption(DefaultValues.LanguageVersions::class)
+    @GradleOption(
+        value = DefaultValues.LanguageVersions::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
@@ -42,7 +45,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @get:Transient
     var autoAdvanceApiVersion: Boolean by FreezableVar(true)
 
-    @GradleOption(DefaultValues.ApiVersions::class)
+    @GradleOption(
+        value = DefaultValues.ApiVersions::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
@@ -296,7 +302,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var checkStickyPhaseConditions: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-Xuse-k2",
         deprecatedName = "-Xuse-fir",

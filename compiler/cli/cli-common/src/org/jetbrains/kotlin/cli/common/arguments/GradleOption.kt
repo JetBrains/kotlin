@@ -19,8 +19,18 @@ package org.jetbrains.kotlin.cli.common.arguments
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 
+/**
+ * @param gradleInputType should be one of [GradleInputTypes] constants
+ */
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleOption(
-    val value: KClass<out DefaultValues> = DefaultValues::class,
-    val backingFieldVisibility: KVisibility = KVisibility.PRIVATE
+    val value: KClass<out DefaultValues>,
+    val gradleInputType: String
 )
+
+// Enum class here is not possible due to bug in K2 compiler:
+// https://youtrack.jetbrains.com/issue/KT-54079
+object GradleInputTypes {
+    const val INPUT = "org.gradle.api.tasks.Input"
+    const val INTERNAL = "org.gradle.api.tasks.Internal"
+}

@@ -38,15 +38,24 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @Argument(value = "-version", description = "Display compiler version")
     var version: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INTERNAL
+    )
     @Argument(value = "-verbose", description = "Enable verbose logging output")
     var verbose: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INTERNAL
+    )
     @Argument(value = "-nowarn", description = "Generate no warnings")
     var suppressWarnings: Boolean by FreezableVar(false)
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @GradleOption(
+        value = DefaultValues.BooleanFalseDefault::class,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(value = "-Werror", description = "Report an error if there are any warnings")
     var allWarningsAsErrors: Boolean by FreezableVar(false)
 

@@ -15,7 +15,7 @@ internal fun generateJsMainFunctionExecutionMode(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val modeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode")
-    filePrinter(file(apiDir, modeFqName)) {
+    filePrinter(fileFromFqName(apiDir, modeFqName)) {
         generateDeclaration("enum class", modeFqName, afterType = "(val mode: String)") {
             val modes = hashMapOf(
                 K2JsArgumentConstants::CALL.name to K2JsArgumentConstants.CALL,
@@ -45,7 +45,7 @@ internal fun generateJsModuleKind(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val jsModuleKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsModuleKind")
-    filePrinter(file(apiDir, jsModuleKindFqName)) {
+    filePrinter(fileFromFqName(apiDir, jsModuleKindFqName)) {
         generateDeclaration("enum class", jsModuleKindFqName, afterType = "(val kind: String)") {
             val kinds = hashMapOf(
                 K2JsArgumentConstants::MODULE_PLAIN.name to K2JsArgumentConstants.MODULE_PLAIN,
@@ -78,7 +78,7 @@ internal fun generateJsSourceMapEmbedMode(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val jsSourceMapEmbedKindFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode")
-    filePrinter(file(apiDir, jsSourceMapEmbedKindFqName)) {
+    filePrinter(fileFromFqName(apiDir, jsSourceMapEmbedKindFqName)) {
         generateDeclaration("enum class", jsSourceMapEmbedKindFqName, afterType = "(val mode: String)") {
             val modes = hashMapOf(
                 K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_ALWAYS.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS,
@@ -109,7 +109,7 @@ internal fun generateJsDiagnosticMode(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val diagnosticModeFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JsDiagnosticMode")
-    filePrinter(file(apiDir, diagnosticModeFqName)) {
+    filePrinter(fileFromFqName(apiDir, diagnosticModeFqName)) {
         generateDeclaration("enum class", diagnosticModeFqName, afterType = "(val mode: String)") {
             val mods = hashMapOf(
                 K2JsArgumentConstants::RUNTIME_DIAGNOSTIC_EXCEPTION.name to K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION,

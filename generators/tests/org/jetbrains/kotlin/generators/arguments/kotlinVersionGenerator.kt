@@ -19,7 +19,7 @@ internal fun generateKotlinVersion(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val kotlinVersionFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
-    filePrinter(file(apiDir, kotlinVersionFqName)) {
+    filePrinter(fileFromFqName(apiDir, kotlinVersionFqName)) {
         generateDeclaration("enum class", kotlinVersionFqName, afterType = "(val version: String)") {
             val languageVersions = LanguageVersion.values()
 

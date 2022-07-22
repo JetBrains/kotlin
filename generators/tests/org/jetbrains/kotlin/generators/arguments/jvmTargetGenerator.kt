@@ -15,7 +15,7 @@ internal fun generateJvmTarget(
     filePrinter: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
     val jvmTargetFqName = FqName("org.jetbrains.kotlin.gradle.dsl.JvmTarget")
-    filePrinter(file(apiDir, jvmTargetFqName)) {
+    filePrinter(fileFromFqName(apiDir, jvmTargetFqName)) {
         generateDeclaration("enum class", jvmTargetFqName, afterType = "(val target: String)") {
             val jvmTargetValues = JvmTarget.values()
             val deprecatedJvmTargetValues = JvmTarget.values().subtract(JvmTarget.supportedValues().toSet())

@@ -38,6 +38,7 @@ dependencies {
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
+    commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly(project(":native:kotlin-native-utils"))
     commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-build-common"))
