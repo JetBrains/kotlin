@@ -108,7 +108,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 NAME
         );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-                "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
+                "Unsafe use of a nullable receiver of type {0}. See https://youtrack.jetbrains.com/issue/KT-36770 for details", RENDER_TYPE);
 
         MAP.put(WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                 "Override ''{0}'' has incorrect nullability in its signature comparing with overridden ''{1}''", COMPACT, COMPACT);
