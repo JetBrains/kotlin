@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.Names.COLUM_GROUP_CLASS_ID
+import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -29,17 +31,34 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 
 class SchemaContext(val properties: List<SchemaProperty>)
 
+object Names {
+    val DF_CLASS_ID: ClassId
+        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
+    val COLUM_GROUP_CLASS_ID: ClassId
+        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnGroup"))
+    val DATA_COLUMN_CLASS_ID: ClassId
+        get() = ClassId(
+            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
+            Name.identifier("DataColumn")
+        )
+    val COLUMNS_CONTAINER_CLASS_ID: ClassId
+        get() = ClassId(
+            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
+            Name.identifier("ColumnsContainer")
+        )
+    val DATA_ROW_CLASS_ID: ClassId
+        get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
+    val DF_ANNOTATIONS_PACKAGE: Name
+        get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
+    val INTERPRETABLE_FQNAME: FqName
+        get() = FqName(Interpretable::class.qualifiedName!!)
+}
 
 class FirDataFrameReceiverInjector(
     session: FirSession,
     private val state: MutableMap<ClassId, SchemaContext>,
     private val ids: ArrayDeque<ClassId>
 ) : FirExpressionResolutionExtension(session) {
-    companion object {
-        val DF_CLASS_ID = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
-        val DF_ANNOTATIONS_PACKAGE = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
-        val INTERPRETABLE_FQNAME = FqName(Interpretable::class.qualifiedName!!)
-    }
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
@@ -62,11 +81,9 @@ class FirDataFrameReceiverInjector(
                 when (it) {
                     is SimpleColumnGroup -> {
                         val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
-                        val groupClassId =
-                            ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnGroup"))
                         val columnGroupReturnType =
                             ConeClassLikeTypeImpl(
-                                ConeClassLikeLookupTagImpl(groupClassId),
+                                ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
                                 typeArguments = arrayOf(nestedClassMarker),
                                 isNullable = false
                             )
@@ -75,11 +92,9 @@ class FirDataFrameReceiverInjector(
 
                     is SimpleFrameColumn -> {
                         val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
-                        val frameClassId =
-                            ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataFrame"))
                         val frameColumnReturnType =
                             ConeClassLikeTypeImpl(
-                                ConeClassLikeLookupTagImpl(frameClassId),
+                                ConeClassLikeLookupTagImpl(DF_CLASS_ID),
                                 typeArguments = arrayOf(nestedClassMarker),
                                 isNullable = it.nullable
                             )

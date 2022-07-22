@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.dataframe.FirDataFrameReceiverInjector.Companion.INTERPRETABLE_FQNAME
+import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall

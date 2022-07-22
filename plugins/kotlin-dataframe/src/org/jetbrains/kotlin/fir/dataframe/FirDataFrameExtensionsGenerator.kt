@@ -111,9 +111,8 @@ class FirDataFrameExtensionsGenerator(
 
         val firPropertySymbol = FirPropertySymbol(callableId)
         val rowExtension = buildProperty {
-            val rowClassId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(rowClassId), typeArguments = arrayOf(marker), isNullable = false)
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID), typeArguments = arrayOf(marker), isNullable = false)
 
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
             moduleData = session.moduleData
@@ -149,19 +148,13 @@ class FirDataFrameExtensionsGenerator(
 
         val firPropertySymbol1 = FirPropertySymbol(callableId)
         val frameExtension = buildProperty {
-            val frameClassId =
-                ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("ColumnsContainer"))
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(frameClassId), typeArguments = arrayOf(marker), isNullable = false)
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID), typeArguments = arrayOf(marker), isNullable = false)
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
 
-            val columnClassId = ClassId(
-                FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-                Name.identifier("DataColumn")
-            )
             val typeProjection = resolvedReturnTypeRef.coneType.toTypeProjection(Variance.INVARIANT)
             val returnType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(columnClassId), arrayOf(typeProjection), isNullable = false)
+                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DATA_COLUMN_CLASS_ID), arrayOf(typeProjection), isNullable = false)
             val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null, false)
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
