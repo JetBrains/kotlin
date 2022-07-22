@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -211,6 +210,29 @@ object FirSessionFactory : FirAbstractSessionFactory() {
             )
             registerModuleData(moduleData)
             moduleData.bindSession(this)
+            // Empty stub for tests
+            register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(
+                object : LanguageVersionSettings {
+
+                    private fun stub(): Nothing = TODO(
+                        "It does not yet have well-defined semantics for tests." +
+                                "If you're seeing this, implement it in a test-specific way"
+                    )
+
+                    override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
+                        return LanguageFeature.State.DISABLED
+                    }
+
+                    override fun isPreRelease(): Boolean = stub()
+
+                    override fun <T> getFlag(flag: AnalysisFlag<T>): T = stub()
+
+                    override val apiVersion: ApiVersion
+                        get() = stub()
+                    override val languageVersion: LanguageVersion
+                        get() = stub()
+                }
+            ))
         }
     }
 }
