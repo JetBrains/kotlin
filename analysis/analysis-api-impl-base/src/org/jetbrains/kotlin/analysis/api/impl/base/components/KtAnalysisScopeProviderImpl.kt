@@ -10,7 +10,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
@@ -19,7 +18,11 @@ class KtAnalysisScopeProviderImpl(
     override val token: KtLifetimeToken
 ) : KtAnalysisScopeProvider() {
 
-    private val allModules = analysisSession.useSiteModule.collectAllDependenciesWithSelf()
+    private val allModules = buildList {
+        add(analysisSession.useSiteModule)
+        addAll(analysisSession.useSiteModule.allDirectDependencies())
+    }
+
     private val analysisScope = GlobalSearchScope.union(allModules.map { it.contentScope })
 
     override fun getAnalysisScope(): GlobalSearchScope = analysisScope
@@ -27,20 +30,4 @@ class KtAnalysisScopeProviderImpl(
     override fun canBeAnalysed(psi: PsiElement): Boolean {
         return analysisScope.contains(psi)
     }
-}
-
-private fun KtModule.collectAllDependenciesWithSelf(): List<KtModule> {
-    val stack = mutableListOf(this)
-    val visited = mutableSetOf<KtModule>()
-
-    while (stack.isNotEmpty()) {
-        val current = stack.removeLast()
-        if (!visited.add(current)) continue
-
-        current.allDirectDependencies().forEach { dependency ->
-            if (dependency !in visited) stack += dependency
-        }
-    }
-
-    return visited.toList()
 }
