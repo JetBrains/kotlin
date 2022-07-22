@@ -134,7 +134,6 @@ private fun loadResolvedLibraries(
     return resolvedLibraries.map { resolvedLibrary ->
         testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
             val storageManager = LockBasedStorageManager("ModulesStructure")
-            val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
             val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 resolvedLibrary.library,
@@ -144,11 +143,13 @@ private fun loadResolvedLibraries(
                 packageAccessHandler = null,
                 lookupTracker = LookupTracker.DO_NOTHING
             )
-            if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))
 
             Pair(moduleDescriptor, resolvedLibrary.library)
+        }.also {
+            val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+            if (isBuiltIns) builtInsModule = it.builtIns
         }
     } to builtInsModule
 }
