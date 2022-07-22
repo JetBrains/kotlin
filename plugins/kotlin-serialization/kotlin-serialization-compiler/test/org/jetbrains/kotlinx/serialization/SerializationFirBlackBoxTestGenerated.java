@@ -30,4 +30,16 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
     public void testClassWithCompanionObject() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/classWithCompanionObject.kt");
     }
+
+    @Test
+    @TestMetadata("defaultProperties.kt")
+    public void testDefaultProperties() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/defaultProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleProperties.kt")
+    public void testMultipleProperties() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/firMembers/multipleProperties.kt");
+    }
 }

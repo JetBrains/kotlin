@@ -54,6 +54,7 @@ interface IrPluginContext : IrGeneratorContext {
     @Deprecated("Use classId overload instead")
     fun referenceClass(fqName: FqName): IrClassSymbol?
     fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol?
+    @Deprecated("Use classId overload instead")
     fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol>
     @Deprecated("Use callableId overload instead")
     fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
