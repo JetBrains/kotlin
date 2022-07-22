@@ -990,6 +990,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueObjectNotSealedInlineChild::class
     }
 
+    abstract class SealedInlineClassWithUnderlyingValue : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = SealedInlineClassWithUnderlyingValue::class
+    }
+
     abstract class SealedInlineChildNotValue : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = SealedInlineChildNotValue::class
     }

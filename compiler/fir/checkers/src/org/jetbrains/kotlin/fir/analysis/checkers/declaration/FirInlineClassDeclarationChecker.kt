@@ -178,6 +178,14 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
+        if (declaration.modality == Modality.SEALED &&
+            context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses) &&
+            primaryConstructor?.source?.kind is KtRealSourceElementKind
+        ) {
+            reporter.reportOn(declaration.source, FirErrors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE, context)
+            return
+        }
+
         if (primaryConstructor == null) return
 
         for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {

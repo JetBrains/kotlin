@@ -1187,6 +1187,11 @@ internal class ValueObjectNotSealedInlineChildImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ValueObjectNotSealedInlineChild(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class SealedInlineClassWithUnderlyingValueImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SealedInlineClassWithUnderlyingValue(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class SealedInlineChildNotValueImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

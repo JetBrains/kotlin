@@ -461,6 +461,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INLINE_CHILD_NOT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INLINE_CHILD_OVERLAPPING_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS
@@ -1241,6 +1242,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_OBJECT_NOT_SEALED_INLINE_CHILD, "value object must be child of sealed inline class")
         map.put(SEALED_INLINE_CHILD_NOT_VALUE, "child of sealed inline class must be value");
         map.put(SEALED_INLINE_CHILD_OVERLAPPING_TYPE, "Sealed inline class child cannot be distinguished from another one");
+        map.put(SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE, "Sealed inline class cannot have underlying value");
 
         // Inline
         map.put(
