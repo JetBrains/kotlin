@@ -180,7 +180,7 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
                         "${compatibleAndroidGradlePluginVersionRange.minSupportedVersion.minor}"
             )
             appendLine(
-                "Maximum supported Android Gradle Plugin version: " +
+                "Maximum tested Android Gradle Plugin version: " +
                         "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMajor}." +
                         "${compatibleAndroidGradlePluginVersionRange.maxSupportedVersionMinor ?: "*"}"
             )
