@@ -285,16 +285,6 @@ internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFun
     }
 }
 
-internal fun IrFunctionAccessExpression.getSuperEnumCall(): IrEnumConstructorCall {
-    val name = this.symbol.owner.parentClassOrNull?.fqName
-    if (this is IrEnumConstructorCall && name == "kotlin.Enum") return this
-    return when (val delegatingCall = this.symbol.owner.body?.statements?.get(0)) {
-        is IrFunctionAccessExpression -> delegatingCall.getSuperEnumCall()
-        is IrTypeOperatorCall -> (delegatingCall.argument as IrFunctionAccessExpression).getSuperEnumCall()
-        else -> TODO("$delegatingCall is unexpected")
-    }
-}
-
 internal fun IrFunction.hasFunInterfaceParent(): Boolean {
     return this.parentClassOrNull?.isFun == true
 }
