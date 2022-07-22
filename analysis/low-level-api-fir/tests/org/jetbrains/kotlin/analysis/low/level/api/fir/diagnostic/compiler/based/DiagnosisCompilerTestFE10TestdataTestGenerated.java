@@ -17870,6 +17870,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("noinlineChild.kt")
+                public void testNoinlineChild() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/noinlineChild.kt");
+                }
+
+                @Test
                 @TestMetadata("object-child.kt")
                 public void testObject_child() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed-inline-class/object-child.kt");

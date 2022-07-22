@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -39,6 +40,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
     private val javaLangFqName = FqName("java.lang")
     private val cloneableFqName = FqName("Cloneable")
+    private val jvmInlineAnnotationFqName = FqName("kotlin.jvm.JvmInline")
 
     @Suppress("NAME_SHADOWING")
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -157,7 +159,10 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (declaration.modality != Modality.SEALED) {
+        val isNoinlineChildOfSealedInlineClass = declaration.isChildOfSealedInlineClass(context.session) &&
+                declaration.annotations.none { it.fqName(context.session) == jvmInlineAnnotationFqName }
+
+        if (declaration.modality != Modality.SEALED && !isNoinlineChildOfSealedInlineClass) {
             if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
                 reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, context)
                 return
@@ -171,41 +176,43 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                 reporter.reportOnWithSuppression(primaryConstructor, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
                 return
             }
+        }
 
-            for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
-                withSuppressedDiagnostics(primaryConstructor, context) { context ->
-                    withSuppressedDiagnostics(primaryConstructorParameter, context) { context ->
-                        when {
-                            primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
-                                reporter.reportOn(
-                                    primaryConstructorParameter.source,
-                                    FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                                    context
-                                )
+        if (primaryConstructor == null) return
 
-                            primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
-                                val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
-                                    (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
-                                }
-                                if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                                            inlineClassHasGenericUnderlyingType)
-                                ) {
-                                    reporter.reportOn(
-                                        primaryConstructorParameter.returnTypeRef.source,
-                                        FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                                        primaryConstructorParameter.returnTypeRef.coneType,
-                                        context
-                                    )
-                                }
+        for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+            withSuppressedDiagnostics(primaryConstructor, context) { context ->
+                withSuppressedDiagnostics(primaryConstructorParameter, context) { context ->
+                    when {
+                        primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                            reporter.reportOn(
+                                primaryConstructorParameter.source,
+                                FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+                                context
+                            )
+
+                        primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
+                            val inlineClassHasGenericUnderlyingType = primaryConstructorParameter.returnTypeRef.coneType.let {
+                                (it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter())
                             }
-
-                            primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
-                                reporter.reportOnWithSuppression(
-                                    primaryConstructorParameter.returnTypeRef,
-                                    FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                            if (!(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                                        inlineClassHasGenericUnderlyingType)
+                            ) {
+                                reporter.reportOn(
+                                    primaryConstructorParameter.returnTypeRef.source,
+                                    FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                                    primaryConstructorParameter.returnTypeRef.coneType,
                                     context
                                 )
+                            }
                         }
+
+                        primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
+                            reporter.reportOnWithSuppression(
+                                primaryConstructorParameter.returnTypeRef,
+                                FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                                context
+                            )
                     }
                 }
             }

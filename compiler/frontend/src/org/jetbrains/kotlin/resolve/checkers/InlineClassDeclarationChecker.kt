@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -52,6 +53,9 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         val inlineOrValueKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: valueKeyword
         require(inlineOrValueKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
 
+        val isNoinlineChildOfSealedInlineClass = descriptor.getSuperClassOrAny().isSealedInlineClass() &&
+                !descriptor.annotations.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)
+
         if (descriptor.isInner || DescriptorUtils.isLocal(descriptor)) {
             trace.report(Errors.VALUE_CLASS_NOT_TOP_LEVEL.on(inlineOrValueKeyword))
             return
@@ -81,7 +85,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         val primaryConstructor = declaration.primaryConstructor
-        if (primaryConstructor == null && !isSealed) {
+        if (primaryConstructor == null && !isSealed && !isNoinlineChildOfSealedInlineClass) {
             trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS.on(inlineOrValueKeyword))
             return
         }
@@ -91,17 +95,19 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) && descriptor.isValueClass()) {
-            if (primaryConstructor != null && primaryConstructor.valueParameters.isEmpty()) {
+        if (!isNoinlineChildOfSealedInlineClass) {
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) && descriptor.isValueClass()) {
+                if (primaryConstructor != null && primaryConstructor.valueParameters.isEmpty()) {
+                    (primaryConstructor.valueParameterList ?: declaration).let {
+                        trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
+                        return
+                    }
+                }
+            } else if (!isSealed && primaryConstructor != null && primaryConstructor.valueParameters.size != 1) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
-                    trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
+                    trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
                     return
                 }
-            }
-        } else if (!isSealed && primaryConstructor != null && primaryConstructor.valueParameters.size != 1) {
-            (primaryConstructor.valueParameterList ?: declaration).let {
-                trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
-                return
             }
         }
 
