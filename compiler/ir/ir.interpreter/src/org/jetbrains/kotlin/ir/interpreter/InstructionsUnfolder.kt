@@ -37,7 +37,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrConstructor -> unfoldConstructor(element, callStack)
         is IrCall -> unfoldValueParameters(element, environment)
         is IrConstructorCall -> unfoldValueParameters(element, environment)
-        is IrEnumConstructorCall -> unfoldValueParameters(element, environment)
+        is IrEnumConstructorCall -> unfoldEnumConstructorCall(element, environment)
         is IrDelegatingConstructorCall -> unfoldValueParameters(element, environment)
         is IrInstanceInitializerCall -> unfoldInstanceInitializerCall(element, callStack)
         is IrField -> unfoldField(element, callStack)
@@ -49,6 +49,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrGetValue -> unfoldGetValue(element, environment)
         is IrGetObjectValue -> unfoldGetObjectValue(element, environment)
         is IrGetEnumValue -> unfoldGetEnumValue(element, environment)
+        is IrEnumEntry -> unfoldEnumEntry(element, environment)
         is IrConst<*> -> callStack.pushSimpleInstruction(element)
         is IrVariable -> unfoldVariable(element, callStack)
         is IrSetValue -> unfoldSetValue(element, callStack)
@@ -177,6 +178,21 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     }
 }
 
+private fun unfoldEnumConstructorCall(element: IrEnumConstructorCall, environment: IrInterpreterEnvironment) {
+    val parentName = element.symbol.owner.parentClassOrNull?.fqName
+    if (parentName == "kotlin.Enum") {
+        // must create a copy here to avoid original data corruption
+        val constructorCallCopy = element.shallowCopy()
+        val enumObject = environment.callStack.loadState(element.getThisReceiver())
+        environment.irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().forEachIndexed { index, it ->
+            val field = enumObject.getField(it.symbol) as Primitive<*>
+            constructorCallCopy.putValueArgument(index, field.value.toIrConst(field.type))
+        }
+        return unfoldValueParameters(constructorCallCopy, environment)
+    }
+    unfoldValueParameters(element, environment)
+}
+
 private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall, callStack: CallStack) {
     val irClass = instanceInitializerCall.classSymbol.owner
     val toInitialize = irClass.declarations.filter { it is IrProperty || it is IrAnonymousInitializer }
@@ -262,6 +278,13 @@ private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterp
     enumClass.declarations.filterIsInstance<IrEnumEntry>().reversed().forEach {
         callStack.pushSimpleInstruction(it)
     }
+}
+
+@Suppress("UNUSED_PARAMETER")
+private fun unfoldEnumEntry(enumEntry: IrEnumEntry, environment: IrInterpreterEnvironment) {
+    // a little hak and misconception here; we are not creating simple instructions from this and just do the cleaning after interpretation
+    environment.callStack.popState()
+    environment.callStack.dropSubFrame()
 }
 
 private fun unfoldVariable(variable: IrVariable, callStack: CallStack) {

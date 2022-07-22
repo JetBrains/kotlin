@@ -396,28 +396,24 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqName} is null")
             val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
                 ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
-            val enumSuperCall = enumConstructorCall.getSuperEnumCall()
-
-            // TODO must call this function even after exception has occurred or else data will be corrupted
-            val cleanEnumSuperCall = fun() {
-                enumSuperCall.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
-                callStack.popState()    // result of constructor must be dropped, because next instruction will be `IrGetEnumValue`
-                callStack.dropSubFrame()
-            }
-
-            if (enumEntries.isNotEmpty()) {
-                val valueArguments = listOf(
-                    enumEntry.name.asString().toIrConst(irBuiltIns.stringType),
-                    enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
-                )
-                valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
-            }
 
             val enumClassObject = Common(enumEntry.correspondingClass ?: enumClass)
             environment.mapOfEnums[enumEntry.symbol] = enumClassObject
 
+            if (enumEntries.isNotEmpty()) {
+                // these fields will be evaluated during interpretation of constructor call
+                // but we need them right away to create correct call to Enum's constructor
+                val valueArguments = listOf(
+                    Primitive(enumEntry.name.asString(), irBuiltIns.stringType),
+                    Primitive(enumEntries.indexOf(enumEntry), irBuiltIns.intType)
+                )
+                irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+                    enumClassObject.setField(property.symbol, argument)
+                }
+            }
+
             callStack.newSubFrame(enumEntry)
-            callStack.pushInstruction(CustomInstruction(cleanEnumSuperCall))
+            callStack.pushCompoundInstruction(enumEntry) // not really a compound instruction
             callStack.pushCompoundInstruction(enumInitializer)
             callStack.storeState(enumConstructorCall.getThisReceiver(), enumClassObject)
         }
