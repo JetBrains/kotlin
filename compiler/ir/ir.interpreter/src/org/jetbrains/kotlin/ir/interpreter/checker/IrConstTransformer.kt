@@ -37,7 +37,7 @@ class IrConstTransformer(
             onError(original, this)
             return when (mode) {
                 // need to pass any const value to be able to get some bytecode and then report error
-                EvaluationMode.ONLY_INTRINSIC_CONST -> IrConstImpl.int(startOffset, endOffset, type, 0)
+                EvaluationMode.ONLY_INTRINSIC_CONST -> IrConstImpl.constNull(startOffset, endOffset, type)
                 else -> original
             }
         }

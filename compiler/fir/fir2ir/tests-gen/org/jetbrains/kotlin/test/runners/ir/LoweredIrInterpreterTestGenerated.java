@@ -101,6 +101,12 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         }
 
         @Test
+        @TestMetadata("kt53272.kt")
+        public void testKt53272() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/kt53272.kt");
+        }
+
+        @Test
         @TestMetadata("longOperations.kt")
         public void testLongOperations() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/longOperations.kt");

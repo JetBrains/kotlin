@@ -398,6 +398,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
             val enumSuperCall = enumConstructorCall.getSuperEnumCall()
 
+            // TODO must call this function even after exception has occurred or else data will be corrupted
             val cleanEnumSuperCall = fun() {
                 enumSuperCall.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
                 callStack.popState()    // result of constructor must be dropped, because next instruction will be `IrGetEnumValue`

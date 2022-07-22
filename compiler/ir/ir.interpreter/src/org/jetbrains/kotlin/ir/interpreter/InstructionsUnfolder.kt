@@ -259,7 +259,7 @@ private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterp
     callStack.pushSimpleInstruction(expression)
     val enumEntry = expression.symbol.owner
     val enumClass = enumEntry.symbol.owner.parentAsClass
-    enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
+    enumClass.declarations.filterIsInstance<IrEnumEntry>().reversed().forEach {
         callStack.pushSimpleInstruction(it)
     }
 }
