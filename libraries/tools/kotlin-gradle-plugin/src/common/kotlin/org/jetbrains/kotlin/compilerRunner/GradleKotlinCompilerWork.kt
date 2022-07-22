@@ -148,11 +148,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
             try {
-                compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
+                return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
                 log.warn(
-                    "Failed to compile with Kotlin compile daemon: ${e.stackTraceToString().suffixIfNot("\n")}" +
-                            "Using fallback strategy: Compile without using Kotlin compile daemon"
+                    "Failed to compile with Kotlin daemon: ${e.stackTraceToString().suffixIfNot("\n")}" +
+                            "Using fallback strategy: Compile without Kotlin daemon\n" +
+                            "Try ./gradlew --stop if this issue persists."
                 )
             }
         }
@@ -171,18 +172,14 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             if (isDebugEnabled) messageCollector else MessageCollector.NONE
         val connection =
             metrics.measure(BuildTime.CONNECT_TO_DAEMON) {
-                try {
-                    GradleCompilerRunner.getDaemonConnectionImpl(
-                        clientIsAliveFlagFile,
-                        sessionFlagFile,
-                        compilerFullClasspath,
-                        daemonMessageCollector,
-                        isDebugEnabled = isDebugEnabled,
-                        daemonJvmArgs = daemonJvmArgs
-                    )
-                } catch (e: Throwable) {
-                    throw RuntimeException("Failed to connect to Kotlin compile daemon", e)
-                }
+                GradleCompilerRunner.getDaemonConnectionImpl(
+                    clientIsAliveFlagFile,
+                    sessionFlagFile,
+                    compilerFullClasspath,
+                    daemonMessageCollector,
+                    isDebugEnabled = isDebugEnabled,
+                    daemonJvmArgs = daemonJvmArgs
+                )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
         val (daemon, sessionId) = connection
@@ -209,7 +206,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
-            throw RuntimeException("Failed to compile with Kotlin compile daemon (incremental mode = $isIncremental)", e)
+            throw e
         } finally {
             // todo: can we clear cache on the end of session?
             // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
