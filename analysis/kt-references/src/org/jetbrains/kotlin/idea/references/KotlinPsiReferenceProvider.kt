@@ -26,7 +26,7 @@ interface KotlinReferenceProviderContributor {
 
 
 class KotlinPsiReferenceRegistrar {
-    val providers: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider> = MultiMap.create()
+    val providers: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider> = MultiMap(LinkedHashMap())
 
     inline fun <reified E : KtElement> registerProvider(crossinline factory: (E) -> PsiReference?) {
         registerMultiProvider<E> { element ->
