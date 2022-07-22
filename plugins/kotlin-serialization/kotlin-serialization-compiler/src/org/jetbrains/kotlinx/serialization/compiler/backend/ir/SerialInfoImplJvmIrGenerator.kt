@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -55,7 +56,7 @@ class SerialInfoImplJvmIrGenerator(
 
     fun getImplClass(serialInfoAnnotationClass: IrClass): IrClass =
         annotationToImpl.getOrPut(serialInfoAnnotationClass) {
-            @Suppress("DEPRECATION") // TODO
+            @OptIn(FirIncompatiblePluginAPI::class) // TODO
             val implClassSymbol = context.referenceClass(serialInfoAnnotationClass.kotlinFqName.child(SerialEntityNames.IMPL_NAME))
             implClassSymbol!!.owner.apply(this::generate)
         }

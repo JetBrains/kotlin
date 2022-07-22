@@ -143,7 +143,7 @@ class SerializableJsTranslator(
     ): Int {
         val constrDesc = superClass.constructors.single(ClassConstructorDescriptor::isSerializationCtor)
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
-        val superProperties = bindingContext.serializablePropertiesFor(superClass).serializableProperties
+        val superProperties = bindingContext!!.serializablePropertiesFor(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = parameters.subList(0, superSlots) +
                 parameters.subList(propertiesStart, propertiesStart + superProperties.size) +

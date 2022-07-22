@@ -93,7 +93,7 @@ class SerializableCodegenImpl(
         val superClass = serializableDescriptor.getSuperClassOrAny()
         val myPropsStart: Int
         if (superClass.isInternalSerializable) {
-            myPropsStart = bindingContext.serializablePropertiesFor(superClass).serializableProperties.size
+            myPropsStart = bindingContext!!.serializablePropertiesFor(superClass).serializableProperties.size
             val superTypeArguments =
                 serializableDescriptor.typeConstructor.supertypes.single { it.toClassDescriptor?.isInternalSerializable == true }.arguments
             //super.writeSelf(output, serialDesc)
@@ -293,7 +293,7 @@ class SerializableCodegenImpl(
             invokespecial(superType, "<init>", desc, false)
             return 0 to propStartVar
         } else {
-            val superProps = bindingContext.serializablePropertiesFor(superClass).serializableProperties
+            val superProps = bindingContext!!.serializablePropertiesFor(superClass).serializableProperties
             val creator = buildInternalConstructorDesc(propStartVar, maskVar, classCodegen, superProps)
             invokespecial(superType, "<init>", creator, false)
             return superProps.size to propStartVar + superProps.sumOf { it.asmType.size }
