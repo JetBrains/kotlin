@@ -106,3 +106,5 @@ actual fun sendGetRequest(url: String, user: String?, password: String?, followL
     curl.close()
     return curl.body.toString()
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = null

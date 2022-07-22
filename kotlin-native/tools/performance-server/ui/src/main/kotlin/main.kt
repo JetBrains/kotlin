@@ -132,7 +132,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     previousBuild = builds.get(data.index - shift)
                     shift++
                 }
-                val linkToDetailedInfo = "https://kotlin-native-perf-summary.labs.jb.gg/compare?report=" +
+                val linkToDetailedInfo = "${window.location.origin}/compare?report=" +
                         "${currentBuild.buildNumber}:${parameters["target"]}" +
                         "${previousBuild?.let {
                             "&compareTo=${previousBuild.buildNumber}:${parameters["target"]}"
@@ -190,7 +190,7 @@ fun getDatesComponents() = "${beforeDate?.let {"&before=${encodeURIComponent(it)
         "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
 
 fun main(args: Array<String>) {
-    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg" // use "http://localhost:3000" for local debug.
+    val serverUrl = window.location.origin // use "http://localhost:3000" for local debug.
     val zoomRatio = 2
 
     // Get parameters from request.

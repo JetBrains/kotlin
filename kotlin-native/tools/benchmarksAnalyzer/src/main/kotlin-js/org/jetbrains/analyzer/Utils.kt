@@ -37,3 +37,5 @@ actual fun sendGetRequest(url: String, user: String?, password: String?, followL
     }
     error("Request to $url has status ${request.status}")
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = window.location.origin

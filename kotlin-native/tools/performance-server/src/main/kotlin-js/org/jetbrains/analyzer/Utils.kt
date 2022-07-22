@@ -27,3 +27,5 @@ actual fun assert(value: Boolean, lazyMessage: () -> Any) {
 actual fun sendGetRequest(url: String, user: String?, password: String?, followLocation: Boolean) : String {
     error("Unsupported")
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = null

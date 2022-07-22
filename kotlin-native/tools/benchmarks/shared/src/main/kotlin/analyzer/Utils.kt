@@ -11,3 +11,4 @@ expect fun writeToFile(fileName: String, text: String)
 expect fun assert(value: Boolean, lazyMessage: () -> Any)
 expect fun sendGetRequest(url: String, user: String? = null, password: String? = null,
                           followLocation: Boolean = false) : String
+expect fun getDefaultPerformanceServerUrl(): String?
