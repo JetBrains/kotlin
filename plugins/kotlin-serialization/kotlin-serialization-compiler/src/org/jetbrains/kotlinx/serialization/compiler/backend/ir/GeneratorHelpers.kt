@@ -742,12 +742,12 @@ interface IrBuilderExtension {
     fun IrBuilderWithScope.classReference(classSymbol: IrType): IrClassReference =
         createClassReference(classSymbol, startOffset, endOffset)
 
-    private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<ParameterDescriptor, IrExpression?> {
+    private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<IrValueSymbol, IrExpression?> {
         if (irClass == null) return emptyMap()
         val original = irClass.constructors.singleOrNull { it.isPrimary }
         // default arguments of original constructor
-        val defaultsMap: Map<ParameterDescriptor, IrExpression?> =
-            original?.valueParameters?.associate { it.descriptor to it.defaultValue?.expression } ?: emptyMap()
+        val defaultsMap: Map<IrValueSymbol, IrExpression?> =
+            original?.valueParameters?.associate { it.symbol to it.defaultValue?.expression } ?: emptyMap()
         return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
     }
 
@@ -783,9 +783,9 @@ interface IrBuilderExtension {
         return fun(initializer: IrExpressionBody): IrExpression {
             val rawExpression = initializer.expression
             val expression =
-                if (rawExpression is IrGetValueImpl && rawExpression.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
+                if (rawExpression.isInitializePropertyFromParameter()) {
                     // this is a primary constructor property, use corresponding default of value parameter
-                    defaultsMap.getValue(rawExpression.symbol.descriptor as ParameterDescriptor)!!
+                     defaultsMap.getValue((rawExpression as IrGetValue).symbol)!!
                 } else {
                     rawExpression
                 }
@@ -1252,8 +1252,8 @@ interface IrBuilderExtension {
         } == true
     }
 
-    fun serializableSyntheticConstructor(forClass: IrClass): IrConstructorSymbol {
-        return forClass.declarations.filterIsInstance<IrConstructor>().single { it.isSerializationCtor() }.symbol
+    fun serializableSyntheticConstructor(forClass: IrClass): IrConstructorSymbol? { // todo: remove this W/A when FIR plugin will add proper ctor
+        return forClass.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.isSerializationCtor() }?.symbol
     }
 
     fun IrClass.getSuperClassOrAny(): IrClass = getSuperClassNotAny() ?: compilerContext.irBuiltIns.anyClass.owner

@@ -121,6 +121,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @Deprecated("Use classId overload instead")
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         @Suppress("DEPRECATION")
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
@@ -157,6 +158,7 @@ open class IrPluginContextImpl constructor(
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+        @Suppress("DEPRECATION")
         return referenceConstructors(classId.asSingleFqName())
     }
 

@@ -105,8 +105,7 @@ class SerializableIrGenerator(
             }
 
             // Missing field exception parts
-            val exceptionFqn = getSerializationPackageFqn(MISSING_FIELD_EXC)
-            val exceptionCtorRef = compilerContext.referenceConstructors(exceptionFqn)
+            val exceptionCtorRef = compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(MISSING_FIELD_EXC)))
                 .single { it.owner.valueParameters.singleOrNull()?.type?.isString() == true }
             val exceptionType = exceptionCtorRef.owner.returnType
 
@@ -230,8 +229,8 @@ class SerializableIrGenerator(
     }
 
     private fun IrBlockBodyBuilder.getInstantiateDescriptorExpr(): IrExpression {
-        val classConstructors = compilerContext.referenceConstructors(serialDescriptorImplClass.kotlinFqName) //todo: remove reference
-        val serialClassDescImplCtor = classConstructors.single { it.owner.isPrimary }
+        val classConstructors = serialDescriptorImplClass.constructors //todo: remove reference
+        val serialClassDescImplCtor = classConstructors.single { it.isPrimary }.symbol
         return irInvoke(
             null, serialClassDescImplCtor,
             irString(irClass.serialName()), irNull(), irInt(properties.serializableProperties.size)
@@ -282,7 +281,7 @@ class SerializableIrGenerator(
         propertiesStart: Int
     ): Int {
         check(superClass.isInternalSerializable)
-        val superCtorRef = serializableSyntheticConstructor(superClass)
+        val superCtorRef = serializableSyntheticConstructor(superClass)!!
         val superProperties = bindingContext.serializablePropertiesFor(superClass.descriptor).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +

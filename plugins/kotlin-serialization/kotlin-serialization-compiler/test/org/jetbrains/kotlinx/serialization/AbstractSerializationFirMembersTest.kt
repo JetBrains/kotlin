@@ -26,6 +26,8 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensio
 import java.io.File
 
 abstract class AbstractSerializationFirMembersTest: AbstractKotlinCompilerTest() {
+    private val librariesList = listOf(getSerializationCoreLibraryJar()!!, getSerializationLibraryJar("kotlinx.serialization.json.Json")!!)
+
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
 
@@ -34,22 +36,25 @@ abstract class AbstractSerializationFirMembersTest: AbstractKotlinCompilerTest()
             +FirDiagnosticsDirectives.FIR_DUMP
         }
 
-        configureForKotlinxSerialization(listOf(getSerializationCoreLibraryJar()!!)) {
+        configureForKotlinxSerialization(librariesList) {
             FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
         }
     }
 }
 
 open class AbstractSerializationFirBlackBoxTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+
+    private val librariesList = listOf(getSerializationCoreLibraryJar()!!, getSerializationLibraryJar("kotlinx.serialization.json.Json")!!)
+
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
-        configureForKotlinxSerialization(listOf(getSerializationCoreLibraryJar()!!)) {
+        configureForKotlinxSerialization(librariesList) {
             FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
         }
         useCustomRuntimeClasspathProviders({ ts ->
                                                object : RuntimeClasspathProvider(ts) {
                                                    override fun runtimeClassPaths(module: TestModule): List<File> {
-                                                       return listOf(getSerializationCoreLibraryJar()!!)
+                                                       return librariesList
                                                    }
                                                }
                                            })

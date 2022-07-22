@@ -294,6 +294,7 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
 ): IrConstructorSymbol {
     val jsArrayName = irType.getArrayClassFqName()
     return try {
+        @Suppress("DEPRECATION") // caution: referenceConstructors(fqName) doesn't work with FIR
         referenceConstructors(jsArrayName).single(predicate)
     } catch (e: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")

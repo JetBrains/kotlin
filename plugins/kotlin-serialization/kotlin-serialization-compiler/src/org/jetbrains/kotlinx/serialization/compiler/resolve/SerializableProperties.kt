@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isInterface
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInitializePropertyFromParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInternallySerializableEnum
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
@@ -227,9 +228,10 @@ internal fun BindingContext?.serializablePropertiesForIrBackend(
                     it,
                     isConstructorParameterWithDefault,
                     it.backingField != null,
-                    it.backingField?.initializer != null || isConstructorParameterWithDefault
+                    it.backingField?.initializer.let { init -> init != null && !init.expression.isInitializePropertyFromParameter() } || isConstructorParameterWithDefault
                 )
             }
+            .filterNot { it.transient }
             .partition { primaryParamsAsProps.contains(it.descriptor) }
 
         val serializableProps = run {
