@@ -88,7 +88,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             )
             // These tasks currently don't support Configuration Cache and marked as [Task::notCompatibleWithConfigurationCache]
             val configCacheIncompatibleTaskTypes = listOf(
-                "GenerateProjectStructureMetadata",
                 "CInteropMetadataDependencyTransformationTask",
                 "TransformKotlinGranularMetadata"
             )
@@ -96,7 +95,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             build("build", buildOptions = buildOptions) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
-                assertOutputContains("17 problems were found storing the configuration cache, 6 of which seem unique.")
+                assertOutputContains("15 problems were found storing the configuration cache, 5 of which seem unique.")
                 configCacheIncompatibleTaskTypes.forEach { taskType ->
                     assertOutputContains(
                         """Task `\S+` of type `[\w.]+$taskType`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
