@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
+import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newProperty
@@ -59,6 +61,10 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         get() = compileAllTask.name
 
     override var compileDependencyFiles: FileCollection by project.newProperty {
+        createMetadataDependencyTransformationClasspath()
+    }
+
+    protected fun createMetadataDependencyTransformationClasspath() =
         createMetadataDependencyTransformationClasspath(
             project = project,
             fromFiles = resolvableMetadataConfiguration(fragment.containingModule),
@@ -71,7 +77,6 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
             },
             metadataResolutionProviders = resolvedMetadataFiles
         )
-    }
 
     override val output: KotlinCompilationOutput = DefaultKotlinCompilationOutput(
         project,
@@ -178,6 +183,15 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
     // FIXME endorsed libs?
     override val enableEndorsedLibs: Boolean
         get() = false
+
+    override var compileDependencyFiles: FileCollection by project.newProperty {
+        createMetadataDependencyTransformationClasspath() + getNativeDistributionDependencies()
+    }
+
+    private fun getNativeDistributionDependencies(): FileCollection {
+        val commonizerTarget = project.getCommonizerTarget(fragment) ?: return project.files()
+        return project.getNativeDistributionDependencies(commonizerTarget)
+    }
 }
 
 // TODO think about more generic case: a fragment that can be compiled by an arbitrary compiler
