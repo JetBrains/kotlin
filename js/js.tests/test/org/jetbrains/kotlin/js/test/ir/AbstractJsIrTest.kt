@@ -183,7 +183,7 @@ private class SkipMultiModuleTestsMetaConfigurator(testServices: TestServices) :
     }
 }
 
-abstract class AbstractFirJsTest(
+open class AbstractFirJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String = "box/",
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
