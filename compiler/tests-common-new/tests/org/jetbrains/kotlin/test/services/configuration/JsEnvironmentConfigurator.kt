@@ -156,7 +156,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                     ConfigurationDirectives.WITH_STDLIB in module.directives
 
             val names = if (needsFullIrRuntime) listOf("full.stdlib", "kotlin.test") else listOf("reduced.stdlib")
-            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path") }
+            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path")?.let { File(it).normalize().absolutePath } }
             val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
             runtimeClasspaths.mapTo(result) { it.absolutePath }
             return result
