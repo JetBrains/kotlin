@@ -259,15 +259,16 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
     override fun recordCapture(local: IrValueDeclaration?): Boolean {
         val isThis = local == thisParam
         val isCtorParam = (local?.parent as? IrConstructor)?.parent === declaration
-        if (local != null && collectors.isNotEmpty() && isThis) {
+        val isClassParam = isThis || isCtorParam
+        if (local != null && collectors.isNotEmpty() && isClassParam) {
             for (collector in collectors) {
                 collector.recordCapture(local)
             }
         }
-        if (local != null && declaration.isLocal && !isThis && !isCtorParam) {
+        if (local != null && declaration.isLocal && !isClassParam) {
             captures.add(local)
         }
-        return isThis || isCtorParam
+        return isClassParam
     }
     override fun recordCapture(local: IrSymbolOwner?) { }
     override fun pushCollector(collector: CaptureCollector) {
@@ -415,10 +416,7 @@ class ComposerLambdaMemoization(
         val composable = declaration.allowsComposableCalls
         val canRemember = composable &&
             // Don't use remember in an inline function
-            !descriptor.isInline &&
-            // Don't use remember if in a composable that returns a value
-            // TODO(b/150390108): Consider allowing remember in effects
-            descriptor.returnType.let { it != null && it.isUnit() }
+            !descriptor.isInline
 
         val context = FunctionContext(declaration, composable, canRemember)
         declarationContextStack.push(context)
