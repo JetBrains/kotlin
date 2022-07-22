@@ -148,6 +148,7 @@ class Fir2IrPluginContext(private val components: Fir2IrComponents) : IrPluginCo
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("Use classId overload instead")
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         error(ERROR_MESSAGE)
     }

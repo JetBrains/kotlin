@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -34,6 +36,7 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
@@ -458,8 +461,7 @@ open class SerializerIrGenerator(
 
                     // throw exception on unknown field
 
-                    val exceptionFqn = getSerializationPackageFqn(UNKNOWN_FIELD_EXC)
-                    val excClassRef = compilerContext.referenceConstructors(exceptionFqn)
+                    val excClassRef = compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(UNKNOWN_FIELD_EXC)))
                         .single { it.owner.valueParameters.singleOrNull()?.type?.isInt() == true }
                     +elseBranch(
                         irThrow(
@@ -485,11 +487,11 @@ open class SerializerIrGenerator(
         )
 
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
-        if (serializableIrClass.isInternalSerializable) {
+        val deserCtor: IrConstructorSymbol? = serializableSyntheticConstructor(serializableIrClass)
+        if (serializableIrClass.isInternalSerializable && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.descriptor).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            val ctor: IrConstructorSymbol = serializableSyntheticConstructor(serializableIrClass)
-            +irReturn(irInvoke(null, ctor, typeArgs, args))
+            +irReturn(irInvoke(null, deserCtor, typeArgs, args))
         } else {
             if (irClass.isLocal) {
                 // if the serializer is local, then the serializable class too, since they must be in the same scope
@@ -592,7 +594,7 @@ open class SerializerIrGenerator(
         if (prop)
             generateSerialDesc()
         val save = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
-        val load = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
+        val load = irClass.findPluginGeneratedMethod(LOAD)?.let { generateLoad(it); true } ?: false
         irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier)?.let { generateChildSerializersGetter(it) }
         irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)?.let { generateTypeParamsSerializersGetter(it) }
         if (!prop && (save || load))
