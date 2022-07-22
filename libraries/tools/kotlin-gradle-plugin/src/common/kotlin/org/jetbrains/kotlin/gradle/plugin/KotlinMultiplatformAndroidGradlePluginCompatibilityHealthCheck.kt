@@ -147,7 +147,6 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         val androidGradlePluginVersion = androidGradlePluginVersionParser.parseVersionString(androidGradlePluginVersionString)
             ?: return warningLogger(Messages.failedParsingAndroidGradlePluginVersion(androidGradlePluginVersionString))
 
-
         if (compatibleAndroidGradlePluginVersionRange.isTooLow(androidGradlePluginVersion)) {
             warningLogger(Messages.androidGradlePluginVersionTooLow(androidGradlePluginVersionString))
         }
@@ -168,7 +167,9 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         )
 
         fun androidGradlePluginVersionTooHigh(androidGradlePluginVersionString: String) = createCompatibilityWarningMessage(
-            "The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is higher than the maximum supported"
+            "The applied Android Gradle Plugin version ($androidGradlePluginVersionString) " +
+                    "is higher than the maximum known to the Kotlin Gradle Plugin. " +
+                    "Tooling stability in such configuration isn't tested, please report encountered issues to kotl.in/issue"
         )
 
         private fun createCompatibilityWarningMessage(warning: String) = buildString {
