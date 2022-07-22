@@ -50,4 +50,4 @@ abstract class YarnLockMismatchReportService : BuildService<YarnLockMismatchRepo
     }
 }
 
-val YARN_LOCK_MISMATCH_MESSAGE = "yarn.lock was changed. Run `kotlinActualizeYarnLock` task to actualize yarn.lock file"
+val YARN_LOCK_MISMATCH_MESSAGE = "yarn.lock was changed. Run the `${YarnLockCopyTask.UPGRADE_YARN_LOCK}` task to actualize yarn.lock file"
