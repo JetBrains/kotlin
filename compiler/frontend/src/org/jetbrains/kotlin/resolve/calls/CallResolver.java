@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.intellij.psi.PsiElement;
-import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -266,23 +266,10 @@ public class CallResolver {
             @NotNull Call call,
             @NotNull Collection<FunctionDescriptor> functionDescriptors
     ) {
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
-                callResolutionContext,
-                functionDescriptors,
-                TracingStrategyImpl.create(expression, call),
-                KotlinCallKind.FUNCTION,
-                null,
-                null
+        TracingStrategy tracingStrategy = TracingStrategyImpl.create(expression, call);
+        return resolveCallWithGivenDescriptors(
+                context, call, functionDescriptors, tracingStrategy, null, null, null
         );
-
-        if (resolutionResults.isSingleResult()) {
-            context.trace.record(BindingContext.RESOLVED_CALL, call, resolutionResults.getResultingCall());
-            context.trace.record(BindingContext.CALL, call.getCallElement(), call);
-        }
-
-        return resolutionResults;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveSetterCall(
@@ -322,15 +309,35 @@ public class CallResolver {
             @NotNull Call call,
             @NotNull Collection<FunctionDescriptor> functionDescriptors
     ) {
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        TracingStrategy tracingStrategy = TracingStrategyImpl.create(expression, call);
+        ReceiverValueWithSmartCastInfo dispatchReceiverValue =
+                NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, receiver);
+        return resolveCallWithGivenDescriptors(
+                context, call, functionDescriptors, tracingStrategy, null, null, dispatchReceiverValue
+        );
+    }
 
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
+    @NotNull
+    public <D extends CallableDescriptor> OverloadResolutionResults<D> resolveCallWithGivenDescriptors(
+            @NotNull ExpressionTypingContext context,
+            @NotNull Call call,
+            @NotNull Collection<D> descriptors,
+            @NotNull TracingStrategy tracingStrategy,
+            @Nullable TypeSubstitutor substitutor,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
+            @Nullable ReceiverValueWithSmartCastInfo dispatchReceiverValue
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
+                context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments
+        );
+
+        OverloadResolutionResults<D> resolutionResults = PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
                 callResolutionContext,
-                functionDescriptors,
-                TracingStrategyImpl.create(expression, call),
+                descriptors,
+                tracingStrategy,
                 KotlinCallKind.FUNCTION,
-                null,
-                NewResolutionOldInferenceKt.transformToReceiverWithSmartCastInfo(context, receiver)
+                substitutor,
+                dispatchReceiverValue
         );
 
         if (resolutionResults.isSingleResult()) {
@@ -339,29 +346,6 @@ public class CallResolver {
         }
 
         return resolutionResults;
-    }
-
-    @NotNull
-    public <D extends CallableDescriptor> OverloadResolutionResults<D> resolveCallWithGivenDescriptor(
-            @NotNull ExpressionTypingContext context,
-            @NotNull Call call,
-            @NotNull D descriptor,
-            @NotNull TracingStrategy tracingStrategy,
-            @Nullable TypeSubstitutor substitutor,
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
-    ) {
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
-                context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments
-        );
-
-        return PSICallResolver.runResolutionAndInferenceForGivenDescriptors(
-                callResolutionContext,
-                Collections.singletonList(descriptor),
-                tracingStrategy,
-                KotlinCallKind.FUNCTION,
-                substitutor,
-                null
-        );
     }
 
     @NotNull

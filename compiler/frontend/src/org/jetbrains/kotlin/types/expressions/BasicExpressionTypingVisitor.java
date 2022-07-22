@@ -630,15 +630,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ReceiverParameterDescriptor descriptor,
             KtExpression expression
     ) {
-        BindingTrace trace = context.trace;
         Call call = CallMaker.makeCall(expression, null, null, expression, Collections.emptyList());
-        OverloadResolutionResults<ReceiverParameterDescriptor> results =
-                components.callResolver.resolveCallWithGivenDescriptor(context, call, descriptor, TracingStrategy.EMPTY, null, null);
-
-        ResolvedCall<?> resolvedCall = results.getResultingCall();
-
-        trace.record(RESOLVED_CALL, call, resolvedCall);
-        trace.record(CALL, expression, call);
+        components.callResolver.resolveCallWithGivenDescriptors(
+                context, call, Collections.singletonList(descriptor), TracingStrategy.EMPTY, null, null, null
+        );
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
