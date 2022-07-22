@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource
 import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.io.*
@@ -86,8 +87,8 @@ class SourceMapBuilderConsumer(
                     sourceInfo.startChar
                 )
             }
-            is JsNode -> { /* Can occur on legacy BE, not sure if it's a bug or not. */ }
-            else -> error("Unexpected sourceInfo: $sourceInfo")
+            is JsNode, is KtPureElement -> { /* Can occur on legacy BE */ }
+            else -> {}
         }
     }
 }
