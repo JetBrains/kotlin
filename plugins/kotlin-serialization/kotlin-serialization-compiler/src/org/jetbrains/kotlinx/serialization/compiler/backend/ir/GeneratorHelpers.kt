@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
@@ -33,22 +33,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
-import org.jetbrains.kotlin.types.model.dependsOnTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.FUNCTION0_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FQ
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_FUNC_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_MODE_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies.LAZY_PUBLICATION_MODE_NAME
 
@@ -320,23 +315,13 @@ interface IrBuilderExtension {
             result
         )
 
-    @Deprecated("", level = DeprecationLevel.ERROR)
+    @FirIncompatiblePluginAPI
     fun KotlinType.toIrType() = compilerContext.typeTranslator.translateType(this)
 
     // note: this method should be used only for properties from current module. Fields from other modules are private and inaccessible.
     val IrSerializableProperty.irField: IrField?
         get() = this.descriptor.backingField
 
-    fun IrClass.searchForProperty(descriptor: PropertyDescriptor): IrProperty {
-        // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
-        // so we use descriptor api for current module because it is not possible to obtain FQname for e.g. local classes.
-        return searchForDeclaration(descriptor) ?: if (descriptor.module == compilerContext.moduleDescriptor) {
-            compilerContext.symbolTable.referenceProperty(descriptor).owner
-        } else {
-            @Suppress("DEPRECATION")
-            compilerContext.referenceProperties(descriptor.fqNameSafe).single().owner
-        }
-    }
 
 
 
@@ -347,8 +332,7 @@ interface IrBuilderExtension {
     fun IrBuilderWithScope.createPropertyByParamReplacer(
         irClass: IrClass,
         serialProperties: List<IrSerializableProperty>,
-        instance: IrValueParameter,
-        bindingContext: BindingContext?
+        instance: IrValueParameter
     ): (ValueParameterDescriptor) -> IrExpression? {
         fun IrSerializableProperty.irGet(): IrExpression {
             val ownerType = instance.symbol.owner.type
@@ -532,7 +516,7 @@ interface IrBuilderExtension {
 
         val field = with(propertyDescriptor) {
             // TODO: type parameters
-            @Suppress("DEPRECATION_ERROR") // should be called only with old FE
+            @OptIn(FirIncompatiblePluginAPI::class)// should be called only with old FE
             originProperty.factory.createField(
                 originProperty.startOffset, originProperty.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrFieldSymbolImpl(propertyDescriptor), name, type.toIrType(),
                 visibility, !isVar, isEffectivelyExternal(), dispatchReceiverParameter == null
@@ -558,7 +542,7 @@ interface IrBuilderExtension {
             false -> searchForDeclaration<IrProperty>(propertyDescriptor)?.setter
         } ?: run {
             with(descriptor) {
-                @Suppress("DEPRECATION_ERROR") // should never be called after FIR frontend
+                @OptIn(FirIncompatiblePluginAPI::class) // should never be called after FIR frontend
                 property.factory.createFunction(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType!!.toIrType(),
@@ -567,7 +551,7 @@ interface IrBuilderExtension {
             }.also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)
                 f.createParameterDeclarations(descriptor)
-                @Suppress("DEPRECATION_ERROR") // should never be called after FIR frontend
+                @OptIn(FirIncompatiblePluginAPI::class) // should never be called after FIR frontend
                 f.returnType = descriptor.returnType!!.toIrType()
                 f.correspondingPropertySymbol = fieldSymbol.owner.correspondingPropertySymbol
             }
@@ -662,7 +646,7 @@ interface IrBuilderExtension {
     ) {
         val function = this
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
-            @Suppress("DEPRECATION_ERROR") // should never be called after FIR frontend
+            @OptIn(FirIncompatiblePluginAPI::class) // should never be called after FIR frontend
             factory.createValueParameter(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
                 name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline,
@@ -697,7 +681,7 @@ interface IrBuilderExtension {
                 typeParameter.parent = this
             }
         }
-        @Suppress("DEPRECATION_ERROR") // should never be called after FIR frontend
+        @OptIn(FirIncompatiblePluginAPI::class) // should never be called after FIR frontend
         newTypeParameters.forEach { typeParameter ->
             typeParameter.superTypes = typeParameter.descriptor.upperBounds.map { it.toIrType() }
         }
@@ -866,13 +850,6 @@ interface IrBuilderExtension {
     } else {
         expression
     }
-
-//    private fun IrBuilderWithScope.wrapWithNullableSerializerIfNeeded(
-//        type: KotlinType,
-//        expression: IrExpression,
-//        nullableProp: IrPropertySymbol
-//    ): IrExpression = wrapWithNullableSerializerIfNeeded(type.toIrType(), expression, nullableProp)
-
 
     fun wrapIrTypeIntoKSerializerIrType(
         type: IrType,
