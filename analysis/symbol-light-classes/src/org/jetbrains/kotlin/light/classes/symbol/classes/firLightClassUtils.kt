@@ -452,18 +452,39 @@ context(KtAnalysisSession)
 context(KtAnalysisSession)
 internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     if (this == superClassOrigin) return false
+    if (superClassOrigin is KtEnumEntry) {
+        return false // enum entry cannot have inheritors
+    }
     if (!superClassOrigin.canBeAnalysed()) {
         return false
     }
-    val subClassSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
+
     val superClassSymbol = superClassOrigin.getClassOrObjectSymbol()
 
-    if (subClassSymbol == superClassSymbol) return false
+    when (this) {
+        is KtEnumEntry -> {
+            val enumEntrySymbol = this.getEnumEntrySymbol()
+            val classId = enumEntrySymbol.containingEnumClassIdIfNonLocal ?: return false
+            val enumClassSymbol = classId.getCorrespondingToplevelClassOrObjectSymbol() ?: return false
+            if (enumClassSymbol == superClassSymbol) return true
+            return if (checkDeep) {
+                enumClassSymbol.isSubClassOf(superClassSymbol)
+            } else {
+                false
+            }
+        }
 
-    return if (checkDeep) {
-        subClassSymbol.isSubClassOf(superClassSymbol)
-    } else {
-        subClassSymbol.isDirectSubClassOf(superClassSymbol)
+        else -> {
+            val subClassSymbol = this.getClassOrObjectSymbol()
+
+            if (subClassSymbol == superClassSymbol) return false
+
+            return if (checkDeep) {
+                subClassSymbol.isSubClassOf(superClassSymbol)
+            } else {
+                subClassSymbol.isDirectSubClassOf(superClassSymbol)
+            }
+        }
     }
 }
 
