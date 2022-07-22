@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Input
@@ -18,32 +19,37 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
+private val Project.performanceServerUrl: String
+    get() = findProperty("kotlin.native.performance.server.url")?.toString() ?: "http://localhost:3000"
+
 /**
  * Task to save benchmarks results on server.
  *
  * @property bundleSize size of build
  * @property onlyBranch register only builds for branch
  * @property fileWithResult json file with benchmarks run results
+ * @property performanceServer URL of the performance server
  */
 open class BuildRegister : DefaultTask() {
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var onlyBranch: String? = null
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var bundleSize: Int? = null
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var buildNumberSuffix: String? = null
 
-    @Input
-    @Optional
+    @get:Input
+    @get:Optional
     var fileWithResult: String = "nativeReport.json"
 
-    @Internal
-    val performanceServer = "https://kotlin-native-perf-summary.labs.jb.gg"
+    @get:Input
+    @get:Optional
+    var performanceServer: String? = project.performanceServerUrl
 
     private fun sendPostRequest(url: String, body: String): String {
         val connection = URL(url).openConnection() as HttpURLConnection
