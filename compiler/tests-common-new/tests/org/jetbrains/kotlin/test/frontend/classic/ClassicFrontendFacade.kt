@@ -266,8 +266,8 @@ class ClassicFrontendFacade(
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        return resolvedLibraries.zip(names).map { (resolvedLibrary, klibPath) ->
-            testServices.jsLibraryProvider.getOrCreateStdlibByPath(klibPath) {
+        return resolvedLibraries.map { resolvedLibrary ->
+            testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
                 val storageManager = LockBasedStorageManager("ModulesStructure")
                 val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
