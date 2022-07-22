@@ -115,7 +115,7 @@ class CounterIterator : Iterator<Int> {
 
 operator fun Counter.iterator(_context_receiver_0: CounterConfig): CounterIterator {
   return with<CounterConfig, CounterIterator>(receiver = _context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
-    return CounterIterator(_context_receiver_0 = _context_receiver_0, counter = <this>)
+    return CounterIterator(_context_receiver_0 = $this$with, counter = <this>)
   }
 )
 }

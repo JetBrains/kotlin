@@ -200,7 +200,7 @@ object CheckContextReceivers : ResolutionStage() {
         }?.takeUnless { it.isEmpty() } ?: return
 
         val receiverGroups: List<List<ImplicitReceiverValue<*>>> =
-            context.bodyResolveContext.towerDataContext.towerDataElements.mapNotNull { towerDataElement ->
+            context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
                 towerDataElement.implicitReceiver?.let(::listOf) ?: towerDataElement.contextReceiverGroup
             }
 

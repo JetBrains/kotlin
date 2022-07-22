@@ -272,7 +272,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.CounterIterator declared in <root>.iterator'
                   CONSTRUCTOR_CALL 'public constructor <init> (_context_receiver_0: <root>.CounterConfig, counter: <root>.Counter) [primary] declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
-                    _context_receiver_0: GET_VAR '_context_receiver_0: <root>.CounterConfig declared in <root>.iterator' type=<root>.CounterConfig origin=null
+                    _context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.iterator.<anonymous>' type=<root>.CounterConfig origin=null
                     counter: GET_VAR '<this>: <root>.Counter declared in <root>.iterator' type=<root>.Counter origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
