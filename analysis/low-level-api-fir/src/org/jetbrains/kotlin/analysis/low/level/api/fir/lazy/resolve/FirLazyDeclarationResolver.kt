@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LazyTransformerFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -28,6 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.utils.withAttachmentDetailed
 
 internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -41,14 +47,19 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
         checkPCE: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ) {
-        if (firFile.resolvePhase >= FirResolvePhase.IMPORTS && annotations.all { it.resolved }) return
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
-            resolveFileAnnotationsWithoutLock(
-                firFile = firFile,
-                annotations = annotations,
-                scopeSession = scopeSession,
-                collector = collector
-            )
+        val fromPhase = firFile.resolvePhase
+        try {
+            if (firFile.resolvePhase >= FirResolvePhase.IMPORTS && annotations.all { it.resolved }) return
+            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
+                resolveFileAnnotationsWithoutLock(
+                    firFile = firFile,
+                    annotations = annotations,
+                    scopeSession = scopeSession,
+                    collector = collector
+                )
+            }
+        } catch (e: Throwable) {
+            rethrowWithDetails(e, firFile, fromPhase, toPhase = null)
         }
     }
 
@@ -113,20 +124,25 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
         collector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean = false,
     ) {
-        if (toPhase == FirResolvePhase.RAW_FIR) return
-        resolveFileToImports(firFile, checkPCE)
-        if (toPhase == FirResolvePhase.IMPORTS) return
-        if (firFile.resolvePhase >= toPhase) return
-        moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
-            ResolveTreeBuilder.resolveEnsure(firFile, toPhase) {
-                lazyResolveFileDeclarationWithoutLock(
-                    firFile = firFile,
-                    toPhase = toPhase,
-                    collector = collector,
-                    scopeSession = scopeSession,
-                    checkPCE = checkPCE,
-                )
+        val fromPhase = firFile.resolvePhase
+        try {
+            if (toPhase == FirResolvePhase.RAW_FIR) return
+            resolveFileToImports(firFile, checkPCE)
+            if (toPhase == FirResolvePhase.IMPORTS) return
+            if (firFile.resolvePhase >= toPhase) return
+            moduleComponents.globalResolveComponents.lockProvider.runCustomResolveUnderLock(firFile, checkPCE) {
+                ResolveTreeBuilder.resolveEnsure(firFile, toPhase) {
+                    lazyResolveFileDeclarationWithoutLock(
+                        firFile = firFile,
+                        toPhase = toPhase,
+                        collector = collector,
+                        scopeSession = scopeSession,
+                        checkPCE = checkPCE,
+                    )
+                }
             }
+        } catch (e: Throwable) {
+            rethrowWithDetails(e, firFile, fromPhase, toPhase)
         }
     }
 
@@ -218,6 +234,20 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
      * @param firDeclarationToResolve target non-local declaration
      */
     fun lazyResolveDeclaration(
+        firDeclarationToResolve: FirDeclaration,
+        scopeSession: ScopeSession,
+        toPhase: FirResolvePhase,
+        checkPCE: Boolean,
+    ) {
+        val fromPhase = firDeclarationToResolve.resolvePhase
+        try {
+            doLazyResolveDeclaration(firDeclarationToResolve, scopeSession, toPhase, checkPCE)
+        } catch (e: Throwable) {
+            rethrowWithDetails(e, firDeclarationToResolve, fromPhase, toPhase)
+        }
+    }
+
+    private fun doLazyResolveDeclaration(
         firDeclarationToResolve: FirDeclaration,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
@@ -389,6 +419,34 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
                 checkPCE = checkPCE,
             ).transformDeclaration(moduleComponents.globalResolveComponents.phaseRunner)
         }
+    }
+}
+
+private fun rethrowWithDetails(
+    e: Throwable,
+    firDeclarationToResolve: FirDeclaration,
+    fromPhase: FirResolvePhase,
+    toPhase: FirResolvePhase?
+): Nothing {
+    if (e is ControlFlowException) throw e
+    errorWithAttachment(
+        buildString {
+            val moduleData = firDeclarationToResolve.llFirModuleData
+            appendLine("Error while resolving ${firDeclarationToResolve::class.java.name} ")
+            appendLine("from $fromPhase to $toPhase")
+            appendLine("current declaration phase ${firDeclarationToResolve.resolvePhase}")
+            appendLine("declaration origin: ${firDeclarationToResolve.origin}")
+            appendLine("declaration session: ${firDeclarationToResolve.llFirSession::class}")
+            appendLine("declaration module data: ${moduleData::class}")
+            appendLine("declaration KtModule: ${moduleData.ktModule::class}")
+            appendLine("declaration platform: ${moduleData.ktModule.platform}")
+        },
+        cause = e,
+    ) {
+        withAttachmentDetailed("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
+        withAttachmentDetailed("session", firDeclarationToResolve.llFirSession) { it.toString() }
+        withAttachmentDetailed("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
+        withFirAttachment("firDeclarationToResolve", firDeclarationToResolve)
     }
 }
 
