@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent

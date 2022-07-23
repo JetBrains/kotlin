@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType

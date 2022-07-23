@@ -38,6 +38,11 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
     }
 }
 
+
+fun KotlinExceptionWithAttachments.withAttachmentBuilder(name: String, buildContent: StringBuilder.() -> Unit): KotlinExceptionWithAttachments {
+    return withAttachment(name, buildString { buildContent() })
+}
+
 fun <T> KotlinExceptionWithAttachments.withAttachmentDetailed(
     name: String,
     content: T?,

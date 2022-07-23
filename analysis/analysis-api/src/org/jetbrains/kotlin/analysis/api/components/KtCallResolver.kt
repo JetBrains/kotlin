@@ -8,16 +8,23 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.errorWithAttachment
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
+
     public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
+
+    public open fun unresolvedKtCallError(psi: KtElement): Nothing {
+        errorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
+            withPsiAttachment("psi", psi)
+        }
+    }
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -27,18 +34,18 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtCallElement.resolveCall(): KtCallInfo = withValidityAssertion {
         analysisSession.callResolver.resolveCall(this)
-            ?: unresolvedKtCallError(this)
+            ?: analysisSession.callResolver.unresolvedKtCallError(this)
     }
 
     public fun KtUnaryExpression.resolveCall(): KtCallInfo = withValidityAssertion {
         analysisSession.callResolver.resolveCall(this)
-            ?: unresolvedKtCallError(this)
+            ?: analysisSession.callResolver.unresolvedKtCallError(this)
     }
 
 
     public fun KtArrayAccessExpression.resolveCall(): KtCallInfo = withValidityAssertion {
         analysisSession.callResolver.resolveCall(this)
-            ?: unresolvedKtCallError(this)
+            ?: analysisSession.callResolver.unresolvedKtCallError(this)
     }
 
     /**
@@ -50,9 +57,4 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtElement.collectCallCandidates(): List<KtCallCandidateInfo> =
         withValidityAssertion { analysisSession.callResolver.collectCallCandidates(this) }
-}
-
-private inline fun <reified PSI : KtElement> unresolvedKtCallError(element: PSI): Nothing {
-    throw KotlinExceptionWithAttachments("${PSI::class.simpleName}(${element::class.simpleName}) should always resolve to a KtCallInfo")
-        .withAttachment("elementText", element.getElementTextInContext())
 }

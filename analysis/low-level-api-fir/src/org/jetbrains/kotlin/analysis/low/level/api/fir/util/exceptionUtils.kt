@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.psi
@@ -40,15 +41,7 @@ fun KotlinExceptionWithAttachments.withConeTypeAttachment(name: String, coneType
     return this
 }
 
-fun KotlinExceptionWithAttachments.withPsiAttachment(name: String, psi: PsiElement?): KotlinExceptionWithAttachments {
-    withAttachmentDetailed(name, psi) { psiElement ->
-        when (psiElement) {
-            is KtElement -> psiElement.getElementTextInContext()
-            else -> psiElement.text
-        }
-    }
-    return this
-}
+
 
 
 fun firErrorWithAttachment(
@@ -76,5 +69,5 @@ fun firErrorWithAttachment(
 }
 
 
-private val debugFirRenderer =
+val debugFirRenderer =
     FirRenderer(resolvePhaseRenderer = FirResolvePhaseRenderer(), declarationRenderer = FirDeclarationRendererWithAttributes())

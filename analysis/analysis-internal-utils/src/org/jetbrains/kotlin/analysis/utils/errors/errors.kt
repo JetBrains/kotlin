@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.utils.errors
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.utils.withAttachmentDetailed
 
 public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
     errorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
@@ -15,4 +20,14 @@ public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
 
 public inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
     unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
+}
+
+public fun KotlinExceptionWithAttachments.withPsiAttachment(name: String, psi: PsiElement?): KotlinExceptionWithAttachments {
+    withAttachmentDetailed(name, psi) { psiElement ->
+        when (psiElement) {
+            is KtElement -> psiElement.getElementTextInContext()
+            else -> psiElement.text
+        }
+    }
+    return this
 }

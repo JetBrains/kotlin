@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.withAttachmentDetailed
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.render
