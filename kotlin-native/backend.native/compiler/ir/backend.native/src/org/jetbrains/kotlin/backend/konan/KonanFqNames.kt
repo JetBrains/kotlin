@@ -37,4 +37,5 @@ object KonanFqNames {
     val gcUnsafeCall = FqName("kotlin.native.internal.GCUnsafeCall")
     val eagerInitialization = FqName("kotlin.native.EagerInitialization")
     val noReorderFields = FqName("kotlin.native.internal.NoReorderFields")
+    val objCName = FqName("kotlin.native.ObjCName")
 }

@@ -25,7 +25,8 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
     ),
     additionalDeclarationCheckers = listOf(
         NativeThrowsChecker, NativeSharedImmutableChecker,
-        NativeTopLevelSingletonChecker, NativeThreadLocalChecker
+        NativeTopLevelSingletonChecker, NativeThreadLocalChecker,
+        NativeObjCNameChecker
     )
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {

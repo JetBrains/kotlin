@@ -3122,6 +3122,9 @@ public final class kotlin/enums/EnumEntriesKt {
 	public static final fun enumEntries (Lkotlin/jvm/functions/Function0;)Lkotlin/enums/EnumEntries;
 }
 
+public abstract interface annotation class kotlin/experimental/ExperimentalObjCName : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
 }
 
