@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.errorWithAttachment
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
     fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol? {
@@ -42,8 +44,11 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         val classId = psiClass.classIdIfNonLocal
             ?: error("No classId for non-local class")
         val provider = session.nullableJavaSymbolProvider ?: session.symbolProvider
-        val symbol = (provider.getClassLikeSymbolByClassId(classId)
-            ?: error("No classifier found with $classId"))
+        val symbol = provider.getClassLikeSymbolByClassId(classId)
+            ?: errorWithAttachment("No classifier found") {
+                withPsiAttachment("psiClass", psiClass)
+                withAttachment("classId", classId.asString())
+            }
         return symbol as FirRegularClassSymbol
     }
 }

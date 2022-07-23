@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.utils.errorWithAttachment
 
 object LowLevelFirApiFacadeForResolveOnAir {
 
@@ -87,7 +91,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         declaration.accept(expressionLocator)
-        return expressionLocator.result ?: error("Resolved on-air element was not found in containing declaration")
+        return expressionLocator.result ?: firErrorWithAttachment("Resolved on-air element was not found in containing declaration") {
+            withPsiAttachment("place", place)
+            withPsiAttachment("elementToResolve", elementToResolve)
+        }
     }
 
     fun onAirGetTowerContextProvider(
@@ -152,7 +159,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
 
         val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
-            ?: error("Cannot find original function matching to ${dependencyNonLocalDeclaration.getElementTextInContext()} in $originalKtFile")
+            ?: firErrorWithAttachment("Cannot find original function matching") {
+                withPsiAttachment("matchingPsi", dependencyNonLocalDeclaration)
+                withPsiAttachment("originalFile", originalKtFile)
+            }
 
         recordOriginalDeclaration(
             targetDeclaration = dependencyNonLocalDeclaration,
@@ -183,7 +193,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
             fileAnnotation = annotationEntry,
             replacement = replacement
         )
-        val llFirResolvableSession = firFile.llFirResolvableSession ?: error("FirFile session expected to be a resolvable session")
+        val llFirResolvableSession = firFile.llFirResolvableSession
+            ?: errorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
+                withAttachment("firSession", firFile.llFirSession)
+            }
         val declarationResolver = llFirResolvableSession.moduleComponents.lazyFirDeclarationsResolver
 
         declarationResolver.resolveFileAnnotations(

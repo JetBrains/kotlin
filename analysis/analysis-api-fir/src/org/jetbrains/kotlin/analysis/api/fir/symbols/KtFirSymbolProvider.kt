@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComp
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withPsiAttachment
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.render
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.errorWithAttachment
 
 internal class KtFirSymbolProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -28,8 +32,9 @@ internal class KtFirSymbolProvider(
 
     override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol {
         return when {
-            psi.isFunctionTypeParameter -> error(
-                "Creating KtValueParameterSymbol for function type parameter is not possible. Please see the KDoc of getParameterSymbol"
+            psi.isFunctionTypeParameter -> firErrorWithAttachment(
+                "Creating KtValueParameterSymbol for function type parameter is not possible. Please see the KDoc of getParameterSymbol",
+                psi = psi,
             )
 
             psi.isLoopParameter -> {
@@ -63,7 +68,10 @@ internal class KtFirSymbolProvider(
             }
 
             is FirAnonymousFunctionSymbol -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(firSymbol)
-            else -> error("Unexpected ${firSymbol.fir.renderWithType()}")
+            else -> errorWithAttachment("Unexpected ${firSymbol::class}") {
+                withFirSymbolAttachment("firSymbol", firSymbol)
+                withPsiAttachment("function", psi)
+            }
         }
     }
 
@@ -117,7 +125,10 @@ internal class KtFirSymbolProvider(
         val firClass =
             when (val firClassLike = psi.resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)) {
                 is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(firResolveSession.useSiteFirSession)
-                    ?: error("${firClassLike.fir.render()} should be expanded to the expected type alias")
+                    ?: errorWithAttachment("${firClassLike.fir::class} should be expanded to the expected type alias") {
+                        withFirSymbolAttachment("firClassLikeSymbol", firClassLike)
+                        withPsiAttachment("ktClassOrObject", psi)
+                    }
                 is FirAnonymousObjectSymbol -> firClassLike
                 is FirRegularClassSymbol -> firClassLike
             }

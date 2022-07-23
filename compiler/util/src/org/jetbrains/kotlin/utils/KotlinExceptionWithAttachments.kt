@@ -29,9 +29,19 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
     }
 }
 
+fun <T> KotlinExceptionWithAttachments.withAttachmentDetailed(
+    name: String,
+    content: T?,
+    render: (T) -> String
+): KotlinExceptionWithAttachments {
+    withAttachment("${name}Class", content?.let { it::class.java.name })
+    withAttachment(name, content?.let(render))
+    return this
+}
+
 @OptIn(ExperimentalContracts::class)
 inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (KotlinExceptionWithAttachments) -> Unit = {}) {
-    contract { returns() implies(value) }
+    contract { returns() implies (value) }
 
     if (!value) {
         val e = KotlinExceptionWithAttachments(lazyMessage())
@@ -39,3 +49,14 @@ inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attach
         throw e
     }
 }
+
+inline fun errorWithAttachment(
+    message: String,
+    cause: Throwable? = null,
+    attachments: KotlinExceptionWithAttachments.() -> Unit = {}
+): Nothing {
+    val exception = KotlinExceptionWithAttachments(message, cause)
+    attachments(exception)
+    throw exception
+}
+

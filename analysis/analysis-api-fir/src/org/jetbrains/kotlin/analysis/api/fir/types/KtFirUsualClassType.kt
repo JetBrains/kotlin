@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.ClassId
@@ -27,7 +28,7 @@ internal class KtFirUsualClassType(
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
     override val classSymbol: KtClassLikeSymbol by cached {
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-            ?: error("Class ${coneType.lookupTag} was not found")
+            ?: firErrorWithAttachment("Class was not found", coneType = coneType)
     }
     override val typeArguments: List<KtTypeArgument> by cached {
         coneType.typeArguments.map { typeArgument ->

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -151,7 +152,7 @@ internal class KtFirCallResolver(
                 when (val calleeReference = calleeReference) {
                     is FirResolvedNamedReference -> {
                         val call = createKtCall(psi, this, null, resolveFragmentOfCall)
-                            ?: error("expect `createKtCall` to succeed for resolvable case")
+                            ?: firErrorWithAttachment("expect `createKtCall` to succeed for resolvable case", fir = this, psi = psi)
                         KtSuccessCallInfo(call)
                     }
                     is FirErrorNamedReference -> {

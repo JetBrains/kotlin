@@ -54,17 +54,14 @@ internal val FirElement.isErrorElement
 internal val FirDeclaration.ktDeclaration: KtDeclaration
     get() {
         val psi = psi
-            ?: error("PSI element was not found for${render()}")
+            ?: firErrorWithAttachment("PSI element was not found", fir = this)
         return when (psi) {
             is KtDeclaration -> psi
             is KtObjectLiteralExpression -> psi.objectDeclaration
-            else -> error(
-                """
-                   FirDeclaration.psi (${this::class.simpleName}) should be KtDeclaration but was ${psi::class.simpleName}
-                   ${(psi as? KtElement)?.getElementTextInContext() ?: psi.text}
-                   
-                   ${render()}
-                   """.trimIndent()
+            else -> firErrorWithAttachment(
+                "FirDeclaration.psi (${this::class.simpleName}) should be KtDeclaration but was ${psi::class.simpleName}",
+                fir = this,
+                psi = psi,
             )
         }
     }

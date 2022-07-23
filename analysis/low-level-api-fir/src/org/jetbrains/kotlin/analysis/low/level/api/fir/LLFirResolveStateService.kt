@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibra
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
@@ -86,7 +87,9 @@ internal class LLFirResolveSessionService(project: Project) {
                 }
 
                 else -> {
-                    error("Unexpected $useSiteKtModule")
+                    firErrorWithAttachment("Unexpected ${useSiteKtModule::class.java}") {
+                        withAttachment("module", useSiteKtModule.moduleDescription)
+                    }
                 }
             }
 

@@ -30,7 +30,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
     findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
-    error("No fir element was found for\n${getElementTextInContext()}")
+    firErrorWithAttachment("No fir element was found for", psi = this)
 }
 
 internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
@@ -45,7 +45,7 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
     }
     return fir
-        ?: error("FirDeclaration was not found for\n${getElementTextInContext()}")
+        ?: firErrorWithAttachment("FirDeclaration was not found", psi = this)
 }
 
 internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclarationForAnyFirSourceDeclarationOfType(
@@ -95,12 +95,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
         this is KtConstructor<*> -> {
             val containingClass = containingClassOrObject
-                ?: error("Container class should be not null for KtConstructor")
+                ?: firErrorWithAttachment("Container class should be not null for KtConstructor", psi = this)
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(provider)
-        else -> error("Invalid container ${this::class}\n${getElementTextInContext()}")
+        else -> firErrorWithAttachment("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
 }
