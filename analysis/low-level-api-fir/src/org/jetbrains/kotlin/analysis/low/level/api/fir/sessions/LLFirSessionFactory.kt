@@ -83,7 +83,7 @@ internal object LLFirSessionFactory {
         components.session = session
 
         return session.apply session@{
-            val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
+            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -187,7 +187,7 @@ internal object LLFirSessionFactory {
         components.session = session
 
         return session.apply session@{
-            val moduleData = LLFirKtModuleBasedModuleData(module).apply { bindSession(this@session) }
+            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtModuleBasedModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
@@ -48,7 +48,7 @@ private object CheckersFactory {
         reporter: DiagnosticReporter,
         useExtendedCheckers: Boolean
     ): DiagnosticCollectorComponents {
-        val module = session.firKtModuleBasedModuleData.ktModule
+        val module = session.llFirModuleData.ktModule
         val platform = module.platform.componentPlatforms.first()
         val extensionCheckers = session.extensionService.additionalCheckers
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)

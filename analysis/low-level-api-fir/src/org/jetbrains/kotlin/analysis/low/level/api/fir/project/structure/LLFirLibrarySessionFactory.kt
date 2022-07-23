@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirFirClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirLibrarySessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryLikeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibrarySession
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.providers.createLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -53,7 +50,7 @@ internal class LLFirLibrarySessionFactory(
         val platform = ktLibraryModule.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         return LLFirLibrarySession(ktLibraryModule, project, builtinsSession.builtinTypes).apply session@{
-            val moduleData = LLFirKtModuleBasedModuleData(ktLibraryModule).apply { bindSession(this@session) }
+            val moduleData = LLFirModuleData(ktLibraryModule).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             registerIdeComponents(project)
             register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)

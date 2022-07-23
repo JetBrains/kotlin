@@ -15,43 +15,36 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
-sealed class LLFirModuleData : FirModuleData()
-
-val FirDeclaration.firModuleData: LLFirModuleData
+val FirDeclaration.llFirModuleData: LLFirModuleData
     get() {
         return moduleData as LLFirModuleData
     }
 
-val FirSession.firModuleData: LLFirModuleData
+val FirSession.llFirModuleData: LLFirModuleData
     get() {
         return moduleData as LLFirModuleData
     }
 
-val FirSession.firKtModuleBasedModuleData: LLFirKtModuleBasedModuleData
-    get() {
-        return moduleData as LLFirKtModuleBasedModuleData
-    }
+
+val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
+    get() = fir.llFirModuleData
 
 
-val FirBasedSymbol<*>.firModuleData: LLFirModuleData
-    get() = fir.firModuleData
-
-
-class LLFirKtModuleBasedModuleData(
+class LLFirModuleData(
     val ktModule: KtModule,
-) : LLFirModuleData() {
+) : FirModuleData() {
     override val name: Name get() = Name.special("<${ktModule.moduleDescription}>")
 
     override val dependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ktModule.directRegularDependencies.map(::LLFirKtModuleBasedModuleData)
+        ktModule.directRegularDependencies.map(::LLFirModuleData)
     }
 
     override val dependsOnDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ktModule.directRefinementDependencies.map(::LLFirKtModuleBasedModuleData)
+        ktModule.directRefinementDependencies.map(::LLFirModuleData)
     }
 
     override val friendDependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ktModule.directRefinementDependencies.map(::LLFirKtModuleBasedModuleData)
+        ktModule.directRefinementDependencies.map(::LLFirModuleData)
     }
 
     override val platform: TargetPlatform get() = ktModule.platform
@@ -62,7 +55,7 @@ class LLFirKtModuleBasedModuleData(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as LLFirKtModuleBasedModuleData
+        other as LLFirModuleData
 
         if (ktModule != other.ktModule) return false
 

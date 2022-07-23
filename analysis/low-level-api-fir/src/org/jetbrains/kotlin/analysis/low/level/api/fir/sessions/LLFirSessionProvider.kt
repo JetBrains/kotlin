@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.Immutable
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProviders
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -29,9 +28,7 @@ class LLFirSessionProvider internal constructor(
 
     override fun getSession(moduleData: FirModuleData): LLFirSession {
         requireIsInstance<LLFirModuleData>(moduleData)
-        return when (moduleData) {
-            is LLFirKtModuleBasedModuleData -> getResolvableSession(moduleData.ktModule)
-        }
+        return getResolvableSession(moduleData.ktModule)
     }
 
     fun getSession(module: KtModule): LLFirSession =

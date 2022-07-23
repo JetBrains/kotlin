@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirElement
@@ -117,9 +117,9 @@ internal object FirDeserializedDeclarationSourceProvider {
             is FirCallableDeclaration -> unwrapFakeOverrides()
             else -> this
         }
-        val moduleData = original.firModuleData as LLFirKtModuleBasedModuleData
+        val moduleData = original.llFirModuleData
         return when (val ktModule = moduleData.ktModule) {
-            is KtBuiltinsModule -> GlobalSearchScope.allScope(project)
+            is KtBuiltinsModule -> GlobalSearchScope.allScope(project) // TODO should be some stdlib
             else -> ktModule.contentScope
         }
     }

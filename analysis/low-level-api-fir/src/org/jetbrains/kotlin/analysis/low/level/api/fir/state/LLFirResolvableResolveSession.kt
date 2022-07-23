@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibrarySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -133,7 +133,7 @@ internal abstract class LLFirResolvableResolveSession(
 
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
-        val llFirResolvableModuleSession = declaration.firModuleData.session as? LLFirResolvableModuleSession ?: return
+        val llFirResolvableModuleSession = declaration.llFirModuleData.session as? LLFirResolvableModuleSession ?: return
 
         val moduleComponents = llFirResolvableModuleSession.moduleComponents
         moduleComponents.lazyFirDeclarationsResolver.lazyResolveDeclaration(

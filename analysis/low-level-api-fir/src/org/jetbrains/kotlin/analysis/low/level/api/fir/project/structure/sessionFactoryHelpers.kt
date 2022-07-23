@@ -82,7 +82,7 @@ internal fun LLFirSourcesSession.registerCompilerPluginServices(
 
 internal fun createJavaSymbolProvider(
     firSession: LLFirSession,
-    moduleData: LLFirKtModuleBasedModuleData,
+    moduleData: LLFirModuleData,
     project: Project,
     contentScope: GlobalSearchScope
 ): JavaSymbolProvider {

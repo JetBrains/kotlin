@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firKtModuleBasedModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createModuleWithoutDependenciesOutOfBlockModificationTracker
-import java.util.concurrent.ConcurrentHashMap
 
 class LLFirSessionProviderStorage(val project: Project) {
     private val sessionsCache = LLFirSessionsCache()
@@ -81,7 +80,7 @@ private class LLFirSessionsCache {
     private var mappings: PersistentMap<KtModule, FirSessionWithModificationTracker> = persistentMapOf()
 
     val sessionInvalidator: LLFirSessionInvalidator = LLFirSessionInvalidator { session ->
-        mappings[session.firKtModuleBasedModuleData.ktModule]?.invalidate()
+        mappings[session.llFirModuleData.ktModule]?.invalidate()
     }
 
 
@@ -121,7 +120,7 @@ private class LLFirSessionsCache {
         }
         return wasSessionInvalidated.entries
             .mapNotNull { (session, wasInvalidated) -> session.takeUnless { wasInvalidated } }
-            .associate { session -> session.firSession.firKtModuleBasedModuleData.ktModule to session.firSession }
+            .associate { session -> session.firSession.llFirModuleData.ktModule to session.firSession }
     }
 
     private fun <T> Collection<T>.reversedDependencies(getDependencies: (T) -> List<T>): Map<T, List<T>> {
@@ -140,7 +139,7 @@ private class FirSessionWithModificationTracker(
     val firSession: LLFirResolvableModuleSession,
 ) {
     private val modificationTracker =
-        when (val ktModule = firSession.firKtModuleBasedModuleData.ktModule) {
+        when (val ktModule = firSession.llFirModuleData.ktModule) {
             is KtSourceModule -> ktModule.createModuleWithoutDependenciesOutOfBlockModificationTracker(project)
             else -> ModificationTracker.NEVER_CHANGED
         }

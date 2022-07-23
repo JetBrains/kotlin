@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirKtModuleBasedModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.firModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -31,9 +31,7 @@ fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSessi
         }
         else -> this
     }
-    return when (val moduleData = target.firModuleData) {
-        is LLFirKtModuleBasedModuleData -> moduleData.ktModule
-    }
+    return target.llFirModuleData.ktModule
 }
 
 fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtModule =
