@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 object CommonConfigurationKeys {
@@ -74,6 +71,10 @@ object CommonConfigurationKeys {
     @JvmField
     val INCREMENTAL_COMPILATION =
         CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
+
+    @JvmField
+    val INCREMENTAL_API =
+        CompilerConfigurationKey.create<IncrementalExtension>("incremental api for compiler plugins")
 
     @JvmField
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS =

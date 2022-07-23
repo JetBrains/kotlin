@@ -62,6 +62,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         protected val SOURCE_TO_CLASSES = "source-to-classes"
         @JvmStatic
         protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        private val API_LISTENERS_DATA = "api-listeners-data"
     }
 
     private val dependents = arrayListOf<AbstractIncrementalCache<ClassName>>()
@@ -81,6 +82,8 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
+    private val apiListenersDataMap = registerMap(ApiListenersDataMap(API_LISTENERS_DATA.storageFile))
+
     /**
      * A file X is a complementary to a file Y if they contain corresponding expect/actual declarations.
      * Complementary files should be compiled together during IC so the compiler does not complain
@@ -101,6 +104,10 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     override fun isSealed(className: FqName): Boolean? {
         return classAttributesMap[className]?.isSealed
+    }
+
+    fun getApiListenerFqName(listenerId: String): List<FqName> {
+        return apiListenersDataMap[listenerId].toList()
     }
 
     override fun getSourceFileIfClass(fqName: FqName): File? =
@@ -228,6 +235,16 @@ abstract class AbstractIncrementalCache<ClassName>(
 
         for ((actual, expects) in actualToExpect) {
             complementaryFilesMap[actual] = expects
+        }
+    }
+
+    fun updateListenerSubscriptions(updatedListenersMap: Map<String, List<FqName>>) {
+        val connectedListenerIds = updatedListenersMap.keys
+        apiListenersDataMap.keys.forEach { key ->
+            if(key !in connectedListenerIds) apiListenersDataMap.remove(key)
+        }
+        updatedListenersMap.forEach {
+            apiListenersDataMap.set(it.key, it.value)
         }
     }
 }

@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurati
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -216,6 +213,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
                     services[IncrementalCompilationComponents::class.java]
                 )
+
+                putIfNotNull(CommonConfigurationKeys.INCREMENTAL_API, services[IncrementalExtension::class.java])
 
                 putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
             }

@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
+import org.jetbrains.kotlin.incremental.components.IncrementalExtension
 import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeClasspathChanges
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
@@ -445,11 +446,12 @@ open class IncrementalJvmCompilerRunner(
         args: K2JVMCompilerArguments,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        incrementalApiService: IncrementalExtension,
         caches: IncrementalJvmCachesManager,
         dirtySources: Set<File>,
         isIncremental: Boolean
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, incrementalApiService, caches, dirtySources, isIncremental).apply {
             val targetId = TargetId(args.moduleName!!, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)

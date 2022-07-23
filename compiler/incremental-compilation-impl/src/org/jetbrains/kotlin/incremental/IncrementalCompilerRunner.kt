@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.IncrementalExtension
+import org.jetbrains.kotlin.incremental.api.IncrementalExtensionImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
@@ -288,6 +290,7 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        incrementalApiService: IncrementalExtension,
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean
@@ -296,6 +299,7 @@ abstract class IncrementalCompilerRunner<
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            register(IncrementalExtension::class.java, incrementalApiService)
         }
 
     protected abstract fun runCompiler(
@@ -349,11 +353,12 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val expectActualTracker = ExpectActualTrackerImpl()
+            val incrementalApiService = IncrementalExtensionImpl(lookupTracker, caches.platformCache::getApiListenerFqName)
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
             val services = makeServices(
-                args, lookupTracker, expectActualTracker, caches,
+                args, lookupTracker, expectActualTracker, incrementalApiService, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
             ).build()
 
@@ -398,8 +403,10 @@ abstract class IncrementalCompilerRunner<
             dirtySourcesSinceLastTimeFile.delete()
 
             val changesCollector = ChangesCollector()
+            //incrementalApiService.processChangesAndNotify(changesCollector.changes().map { it.fqName })
             reporter.measure(BuildTime.IC_UPDATE_CACHES) {
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
+                caches.platformCache.updateListenerSubscriptions(incrementalApiService.incrementalChangesManager.listenersMap.mapKeys { it.key.id })
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
                 updateCaches(services, caches, generatedFiles, changesCollector)
@@ -411,6 +418,7 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
+            incrementalApiService.processChangesAndNotify(changesCollector.changes().map { it.fqName }, caches.platformCache)
             val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(
                 listOf(caches.platformCache),
                 reporter
