@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.ExceptionWithAttachments
+import java.nio.charset.StandardCharsets
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -17,7 +18,15 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     constructor(message: String?, cause: Throwable?) : super(message, cause) {
         if (cause is KotlinExceptionWithAttachments) {
-            attachments.addAll(cause.attachments)
+            attachments.addAll(
+                cause.attachments.map { a ->
+                    val content = a.openContentStream().use { it.reader(StandardCharsets.UTF_8).use { it.readText() } }
+                    Attachment("case_" + a.path, content)
+                }
+            )
+        }
+        if (cause != null) {
+            withAttachment("causeThrowable", cause.stackTraceToString())
         }
     }
 
