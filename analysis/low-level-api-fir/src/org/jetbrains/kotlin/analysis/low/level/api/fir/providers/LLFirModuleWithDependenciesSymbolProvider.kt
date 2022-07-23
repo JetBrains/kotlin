@@ -173,8 +173,10 @@ internal abstract class LLFirDependentModuleProviders(
         facades += newFacades
     }
 
-    private fun FirCallableSymbol<*>.jvmClassName(): JvmClassName? =
-        (fir.containerSource as? JvmPackagePartSource)?.facadeClassName
+    private fun FirCallableSymbol<*>.jvmClassName(): JvmClassName? {
+        val jvmPackagePartSource = fir.containerSource as? JvmPackagePartSource ?: return null
+        return jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+    }
 
 }
 
