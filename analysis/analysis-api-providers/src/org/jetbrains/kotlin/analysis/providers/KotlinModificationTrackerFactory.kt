@@ -9,6 +9,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 
 
@@ -62,10 +63,40 @@ public abstract class KotlinModificationTrackerFactory {
      * See [KotlinModificationTrackerFactory] for the definition of **OOBM**.
      * @see ModificationTracker
      */
-    public abstract fun createLibrariesModificationTracker(): ModificationTracker
+    public abstract fun createLibrariesWideModificationTracker(): ModificationTracker
+
+    /**
+     * Creates [KtModuleStateTracker] which is incremented every time [module] roots changes.
+     *
+     * @see KtModuleStateTracker
+     */
+    public abstract fun createModuleStateTracker(module: KtModule): KtModuleStateTracker
+
 
     @TestOnly
     public abstract fun incrementModificationsCount()
+
+    public companion object {
+        public fun getService(project: Project): KotlinModificationTrackerFactory =
+            project.getService(KotlinModificationTrackerFactory::class.java)
+    }
+}
+
+/**
+ * Represents current state of [KtModule] validity, can be created via [org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory.createModuleStateTracker]
+ */
+public interface KtModuleStateTracker {
+    /**
+     * If the module is still valid (i.e., it was not removed)
+     */
+    public val isValid: Boolean
+
+    /**
+     * Represents modification tracker of modified roots similar to the [ModificationTracker].
+     *
+     * If the [isValid] == `false`, when behaviour is unspecified
+     */
+    public val rootModificationCount: Long
 }
 
 /**
@@ -94,6 +125,6 @@ public fun KtSourceModule.createModuleWithoutDependenciesOutOfBlockModificationT
  * See [KotlinModificationTrackerFactory] for the definition of **OOBM**.
  * @see ModificationTracker
  */
-public fun Project.createLibrariesModificationTracker(): ModificationTracker =
+public fun Project.createAllLibrariesModificationTracker(): ModificationTracker =
     ServiceManager.getService(this, KotlinModificationTrackerFactory::class.java)
-        .createLibrariesModificationTracker()
+        .createLibrariesWideModificationTracker()

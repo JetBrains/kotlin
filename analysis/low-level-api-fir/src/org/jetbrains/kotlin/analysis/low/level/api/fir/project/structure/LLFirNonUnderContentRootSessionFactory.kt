@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirNonUnderContentRootSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
@@ -41,9 +40,8 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
 
     fun getNonUnderContentRootSession(
         module: KtNotUnderContentRootModule,
-        sessions: MutableMap<KtModule, LLFirResolvableModuleSession>
     ): LLFirResolvableModuleSession {
-        return cache.getOrPut(module) { createSession(module, LLFirSessionInvalidator { cache.clear() }) }.also { sessions[module] = it }
+        return cache.getOrPut(module) { createSession(module, LLFirSessionInvalidator { cache.clear() }) }
     }
 
     @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)

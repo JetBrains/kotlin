@@ -19,24 +19,19 @@ import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 class LLFirSessionProvider internal constructor(
     val project: Project,
     internal val rootModuleSession: LLFirResolvableModuleSession,
-    private val moduleToResolvableSession: Map<KtModule, LLFirResolvableModuleSession>
+    private val ktModuleToSession: Map<KtModule, LLFirSession>
 ) : FirSessionProvider() {
-
-    private val moduleToSession = moduleToResolvableSession + moduleToResolvableSession.values.flatMap { module ->
-        (module.dependenciesSymbolProvider as LLFirDependentModuleProviders).dependentSessions
-    }.associateBy { it.ktModule }
-
     override fun getSession(moduleData: FirModuleData): LLFirSession {
         requireIsInstance<LLFirModuleData>(moduleData)
         return getResolvableSession(moduleData.ktModule)
     }
 
     fun getSession(module: KtModule): LLFirSession =
-        moduleToSession.getValue(module)
+        ktModuleToSession.getValue(module)
 
     fun getResolvableSession(module: KtModule): LLFirResolvableModuleSession =
-        moduleToResolvableSession.getValue(module)
+        ktModuleToSession.getValue(module) as LLFirResolvableModuleSession
 
-    val allSessions: Collection<LLFirModuleSession>
-        get() = moduleToResolvableSession.values
+    val allSessions: Collection<LLFirSession>
+        get() = ktModuleToSession.values
 }
