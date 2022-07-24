@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 class ApiListenersDataMap(storageFile: File) : BasicStringMap<Collection<FqName>>(storageFile, FqNameCollectionExternalizer) {
-//    override fun dumpValue(value: kotlin.Int): String = value.toString()
 
     operator fun get(listenerId: String): Collection<FqName> {
         return storage[listenerId] ?: setOf()
@@ -32,13 +31,4 @@ class ApiListenersDataMap(storageFile: File) : BasicStringMap<Collection<FqName>
 
 
     override fun dumpValue(value: Collection<FqName>): String = value.map { it.toString() }.dumpCollection()
-
-//    fun toMap(): Map<File, kotlin.Int> {
-//        val result = HashMap<File, kotlin.Int>()
-//        for (key in storage.keys) {
-//            val value = storage[key] ?: continue
-//            result[pathConverter.toFile(key)] = value
-//        }
-//        return result
-//    }
 }

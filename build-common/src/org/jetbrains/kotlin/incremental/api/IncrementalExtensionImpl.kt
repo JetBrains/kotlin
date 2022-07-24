@@ -27,7 +27,7 @@ class IncrementalExtensionImpl(lookupTracker: LookupTracker, private val getCach
         incrementalChangesManager.unsubscribe(listenerId, fqNames)
     }
 
-    override fun markLookupAsDirty(fqNames: List<FqName>) { //TODO: refactor to lookups?
+    override fun markLookupAsDirty(fqNames: List<FqName>) {
         dirtyLookupFqNames.addAll(fqNames)
     }
 

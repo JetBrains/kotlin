@@ -403,7 +403,6 @@ abstract class IncrementalCompilerRunner<
             dirtySourcesSinceLastTimeFile.delete()
 
             val changesCollector = ChangesCollector()
-            //incrementalApiService.processChangesAndNotify(changesCollector.changes().map { it.fqName })
             reporter.measure(BuildTime.IC_UPDATE_CACHES) {
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.platformCache.updateListenerSubscriptions(incrementalApiService.incrementalChangesManager.listenersMap.mapKeys { it.key.id })
