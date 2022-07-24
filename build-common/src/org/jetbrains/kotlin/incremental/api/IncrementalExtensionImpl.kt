@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 
 class IncrementalExtensionImpl(lookupTracker: LookupTracker, private val getCachedFqNames: (String) -> List<FqName>) : IncrementalExtension(lookupTracker) {
     val incrementalChangesManager = IncrementalChangesManager()
+    val dirtyLookupFqNames = mutableListOf<FqName>()
 
     override fun addListener(listener: ICListener) {
         if (incrementalChangesManager.listenersMap[listener] != null)
@@ -26,6 +27,10 @@ class IncrementalExtensionImpl(lookupTracker: LookupTracker, private val getCach
         incrementalChangesManager.unsubscribe(listenerId, fqNames)
     }
 
+    override fun markLookupAsDirty(fqNames: List<FqName>) { //TODO: refactor to lookups?
+        dirtyLookupFqNames.addAll(fqNames)
+    }
+
     fun processChangesAndNotify(changedFqNames: List<FqName>, platformCache: AbstractIncrementalCache<*>) {
         for (entry in groupListeners()) {
             val listenerType = entry.key
@@ -38,7 +43,7 @@ class IncrementalExtensionImpl(lookupTracker: LookupTracker, private val getCach
                     changedFqNames.flatMap { platformCache.getSubtypesOf(it) }
                 }
             }
-            listener.forEach { it.onChange(fqNamesToNotify.intersect(it.getSubscribedFqNames())) }
+            listener.forEach { it.onChange(fqNamesToNotify.intersect(incrementalChangesManager.getSubscribedFqNames(it.id))) }
         }
     }
 
@@ -69,8 +74,10 @@ class IncrementalChangesManager {
             ?: throw Exception("There is no listener with id: $listenerId")
         listenersMap[listener] = listenersMap[listener]!! - fqNames
     }
+
+
+    fun getSubscribedFqNames(listenerId: String): List<FqName> {
+        return listenersMap.filter { it.key.id == listenerId}.map { it.value }.singleOrNull() ?: emptyList()
+    }
 }
 
-fun ICListener.getSubscribedFqNames(): List<FqName> {
-    TODO("Not yet implemented")
-}

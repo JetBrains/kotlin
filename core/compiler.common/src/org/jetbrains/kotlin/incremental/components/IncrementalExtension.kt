@@ -11,6 +11,7 @@ abstract class IncrementalExtension(val lookupTracker: LookupTracker) {
     abstract fun addListener(listener: ICListener)
     abstract fun subscribe(listenerId: String, fqNames: List<FqName>)
     abstract fun unsubscribe(listenerId: String, fqNames: List<FqName>)
+    abstract fun markLookupAsDirty(fqNames: List<FqName>)
 
 //    companion object {
 //        val NONE: IncrementalExtension = object : IncrementalExtension() {

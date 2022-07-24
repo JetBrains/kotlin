@@ -425,10 +425,19 @@ abstract class IncrementalCompilerRunner<
             )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
+            val dirtyLookupsFromCompilerPlugins = incrementalApiService.dirtyLookupFqNames.map {
+
+                val scope = it.parent().asString()
+                val name = it.shortName().identifier
+                LookupSymbol(name, scope)
+            }
+
+            incrementalApiService.dirtyLookupFqNames.clear()
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
             with(dirtySources) {
                 clear()
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
+                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupsFromCompilerPlugins, reporter))
                 addAll(
                     mapClassesFqNamesToFiles(
                         listOf(caches.platformCache),
