@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -71,32 +72,32 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
     abstract override fun replaceBody(newBody: FirBlock?)
 }
 
-inline fun <D> FirConstructor.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceDelegatedConstructor(delegatedConstructor?.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceDelegatedConstructor(delegatedConstructor?.transform(transformer, data)) }
 
-inline fun <D> FirConstructor.transformBody(transformer: FirTransformer<D>, data: D): FirConstructor 
-     = apply { replaceBody(body?.transform(transformer, data)) }
+inline fun <D> FirConstructor.transformBody(transformer: FirTransformer<D>, data: D): FirConstructor  = 
+    apply { replaceBody(body?.transform(transformer, data)) }

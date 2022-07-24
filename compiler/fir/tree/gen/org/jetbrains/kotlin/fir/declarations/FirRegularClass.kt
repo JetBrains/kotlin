@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -65,23 +66,23 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
     abstract fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 }
 
-inline fun <D> FirRegularClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceDeclarations(declarations.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
 
-inline fun <D> FirRegularClass.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirRegularClass 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirRegularClass.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirRegularClass  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }

@@ -228,6 +228,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     copyBuilder.symbol = original.symbol
     copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.annotations.addAll(original.annotations)
+    @Suppress("UNCHECKED_CAST")
     copyBuilder.typeParameters.addAll(original.typeParameters as List<FirTypeParameter>) // TODO UNCHECKED
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }

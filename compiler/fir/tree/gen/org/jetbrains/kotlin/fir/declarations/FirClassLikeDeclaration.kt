@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -42,11 +43,11 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 }
 
-inline fun <D> FirClassLikeDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirClassLikeDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirClassLikeDeclaration.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirClassLikeDeclaration.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirClassLikeDeclaration.transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirClassLikeDeclaration.transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration  = 
+    apply { replaceStatus(status.transform(transformer, data)) }

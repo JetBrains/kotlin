@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -68,29 +69,29 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract fun replaceBody(newBody: FirBlock?)
 }
 
-inline fun <D> FirFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirFunction.transformBody(transformer: FirTransformer<D>, data: D): FirFunction 
-     = apply { replaceBody(body?.transform(transformer, data)) }
+inline fun <D> FirFunction.transformBody(transformer: FirTransformer<D>, data: D): FirFunction  = 
+    apply { replaceBody(body?.transform(transformer, data)) }

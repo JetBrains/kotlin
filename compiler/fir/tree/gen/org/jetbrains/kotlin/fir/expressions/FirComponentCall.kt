@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -58,29 +59,29 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 }
 
-inline fun <D> FirComponentCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceArgumentList(argumentList.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirComponentCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
-     = apply { replaceExplicitReceiver(explicitReceiver.transform(transformer, data)) }
+inline fun <D> FirComponentCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall  = 
+    apply { replaceExplicitReceiver(explicitReceiver.transform(transformer, data)) }

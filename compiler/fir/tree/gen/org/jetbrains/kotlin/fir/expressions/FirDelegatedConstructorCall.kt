@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -42,20 +43,20 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 }
 
-inline fun <D> FirDelegatedConstructorCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirDelegatedConstructorCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceArgumentList(argumentList.transform(transformer, data)) }
 
-inline fun <D> FirDelegatedConstructorCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirDelegatedConstructorCall.transformConstructedTypeRef(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceConstructedTypeRef(constructedTypeRef.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformConstructedTypeRef(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceConstructedTypeRef(constructedTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirDelegatedConstructorCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirDelegatedConstructorCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirDelegatedConstructorCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

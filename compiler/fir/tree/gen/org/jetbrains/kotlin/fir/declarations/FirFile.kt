@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -47,14 +48,14 @@ abstract class FirFile : FirDeclaration() {
     abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 }
 
-inline fun <D> FirFile.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirFile.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirFile.transformPackageDirective(transformer: FirTransformer<D>, data: D): FirFile 
-     = apply { replacePackageDirective(packageDirective.transform(transformer, data)) }
+inline fun <D> FirFile.transformPackageDirective(transformer: FirTransformer<D>, data: D): FirFile  = 
+    apply { replacePackageDirective(packageDirective.transform(transformer, data)) }
 
-inline fun <D> FirFile.transformImports(transformer: FirTransformer<D>, data: D): FirFile 
-     = apply { replaceImports(imports.transform(transformer, data)) }
+inline fun <D> FirFile.transformImports(transformer: FirTransformer<D>, data: D): FirFile  = 
+    apply { replaceImports(imports.transform(transformer, data)) }
 
-inline fun <D> FirFile.transformDeclarations(transformer: FirTransformer<D>, data: D): FirFile 
-     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+inline fun <D> FirFile.transformDeclarations(transformer: FirTransformer<D>, data: D): FirFile  = 
+    apply { replaceDeclarations(declarations.transform(transformer, data)) }

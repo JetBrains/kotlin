@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -57,29 +58,29 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 }
 
-inline fun <D> FirFunctionCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceArgumentList(argumentList.transform(transformer, data)) }
 
-inline fun <D> FirFunctionCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCall 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirFunctionCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCall  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

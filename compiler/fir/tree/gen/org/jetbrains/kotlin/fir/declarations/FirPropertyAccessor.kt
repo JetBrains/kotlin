@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -74,32 +75,32 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
     abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
 
-inline fun <D> FirPropertyAccessor.transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceBody(body?.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceBody(body?.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceContractDescription(contractDescription.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceContractDescription(contractDescription.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessor.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessor.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

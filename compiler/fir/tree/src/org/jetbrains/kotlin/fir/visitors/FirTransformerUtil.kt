@@ -2,7 +2,7 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
@@ -69,10 +69,12 @@ inline fun FirPureAbstractElement.accept(visitor: FirVisitorVoid) {
 }
 
 inline fun <T : FirElement, D> T.transform(transformer: FirTransformer<D>, data: D): T {
+    @Suppress("UNCHECKED_CAST")
     return transformer.dispatch(this, data) as T
 }
 
 inline fun <T : FirElement, D> FirPureAbstractElement.transform(transformer: FirTransformer<D>, data: D): T {
+    @Suppress("UNCHECKED_CAST")
     return transformer.dispatch(this, data) as T
 }
 

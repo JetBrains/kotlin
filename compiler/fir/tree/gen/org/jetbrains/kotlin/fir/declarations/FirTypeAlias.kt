@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -47,14 +48,14 @@ abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParameterRefsOwn
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
 
-inline fun <D> FirTypeAlias.transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirTypeAlias.transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirTypeAlias.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirTypeAlias.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirTypeAlias.transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAlias 
-     = apply { replaceExpandedTypeRef(expandedTypeRef.transform(transformer, data)) }
+inline fun <D> FirTypeAlias.transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAlias  = 
+    apply { replaceExpandedTypeRef(expandedTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirTypeAlias.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAlias 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirTypeAlias.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAlias  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -34,5 +35,5 @@ sealed class FirDeclaration : FirPureAbstractElement(), FirAnnotationContainer {
     abstract fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }
 
-inline fun <D> FirDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.visitors.FirElementKind.*

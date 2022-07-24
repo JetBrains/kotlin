@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -85,38 +86,38 @@ abstract class FirProperty : FirVariable(), FirTypeParameterRefsOwner, FirContro
     abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
 
-inline fun <D> FirProperty.transformStatus(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirProperty.transformStatus(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirProperty.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirProperty.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformInitializer(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformInitializer(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceInitializer(initializer?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformDelegate(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformDelegate(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceDelegate(delegate?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformGetter(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceGetter(getter?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformGetter(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceGetter(getter?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformSetter(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceSetter(setter?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformSetter(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceSetter(setter?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformBackingField(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformBackingField(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceBackingField(backingField?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirProperty.transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirProperty.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirProperty.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirProperty.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -24,5 +25,5 @@ abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 }
 
-inline fun <D> FirTypeProjectionWithVariance.transformTypeRef(transformer: FirTransformer<D>, data: D): FirTypeProjectionWithVariance 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirTypeProjectionWithVariance.transformTypeRef(transformer: FirTransformer<D>, data: D): FirTypeProjectionWithVariance  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }

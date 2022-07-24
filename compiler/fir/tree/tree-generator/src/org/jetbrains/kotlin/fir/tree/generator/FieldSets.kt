@@ -37,7 +37,7 @@ object FieldSets {
 
     val declarations by lazy { fieldList(declaration.withArgs("E" to "*")) }
 
-    val annotations by lazy { fieldList("annotations", annotation).withTransform(needTransformInOtherChildren = true) }
+    val annotations by lazy { fieldList("annotations", annotation).withTransform() }
 
     fun symbolWithPackage(packageName: String?, symbolClassName: String, argument: String? = null): Field {
         return field("symbol", type(packageName, symbolClassName), argument)
@@ -49,7 +49,7 @@ object FieldSets {
     fun body(nullable: Boolean = false, withReplace: Boolean = false) =
         field("body", block, nullable, withReplace = withReplace)
 
-    val returnTypeRef =field("returnTypeRef", typeRef)
+    val returnTypeRef = field("returnTypeRef", typeRef)
 
     val typeRefField = field(typeRef, withReplace = true)
 

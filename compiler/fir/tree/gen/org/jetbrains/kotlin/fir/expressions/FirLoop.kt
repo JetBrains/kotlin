@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -34,14 +35,14 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
     abstract fun replaceLabel(newLabel: FirLabel?)
 }
 
-inline fun <D> FirLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirLoop 
-     = apply { replaceBlock(block.transform(transformer, data)) }
+inline fun <D> FirLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirLoop  = 
+    apply { replaceBlock(block.transform(transformer, data)) }
 
-inline fun <D> FirLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirLoop 
-     = apply { replaceCondition(condition.transform(transformer, data)) }
+inline fun <D> FirLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirLoop  = 
+    apply { replaceCondition(condition.transform(transformer, data)) }
 
-inline fun <D> FirLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirLoop 
-     = apply { replaceLabel(label?.transform(transformer, data)) }
+inline fun <D> FirLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirLoop  = 
+    apply { replaceLabel(label?.transform(transformer, data)) }

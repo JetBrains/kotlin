@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -22,5 +23,5 @@ sealed interface FirTypeParameterRefsOwner : FirElement {
     fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
 
-inline fun <D> FirTypeParameterRefsOwner.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirTypeParameterRefsOwner.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

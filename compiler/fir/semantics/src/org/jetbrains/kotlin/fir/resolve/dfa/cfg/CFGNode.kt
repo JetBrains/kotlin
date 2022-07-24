@@ -850,7 +850,6 @@ class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotatio
 // ----------------------------------- Stub -----------------------------------
 
 // TODO REMOVE
-@Deprecated("TODO REMOVE")
 object FirStub : FirElement {
     override val source: KtSourceElement? get() = null
     override val elementKind: FirElementKind

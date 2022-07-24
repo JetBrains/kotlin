@@ -26,6 +26,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()
+        println("@file:Suppress(\"UNUSED_PARAMETER\")")
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import $VISITOR_PACKAGE.FirElementKind.*") }
@@ -81,7 +82,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
                 print("transform${element.name}Children($varName: ${element.typeWithArguments}, data: D): ${element.transformerType.typeWithArguments}${element.multipleUpperBoundsList()}")
                 //if (!isInterface && !isAbstract) {
-                println(" {")
+                println("{")
                 withIndent {
                     if (element == FirTreeBuilder.userTypeRef) {
                         // TODO

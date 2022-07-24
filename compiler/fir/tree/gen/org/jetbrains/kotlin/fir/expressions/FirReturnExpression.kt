@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -32,11 +33,11 @@ abstract class FirReturnExpression : FirJump<FirFunction>() {
     abstract fun replaceResult(newResult: FirExpression)
 }
 
-inline fun <D> FirReturnExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirReturnExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirReturnExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirReturnExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirReturnExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirReturnExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirReturnExpression.transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression 
-     = apply { replaceResult(result.transform(transformer, data)) }
+inline fun <D> FirReturnExpression.transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression  = 
+    apply { replaceResult(result.transform(transformer, data)) }

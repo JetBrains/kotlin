@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -38,17 +39,17 @@ abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
     abstract fun replaceContextReceiverTypeRefs(newContextReceiverTypeRefs: List<FirTypeRef>)
 }
 
-inline fun <D> FirFunctionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirFunctionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirFunctionTypeRef.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirFunctionTypeRef.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirFunctionTypeRef.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirFunctionTypeRef.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirFunctionTypeRef.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirFunctionTypeRef.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirFunctionTypeRef.transformContextReceiverTypeRefs(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
-     = apply { replaceContextReceiverTypeRefs(contextReceiverTypeRefs.transform(transformer, data)) }
+inline fun <D> FirFunctionTypeRef.transformContextReceiverTypeRefs(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef  = 
+    apply { replaceContextReceiverTypeRefs(contextReceiverTypeRefs.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -56,26 +57,26 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean)
 }
 
-inline fun <D> FirCallableReferenceAccess.transformTypeRef(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformTypeRef(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
 
-inline fun <D> FirCallableReferenceAccess.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirCallableReferenceAccess.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

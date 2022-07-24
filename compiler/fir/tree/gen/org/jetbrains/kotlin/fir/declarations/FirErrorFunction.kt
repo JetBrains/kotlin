@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -69,29 +70,29 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
 
-inline fun <D> FirErrorFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceBody(body?.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceBody(body?.transform(transformer, data)) }
 
-inline fun <D> FirErrorFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirErrorFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -33,14 +34,14 @@ abstract class FirBinaryLogicExpression : FirExpression() {
     abstract fun replaceRightOperand(newRightOperand: FirExpression)
 }
 
-inline fun <D> FirBinaryLogicExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirBinaryLogicExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirBinaryLogicExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirBinaryLogicExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirBinaryLogicExpression.transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
-     = apply { replaceLeftOperand(leftOperand.transform(transformer, data)) }
+inline fun <D> FirBinaryLogicExpression.transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression  = 
+    apply { replaceLeftOperand(leftOperand.transform(transformer, data)) }
 
-inline fun <D> FirBinaryLogicExpression.transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
-     = apply { replaceRightOperand(rightOperand.transform(transformer, data)) }
+inline fun <D> FirBinaryLogicExpression.transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression  = 
+    apply { replaceRightOperand(rightOperand.transform(transformer, data)) }

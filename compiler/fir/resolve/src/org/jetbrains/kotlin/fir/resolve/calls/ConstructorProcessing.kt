@@ -204,7 +204,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
     if (newReturnType == null && newParameterTypes.all { it == null }) return samConstructorForClass
 
     val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(namedSymbol, expansionRegularClass.classId)
-
+    @Suppress("UNCHECKED_CAST")
     return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
         session, symbolForOverride, samConstructorForClass,
         newDispatchReceiverType = null,

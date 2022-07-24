@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -78,35 +79,35 @@ abstract class FirErrorProperty : FirVariable(), FirDiagnosticHolder {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
 
-inline fun <D> FirErrorProperty.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformStatus(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformStatus(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceInitializer(initializer?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformDelegate(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformDelegate(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceDelegate(delegate?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformGetter(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceGetter(getter?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformGetter(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceGetter(getter?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformSetter(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceSetter(setter?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformSetter(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceSetter(setter?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceBackingField(backingField?.transform(transformer, data)) }
 
-inline fun <D> FirErrorProperty.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirErrorProperty.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }

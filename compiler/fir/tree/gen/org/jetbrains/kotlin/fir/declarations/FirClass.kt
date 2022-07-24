@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -53,17 +54,17 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
 
-inline fun <D> FirClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirClass.transformStatus(transformer: FirTransformer<D>, data: D): FirClass 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirClass.transformStatus(transformer: FirTransformer<D>, data: D): FirClass  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass 
-     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+inline fun <D> FirClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass  = 
+    apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
 
-inline fun <D> FirClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass 
-     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+inline fun <D> FirClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass  = 
+    apply { replaceDeclarations(declarations.transform(transformer, data)) }
 
-inline fun <D> FirClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }

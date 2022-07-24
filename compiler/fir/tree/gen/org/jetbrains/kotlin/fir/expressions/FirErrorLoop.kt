@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -35,14 +36,14 @@ abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
     abstract override fun replaceLabel(newLabel: FirLabel?)
 }
 
-inline fun <D> FirErrorLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirErrorLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirErrorLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop 
-     = apply { replaceBlock(block.transform(transformer, data)) }
+inline fun <D> FirErrorLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop  = 
+    apply { replaceBlock(block.transform(transformer, data)) }
 
-inline fun <D> FirErrorLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop 
-     = apply { replaceCondition(condition.transform(transformer, data)) }
+inline fun <D> FirErrorLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop  = 
+    apply { replaceCondition(condition.transform(transformer, data)) }
 
-inline fun <D> FirErrorLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoop 
-     = apply { replaceLabel(label?.transform(transformer, data)) }
+inline fun <D> FirErrorLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoop  = 
+    apply { replaceLabel(label?.transform(transformer, data)) }

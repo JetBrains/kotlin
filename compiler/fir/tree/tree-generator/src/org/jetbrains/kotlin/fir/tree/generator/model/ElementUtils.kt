@@ -93,7 +93,7 @@ infix fun FieldSet.with(set: FieldSet): FieldSet {
     return this + set
 }
 
-fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = copy().apply {
+fun Field.withTransform(): Field = copy().apply {
 }
 
 fun Field.withReplace(): Field = copy().apply {

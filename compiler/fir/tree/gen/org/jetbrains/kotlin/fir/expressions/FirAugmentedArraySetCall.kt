@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -35,14 +36,14 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 }
 
-inline fun <D> FirAugmentedArraySetCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAugmentedArraySetCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAugmentedArraySetCall.transformLhsGetCall(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
-     = apply { replaceLhsGetCall(lhsGetCall.transform(transformer, data)) }
+inline fun <D> FirAugmentedArraySetCall.transformLhsGetCall(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall  = 
+    apply { replaceLhsGetCall(lhsGetCall.transform(transformer, data)) }
 
-inline fun <D> FirAugmentedArraySetCall.transformRhs(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
-     = apply { replaceRhs(rhs.transform(transformer, data)) }
+inline fun <D> FirAugmentedArraySetCall.transformRhs(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall  = 
+    apply { replaceRhs(rhs.transform(transformer, data)) }
 
-inline fun <D> FirAugmentedArraySetCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirAugmentedArraySetCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -32,14 +33,14 @@ abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
     abstract fun replaceDelegateProvider(newDelegateProvider: FirExpression)
 }
 
-inline fun <D> FirWrappedDelegateExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirWrappedDelegateExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirWrappedDelegateExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirWrappedDelegateExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirWrappedDelegateExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
-     = apply { replaceExpression(expression.transform(transformer, data)) }
+inline fun <D> FirWrappedDelegateExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression  = 
+    apply { replaceExpression(expression.transform(transformer, data)) }
 
-inline fun <D> FirWrappedDelegateExpression.transformDelegateProvider(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
-     = apply { replaceDelegateProvider(delegateProvider.transform(transformer, data)) }
+inline fun <D> FirWrappedDelegateExpression.transformDelegateProvider(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression  = 
+    apply { replaceDelegateProvider(delegateProvider.transform(transformer, data)) }

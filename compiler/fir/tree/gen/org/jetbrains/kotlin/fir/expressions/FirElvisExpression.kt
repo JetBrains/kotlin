@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -36,17 +37,17 @@ abstract class FirElvisExpression : FirExpression(), FirResolvable {
     abstract fun replaceRhs(newRhs: FirExpression)
 }
 
-inline fun <D> FirElvisExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirElvisExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirElvisExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirElvisExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirElvisExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirElvisExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirElvisExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpression 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirElvisExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpression  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirElvisExpression.transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpression 
-     = apply { replaceLhs(lhs.transform(transformer, data)) }
+inline fun <D> FirElvisExpression.transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpression  = 
+    apply { replaceLhs(lhs.transform(transformer, data)) }
 
-inline fun <D> FirElvisExpression.transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpression 
-     = apply { replaceRhs(rhs.transform(transformer, data)) }
+inline fun <D> FirElvisExpression.transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpression  = 
+    apply { replaceRhs(rhs.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -56,20 +57,20 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 }
 
-inline fun <D> FirAnonymousObject.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousObject.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousObject.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousObject.transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceDeclarations(declarations.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousObject.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousObject.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirAnonymousObject.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObject  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }

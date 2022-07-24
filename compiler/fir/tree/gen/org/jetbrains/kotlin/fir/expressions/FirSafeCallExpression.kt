@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -34,14 +35,14 @@ abstract class FirSafeCallExpression : FirExpression() {
     abstract fun replaceSelector(newSelector: FirStatement)
 }
 
-inline fun <D> FirSafeCallExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirSafeCallExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirSafeCallExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirSafeCallExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirSafeCallExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirSafeCallExpression.transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
-     = apply { replaceReceiver(receiver.transform(transformer, data)) }
+inline fun <D> FirSafeCallExpression.transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpression  = 
+    apply { replaceReceiver(receiver.transform(transformer, data)) }
 
-inline fun <D> FirSafeCallExpression.transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
-     = apply { replaceSelector(selector.transform(transformer, data)) }
+inline fun <D> FirSafeCallExpression.transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpression  = 
+    apply { replaceSelector(selector.transform(transformer, data)) }

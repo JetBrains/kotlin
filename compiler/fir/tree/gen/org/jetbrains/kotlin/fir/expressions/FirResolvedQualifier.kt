@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -45,11 +46,11 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 }
 
-inline fun <D> FirResolvedQualifier.transformTypeRef(transformer: FirTransformer<D>, data: D): FirResolvedQualifier 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirResolvedQualifier.transformTypeRef(transformer: FirTransformer<D>, data: D): FirResolvedQualifier  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirResolvedQualifier.transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedQualifier 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirResolvedQualifier.transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedQualifier  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirResolvedQualifier.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirResolvedQualifier.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }

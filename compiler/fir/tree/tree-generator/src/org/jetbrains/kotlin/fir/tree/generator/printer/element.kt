@@ -21,6 +21,7 @@ fun Element.generateCode(generationPath: File): GeneratedFile {
     val stringBuilder = StringBuilder()
     SmartPrinter(stringBuilder).apply {
         printCopyright()
+        println("@file:Suppress(\"NOTHING_TO_INLINE\")")
         println("package $packageName")
         println()
         val imports = collectImports()
@@ -121,12 +122,12 @@ fun SmartPrinter.printElement(element: Element) {
             val transformName = field.name.replaceFirstChar(Char::uppercaseChar)
             val returnType = typeWithArguments
             val transformTypeParameters = (listOf("D") + typeArguments.map { it.toString() }).joinToString(", ", "<", ">")
-            println("fun $transformTypeParameters $returnType.transform$transformName(transformer: FirTransformer<D>, data: D): $returnType${multipleUpperBoundsList()}")
+            println("fun $transformTypeParameters $returnType.transform$transformName(transformer: FirTransformer<D>, data: D): $returnType${multipleUpperBoundsList()} = ")
             withIndent {
                 // TODO WTF????!?!?!?!?!?
                 if (field.name == "subject" && element.type == "FirWhenExpression") {
                     println("""
-                    |= apply { if (subjectVariable != null) {
+                    |apply { if (subjectVariable != null) {
                     |        replaceSubjectVariable(subjectVariable?.transform(transformer, data))
                     |        replaceSubject(subjectVariable?.initializer)
                     |       } else {
@@ -135,7 +136,7 @@ fun SmartPrinter.printElement(element: Element) {
                     |       }
                     """.trimMargin())
                 } else {
-                    println(" = apply { replace${field.name.replaceFirstChar(Char::uppercaseChar)}(${field.name}${field.call()}transform(transformer, data)) }")
+                    println("apply { replace${field.name.replaceFirstChar(Char::uppercaseChar)}(${field.name}${field.call()}transform(transformer, data)) }")
                 }
             }
         }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -45,20 +46,20 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
 }
 
-inline fun <D> FirAnnotationCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirAnnotationCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAnnotationCall.transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceAnnotationTypeRef(annotationTypeRef.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceAnnotationTypeRef(annotationTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirAnnotationCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirAnnotationCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceArgumentList(argumentList.transform(transformer, data)) }
 
-inline fun <D> FirAnnotationCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirAnnotationCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

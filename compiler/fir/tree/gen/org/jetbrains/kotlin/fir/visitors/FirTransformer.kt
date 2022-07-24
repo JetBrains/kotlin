@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
@@ -1438,96 +1439,96 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedContractDescription(resolvedContractDescription, data)
     }
 
-    fun transformElementChildren(element: FirElement, data: D): FirElement  {
+    fun transformElementChildren(element: FirElement, data: D): FirElement {
         return element
     }
 
-    fun transformAnnotationContainerChildren(annotationContainer: FirAnnotationContainer, data: D): FirAnnotationContainer  {
+    fun transformAnnotationContainerChildren(annotationContainer: FirAnnotationContainer, data: D): FirAnnotationContainer {
         annotationContainer.transformAnnotations(this, data)
         return annotationContainer
     }
 
-    fun transformTypeRefChildren(typeRef: FirTypeRef, data: D): FirTypeRef  {
+    fun transformTypeRefChildren(typeRef: FirTypeRef, data: D): FirTypeRef {
         typeRef.transformAnnotations(this, data)
         return typeRef
     }
 
-    fun transformReferenceChildren(reference: FirReference, data: D): FirReference  {
+    fun transformReferenceChildren(reference: FirReference, data: D): FirReference {
         return reference
     }
 
-    fun transformLabelChildren(label: FirLabel, data: D): FirLabel  {
+    fun transformLabelChildren(label: FirLabel, data: D): FirLabel {
         return label
     }
 
-    fun transformResolvableChildren(resolvable: FirResolvable, data: D): FirResolvable  {
+    fun transformResolvableChildren(resolvable: FirResolvable, data: D): FirResolvable {
         resolvable.transformCalleeReference(this, data)
         return resolvable
     }
 
-    fun transformTargetElementChildren(targetElement: FirTargetElement, data: D): FirTargetElement  {
+    fun transformTargetElementChildren(targetElement: FirTargetElement, data: D): FirTargetElement {
         return targetElement
     }
 
-    fun transformDeclarationStatusChildren(declarationStatus: FirDeclarationStatus, data: D): FirDeclarationStatus  {
+    fun transformDeclarationStatusChildren(declarationStatus: FirDeclarationStatus, data: D): FirDeclarationStatus {
         return declarationStatus
     }
 
-    fun transformResolvedDeclarationStatusChildren(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): FirDeclarationStatus  {
+    fun transformResolvedDeclarationStatusChildren(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): FirDeclarationStatus {
         return resolvedDeclarationStatus
     }
 
-    fun transformControlFlowGraphOwnerChildren(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): FirControlFlowGraphOwner  {
+    fun transformControlFlowGraphOwnerChildren(controlFlowGraphOwner: FirControlFlowGraphOwner, data: D): FirControlFlowGraphOwner {
         controlFlowGraphOwner.transformControlFlowGraphReference(this, data)
         return controlFlowGraphOwner
     }
 
-    fun transformStatementChildren(statement: FirStatement, data: D): FirStatement  {
+    fun transformStatementChildren(statement: FirStatement, data: D): FirStatement {
         statement.transformAnnotations(this, data)
         return statement
     }
 
-    fun transformExpressionChildren(expression: FirExpression, data: D): FirStatement  {
+    fun transformExpressionChildren(expression: FirExpression, data: D): FirStatement {
         expression.transformTypeRef(this, data)
         expression.transformAnnotations(this, data)
         return expression
     }
 
-    fun transformStatementStubChildren(statementStub: FirStatementStub, data: D): FirStatement  {
+    fun transformStatementStubChildren(statementStub: FirStatementStub, data: D): FirStatement {
         statementStub.transformAnnotations(this, data)
         return statementStub
     }
 
-    fun transformContextReceiverChildren(contextReceiver: FirContextReceiver, data: D): FirContextReceiver  {
+    fun transformContextReceiverChildren(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
         contextReceiver.transformTypeRef(this, data)
         return contextReceiver
     }
 
-    fun transformDeclarationChildren(declaration: FirDeclaration, data: D): FirDeclaration  {
+    fun transformDeclarationChildren(declaration: FirDeclaration, data: D): FirDeclaration {
         declaration.transformAnnotations(this, data)
         return declaration
     }
 
-    fun transformTypeParameterRefsOwnerChildren(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner  {
+    fun transformTypeParameterRefsOwnerChildren(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): FirTypeParameterRefsOwner {
         typeParameterRefsOwner.transformTypeParameters(this, data)
         return typeParameterRefsOwner
     }
 
-    fun transformMemberDeclarationChildren(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration  {
+    fun transformMemberDeclarationChildren(memberDeclaration: FirMemberDeclaration, data: D): FirMemberDeclaration {
         memberDeclaration.transformAnnotations(this, data)
         memberDeclaration.transformTypeParameters(this, data)
         memberDeclaration.transformStatus(this, data)
         return memberDeclaration
     }
 
-    fun transformAnonymousInitializerChildren(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer  {
+    fun transformAnonymousInitializerChildren(anonymousInitializer: FirAnonymousInitializer, data: D): FirAnonymousInitializer {
         anonymousInitializer.transformAnnotations(this, data)
         anonymousInitializer.transformControlFlowGraphReference(this, data)
         anonymousInitializer.transformBody(this, data)
         return anonymousInitializer
     }
 
-    fun transformCallableDeclarationChildren(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration  {
+    fun transformCallableDeclarationChildren(callableDeclaration: FirCallableDeclaration, data: D): FirCallableDeclaration {
         callableDeclaration.transformAnnotations(this, data)
         callableDeclaration.transformTypeParameters(this, data)
         callableDeclaration.transformStatus(this, data)
@@ -1537,17 +1538,17 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return callableDeclaration
     }
 
-    fun transformTypeParameterRefChildren(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef  {
+    fun transformTypeParameterRefChildren(typeParameterRef: FirTypeParameterRef, data: D): FirTypeParameterRef {
         return typeParameterRef
     }
 
-    fun transformTypeParameterChildren(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef  {
+    fun transformTypeParameterChildren(typeParameter: FirTypeParameter, data: D): FirTypeParameterRef {
         typeParameter.transformBounds(this, data)
         typeParameter.transformAnnotations(this, data)
         return typeParameter
     }
 
-    fun transformVariableChildren(variable: FirVariable, data: D): FirStatement  {
+    fun transformVariableChildren(variable: FirVariable, data: D): FirStatement {
         variable.transformTypeParameters(this, data)
         variable.transformStatus(this, data)
         variable.transformReturnTypeRef(this, data)
@@ -1562,7 +1563,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return variable
     }
 
-    fun transformValueParameterChildren(valueParameter: FirValueParameter, data: D): FirStatement  {
+    fun transformValueParameterChildren(valueParameter: FirValueParameter, data: D): FirStatement {
         valueParameter.transformTypeParameters(this, data)
         valueParameter.transformStatus(this, data)
         valueParameter.transformReturnTypeRef(this, data)
@@ -1579,7 +1580,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return valueParameter
     }
 
-    fun transformPropertyChildren(property: FirProperty, data: D): FirStatement  {
+    fun transformPropertyChildren(property: FirProperty, data: D): FirStatement {
         property.transformStatus(this, data)
         property.transformReturnTypeRef(this, data)
         property.transformReceiverTypeRef(this, data)
@@ -1595,7 +1596,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return property
     }
 
-    fun transformFieldChildren(field: FirField, data: D): FirStatement  {
+    fun transformFieldChildren(field: FirField, data: D): FirStatement {
         field.transformTypeParameters(this, data)
         field.transformStatus(this, data)
         field.transformReturnTypeRef(this, data)
@@ -1611,7 +1612,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return field
     }
 
-    fun transformEnumEntryChildren(enumEntry: FirEnumEntry, data: D): FirStatement  {
+    fun transformEnumEntryChildren(enumEntry: FirEnumEntry, data: D): FirStatement {
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformStatus(this, data)
         enumEntry.transformReturnTypeRef(this, data)
@@ -1626,14 +1627,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return enumEntry
     }
 
-    fun transformClassLikeDeclarationChildren(classLikeDeclaration: FirClassLikeDeclaration, data: D): FirStatement  {
+    fun transformClassLikeDeclarationChildren(classLikeDeclaration: FirClassLikeDeclaration, data: D): FirStatement {
         classLikeDeclaration.transformAnnotations(this, data)
         classLikeDeclaration.transformTypeParameters(this, data)
         classLikeDeclaration.transformStatus(this, data)
         return classLikeDeclaration
     }
 
-    fun transformClassChildren(klass: FirClass, data: D): FirStatement  {
+    fun transformClassChildren(klass: FirClass, data: D): FirStatement {
         klass.transformTypeParameters(this, data)
         klass.transformStatus(this, data)
         klass.transformSuperTypeRefs(this, data)
@@ -1642,7 +1643,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return klass
     }
 
-    fun transformRegularClassChildren(regularClass: FirRegularClass, data: D): FirStatement  {
+    fun transformRegularClassChildren(regularClass: FirRegularClass, data: D): FirStatement {
         regularClass.transformTypeParameters(this, data)
         regularClass.transformStatus(this, data)
         regularClass.transformDeclarations(this, data)
@@ -1653,7 +1654,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return regularClass
     }
 
-    fun transformTypeAliasChildren(typeAlias: FirTypeAlias, data: D): FirStatement  {
+    fun transformTypeAliasChildren(typeAlias: FirTypeAlias, data: D): FirStatement {
         typeAlias.transformStatus(this, data)
         typeAlias.transformTypeParameters(this, data)
         typeAlias.transformExpandedTypeRef(this, data)
@@ -1661,7 +1662,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return typeAlias
     }
 
-    fun transformFunctionChildren(function: FirFunction, data: D): FirStatement  {
+    fun transformFunctionChildren(function: FirFunction, data: D): FirStatement {
         function.transformAnnotations(this, data)
         function.transformTypeParameters(this, data)
         function.transformStatus(this, data)
@@ -1674,12 +1675,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return function
     }
 
-    fun transformContractDescriptionOwnerChildren(contractDescriptionOwner: FirContractDescriptionOwner, data: D): FirContractDescriptionOwner  {
+    fun transformContractDescriptionOwnerChildren(contractDescriptionOwner: FirContractDescriptionOwner, data: D): FirContractDescriptionOwner {
         contractDescriptionOwner.transformContractDescription(this, data)
         return contractDescriptionOwner
     }
 
-    fun transformSimpleFunctionChildren(simpleFunction: FirSimpleFunction, data: D): FirStatement  {
+    fun transformSimpleFunctionChildren(simpleFunction: FirSimpleFunction, data: D): FirStatement {
         simpleFunction.transformStatus(this, data)
         simpleFunction.transformReturnTypeRef(this, data)
         simpleFunction.transformReceiverTypeRef(this, data)
@@ -1693,7 +1694,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return simpleFunction
     }
 
-    fun transformPropertyAccessorChildren(propertyAccessor: FirPropertyAccessor, data: D): FirStatement  {
+    fun transformPropertyAccessorChildren(propertyAccessor: FirPropertyAccessor, data: D): FirStatement {
         propertyAccessor.transformStatus(this, data)
         propertyAccessor.transformReturnTypeRef(this, data)
         propertyAccessor.transformReceiverTypeRef(this, data)
@@ -1707,7 +1708,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return propertyAccessor
     }
 
-    fun transformBackingFieldChildren(backingField: FirBackingField, data: D): FirStatement  {
+    fun transformBackingFieldChildren(backingField: FirBackingField, data: D): FirStatement {
         backingField.transformReturnTypeRef(this, data)
         backingField.transformReceiverTypeRef(this, data)
         backingField.transformContextReceivers(this, data)
@@ -1722,7 +1723,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return backingField
     }
 
-    fun transformConstructorChildren(constructor: FirConstructor, data: D): FirStatement  {
+    fun transformConstructorChildren(constructor: FirConstructor, data: D): FirStatement {
         constructor.transformTypeParameters(this, data)
         constructor.transformStatus(this, data)
         constructor.transformReturnTypeRef(this, data)
@@ -1736,7 +1737,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return constructor
     }
 
-    fun transformFileChildren(file: FirFile, data: D): FirFile  {
+    fun transformFileChildren(file: FirFile, data: D): FirFile {
         file.transformAnnotations(this, data)
         file.transformPackageDirective(this, data)
         file.transformImports(this, data)
@@ -1744,11 +1745,11 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return file
     }
 
-    fun transformPackageDirectiveChildren(packageDirective: FirPackageDirective, data: D): FirPackageDirective  {
+    fun transformPackageDirectiveChildren(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
         return packageDirective
     }
 
-    fun transformAnonymousFunctionChildren(anonymousFunction: FirAnonymousFunction, data: D): FirStatement  {
+    fun transformAnonymousFunctionChildren(anonymousFunction: FirAnonymousFunction, data: D): FirStatement {
         anonymousFunction.transformAnnotations(this, data)
         anonymousFunction.transformStatus(this, data)
         anonymousFunction.transformReturnTypeRef(this, data)
@@ -1763,14 +1764,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return anonymousFunction
     }
 
-    fun transformAnonymousFunctionExpressionChildren(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): FirStatement  {
+    fun transformAnonymousFunctionExpressionChildren(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): FirStatement {
         anonymousFunctionExpression.transformTypeRef(this, data)
         anonymousFunctionExpression.transformAnnotations(this, data)
         anonymousFunctionExpression.transformAnonymousFunction(this, data)
         return anonymousFunctionExpression
     }
 
-    fun transformAnonymousObjectChildren(anonymousObject: FirAnonymousObject, data: D): FirStatement  {
+    fun transformAnonymousObjectChildren(anonymousObject: FirAnonymousObject, data: D): FirStatement {
         anonymousObject.transformTypeParameters(this, data)
         anonymousObject.transformStatus(this, data)
         anonymousObject.transformSuperTypeRefs(this, data)
@@ -1780,32 +1781,32 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return anonymousObject
     }
 
-    fun transformAnonymousObjectExpressionChildren(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): FirStatement  {
+    fun transformAnonymousObjectExpressionChildren(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): FirStatement {
         anonymousObjectExpression.transformTypeRef(this, data)
         anonymousObjectExpression.transformAnnotations(this, data)
         anonymousObjectExpression.transformAnonymousObject(this, data)
         return anonymousObjectExpression
     }
 
-    fun transformDiagnosticHolderChildren(diagnosticHolder: FirDiagnosticHolder, data: D): FirDiagnosticHolder  {
+    fun transformDiagnosticHolderChildren(diagnosticHolder: FirDiagnosticHolder, data: D): FirDiagnosticHolder {
         return diagnosticHolder
     }
 
-    fun transformImportChildren(import: FirImport, data: D): FirImport  {
+    fun transformImportChildren(import: FirImport, data: D): FirImport {
         return import
     }
 
-    fun transformResolvedImportChildren(resolvedImport: FirResolvedImport, data: D): FirImport  {
+    fun transformResolvedImportChildren(resolvedImport: FirResolvedImport, data: D): FirImport {
         resolvedImport.transformDelegate(this, data)
         return resolvedImport
     }
 
-    fun transformErrorImportChildren(errorImport: FirErrorImport, data: D): FirImport  {
+    fun transformErrorImportChildren(errorImport: FirErrorImport, data: D): FirImport {
         errorImport.transformDelegate(this, data)
         return errorImport
     }
 
-    fun transformLoopChildren(loop: FirLoop, data: D): FirStatement  {
+    fun transformLoopChildren(loop: FirLoop, data: D): FirStatement {
         loop.transformAnnotations(this, data)
         loop.transformBlock(this, data)
         loop.transformCondition(this, data)
@@ -1813,7 +1814,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return loop
     }
 
-    fun transformErrorLoopChildren(errorLoop: FirErrorLoop, data: D): FirStatement  {
+    fun transformErrorLoopChildren(errorLoop: FirErrorLoop, data: D): FirStatement {
         errorLoop.transformAnnotations(this, data)
         errorLoop.transformBlock(this, data)
         errorLoop.transformCondition(this, data)
@@ -1821,7 +1822,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return errorLoop
     }
 
-    fun transformDoWhileLoopChildren(doWhileLoop: FirDoWhileLoop, data: D): FirStatement  {
+    fun transformDoWhileLoopChildren(doWhileLoop: FirDoWhileLoop, data: D): FirStatement {
         doWhileLoop.transformAnnotations(this, data)
         doWhileLoop.transformBlock(this, data)
         doWhileLoop.transformCondition(this, data)
@@ -1829,7 +1830,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return doWhileLoop
     }
 
-    fun transformWhileLoopChildren(whileLoop: FirWhileLoop, data: D): FirStatement  {
+    fun transformWhileLoopChildren(whileLoop: FirWhileLoop, data: D): FirStatement {
         whileLoop.transformAnnotations(this, data)
         whileLoop.transformLabel(this, data)
         whileLoop.transformCondition(this, data)
@@ -1837,14 +1838,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return whileLoop
     }
 
-    fun transformBlockChildren(block: FirBlock, data: D): FirStatement  {
+    fun transformBlockChildren(block: FirBlock, data: D): FirStatement {
         block.transformAnnotations(this, data)
         block.transformStatements(this, data)
         block.transformTypeRef(this, data)
         return block
     }
 
-    fun transformBinaryLogicExpressionChildren(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement  {
+    fun transformBinaryLogicExpressionChildren(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
         binaryLogicExpression.transformTypeRef(this, data)
         binaryLogicExpression.transformAnnotations(this, data)
         binaryLogicExpression.transformLeftOperand(this, data)
@@ -1852,37 +1853,37 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return binaryLogicExpression
     }
 
-    fun <E : FirTargetElement> transformJumpChildren(jump: FirJump<E>, data: D): FirStatement  {
+    fun <E : FirTargetElement> transformJumpChildren(jump: FirJump<E>, data: D): FirStatement {
         jump.transformTypeRef(this, data)
         jump.transformAnnotations(this, data)
         return jump
     }
 
-    fun transformLoopJumpChildren(loopJump: FirLoopJump, data: D): FirStatement  {
+    fun transformLoopJumpChildren(loopJump: FirLoopJump, data: D): FirStatement {
         loopJump.transformTypeRef(this, data)
         loopJump.transformAnnotations(this, data)
         return loopJump
     }
 
-    fun transformBreakExpressionChildren(breakExpression: FirBreakExpression, data: D): FirStatement  {
+    fun transformBreakExpressionChildren(breakExpression: FirBreakExpression, data: D): FirStatement {
         breakExpression.transformTypeRef(this, data)
         breakExpression.transformAnnotations(this, data)
         return breakExpression
     }
 
-    fun transformContinueExpressionChildren(continueExpression: FirContinueExpression, data: D): FirStatement  {
+    fun transformContinueExpressionChildren(continueExpression: FirContinueExpression, data: D): FirStatement {
         continueExpression.transformTypeRef(this, data)
         continueExpression.transformAnnotations(this, data)
         return continueExpression
     }
 
-    fun transformCatchChildren(catch: FirCatch, data: D): FirCatch  {
+    fun transformCatchChildren(catch: FirCatch, data: D): FirCatch {
         catch.transformParameter(this, data)
         catch.transformBlock(this, data)
         return catch
     }
 
-    fun transformTryExpressionChildren(tryExpression: FirTryExpression, data: D): FirStatement  {
+    fun transformTryExpressionChildren(tryExpression: FirTryExpression, data: D): FirStatement {
         tryExpression.transformTypeRef(this, data)
         tryExpression.transformAnnotations(this, data)
         tryExpression.transformCalleeReference(this, data)
@@ -1892,41 +1893,41 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return tryExpression
     }
 
-    fun <T> transformConstExpressionChildren(constExpression: FirConstExpression<T>, data: D): FirStatement  {
+    fun <T> transformConstExpressionChildren(constExpression: FirConstExpression<T>, data: D): FirStatement {
         constExpression.transformTypeRef(this, data)
         constExpression.transformAnnotations(this, data)
         return constExpression
     }
 
-    fun transformTypeProjectionChildren(typeProjection: FirTypeProjection, data: D): FirTypeProjection  {
+    fun transformTypeProjectionChildren(typeProjection: FirTypeProjection, data: D): FirTypeProjection {
         return typeProjection
     }
 
-    fun transformStarProjectionChildren(starProjection: FirStarProjection, data: D): FirTypeProjection  {
+    fun transformStarProjectionChildren(starProjection: FirStarProjection, data: D): FirTypeProjection {
         return starProjection
     }
 
-    fun transformPlaceholderProjectionChildren(placeholderProjection: FirPlaceholderProjection, data: D): FirTypeProjection  {
+    fun transformPlaceholderProjectionChildren(placeholderProjection: FirPlaceholderProjection, data: D): FirTypeProjection {
         return placeholderProjection
     }
 
-    fun transformTypeProjectionWithVarianceChildren(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): FirTypeProjection  {
+    fun transformTypeProjectionWithVarianceChildren(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): FirTypeProjection {
         typeProjectionWithVariance.transformTypeRef(this, data)
         return typeProjectionWithVariance
     }
 
-    fun transformArgumentListChildren(argumentList: FirArgumentList, data: D): FirArgumentList  {
+    fun transformArgumentListChildren(argumentList: FirArgumentList, data: D): FirArgumentList {
         argumentList.transformArguments(this, data)
         return argumentList
     }
 
-    fun transformCallChildren(call: FirCall, data: D): FirStatement  {
+    fun transformCallChildren(call: FirCall, data: D): FirStatement {
         call.transformAnnotations(this, data)
         call.transformArgumentList(this, data)
         return call
     }
 
-    fun transformAnnotationChildren(annotation: FirAnnotation, data: D): FirStatement  {
+    fun transformAnnotationChildren(annotation: FirAnnotation, data: D): FirStatement {
         annotation.transformTypeRef(this, data)
         annotation.transformAnnotations(this, data)
         annotation.transformAnnotationTypeRef(this, data)
@@ -1935,7 +1936,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return annotation
     }
 
-    fun transformAnnotationCallChildren(annotationCall: FirAnnotationCall, data: D): FirStatement  {
+    fun transformAnnotationCallChildren(annotationCall: FirAnnotationCall, data: D): FirStatement {
         annotationCall.transformTypeRef(this, data)
         annotationCall.transformAnnotations(this, data)
         annotationCall.transformAnnotationTypeRef(this, data)
@@ -1945,18 +1946,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return annotationCall
     }
 
-    fun transformAnnotationArgumentMappingChildren(annotationArgumentMapping: FirAnnotationArgumentMapping, data: D): FirAnnotationArgumentMapping  {
+    fun transformAnnotationArgumentMappingChildren(annotationArgumentMapping: FirAnnotationArgumentMapping, data: D): FirAnnotationArgumentMapping {
         return annotationArgumentMapping
     }
 
-    fun transformComparisonExpressionChildren(comparisonExpression: FirComparisonExpression, data: D): FirStatement  {
+    fun transformComparisonExpressionChildren(comparisonExpression: FirComparisonExpression, data: D): FirStatement {
         comparisonExpression.transformTypeRef(this, data)
         comparisonExpression.transformAnnotations(this, data)
         comparisonExpression.transformCompareToCall(this, data)
         return comparisonExpression
     }
 
-    fun transformTypeOperatorCallChildren(typeOperatorCall: FirTypeOperatorCall, data: D): FirStatement  {
+    fun transformTypeOperatorCallChildren(typeOperatorCall: FirTypeOperatorCall, data: D): FirStatement {
         typeOperatorCall.transformTypeRef(this, data)
         typeOperatorCall.transformAnnotations(this, data)
         typeOperatorCall.transformArgumentList(this, data)
@@ -1964,21 +1965,21 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return typeOperatorCall
     }
 
-    fun transformAssignmentOperatorStatementChildren(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): FirStatement  {
+    fun transformAssignmentOperatorStatementChildren(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): FirStatement {
         assignmentOperatorStatement.transformAnnotations(this, data)
         assignmentOperatorStatement.transformLeftArgument(this, data)
         assignmentOperatorStatement.transformRightArgument(this, data)
         return assignmentOperatorStatement
     }
 
-    fun transformEqualityOperatorCallChildren(equalityOperatorCall: FirEqualityOperatorCall, data: D): FirStatement  {
+    fun transformEqualityOperatorCallChildren(equalityOperatorCall: FirEqualityOperatorCall, data: D): FirStatement {
         equalityOperatorCall.transformTypeRef(this, data)
         equalityOperatorCall.transformAnnotations(this, data)
         equalityOperatorCall.transformArgumentList(this, data)
         return equalityOperatorCall
     }
 
-    fun transformWhenExpressionChildren(whenExpression: FirWhenExpression, data: D): FirStatement  {
+    fun transformWhenExpressionChildren(whenExpression: FirWhenExpression, data: D): FirStatement {
         whenExpression.transformTypeRef(this, data)
         whenExpression.transformAnnotations(this, data)
         whenExpression.transformCalleeReference(this, data)
@@ -1987,18 +1988,18 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return whenExpression
     }
 
-    fun transformWhenBranchChildren(whenBranch: FirWhenBranch, data: D): FirWhenBranch  {
+    fun transformWhenBranchChildren(whenBranch: FirWhenBranch, data: D): FirWhenBranch {
         whenBranch.transformCondition(this, data)
         whenBranch.transformResult(this, data)
         return whenBranch
     }
 
-    fun transformContextReceiverArgumentListOwnerChildren(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): FirContextReceiverArgumentListOwner  {
+    fun transformContextReceiverArgumentListOwnerChildren(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): FirContextReceiverArgumentListOwner {
         contextReceiverArgumentListOwner.transformContextReceiverArguments(this, data)
         return contextReceiverArgumentListOwner
     }
 
-    fun transformQualifiedAccessChildren(qualifiedAccess: FirQualifiedAccess, data: D): FirStatement  {
+    fun transformQualifiedAccessChildren(qualifiedAccess: FirQualifiedAccess, data: D): FirStatement {
         qualifiedAccess.transformCalleeReference(this, data)
         qualifiedAccess.transformAnnotations(this, data)
         qualifiedAccess.transformContextReceiverArguments(this, data)
@@ -2009,7 +2010,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return qualifiedAccess
     }
 
-    fun transformCheckNotNullCallChildren(checkNotNullCall: FirCheckNotNullCall, data: D): FirStatement  {
+    fun transformCheckNotNullCallChildren(checkNotNullCall: FirCheckNotNullCall, data: D): FirStatement {
         checkNotNullCall.transformTypeRef(this, data)
         checkNotNullCall.transformAnnotations(this, data)
         checkNotNullCall.transformArgumentList(this, data)
@@ -2017,7 +2018,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return checkNotNullCall
     }
 
-    fun transformElvisExpressionChildren(elvisExpression: FirElvisExpression, data: D): FirStatement  {
+    fun transformElvisExpressionChildren(elvisExpression: FirElvisExpression, data: D): FirStatement {
         elvisExpression.transformTypeRef(this, data)
         elvisExpression.transformAnnotations(this, data)
         elvisExpression.transformCalleeReference(this, data)
@@ -2026,14 +2027,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return elvisExpression
     }
 
-    fun transformArrayOfCallChildren(arrayOfCall: FirArrayOfCall, data: D): FirStatement  {
+    fun transformArrayOfCallChildren(arrayOfCall: FirArrayOfCall, data: D): FirStatement {
         arrayOfCall.transformTypeRef(this, data)
         arrayOfCall.transformAnnotations(this, data)
         arrayOfCall.transformArgumentList(this, data)
         return arrayOfCall
     }
 
-    fun transformAugmentedArraySetCallChildren(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): FirStatement  {
+    fun transformAugmentedArraySetCallChildren(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): FirStatement {
         augmentedArraySetCall.transformAnnotations(this, data)
         augmentedArraySetCall.transformLhsGetCall(this, data)
         augmentedArraySetCall.transformRhs(this, data)
@@ -2041,21 +2042,21 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return augmentedArraySetCall
     }
 
-    fun transformClassReferenceExpressionChildren(classReferenceExpression: FirClassReferenceExpression, data: D): FirStatement  {
+    fun transformClassReferenceExpressionChildren(classReferenceExpression: FirClassReferenceExpression, data: D): FirStatement {
         classReferenceExpression.transformTypeRef(this, data)
         classReferenceExpression.transformAnnotations(this, data)
         classReferenceExpression.transformClassTypeRef(this, data)
         return classReferenceExpression
     }
 
-    fun transformErrorExpressionChildren(errorExpression: FirErrorExpression, data: D): FirStatement  {
+    fun transformErrorExpressionChildren(errorExpression: FirErrorExpression, data: D): FirStatement {
         errorExpression.transformTypeRef(this, data)
         errorExpression.transformAnnotations(this, data)
         errorExpression.transformExpression(this, data)
         return errorExpression
     }
 
-    fun transformErrorFunctionChildren(errorFunction: FirErrorFunction, data: D): FirStatement  {
+    fun transformErrorFunctionChildren(errorFunction: FirErrorFunction, data: D): FirStatement {
         errorFunction.transformAnnotations(this, data)
         errorFunction.transformStatus(this, data)
         errorFunction.transformReturnTypeRef(this, data)
@@ -2068,7 +2069,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return errorFunction
     }
 
-    fun transformErrorPropertyChildren(errorProperty: FirErrorProperty, data: D): FirStatement  {
+    fun transformErrorPropertyChildren(errorProperty: FirErrorProperty, data: D): FirStatement {
         errorProperty.transformTypeParameters(this, data)
         errorProperty.transformStatus(this, data)
         errorProperty.transformReturnTypeRef(this, data)
@@ -2083,7 +2084,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return errorProperty
     }
 
-    fun transformQualifiedAccessExpressionChildren(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): FirStatement  {
+    fun transformQualifiedAccessExpressionChildren(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): FirStatement {
         qualifiedAccessExpression.transformTypeRef(this, data)
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformCalleeReference(this, data)
@@ -2095,7 +2096,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return qualifiedAccessExpression
     }
 
-    fun transformPropertyAccessExpressionChildren(propertyAccessExpression: FirPropertyAccessExpression, data: D): FirStatement  {
+    fun transformPropertyAccessExpressionChildren(propertyAccessExpression: FirPropertyAccessExpression, data: D): FirStatement {
         propertyAccessExpression.transformTypeRef(this, data)
         propertyAccessExpression.transformAnnotations(this, data)
         propertyAccessExpression.transformCalleeReference(this, data)
@@ -2107,7 +2108,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return propertyAccessExpression
     }
 
-    fun transformFunctionCallChildren(functionCall: FirFunctionCall, data: D): FirStatement  {
+    fun transformFunctionCallChildren(functionCall: FirFunctionCall, data: D): FirStatement {
         functionCall.transformTypeRef(this, data)
         functionCall.transformAnnotations(this, data)
         functionCall.transformContextReceiverArguments(this, data)
@@ -2120,7 +2121,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return functionCall
     }
 
-    fun transformIntegerLiteralOperatorCallChildren(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: D): FirStatement  {
+    fun transformIntegerLiteralOperatorCallChildren(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: D): FirStatement {
         integerLiteralOperatorCall.transformTypeRef(this, data)
         integerLiteralOperatorCall.transformAnnotations(this, data)
         integerLiteralOperatorCall.transformContextReceiverArguments(this, data)
@@ -2133,7 +2134,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return integerLiteralOperatorCall
     }
 
-    fun transformImplicitInvokeCallChildren(implicitInvokeCall: FirImplicitInvokeCall, data: D): FirStatement  {
+    fun transformImplicitInvokeCallChildren(implicitInvokeCall: FirImplicitInvokeCall, data: D): FirStatement {
         implicitInvokeCall.transformTypeRef(this, data)
         implicitInvokeCall.transformAnnotations(this, data)
         implicitInvokeCall.transformContextReceiverArguments(this, data)
@@ -2146,7 +2147,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return implicitInvokeCall
     }
 
-    fun transformDelegatedConstructorCallChildren(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): FirStatement  {
+    fun transformDelegatedConstructorCallChildren(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): FirStatement {
         delegatedConstructorCall.transformAnnotations(this, data)
         delegatedConstructorCall.transformArgumentList(this, data)
         delegatedConstructorCall.transformContextReceiverArguments(this, data)
@@ -2156,7 +2157,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return delegatedConstructorCall
     }
 
-    fun transformComponentCallChildren(componentCall: FirComponentCall, data: D): FirStatement  {
+    fun transformComponentCallChildren(componentCall: FirComponentCall, data: D): FirStatement {
         componentCall.transformTypeRef(this, data)
         componentCall.transformAnnotations(this, data)
         componentCall.transformContextReceiverArguments(this, data)
@@ -2169,7 +2170,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return componentCall
     }
 
-    fun transformCallableReferenceAccessChildren(callableReferenceAccess: FirCallableReferenceAccess, data: D): FirStatement  {
+    fun transformCallableReferenceAccessChildren(callableReferenceAccess: FirCallableReferenceAccess, data: D): FirStatement {
         callableReferenceAccess.transformTypeRef(this, data)
         callableReferenceAccess.transformAnnotations(this, data)
         callableReferenceAccess.transformContextReceiverArguments(this, data)
@@ -2181,7 +2182,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return callableReferenceAccess
     }
 
-    fun transformThisReceiverExpressionChildren(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement  {
+    fun transformThisReceiverExpressionChildren(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement {
         thisReceiverExpression.transformTypeRef(this, data)
         thisReceiverExpression.transformAnnotations(this, data)
         thisReceiverExpression.transformContextReceiverArguments(this, data)
@@ -2193,7 +2194,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return thisReceiverExpression
     }
 
-    fun transformSafeCallExpressionChildren(safeCallExpression: FirSafeCallExpression, data: D): FirStatement  {
+    fun transformSafeCallExpressionChildren(safeCallExpression: FirSafeCallExpression, data: D): FirStatement {
         safeCallExpression.transformTypeRef(this, data)
         safeCallExpression.transformAnnotations(this, data)
         safeCallExpression.transformReceiver(this, data)
@@ -2201,55 +2202,55 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return safeCallExpression
     }
 
-    fun transformCheckedSafeCallSubjectChildren(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: D): FirStatement  {
+    fun transformCheckedSafeCallSubjectChildren(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: D): FirStatement {
         checkedSafeCallSubject.transformTypeRef(this, data)
         checkedSafeCallSubject.transformAnnotations(this, data)
         return checkedSafeCallSubject
     }
 
-    fun transformGetClassCallChildren(getClassCall: FirGetClassCall, data: D): FirStatement  {
+    fun transformGetClassCallChildren(getClassCall: FirGetClassCall, data: D): FirStatement {
         getClassCall.transformTypeRef(this, data)
         getClassCall.transformAnnotations(this, data)
         getClassCall.transformArgumentList(this, data)
         return getClassCall
     }
 
-    fun transformWrappedExpressionChildren(wrappedExpression: FirWrappedExpression, data: D): FirStatement  {
+    fun transformWrappedExpressionChildren(wrappedExpression: FirWrappedExpression, data: D): FirStatement {
         wrappedExpression.transformTypeRef(this, data)
         wrappedExpression.transformAnnotations(this, data)
         wrappedExpression.transformExpression(this, data)
         return wrappedExpression
     }
 
-    fun transformWrappedArgumentExpressionChildren(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): FirStatement  {
+    fun transformWrappedArgumentExpressionChildren(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): FirStatement {
         wrappedArgumentExpression.transformTypeRef(this, data)
         wrappedArgumentExpression.transformAnnotations(this, data)
         wrappedArgumentExpression.transformExpression(this, data)
         return wrappedArgumentExpression
     }
 
-    fun transformLambdaArgumentExpressionChildren(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement  {
+    fun transformLambdaArgumentExpressionChildren(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): FirStatement {
         lambdaArgumentExpression.transformTypeRef(this, data)
         lambdaArgumentExpression.transformAnnotations(this, data)
         lambdaArgumentExpression.transformExpression(this, data)
         return lambdaArgumentExpression
     }
 
-    fun transformSpreadArgumentExpressionChildren(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement  {
+    fun transformSpreadArgumentExpressionChildren(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): FirStatement {
         spreadArgumentExpression.transformTypeRef(this, data)
         spreadArgumentExpression.transformAnnotations(this, data)
         spreadArgumentExpression.transformExpression(this, data)
         return spreadArgumentExpression
     }
 
-    fun transformNamedArgumentExpressionChildren(namedArgumentExpression: FirNamedArgumentExpression, data: D): FirStatement  {
+    fun transformNamedArgumentExpressionChildren(namedArgumentExpression: FirNamedArgumentExpression, data: D): FirStatement {
         namedArgumentExpression.transformTypeRef(this, data)
         namedArgumentExpression.transformAnnotations(this, data)
         namedArgumentExpression.transformExpression(this, data)
         return namedArgumentExpression
     }
 
-    fun transformVarargArgumentsExpressionChildren(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): FirStatement  {
+    fun transformVarargArgumentsExpressionChildren(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): FirStatement {
         varargArgumentsExpression.transformTypeRef(this, data)
         varargArgumentsExpression.transformAnnotations(this, data)
         varargArgumentsExpression.transformArguments(this, data)
@@ -2257,48 +2258,48 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return varargArgumentsExpression
     }
 
-    fun transformResolvedQualifierChildren(resolvedQualifier: FirResolvedQualifier, data: D): FirStatement  {
+    fun transformResolvedQualifierChildren(resolvedQualifier: FirResolvedQualifier, data: D): FirStatement {
         resolvedQualifier.transformTypeRef(this, data)
         resolvedQualifier.transformAnnotations(this, data)
         resolvedQualifier.transformTypeArguments(this, data)
         return resolvedQualifier
     }
 
-    fun transformErrorResolvedQualifierChildren(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): FirStatement  {
+    fun transformErrorResolvedQualifierChildren(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): FirStatement {
         errorResolvedQualifier.transformTypeRef(this, data)
         errorResolvedQualifier.transformAnnotations(this, data)
         errorResolvedQualifier.transformTypeArguments(this, data)
         return errorResolvedQualifier
     }
 
-    fun transformResolvedReifiedParameterReferenceChildren(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: D): FirStatement  {
+    fun transformResolvedReifiedParameterReferenceChildren(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: D): FirStatement {
         resolvedReifiedParameterReference.transformTypeRef(this, data)
         resolvedReifiedParameterReference.transformAnnotations(this, data)
         return resolvedReifiedParameterReference
     }
 
-    fun transformReturnExpressionChildren(returnExpression: FirReturnExpression, data: D): FirStatement  {
+    fun transformReturnExpressionChildren(returnExpression: FirReturnExpression, data: D): FirStatement {
         returnExpression.transformTypeRef(this, data)
         returnExpression.transformAnnotations(this, data)
         returnExpression.transformResult(this, data)
         return returnExpression
     }
 
-    fun transformStringConcatenationCallChildren(stringConcatenationCall: FirStringConcatenationCall, data: D): FirStatement  {
+    fun transformStringConcatenationCallChildren(stringConcatenationCall: FirStringConcatenationCall, data: D): FirStatement {
         stringConcatenationCall.transformAnnotations(this, data)
         stringConcatenationCall.transformArgumentList(this, data)
         stringConcatenationCall.transformTypeRef(this, data)
         return stringConcatenationCall
     }
 
-    fun transformThrowExpressionChildren(throwExpression: FirThrowExpression, data: D): FirStatement  {
+    fun transformThrowExpressionChildren(throwExpression: FirThrowExpression, data: D): FirStatement {
         throwExpression.transformTypeRef(this, data)
         throwExpression.transformAnnotations(this, data)
         throwExpression.transformException(this, data)
         return throwExpression
     }
 
-    fun transformVariableAssignmentChildren(variableAssignment: FirVariableAssignment, data: D): FirStatement  {
+    fun transformVariableAssignmentChildren(variableAssignment: FirVariableAssignment, data: D): FirStatement {
         variableAssignment.transformCalleeReference(this, data)
         variableAssignment.transformAnnotations(this, data)
         variableAssignment.transformContextReceiverArguments(this, data)
@@ -2311,13 +2312,13 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return variableAssignment
     }
 
-    fun transformWhenSubjectExpressionChildren(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement  {
+    fun transformWhenSubjectExpressionChildren(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
         whenSubjectExpression.transformTypeRef(this, data)
         whenSubjectExpression.transformAnnotations(this, data)
         return whenSubjectExpression
     }
 
-    fun transformWrappedDelegateExpressionChildren(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement  {
+    fun transformWrappedDelegateExpressionChildren(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement {
         wrappedDelegateExpression.transformTypeRef(this, data)
         wrappedDelegateExpression.transformAnnotations(this, data)
         wrappedDelegateExpression.transformExpression(this, data)
@@ -2325,61 +2326,61 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return wrappedDelegateExpression
     }
 
-    fun transformNamedReferenceChildren(namedReference: FirNamedReference, data: D): FirReference  {
+    fun transformNamedReferenceChildren(namedReference: FirNamedReference, data: D): FirReference {
         return namedReference
     }
 
-    fun transformErrorNamedReferenceChildren(errorNamedReference: FirErrorNamedReference, data: D): FirReference  {
+    fun transformErrorNamedReferenceChildren(errorNamedReference: FirErrorNamedReference, data: D): FirReference {
         return errorNamedReference
     }
 
-    fun transformSuperReferenceChildren(superReference: FirSuperReference, data: D): FirReference  {
+    fun transformSuperReferenceChildren(superReference: FirSuperReference, data: D): FirReference {
         superReference.transformSuperTypeRef(this, data)
         return superReference
     }
 
-    fun transformThisReferenceChildren(thisReference: FirThisReference, data: D): FirReference  {
+    fun transformThisReferenceChildren(thisReference: FirThisReference, data: D): FirReference {
         return thisReference
     }
 
-    fun transformControlFlowGraphReferenceChildren(controlFlowGraphReference: FirControlFlowGraphReference, data: D): FirReference  {
+    fun transformControlFlowGraphReferenceChildren(controlFlowGraphReference: FirControlFlowGraphReference, data: D): FirReference {
         return controlFlowGraphReference
     }
 
-    fun transformResolvedNamedReferenceChildren(resolvedNamedReference: FirResolvedNamedReference, data: D): FirReference  {
+    fun transformResolvedNamedReferenceChildren(resolvedNamedReference: FirResolvedNamedReference, data: D): FirReference {
         return resolvedNamedReference
     }
 
-    fun transformDelegateFieldReferenceChildren(delegateFieldReference: FirDelegateFieldReference, data: D): FirReference  {
+    fun transformDelegateFieldReferenceChildren(delegateFieldReference: FirDelegateFieldReference, data: D): FirReference {
         return delegateFieldReference
     }
 
-    fun transformBackingFieldReferenceChildren(backingFieldReference: FirBackingFieldReference, data: D): FirReference  {
+    fun transformBackingFieldReferenceChildren(backingFieldReference: FirBackingFieldReference, data: D): FirReference {
         return backingFieldReference
     }
 
-    fun transformResolvedCallableReferenceChildren(resolvedCallableReference: FirResolvedCallableReference, data: D): FirReference  {
+    fun transformResolvedCallableReferenceChildren(resolvedCallableReference: FirResolvedCallableReference, data: D): FirReference {
         return resolvedCallableReference
     }
 
-    fun transformResolvedTypeRefChildren(resolvedTypeRef: FirResolvedTypeRef, data: D): FirTypeRef  {
+    fun transformResolvedTypeRefChildren(resolvedTypeRef: FirResolvedTypeRef, data: D): FirTypeRef {
         resolvedTypeRef.transformAnnotations(this, data)
         resolvedTypeRef.transformDelegatedTypeRef(this, data)
         return resolvedTypeRef
     }
 
-    fun transformErrorTypeRefChildren(errorTypeRef: FirErrorTypeRef, data: D): FirTypeRef  {
+    fun transformErrorTypeRefChildren(errorTypeRef: FirErrorTypeRef, data: D): FirTypeRef {
         errorTypeRef.transformAnnotations(this, data)
         errorTypeRef.transformDelegatedTypeRef(this, data)
         return errorTypeRef
     }
 
-    fun transformTypeRefWithNullabilityChildren(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef  {
+    fun transformTypeRefWithNullabilityChildren(typeRefWithNullability: FirTypeRefWithNullability, data: D): FirTypeRef {
         typeRefWithNullability.transformAnnotations(this, data)
         return typeRefWithNullability
     }
 
-    fun transformUserTypeRefChildren(userTypeRef: FirUserTypeRef, data: D): FirTypeRef  {
+    fun transformUserTypeRefChildren(userTypeRef: FirUserTypeRef, data: D): FirTypeRef {
         for (part in userTypeRef.qualifier) {
     (part.typeArgumentList.typeArguments as MutableList<FirTypeProjection>).transformInplace(this, data)
 }
@@ -2387,12 +2388,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return userTypeRef
     }
 
-    fun transformDynamicTypeRefChildren(dynamicTypeRef: FirDynamicTypeRef, data: D): FirTypeRef  {
+    fun transformDynamicTypeRefChildren(dynamicTypeRef: FirDynamicTypeRef, data: D): FirTypeRef {
         dynamicTypeRef.transformAnnotations(this, data)
         return dynamicTypeRef
     }
 
-    fun transformFunctionTypeRefChildren(functionTypeRef: FirFunctionTypeRef, data: D): FirTypeRef  {
+    fun transformFunctionTypeRefChildren(functionTypeRef: FirFunctionTypeRef, data: D): FirTypeRef {
         functionTypeRef.transformAnnotations(this, data)
         functionTypeRef.transformReceiverTypeRef(this, data)
         functionTypeRef.transformValueParameters(this, data)
@@ -2401,43 +2402,43 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return functionTypeRef
     }
 
-    fun transformIntersectionTypeRefChildren(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef  {
+    fun transformIntersectionTypeRefChildren(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {
         intersectionTypeRef.transformAnnotations(this, data)
         intersectionTypeRef.transformLeftType(this, data)
         intersectionTypeRef.transformRightType(this, data)
         return intersectionTypeRef
     }
 
-    fun transformImplicitTypeRefChildren(implicitTypeRef: FirImplicitTypeRef, data: D): FirTypeRef  {
+    fun transformImplicitTypeRefChildren(implicitTypeRef: FirImplicitTypeRef, data: D): FirTypeRef {
         implicitTypeRef.transformAnnotations(this, data)
         return implicitTypeRef
     }
 
-    fun transformSmartCastedTypeRefChildren(smartCastedTypeRef: FirSmartCastedTypeRef, data: D): FirTypeRef  {
+    fun transformSmartCastedTypeRefChildren(smartCastedTypeRef: FirSmartCastedTypeRef, data: D): FirTypeRef {
         smartCastedTypeRef.transformAnnotations(this, data)
         smartCastedTypeRef.transformDelegatedTypeRef(this, data)
         return smartCastedTypeRef
     }
 
-    fun transformEffectDeclarationChildren(effectDeclaration: FirEffectDeclaration, data: D): FirEffectDeclaration  {
+    fun transformEffectDeclarationChildren(effectDeclaration: FirEffectDeclaration, data: D): FirEffectDeclaration {
         return effectDeclaration
     }
 
-    fun transformContractDescriptionChildren(contractDescription: FirContractDescription, data: D): FirContractDescription  {
+    fun transformContractDescriptionChildren(contractDescription: FirContractDescription, data: D): FirContractDescription {
         return contractDescription
     }
 
-    fun transformLegacyRawContractDescriptionChildren(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): FirContractDescription  {
+    fun transformLegacyRawContractDescriptionChildren(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): FirContractDescription {
         legacyRawContractDescription.transformContractCall(this, data)
         return legacyRawContractDescription
     }
 
-    fun transformRawContractDescriptionChildren(rawContractDescription: FirRawContractDescription, data: D): FirContractDescription  {
+    fun transformRawContractDescriptionChildren(rawContractDescription: FirRawContractDescription, data: D): FirContractDescription {
         rawContractDescription.transformRawEffects(this, data)
         return rawContractDescription
     }
 
-    fun transformResolvedContractDescriptionChildren(resolvedContractDescription: FirResolvedContractDescription, data: D): FirContractDescription  {
+    fun transformResolvedContractDescriptionChildren(resolvedContractDescription: FirResolvedContractDescription, data: D): FirContractDescription {
         resolvedContractDescription.transformEffects(this, data)
         resolvedContractDescription.transformUnresolvedEffects(this, data)
         return resolvedContractDescription

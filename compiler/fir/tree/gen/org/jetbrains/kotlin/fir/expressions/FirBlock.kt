@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -29,11 +30,11 @@ abstract class FirBlock : FirExpression() {
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 }
 
-inline fun <D> FirBlock.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirBlock.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirBlock.transformStatements(transformer: FirTransformer<D>, data: D): FirBlock 
-     = apply { replaceStatements(statements.transform(transformer, data)) }
+inline fun <D> FirBlock.transformStatements(transformer: FirTransformer<D>, data: D): FirBlock  = 
+    apply { replaceStatements(statements.transform(transformer, data)) }
 
-inline fun <D> FirBlock.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBlock 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirBlock.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBlock  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }

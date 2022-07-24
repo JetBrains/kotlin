@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -30,11 +31,11 @@ abstract class FirWrappedArgumentExpression : FirWrappedExpression() {
     abstract override fun replaceExpression(newExpression: FirExpression)
 }
 
-inline fun <D> FirWrappedArgumentExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirWrappedArgumentExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirWrappedArgumentExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirWrappedArgumentExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirWrappedArgumentExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression 
-     = apply { replaceExpression(expression.transform(transformer, data)) }
+inline fun <D> FirWrappedArgumentExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedArgumentExpression  = 
+    apply { replaceExpression(expression.transform(transformer, data)) }

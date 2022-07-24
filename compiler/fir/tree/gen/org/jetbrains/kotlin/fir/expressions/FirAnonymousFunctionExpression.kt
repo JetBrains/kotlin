@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -30,11 +31,11 @@ abstract class FirAnonymousFunctionExpression : FirExpression() {
     abstract fun replaceAnonymousFunction(newAnonymousFunction: FirAnonymousFunction)
 }
 
-inline fun <D> FirAnonymousFunctionExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunctionExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunctionExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunctionExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunctionExpression.transformAnonymousFunction(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
-     = apply { replaceAnonymousFunction(anonymousFunction.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunctionExpression.transformAnonymousFunction(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression  = 
+    apply { replaceAnonymousFunction(anonymousFunction.transform(transformer, data)) }

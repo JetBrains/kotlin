@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -23,5 +24,5 @@ abstract class FirArgumentList : FirPureAbstractElement(), FirElement {
     abstract fun replaceArguments(newArguments: List<FirExpression>)
 }
 
-inline fun <D> FirArgumentList.transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList 
-     = apply { replaceArguments(arguments.transform(transformer, data)) }
+inline fun <D> FirArgumentList.transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList  = 
+    apply { replaceArguments(arguments.transform(transformer, data)) }

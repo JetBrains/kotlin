@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -47,11 +48,11 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 }
 
-inline fun <D> FirErrorResolvedQualifier.transformTypeRef(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirErrorResolvedQualifier.transformTypeRef(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirErrorResolvedQualifier.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirErrorResolvedQualifier.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirErrorResolvedQualifier.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirErrorResolvedQualifier.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }

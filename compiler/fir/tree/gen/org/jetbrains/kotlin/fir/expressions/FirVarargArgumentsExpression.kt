@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -32,14 +33,14 @@ abstract class FirVarargArgumentsExpression : FirExpression() {
     abstract fun replaceVarargElementType(newVarargElementType: FirTypeRef)
 }
 
-inline fun <D> FirVarargArgumentsExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirVarargArgumentsExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirVarargArgumentsExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirVarargArgumentsExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirVarargArgumentsExpression.transformArguments(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
-     = apply { replaceArguments(arguments.transform(transformer, data)) }
+inline fun <D> FirVarargArgumentsExpression.transformArguments(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression  = 
+    apply { replaceArguments(arguments.transform(transformer, data)) }
 
-inline fun <D> FirVarargArgumentsExpression.transformVarargElementType(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
-     = apply { replaceVarargElementType(varargElementType.transform(transformer, data)) }
+inline fun <D> FirVarargArgumentsExpression.transformVarargElementType(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression  = 
+    apply { replaceVarargElementType(varargElementType.transform(transformer, data)) }

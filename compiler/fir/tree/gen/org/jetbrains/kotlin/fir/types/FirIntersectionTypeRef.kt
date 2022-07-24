@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -30,11 +31,11 @@ abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
     abstract fun replaceRightType(newRightType: FirTypeRef)
 }
 
-inline fun <D> FirIntersectionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirIntersectionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirIntersectionTypeRef.transformLeftType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
-     = apply { replaceLeftType(leftType.transform(transformer, data)) }
+inline fun <D> FirIntersectionTypeRef.transformLeftType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef  = 
+    apply { replaceLeftType(leftType.transform(transformer, data)) }
 
-inline fun <D> FirIntersectionTypeRef.transformRightType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
-     = apply { replaceRightType(rightType.transform(transformer, data)) }
+inline fun <D> FirIntersectionTypeRef.transformRightType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef  = 
+    apply { replaceRightType(rightType.transform(transformer, data)) }

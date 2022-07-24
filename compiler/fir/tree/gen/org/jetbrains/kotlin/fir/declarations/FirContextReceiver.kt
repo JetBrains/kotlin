@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -27,5 +28,5 @@ abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 }
 
-inline fun <D> FirContextReceiver.transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirContextReceiver.transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }

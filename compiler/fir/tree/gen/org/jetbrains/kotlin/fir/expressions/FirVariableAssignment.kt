@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -57,32 +58,32 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract fun replaceRValue(newRValue: FirExpression)
 }
 
-inline fun <D> FirVariableAssignment.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformLValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceLValue(lValue.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformLValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceLValue(lValue.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformLValueTypeRef(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceLValueTypeRef(lValueTypeRef.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformLValueTypeRef(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceLValueTypeRef(lValueTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirVariableAssignment.transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment 
-     = apply { replaceRValue(rValue.transform(transformer, data)) }
+inline fun <D> FirVariableAssignment.transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment  = 
+    apply { replaceRValue(rValue.transform(transformer, data)) }

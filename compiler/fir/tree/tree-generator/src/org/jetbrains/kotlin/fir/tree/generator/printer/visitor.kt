@@ -29,6 +29,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
 
     SmartPrinter(stringBuilder).apply {
         printCopyright()
+        println("@file:Suppress(\"UNUSED_PARAMETER\")")
         println("package $VISITOR_PACKAGE")
         println()
         println("import $VISITOR_PACKAGE.FirElementKind.*")

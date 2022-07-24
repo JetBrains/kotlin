@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -82,35 +83,35 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParameterRefsOwner {
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 }
 
-inline fun <D> FirAnonymousFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceStatus(status.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceStatus(status.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceBody(body?.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceBody(body?.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformLabel(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceLabel(label?.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformLabel(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceLabel(label?.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
 
-inline fun <D> FirAnonymousFunction.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirAnonymousFunction.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }

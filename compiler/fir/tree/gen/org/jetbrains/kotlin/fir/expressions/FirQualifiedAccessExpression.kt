@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -50,26 +51,26 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 }
 
-inline fun <D> FirQualifiedAccessExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirQualifiedAccessExpression.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirQualifiedAccessExpression.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }

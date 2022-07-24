@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -30,11 +31,11 @@ abstract class FirAssignmentOperatorStatement : FirPureAbstractElement(), FirSta
     abstract fun replaceRightArgument(newRightArgument: FirExpression)
 }
 
-inline fun <D> FirAssignmentOperatorStatement.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirAssignmentOperatorStatement.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirAssignmentOperatorStatement.transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
-     = apply { replaceLeftArgument(leftArgument.transform(transformer, data)) }
+inline fun <D> FirAssignmentOperatorStatement.transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement  = 
+    apply { replaceLeftArgument(leftArgument.transform(transformer, data)) }
 
-inline fun <D> FirAssignmentOperatorStatement.transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
-     = apply { replaceRightArgument(rightArgument.transform(transformer, data)) }
+inline fun <D> FirAssignmentOperatorStatement.transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement  = 
+    apply { replaceRightArgument(rightArgument.transform(transformer, data)) }

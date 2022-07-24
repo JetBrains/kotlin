@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.type
 object FirPropertyTypeParametersChecker : FirPropertyChecker() {
 
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        @Suppress("UNCHECKED_CAST")
         val typeParameters = declaration.typeParameters as List<FirTypeParameter> // TODO remove unchecked
         val boundsByName = typeParameters.associate { it.name to it.symbol.resolvedBounds }
         val usedTypes = HashSet<ConeKotlinType>()

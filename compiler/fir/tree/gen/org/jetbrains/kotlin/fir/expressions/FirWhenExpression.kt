@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -44,17 +45,17 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?)
 }
 
-inline fun <D> FirWhenExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirWhenExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirWhenExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirWhenExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirWhenExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirWhenExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirWhenExpression.transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-    = apply { if (subjectVariable != null) {
+inline fun <D> FirWhenExpression.transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { if (subjectVariable != null) {
         replaceSubjectVariable(subjectVariable?.transform(transformer, data))
         replaceSubject(subjectVariable?.initializer)
        } else {
@@ -62,8 +63,8 @@ inline fun <D> FirWhenExpression.transformSubject(transformer: FirTransformer<D>
        }
        }
 
-inline fun <D> FirWhenExpression.transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-     = apply { replaceSubjectVariable(subjectVariable?.transform(transformer, data)) }
+inline fun <D> FirWhenExpression.transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { replaceSubjectVariable(subjectVariable?.transform(transformer, data)) }
 
-inline fun <D> FirWhenExpression.transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression 
-     = apply { replaceBranches(branches.transform(transformer, data)) }
+inline fun <D> FirWhenExpression.transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression  = 
+    apply { replaceBranches(branches.transform(transformer, data)) }

@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -26,8 +27,8 @@ abstract class FirResolvedContractDescription : FirContractDescription() {
     abstract fun replaceUnresolvedEffects(newUnresolvedEffects: List<FirStatement>)
 }
 
-inline fun <D> FirResolvedContractDescription.transformEffects(transformer: FirTransformer<D>, data: D): FirResolvedContractDescription 
-     = apply { replaceEffects(effects.transform(transformer, data)) }
+inline fun <D> FirResolvedContractDescription.transformEffects(transformer: FirTransformer<D>, data: D): FirResolvedContractDescription  = 
+    apply { replaceEffects(effects.transform(transformer, data)) }
 
-inline fun <D> FirResolvedContractDescription.transformUnresolvedEffects(transformer: FirTransformer<D>, data: D): FirResolvedContractDescription 
-     = apply { replaceUnresolvedEffects(unresolvedEffects.transform(transformer, data)) }
+inline fun <D> FirResolvedContractDescription.transformUnresolvedEffects(transformer: FirTransformer<D>, data: D): FirResolvedContractDescription  = 
+    apply { replaceUnresolvedEffects(unresolvedEffects.transform(transformer, data)) }

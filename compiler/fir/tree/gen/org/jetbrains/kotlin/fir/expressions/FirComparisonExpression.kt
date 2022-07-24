@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -30,11 +31,11 @@ abstract class FirComparisonExpression : FirExpression() {
     abstract fun replaceCompareToCall(newCompareToCall: FirFunctionCall)
 }
 
-inline fun <D> FirComparisonExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirComparisonExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComparisonExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirComparisonExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirComparisonExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComparisonExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirComparisonExpression.transformCompareToCall(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
-     = apply { replaceCompareToCall(compareToCall.transform(transformer, data)) }
+inline fun <D> FirComparisonExpression.transformCompareToCall(transformer: FirTransformer<D>, data: D): FirComparisonExpression  = 
+    apply { replaceCompareToCall(compareToCall.transform(transformer, data)) }

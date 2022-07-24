@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -31,8 +32,8 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override fun replaceDelegatedTypeRef(newDelegatedTypeRef: FirTypeRef?)
 }
 
-inline fun <D> FirErrorTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirErrorTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirErrorTypeRef.transformDelegatedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef 
-     = apply { replaceDelegatedTypeRef(delegatedTypeRef?.transform(transformer, data)) }
+inline fun <D> FirErrorTypeRef.transformDelegatedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef  = 
+    apply { replaceDelegatedTypeRef(delegatedTypeRef?.transform(transformer, data)) }

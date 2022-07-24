@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
@@ -52,26 +53,26 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 }
 
-inline fun <D> FirPropertyAccessExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceTypeRef(typeRef.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceAnnotations(annotations.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
 
-inline fun <D> FirPropertyAccessExpression.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression 
-     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+inline fun <D> FirPropertyAccessExpression.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpression  = 
+    apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
