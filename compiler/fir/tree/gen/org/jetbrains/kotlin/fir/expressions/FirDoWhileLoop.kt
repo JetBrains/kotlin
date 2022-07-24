@@ -22,17 +22,24 @@ abstract class FirDoWhileLoop : FirLoop() {
     abstract override val condition: FirExpression
     abstract override val label: FirLabel?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDoWhileLoop(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformDoWhileLoop(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+    abstract override fun replaceBlock(newBlock: FirBlock)
 
-    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+    abstract override fun replaceCondition(newCondition: FirExpression)
 
-    abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
-
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+    abstract override fun replaceLabel(newLabel: FirLabel?)
 }
+
+inline fun <D> FirDoWhileLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDoWhileLoop 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirDoWhileLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoop 
+     = apply { replaceBlock(block.transform(transformer, data)) }
+
+inline fun <D> FirDoWhileLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoop 
+     = apply { replaceCondition(condition.transform(transformer, data)) }
+
+inline fun <D> FirDoWhileLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirDoWhileLoop 
+     = apply { replaceLabel(label?.transform(transformer, data)) }

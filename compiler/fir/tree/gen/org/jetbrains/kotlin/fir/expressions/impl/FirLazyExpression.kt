@@ -25,16 +25,9 @@ class FirLazyExpression @FirImplementationDetail constructor(
     override val typeRef: FirTypeRef get() = error("FirLazyExpression should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyExpression should be calculated before accessing")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyExpression {
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyExpression {
-        return this
-    }
+    override val elementKind get() = FirElementKind.Expression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 }

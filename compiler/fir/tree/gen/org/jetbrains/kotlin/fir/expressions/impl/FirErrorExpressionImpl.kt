@@ -30,25 +30,18 @@ internal class FirErrorExpressionImpl(
 ) : FirErrorExpression() {
     override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        expression?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        expression = expression?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ErrorExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
+    override fun replaceExpression(newExpression: FirExpression?) {
+        expression = newExpression
     }
 }

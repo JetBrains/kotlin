@@ -45,13 +45,12 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
     abstract override val body: FirBlock?
     abstract val isPrimary: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstructor(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformConstructor(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -65,21 +64,39 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?)
+
     abstract override fun replaceBody(newBody: FirBlock?)
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructor
-
-    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructor
 }
+
+inline fun <D> FirConstructor.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceDelegatedConstructor(delegatedConstructor?.transform(transformer, data)) }
+
+inline fun <D> FirConstructor.transformBody(transformer: FirTransformer<D>, data: D): FirConstructor 
+     = apply { replaceBody(body?.transform(transformer, data)) }

@@ -24,13 +24,19 @@ abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
     abstract override val diagnostic: ConeDiagnostic
     abstract val expression: FirExpression?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformErrorExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceExpression(newExpression: FirExpression?)
 }
+
+inline fun <D> FirErrorExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirErrorExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirErrorExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirErrorExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirErrorExpression 
+     = apply { replaceExpression(expression?.transform(transformer, data)) }

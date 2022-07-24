@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -1136,7 +1138,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable) {
-        if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
+        describeTypeParameters(fir)
 
         fir.receiverTypeRef?.let {
             +"("

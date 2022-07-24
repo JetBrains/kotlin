@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.transformChildren
 import org.jetbrains.kotlin.name.ClassId
 
 class FirSealedClassInheritorsProcessor(

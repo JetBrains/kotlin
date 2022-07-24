@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
@@ -62,7 +62,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     var propertySymbol: FirPropertySymbol? = null
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {

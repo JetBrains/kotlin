@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirFunctionParameterChecker : FirFunctionChecker() {

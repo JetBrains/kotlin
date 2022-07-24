@@ -30,15 +30,21 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousInitializer(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnonymousInitializer(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
+    abstract fun replaceBody(newBody: FirBlock?)
 }
+
+inline fun <D> FirAnonymousInitializer.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousInitializer.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousInitializer.transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer 
+     = apply { replaceBody(body?.transform(transformer, data)) }

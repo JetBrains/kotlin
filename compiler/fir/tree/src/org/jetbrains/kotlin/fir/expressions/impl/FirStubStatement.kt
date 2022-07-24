@@ -10,23 +10,22 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirStatementStub
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-object FirStubStatement : FirPureAbstractElement(), FirStatement {
+object FirStubStatement : FirStatementStub() {
     override val source: KtSourceElement?
         get() = null
 
     override val annotations: List<FirAnnotation>
         get() = emptyList()
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStatement {
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        require(newAnnotations.isEmpty())
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return this
-    }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.StatementStub
 }

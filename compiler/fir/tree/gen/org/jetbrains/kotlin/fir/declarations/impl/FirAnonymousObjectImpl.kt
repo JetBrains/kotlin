@@ -53,52 +53,19 @@ internal class FirAnonymousObjectImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        superTypeRefs.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        transformTypeParameters(transformer, data)
-        transformStatus(transformer, data)
-        transformSuperTypeRefs(transformer, data)
-        transformDeclarations(transformer, data)
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        superTypeRefs.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        declarations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.AnonymousObject
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters)
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
@@ -108,6 +75,16 @@ internal class FirAnonymousObjectImpl(
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
+    }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        declarations.clear()
+        declarations.addAll(newDeclarations)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

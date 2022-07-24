@@ -19,13 +19,14 @@ sealed interface FirCall : FirStatement {
     override val annotations: List<FirAnnotation>
     val argumentList: FirArgumentList
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCall(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformCall(this, data) as E
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     fun replaceArgumentList(newArgumentList: FirArgumentList)
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCall
 }
+
+inline fun <D> FirCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }

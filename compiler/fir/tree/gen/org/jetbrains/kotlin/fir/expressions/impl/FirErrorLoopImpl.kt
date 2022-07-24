@@ -32,38 +32,22 @@ internal class FirErrorLoopImpl(
     override var block: FirBlock = FirEmptyExpressionBlock()
     override var condition: FirExpression = FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        block.accept(visitor, data)
-        condition.accept(visitor, data)
-        label?.accept(visitor, data)
+    override val elementKind get() = FirElementKind.ErrorLoop
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        transformBlock(transformer, data)
-        transformCondition(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
+    override fun replaceBlock(newBlock: FirBlock) {
+        block = newBlock
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceCondition(newCondition: FirExpression) {
+        condition = newCondition
     }
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        block = block.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        condition = condition.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        transformAnnotations(transformer, data)
-        label = label?.transform(transformer, data)
-        return this
+    override fun replaceLabel(newLabel: FirLabel?) {
+        label = newLabel
     }
 }

@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.transformChildren
 import org.jetbrains.kotlin.name.Name
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -388,7 +389,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
             variable.transformAccessors()
         }
-        variable.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        variable.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        // TODO CONTEXT RECEIVERS
         context.storeVariable(variable, session)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         return variable
@@ -399,7 +401,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return transformReturnTypeRef(transformer, data)
             .transformInitializer(transformer, data)
             .transformTypeParameters(transformer, data)
-            .transformOtherChildren(transformer, data)
+            .transformContextReceivers(transformer, data)
+            .transformAnnotations(transformer, data)
+            .transformControlFlowGraphReference(transformer, data)
     }
 
     private fun FirProperty.transformAccessors(mayResolveSetter: Boolean = true) {

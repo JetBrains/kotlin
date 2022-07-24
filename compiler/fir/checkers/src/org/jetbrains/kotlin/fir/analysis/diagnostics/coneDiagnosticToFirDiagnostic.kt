@@ -81,7 +81,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,
                 unstableSmartcast.argument,
-                unstableSmartcast.argument.smartcastStability.description,
+                unstableSmartcast.argument.smartCastedTypeRef!!.smartcastStability.description,
                 unstableSmartcast.isCastToNotNull
             )
         }
@@ -247,7 +247,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source,
                 rootCause.targetType,
                 rootCause.argument,
-                rootCause.argument.smartcastStability.description,
+                rootCause.argument.smartCastedTypeRef!!.smartcastStability.description,
                 rootCause.isCastToNotNull
             )
             is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol)

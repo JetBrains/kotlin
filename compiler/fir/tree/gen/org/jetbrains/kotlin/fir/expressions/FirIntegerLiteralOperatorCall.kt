@@ -32,16 +32,13 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntegerLiteralOperatorCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformIntegerLiteralOperatorCall(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
@@ -49,21 +46,40 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall
 }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirIntegerLiteralOperatorCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

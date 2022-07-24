@@ -41,31 +41,15 @@ internal class FirErrorResolvedQualifierImpl(
 }
     override val resolvedToCompanionObject: Boolean get() = false
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        typeArguments.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifierImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        transformTypeArguments(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifierImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifierImpl {
-        typeArguments.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ErrorResolvedQualifier
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {

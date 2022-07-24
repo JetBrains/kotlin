@@ -32,6 +32,10 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.transform
+import org.jetbrains.kotlin.fir.visitors.transformChildren
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
@@ -120,13 +124,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     private fun FirFile.visitChildren(): Set<FirElement> =
         ConsistencyVisitor().let {
             this@visitChildren.accept(it)
-            it.result
+            it.result.keys
         }
 
     private fun FirFile.transformChildren(): Set<FirElement> =
         ConsistencyTransformer().let {
             this@transformChildren.transform<FirFile, Unit>(it, Unit)
-            it.result
+            it.result.keys
         }
 
     protected fun FirFile.checkChildren() {
@@ -152,12 +156,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     private class ConsistencyVisitor : FirVisitorVoid() {
-        var result = hashSetOf<FirElement>()
+        var result = mutableMapOf<FirElement, Exception>()
 
         override fun visitElement(element: FirElement) {
+            val prev = result.put(element, Exception())
             // NB: types are reused sometimes (e.g. in accessors)
-            if (!result.add(element)) {
-                throwTwiceVisitingError(element)
+            if (prev != null) {
+                throwTwiceVisitingError(element, prev)
             } else {
                 element.acceptChildren(this)
             }
@@ -165,11 +170,12 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     private class ConsistencyTransformer : FirTransformer<Unit>() {
-        var result = hashSetOf<FirElement>()
+        var result = mutableMapOf<FirElement, Exception>()
 
         override fun <E : FirElement> transformElement(element: E, data: Unit): E {
-            if (!result.add(element)) {
-                throwTwiceVisitingError(element)
+            val prev = result.put(element, Exception())
+            if (prev != null) {
+                throwTwiceVisitingError(element, prev)
             } else {
                 element.transformChildren(this, Unit)
             }
@@ -178,7 +184,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 }
 
-private fun throwTwiceVisitingError(element: FirElement) {
+private fun throwTwiceVisitingError(element: FirElement, prev: Exception) {
     if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
         element is FirTypeProjection || element is FirValueParameter || element is FirAnnotation ||
         element is FirEmptyContractDescription ||
@@ -193,6 +199,7 @@ private fun throwTwiceVisitingError(element: FirElement) {
     }
 
     val elementDump = FirRenderer().renderElementAsString(element)
+    prev.printStackTrace()
     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
 }
 

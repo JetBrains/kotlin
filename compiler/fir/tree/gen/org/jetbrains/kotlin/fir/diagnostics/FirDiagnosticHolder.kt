@@ -18,9 +18,4 @@ interface FirDiagnosticHolder : FirElement {
     override val source: KtSourceElement?
     val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDiagnosticHolder(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformDiagnosticHolder(this, data) as E
 }

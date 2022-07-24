@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -57,7 +57,7 @@ internal class FirAnonymousFunctionImpl(
     override var inlineStatus: InlineStatus,
     override val isLambda: Boolean,
     override val hasExplicitParameterList: Boolean,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
     @Volatile
@@ -68,72 +68,19 @@ internal class FirAnonymousFunctionImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
-        body?.accept(visitor, data)
-        label?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-        typeRef.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.AnonymousFunction
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        transformAnnotations(transformer, data)
-        transformStatus(transformer, data)
-        transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
-        contextReceivers.transformInplace(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        transformValueParameters(transformer, data)
-        transformBody(transformer, data)
-        label = label?.transform(transformer, data)
-        transformTypeParameters(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        valueParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        body = body?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -166,12 +113,21 @@ internal class FirAnonymousFunctionImpl(
         body = newBody
     }
 
+    override fun replaceLabel(newLabel: FirLabel?) {
+        label = newLabel
+    }
+
     override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
         invocationKind = newInvocationKind
     }
 
     override fun replaceInlineStatus(newInlineStatus: InlineStatus) {
         inlineStatus = newInlineStatus
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters)
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

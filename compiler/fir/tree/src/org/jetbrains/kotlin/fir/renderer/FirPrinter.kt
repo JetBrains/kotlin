@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.utils.Printer
 
 open class FirPrinter(builder: StringBuilder) {

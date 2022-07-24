@@ -25,11 +25,14 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override val isFromStubType: Boolean
     abstract override val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformErrorTypeRef(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef
+    abstract override fun replaceDelegatedTypeRef(newDelegatedTypeRef: FirTypeRef?)
 }
+
+inline fun <D> FirErrorTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirErrorTypeRef.transformDelegatedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef 
+     = apply { replaceDelegatedTypeRef(delegatedTypeRef?.transform(transformer, data)) }

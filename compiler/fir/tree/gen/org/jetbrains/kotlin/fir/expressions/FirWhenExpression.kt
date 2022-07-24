@@ -28,25 +28,42 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract val exhaustivenessStatus: ExhaustivenessStatus?
     abstract val usedAsExpression: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWhenExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    abstract fun replaceSubject(newSubject: FirExpression?)
+
+    abstract fun replaceSubjectVariable(newSubjectVariable: FirVariable?)
+
+    abstract fun replaceBranches(newBranches: List<FirWhenBranch>)
+
     abstract fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression
-
-    abstract fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression
-
-    abstract fun <D> transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpression
 }
+
+inline fun <D> FirWhenExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirWhenExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirWhenExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirWhenExpression.transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+    = apply { if (subjectVariable != null) {
+        replaceSubjectVariable(subjectVariable?.transform(transformer, data))
+        replaceSubject(subjectVariable?.initializer)
+       } else {
+           replaceSubject(subject?.transform(transformer, data))
+       }
+       }
+
+inline fun <D> FirWhenExpression.transformSubjectVariable(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+     = apply { replaceSubjectVariable(subjectVariable?.transform(transformer, data)) }
+
+inline fun <D> FirWhenExpression.transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpression 
+     = apply { replaceBranches(branches.transform(transformer, data)) }

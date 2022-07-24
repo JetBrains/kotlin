@@ -37,25 +37,33 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override val annotations: List<FirAnnotation>
     abstract val scopeProvider: FirScopeProvider
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformClass(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
+    abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClass
-
-    abstract fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass
-
-    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirClass.transformStatus(transformer: FirTransformer<D>, data: D): FirClass 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClass 
+     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+
+inline fun <D> FirClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirClass 
+     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+
+inline fun <D> FirClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClass 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

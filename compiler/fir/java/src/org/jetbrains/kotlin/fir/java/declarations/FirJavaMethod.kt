@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -44,6 +43,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 class FirJavaMethod @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
@@ -87,69 +87,12 @@ class FirJavaMethod @FirImplementationDetail constructor(
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecation: DeprecationsPerUseSite? = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
-        body?.accept(visitor, data)
-        status.accept(visitor, data)
-        contractDescription.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
-        transformValueParameters(transformer, data)
-        transformBody(transformer, data)
-        transformStatus(transformer, data)
-        transformContractDescription(transformer, data)
-        transformAnnotations(transformer, data)
-        transformTypeParameters(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        return this
-    }
-
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        valueParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        status = status.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("cannot be replaced for FirJavaField")
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -178,9 +121,20 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        error("cannot be replaced for FirJavaField")
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        error("cannot be replaced for FirJavaField")
+    }
+
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaMethod")
     }
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.SimpleFunction
 }
 
 val ALL_JAVA_OPERATION_NAMES =
@@ -188,7 +142,7 @@ val ALL_JAVA_OPERATION_NAMES =
             EQUALS + COMPARE_TO + CONTAINS + INVOKE + ITERATOR + GET + SET + NEXT + HAS_NEXT
 
 @FirBuilderDsl
-class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
+class FirJavaMethodBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override lateinit var moduleData: FirModuleData
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -200,7 +154,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     lateinit var name: Name
     lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     var isFromSource: Boolean by Delegates.notNull()
@@ -274,7 +228,7 @@ inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodB
     copyBuilder.symbol = original.symbol
     copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.typeParameters.addAll(original.typeParameters)
+    copyBuilder.typeParameters.addAll(original.typeParameters as List<FirTypeParameter>) // TODO UNCHECKED
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }
     return copyBuilder

@@ -9,7 +9,5 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirPureAbstractElement : FirElement {
-    abstract override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)
 
-    abstract override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement
 }

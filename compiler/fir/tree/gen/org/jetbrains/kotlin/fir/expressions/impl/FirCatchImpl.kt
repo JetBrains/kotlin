@@ -23,29 +23,13 @@ internal class FirCatchImpl(
     override var parameter: FirValueParameter,
     override var block: FirBlock,
 ) : FirCatch() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        parameter.accept(visitor, data)
-        block.accept(visitor, data)
+    override val elementKind get() = FirElementKind.Catch
+
+    override fun replaceParameter(newParameter: FirValueParameter) {
+        parameter = newParameter
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCatchImpl {
-        transformParameter(transformer, data)
-        transformBlock(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatchImpl {
-        parameter = parameter.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatchImpl {
-        block = block.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatchImpl {
-        return this
+    override fun replaceBlock(newBlock: FirBlock) {
+        block = newBlock
     }
 }

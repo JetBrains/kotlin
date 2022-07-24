@@ -10,23 +10,21 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirNoReceiverExpression : FirExpression() {
     override val source: KtSourceElement? = null
     override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: List<FirAnnotation> get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNoReceiverExpression {
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression {
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        require(newAnnotations.isEmpty())
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Expression
 }

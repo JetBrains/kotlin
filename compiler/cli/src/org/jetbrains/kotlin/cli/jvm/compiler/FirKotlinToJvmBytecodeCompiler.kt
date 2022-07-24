@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -72,8 +74,13 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.util.concurrent.atomic.AtomicLong
 
 object FirKotlinToJvmBytecodeCompiler {
+
+    val fileNumber = AtomicLong(0)
+    val totalTime = AtomicLong(0)
+
     fun compileModulesUsingFrontendIR(
         projectEnvironment: AbstractProjectEnvironment,
         projectConfiguration: CompilerConfiguration,
@@ -165,6 +172,7 @@ object FirKotlinToJvmBytecodeCompiler {
     }
 
     private fun CompilationContext.compileModule(): Pair<FirResult, GenerationState>? {
+        val start = System.nanoTime()
         performanceManager?.notifyAnalysisStarted()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -180,6 +188,7 @@ object FirKotlinToJvmBytecodeCompiler {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
             return null
         }
+
 
         performanceManager?.notifyGenerationStarted()
         performanceManager?.notifyIRTranslationStarted()
@@ -202,6 +211,11 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRGenerationFinished()
         performanceManager?.notifyGenerationFinished()
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        val end = System.nanoTime() - start
+        val total = totalTime.addAndGet(end)
+        val processedFiles = fileNumber.addAndGet(allSources.size.toLong())
+        File("/Users/simon.ogorodnik/Workspace/gradle-jps-compiler-plugin/jps-wrapper/filenum.txt")
+            .appendText("${Thread.currentThread().id}:${module.getModuleName()}:${allSources.size}:${end / 1_000_000}:${processedFiles}:${total / 1_000_000}\n")
 
         return firResult to generationState
     }

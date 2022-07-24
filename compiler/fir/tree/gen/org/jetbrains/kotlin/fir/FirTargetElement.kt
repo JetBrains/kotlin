@@ -16,9 +16,4 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirTargetElement : FirElement {
     override val source: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTargetElement(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTargetElement(this, data) as E
 }

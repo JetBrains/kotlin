@@ -24,19 +24,7 @@ internal class FirContextReceiverImpl(
     override val customLabelName: Name?,
     override val labelNameFromTypeRef: Name?,
 ) : FirContextReceiver() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContextReceiverImpl {
-        transformTypeRef(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiverImpl {
-        typeRef = typeRef.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ContextReceiver
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

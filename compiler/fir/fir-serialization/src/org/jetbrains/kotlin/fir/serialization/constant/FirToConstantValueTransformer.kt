@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? = accept(FirToConstantValueTransformer, session)

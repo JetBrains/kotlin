@@ -23,9 +23,4 @@ interface FirImport : FirElement {
     val aliasName: Name?
     val aliasSource: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImport(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformImport(this, data) as E
 }

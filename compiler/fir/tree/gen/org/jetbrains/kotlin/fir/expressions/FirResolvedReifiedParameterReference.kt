@@ -22,13 +22,14 @@ abstract class FirResolvedReifiedParameterReference : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val symbol: FirTypeParameterSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedReifiedParameterReference(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformResolvedReifiedParameterReference(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedReifiedParameterReference
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirResolvedReifiedParameterReference.transformTypeRef(transformer: FirTransformer<D>, data: D): FirResolvedReifiedParameterReference 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirResolvedReifiedParameterReference.transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedReifiedParameterReference 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

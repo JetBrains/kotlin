@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts.description
 
 import org.jetbrains.kotlin.fir.contracts.*
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration

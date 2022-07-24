@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -87,53 +88,15 @@ class FirSyntheticPropertyAccessor(
 
     override val containerSource: DeserializedContainerSource? get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        delegate.accept(visitor, data)
-        controlFlowGraphReference?.accept(visitor, data)
-        contractDescription.accept(visitor, data)
-    }
-
     override fun replaceBody(newBody: FirBlock?) {
         throw AssertionError("Transformation of synthetic property accessor isn't supported")
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
@@ -157,6 +120,14 @@ class FirSyntheticPropertyAccessor(
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
@@ -164,4 +135,7 @@ class FirSyntheticPropertyAccessor(
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.PropertyAccessor
 }

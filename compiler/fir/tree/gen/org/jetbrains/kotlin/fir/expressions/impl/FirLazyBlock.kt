@@ -27,25 +27,11 @@ class FirLazyBlock @FirImplementationDetail constructor(
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
     override val typeRef: FirTypeRef get() = error("FirLazyBlock should be calculated before accessing")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override val elementKind get() = FirElementKind.Block
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
-        transformOtherChildren(transformer, data)
-        return this
-    }
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyBlock {
-        return this
-    }
-
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirLazyBlock {
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
-        return this
-    }
+    override fun replaceStatements(newStatements: List<FirStatement>) {}
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

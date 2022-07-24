@@ -1009,7 +1009,8 @@ class CallAndReferenceGenerator(
     }
 
     private fun FirQualifiedAccess.findTypeParameter(index: Int): FirTypeParameter? =
-        ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirTypeParametersOwner)?.typeParameters?.get(index)
+        ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.get(index)
+        as FirTypeParameter // TODO  WTF???
 
     private fun FirQualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = true)

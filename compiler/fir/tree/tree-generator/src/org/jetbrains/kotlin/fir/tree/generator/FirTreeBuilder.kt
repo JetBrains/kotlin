@@ -27,11 +27,13 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
 
+    val statementStub by element(Expression, statement)
+
     val contextReceiver by element(Declaration)
 
     val declaration by sealedElement(Declaration, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
-    val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
+    private val typeParametersOwner get() = typeParameterRefsOwner//by sealedElement(Declaration, typeParameterRefsOwner)
     val memberDeclaration by sealedElement(Declaration, declaration, typeParameterRefsOwner)
     val anonymousInitializer by element(Declaration, declaration, controlFlowGraphOwner)
     val callableDeclaration by sealedElement(Declaration, memberDeclaration)
@@ -120,10 +122,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val componentCall by element(Expression, functionCall)
     val callableReferenceAccess by element(Expression, qualifiedAccessExpression)
     val thisReceiverExpression by element(Expression, qualifiedAccessExpression)
-    val wrappedExpressionWithSmartcast by element(Expression)
-    val wrappedExpressionWithSmartcastToNothing by element(Expression, wrappedExpressionWithSmartcast)
-    val expressionWithSmartcast by element(Expression, qualifiedAccessExpression, wrappedExpressionWithSmartcast)
-    val expressionWithSmartcastToNothing by element(Expression, expressionWithSmartcast, wrappedExpressionWithSmartcastToNothing)
     val safeCallExpression by element(Expression, expression)
     val checkedSafeCallSubject by element(Expression, expression)
     val getClassCall by element(Expression, expression, call)
@@ -142,8 +140,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val throwExpression by element(Expression, expression)
     val variableAssignment by element(Expression, qualifiedAccess)
     val whenSubjectExpression by element(Expression, expression)
-    val whenSubjectExpressionWithSmartcast by element(Expression, whenSubjectExpression, wrappedExpressionWithSmartcast)
-    val whenSubjectExpressionWithSmartcastToNothing by element(Expression, whenSubjectExpression, wrappedExpressionWithSmartcastToNothing)
 
     val wrappedDelegateExpression by element(Expression, wrappedExpression)
 
@@ -167,6 +163,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val functionTypeRef by element(TypeRef, typeRefWithNullability)
     val intersectionTypeRef by element(TypeRef, typeRefWithNullability)
     val implicitTypeRef by element(TypeRef, typeRef)
+    val smartCastedTypeRef by element(TypeRef, resolvedTypeRef)
 
     val effectDeclaration by element(Contracts)
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
@@ -66,12 +67,32 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         superTypeRefs.addAll(newSuperTypeRefs)
     }
 
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        error("cannot be replaced for FirJavaClass")
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        error("cannot be replaced for FirJavaClass")
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("cannot be replaced for FirJavaClass")
+    }
+
     override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
         deprecation = newDeprecation
+    }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        error("cannot be replaced for FirJavaClass")
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        error("cannot be replaced for FirJavaClass")
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
@@ -80,48 +101,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         get() = null
 
     override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {}
+    override val elementKind: FirElementKind
+        get() = FirElementKind.RegularClass
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        superTypeRefs.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        transformTypeParameters(transformer, data)
-        transformDeclarations(transformer, data)
-        status = status.transformSingle(transformer, data)
-        transformSuperTypeRefs(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        superTypeRefs.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        status = status.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        declarations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
 }
 
 @FirBuilderDsl

@@ -30,9 +30,9 @@ abstract class FirResolvedImport : FirPureAbstractElement(), FirImport {
     abstract val resolvedParentClassId: ClassId?
     abstract val importedName: Name?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedImport(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformResolvedImport(this, data) as E
+    abstract fun replaceDelegate(newDelegate: FirImport)
 }
+
+inline fun <D> FirResolvedImport.transformDelegate(transformer: FirTransformer<D>, data: D): FirResolvedImport 
+     = apply { replaceDelegate(delegate.transform(transformer, data)) }

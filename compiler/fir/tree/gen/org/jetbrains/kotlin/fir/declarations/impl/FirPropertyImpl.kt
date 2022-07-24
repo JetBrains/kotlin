@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -63,7 +63,7 @@ internal class FirPropertyImpl(
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
     override val isLocal: Boolean,
     override var bodyResolveState: FirPropertyBodyResolveState,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
 ) : FirProperty() {
     override val isVal: Boolean get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -73,94 +73,14 @@ internal class FirPropertyImpl(
         delegateFieldSymbol?.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-        backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        transformStatus(transformer, data)
-        transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
-        transformInitializer(transformer, data)
-        transformDelegate(transformer, data)
-        transformGetter(transformer, data)
-        transformSetter(transformer, data)
-        transformBackingField(transformer, data)
-        transformTypeParameters(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        initializer = initializer?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        delegate = delegate?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        getter = getter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        setter = setter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
-        contextReceivers.transformInplace(transformer, data)
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.Property
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -184,6 +104,10 @@ internal class FirPropertyImpl(
         initializer = newInitializer
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        delegate = newDelegate
+    }
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
         getter = newGetter
     }
@@ -192,11 +116,25 @@ internal class FirPropertyImpl(
         setter = newSetter
     }
 
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        backingField = newBackingField
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceBodyResolveState(newBodyResolveState: FirPropertyBodyResolveState) {
         bodyResolveState = newBodyResolveState
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters)
     }
 }

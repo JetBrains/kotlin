@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatementStub
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -98,10 +98,6 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNothing
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -119,8 +115,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -139,6 +133,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirSmartCastedTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -197,6 +192,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(expression)
     }
 
+    open fun visitStatementStub(statementStub: FirStatementStub) {
+        visitElement(statementStub)
+    }
+
     open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
         visitElement(contextReceiver)
     }
@@ -207,10 +206,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner) {
         visitElement(typeParameterRefsOwner)
-    }
-
-    open fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner) {
-        visitElement(typeParametersOwner)
     }
 
     open fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
@@ -521,22 +516,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(thisReceiverExpression)
     }
 
-    open fun <E : FirExpression> visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>) {
-        visitElement(wrappedExpressionWithSmartcast)
-    }
-
-    open fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNothing(wrappedExpressionWithSmartcastToNothing: FirWrappedExpressionWithSmartcastToNothing<E>) {
-        visitElement(wrappedExpressionWithSmartcastToNothing)
-    }
-
-    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
-        visitElement(expressionWithSmartcast)
-    }
-
-    open fun visitExpressionWithSmartcastToNothing(expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing) {
-        visitElement(expressionWithSmartcastToNothing)
-    }
-
     open fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
         visitElement(safeCallExpression)
     }
@@ -603,14 +582,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
         visitElement(whenSubjectExpression)
-    }
-
-    open fun visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast) {
-        visitElement(whenSubjectExpressionWithSmartcast)
-    }
-
-    open fun visitWhenSubjectExpressionWithSmartcastToNothing(whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing) {
-        visitElement(whenSubjectExpressionWithSmartcastToNothing)
     }
 
     open fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression) {
@@ -685,6 +656,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(implicitTypeRef)
     }
 
+    open fun visitSmartCastedTypeRef(smartCastedTypeRef: FirSmartCastedTypeRef) {
+        visitElement(smartCastedTypeRef)
+    }
+
     open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
         visitElement(effectDeclaration)
     }
@@ -753,6 +728,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitExpression(expression)
     }
 
+    final override fun visitStatementStub(statementStub: FirStatementStub, data: Nothing?) {
+        visitStatementStub(statementStub)
+    }
+
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {
         visitContextReceiver(contextReceiver)
     }
@@ -763,10 +742,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: Nothing?) {
         visitTypeParameterRefsOwner(typeParameterRefsOwner)
-    }
-
-    final override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: Nothing?) {
-        visitTypeParametersOwner(typeParametersOwner)
     }
 
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {
@@ -1077,22 +1052,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitThisReceiverExpression(thisReceiverExpression)
     }
 
-    final override fun <E : FirExpression> visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast: FirWrappedExpressionWithSmartcast<E>, data: Nothing?) {
-        visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcast)
-    }
-
-    final override fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNothing(wrappedExpressionWithSmartcastToNothing: FirWrappedExpressionWithSmartcastToNothing<E>, data: Nothing?) {
-        visitWrappedExpressionWithSmartcastToNothing(wrappedExpressionWithSmartcastToNothing)
-    }
-
-    final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Nothing?) {
-        visitExpressionWithSmartcast(expressionWithSmartcast)
-    }
-
-    final override fun visitExpressionWithSmartcastToNothing(expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing, data: Nothing?) {
-        visitExpressionWithSmartcastToNothing(expressionWithSmartcastToNothing)
-    }
-
     final override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Nothing?) {
         visitSafeCallExpression(safeCallExpression)
     }
@@ -1159,14 +1118,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?) {
         visitWhenSubjectExpression(whenSubjectExpression)
-    }
-
-    final override fun visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast, data: Nothing?) {
-        visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast)
-    }
-
-    final override fun visitWhenSubjectExpressionWithSmartcastToNothing(whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing, data: Nothing?) {
-        visitWhenSubjectExpressionWithSmartcastToNothing(whenSubjectExpressionWithSmartcastToNothing)
     }
 
     final override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: Nothing?) {
@@ -1239,6 +1190,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?) {
         visitImplicitTypeRef(implicitTypeRef)
+    }
+
+    final override fun visitSmartCastedTypeRef(smartCastedTypeRef: FirSmartCastedTypeRef, data: Nothing?) {
+        visitSmartCastedTypeRef(smartCastedTypeRef)
     }
 
     final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: Nothing?) {

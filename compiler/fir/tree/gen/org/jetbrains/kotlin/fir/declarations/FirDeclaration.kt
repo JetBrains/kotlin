@@ -28,13 +28,11 @@ sealed class FirDeclaration : FirPureAbstractElement(), FirAnnotationContainer {
     abstract val origin: FirDeclarationOrigin
     abstract val attributes: FirDeclarationAttributes
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformDeclaration(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration
 }
+
+inline fun <D> FirDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirDeclaration 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

@@ -317,7 +317,7 @@ class FirElementSerializer private constructor(
         }
 
         for (typeParameter in property.typeParameters) {
-            builder.addTypeParameter(local.typeParameterProto(typeParameter))
+            builder.addTypeParameter(local.typeParameterProto(typeParameter as FirTypeParameter))
         }
 
         for (contextReceiver in property.contextReceivers) {
@@ -465,7 +465,7 @@ class FirElementSerializer private constructor(
         builder.name = getSimpleNameIndex(typeAlias.name)
 
         for (typeParameter in typeAlias.typeParameters) {
-            builder.addTypeParameter(local.typeParameterProto(typeParameter))
+            builder.addTypeParameter(local.typeParameterProto(typeParameter as FirTypeParameter))
         }
 
         val underlyingType = typeAlias.expandedConeType!!

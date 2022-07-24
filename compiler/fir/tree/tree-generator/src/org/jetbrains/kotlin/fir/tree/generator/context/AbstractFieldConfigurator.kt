@@ -69,9 +69,6 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
             return this to args.map { Type(null, it) }
         }
 
-        fun needTransformOtherChildren() {
-            element._needTransformOtherChildren = true
-        }
 
         fun shouldBeAnInterface() {
             element.kind = Implementation.Kind.Interface

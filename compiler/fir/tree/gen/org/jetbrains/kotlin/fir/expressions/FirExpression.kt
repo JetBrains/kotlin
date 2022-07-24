@@ -21,13 +21,14 @@ abstract class FirExpression : FirPureAbstractElement(), FirStatement {
     abstract val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformExpression(this, data) as E
 
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

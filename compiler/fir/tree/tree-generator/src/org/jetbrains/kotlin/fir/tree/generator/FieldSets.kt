@@ -57,9 +57,9 @@ object FieldSets {
 
     val valueParameters by lazy { fieldList(valueParameter) }
 
-    val typeParameters by lazy { fieldList("typeParameters", typeParameter) }
-
     val typeParameterRefs by lazy { fieldList("typeParameters", typeParameterRef) }
+
+    val typeParameters get() = typeParameterRefs//by lazy { fieldList("typeParameters", typeParameter) }
 
     val name by lazy { field(nameType) }
 

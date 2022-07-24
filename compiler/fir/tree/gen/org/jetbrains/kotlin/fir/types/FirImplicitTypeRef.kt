@@ -19,11 +19,9 @@ abstract class FirImplicitTypeRef : FirTypeRef() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformImplicitTypeRef(this, data) as E
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRef
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirImplicitTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

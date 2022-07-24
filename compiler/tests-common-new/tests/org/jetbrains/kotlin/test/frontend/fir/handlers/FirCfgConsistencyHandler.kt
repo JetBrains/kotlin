@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirCfgConsistencyChecker
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.fir.visitors.accept
 
 class FirCfgConsistencyHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {

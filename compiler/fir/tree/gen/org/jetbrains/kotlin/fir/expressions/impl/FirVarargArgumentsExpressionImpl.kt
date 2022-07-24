@@ -26,27 +26,23 @@ internal class FirVarargArgumentsExpressionImpl(
     override val arguments: MutableList<FirExpression>,
     override var varargElementType: FirTypeRef,
 ) : FirVarargArgumentsExpression() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        arguments.forEach { it.accept(visitor, data) }
-        varargElementType.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        arguments.transformInplace(transformer, data)
-        varargElementType = varargElementType.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.VarargArgumentsExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
+    override fun replaceArguments(newArguments: List<FirExpression>) {
+        arguments.clear()
+        arguments.addAll(newArguments)
+    }
+
+    override fun replaceVarargElementType(newVarargElementType: FirTypeRef) {
+        varargElementType = newVarargElementType
     }
 }

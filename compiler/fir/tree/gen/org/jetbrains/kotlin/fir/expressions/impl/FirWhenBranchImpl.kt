@@ -23,29 +23,13 @@ internal class FirWhenBranchImpl(
     override var condition: FirExpression,
     override var result: FirBlock,
 ) : FirWhenBranch() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
+    override val elementKind get() = FirElementKind.WhenBranch
+
+    override fun replaceCondition(newCondition: FirExpression) {
+        condition = newCondition
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
-        transformCondition(transformer, data)
-        transformResult(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
-        condition = condition.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
-        result = result.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
-        return this
+    override fun replaceResult(newResult: FirBlock) {
+        result = newResult
     }
 }

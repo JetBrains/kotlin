@@ -35,36 +35,11 @@ internal class FirDelegatedConstructorCallImpl(
 ) : FirDelegatedConstructorCall() {
     override val isSuper: Boolean get() = !isThis
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        argumentList.accept(visitor, data)
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
-        constructedTypeRef.accept(visitor, data)
-        calleeReference.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.DelegatedConstructorCall
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        transformAnnotations(transformer, data)
-        argumentList = argumentList.transform(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
-        constructedTypeRef = constructedTypeRef.transform(transformer, data)
-        transformCalleeReference(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
@@ -78,6 +53,10 @@ internal class FirDelegatedConstructorCallImpl(
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {
         constructedTypeRef = newConstructedTypeRef
+    }
+
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {

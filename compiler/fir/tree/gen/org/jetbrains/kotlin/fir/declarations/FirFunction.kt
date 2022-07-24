@@ -44,13 +44,14 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract val valueParameters: List<FirValueParameter>
     abstract val body: FirBlock?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformFunction(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -65,18 +66,31 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
     abstract fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     abstract fun replaceBody(newBody: FirBlock?)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction
-
-    abstract fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction
 }
+
+inline fun <D> FirFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+
+inline fun <D> FirFunction.transformBody(transformer: FirTransformer<D>, data: D): FirFunction 
+     = apply { replaceBody(body?.transform(transformer, data)) }

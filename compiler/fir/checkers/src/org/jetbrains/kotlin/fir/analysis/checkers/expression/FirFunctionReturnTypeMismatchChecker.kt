@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSI
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
@@ -45,15 +44,16 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
             } else {
                 val isDueToNullability =
                     context.session.typeContext.isTypeMismatchDueToNullability(returnExpressionType, functionReturnType)
-                if (resultExpression is FirExpressionWithSmartcast && !resultExpression.isStable &&
-                    isSubtypeForTypeMismatch(typeContext, subtype = resultExpression.smartcastType.coneType, supertype = functionReturnType)
+                val resultExpressionTypeRef = resultExpression.smartCastedTypeRef
+                if (resultExpressionTypeRef != null && !resultExpressionTypeRef.isStable &&
+                    isSubtypeForTypeMismatch(typeContext, subtype = resultExpressionTypeRef.smartcastType, supertype = functionReturnType)
                 ) {
                     reporter.reportOn(
                         resultExpression.source,
                         SMARTCAST_IMPOSSIBLE,
                         functionReturnType,
                         resultExpression,
-                        resultExpression.smartcastStability.description,
+                        resultExpressionTypeRef.smartcastStability.description,
                         isDueToNullability,
                         context
                     )

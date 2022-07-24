@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -116,8 +117,6 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             checkReceiversOfQualifiedAccessExpression(qualifiedAccessExpression, targetSymbol, data)
         }
 
-        // prevent delegation to visitQualifiedAccessExpression, which causes redundant diagnostics
-        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: CheckerContext) {}
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
             val propertySymbol = variableAssignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
@@ -409,7 +408,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
 
         if (overriddenSymbols.isNotEmpty()) {
             for (param in function.typeParameters) {
-                if (param.isReified) {
+                if (param is FirTypeParameter && param.isReified) {
                     reporter.reportOn(param.source, FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE, context)
                 }
             }

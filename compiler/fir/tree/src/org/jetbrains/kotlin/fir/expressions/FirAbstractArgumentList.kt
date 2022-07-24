@@ -10,15 +10,5 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAbstractArgumentList : FirArgumentList() {
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
-        return this
-    }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        // DO NOTHING
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return this
-    }
 }

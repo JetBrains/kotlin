@@ -22,15 +22,24 @@ abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
     abstract override val expression: FirExpression
     abstract val delegateProvider: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedDelegateExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWrappedDelegateExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceExpression(newExpression: FirExpression)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression
+    abstract fun replaceDelegateProvider(newDelegateProvider: FirExpression)
 }
+
+inline fun <D> FirWrappedDelegateExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirWrappedDelegateExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirWrappedDelegateExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
+     = apply { replaceExpression(expression.transform(transformer, data)) }
+
+inline fun <D> FirWrappedDelegateExpression.transformDelegateProvider(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression 
+     = apply { replaceDelegateProvider(delegateProvider.transform(transformer, data)) }

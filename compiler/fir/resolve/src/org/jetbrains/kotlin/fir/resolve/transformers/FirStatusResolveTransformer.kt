@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.transform
 
 class FirStatusResolveProcessor(
     session: FirSession,
@@ -309,7 +310,7 @@ abstract class AbstractFirStatusResolveTransformer(
         typeAlias: FirTypeAlias,
         data: FirResolvedDeclarationStatus?
     ): FirStatement {
-        typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
+        typeAlias.typeParameters.forEach { transformDeclaration(it as FirTypeParameter, data) } // TODO WTF????
         typeAlias.transformStatus(this, statusResolver.resolveStatus(typeAlias, containingClass, isLocal = false))
         return transformDeclaration(typeAlias, data) as FirTypeAlias
     }

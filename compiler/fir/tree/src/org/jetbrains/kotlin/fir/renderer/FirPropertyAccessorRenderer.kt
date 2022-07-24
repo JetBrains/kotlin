@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 
 class FirPropertyAccessorRenderer {

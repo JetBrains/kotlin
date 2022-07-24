@@ -21,12 +21,10 @@ internal class FirRawContractDescriptionImpl(
     override val source: KtSourceElement?,
     override val rawEffects: MutableList<FirExpression>,
 ) : FirRawContractDescription() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        rawEffects.forEach { it.accept(visitor, data) }
-    }
+    override val elementKind get() = FirElementKind.RawContractDescription
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRawContractDescriptionImpl {
-        rawEffects.transformInplace(transformer, data)
-        return this
+    override fun replaceRawEffects(newRawEffects: List<FirExpression>) {
+        rawEffects.clear()
+        rawEffects.addAll(newRawEffects)
     }
 }

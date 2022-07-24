@@ -41,20 +41,9 @@ internal class FirAnonymousInitializerImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        controlFlowGraphReference?.accept(visitor, data)
-        body?.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.AnonymousInitializer
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        body = body?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
-        return this
-    }
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
@@ -62,5 +51,9 @@ internal class FirAnonymousInitializerImpl(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
     }
 }

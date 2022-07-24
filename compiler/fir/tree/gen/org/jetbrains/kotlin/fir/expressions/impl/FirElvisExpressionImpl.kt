@@ -30,48 +30,26 @@ internal class FirElvisExpressionImpl(
 ) : FirElvisExpression() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        calleeReference.accept(visitor, data)
-        lhs.accept(visitor, data)
-        rhs.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        transformCalleeReference(transformer, data)
-        transformLhs(transformer, data)
-        transformRhs(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        lhs = lhs.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
-        rhs = rhs.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ElvisExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
+    }
+
+    override fun replaceLhs(newLhs: FirExpression) {
+        lhs = newLhs
+    }
+
+    override fun replaceRhs(newRhs: FirExpression) {
+        rhs = newRhs
     }
 }

@@ -18,11 +18,9 @@ sealed interface FirTypeParameterRefsOwner : FirElement {
     override val source: KtSourceElement?
     val typeParameters: List<FirTypeParameterRef>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRefsOwner(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTypeParameterRefsOwner(this, data) as E
-
-    fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner
+    fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
+
+inline fun <D> FirTypeParameterRefsOwner.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

@@ -22,11 +22,19 @@ abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
     abstract val leftType: FirTypeRef
     abstract val rightType: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntersectionTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformIntersectionTypeRef(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef
+    abstract fun replaceLeftType(newLeftType: FirTypeRef)
+
+    abstract fun replaceRightType(newRightType: FirTypeRef)
 }
+
+inline fun <D> FirIntersectionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirIntersectionTypeRef.transformLeftType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
+     = apply { replaceLeftType(leftType.transform(transformer, data)) }
+
+inline fun <D> FirIntersectionTypeRef.transformRightType(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRef 
+     = apply { replaceRightType(rightType.transform(transformer, data)) }

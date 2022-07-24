@@ -20,9 +20,5 @@ internal class FirLabelImpl(
     override val source: KtSourceElement?,
     override val name: String,
 ) : FirLabel() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLabelImpl {
-        return this
-    }
+    override val elementKind get() = FirElementKind.Label
 }

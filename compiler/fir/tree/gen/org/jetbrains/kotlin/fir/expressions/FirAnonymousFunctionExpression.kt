@@ -22,15 +22,19 @@ abstract class FirAnonymousFunctionExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val anonymousFunction: FirAnonymousFunction
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunctionExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnonymousFunctionExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun <D> transformAnonymousFunction(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression
+    abstract fun replaceAnonymousFunction(newAnonymousFunction: FirAnonymousFunction)
 }
+
+inline fun <D> FirAnonymousFunctionExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunctionExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunctionExpression.transformAnonymousFunction(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpression 
+     = apply { replaceAnonymousFunction(anonymousFunction.transform(transformer, data)) }

@@ -178,7 +178,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     private val FirExpression.unwrapped: FirExpression
         get() =
             when (this) {
-                is FirExpressionWithSmartcast -> this.originalExpression
                 is FirWrappedExpression -> this.expression
                 else -> this
             }

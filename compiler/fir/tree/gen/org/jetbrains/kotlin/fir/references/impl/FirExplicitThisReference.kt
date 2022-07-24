@@ -24,11 +24,7 @@ internal class FirExplicitThisReference(
 ) : FirThisReference() {
     override var boundSymbol: FirBasedSymbol<*>? = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitThisReference {
-        return this
-    }
+    override val elementKind get() = FirElementKind.ThisReference
 
     override fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?) {
         boundSymbol = newBoundSymbol

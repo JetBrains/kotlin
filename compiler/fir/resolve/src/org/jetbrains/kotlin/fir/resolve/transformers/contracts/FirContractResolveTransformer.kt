@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.name.Name
 
 open class FirContractResolveTransformer(

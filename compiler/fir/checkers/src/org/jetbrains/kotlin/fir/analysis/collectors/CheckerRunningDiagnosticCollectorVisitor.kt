@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
+import org.jetbrains.kotlin.fir.visitors.accept
 
 open class CheckerRunningDiagnosticCollectorVisitor(
     context: CheckerContext,

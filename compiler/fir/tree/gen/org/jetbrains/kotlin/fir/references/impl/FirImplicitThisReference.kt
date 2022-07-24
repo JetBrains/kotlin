@@ -24,11 +24,7 @@ internal class FirImplicitThisReference(
     override val source: KtSourceElement? get() = null
     override val labelName: String? get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitThisReference {
-        return this
-    }
+    override val elementKind get() = FirElementKind.ThisReference
 
     override fun replaceBoundSymbol(newBoundSymbol: FirBasedSymbol<*>?) {}
 

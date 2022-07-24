@@ -27,33 +27,15 @@ internal class FirCheckNotNullCallImpl(
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
 ) : FirCheckNotNullCall() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        argumentList.accept(visitor, data)
-        calleeReference.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCheckNotNullCallImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        argumentList = argumentList.transform(transformer, data)
-        transformCalleeReference(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckNotNullCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCheckNotNullCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.CheckNotNullCall
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

@@ -114,8 +114,6 @@ internal val FirResolvable.symbol: FirBasedSymbol<*>?
         else -> null
     }
 
+// TODO REMOVE
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
-    when (this) {
-        is FirExpressionWithSmartcast -> originalExpression
-        else -> this
-    }
+    this

@@ -189,11 +189,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        noImpl(expressionWithSmartcast)
-        noImpl(expressionWithSmartcastToNothing)
+        noImpl(statementStub)
+        hasManualImpl(statementStub)
 
-        noImpl(whenSubjectExpressionWithSmartcast)
-        noImpl(whenSubjectExpressionWithSmartcastToNothing)
+        hasManualImpl(declarationStatus)
+        hasManualImpl(contractDescription)
 
         impl(getClassCall) {
             default("argument") {
@@ -417,6 +417,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
             default("delegatedTypeRef") {
                 needAcceptAndTransform = false
+            }
+        }
+
+        impl(smartCastedTypeRef) {
+            publicImplementation()
+            default("type") {
+                value = "if (isStable) smartcastType else originalType"
+                withGetter = true
+            }
+            default("isStable") {
+                value = "smartcastStability == SmartcastStability.STABLE_VALUE"
+                withGetter = true
             }
         }
 

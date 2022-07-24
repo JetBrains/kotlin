@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 class FirResolvedDeclarationStatusImpl(
     visibility: Visibility,
@@ -39,4 +40,6 @@ class FirResolvedDeclarationStatusImpl(
 
     override val modality: Modality
         get() = super.modality!!
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ResolvedDeclarationStatus
 }

@@ -27,6 +27,7 @@ fun generateElements(builder: AbstractFirTreeBuilder, generationPath: File): Lis
     generatedFiles += printVisitor(builder.elements, generationPath, true)
     generatedFiles += printDefaultVisitorVoid(builder.elements, generationPath)
     generatedFiles += printTransformer(builder.elements, generationPath)
+    generatedFiles += printElementKind(builder.elements, generationPath)
     return generatedFiles
 }
 

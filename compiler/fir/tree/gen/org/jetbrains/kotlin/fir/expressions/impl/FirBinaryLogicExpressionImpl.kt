@@ -30,42 +30,22 @@ internal class FirBinaryLogicExpressionImpl(
 ) : FirBinaryLogicExpression() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        leftOperand.accept(visitor, data)
-        rightOperand.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
-        transformLeftOperand(transformer, data)
-        transformRightOperand(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
-        leftOperand = leftOperand.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
-        rightOperand = rightOperand.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.BinaryLogicExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
+    override fun replaceLeftOperand(newLeftOperand: FirExpression) {
+        leftOperand = newLeftOperand
+    }
+
+    override fun replaceRightOperand(newRightOperand: FirExpression) {
+        rightOperand = newRightOperand
     }
 }

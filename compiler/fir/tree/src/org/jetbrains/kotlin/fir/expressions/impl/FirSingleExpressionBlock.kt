@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -26,38 +27,22 @@ class FirSingleExpressionBlock(
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        statement.accept(visitor, data)
-        typeRef.accept(visitor, data)
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSingleExpressionBlock {
-        transformStatements(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
+    override fun replaceStatements(newStatements: List<FirStatement>) {
+        require(newStatements.size == 1)
+        statement = newStatements[0]
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock {
-        statement = statement.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlock {
-        transformAnnotations(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Block
 }
 
 @Suppress("NOTHING_TO_INLINE")

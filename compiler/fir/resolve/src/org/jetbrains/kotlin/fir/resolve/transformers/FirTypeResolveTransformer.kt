@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.transform
 
 class FirTypeResolveProcessor(
     session: FirSession,
@@ -147,7 +149,7 @@ open class FirTypeResolveTransformer(
         return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
-                unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                unboundCyclesInTypeParametersSupertypes(it as FirTypeParameterRefsOwner)
             }
         } as FirSimpleFunction
     }

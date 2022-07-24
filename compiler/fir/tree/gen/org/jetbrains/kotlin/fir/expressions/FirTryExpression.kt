@@ -25,25 +25,34 @@ abstract class FirTryExpression : FirExpression(), FirResolvable {
     abstract val catches: List<FirCatch>
     abstract val finallyBlock: FirBlock?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTryExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTryExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun replaceTryBlock(newTryBlock: FirBlock)
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun replaceCatches(newCatches: List<FirCatch>)
 
-    abstract fun <D> transformTryBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
-
-    abstract fun <D> transformCatches(transformer: FirTransformer<D>, data: D): FirTryExpression
-
-    abstract fun <D> transformFinallyBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun replaceFinallyBlock(newFinallyBlock: FirBlock?)
 }
+
+inline fun <D> FirTryExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirTryExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirTryExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirTryExpression.transformTryBlock(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceTryBlock(tryBlock.transform(transformer, data)) }
+
+inline fun <D> FirTryExpression.transformCatches(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceCatches(catches.transform(transformer, data)) }
+
+inline fun <D> FirTryExpression.transformFinallyBlock(transformer: FirTransformer<D>, data: D): FirTryExpression 
+     = apply { replaceFinallyBlock(finallyBlock?.transform(transformer, data)) }

@@ -26,9 +26,5 @@ internal class FirImportImpl(
     override val aliasName: Name?,
     override val aliasSource: KtSourceElement?,
 ) : FirPureAbstractElement(), FirImport {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImportImpl {
-        return this
-    }
+    override val elementKind get() = FirElementKind.Import
 }

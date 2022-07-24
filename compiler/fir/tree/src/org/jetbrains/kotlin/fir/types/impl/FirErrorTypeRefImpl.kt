@@ -33,17 +33,15 @@ internal class FirErrorTypeRefImpl(
 
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ErrorTypeRef
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceDelegatedTypeRef(newDelegatedTypeRef: FirTypeRef?) {
+        this.delegatedTypeRef = newDelegatedTypeRef
     }
 }

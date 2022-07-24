@@ -22,14 +22,7 @@ internal class FirExplicitSuperReference(
     override val labelName: String?,
     override var superTypeRef: FirTypeRef,
 ) : FirSuperReference() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        superTypeRef.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitSuperReference {
-        superTypeRef = superTypeRef.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.SuperReference
 
     override fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef) {
         superTypeRef = newSuperTypeRef

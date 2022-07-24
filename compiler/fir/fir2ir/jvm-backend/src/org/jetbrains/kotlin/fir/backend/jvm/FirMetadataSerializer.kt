@@ -224,7 +224,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
 private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApproximator): FirPropertyAccessor {
     val accessor = this
     return buildPropertyAccessor {
-        val typeParameterSet = accessor.typeParameters.toMutableSet()
+        val typeParameterSet = (accessor.typeParameters as List<FirTypeParameter>).toMutableSet() // TODO UNCHECKED
         moduleData = accessor.moduleData
         origin = FirDeclarationOrigin.Source
         returnTypeRef = accessor.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
@@ -244,7 +244,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(approximator: AbstractTypeApp
 internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximator): FirProperty {
     val property = this
     return buildProperty {
-        val typeParameterSet = property.typeParameters.toMutableSet()
+        val typeParameterSet = (property.typeParameters as List<FirTypeParameter>).toMutableSet() // TODO UNCHECKED
         moduleData = property.moduleData
         origin = FirDeclarationOrigin.Source
         symbol = FirPropertySymbol(property.symbol.callableId)

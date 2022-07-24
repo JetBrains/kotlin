@@ -27,23 +27,14 @@ internal class FirSpreadArgumentExpressionImpl(
     override val typeRef: FirTypeRef get() = expression.typeRef
     override val isSpread: Boolean get() = true
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        expression.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSpreadArgumentExpressionImpl {
-        transformAnnotations(transformer, data)
-        expression = expression.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSpreadArgumentExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.SpreadArgumentExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
 
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParametersOwner {
+abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParameterRefsOwner {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -27,29 +27,34 @@ abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParametersOwner 
     abstract override val attributes: FirDeclarationAttributes
     abstract override val status: FirDeclarationStatus
     abstract override val deprecation: DeprecationsPerUseSite?
-    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract val name: Name
     abstract override val symbol: FirTypeAliasSymbol
     abstract val expandedTypeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeAlias(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTypeAlias(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 
     abstract fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias
-
-    abstract fun <D> transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAlias
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAlias
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirTypeAlias.transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirTypeAlias.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeAlias 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirTypeAlias.transformExpandedTypeRef(transformer: FirTransformer<D>, data: D): FirTypeAlias 
+     = apply { replaceExpandedTypeRef(expandedTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirTypeAlias.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeAlias 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

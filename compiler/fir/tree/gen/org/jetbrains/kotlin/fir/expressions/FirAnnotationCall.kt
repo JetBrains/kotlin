@@ -29,13 +29,12 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val calleeReference: FirReference
     abstract override val argumentMapping: FirAnnotationArgumentMapping
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnnotationCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
@@ -44,12 +43,22 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
-
-    abstract override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 }
+
+inline fun <D> FirAnnotationCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceAnnotationTypeRef(annotationTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

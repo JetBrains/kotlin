@@ -30,24 +30,19 @@ internal class FirAugmentedArraySetCallImpl(
     override var calleeReference: FirReference,
     override val arrayAccessSource: KtSourceElement?,
 ) : FirAugmentedArraySetCall() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        lhsGetCall.accept(visitor, data)
-        rhs.accept(visitor, data)
-        calleeReference.accept(visitor, data)
+    override val elementKind get() = FirElementKind.AugmentedArraySetCall
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
-        transformAnnotations(transformer, data)
-        lhsGetCall = lhsGetCall.transform(transformer, data)
-        rhs = rhs.transform(transformer, data)
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
+    override fun replaceLhsGetCall(newLhsGetCall: FirFunctionCall) {
+        lhsGetCall = newLhsGetCall
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceRhs(newRhs: FirExpression) {
+        rhs = newRhs
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {

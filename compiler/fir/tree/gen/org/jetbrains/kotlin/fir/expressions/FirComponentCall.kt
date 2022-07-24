@@ -33,20 +33,21 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComponentCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformComponentCall(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
@@ -55,16 +56,31 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
 }
+
+inline fun <D> FirComponentCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirComponentCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall 
+     = apply { replaceExplicitReceiver(explicitReceiver.transform(transformer, data)) }

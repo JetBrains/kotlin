@@ -26,21 +26,29 @@ abstract class FirAnnotation : FirExpression() {
     abstract val argumentMapping: FirAnnotationArgumentMapping
     abstract val typeArguments: List<FirTypeProjection>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnnotation(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotation
-
-    abstract fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation
-
-    abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotation
 }
+
+inline fun <D> FirAnnotation.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnnotation.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotation 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnnotation.transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotation 
+     = apply { replaceAnnotationTypeRef(annotationTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnnotation.transformArgumentMapping(transformer: FirTransformer<D>, data: D): FirAnnotation 
+     = apply { replaceArgumentMapping(argumentMapping.transform(transformer, data)) }
+
+inline fun <D> FirAnnotation.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotation 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }

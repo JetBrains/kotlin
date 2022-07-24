@@ -24,19 +24,24 @@ abstract class FirSafeCallExpression : FirExpression() {
     abstract val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
     abstract val selector: FirStatement
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSafeCallExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformSafeCallExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceReceiver(newReceiver: FirExpression)
+
     abstract fun replaceSelector(newSelector: FirStatement)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
-
-    abstract fun <D> transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
-
-    abstract fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
 }
+
+inline fun <D> FirSafeCallExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirSafeCallExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirSafeCallExpression.transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
+     = apply { replaceReceiver(receiver.transform(transformer, data)) }
+
+inline fun <D> FirSafeCallExpression.transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpression 
+     = apply { replaceSelector(selector.transform(transformer, data)) }

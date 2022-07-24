@@ -43,15 +43,18 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract val contextReceivers: List<FirContextReceiver>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformRegularClass(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
+
+    abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
@@ -59,13 +62,26 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass
+    abstract fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 }
+
+inline fun <D> FirRegularClass.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+
+inline fun <D> FirRegularClass.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirRegularClass 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }

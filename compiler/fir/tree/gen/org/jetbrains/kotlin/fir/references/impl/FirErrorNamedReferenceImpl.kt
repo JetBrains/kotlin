@@ -26,9 +26,5 @@ internal class FirErrorNamedReferenceImpl(
 ) : FirErrorNamedReference() {
     override val name: Name = Name.special("<${diagnostic.reason}>")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorNamedReferenceImpl {
-        return this
-    }
+    override val elementKind get() = FirElementKind.ErrorNamedReference
 }

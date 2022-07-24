@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.transform
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirImplicitTypeBodyResolveProcessor(
@@ -354,7 +355,7 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         if (designation.hasNext()) {
-            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data)
+            val result = (designation.next() as FirDeclaration).transform<FirDeclaration, ResolutionMode>(this, data)
             if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }

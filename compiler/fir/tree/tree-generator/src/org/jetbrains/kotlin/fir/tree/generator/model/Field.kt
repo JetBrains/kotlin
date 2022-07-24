@@ -17,7 +17,7 @@ sealed class Field : Importable {
 
     var fromParent: Boolean = false
     open var needsSeparateTransform: Boolean = false
-    open var needTransformInOtherChildren: Boolean = false
+    var nonReplaceable: Boolean? = null
 
     open val defaultValueInImplementation: String? get() = null
     abstract var isMutable: Boolean
@@ -40,10 +40,10 @@ sealed class Field : Importable {
             copy.arguments.clear()
             copy.arguments.addAll(arguments)
             copy.needsSeparateTransform = needsSeparateTransform
-            copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.isMutable = isMutable
             copy.overridenTypes += overridenTypes
             copy.useNullableForReplace = useNullableForReplace
+            copy.nonReplaceable = nonReplaceable
         }
         copy.fromParent = fromParent
     }
@@ -79,13 +79,6 @@ class FieldWithDefault(val origin: Field) : Field() {
         set(_) {}
     override val packageName: String? get() = origin.packageName
     override val isFirType: Boolean get() = origin.isFirType
-    override var needsSeparateTransform: Boolean
-        get() = origin.needsSeparateTransform
-        set(_) {}
-
-    override var needTransformInOtherChildren: Boolean
-        get() = origin.needTransformInOtherChildren
-        set(_) {}
 
     override val arguments: MutableList<Importable>
         get() = origin.arguments
@@ -166,7 +159,8 @@ class FirField(
     override val name: String,
     val element: AbstractElement,
     override val nullable: Boolean,
-    override var withReplace: Boolean
+    override var withReplace: Boolean,
+    var nonTraversable: Boolean
 ) : Field() {
     init {
         if (element is ElementWithArguments) {
@@ -186,7 +180,8 @@ class FirField(
             name,
             element,
             nullable,
-            withReplace
+            withReplace,
+            nonTraversable
         ).apply {
             withBindThis = this@FirField.withBindThis
         }

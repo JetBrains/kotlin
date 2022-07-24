@@ -254,7 +254,7 @@ data class CompilerId(
 }
 
 
-fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
+fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != "false"
 
 fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                               vararg additionalParams: String,

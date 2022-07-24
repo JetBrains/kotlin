@@ -24,17 +24,19 @@ abstract class FirReturnExpression : FirJump<FirFunction>() {
     abstract override val target: FirTarget<FirFunction>
     abstract val result: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReturnExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformReturnExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpression
+    abstract fun replaceResult(newResult: FirExpression)
 }
+
+inline fun <D> FirReturnExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirReturnExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirReturnExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirReturnExpression.transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression 
+     = apply { replaceResult(result.transform(transformer, data)) }

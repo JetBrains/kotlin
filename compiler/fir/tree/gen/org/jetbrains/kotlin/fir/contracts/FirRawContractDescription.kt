@@ -19,9 +19,9 @@ abstract class FirRawContractDescription : FirContractDescription() {
     abstract override val source: KtSourceElement?
     abstract val rawEffects: List<FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRawContractDescription(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformRawContractDescription(this, data) as E
+    abstract fun replaceRawEffects(newRawEffects: List<FirExpression>)
 }
+
+inline fun <D> FirRawContractDescription.transformRawEffects(transformer: FirTransformer<D>, data: D): FirRawContractDescription 
+     = apply { replaceRawEffects(rawEffects.transform(transformer, data)) }

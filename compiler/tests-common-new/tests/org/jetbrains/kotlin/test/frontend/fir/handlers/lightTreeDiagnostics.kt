@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.toKtLightSourceElement
 

@@ -18,11 +18,9 @@ interface FirAnnotationContainer : FirElement {
     override val source: KtSourceElement?
     val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationContainer(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnnotationContainer(this, data) as E
-
-    fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationContainer
+    fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirAnnotationContainer.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationContainer 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

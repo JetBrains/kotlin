@@ -59,58 +59,33 @@ internal class FirRegularClassImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        declarations.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-        superTypeRefs.forEach { it.accept(visitor, data) }
-        contextReceivers.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        transformTypeParameters(transformer, data)
-        transformStatus(transformer, data)
-        transformDeclarations(transformer, data)
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        transformSuperTypeRefs(transformer, data)
-        contextReceivers.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        declarations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        superTypeRefs.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.RegularClass
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters)
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
         deprecation = newDeprecation
+    }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        declarations.clear()
+        declarations.addAll(newDeclarations)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
@@ -124,5 +99,10 @@ internal class FirRegularClassImpl(
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
+    }
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        contextReceivers.clear()
+        contextReceivers.addAll(newContextReceivers)
     }
 }

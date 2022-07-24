@@ -40,68 +40,7 @@ internal class FirImplicitInvokeCallImpl(
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Operator
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
-        typeArguments.forEach { it.accept(visitor, data) }
-        explicitReceiver?.accept(visitor, data)
-        if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver.accept(visitor, data)
-        }
-        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver.accept(visitor, data)
-        }
-        argumentList.accept(visitor, data)
-        calleeReference.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
-        transformTypeArguments(transformer, data)
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
-        if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        }
-        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver.transform(transformer, data)
-        }
-        argumentList = argumentList.transform(transformer, data)
-        transformCalleeReference(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        typeArguments.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ImplicitInvokeCall
 
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
@@ -110,6 +49,11 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
@@ -124,6 +68,14 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

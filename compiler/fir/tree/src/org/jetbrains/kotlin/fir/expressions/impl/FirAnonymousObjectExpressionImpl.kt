@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transform
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 internal class FirAnonymousObjectExpressionImpl(
     override val source: KtSourceElement?,
@@ -24,29 +22,20 @@ internal class FirAnonymousObjectExpressionImpl(
     override var anonymousObject: FirAnonymousObject,
 ) : FirAnonymousObjectExpression() {
     override val annotations: List<FirAnnotation>
-        get() = anonymousObject.annotations
+        get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        anonymousObject.accept(visitor, data)
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        require(newAnnotations.isEmpty())
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnonymousObject(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObjectExpressionImpl {
-        return this
-    }
-
-    override fun <D> transformAnonymousObject(transformer: FirTransformer<D>, data: D): FirAnonymousObjectExpressionImpl {
-        anonymousObject = anonymousObject.transform(transformer, data)
-        return this
+    override fun replaceAnonymousObject(newAnonymousObject: FirAnonymousObject) {
+        anonymousObject = newAnonymousObject
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.AnonymousObjectExpression
 }

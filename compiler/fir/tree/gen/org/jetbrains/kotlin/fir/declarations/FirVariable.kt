@@ -48,13 +48,12 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
     abstract val backingField: FirBackingField?
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariable(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformVariable(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -66,29 +65,46 @@ sealed class FirVariable : FirCallableDeclaration(), FirStatement {
 
     abstract fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract fun replaceSetter(newSetter: FirPropertyAccessor?)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable
+    abstract fun replaceBackingField(newBackingField: FirBackingField?)
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirVariable
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirVariable.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformStatus(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformInitializer(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformDelegate(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformGetter(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceGetter(getter?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformSetter(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceSetter(setter?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformBackingField(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+
+inline fun <D> FirVariable.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariable 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

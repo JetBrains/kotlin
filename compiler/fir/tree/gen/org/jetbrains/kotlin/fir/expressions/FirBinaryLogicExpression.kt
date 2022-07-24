@@ -23,19 +23,24 @@ abstract class FirBinaryLogicExpression : FirExpression() {
     abstract val rightOperand: FirExpression
     abstract val kind: LogicOperationKind
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBinaryLogicExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformBinaryLogicExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun replaceLeftOperand(newLeftOperand: FirExpression)
 
-    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun replaceRightOperand(newRightOperand: FirExpression)
 }
+
+inline fun <D> FirBinaryLogicExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirBinaryLogicExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirBinaryLogicExpression.transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
+     = apply { replaceLeftOperand(leftOperand.transform(transformer, data)) }
+
+inline fun <D> FirBinaryLogicExpression.transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression 
+     = apply { replaceRightOperand(rightOperand.transform(transformer, data)) }

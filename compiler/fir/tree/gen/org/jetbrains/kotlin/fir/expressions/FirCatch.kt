@@ -21,15 +21,14 @@ abstract class FirCatch : FirPureAbstractElement(), FirElement {
     abstract val parameter: FirValueParameter
     abstract val block: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCatch(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformCatch(this, data) as E
+    abstract fun replaceParameter(newParameter: FirValueParameter)
 
-    abstract fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
-
-    abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatch
+    abstract fun replaceBlock(newBlock: FirBlock)
 }
+
+inline fun <D> FirCatch.transformParameter(transformer: FirTransformer<D>, data: D): FirCatch 
+     = apply { replaceParameter(parameter.transform(transformer, data)) }
+
+inline fun <D> FirCatch.transformBlock(transformer: FirTransformer<D>, data: D): FirCatch 
+     = apply { replaceBlock(block.transform(transformer, data)) }

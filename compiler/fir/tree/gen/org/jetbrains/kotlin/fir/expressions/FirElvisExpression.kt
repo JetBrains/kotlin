@@ -24,21 +24,29 @@ abstract class FirElvisExpression : FirExpression(), FirResolvable {
     abstract val lhs: FirExpression
     abstract val rhs: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElvisExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformElvisExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpression
+    abstract fun replaceLhs(newLhs: FirExpression)
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpression
-
-    abstract fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpression
-
-    abstract fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpression
+    abstract fun replaceRhs(newRhs: FirExpression)
 }
+
+inline fun <D> FirElvisExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirElvisExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirElvisExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirElvisExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpression 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirElvisExpression.transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpression 
+     = apply { replaceLhs(lhs.transform(transformer, data)) }
+
+inline fun <D> FirElvisExpression.transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpression 
+     = apply { replaceRhs(rhs.transform(transformer, data)) }

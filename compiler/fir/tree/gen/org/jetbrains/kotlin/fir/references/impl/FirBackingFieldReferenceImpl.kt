@@ -26,9 +26,5 @@ internal class FirBackingFieldReferenceImpl(
 ) : FirBackingFieldReference() {
     override val name: Name get() = Name.identifier("\$field")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldReferenceImpl {
-        return this
-    }
+    override val elementKind get() = FirElementKind.BackingFieldReference
 }

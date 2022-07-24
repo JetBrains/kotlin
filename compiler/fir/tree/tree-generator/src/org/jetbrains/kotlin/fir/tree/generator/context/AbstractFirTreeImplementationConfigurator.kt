@@ -16,6 +16,10 @@ abstract class AbstractFirTreeImplementationConfigurator {
         element.doesNotNeedImplementation = true
     }
 
+    fun hasManualImpl(element: Element) {
+        element.hasManualImplementations = true
+    }
+
     fun impl(element: Element, name: String? = null, config: ImplementationContext.() -> Unit = {}): Implementation {
         val implementation = if (name == null) {
             element.defaultImplementation

@@ -27,27 +27,11 @@ class FirEmptyExpressionBlock : FirBlock() {
     override val statements: List<FirStatement> get() = emptyList()
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.Block
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
-        transformOtherChildren(transformer, data)
-        return this
-    }
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
-        return this
-    }
-
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEmptyExpressionBlock {
-        typeRef = typeRef.transform(transformer, data)
-        return this
-    }
+    override fun replaceStatements(newStatements: List<FirStatement>) {}
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

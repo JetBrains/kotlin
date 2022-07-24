@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.transform
+import org.jetbrains.kotlin.fir.visitors.transformChildren
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -486,7 +488,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             transformer.firTowerDataContextCollector?.addStatementContext(block.statements[index], context.towerDataContext)
             TransformData.Data(value)
         }
-        block.transformOtherChildren(transformer, data)
+        block.transformAnnotations(transformer, data)
         if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isUnitOrFlexibleUnit == true) {
             // Unit-coercion
             block.resultType = data.expectedTypeRef
@@ -707,19 +709,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }.transformTypeOperatorCallChildren()
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
-        resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-                return element
-            }
-
-            override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirTypeRef {
-                return if (typeRef === resolved.conversionTypeRef) {
-                    conversionTypeRef
-                } else {
-                    typeRef
-                }
-            }
-        }, null)
+        resolved.replaceConversionTypeRef(conversionTypeRef)
 
         when (resolved.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
@@ -769,12 +759,18 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
                 if (expectedType != null) {
                     val newMode = ResolutionMode.WithExpectedTypeFromCast(conversionTypeRef.withReplacedConeType(expectedType))
-                    return transformOtherChildren(transformer, newMode)
+                    return this
+                        .transformTypeRef(transformer, newMode)
+                        .transformAnnotations(transformer, newMode)
+                        .transformArgumentList(transformer, newMode)
                 }
             }
         }
 
-        return transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+        return this
+            .transformTypeRef(transformer, ResolutionMode.ContextIndependent)
+            .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+            .transformArgumentList(transformer, ResolutionMode.ContextIndependent)
     }
 
     override fun transformCheckNotNullCall(
@@ -827,7 +823,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
                     .also(dataFlowAnalyzer::exitLeftBinaryOrArgument)
                     .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType)).also(dataFlowAnalyzer::exitBinaryOr)
-        }.transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType)).also {
+        }.transformAnnotations(transformer, ResolutionMode.WithExpectedType(booleanType)).also {
             it.resultType = booleanType
         }
     }

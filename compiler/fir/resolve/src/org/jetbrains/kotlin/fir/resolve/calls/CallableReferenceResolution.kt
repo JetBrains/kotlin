@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -380,17 +381,12 @@ class FirFakeArgumentForCallableReference(
         error("should not be called")
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression {
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         error("should not be called")
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        error("should not be called")
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        error("should not be called")
-    }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Expression
 }
 
 fun ConeKotlinType.isKCallableType(): Boolean {

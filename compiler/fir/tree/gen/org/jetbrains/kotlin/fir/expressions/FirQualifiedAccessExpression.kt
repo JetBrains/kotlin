@@ -29,16 +29,13 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformQualifiedAccessExpression(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
@@ -48,15 +45,31 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 }
+
+inline fun <D> FirQualifiedAccessExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+
+inline fun <D> FirQualifiedAccessExpression.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression 
+     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }

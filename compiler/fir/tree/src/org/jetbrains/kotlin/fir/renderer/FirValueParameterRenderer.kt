@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.fir.visitors.accept
 
 open class FirValueParameterRenderer {
     internal lateinit var components: FirRendererComponents

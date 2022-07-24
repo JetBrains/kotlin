@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.FirSmartCastedTypeRefBuilder
+import org.jetbrains.kotlin.fir.types.builder.buildSmartCastedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -323,25 +325,23 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirQualifiedAccessExpression {
-    val builder = transformExpressionUsingSmartcastInfo(
+    val smartCastedTypeRef = transformExpressionUsingSmartcastInfo(
         qualifiedAccessExpression,
-        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
-        ::FirExpressionWithSmartcastBuilder,
-        ::FirExpressionWithSmartcastToNothingBuilder
-    ) ?: return qualifiedAccessExpression
-    return builder.build()
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo
+    )
+    smartCastedTypeRef?.let { qualifiedAccessExpression.replaceTypeRef(it) }
+    return qualifiedAccessExpression
 }
 
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     whenSubjectExpression: FirWhenSubjectExpression
 ): FirWhenSubjectExpression {
-    val builder = transformExpressionUsingSmartcastInfo(
+    val smartCastedTypeRef = transformExpressionUsingSmartcastInfo(
         whenSubjectExpression,
-        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
-        ::FirWhenSubjectExpressionWithSmartcastBuilder,
-        ::FirWhenSubjectExpressionWithSmartcastToNothingBuilder
-    ) ?: return whenSubjectExpression
-    return builder.build()
+        dataFlowAnalyzer::getTypeUsingSmartcastInfo
+    )
+    smartCastedTypeRef?.let { whenSubjectExpression.replaceTypeRef(it) }
+    return whenSubjectExpression
 }
 
 private val ConeKotlinType.isKindOfNothing
@@ -349,10 +349,8 @@ private val ConeKotlinType.isKindOfNothing
 
 private inline fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
-    smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?,
-    smartcastBuilder: () -> FirWrappedExpressionWithSmartcastBuilder<T>,
-    smartcastToNothingBuilder: () -> FirWrappedExpressionWithSmartcastToNothingBuilder<T>
-): FirWrappedExpressionWithSmartcastBuilder<T>? {
+    smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?
+): FirSmartCastedTypeRef? {
     val (stability, typesFromSmartCast) = smartcastExtractor(expression) ?: return null
     val smartcastStability = stability.impliedSmartcastStability
         ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
@@ -370,12 +368,6 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
     if (allTypes.all { it is ConeDynamicType }) return null
     val intersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, allTypes)
     if (intersectedType == originalType && intersectedType !is ConeDynamicType) return null
-    val intersectedTypeRef = buildResolvedTypeRef {
-        source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-        type = intersectedType
-        annotations += expression.resultType.annotations
-        delegatedTypeRef = expression.resultType
-    }
 
     // Example (1): if (x is String) { ... }, where x: dynamic
     //   the dynamic type will "consume" all other, erasing information.
@@ -389,26 +381,21 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
     ) {
         val reducedTypes = typesFromSmartCast.filterTo(mutableListOf()) { !it.isKindOfNothing }
         val reducedIntersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, reducedTypes)
-        val reducedIntersectedTypeRef = buildResolvedTypeRef {
-            source = expression.resultType.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            type = reducedIntersectedType
-            annotations += expression.resultType.annotations
-            delegatedTypeRef = expression.resultType
-        }
-        return smartcastToNothingBuilder().apply {
-            originalExpression = expression
-            smartcastType = intersectedTypeRef
-            smartcastTypeWithoutNullableNothing = reducedIntersectedTypeRef
+
+        return buildSmartCastedTypeRef {
+            smartcastType = reducedIntersectedType
+            this.originalType = originalType
+//            smartcastTypeWithoutNullableNothing = reducedIntersectedTypeRef
             this.typesFromSmartCast = typesFromSmartCast
             this.smartcastStability = smartcastStability
         }
     }
 
-    return smartcastBuilder().apply {
-        originalExpression = expression
-        smartcastType = intersectedTypeRef
+    return buildSmartCastedTypeRef {
+        smartcastType = intersectedType
         this.typesFromSmartCast = typesFromSmartCast
         this.smartcastStability = smartcastStability
+        this.originalType = originalType
     }
 }
 
@@ -419,11 +406,11 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
 ) {
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
-    val receiverType = ((nullableReceiverExpression as? FirExpressionWithSmartcastToNothing)
+    val receiverType = ((nullableReceiverExpression.smartCastedTypeRef)
         ?.takeIf { it.isStable }
-        ?.smartcastTypeWithoutNullableNothing
-        ?: nullableReceiverExpression.typeRef)
-        .coneTypeSafe<ConeKotlinType>() ?: return
+        ?.smartcastType // TODO: !!! smartcastTypeWithoutNullableNothing
+        ?: nullableReceiverExpression.typeRef.coneTypeSafe())
+        ?: return
 
     val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
 

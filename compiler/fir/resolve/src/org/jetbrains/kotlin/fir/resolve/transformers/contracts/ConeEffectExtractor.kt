@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class ConeEffectExtractor(
@@ -109,20 +111,6 @@ class ConeEffectExtractor(
         if (const.kind != ConstantValueKind.Null) return null
         val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
         return ConeIsNullPredicate(arg, isNegated)
-    }
-
-    override fun visitExpressionWithSmartcast(
-        expressionWithSmartcast: FirExpressionWithSmartcast,
-        data: Nothing?
-    ): ConeContractDescriptionElement? {
-        return expressionWithSmartcast.originalExpression.accept(this, data)
-    }
-
-    override fun visitExpressionWithSmartcastToNothing(
-        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
-        data: Nothing?
-    ): ConeContractDescriptionElement? {
-        return expressionWithSmartcastToNothing.originalExpression.accept(this, data)
     }
 
     override fun visitQualifiedAccessExpression(

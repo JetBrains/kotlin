@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -848,12 +849,11 @@ class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotatio
 
 // ----------------------------------- Stub -----------------------------------
 
+// TODO REMOVE
+@Deprecated("TODO REMOVE")
 object FirStub : FirElement {
     override val source: KtSourceElement? get() = null
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Expression
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return this
-    }
 }

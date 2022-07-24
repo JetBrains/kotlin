@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.readSourceFileWithMapping

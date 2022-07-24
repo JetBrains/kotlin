@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.fir.visitors.accept
 
 internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,

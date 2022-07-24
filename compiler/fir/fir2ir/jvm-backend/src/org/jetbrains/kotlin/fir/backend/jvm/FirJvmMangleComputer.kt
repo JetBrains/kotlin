@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -164,9 +165,9 @@ open class FirJvmMangleComputer(
             appendSignature(specialValueParamPrefix(it))
             mangleValueParameter(this, it)
         }
-        (container as? FirTypeParametersOwner)?.typeParameters?.withIndex()?.toList().orEmpty()
+        (container as? FirTypeParameterRefsOwner)?.typeParameters?.withIndex()?.toList().orEmpty()
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
-                mangleTypeParameter(this, typeParameter, index)
+                mangleTypeParameter(this, typeParameter as FirTypeParameter, index) // TODO type parameters
             }
 
         if (!isCtor && !returnTypeRef.isUnit && addReturnType()) {
@@ -181,7 +182,8 @@ open class FirJvmMangleComputer(
             }
             if (parent is FirCallableDeclaration) {
                 val overriddenFir = parent.originalForSubstitutionOverride
-                if (overriddenFir is FirTypeParametersOwner && this in overriddenFir.typeParameters) {
+                // TODO WUT?
+                if (overriddenFir is FirTypeParameterRefsOwner && this in overriddenFir.typeParameters) {
                     return parent
                 }
             }

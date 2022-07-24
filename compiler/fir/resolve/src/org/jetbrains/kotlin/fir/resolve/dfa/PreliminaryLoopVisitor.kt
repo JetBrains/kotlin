@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.name.Name
 
 class PreliminaryLoopVisitor {

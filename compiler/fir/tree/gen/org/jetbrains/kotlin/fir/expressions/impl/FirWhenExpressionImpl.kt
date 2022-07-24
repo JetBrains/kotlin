@@ -34,64 +34,32 @@ internal class FirWhenExpressionImpl(
     override var exhaustivenessStatus: ExhaustivenessStatus?,
     override val usedAsExpression: Boolean,
 ) : FirWhenExpression() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        calleeReference.accept(visitor, data)
-        val subjectVariable_ = subjectVariable
-        if (subjectVariable_ != null) {
-            subjectVariable_.accept(visitor, data)
-        } else {
-            subject?.accept(visitor, data)
-        }
-        branches.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        transformCalleeReference(transformer, data)
-        transformSubject(transformer, data)
-        transformBranches(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        if (subjectVariable != null) {
-            subjectVariable = subjectVariable?.transform(transformer, data)
-            subject = subjectVariable?.initializer
-        } else {
-            subject = subject?.transform(transformer, data)
-        }
-        return this
-    }
-
-    override fun <D> transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        branches.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.WhenExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
+    }
+
+    override fun replaceSubject(newSubject: FirExpression?) {
+        subject = newSubject
+    }
+
+    override fun replaceSubjectVariable(newSubjectVariable: FirVariable?) {
+        subjectVariable = newSubjectVariable
+    }
+
+    override fun replaceBranches(newBranches: List<FirWhenBranch>) {
+        branches.clear()
+        branches.addAll(newBranches)
     }
 
     override fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?) {

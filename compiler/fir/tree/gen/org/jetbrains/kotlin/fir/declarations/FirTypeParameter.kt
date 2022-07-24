@@ -35,15 +35,16 @@ abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
     abstract val bounds: List<FirTypeRef>
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTypeParameter(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract fun replaceBounds(newBounds: List<FirTypeRef>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirTypeParameter.transformBounds(transformer: FirTransformer<D>, data: D): FirTypeParameter 
+     = apply { replaceBounds(bounds.transform(transformer, data)) }
+
+inline fun <D> FirTypeParameter.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

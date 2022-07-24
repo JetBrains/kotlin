@@ -46,6 +46,9 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.types.smartCastedTypeRef
 
 @OptIn(SymbolInternals::class)
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
@@ -158,11 +161,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         )
                     )
                 }
-                if (element is FirExpressionWithSmartcast) {
-                    element.originalExpression.acceptChildren(this)
-                } else {
-                    element.acceptChildren(this)
-                }
+                element.acceptChildren(this)
             }
 
             override fun visitFunctionCall(functionCall: FirFunctionCall) {
@@ -190,13 +189,15 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         }.let(firFile::accept)
         globalMetadataInfoHandler.addMetadataInfosForFile(
             testFile,
-            result.flatMap { it.toMetaInfos(
-                testFile,
-                globalMetadataInfoHandler,
-                lightTreeEnabled,
-                lightTreeComparingModeEnabled,
-                forceRenderArguments = true
-            ) }
+            result.flatMap {
+                it.toMetaInfos(
+                    testFile,
+                    globalMetadataInfoHandler,
+                    lightTreeEnabled,
+                    lightTreeComparingModeEnabled,
+                    forceRenderArguments = true
+                )
+            }
         )
     }
 
@@ -205,13 +206,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
     ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirExpressionWithSmartcast)?.takeIf { it.isStable }?.originalType)
+            element.typeRef.renderAsString((element.smartCastedTypeRef)?.takeIf { it.isStable }?.originalType)
         }
 
-    private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {
+    private fun FirTypeRef.renderAsString(originalType: ConeKotlinType?): String {
         val type = coneTypeSafe<ConeKotlinType>() ?: return "Type is unknown"
         val rendered = type.renderForDebugInfo()
-        val originalTypeRendered = originalTypeRef?.coneTypeSafe<ConeKotlinType>()?.renderForDebugInfo() ?: return rendered
+        val originalTypeRendered = originalType?.renderForDebugInfo() ?: return rendered
 
         return "$originalTypeRendered & $rendered"
     }

@@ -67,82 +67,19 @@ class FirFieldImpl @FirImplementationDetail constructor(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
-        initializer?.accept(visitor, data)
-        backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        transformTypeParameters(transformer, data)
-        transformStatus(transformer, data)
-        transformReturnTypeRef(transformer, data)
-        transformInitializer(transformer, data)
-        transformBackingField(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        initializer = initializer?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        contextReceivers.transformInplace(transformer, data)
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.Field
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        typeParameters.clear()
+        typeParameters.addAll(newTypeParameters)
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -164,9 +101,20 @@ class FirFieldImpl @FirImplementationDetail constructor(
         initializer = newInitializer
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        backingField = newBackingField
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference

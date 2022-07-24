@@ -29,22 +29,11 @@ internal class FirStringConcatenationCallImpl(
 ) : FirStringConcatenationCall() {
     override var typeRef: FirTypeRef = FirImplicitStringTypeRef(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        argumentList.accept(visitor, data)
-        typeRef.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.StringConcatenationCall
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirStringConcatenationCallImpl {
-        transformAnnotations(transformer, data)
-        argumentList = argumentList.transform(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStringConcatenationCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

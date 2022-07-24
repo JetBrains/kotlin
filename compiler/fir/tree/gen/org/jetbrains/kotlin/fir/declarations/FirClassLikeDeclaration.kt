@@ -30,19 +30,23 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
     abstract override val symbol: FirClassLikeSymbol<out FirClassLikeDeclaration>
     abstract val deprecation: DeprecationsPerUseSite?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformClassLikeDeclaration(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration
 }
+
+inline fun <D> FirClassLikeDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirClassLikeDeclaration.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirClassLikeDeclaration.transformStatus(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration 
+     = apply { replaceStatus(status.transform(transformer, data)) }

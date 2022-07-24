@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -22,18 +23,6 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (argument in arguments) {
-            argument.accept(visitor, data)
-        }
-    }
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        transformArguments(transformer, data)
-        return this
-    }
 }
 
 
@@ -45,9 +34,15 @@ internal class FirResolvedArgumentListImpl(
     override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = mapping
         private set
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
-        mapping = mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
-        return this
+//    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
+//        mapping = mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
+//        return this
+//    }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ArgumentList
+
+    override fun replaceArguments(newArguments: List<FirExpression>) {
+        mapping.keys
     }
 }
 
@@ -66,10 +61,18 @@ internal class FirResolvedArgumentListForErrorCall(
 
     override val arguments: List<FirExpression>
         get() = _mapping.keys.toList()
+//
+//    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirResolvedArgumentListForErrorCall {
+//        _mapping = _mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
+//        mapping = computeMapping()
+//        return this
+//    }
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirResolvedArgumentListForErrorCall {
-        _mapping = _mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
-        mapping = computeMapping()
-        return this
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ArgumentList
+
+
+    override fun replaceArguments(newArguments: List<FirExpression>) {
+
     }
 }

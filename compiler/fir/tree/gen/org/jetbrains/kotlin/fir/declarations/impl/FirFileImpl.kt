@@ -48,37 +48,28 @@ internal class FirFileImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        packageDirective.accept(visitor, data)
-        imports.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
-    }
+    override val elementKind get() = FirElementKind.File
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {
-        transformAnnotations(transformer, data)
-        packageDirective = packageDirective.transform(transformer, data)
-        transformImports(transformer, data)
-        transformDeclarations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFileImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformImports(transformer: FirTransformer<D>, data: D): FirFileImpl {
-        imports.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirFileImpl {
-        declarations.transformInplace(transformer, data)
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replacePackageDirective(newPackageDirective: FirPackageDirective) {
+        packageDirective = newPackageDirective
+    }
+
+    override fun replaceImports(newImports: List<FirImport>) {
+        imports.clear()
+        imports.addAll(newImports)
+    }
+
+    override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {
+        declarations.clear()
+        declarations.addAll(newDeclarations)
     }
 }

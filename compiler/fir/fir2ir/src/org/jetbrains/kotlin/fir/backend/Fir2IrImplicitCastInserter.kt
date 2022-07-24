@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
@@ -261,41 +262,6 @@ class Fir2IrImplicitCastInserter(
             }
         }
         return this
-    }
-
-    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: IrElement): IrExpression {
-        return if (expressionWithSmartcast.isStable) {
-            implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
-        } else {
-            data as IrExpression
-        }
-    }
-
-    override fun visitExpressionWithSmartcastToNothing(
-        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
-        data: IrElement
-    ): IrElement {
-        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
-        return data
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcast(
-        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
-        data: IrElement
-    ): IrElement {
-        return if (whenSubjectExpressionWithSmartcast.isStable) {
-            implicitCastOrExpression(data as IrExpression, whenSubjectExpressionWithSmartcast.typeRef)
-        } else {
-            data as IrExpression
-        }
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
-        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
-        data: IrElement
-    ): IrElement {
-        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
-        return data
     }
 
     internal fun implicitCastFromDispatchReceiver(

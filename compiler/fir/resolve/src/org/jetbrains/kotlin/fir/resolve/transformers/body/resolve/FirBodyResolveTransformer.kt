@@ -22,6 +22,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.transform
+import org.jetbrains.kotlin.fir.visitors.transformChildren
+import org.jetbrains.kotlin.fir.transformAnnotations
 
 open class FirBodyResolveTransformer(
     session: FirSession,
@@ -82,7 +87,7 @@ open class FirBodyResolveTransformer(
             }
         }
 
-        return resolvedTypeRef.transformAnnotations(this, data)
+        return resolvedTypeRef.transformAnnotations(this, data) as FirResolvedTypeRef // TODO
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): FirTypeRef {

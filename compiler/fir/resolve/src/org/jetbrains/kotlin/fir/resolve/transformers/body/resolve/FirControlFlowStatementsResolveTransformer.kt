@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.declarations.transformReturnTypeRef
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.accept
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTransformer) :
     FirPartialBodyResolveTransformer(transformer) {
@@ -35,7 +37,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         return whileLoop.also(dataFlowAnalyzer::enterWhileLoop)
             .transformCondition(transformer, context).also(dataFlowAnalyzer::exitWhileLoopCondition)
             .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
-            .transformOtherChildren(transformer, context)
+            .transformAnnotations(transformer, context)
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): FirStatement {
@@ -48,7 +50,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                 }
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, context)
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
-                .transformOtherChildren(transformer, context)
+                .transformAnnotations(transformer, data)
         }
     }
 

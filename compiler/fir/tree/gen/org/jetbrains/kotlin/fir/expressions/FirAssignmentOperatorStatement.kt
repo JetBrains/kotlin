@@ -22,15 +22,19 @@ abstract class FirAssignmentOperatorStatement : FirPureAbstractElement(), FirSta
     abstract val leftArgument: FirExpression
     abstract val rightArgument: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAssignmentOperatorStatement(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAssignmentOperatorStatement(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement
+    abstract fun replaceLeftArgument(newLeftArgument: FirExpression)
 
-    abstract fun <D> transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement
-
-    abstract fun <D> transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement
+    abstract fun replaceRightArgument(newRightArgument: FirExpression)
 }
+
+inline fun <D> FirAssignmentOperatorStatement.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAssignmentOperatorStatement.transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
+     = apply { replaceLeftArgument(leftArgument.transform(transformer, data)) }
+
+inline fun <D> FirAssignmentOperatorStatement.transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement 
+     = apply { replaceRightArgument(rightArgument.transform(transformer, data)) }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -27,31 +28,18 @@ class FirJavaTypeRef(
     override val customRenderer: Boolean
         get() = true
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
     override val isMarkedNullable: Boolean
         get() = false
 
     override val source: KtSourceElement?
         get() = null
+    override val elementKind: FirElementKind
+        get() = FirElementKind.UserTypeRef
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (part in qualifier) {
-            part.typeArgumentList.typeArguments.forEach { it.accept(visitor, data) }
-        }
-        annotations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
-        for (part in qualifier) {
-            (part.typeArgumentList.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
-        }
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
-        return this
-    }
 
     override fun toString(): String {
         return type.render()

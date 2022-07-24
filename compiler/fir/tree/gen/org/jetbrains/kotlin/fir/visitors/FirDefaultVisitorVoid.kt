@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatementStub
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -98,10 +98,6 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirWrappedExpressionWithSmartcastToNothing
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -119,8 +115,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -139,6 +133,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirSmartCastedTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -159,9 +154,9 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitExpression(expression: FirExpression)  = visitStatement(expression)
 
-    override fun visitDeclaration(declaration: FirDeclaration)  = visitAnnotationContainer(declaration)
+    override fun visitStatementStub(statementStub: FirStatementStub)  = visitStatement(statementStub)
 
-    override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
+    override fun visitDeclaration(declaration: FirDeclaration)  = visitAnnotationContainer(declaration)
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration)  = visitMemberDeclaration(callableDeclaration)
 
@@ -223,8 +218,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression)  = visitQualifiedAccessExpression(thisReceiverExpression)
 
-    override fun <E : FirExpression> visitWrappedExpressionWithSmartcastToNothing(wrappedExpressionWithSmartcastToNothing: FirWrappedExpressionWithSmartcastToNothing<E>)  = visitWrappedExpressionWithSmartcast(wrappedExpressionWithSmartcastToNothing)
-
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression)  = visitExpression(safeCallExpression)
 
     override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject)  = visitExpression(checkedSafeCallSubject)
@@ -284,6 +277,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef)  = visitTypeRefWithNullability(intersectionTypeRef)
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef)  = visitTypeRef(implicitTypeRef)
+
+    override fun visitSmartCastedTypeRef(smartCastedTypeRef: FirSmartCastedTypeRef)  = visitResolvedTypeRef(smartCastedTypeRef)
 
     override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription)  = visitContractDescription(legacyRawContractDescription)
 

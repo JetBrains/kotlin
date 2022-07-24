@@ -23,14 +23,15 @@ internal class FirResolvedContractDescriptionImpl(
     override val effects: MutableList<FirEffectDeclaration>,
     override val unresolvedEffects: MutableList<FirStatement>,
 ) : FirResolvedContractDescription() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        effects.forEach { it.accept(visitor, data) }
-        unresolvedEffects.forEach { it.accept(visitor, data) }
+    override val elementKind get() = FirElementKind.ResolvedContractDescription
+
+    override fun replaceEffects(newEffects: List<FirEffectDeclaration>) {
+        effects.clear()
+        effects.addAll(newEffects)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedContractDescriptionImpl {
-        effects.transformInplace(transformer, data)
-        unresolvedEffects.transformInplace(transformer, data)
-        return this
+    override fun replaceUnresolvedEffects(newUnresolvedEffects: List<FirStatement>) {
+        unresolvedEffects.clear()
+        unresolvedEffects.addAll(newUnresolvedEffects)
     }
 }

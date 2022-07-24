@@ -21,12 +21,9 @@ internal class FirLegacyRawContractDescriptionImpl(
     override val source: KtSourceElement?,
     override var contractCall: FirFunctionCall,
 ) : FirLegacyRawContractDescription() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        contractCall.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.LegacyRawContractDescription
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLegacyRawContractDescriptionImpl {
-        contractCall = contractCall.transform(transformer, data)
-        return this
+    override fun replaceContractCall(newContractCall: FirFunctionCall) {
+        contractCall = newContractCall
     }
 }

@@ -22,13 +22,24 @@ abstract class FirVarargArgumentsExpression : FirExpression() {
     abstract val arguments: List<FirExpression>
     abstract val varargElementType: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVarargArgumentsExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformVarargArgumentsExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceArguments(newArguments: List<FirExpression>)
+
+    abstract fun replaceVarargElementType(newVarargElementType: FirTypeRef)
 }
+
+inline fun <D> FirVarargArgumentsExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirVarargArgumentsExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirVarargArgumentsExpression.transformArguments(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
+     = apply { replaceArguments(arguments.transform(transformer, data)) }
+
+inline fun <D> FirVarargArgumentsExpression.transformVarargElementType(transformer: FirTransformer<D>, data: D): FirVarargArgumentsExpression 
+     = apply { replaceVarargElementType(varargElementType.transform(transformer, data)) }

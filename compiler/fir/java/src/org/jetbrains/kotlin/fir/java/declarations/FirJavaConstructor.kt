@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaConstructor @FirImplementationDetail constructor(
@@ -64,62 +65,16 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        valueParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        controlFlowGraphReference?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-        valueParameters.forEach { it.accept(visitor, data) }
-        status.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        error("Body cannot be replaced for FirJavaConstructor")
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        transformReturnTypeRef(transformer, data)
-        transformTypeParameters(transformer, data)
-        transformValueParameters(transformer, data)
-        status = status.transformSingle(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        status = status.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        return this
-    }
-
-    override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        return this
-    }
-
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructor {
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        typeParameters.transformInplace(transformer, data)
-        return this
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("Body cannot be replaced for FirJavaConstructor")
     }
 
     override var containerSource: DeserializedContainerSource? = null
@@ -131,6 +86,14 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
         valueParameters += newValueParameters
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        error("Body cannot be replaced for FirJavaConstructor")
+    }
+
+    override fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?) {
+        error("Body cannot be replaced for FirJavaConstructor")
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
@@ -147,6 +110,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override fun replaceBody(newBody: FirBlock?) {
         error("Body cannot be replaced for FirJavaConstructor")
     }
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Constructor
 }
 
 @FirBuilderDsl

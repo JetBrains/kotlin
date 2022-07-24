@@ -166,11 +166,12 @@ object CheckDispatchReceiver : ResolutionStage() {
         val smartcastedReceiver = when (explicitReceiverExpression) {
             is FirCheckNotNullCall -> explicitReceiverExpression.argument
             else -> explicitReceiverExpression
-        } as? FirExpressionWithSmartcast
+        }
+        val smartCastedTypeRef = smartcastedReceiver?.smartCastedTypeRef
 
-        if (smartcastedReceiver != null &&
-            !smartcastedReceiver.isStable &&
-            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.canBeNull))
+        if (smartCastedTypeRef != null &&
+            !smartCastedTypeRef.isStable &&
+            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartCastedTypeRef.smartcastType.canBeNull))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
                 context.session.typeApproximator.approximateToSuperType(
@@ -179,12 +180,12 @@ object CheckDispatchReceiver : ResolutionStage() {
                 ) ?: it
             }
             val targetType =
-                dispatchReceiverType ?: smartcastedReceiver.smartcastType.coneType
+                dispatchReceiverType ?: smartCastedTypeRef.smartcastType
             sink.yieldDiagnostic(
                 UnstableSmartCast(
                     smartcastedReceiver,
                     targetType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalType.coneType, targetType)
+                    context.session.typeContext.isTypeMismatchDueToNullability(smartCastedTypeRef.originalType, targetType)
                 )
             )
         } else if (isReceiverNullable) {

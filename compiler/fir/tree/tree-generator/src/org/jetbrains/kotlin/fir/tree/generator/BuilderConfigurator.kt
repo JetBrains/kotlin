@@ -23,13 +23,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from expression
         }
 
-        val typeParametersOwnerBuilder by builder {
-            fields from typeParametersOwner
-        }
-
         val typeParameterRefsOwnerBuilder by builder {
             fields from typeParameterRefsOwner
         }
+        val typeParametersOwnerBuilder = typeParameterRefsOwnerBuilder
 
         val classBuilder by builder {
             parents += declarationBuilder
@@ -275,6 +272,11 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(implicitTypeRef) {
             withCopy()
+        }
+
+        builder(smartCastedTypeRef) {
+            defaultNull("delegatedTypeRef")
+            default("isFromStubType", "false")
         }
 
         builder(breakExpression) {

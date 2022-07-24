@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartSet
@@ -264,7 +265,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
                         }
                         checkConflictingParameters(declaration.typeParameters, context, reporter)
                     }
-                    is FirTypeParametersOwner -> {
+                    is FirTypeParameterRefsOwner -> {
                         checkConflictingParameters(declaration.typeParameters, context, reporter)
                     }
                     else -> {

@@ -27,27 +27,20 @@ internal class FirWrappedDelegateExpressionImpl(
 ) : FirWrappedDelegateExpression() {
     override val typeRef: FirTypeRef get() = expression.typeRef
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        expression.accept(visitor, data)
-        delegateProvider.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpressionImpl {
-        transformAnnotations(transformer, data)
-        expression = expression.transform(transformer, data)
-        delegateProvider = delegateProvider.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.WrappedDelegateExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression
+    }
+
+    override fun replaceDelegateProvider(newDelegateProvider: FirExpression) {
+        delegateProvider = newDelegateProvider
     }
 }

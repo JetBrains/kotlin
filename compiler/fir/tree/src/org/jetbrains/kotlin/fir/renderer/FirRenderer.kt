@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.accept
+import org.jetbrains.kotlin.fir.visitors.acceptChildren
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -426,11 +428,11 @@ class FirRenderer(
         }
 
         override fun visitStatement(statement: FirStatement) {
-            if (statement is FirStubStatement) {
-                print("[StubStatement]")
-            } else {
-                visitElement(statement)
-            }
+            visitElement(statement)
+        }
+
+        override fun visitStatementStub(statementStub: FirStatementStub) {
+            print("[StubStatement]")
         }
 
         override fun visitReturnExpression(returnExpression: FirReturnExpression) {
@@ -903,10 +905,6 @@ class FirRenderer(
 
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {
             visitQualifiedAccessExpression(thisReceiverExpression)
-        }
-
-        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
-            visitQualifiedAccessExpression(expressionWithSmartcast)
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {

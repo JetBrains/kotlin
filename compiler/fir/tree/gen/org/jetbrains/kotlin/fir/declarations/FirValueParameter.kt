@@ -53,13 +53,12 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
     abstract val isNoinline: Boolean
     abstract val isVararg: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitValueParameter(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformValueParameter(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -71,31 +70,56 @@ abstract class FirValueParameter : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
+    abstract override fun replaceBackingField(newBackingField: FirBackingField?)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter
-
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter
+    abstract fun replaceDefaultValue(newDefaultValue: FirExpression?)
 }
+
+inline fun <D> FirValueParameter.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceGetter(getter?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceSetter(setter?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirValueParameter.transformDefaultValue(transformer: FirTransformer<D>, data: D): FirValueParameter 
+     = apply { replaceDefaultValue(defaultValue?.transform(transformer, data)) }

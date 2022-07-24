@@ -22,13 +22,19 @@ abstract class FirComparisonExpression : FirExpression() {
     abstract val operation: FirOperation
     abstract val compareToCall: FirFunctionCall
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComparisonExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformComparisonExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComparisonExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceCompareToCall(newCompareToCall: FirFunctionCall)
 }
+
+inline fun <D> FirComparisonExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirComparisonExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirComparisonExpression.transformCompareToCall(transformer: FirTransformer<D>, data: D): FirComparisonExpression 
+     = apply { replaceCompareToCall(compareToCall.transform(transformer, data)) }

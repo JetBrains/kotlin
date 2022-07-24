@@ -27,38 +27,22 @@ internal class FirDoWhileLoopImpl(
     override var condition: FirExpression,
     override var label: FirLabel?,
 ) : FirDoWhileLoop() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        block.accept(visitor, data)
-        condition.accept(visitor, data)
-        label?.accept(visitor, data)
+    override val elementKind get() = FirElementKind.DoWhileLoop
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        transformBlock(transformer, data)
-        transformCondition(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
+    override fun replaceBlock(newBlock: FirBlock) {
+        block = newBlock
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceCondition(newCondition: FirExpression) {
+        condition = newCondition
     }
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        block = block.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        condition = condition.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        transformAnnotations(transformer, data)
-        label = label?.transform(transformer, data)
-        return this
+    override fun replaceLabel(newLabel: FirLabel?) {
+        label = newLabel
     }
 }

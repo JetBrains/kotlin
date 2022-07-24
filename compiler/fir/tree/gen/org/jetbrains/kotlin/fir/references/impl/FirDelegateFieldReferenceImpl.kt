@@ -26,9 +26,5 @@ internal class FirDelegateFieldReferenceImpl(
 ) : FirDelegateFieldReference() {
     override val name: Name get() = Name.identifier("\$delegate")
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegateFieldReferenceImpl {
-        return this
-    }
+    override val elementKind get() = FirElementKind.DelegateFieldReference
 }

@@ -71,93 +71,16 @@ internal class FirDefaultSetterValueParameter(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-        backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
-        defaultValue?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        transformStatus(transformer, data)
-        transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
-        transformInitializer(transformer, data)
-        transformDelegate(transformer, data)
-        transformGetter(transformer, data)
-        transformSetter(transformer, data)
-        transformBackingField(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        initializer = initializer?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        delegate = delegate?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        getter = getter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        setter = setter?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
-        contextReceivers.transformInplace(transformer, data)
-        transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
-        defaultValue = defaultValue?.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ValueParameter
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {}
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -181,6 +104,10 @@ internal class FirDefaultSetterValueParameter(
         initializer = newInitializer
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        delegate = newDelegate
+    }
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
         getter = newGetter
     }
@@ -189,7 +116,20 @@ internal class FirDefaultSetterValueParameter(
         setter = newSetter
     }
 
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        backingField = newBackingField
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+        defaultValue = newDefaultValue
     }
 }

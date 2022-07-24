@@ -84,17 +84,6 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
             }
 
-            override()
-            println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
-
-            println()
-            println("@Suppress(\"UNCHECKED_CAST\")")
-            override()
-            println("fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = ")
-            withIndent {
-                println("transformer.transform$name(this, data) as E")
-            }
-
             fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
                 if (name == "source") {
@@ -105,7 +94,7 @@ fun SmartPrinter.printElement(element: Element) {
                 println(replaceFunctionDeclaration(overridenType, forceNullable))
             }
 
-            allFields.filter { it.withReplace }.forEach {
+            allFields.filter { it.withReplace || it.isFirType }.forEach {
                 val override = overridenFields[it, it] && !(it.name == "source" && fullQualifiedName.endsWith("FirQualifiedAccess"))
                 it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
                 for (overridenType in it.overridenTypes) {
@@ -113,36 +102,42 @@ fun SmartPrinter.printElement(element: Element) {
                 }
             }
 
-            for (field in allFields) {
-                if (!field.needsSeparateTransform) continue
-                println()
-                abstract()
-                if (field.fromParent) {
-                    print("override ")
-                }
-                println(field.transformFunctionDeclaration(typeWithArguments))
-            }
-            if (needTransformOtherChildren) {
-                println()
-                abstract()
-                if (element.parents.any { it.needTransformOtherChildren }) {
-                    print("override ")
-                }
-                println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
-            }
-
             if (element == AbstractFirTreeBuilder.baseFirElement) {
                 require(isInterface)
                 println()
-                println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
-                println()
-                println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
-                println()
-                println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
-                println()
-                println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                println("val elementKind: FirElementKind")
             }
         }
         println("}")
+
+        for (field in allFirFields) {
+            if (field.withGetter || (field is FirField && field.nonTraversable)) continue
+
+
+
+            println()
+            print("inline ")
+
+            val transformName = field.name.replaceFirstChar(Char::uppercaseChar)
+            val returnType = typeWithArguments
+            val transformTypeParameters = (listOf("D") + typeArguments.map { it.toString() }).joinToString(", ", "<", ">")
+            println("fun $transformTypeParameters $returnType.transform$transformName(transformer: FirTransformer<D>, data: D): $returnType${multipleUpperBoundsList()}")
+            withIndent {
+                // TODO WTF????!?!?!?!?!?
+                if (field.name == "subject" && element.type == "FirWhenExpression") {
+                    println("""
+                    |= apply { if (subjectVariable != null) {
+                    |        replaceSubjectVariable(subjectVariable?.transform(transformer, data))
+                    |        replaceSubject(subjectVariable?.initializer)
+                    |       } else {
+                    |           replaceSubject(subject?.transform(transformer, data))
+                    |       }
+                    |       }
+                    """.trimMargin())
+                } else {
+                    println(" = apply { replace${field.name.replaceFirstChar(Char::uppercaseChar)}(${field.name}${field.call()}transform(transformer, data)) }")
+                }
+            }
+        }
     }
 }

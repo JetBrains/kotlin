@@ -68,74 +68,16 @@ internal class FirErrorPropertyImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
-        returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
-        backingField?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        transformStatus(transformer, data)
-        transformReturnTypeRef(transformer, data)
-        transformBackingField(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        status = status.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        returnTypeRef = returnTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        backingField = backingField?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        contextReceivers.transformInplace(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.ErrorProperty
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {}
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -155,7 +97,18 @@ internal class FirErrorPropertyImpl(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {}
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        backingField = newBackingField
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
 }

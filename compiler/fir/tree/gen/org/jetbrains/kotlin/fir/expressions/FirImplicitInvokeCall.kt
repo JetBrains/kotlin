@@ -32,16 +32,13 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitInvokeCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformImplicitInvokeCall(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
@@ -49,21 +46,40 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
-
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
 }
+
+inline fun <D> FirImplicitInvokeCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformContextReceiverArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceContextReceiverArguments(contextReceiverArguments.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceExplicitReceiver(explicitReceiver?.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceDispatchReceiver(dispatchReceiver.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceExtensionReceiver(extensionReceiver.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirImplicitInvokeCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

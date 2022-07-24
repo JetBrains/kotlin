@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -99,7 +98,7 @@ object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
-class UnstableSmartCast(val argument: FirExpressionWithSmartcast, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) :
+class UnstableSmartCast(val argument: FirExpression, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) :
     ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(

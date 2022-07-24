@@ -30,41 +30,22 @@ internal class FirTypeOperatorCallImpl(
 ) : FirTypeOperatorCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        argumentList.accept(visitor, data)
-        conversionTypeRef.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeOperatorCallImpl {
-        transformConversionTypeRef(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCallImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformConversionTypeRef(transformer: FirTransformer<D>, data: D): FirTypeOperatorCallImpl {
-        conversionTypeRef = conversionTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTypeOperatorCallImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        argumentList = argumentList.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.TypeOperatorCall
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
+    }
+
+    override fun replaceConversionTypeRef(newConversionTypeRef: FirTypeRef) {
+        conversionTypeRef = newConversionTypeRef
     }
 }

@@ -22,17 +22,10 @@ internal class FirDynamicTypeRefImpl(
     override val annotations: MutableList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-    }
+    override val elementKind get() = FirElementKind.DynamicTypeRef
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 }

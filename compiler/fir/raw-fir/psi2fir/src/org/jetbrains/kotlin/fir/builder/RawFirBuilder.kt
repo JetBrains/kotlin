@@ -664,15 +664,6 @@ open class RawFirBuilder(
             }
         }
 
-        private fun KtTypeParameterListOwner.extractTypeParametersTo(
-            container: FirTypeParametersOwnerBuilder,
-            declarationSymbol: FirBasedSymbol<*>
-        ) {
-            for (typeParameter in typeParameters) {
-                container.typeParameters += extractTypeParameter(typeParameter, declarationSymbol)
-            }
-        }
-
         private fun extractTypeParameter(parameter: KtTypeParameter, declarationSymbol: FirBasedSymbol<*>): FirTypeParameter {
             val parameterName = parameter.nameAsSafeName
             return buildTypeParameter {

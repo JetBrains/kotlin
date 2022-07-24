@@ -24,15 +24,19 @@ abstract class FirNamedArgumentExpression : FirWrappedArgumentExpression() {
     abstract override val isSpread: Boolean
     abstract val name: Name
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedArgumentExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformNamedArgumentExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun replaceExpression(newExpression: FirExpression)
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression
+    abstract override fun replaceExpression(newExpression: FirExpression)
 }
+
+inline fun <D> FirNamedArgumentExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirNamedArgumentExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirNamedArgumentExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression 
+     = apply { replaceExpression(expression.transform(transformer, data)) }

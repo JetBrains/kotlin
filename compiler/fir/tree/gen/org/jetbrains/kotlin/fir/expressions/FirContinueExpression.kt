@@ -22,13 +22,14 @@ abstract class FirContinueExpression : FirLoopJump() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val target: FirTarget<FirLoop>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContinueExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformContinueExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContinueExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirContinueExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirContinueExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirContinueExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirContinueExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

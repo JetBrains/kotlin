@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.render
@@ -57,13 +56,12 @@ val FirExpression.isNullLiteral: Boolean
             this.value == null &&
             this.source != null
 
-@OptIn(ExperimentalContracts::class)
 fun FirExpression.isStableSmartcast(): Boolean {
-    contract {
-        returns(true) implies (this@isStableSmartcast is FirExpressionWithSmartcast)
-    }
-    return this is FirExpressionWithSmartcast && this.isStable
+    return (this.smartCastedTypeRef)?.isStable ?: false
 }
+
+val FirExpression.smartCastedTypeRef: FirSmartCastedTypeRef?
+    get() = this.typeRef as? FirSmartCastedTypeRef
 
 private val FirTypeRef.lookupTagBasedOrNull: ConeLookupTagBasedType?
     get() = when (this) {

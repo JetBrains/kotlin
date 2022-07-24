@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.transformAnnotations
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*

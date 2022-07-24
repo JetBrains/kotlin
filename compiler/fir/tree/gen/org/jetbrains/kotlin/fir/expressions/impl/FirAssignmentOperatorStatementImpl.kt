@@ -26,31 +26,18 @@ internal class FirAssignmentOperatorStatementImpl(
     override var leftArgument: FirExpression,
     override var rightArgument: FirExpression,
 ) : FirAssignmentOperatorStatement() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        leftArgument.accept(visitor, data)
-        rightArgument.accept(visitor, data)
+    override val elementKind get() = FirElementKind.AssignmentOperatorStatement
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        transformAnnotations(transformer, data)
-        transformLeftArgument(transformer, data)
-        transformRightArgument(transformer, data)
-        return this
+    override fun replaceLeftArgument(newLeftArgument: FirExpression) {
+        leftArgument = newLeftArgument
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        leftArgument = leftArgument.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformRightArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatementImpl {
-        rightArgument = rightArgument.transform(transformer, data)
-        return this
+    override fun replaceRightArgument(newRightArgument: FirExpression) {
+        rightArgument = newRightArgument
     }
 }

@@ -52,12 +52,18 @@ fun field(name: String, type: Type, argument: String? = null, nullable: Boolean 
     }
 }
 
-fun field(name: String, element: AbstractElement, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(name, element, nullable, withReplace)
+fun field(
+    name: String,
+    element: AbstractElement,
+    nullable: Boolean = false,
+    withReplace: Boolean = false,
+    nonTraversable: Boolean = false
+): Field {
+    return FirField(name, element, nullable, withReplace, nonTraversable)
 }
 
-fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element, nullable, withReplace)
+fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false, nonTraversable: Boolean = false): Field {
+    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element, nullable, withReplace, nonTraversable)
 }
 
 // ----------- Field list -----------
@@ -88,12 +94,14 @@ infix fun FieldSet.with(set: FieldSet): FieldSet {
 }
 
 fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = copy().apply {
-    needsSeparateTransform = true
-    this.needTransformInOtherChildren = needTransformInOtherChildren
 }
 
 fun Field.withReplace(): Field = copy().apply {
     withReplace = true
+}
+
+fun Field.withoutReplace(): Field = copy().apply {
+    nonReplaceable = true
 }
 
 fun FieldSet.withTransform(): FieldSet = this.map { it.withTransform() }

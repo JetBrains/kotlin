@@ -21,11 +21,9 @@ sealed class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTypeRef(this, data) as E
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRef
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

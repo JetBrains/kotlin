@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.accept
 
 open class FirCallArgumentsRenderer {
     internal lateinit var components: FirRendererComponents

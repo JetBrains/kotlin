@@ -20,15 +20,14 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     abstract val condition: FirExpression
     abstract val result: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWhenBranch(this, data) as E
+    abstract fun replaceCondition(newCondition: FirExpression)
 
-    abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
-
-    abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranch
+    abstract fun replaceResult(newResult: FirBlock)
 }
+
+inline fun <D> FirWhenBranch.transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch 
+     = apply { replaceCondition(condition.transform(transformer, data)) }
+
+inline fun <D> FirWhenBranch.transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch 
+     = apply { replaceResult(result.transform(transformer, data)) }

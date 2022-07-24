@@ -21,15 +21,19 @@ abstract class FirArrayOfCall : FirExpression(), FirCall {
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArrayOfCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformArrayOfCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirArrayOfCall
+    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 }
+
+inline fun <D> FirArrayOfCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirArrayOfCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirArrayOfCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirArrayOfCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirArrayOfCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirArrayOfCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }

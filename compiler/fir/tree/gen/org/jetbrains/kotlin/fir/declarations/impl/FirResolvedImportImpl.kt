@@ -33,10 +33,9 @@ internal class FirResolvedImportImpl(
     override val resolvedParentClassId: ClassId? get() = relativeParentClassName?.let { ClassId(packageFqName, it, false) }
     override val importedName: Name? get() = importedFqName?.shortName()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override val elementKind get() = FirElementKind.ResolvedImport
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedImportImpl {
-        return this
+    override fun replaceDelegate(newDelegate: FirImport) {
+        delegate = newDelegate
     }
 }

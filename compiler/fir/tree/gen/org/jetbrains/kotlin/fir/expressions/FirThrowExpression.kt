@@ -21,13 +21,19 @@ abstract class FirThrowExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val exception: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThrowExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformThrowExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirThrowExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceException(newException: FirExpression)
 }
+
+inline fun <D> FirThrowExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirThrowExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirThrowExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirThrowExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirThrowExpression.transformException(transformer: FirTransformer<D>, data: D): FirThrowExpression 
+     = apply { replaceException(exception.transform(transformer, data)) }

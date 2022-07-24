@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.expressions.*
@@ -238,7 +239,7 @@ internal class OperatorExpressionGenerator(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean
     ): IrExpression {
-        val isOriginalNullable = (this as? FirExpressionWithSmartcast)?.originalExpression?.typeRef?.isMarkedNullable ?: false
+        val isOriginalNullable = (this.smartCastedTypeRef)?.originalType?.isMarkedNullable ?: false
         val irExpression = visitor.convertToIrExpression(this)
         val operandType = if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType
         val targetType = comparisonInfo?.comparisonType

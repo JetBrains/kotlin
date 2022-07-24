@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.transformChildren
 import org.jetbrains.kotlin.resolve.multiplatform.compatible
 
 class FirExpectActualMatcherProcessor(

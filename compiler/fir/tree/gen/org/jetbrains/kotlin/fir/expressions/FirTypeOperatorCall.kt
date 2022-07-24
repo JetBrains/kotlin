@@ -23,19 +23,24 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract val operation: FirOperation
     abstract val conversionTypeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformTypeOperatorCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
-
-    abstract fun <D> transformConversionTypeRef(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
+    abstract fun replaceConversionTypeRef(newConversionTypeRef: FirTypeRef)
 }
+
+inline fun <D> FirTypeOperatorCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirTypeOperatorCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirTypeOperatorCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirTypeOperatorCall.transformConversionTypeRef(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall 
+     = apply { replaceConversionTypeRef(conversionTypeRef.transform(transformer, data)) }

@@ -49,13 +49,12 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirFieldSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformField(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -67,31 +66,51 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
+    abstract override fun replaceBackingField(newBackingField: FirBackingField?)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirField
-
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField
 }
+
+inline fun <D> FirField.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirField.transformStatus(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirField.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirField.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirField.transformInitializer(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformDelegate(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformGetter(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceGetter(getter?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformSetter(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceSetter(setter?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformBackingField(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+
+inline fun <D> FirField.transformAnnotations(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirField.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirField 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }

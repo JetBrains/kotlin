@@ -30,12 +30,9 @@ internal class FirErrorImportImpl(
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        delegate.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.ErrorImport
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorImportImpl {
-        delegate = delegate.transform(transformer, data)
-        return this
+    override fun replaceDelegate(newDelegate: FirImport) {
+        delegate = newDelegate
     }
 }

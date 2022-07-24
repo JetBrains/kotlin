@@ -27,32 +27,16 @@ internal class FirBlockImpl(
 ) : FirBlock() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        statements.forEach { it.accept(visitor, data) }
-        typeRef.accept(visitor, data)
+    override val elementKind get() = FirElementKind.Block
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBlockImpl {
-        transformStatements(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlockImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlockImpl {
-        statements.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlockImpl {
-        transformAnnotations(transformer, data)
-        typeRef = typeRef.transform(transformer, data)
-        return this
+    override fun replaceStatements(newStatements: List<FirStatement>) {
+        statements.clear()
+        statements.addAll(newStatements)
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

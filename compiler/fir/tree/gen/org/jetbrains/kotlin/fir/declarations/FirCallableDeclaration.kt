@@ -37,13 +37,14 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract val dispatchReceiverType: ConeSimpleKotlinType?
     abstract val contextReceivers: List<FirContextReceiver>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableDeclaration(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformCallableDeclaration(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -52,14 +53,22 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
-
-    abstract fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
-
-    abstract fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration
 }
+
+inline fun <D> FirCallableDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirCallableDeclaration.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirCallableDeclaration.transformStatus(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirCallableDeclaration.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirCallableDeclaration.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirCallableDeclaration.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirCallableDeclaration 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }

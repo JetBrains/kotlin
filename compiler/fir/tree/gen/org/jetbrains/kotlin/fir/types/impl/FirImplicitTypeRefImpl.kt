@@ -22,14 +22,7 @@ internal class FirImplicitTypeRefImpl(
 ) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotation> get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-    }
+    override val elementKind get() = FirElementKind.ImplicitTypeRef
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
-        return this
-    }
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 }

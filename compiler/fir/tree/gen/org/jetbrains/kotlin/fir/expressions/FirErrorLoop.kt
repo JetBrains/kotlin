@@ -25,17 +25,24 @@ abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
     abstract override val label: FirLabel?
     abstract override val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorLoop(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformErrorLoop(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun replaceBlock(newBlock: FirBlock)
 
-    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun replaceCondition(newCondition: FirExpression)
 
-    abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop
-
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun replaceLabel(newLabel: FirLabel?)
 }
+
+inline fun <D> FirErrorLoop.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirErrorLoop.transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop 
+     = apply { replaceBlock(block.transform(transformer, data)) }
+
+inline fun <D> FirErrorLoop.transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop 
+     = apply { replaceCondition(condition.transform(transformer, data)) }
+
+inline fun <D> FirErrorLoop.transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoop 
+     = apply { replaceLabel(label?.transform(transformer, data)) }

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {
+abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, FirTypeParameterRefsOwner {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData
     abstract override val resolvePhase: FirResolvePhase
@@ -44,15 +44,12 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
     abstract val name: Name
     abstract override val symbol: FirNamedFunctionSymbol
     abstract override val annotations: List<FirAnnotation>
-    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val typeParameters: List<FirTypeParameterRef>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSimpleFunction(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformSimpleFunction(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -70,19 +67,37 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
 
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 }
+
+inline fun <D> FirSimpleFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceBody(body?.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceContractDescription(contractDescription.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirSimpleFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }

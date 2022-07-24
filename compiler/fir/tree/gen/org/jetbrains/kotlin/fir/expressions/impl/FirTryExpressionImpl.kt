@@ -30,60 +30,31 @@ internal class FirTryExpressionImpl(
     override val catches: MutableList<FirCatch>,
     override var finallyBlock: FirBlock?,
 ) : FirTryExpression() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        calleeReference.accept(visitor, data)
-        tryBlock.accept(visitor, data)
-        catches.forEach { it.accept(visitor, data) }
-        finallyBlock?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        transformCalleeReference(transformer, data)
-        transformTryBlock(transformer, data)
-        transformCatches(transformer, data)
-        transformFinallyBlock(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTryBlock(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        tryBlock = tryBlock.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCatches(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        catches.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformFinallyBlock(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        finallyBlock = finallyBlock?.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTryExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.TryExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
+    }
+
+    override fun replaceTryBlock(newTryBlock: FirBlock) {
+        tryBlock = newTryBlock
+    }
+
+    override fun replaceCatches(newCatches: List<FirCatch>) {
+        catches.clear()
+        catches.addAll(newCatches)
+    }
+
+    override fun replaceFinallyBlock(newFinallyBlock: FirBlock?) {
+        finallyBlock = newFinallyBlock
     }
 }

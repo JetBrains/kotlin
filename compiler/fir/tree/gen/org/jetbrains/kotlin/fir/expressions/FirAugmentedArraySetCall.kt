@@ -25,13 +25,24 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
     abstract val calleeReference: FirReference
     abstract val arrayAccessSource: KtSourceElement?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAugmentedArraySetCall(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAugmentedArraySetCall(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceLhsGetCall(newLhsGetCall: FirFunctionCall)
+
+    abstract fun replaceRhs(newRhs: FirExpression)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall
 }
+
+inline fun <D> FirAugmentedArraySetCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAugmentedArraySetCall.transformLhsGetCall(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
+     = apply { replaceLhsGetCall(lhsGetCall.transform(transformer, data)) }
+
+inline fun <D> FirAugmentedArraySetCall.transformRhs(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
+     = apply { replaceRhs(rhs.transform(transformer, data)) }
+
+inline fun <D> FirAugmentedArraySetCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

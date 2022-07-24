@@ -38,27 +38,38 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirAnonymousObjectSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnonymousObject(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?)
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
+    abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject
-
-    abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject
-
-    abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 }
+
+inline fun <D> FirAnonymousObject.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousObject.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousObject.transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceSuperTypeRefs(superTypeRefs.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousObject.transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceDeclarations(declarations.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousObject.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousObject.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObject 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }

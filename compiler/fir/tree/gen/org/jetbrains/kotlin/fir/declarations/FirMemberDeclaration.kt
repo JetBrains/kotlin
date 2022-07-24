@@ -28,17 +28,21 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformMemberDeclaration(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
-
-    abstract fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    abstract fun replaceStatus(newStatus: FirDeclarationStatus)
 }
+
+inline fun <D> FirMemberDeclaration.transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirMemberDeclaration.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirMemberDeclaration 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirMemberDeclaration.transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration 
+     = apply { replaceStatus(status.transform(transformer, data)) }

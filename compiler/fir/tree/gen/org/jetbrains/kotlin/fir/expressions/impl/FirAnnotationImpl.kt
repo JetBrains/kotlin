@@ -30,34 +30,15 @@ internal class FirAnnotationImpl(
     override val typeRef: FirTypeRef get() = annotationTypeRef
     override val annotations: List<FirAnnotation> get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotationTypeRef.accept(visitor, data)
-        argumentMapping.accept(visitor, data)
-        typeArguments.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
-        transformAnnotationTypeRef(transformer, data)
-        argumentMapping = argumentMapping.transform(transformer, data)
-        transformTypeArguments(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
-        return this
-    }
-
-    override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
-        annotationTypeRef = annotationTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationImpl {
-        typeArguments.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.Annotation
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
+        annotationTypeRef = newAnnotationTypeRef
+    }
 
     override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping) {
         argumentMapping = newArgumentMapping

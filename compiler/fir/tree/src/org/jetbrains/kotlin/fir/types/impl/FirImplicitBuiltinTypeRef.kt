@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
@@ -37,15 +38,12 @@ sealed class FirImplicitBuiltinTypeRef(
     override val isFromStubType: Boolean
         get() = false
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ResolvedTypeRef
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return this
-    }
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
-        return this
-    }
+    override fun replaceDelegatedTypeRef(newDelegatedTypeRef: FirTypeRef?) {}
 }
 
 class FirImplicitUnitTypeRef(

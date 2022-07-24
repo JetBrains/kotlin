@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
+abstract class FirAnonymousFunction : FirFunction(), FirTypeParameterRefsOwner {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
@@ -47,16 +47,15 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
     abstract val inlineStatus: InlineStatus
     abstract val isLambda: Boolean
     abstract val hasExplicitParameterList: Boolean
-    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract val typeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformAnonymousFunction(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -72,23 +71,46 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
 
     abstract override fun replaceBody(newBody: FirBlock?)
 
+    abstract fun replaceLabel(newLabel: FirLabel?)
+
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
 
     abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
 
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }
+
+inline fun <D> FirAnonymousFunction.transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformStatus(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceControlFlowGraphReference(controlFlowGraphReference?.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceBody(body?.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformLabel(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceLabel(label?.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirAnonymousFunction.transformTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }

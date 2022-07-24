@@ -22,13 +22,14 @@ abstract class FirCheckedSafeCallSubject : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val originalReceiverRef: FirExpressionRef<FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCheckedSafeCallSubject(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformCheckedSafeCallSubject(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckedSafeCallSubject
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirCheckedSafeCallSubject.transformTypeRef(transformer: FirTransformer<D>, data: D): FirCheckedSafeCallSubject 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirCheckedSafeCallSubject.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckedSafeCallSubject 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

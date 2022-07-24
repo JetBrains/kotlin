@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -14,9 +15,6 @@ object FirReferenceForUnresolvedAnnotations : FirReference() {
     override val source: KtSourceElement?
         get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReference {
-        return this
-    }
+    override val elementKind: FirElementKind
+        get() = FirElementKind.Reference
 }

@@ -23,19 +23,24 @@ abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCheckNotNullCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformCheckNotNullCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
 }
+
+inline fun <D> FirCheckNotNullCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirCheckNotNullCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirCheckNotNullCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirCheckNotNullCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall 
+     = apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }

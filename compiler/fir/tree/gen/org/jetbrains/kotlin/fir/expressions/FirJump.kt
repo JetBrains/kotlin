@@ -23,13 +23,14 @@ sealed class FirJump<E : FirTargetElement> : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val target: FirTarget<E>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitJump(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformJump(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJump<E>
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D, E : FirTargetElement> FirJump<E>.transformTypeRef(transformer: FirTransformer<D>, data: D): FirJump<E> 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D, E : FirTargetElement> FirJump<E>.transformAnnotations(transformer: FirTransformer<D>, data: D): FirJump<E> 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

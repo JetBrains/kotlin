@@ -50,12 +50,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol(typeParameterSymbolType.type)
         }
 
-        typeParametersOwner.configure {
-            +typeParameters.withTransform()
-        }
+//        typeParametersOwner.configure {
+//            +(typeParameters.copy().apply {
+//                nonReplaceable = false as Boolean?
+//            })
+//        }
 
         typeParameterRefsOwner.configure {
-            +typeParameterRefs.withTransform()
+            +typeParameterRefs
         }
 
         resolvable.configure {
@@ -132,14 +134,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         block.configure {
             +fieldList(statement).withTransform()
             +typeRefField
-            needTransformOtherChildren()
         }
 
         binaryLogicExpression.configure {
             +field("leftOperand", expression).withTransform()
             +field("rightOperand", expression).withTransform()
             +field("kind", operationKindType)
-            needTransformOtherChildren()
         }
 
         jump.configure {
@@ -154,7 +154,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         returnExpression.configure {
             parentArg(jump, "E", function.withArgs("E" to "*"))
             +field("result", expression).withTransform()
-            needTransformOtherChildren()
         }
 
         label.configure {
@@ -165,7 +164,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field(block).withTransform()
             +field("condition", expression).withTransform()
             +field(label, nullable = true)
-            needTransformOtherChildren()
         }
 
         whileLoop.configure {
@@ -176,14 +174,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         catchClause.configure {
             +field("parameter", valueParameter).withTransform()
             +field(block).withTransform()
-            needTransformOtherChildren()
         }
 
         tryExpression.configure {
             +field("tryBlock", block).withTransform()
             +fieldList("catches", catchClause).withTransform()
             +field("finallyBlock", block, nullable = true).withTransform()
-            needTransformOtherChildren()
         }
 
         elvisExpression.configure {
@@ -224,7 +220,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeOperatorCall.configure {
             +field("operation", operationType)
             +field("conversionTypeRef", typeRef).withTransform()
-            needTransformOtherChildren()
         }
 
         assignmentOperatorStatement.configure {
@@ -240,12 +235,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         whenBranch.configure {
             +field("condition", expression).withTransform()
             +field("result", block).withTransform()
-            needTransformOtherChildren()
         }
 
         classLikeDeclaration.configure {
             +symbol("FirClassLikeSymbol", "out FirClassLikeDeclaration")
-            +field("deprecation", deprecationsPerUseSiteType, nullable = true).withReplace().apply { isMutable = true}
+            +field("deprecation", deprecationsPerUseSiteType, nullable = true).withReplace().apply { isMutable = true }
         }
 
         klass.configure {
@@ -400,7 +394,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("setter", propertyAccessor, nullable = true, withReplace = true).withTransform()
             +field("backingField", backingField, nullable = true).withTransform()
             +annotations
-            needTransformOtherChildren()
         }
 
         errorProperty.configure {
@@ -465,7 +458,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, nonTraversable = true)
         }
 
         annotationArgumentMapping.configure {
@@ -490,30 +483,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +intField("componentIndex")
         }
 
-        wrappedExpressionWithSmartcast.configure {
-            withArg("E", expression)
-            +typeRefField
-            +field("originalExpression", "E", packageName = null)
-            +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
-            +field("originalType", typeRef)
-            +field("smartcastType", typeRef)
-            +booleanField("isStable")
-            +smartcastStability
-        }
-
-        wrappedExpressionWithSmartcastToNothing.configure {
-            withArg("E", expression)
-            parentArg(wrappedExpressionWithSmartcast, "E", "E")
-            +field("smartcastTypeWithoutNullableNothing", typeRef)
-        }
-
-        expressionWithSmartcast.configure {
-            parentArg(wrappedExpressionWithSmartcast, "E", qualifiedAccessExpression)
-        }
-
-        expressionWithSmartcastToNothing.configure {
-            parentArg(wrappedExpressionWithSmartcastToNothing, "E", qualifiedAccessExpression)
-        }
 
         safeCallExpression.configure {
             +field("receiver", expression).withTransform()
@@ -533,7 +502,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         getClassCall.configure {
-            +field("argument", expression)
+            +field("argument", expression).apply { nonReplaceable = true }
         }
 
         wrappedArgumentExpression.configure {
@@ -572,21 +541,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         variableAssignment.configure {
-            +field("lValue", reference)
+            +field("lValue", reference).withoutReplace()
             +field("lValueTypeRef", typeRef).withReplace()
             +field("rValue", expression).withTransform()
         }
 
         whenSubjectExpression.configure {
             +field("whenRef", whenRefType)
-        }
-
-        whenSubjectExpressionWithSmartcast.configure {
-            parentArg(wrappedExpressionWithSmartcast, "E", whenSubjectExpression)
-        }
-
-        whenSubjectExpressionWithSmartcastToNothing.configure {
-            parentArg(wrappedExpressionWithSmartcastToNothing, "E", whenSubjectExpression)
         }
 
         wrappedExpression.configure {
@@ -640,6 +601,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isFromStubType")
         }
 
+        smartCastedTypeRef.configure {
+            +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
+            +field("originalType", coneKotlinTypeType)
+            +field("smartcastType", coneKotlinTypeType)
+            +booleanField("isStable")
+            +smartcastStability
+        }
+
         typeRefWithNullability.configure {
             +booleanField("isMarkedNullable")
         }
@@ -674,7 +643,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +fieldList("branches", whenBranch).withTransform()
             +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
             +booleanField("usedAsExpression")
-            needTransformOtherChildren()
         }
 
         typeProjectionWithVariance.configure {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -84,10 +83,9 @@ class MemberScopeTowerLevel(
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
-        val scopeWithoutSmartcast = (dispatchReceiverValue.receiverExpression as? FirExpressionWithSmartcast)
+        val scopeWithoutSmartcast = dispatchReceiverValue.receiverExpression.smartCastedTypeRef
             ?.takeIf { it.isStable }
             ?.originalType
-            ?.coneType
             ?.scope(session, scopeSession, bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator)
         if (scopeWithoutSmartcast == null) {
             consumeCandidates(output, candidates)

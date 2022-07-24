@@ -35,21 +35,23 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorResolvedQualifier(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformErrorResolvedQualifier(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
 
     abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier
-
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier
 }
+
+inline fun <D> FirErrorResolvedQualifier.transformTypeRef(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirErrorResolvedQualifier.transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirErrorResolvedQualifier.transformTypeArguments(transformer: FirTransformer<D>, data: D): FirErrorResolvedQualifier 
+     = apply { replaceTypeArguments(typeArguments.transform(transformer, data)) }

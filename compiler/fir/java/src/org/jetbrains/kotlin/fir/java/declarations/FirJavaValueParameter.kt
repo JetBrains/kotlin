@@ -26,6 +26,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
@@ -99,66 +100,16 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        defaultValue?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        transformReturnTypeRef(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        defaultValue = defaultValue?.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter {
-        return this
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        error("cannot be replaced for FirJavaValueParameter")
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("cannot be replaced for FirJavaValueParameter")
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
@@ -175,7 +126,15 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceInitializer(newInitializer: FirExpression?) {
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        error("cannot be replaced for FirJavaValueParameter")
+    }
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+    }
+
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+        error("cannot be replaced for FirJavaValueParameter")
     }
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
@@ -184,9 +143,20 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
     }
 
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        error("cannot be replaced for FirJavaValueParameter")
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        error("cannot be replaced for FirJavaValueParameter")
+    }
+
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaValueParameter")
     }
+
+    override val elementKind: FirElementKind
+        get() = FirElementKind.ValueParameter
 }
 
 @FirBuilderDsl

@@ -22,13 +22,14 @@ abstract class FirBreakExpression : FirLoopJump() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val target: FirTarget<FirLoop>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBreakExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformBreakExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBreakExpression
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirBreakExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirBreakExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirBreakExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirBreakExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

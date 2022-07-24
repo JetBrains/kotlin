@@ -22,15 +22,24 @@ abstract class FirGetClassCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
     abstract val argument: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitGetClassCall(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformGetClassCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirGetClassCall
+    abstract fun replaceArgument(newArgument: FirExpression)
 }
+
+inline fun <D> FirGetClassCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirGetClassCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirGetClassCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirGetClassCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirGetClassCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirGetClassCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirGetClassCall.transformArgument(transformer: FirTransformer<D>, data: D): FirGetClassCall 
+     = apply { replaceArgument(argument.transform(transformer, data)) }

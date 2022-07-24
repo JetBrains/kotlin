@@ -168,3 +168,8 @@ val Element.typeParameters: String
 
 val Type.generics: String
     get() = arguments.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") ?: ""
+
+val Element.erasedTypeArguments
+    get() = typeArguments.takeIf { it.isNotEmpty() }
+        ?.joinToString(", ", "<", "> ") { "*" }
+        ?: ""

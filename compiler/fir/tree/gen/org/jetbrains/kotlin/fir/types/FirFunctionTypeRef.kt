@@ -26,11 +26,29 @@ abstract class FirFunctionTypeRef : FirTypeRefWithNullability() {
     abstract val isSuspend: Boolean
     abstract val contextReceiverTypeRefs: List<FirTypeRef>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformFunctionTypeRef(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef
+    abstract fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+
+    abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract fun replaceContextReceiverTypeRefs(newContextReceiverTypeRefs: List<FirTypeRef>)
 }
+
+inline fun <D> FirFunctionTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirFunctionTypeRef.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirFunctionTypeRef.transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
+     = apply { replaceValueParameters(valueParameters.transform(transformer, data)) }
+
+inline fun <D> FirFunctionTypeRef.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirFunctionTypeRef.transformContextReceiverTypeRefs(transformer: FirTransformer<D>, data: D): FirFunctionTypeRef 
+     = apply { replaceContextReceiverTypeRefs(contextReceiverTypeRefs.transform(transformer, data)) }

@@ -30,38 +30,19 @@ internal class FirSafeCallExpressionImpl(
     override val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>,
     override var selector: FirStatement,
 ) : FirSafeCallExpression() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        receiver.accept(visitor, data)
-        selector.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
-        transformAnnotations(transformer, data)
-        transformReceiver(transformer, data)
-        transformSelector(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        receiver = receiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        selector = selector.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.SafeCallExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
+    }
+
+    override fun replaceReceiver(newReceiver: FirExpression) {
+        receiver = newReceiver
     }
 
     override fun replaceSelector(newSelector: FirStatement) {

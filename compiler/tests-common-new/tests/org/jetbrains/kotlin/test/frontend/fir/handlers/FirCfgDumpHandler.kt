@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.fir.visitors.accept
 
 // TODO: adapt to multifile and multimodule tests
 class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {

@@ -23,15 +23,16 @@ abstract class FirConstExpression<T> : FirExpression() {
     abstract val kind: ConstantValueKind<T>
     abstract val value: T
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformConstExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun replaceKind(newKind: ConstantValueKind<T>)
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstExpression<T>
+    abstract fun replaceKind(newKind: ConstantValueKind<T>)
 }
+
+inline fun <D, T> FirConstExpression<T>.transformTypeRef(transformer: FirTransformer<D>, data: D): FirConstExpression<T> 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D, T> FirConstExpression<T>.transformAnnotations(transformer: FirTransformer<D>, data: D): FirConstExpression<T> 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

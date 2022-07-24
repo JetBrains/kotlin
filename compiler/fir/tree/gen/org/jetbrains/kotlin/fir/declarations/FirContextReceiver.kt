@@ -23,13 +23,9 @@ abstract class FirContextReceiver : FirPureAbstractElement(), FirElement {
     abstract val customLabelName: Name?
     abstract val labelNameFromTypeRef: Name?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContextReceiver(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformContextReceiver(this, data) as E
 
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
-
-    abstract fun <D> transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver
 }
+
+inline fun <D> FirContextReceiver.transformTypeRef(transformer: FirTransformer<D>, data: D): FirContextReceiver 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }

@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.smartcastScope
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -60,17 +58,13 @@ open class ExpressionReceiverValue(
     override val explicitReceiver: FirExpression
 ) : AbstractExplicitReceiverValue<FirExpression>(), ReceiverValue {
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
-        var receiverExpr: FirExpression? = receiverExpression
-        // Unwrap `x!!` to `x` and use the resulted expression to derive receiver type. This is necessary so that smartcast types inside
-        // `!!` is handled correctly.
-        if (receiverExpr is FirCheckNotNullCall) {
-            receiverExpr = receiverExpr.arguments.firstOrNull()
-        }
-        if (receiverExpr is FirExpressionWithSmartcast) {
-            return receiverExpr.smartcastScope(useSiteSession, scopeSession)
-        }
         return type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
+}
+
+class ExpressionReceiverValueWithDifferentType(explicitReceiver: FirExpression, override val type: ConeKotlinType) :
+    ExpressionReceiverValue(explicitReceiver) {
+
 }
 
 sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
@@ -104,16 +98,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         if (type == this.type) return
         if (!mutable) throw IllegalStateException("Cannot mutate an immutable ImplicitReceiverValue")
         this.type = type
-        receiverExpression = if (type == originalReceiverExpression.typeRef.coneType) {
-            originalReceiverExpression
-        } else {
-            buildExpressionWithSmartcast {
-                originalExpression = originalReceiverExpression
-                smartcastType = originalReceiverExpression.typeRef.resolvedTypeFromPrototype(type)
-                typesFromSmartCast = listOf(type)
-                smartcastStability = SmartcastStability.STABLE_VALUE
-            }
-        }
+        receiverExpression = originalReceiverExpression
         implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
 

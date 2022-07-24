@@ -21,15 +21,19 @@ abstract class FirWrappedExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val expression: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedExpression(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWrappedExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun replaceExpression(newExpression: FirExpression)
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedExpression
+    abstract fun replaceExpression(newExpression: FirExpression)
 }
+
+inline fun <D> FirWrappedExpression.transformTypeRef(transformer: FirTransformer<D>, data: D): FirWrappedExpression 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }
+
+inline fun <D> FirWrappedExpression.transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedExpression 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirWrappedExpression.transformExpression(transformer: FirTransformer<D>, data: D): FirWrappedExpression 
+     = apply { replaceExpression(expression.transform(transformer, data)) }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.visitors.accept
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -547,36 +548,6 @@ class Fir2IrVisitor(
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
-    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
-        // Generate the expression with the original type and then cast it to the smart cast type.
-        val value = convertToIrExpression(expressionWithSmartcast.originalExpression)
-        return implicitCastInserter.visitExpressionWithSmartcast(expressionWithSmartcast, value)
-    }
-
-    override fun visitExpressionWithSmartcastToNothing(
-        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
-        data: Any?
-    ): IrElement {
-        // This should not be materialized. Generate the expression with the original expression.
-        return convertToIrExpression(expressionWithSmartcastToNothing.originalExpression)
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcast(
-        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
-        data: Any?
-    ): IrElement {
-        val value = visitWhenSubjectExpression(whenSubjectExpressionWithSmartcast.originalExpression, data)
-        return implicitCastInserter.visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast, value)
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
-        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
-        data: Any?
-    ): IrElement {
-        // This should not be materialized. Generate the expression with the original expression.
-        return visitWhenSubjectExpression(whenSubjectExpressionWithSmartcastToNothing.originalExpression, data)
-    }
-
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
         return convertCallableReferenceAccess(callableReferenceAccess, false)
     }
@@ -656,7 +627,7 @@ class Fir2IrVisitor(
         return when (expression) {
             null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
-            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirExpressionWithSmartcast ->
+            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess ->
                 convertToIrExpression(expression)
             else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
                 val variableAsFunctionMode = calleeReference is FirResolvedNamedReference &&

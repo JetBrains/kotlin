@@ -35,17 +35,26 @@ abstract class FirFile : FirDeclaration() {
     abstract val sourceFileLinesMapping: KtSourceFileLinesMapping?
     abstract override val symbol: FirFileSymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformFile(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
+    abstract fun replacePackageDirective(newPackageDirective: FirPackageDirective)
 
-    abstract fun <D> transformImports(transformer: FirTransformer<D>, data: D): FirFile
+    abstract fun replaceImports(newImports: List<FirImport>)
 
-    abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirFile
+    abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 }
+
+inline fun <D> FirFile.transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirFile.transformPackageDirective(transformer: FirTransformer<D>, data: D): FirFile 
+     = apply { replacePackageDirective(packageDirective.transform(transformer, data)) }
+
+inline fun <D> FirFile.transformImports(transformer: FirTransformer<D>, data: D): FirFile 
+     = apply { replaceImports(imports.transform(transformer, data)) }
+
+inline fun <D> FirFile.transformDeclarations(transformer: FirTransformer<D>, data: D): FirFile 
+     = apply { replaceDeclarations(declarations.transform(transformer, data)) }

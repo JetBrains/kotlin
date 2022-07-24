@@ -23,12 +23,9 @@ internal class FirTypeProjectionWithVarianceImpl(
     override var typeRef: FirTypeRef,
     override val variance: Variance,
 ) : FirTypeProjectionWithVariance() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-    }
+    override val elementKind get() = FirElementKind.TypeProjectionWithVariance
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeProjectionWithVarianceImpl {
-        typeRef = typeRef.transform(transformer, data)
-        return this
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }

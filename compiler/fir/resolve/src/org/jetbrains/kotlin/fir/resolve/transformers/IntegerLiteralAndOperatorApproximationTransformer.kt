@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
+import org.jetbrains.kotlin.fir.expressions.transformDispatchReceiver
+import org.jetbrains.kotlin.fir.expressions.transformExtensionReceiver
+import org.jetbrains.kotlin.fir.expressions.transformArguments
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference

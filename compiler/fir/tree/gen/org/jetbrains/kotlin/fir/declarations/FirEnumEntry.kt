@@ -47,13 +47,12 @@ abstract class FirEnumEntry : FirVariable() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val symbol: FirEnumEntrySymbol
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntry(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformEnumEntry(this, data) as E
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>)
+
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
@@ -65,29 +64,46 @@ abstract class FirEnumEntry : FirVariable() {
 
     abstract override fun replaceInitializer(newInitializer: FirExpression?)
 
+    abstract override fun replaceDelegate(newDelegate: FirExpression?)
+
     abstract override fun replaceGetter(newGetter: FirPropertyAccessor?)
 
     abstract override fun replaceSetter(newSetter: FirPropertyAccessor?)
 
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntry
+    abstract override fun replaceBackingField(newBackingField: FirBackingField?)
 
-    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntry
-
-    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntry
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirEnumEntry.transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceTypeParameters(typeParameters.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceStatus(status.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceReturnTypeRef(returnTypeRef.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceReceiverTypeRef(receiverTypeRef?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformContextReceivers(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceContextReceivers(contextReceivers.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformInitializer(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceInitializer(initializer?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformDelegate(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceDelegate(delegate?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformGetter(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceGetter(getter?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformSetter(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceSetter(setter?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformBackingField(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceBackingField(backingField?.transform(transformer, data)) }
+
+inline fun <D> FirEnumEntry.transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntry 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }

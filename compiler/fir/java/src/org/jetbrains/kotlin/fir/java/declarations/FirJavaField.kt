@@ -30,6 +30,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
+import org.jetbrains.kotlin.fir.visitors.FirElementKind
 
 class FirJavaField @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
@@ -68,71 +69,28 @@ class FirJavaField @FirImplementationDetail constructor(
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
-    override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
-        transformAnnotations(transformer, data)
-        initializer = initializer?.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
-        initializer?.accept(visitor, data)
+    override fun replaceTypeParameters(newTypeParameters: List<FirTypeParameterRef>) {
+        error("cannot be replaced for FirJavaField")
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaField {
-        transformReturnTypeRef(transformer, data)
-        transformTypeParameters(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
-
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaField {
-        status = status.transformSingle(transformer, data)
-        return this
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("cannot be replaced for FirJavaField")
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
-        return this
-    }
-
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
-        typeParameters.transformInplace(transformer, data)
-        return this
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        error("cannot be replaced for FirJavaField")
     }
 
     override val delegate: FirExpression?
@@ -140,27 +98,29 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override var containerSource: DeserializedContainerSource? = null
 
-    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
     override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {}
 
-    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
-        return this
-    }
-
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {}
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {}
+    override fun replaceBackingField(newBackingField: FirBackingField?) {
+        error("cannot be replaced for FirJavaField")
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        error("cannot be replaced for FirJavaField")
+    }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaField")
     }
+
+    override val elementKind: FirElementKind
+        get() = TODO("not implemented")
 }
 
 @FirBuilderDsl

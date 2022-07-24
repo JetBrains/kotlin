@@ -45,21 +45,7 @@ internal class FirTypeParameterImpl(
         symbol.bind(this)
     }
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        bounds.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
-        bounds.transformInplace(transformer, data)
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.TypeParameter
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
@@ -68,5 +54,10 @@ internal class FirTypeParameterImpl(
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds.clear()
         bounds.addAll(newBounds)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 }

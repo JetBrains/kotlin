@@ -35,41 +35,15 @@ internal class FirAnnotationCallImpl(
     override val typeRef: FirTypeRef get() = annotationTypeRef
     override val annotations: List<FirAnnotation> get() = emptyList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotationTypeRef.accept(visitor, data)
-        typeArguments.forEach { it.accept(visitor, data) }
-        argumentList.accept(visitor, data)
-        calleeReference.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        transformAnnotationTypeRef(transformer, data)
-        transformTypeArguments(transformer, data)
-        argumentList = argumentList.transform(transformer, data)
-        transformCalleeReference(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        return this
-    }
-
-    override fun <D> transformAnnotationTypeRef(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        annotationTypeRef = annotationTypeRef.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        typeArguments.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
-        return this
-    }
+    override val elementKind get() = FirElementKind.AnnotationCall
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
+        annotationTypeRef = newAnnotationTypeRef
+    }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()

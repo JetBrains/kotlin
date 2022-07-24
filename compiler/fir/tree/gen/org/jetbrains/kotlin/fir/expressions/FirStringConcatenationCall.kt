@@ -21,15 +21,19 @@ abstract class FirStringConcatenationCall : FirCall, FirExpression() {
     abstract override val argumentList: FirArgumentList
     abstract override val typeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStringConcatenationCall(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformStringConcatenationCall(this, data) as E
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStringConcatenationCall
 }
+
+inline fun <D> FirStringConcatenationCall.transformAnnotations(transformer: FirTransformer<D>, data: D): FirStringConcatenationCall 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
+
+inline fun <D> FirStringConcatenationCall.transformArgumentList(transformer: FirTransformer<D>, data: D): FirStringConcatenationCall 
+     = apply { replaceArgumentList(argumentList.transform(transformer, data)) }
+
+inline fun <D> FirStringConcatenationCall.transformTypeRef(transformer: FirTransformer<D>, data: D): FirStringConcatenationCall 
+     = apply { replaceTypeRef(typeRef.transform(transformer, data)) }

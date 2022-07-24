@@ -20,9 +20,5 @@ import org.jetbrains.kotlin.fir.visitors.*
 object FirStubReference : FirReference() {
     override val source: KtSourceElement? get() = null
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirStubReference {
-        return this
-    }
+    override val elementKind get() = FirElementKind.Reference
 }

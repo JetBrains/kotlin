@@ -25,21 +25,18 @@ internal class FirIntersectionTypeRefImpl(
     override var leftType: FirTypeRef,
     override var rightType: FirTypeRef,
 ) : FirIntersectionTypeRef() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        leftType.accept(visitor, data)
-        rightType.accept(visitor, data)
+    override val elementKind get() = FirElementKind.IntersectionTypeRef
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRefImpl {
-        transformAnnotations(transformer, data)
-        leftType = leftType.transform(transformer, data)
-        rightType = rightType.transform(transformer, data)
-        return this
+    override fun replaceLeftType(newLeftType: FirTypeRef) {
+        leftType = newLeftType
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRefImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceRightType(newRightType: FirTypeRef) {
+        rightType = newRightType
     }
 }

@@ -28,13 +28,13 @@ interface AbstractElement : FieldContainer, KindOwner {
     val baseTransformerType: AbstractElement?
     val transformerType: AbstractElement
     val doesNotNeedImplementation: Boolean
-    val needTransformOtherChildren: Boolean
     val allImplementations: List<Implementation>
     val allFirFields: List<Field>
     val defaultImplementation: Implementation?
     val customImplementations: List<Implementation>
     val overridenFields: Map<Field, Map<Importable, Boolean>>
     val useNullableForReplace: Set<Field>
+    val hasManualImplementations: Boolean
 
     val isSealed: Boolean
         get() = false
@@ -68,7 +68,6 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
             }
             field = value
         }
-    var _needTransformOtherChildren: Boolean = false
 
     override var isSealed: Boolean = false
 
@@ -76,8 +75,8 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
     override val transformerType: Element get() = baseTransformerType ?: this
 
     override var doesNotNeedImplementation: Boolean = false
+    override var hasManualImplementations: Boolean = false
 
-    override val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
     override val overridenFields: MutableMap<Field, MutableMap<Importable, Boolean>> = mutableMapOf()
     override val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     override val allImplementations: List<Implementation> by lazy {
@@ -99,9 +98,8 @@ class Element(override val name: String, kind: Kind) : AbstractElement {
             if (overrides) {
                 val existingField = result.first { it == parentField }
                 existingField.fromParent = true
-                existingField.needsSeparateTransform = existingField.needsSeparateTransform || parentField.needsSeparateTransform
-                existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || parentField.needTransformInOtherChildren
                 existingField.withReplace = parentField.withReplace || existingField.withReplace
+                existingField.nonReplaceable = existingField.nonReplaceable ?: parentField.nonReplaceable
                 if (parentField.type != existingField.type && parentField.withReplace) {
                     existingField.overridenTypes += parentField
                     overridenFields[existingField, parentField] = false

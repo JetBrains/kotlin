@@ -24,9 +24,4 @@ abstract class FirErrorNamedReference : FirNamedReference(), FirDiagnosticHolder
     abstract override val candidateSymbol: FirBasedSymbol<*>?
     abstract override val diagnostic: ConeDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorNamedReference(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformErrorNamedReference(this, data) as E
 }

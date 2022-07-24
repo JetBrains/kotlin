@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
@@ -64,7 +64,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var inlineStatus: InlineStatus = InlineStatus.Unknown
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var hasExplicitParameterList: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun build(): FirAnonymousFunction {

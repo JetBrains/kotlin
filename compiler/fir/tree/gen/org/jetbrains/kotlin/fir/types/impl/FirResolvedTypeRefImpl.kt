@@ -27,17 +27,14 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override var delegatedTypeRef: FirTypeRef?,
     override val isFromStubType: Boolean,
 ) : FirResolvedTypeRef() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
+    override val elementKind get() = FirElementKind.ResolvedTypeRef
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations.clear()
+        annotations.addAll(newAnnotations)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
-        transformAnnotations(transformer, data)
-        return this
-    }
-
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
-        annotations.transformInplace(transformer, data)
-        return this
+    override fun replaceDelegatedTypeRef(newDelegatedTypeRef: FirTypeRef?) {
+        delegatedTypeRef = newDelegatedTypeRef
     }
 }

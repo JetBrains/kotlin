@@ -22,11 +22,9 @@ abstract class FirUserTypeRef : FirTypeRefWithNullability() {
     abstract val qualifier: List<FirQualifierPart>
     abstract val customRenderer: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitUserTypeRef(this, data)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformUserTypeRef(this, data) as E
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 }
+
+inline fun <D> FirUserTypeRef.transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef 
+     = apply { replaceAnnotations(annotations.transform(transformer, data)) }
