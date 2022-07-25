@@ -7,7 +7,7 @@ project.updateJvmTarget("1.8")
 
 dependencies {
     api(kotlinStdlib())
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     testApi(commonDependency("junit"))
 }
 

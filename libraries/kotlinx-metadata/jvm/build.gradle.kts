@@ -41,8 +41,7 @@ dependencies {
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
 }
 
 if (deployVersion != null) {

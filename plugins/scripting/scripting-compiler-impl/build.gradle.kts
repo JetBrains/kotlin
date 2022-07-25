@@ -16,7 +16,7 @@ dependencies {
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(kotlinStdlib())
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
