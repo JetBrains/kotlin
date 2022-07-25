@@ -74,4 +74,6 @@ class BuiltinTypes {
     val charType: FirImplicitBuiltinTypeRef = FirImplicitCharTypeRef(null)
     val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)
     val throwableType: FirImplicitThrowableTypeRef = FirImplicitThrowableTypeRef(null)
+    val iterableType: FirImplicitBuiltinTypeRef = FirImplicitIterableTypeRef(null)
+    val arrayType: FirImplicitBuiltinTypeRef = FirImplicitArrayTypeRef(null)
 }

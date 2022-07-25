@@ -124,6 +124,14 @@ class FirImplicitThrowableTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Throwable)
 
+class FirImplicitIterableTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Iterable)
+
+class FirImplicitArrayTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Array)
+
 class FirImplicitKPropertyTypeRef(
     source: KtSourceElement?,
     typeArgument: ConeTypeProjection
@@ -195,6 +203,8 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)
         is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
         is FirImplicitThrowableTypeRef -> FirImplicitThrowableTypeRef(newSource)
+        is FirImplicitIterableTypeRef -> FirImplicitIterableTypeRef(newSource)
+        is FirImplicitArrayTypeRef -> FirImplicitArrayTypeRef(newSource)
         is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
             newSource,
             typeArgument = type.typeArguments[0]

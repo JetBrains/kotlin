@@ -140,6 +140,10 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.typeProvider.getDispatchReceiverType(this) }
 }
 
+/**
+ * This class provides builtin types.
+ * Generic types provided by this class are star projected types.
+ */
 @Suppress("PropertyName")
 public abstract class KtBuiltinTypes : KtLifetimeOwner {
     public abstract val INT: KtType
@@ -162,4 +166,8 @@ public abstract class KtBuiltinTypes : KtLifetimeOwner {
 
     public abstract val NULLABLE_ANY: KtType
     public abstract val NULLABLE_NOTHING: KtType
+
+    public abstract val ANNOTATION: KtType
+    public abstract val ITERABLE: KtType
+    public abstract val ARRAY: KtType
 }
