@@ -20,7 +20,6 @@ dependencies {
     compileOnly("org.apache.maven:maven-core:3.0.3")
     testCompileOnly(project(":compiler:cli"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(project(":kotlin-reflect"))
     testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-compiler"))

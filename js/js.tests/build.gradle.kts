@@ -59,8 +59,6 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:util"))
 
-    testRuntimeOnly(project(":kotlin-reflect"))
-
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("com.google.guava:guava"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
@@ -70,7 +68,6 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
     }
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
     testRuntimeOnly(project(":compiler:backend-common"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))

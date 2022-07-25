@@ -71,7 +71,6 @@ dependencies {
     testApi(projectTests(":plugins:fir-plugin-prototype"))
     testApi(projectTests(":plugins:fir-plugin-prototype:fir-plugin-ic-test"))
     testApi(projectTests(":generators:test-generator"))
-    testCompileOnly(project(":kotlin-reflect-api"))
     testImplementation(project(":kotlin-reflect"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))

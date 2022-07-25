@@ -28,8 +28,6 @@ dependencies {
     testImplementation(project(":compiler:fir:checkers"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 

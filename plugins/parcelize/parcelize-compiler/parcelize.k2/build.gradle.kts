@@ -17,7 +17,6 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":kotlin-reflect-api"))
 }
 
 sourceSets {

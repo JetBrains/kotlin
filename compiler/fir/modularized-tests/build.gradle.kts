@@ -23,8 +23,6 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:fir:resolve"))

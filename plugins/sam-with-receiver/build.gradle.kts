@@ -26,8 +26,6 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(commonDependency("junit:junit"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 

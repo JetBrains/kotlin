@@ -22,7 +22,6 @@ dependencies {
 
     testImplementation(project(":compiler:cli-common"))
     testImplementation(jpsModelSerialization())
-    testImplementation(project(":kotlin-reflect"))
     testImplementation(commonDependency("junit:junit"))
 }
 

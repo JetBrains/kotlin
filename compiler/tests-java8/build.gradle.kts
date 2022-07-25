@@ -8,12 +8,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
     testApi(projectTests(":generators:test-generator"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
-
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    }
 }
 
 sourceSets {
