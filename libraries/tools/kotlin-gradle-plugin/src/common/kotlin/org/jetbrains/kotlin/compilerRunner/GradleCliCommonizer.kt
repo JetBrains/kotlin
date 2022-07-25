@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
@@ -26,9 +27,9 @@ internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToo
     })
 }
 
-internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
-    if (configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME) == null) {
-        project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).run {
+internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuration {
+    return configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
+        ?: project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME).run {
             isCanBeResolved = true
             isCanBeConsumed = false
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
@@ -40,5 +41,4 @@ internal fun Project.registerCommonizerClasspathConfigurationIfNecessary() {
                 )
             }
         }
-    }
 }

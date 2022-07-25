@@ -15,9 +15,9 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.commonizer.CommonizerDependency
 import org.jetbrains.kotlin.commonizer.TargetedCommonizerDependency
 import org.jetbrains.kotlin.commonizer.allLeaves
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -97,7 +97,6 @@ internal open class CInteropCommonizerTask
 
     private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
         .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
-            commonizerClasspath
             KotlinNativeCommonizerToolRunner.Settings(
                 pluginVersion,
                 commonizerClasspath.files,

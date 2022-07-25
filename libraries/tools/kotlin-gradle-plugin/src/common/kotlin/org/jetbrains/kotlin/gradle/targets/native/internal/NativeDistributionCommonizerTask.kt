@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -59,7 +58,6 @@ internal open class NativeDistributionCommonizerTask
 
     private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
         .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
-            commonizerClasspath
             KotlinNativeCommonizerToolRunner.Settings(
                 pluginVersion,
                 commonizerClasspath.files,
@@ -103,7 +101,6 @@ internal open class NativeDistributionCommonizerTask
     }
 
     init {
-        project.registerCommonizerClasspathConfigurationIfNecessary()
         outputs.upToDateWhen {
             commonizerCache.isUpToDate(commonizerTargets)
         }
