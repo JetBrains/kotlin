@@ -7,15 +7,16 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.backend.jvm.functionByName
+import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -25,19 +26,20 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
@@ -71,9 +73,12 @@ interface IrBuilderExtension {
     }
 
     fun <F: IrFunction> addFunctionBody(function: F, bodyGen: IrBlockBodyBuilder.(F) -> Unit) {
-        function.body = DeclarationIrBuilder(compilerContext, function.symbol, function.startOffset, function.endOffset).irBlockBody(
-            function.startOffset,
-            function.endOffset
+        val parentClass = function.parent
+        val startOffset = function.startOffset.takeIf { it >= 0 } ?: parentClass.startOffset
+        val endOffset = function.endOffset.takeIf { it >= 0 } ?: parentClass.endOffset
+        function.body = DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(
+            startOffset,
+            endOffset
         ) { bodyGen(function) }
     }
 
@@ -136,7 +141,7 @@ interface IrBuilderExtension {
     ): IrProperty {
         val lazySafeModeClassDescriptor = compilerContext.referenceClass(ClassId.topLevel(LAZY_MODE_FQ))!!.owner
         val lazyFunctionSymbol = compilerContext.referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).single {
-            it.descriptor.valueParameters.size == 2 && it.descriptor.valueParameters[0].type == lazySafeModeClassDescriptor.defaultType
+            it.owner.valueParameters.size == 2 && it.owner.valueParameters[0].type == lazySafeModeClassDescriptor.defaultType
         }
         val publicationEntryDescriptor = lazySafeModeClassDescriptor.enumEntries().single { it.name == LAZY_PUBLICATION_MODE_NAME }
 
@@ -814,7 +819,7 @@ interface IrBuilderExtension {
     ): IrExpression? {
         val nullableSerClass = compilerContext.referenceProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
         val serializer =
-            property.serializableWith?.classOrNull
+            property.serializableWith(compilerContext)
                 ?: if (!property.type.isTypeParameter()) generator.findTypeSerializerOrContext(
                     compilerContext,
                     property.type
@@ -883,7 +888,7 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.serializerInstance(
-        enclosingGenerator: AbstractSerialGenerator,
+        enclosingGenerator: AbstractIrGenerator,
         serializerClassOriginal: ClassDescriptor?,
         module: ModuleDescriptor,
         kType: IrType,
@@ -901,7 +906,7 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.serializerInstance(
-        enclosingGenerator: AbstractSerialGenerator,
+        enclosingGenerator: AbstractIrGenerator,
         serializerClassOriginal: IrClassSymbol?,
         pluginContext: SerializationPluginContext,
         kType: IrType,
@@ -960,8 +965,7 @@ interface IrBuilderExtension {
                                 thisIrType.arguments.map {
                                     val argSer = enclosingGenerator.findTypeSerializerOrContext(
                                         compilerContext,
-                                        it.typeOrNull!!, //todo: handle star projections here
-                                        sourceElement = serializerClassOriginal.owner.sourceElement()?.psi
+                                        it.typeOrNull!! //todo: handle star projections here?
                                     )
                                     instantiate(argSer, it.typeOrNull!!)!!
                                 })
@@ -1076,8 +1080,7 @@ interface IrBuilderExtension {
                 args = kType.arguments.map {
                     val argSer = enclosingGenerator.findTypeSerializerOrContext(
                         pluginContext,
-                        it.typeOrNull!!, // todo: stars
-                        sourceElement = serializerClassOriginal.owner.source.getPsi()
+                        it.typeOrNull!! // todo: stars?
                     )
                     instantiate(argSer, it.typeOrNull!!) ?: return null
                 }
@@ -1242,11 +1245,10 @@ interface IrBuilderExtension {
     }
 
     fun IrClass.findWriteSelfMethod(): IrSimpleFunction? =
-        declarations.filter { it is IrSimpleFunction && it.name == SerialEntityNames.WRITE_SELF_NAME && !it.isFakeOverride }
-            .takeUnless(Collection<*>::isEmpty)?.single() as IrSimpleFunction?
+        declarations.singleOrNull { it is IrSimpleFunction && it.name == SerialEntityNames.WRITE_SELF_NAME && !it.isFakeOverride } as IrSimpleFunction?
 
     fun IrBlockBodyBuilder.serializeAllProperties(
-        generator: AbstractSerialGenerator,
+        generator: AbstractIrGenerator,
         serializableIrClass: IrClass,
         serializableProperties: List<IrSerializableProperty>,
         objectToSerialize: IrValueDeclaration,
@@ -1339,7 +1341,7 @@ interface IrBuilderExtension {
 
 
     fun IrBlockBodyBuilder.formEncodeDecodePropertyCall(
-        enclosingGenerator: AbstractSerialGenerator,
+        enclosingGenerator: AbstractIrGenerator,
         encoder: IrExpression,
         property: IrSerializableProperty,
         whenHaveSerializer: (serializer: IrExpression, sti: IrSerialTypeInfo) -> FunctionWithArgs,
