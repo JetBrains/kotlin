@@ -264,6 +264,7 @@ internal fun IrCall.getCorrespondingProperty(): IrProperty =
     symbol.owner.correspondingPropertySymbol?.owner
         ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
+@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referencePackageFunction(
     packageName: String,
     name: String,
@@ -274,6 +275,7 @@ internal fun IrPluginContext.referencePackageFunction(
         error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
     }
 
+@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, functionName: String): IrSimpleFunctionSymbol {
     val functionId = FqName("$KOTLIN.${classSymbol.owner.name}.$functionName")
     return try {
@@ -283,18 +285,19 @@ internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, funct
     }
 }
 
+@OptIn(FirIncompatiblePluginAPI::class)
 private fun IrPluginContext.referenceArrayClass(irType: IrSimpleType): IrClassSymbol {
     val jsArrayName = irType.getArrayClassFqName()
     return referenceClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
 }
 
+@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.getArrayConstructorSymbol(
     irType: IrSimpleType,
     predicate: (IrConstructorSymbol) -> Boolean = { true }
 ): IrConstructorSymbol {
     val jsArrayName = irType.getArrayClassFqName()
     return try {
-        @Suppress("DEPRECATION") // caution: referenceConstructors(fqName) doesn't work with FIR
         referenceConstructors(jsArrayName).single(predicate)
     } catch (e: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")

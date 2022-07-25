@@ -6,10 +6,9 @@
 package org.jetbrains.kotlinx.serialization;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -26,9 +25,21 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("annotationsOnFile.kt")
+    public void testAnnotationsOnFile() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/annotationsOnFile.kt");
+    }
+
+    @Test
     @TestMetadata("classSerializerAsObject.kt")
     public void testClassSerializerAsObject() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/classSerializerAsObject.kt");
+    }
+
+    @Test
+    @TestMetadata("generics.kt")
+    public void testGenerics() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/generics.kt");
     }
 
     @Test

@@ -7,7 +7,8 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.isStaticSerializable
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -37,9 +37,9 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SE
 class SerializableIrGenerator(
     val irClass: IrClass,
     override val compilerContext: SerializationPluginContext
-) : AbstractSerialGenerator(null, irClass.descriptor), IrBuilderExtension {
+) : AbstractIrGenerator(irClass), IrBuilderExtension {
 
-    protected val properties = bindingContext.serializablePropertiesForIrBackend(irClass)
+    protected val properties = serializablePropertiesForIrBackend(irClass)
 
     private val serialDescriptorClass = compilerContext.referenceClass(
         ClassId(
@@ -272,7 +272,7 @@ class SerializableIrGenerator(
     ): Int {
         check(superClass.isInternalSerializable)
         val superCtorRef = serializableSyntheticConstructor(superClass)!!
-        val superProperties = bindingContext.serializablePropertiesForIrBackend(superClass).serializableProperties
+        val superProperties = serializablePropertiesForIrBackend(superClass).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
                 allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
@@ -309,7 +309,7 @@ class SerializableIrGenerator(
             var ignoreIndexTo = -1
             val superClass = irClass.getSuperClassOrAny()
             if (superClass.descriptor.isInternalSerializable) {
-                ignoreIndexTo = bindingContext.serializablePropertiesForIrBackend(superClass).serializableProperties.size
+                ignoreIndexTo = serializablePropertiesForIrBackend(superClass).serializableProperties.size
 
                 // call super.writeSelf
                 var superWriteSelfF = superClass.findWriteSelfMethod()
@@ -374,12 +374,7 @@ class SerializableIrGenerator(
     private fun generateSyntheticMethods() {
         val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
         if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(SAVE) }) {
-            val func =
-                irClass.functions.singleOrNull { function ->
-                    function.name == SerialEntityNames.WRITE_SELF_NAME &&
-                            function.modality == Modality.FINAL &&
-                            function.returnType.isUnit()
-                } ?: return
+            val func = irClass.findWriteSelfMethod() ?: return
             generateWriteSelfMethod(func)
         }
     }

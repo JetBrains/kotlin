@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -63,17 +63,29 @@ fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module
     return null
 }
 
+fun AbstractIrGenerator.findAddOnSerializer(propertyType: IrType, ctx: SerializationPluginContext): IrClassSymbol? {
+    val classSymbol = propertyType.classOrNull ?: return null
+    additionalSerializersInScopeOfCurrentFile[classSymbol to propertyType.isNullable()]?.let { return it }
+    if (classSymbol in contextualKClassListInCurrentFile)
+        return ctx.getClassFromRuntime(SpecialBuiltins.contextSerializer)
+    if (classSymbol.owner.annotations.hasAnnotation(SerializationAnnotations.polymorphicFqName))
+        return ctx.getClassFromRuntime(SpecialBuiltins.polymorphicSerializer)
+    if (propertyType.isNullable()) return findAddOnSerializer(propertyType.makeNotNull(), ctx)
+    return null
+}
+
+
 fun KotlinType.isGeneratedSerializableObject() =
     toClassDescriptor?.run { kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotationWithoutArgs } == true
 
-fun  AbstractSerialGenerator.getIrSerialTypeInfo(property: IrSerializableProperty, ctx: SerializationPluginContext): IrSerialTypeInfo {
+fun AbstractIrGenerator.getIrSerialTypeInfo(property: IrSerializableProperty, ctx: SerializationPluginContext): IrSerialTypeInfo {
     fun SerializableInfo(serializer: IrClassSymbol?) =
         IrSerialTypeInfo(property, if (property.type.isNullable()) "Nullable" else "", serializer)
 
     val T = property.type
-    property.serializableWith?.let { return SerializableInfo(it.classOrNull!!) }
-//   TODO findAddOnSerializer(T, property.module)?.let { return SerializableInfo(it) }
-    T.overridenSerializer?.let { return SerializableInfo(it.classOrNull!!) }
+    property.serializableWith(ctx)?.let { return SerializableInfo(it) }
+    findAddOnSerializer(T, ctx)?.let { return SerializableInfo(it) }
+    T.overridenSerializer?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> IrSerialTypeInfo(property, if (property.type.isMarkedNullable()) "Nullable" else "", null)
         T.isPrimitiveType() -> IrSerialTypeInfo(
@@ -82,7 +94,7 @@ fun  AbstractSerialGenerator.getIrSerialTypeInfo(property: IrSerializablePropert
         )
         T.isString() -> IrSerialTypeInfo(property, "String")
         T.isArray() -> {
-            val serializer = property.serializableWith?.classOrNull ?: ctx.getClassFromRuntime(SpecialBuiltins.referenceArraySerializer)
+            val serializer = property.serializableWith(ctx) ?: ctx.getClassFromInternalSerializationPackage(SpecialBuiltins.referenceArraySerializer)
             SerializableInfo(serializer)
         }
         else -> {
