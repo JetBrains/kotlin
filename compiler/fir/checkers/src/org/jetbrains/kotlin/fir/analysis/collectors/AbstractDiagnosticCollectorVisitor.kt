@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContext,
@@ -161,7 +162,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
         if (typeRef.source != null && typeRef.source?.kind !is KtFakeSourceElementKind) {
-            withAnnotationContainer(typeRef) {
+            withTypeRefAnnotationContainer(typeRef) {
                 checkElement(typeRef)
                 visitNestedElements(typeRef)
             }
@@ -174,7 +175,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
-        // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
+        // as children in delegatedTypeRef. We should make sure those children are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
         val resolvedTypeRefType = resolvedTypeRef.type
         if (resolvedTypeRefType is ConeErrorType) {
@@ -182,15 +183,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
         if (resolvedTypeRef.source?.kind is KtFakeSourceElementKind) return
 
-        //the note about is just wrong
-        //if we don't visit resolved type we can't make any diagnostics on them
-        //so here we check resolvedTypeRef
-        if (resolvedTypeRefType !is ConeErrorType) {
-            withAnnotationContainer(resolvedTypeRef) {
+        // Even though we don't visit the children of the resolvedTypeRef we still add it as an annotation container
+        // and take care not to add the corresponding delegatedTypeRef. This is so that diagnostics will have access to
+        // the FirResolvedTypeRef though the context, instead of, e.g., a FirUserTypeRef without cone types.
+        withTypeRefAnnotationContainer(resolvedTypeRef) {
+            if (resolvedTypeRefType !is ConeErrorType) {
+                // We still need to check the resolvedTypeRef, since otherwise we couldn't report any diagnostics on them.
                 checkElement(resolvedTypeRef)
             }
+            resolvedTypeRef.delegatedTypeRef?.accept(this, data)
         }
-        resolvedTypeRef.delegatedTypeRef?.accept(this, data)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
@@ -334,6 +336,17 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    private inline fun <R> withTypeRefAnnotationContainer(annotationContainer: FirTypeRef, block: () -> R): R {
+        var containingTypeRef = context.annotationContainers.lastOrNull()?.safeAs<FirResolvedTypeRef>()
+        while (containingTypeRef != null && containingTypeRef.delegatedTypeRef != annotationContainer) {
+            containingTypeRef = containingTypeRef.delegatedTypeRef as? FirResolvedTypeRef
+        }
+        return if (containingTypeRef != null) {
+            block()
+        } else {
+            withAnnotationContainer(annotationContainer, block)
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     fun addSuppressedDiagnosticsToContext(annotationContainer: FirAnnotationContainer) {
