@@ -13,7 +13,7 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))

@@ -7,9 +7,8 @@ dependencies {
     testImplementation(project(":compiler:fir:entrypoint"))
     testImplementation(project(":compiler:cli"))
     testImplementation(intellijCore())
+    testImplementation(project(":kotlin-reflect"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     // This dependency is needed only for FileComparisonFailure

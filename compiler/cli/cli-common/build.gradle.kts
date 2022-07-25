@@ -10,7 +10,7 @@ dependencies {
     api(project(":js:js.config"))
     api(project(":native:kotlin-native-utils"))
     api(project(":compiler:plugin-api"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("com.google.guava:guava"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))

@@ -12,8 +12,7 @@ dependencies {
     testApiJUnit5()
     testApi(project(":generators"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 

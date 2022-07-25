@@ -10,7 +10,7 @@ dependencies {
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
     implementation(project(":compiler:psi"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))

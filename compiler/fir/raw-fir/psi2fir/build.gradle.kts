@@ -20,12 +20,11 @@ dependencies {
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(project(":kotlin-reflect"))
 
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompileOnly(project(":kotlin-reflect-api"))
 
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testCompileOnly(intellijCore())

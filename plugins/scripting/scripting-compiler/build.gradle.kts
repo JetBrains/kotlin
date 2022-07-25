@@ -14,7 +14,7 @@ dependencies {
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))

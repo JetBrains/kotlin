@@ -9,7 +9,7 @@ kotlin {
 
 dependencies {
     implementation(kotlinxCollectionsImmutable())
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
 
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:frontend"))

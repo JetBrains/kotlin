@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi"))
 
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-reflect"))
     compileOnly(intellijCore())
 }
 

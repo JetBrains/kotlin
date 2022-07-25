@@ -23,8 +23,7 @@ dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testCompileOnly(intellijCore())
