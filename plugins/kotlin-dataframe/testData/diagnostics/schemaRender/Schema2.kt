@@ -1,6 +1,7 @@
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
+import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.testing.*
 import org.jetbrains.kotlinx.dataframe.plugin.testing.schemaRender.*
 
@@ -58,6 +59,8 @@ internal fun schemaTest() {
     col1(df.functions[0].name[0])
     fun col2(v: kotlin.String) {}
     col2(df.functions[0].returnType[0])
+    fun col31(v: ColumnGroup<*>) {}
+    col31(df.function)
     fun col3(v: kotlin.String) {}
     col3(df.function.name[0])
     fun col4(v: kotlin.String) {}

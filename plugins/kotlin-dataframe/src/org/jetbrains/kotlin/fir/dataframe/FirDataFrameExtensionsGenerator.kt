@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
@@ -87,17 +88,27 @@ class FirDataFrameExtensionsGenerator(
                     owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
                 )
             }
+
             else -> state
                 .flatMap { (classId, schemaContext) ->
                     schemaContext.properties.filter { CallableId(classId, Name.identifier(it.name)) == callableId }
                 }
                 .flatMap { schemaProperty ->
-                    firPropertySymbols(
-                        schemaProperty.returnType.toFirResolvedTypeRef(),
-                        Name.identifier(schemaProperty.name),
-                        callableId,
-                        schemaProperty.marker
+                    val propertyName = Name.identifier(schemaProperty.name)
+                    val dataRowExtension = dataRowExtension(
+                        callableId = callableId,
+                        marker = schemaProperty.marker,
+                        resolvedReturnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef(),
+                        propertyName = propertyName
                     )
+
+                    val columnContainerExtension = columnContainerExtension(
+                        callableId = callableId,
+                        marker = schemaProperty.marker,
+                        propertyName = propertyName,
+                        returnType = schemaProperty.columnContainerReturnType
+                    )
+                    listOf(dataRowExtension.symbol, columnContainerExtension.symbol)
                 }
         }
     }
@@ -108,11 +119,30 @@ class FirDataFrameExtensionsGenerator(
         callableId: CallableId,
         marker: ConeTypeProjection
     ): List<FirPropertySymbol> {
+        val rowExtension = dataRowExtension(callableId, marker, resolvedReturnTypeRef, propertyName)
+        val frameExtension = columnContainerExtension(
+            callableId,
+            marker,
+            propertyName,
+            resolvedReturnTypeRef.projectOverDataColumnType()
+        )
+        return listOf(rowExtension.symbol, frameExtension.symbol)
+    }
 
+    private fun dataRowExtension(
+        callableId: CallableId,
+        marker: ConeTypeProjection,
+        resolvedReturnTypeRef: FirResolvedTypeRef,
+        propertyName: Name
+    ): FirProperty {
         val firPropertySymbol = FirPropertySymbol(callableId)
         val rowExtension = buildProperty {
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID), typeArguments = arrayOf(marker), isNullable = false)
+                ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
+                    typeArguments = arrayOf(marker),
+                    isNullable = false
+                )
 
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
             moduleData = session.moduleData
@@ -145,16 +175,25 @@ class FirDataFrameExtensionsGenerator(
             isVar = false
             isLocal = false
         }.also { firPropertySymbol.bind(it) }
+        return rowExtension
+    }
 
+    private fun columnContainerExtension(
+        callableId: CallableId,
+        marker: ConeTypeProjection,
+        propertyName: Name,
+        returnType: ConeKotlinType
+    ): FirProperty {
         val firPropertySymbol1 = FirPropertySymbol(callableId)
         val frameExtension = buildProperty {
             val receiverType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID), typeArguments = arrayOf(marker), isNullable = false)
+                ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(Names.COLUMNS_CONTAINER_CLASS_ID),
+                    typeArguments = arrayOf(marker),
+                    isNullable = false
+                )
             val typeRef = FirResolvedTypeRefImpl(null, mutableListOf(), receiverType, null, false)
 
-            val typeProjection = resolvedReturnTypeRef.coneType.toTypeProjection(Variance.INVARIANT)
-            val returnType =
-                ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DATA_COLUMN_CLASS_ID), arrayOf(typeProjection), isNullable = false)
             val retTypeRef = FirResolvedTypeRefImpl(null, mutableListOf(), returnType, null, false)
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -186,7 +225,7 @@ class FirDataFrameExtensionsGenerator(
             isVar = false
             isLocal = false
         }.also { firPropertySymbol1.bind(it) }
-        return listOf(rowExtension.symbol, frameExtension.symbol)
+        return frameExtension
     }
 
     override fun getTopLevelClassIds(): Set<ClassId> {

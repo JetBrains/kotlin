@@ -35,7 +35,7 @@ object Names {
     val DF_CLASS_ID: ClassId
         get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
     val COLUM_GROUP_CLASS_ID: ClassId
-        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnGroup"))
+        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
     val DATA_COLUMN_CLASS_ID: ClassId
         get() = ClassId(
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
@@ -81,13 +81,21 @@ class FirDataFrameReceiverInjector(
                 when (it) {
                     is SimpleColumnGroup -> {
                         val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
-                        val columnGroupReturnType =
+                        val columnsContainerReturnType =
                             ConeClassLikeTypeImpl(
                                 ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
                                 typeArguments = arrayOf(nestedClassMarker),
                                 isNullable = false
                             )
-                        SchemaProperty(marker, it.name, columnGroupReturnType)
+
+                        val dataRowReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
+                                typeArguments = arrayOf(nestedClassMarker),
+                                isNullable = false
+                            )
+
+                        SchemaProperty(marker, it.name, dataRowReturnType, columnsContainerReturnType)
                     }
 
                     is SimpleFrameColumn -> {
@@ -99,9 +107,19 @@ class FirDataFrameReceiverInjector(
                                 isNullable = it.nullable
                             )
 
-                        SchemaProperty(marker, it.name, frameColumnReturnType)
+                        SchemaProperty(
+                            marker = marker,
+                            name = it.name,
+                            dataRowReturnType = frameColumnReturnType,
+                            columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef().projectOverDataColumnType()
+                        )
                     }
-                    is SimpleCol -> SchemaProperty(marker, it.name, it.type.convert())
+                    is SimpleCol -> SchemaProperty(
+                        marker = marker,
+                        name = it.name,
+                        dataRowReturnType = it.type.convert(),
+                        columnContainerReturnType = it.type.convert().toFirResolvedTypeRef().projectOverDataColumnType()
+                    )
                     else -> TODO("shouldn't happen")
                 }
             }
@@ -158,4 +176,10 @@ data class RefinedArgument(val name: Name, val expression: FirExpression) {
     }
 }
 
-data class SchemaProperty(val marker: ConeTypeProjection, val name: String, val returnType: ConeKotlinType, val override: Boolean = false)
+data class SchemaProperty(
+    val marker: ConeTypeProjection,
+    val name: String,
+    val dataRowReturnType: ConeKotlinType,
+    val columnContainerReturnType: ConeKotlinType,
+    val override: Boolean = false
+)

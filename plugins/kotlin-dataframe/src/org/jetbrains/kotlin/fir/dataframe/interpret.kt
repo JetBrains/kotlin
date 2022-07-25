@@ -156,12 +156,11 @@ fun <T> FirExpressionResolutionExtension.interpret(
         when (val res = processor.interpret(arguments)) {
             is Interpreter.Success -> res
             is Interpreter.Error -> {
-                // TODO Report errors
-                null
+                error(res.message.toString())
             }
         }
     } else {
-        null
+        error("")
     }
 }
 

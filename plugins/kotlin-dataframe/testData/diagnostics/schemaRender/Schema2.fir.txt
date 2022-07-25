@@ -1,30 +1,34 @@
 FILE: Schema2.kt
     internal final fun schemaTest(): R|kotlin/Unit| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>| = R|org/jetbrains/kotlinx/dataframe/plugin/testing/schemaRender/schema1|()
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>| = R|org/jetbrains/kotlinx/dataframe/plugin/testing/schemaRender/schema2|()
         local final fun col0(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col0>#(R|<local>/df|.<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        R|<local>/col0|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
         local final fun col1(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col1>#(R|<local>/df|.<Unresolved name: functions>#.<CS errors: kotlin/collections/get>#<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)).<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        R|<local>/col1|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.functions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|>|(Int(0))).R|org/jetbrains/kotlinx/dataframe/99.name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
         local final fun col2(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col2>#(R|<local>/df|.<Unresolved name: functions>#.<CS errors: kotlin/collections/get>#<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)).<Ambiguity: returnType, [org/jetbrains/kotlinx/dataframe/98.returnType, org/jetbrains/kotlinx/dataframe/98.returnType]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        R|<local>/col2|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.functions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|>|(Int(0))).R|org/jetbrains/kotlinx/dataframe/98.returnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        local final fun col31(v: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<*>|): R|kotlin/Unit| {
+        }
+
+        R|<local>/col31|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|)
         local final fun col3(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col3>#((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|.R|org/jetbrains/kotlinx/dataframe/name|.R|kotlin/String.get|(Int(0)))
+        R|<local>/col3|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|).R|org/jetbrains/kotlinx/dataframe/99.name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
         local final fun col4(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col4>#((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|.<Ambiguity: returnType, [org/jetbrains/kotlinx/dataframe/98.returnType, org/jetbrains/kotlinx/dataframe/98.returnType]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        R|<local>/col4|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|).R|org/jetbrains/kotlinx/dataframe/97.returnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
         local final fun col5(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        <Inapplicable(INAPPLICABLE): <local>/col5>#(R|<local>/df|.<None of the following candidates is applicable because of receiver type mismatch: [org/jetbrains/kotlinx/dataframe/api/group]>#<R|ERROR CLASS: Cannot infer argument for type parameter T|, R|ERROR CLASS: Cannot infer argument for type parameter G|>.<Unresolved name: nestedGroup>#.<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        R|<local>/col5|((this@R|/schemaTest|, (this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.group|).R|org/jetbrains/kotlinx/dataframe/96.nestedGroup|).R|org/jetbrains/kotlinx/dataframe/99.name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe
@@ -220,10 +224,34 @@ FILE: __GENERATED DECLARATIONS__.kt
     local final class 94 {
     }
     local final class 95 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/95>|.name: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/95>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
     }
     local final class 96 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|.nestedGroup: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/95>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/95>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/96>|.nestedGroup: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/95>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/95>|
+
     }
     local final class 97 {
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/97>|.name: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/97>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/97>|.returnType: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/97>|.returnType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
     }
     local final class 98 {
         public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/98>|.name: R|kotlin/String|
@@ -238,42 +266,30 @@ FILE: __GENERATED DECLARATIONS__.kt
         public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/98>|.returnType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/98>|.defaultValue: R|kotlin/String?|
-            public get(): R|kotlin/String?|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/98>|.defaultValue: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-
     }
     local final class 99 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.id: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.function: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.name: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.function: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.functionReturnType: R|kotlin/String|
-            public get(): R|kotlin/String|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.functionReturnType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.parameters: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.functions: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.parameters: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.functions: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.receiverType: R|kotlin/String|
-            public get(): R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.function: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/97>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/97>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.receiverType: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.function: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/97>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/97>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<*>|.group: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/96>|
+
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<*>|.group: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/96>|
 
     }
