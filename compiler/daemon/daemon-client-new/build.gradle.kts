@@ -24,7 +24,6 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":daemon-common-new"))
-    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-daemon-client"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":daemon-common")) { isTransitive = false }

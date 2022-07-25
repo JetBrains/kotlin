@@ -11,9 +11,7 @@ dependencies {
     testApi(projectTests(":compiler:incremental-compilation-impl"))
 
     testCompileOnly(intellijCore())
-    testCompileOnly(project(":kotlin-reflect-api"))
 
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 

@@ -39,7 +39,6 @@ dependencies {
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":native:kotlin-native-utils"))
-    commonCompileOnly(project(":kotlin-reflect-api"))
     commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-build-common"))
     commonCompileOnly(project(":kotlin-compiler-runner"))
@@ -53,7 +52,6 @@ dependencies {
     commonCompileOnly("com.android.tools.build:builder:3.6.4")
     commonCompileOnly("com.android.tools.build:builder-model:3.6.4")
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
-    commonCompileOnly(project(":kotlin-reflect"))
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.9")
@@ -101,7 +99,6 @@ dependencies {
     }
 
     testCompileOnly(project(":compiler"))
-    testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 

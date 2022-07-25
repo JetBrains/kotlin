@@ -8,7 +8,6 @@ dependencies {
     api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 
-    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(commonDependency("com.google.guava:guava"))
 }
 
