@@ -189,14 +189,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     /**
      * Side-effect-free version of atSet()
      */
-    protected boolean _atSet(IElementType... tokens) {
-        return _atSet(TokenSet.create(tokens));
-    }
-
-    /**
-     * Side-effect-free version of atSet()
-     */
-    private boolean _atSet(TokenSet set) {
+    protected boolean _atSet(TokenSet set) {
         IElementType token = tt();
         if (set.contains(token)) return true;
         if (set.contains(EOL_OR_SEMICOLON)) {
@@ -205,10 +198,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
             if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
         return false;
-    }
-
-    protected boolean atSet(IElementType... tokens) {
-        return atSet(TokenSet.create(tokens));
     }
 
     protected boolean atSet(TokenSet set) {

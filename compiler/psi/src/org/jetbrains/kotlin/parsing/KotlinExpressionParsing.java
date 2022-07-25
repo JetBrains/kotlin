@@ -37,19 +37,28 @@ import java.util.Set;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.DEFAULT;
+import static org.jetbrains.kotlin.parsing.KotlinParsing.PARAMETER_NAME_RECOVERY_SET;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_COMMENTS_BINDER;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_COMMENTS_BINDER;
 
 public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
-
-
     private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
-    private static final IElementType[] LOCAL_DECLARATION_FIRST =
-            new IElementType[] {CLASS_KEYWORD, INTERFACE_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, TYPE_ALIAS_KEYWORD};
     private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA = TokenSet.create(ARROW, COMMA, COLON);
+    private static final TokenSet TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY =
+            TokenSet.orSet(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA, PARAMETER_NAME_RECOVERY_SET);
+    private static final TokenSet EQ_RPAR_SET = TokenSet.create(EQ, RPAR);
+    private static final TokenSet ARROW_SET = TokenSet.create(ARROW);
+    private static final TokenSet ARROW_COMMA_SET = TokenSet.create(ARROW, COMMA);
+    private static final TokenSet IN_KEYWORD_R_PAR_COLON_SET = TokenSet.create(IN_KEYWORD, RPAR, COLON);
+    private static final TokenSet IN_KEYWORD_L_BRACE_SET = TokenSet.create(IN_KEYWORD, LBRACE);
+    private static final TokenSet IN_KEYWORD_L_BRACE_RECOVERY_SET = TokenSet.orSet(IN_KEYWORD_L_BRACE_SET, PARAMETER_NAME_RECOVERY_SET);
+    private static final TokenSet COLON_IN_KEYWORD_SET = TokenSet.create(COLON, IN_KEYWORD);
+    private static final TokenSet L_PAR_L_BRACE_R_PAR_SET = TokenSet.create(LPAR, LBRACE, RPAR);
+    private static final TokenSet IN_KEYWORD_SET = TokenSet.create(IN_KEYWORD);
+    private static final TokenSet TRY_CATCH_RECOVERY_TOKEN_SET = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
 
     private static ImmutableMap<String, KtToken> tokenSetToMap(TokenSet tokens) {
         ImmutableMap.Builder<String, KtToken> builder = ImmutableMap.builder();
@@ -848,7 +857,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advanceAt(LPAR);
 
             PsiBuilder.Marker atWhenStart = mark();
-            myKotlinParsing.parseAnnotationsList(DEFAULT, TokenSet.create(EQ, RPAR));
+            myKotlinParsing.parseAnnotationsList(DEFAULT, EQ_RPAR_SET);
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
                 IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.DeclarationParsingMode.LOCAL);
 
@@ -1239,16 +1248,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             else if (at(LPAR)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
-                myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA);
+                myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
+                                                          TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY);
                 destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
             }
             else {
-                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(ARROW));
+                expect(IDENTIFIER, "Expecting parameter name", ARROW_SET);
             }
 
             if (at(COLON)) {
                 advance(); // COLON
-                myKotlinParsing.parseTypeRef(TokenSet.create(ARROW, COMMA));
+                myKotlinParsing.parseTypeRef(ARROW_COMMA_SET);
             }
             parameter.done(VALUE_PARAMETER);
 
@@ -1459,27 +1469,27 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(IN_KEYWORD, RPAR, COLON));
+                    myKotlinParsing.parseModifierList(DEFAULT, IN_KEYWORD_R_PAR_COLON_SET);
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
 
                 if (at(LPAR)) {
                     PsiBuilder.Marker destructuringDeclaration = mark();
-                    myKotlinParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+                    myKotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET);
                     destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
                 }
                 else {
-                    expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));
+                    expect(IDENTIFIER, "Expecting a variable name", COLON_IN_KEYWORD_SET);
 
                     if (at(COLON)) {
                         advance(); // COLON
-                        myKotlinParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+                        myKotlinParsing.parseTypeRef(IN_KEYWORD_SET);
                     }
                 }
                 parameter.done(VALUE_PARAMETER);
 
-                if (expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE, RPAR))) {
+                if (expect(IN_KEYWORD, "Expecting 'in'", L_PAR_L_BRACE_R_PAR_SET)) {
                     PsiBuilder.Marker range = mark();
                     parseExpression();
                     range.done(LOOP_RANGE);
@@ -1542,19 +1552,18 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker catchBlock = mark();
             advance(); // CATCH_KEYWORD
 
-            TokenSet recoverySet = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
-            if (atSet(recoverySet)) {
+            if (atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                 error("Expecting exception variable declaration");
             }
             else {
                 PsiBuilder.Marker parameters = mark();
-                expect(LPAR, "Expecting '('", recoverySet);
-                if (!atSet(recoverySet)) {
+                expect(LPAR, "Expecting '('", TRY_CATCH_RECOVERY_TOKEN_SET);
+                if (!atSet(TRY_CATCH_RECOVERY_TOKEN_SET)) {
                     myKotlinParsing.parseValueParameter(/*typeRequired = */ true);
                     if (at(COMMA)) {
                         advance(); // trailing comma
                     }
-                    expect(RPAR, "Expecting ')'", recoverySet);
+                    expect(RPAR, "Expecting ')'", TRY_CATCH_RECOVERY_TOKEN_SET);
                 }
                 else {
                     error("Expecting exception variable declaration");

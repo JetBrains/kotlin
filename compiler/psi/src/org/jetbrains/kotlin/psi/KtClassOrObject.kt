@@ -25,10 +25,8 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -124,12 +122,11 @@ abstract class KtClassOrObject :
 
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 
-    fun getDeclarationKeyword(): PsiElement? =
-        findChildByType(
-            TokenSet.create(
-                KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
-            )
-        )
+    fun getDeclarationKeyword(): PsiElement? = findChildByType(classInterfaceObjectTokenSet)
+
+    private val classInterfaceObjectTokenSet = TokenSet.create(
+        KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
+    )
 
     override fun delete() {
         CheckUtil.checkWritable(this)

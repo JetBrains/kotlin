@@ -36,6 +36,9 @@ import static org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD;
 
 @SuppressWarnings("deprecation")
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
+
+    private static final TokenSet VAL_VAR_KEYWORDS = TokenSet.create(VAL_KEYWORD, VAR_KEYWORD);
+
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);
     }
@@ -136,7 +139,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Override
     public PsiElement getValOrVarKeyword() {
-        ASTNode node = getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+        ASTNode node = getParentNode().findChildByType(VAL_VAR_KEYWORDS);
         if (node == null) return null;
         return node.getPsi();
     }
