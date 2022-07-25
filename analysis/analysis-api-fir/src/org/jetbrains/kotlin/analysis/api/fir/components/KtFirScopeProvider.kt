@@ -231,7 +231,7 @@ internal class KtFirScopeProvider(
     private fun convertToKtScope(firScope: FirScope): KtScope {
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
-            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
+            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, analysisSession.useSiteScopeDeclarationProvider, token)
             is FirPackageMemberScope -> KtFirPackageScope(
                 firScope.fqName,
                 project,

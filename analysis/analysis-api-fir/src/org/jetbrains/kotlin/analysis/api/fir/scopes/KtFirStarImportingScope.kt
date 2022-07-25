@@ -5,30 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirStarImportingScope(
     private val firScope: FirAbstractStarImportingScope,
     private val builder: KtSymbolByFirBuilder,
-    project: Project,
+    private val declarationProvider: KotlinDeclarationProvider,
     override val token: KtLifetimeToken,
 ) : KtScope {
-    //todo use more concrete scope
-    private val declarationProvider = project.createDeclarationProvider(GlobalSearchScope.allScope(project))
 
     private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->
