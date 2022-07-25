@@ -6,11 +6,16 @@
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -56,12 +61,16 @@ private class SerializerClassLowering(
     private val serialInfoJvmGenerator = SerialInfoImplJvmIrGenerator(context, moduleFragment).also { context.serialInfoImplJvmIrGenerator = it }
 
     override fun lower(irClass: IrClass) {
-        SerializableIrGenerator.generate(irClass, context)
-        SerializerIrGenerator.generate(irClass, context, context.metadataPlugin, serialInfoJvmGenerator)
-        SerializableCompanionIrGenerator.generate(irClass, context)
+        try {
+            SerializableIrGenerator.generate(irClass, context)
+            SerializerIrGenerator.generate(irClass, context, context.metadataPlugin, serialInfoJvmGenerator)
+            SerializableCompanionIrGenerator.generate(irClass, context)
 
-        if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
-            serialInfoJvmGenerator.generate(irClass)
+            if (context.platform.isJvm() && KSerializerDescriptorResolver.isSerialInfoImpl(irClass.descriptor)) {
+                serialInfoJvmGenerator.generate(irClass)
+            }
+        } catch (e: Exception) {
+            throw CompilationException("kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause", irClass.fileParent, irClass, e)
         }
     }
 }

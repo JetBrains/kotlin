@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SimpleSyntheticPropertyDescriptor
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.IMPL_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
@@ -220,43 +219,55 @@ object KSerializerDescriptorResolver {
     }
 
     private fun createSerializableClassPropertyDescriptor(
-        companionDescriptor: ClassDescriptor,
-        classDescriptor: ClassDescriptor
-    ): PropertyDescriptor =
-        doCreateSerializerProperty(companionDescriptor, classDescriptor, SerialEntityNames.SERIAL_DESC_FIELD_NAME)
+        thisDescriptor: ClassDescriptor,
+        serializableClassDescriptor: ClassDescriptor
+    ): PropertyDescriptor {
+        val typeParam = listOf(createProjection(serializableClassDescriptor.defaultType, Variance.INVARIANT, null))
+        val propertyFromSerializer = thisDescriptor.getGeneratedSerializerDescriptor().getMemberScope(typeParam)
+            .getContributedVariables(SerialEntityNames.SERIAL_DESC_FIELD_NAME, NoLookupLocation.FROM_BUILTINS).single()
+        val result = doCreateSerializerProperty(
+            thisDescriptor,
+            SerialEntityNames.SERIAL_DESC_FIELD_NAME,
+            propertyFromSerializer.type,
+            propertyFromSerializer.typeParameters,
+            DescriptorVisibilities.PUBLIC,
+            Modality.OPEN // TODO: it was historically OPEN, but I do not see the reasons not to change to FINAL
+        )
+        result.overriddenDescriptors = listOf(propertyFromSerializer)
+        return result
+    }
 
     private fun doCreateSerializerProperty(
-        companionDescriptor: ClassDescriptor,
-        classDescriptor: ClassDescriptor,
-        name: Name
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        type: KotlinType,
+        typeParameters: List<TypeParameterDescriptor> = emptyList(),
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        modality: Modality = Modality.FINAL,
+        needBackingField: Boolean = false
     ): PropertyDescriptor {
-        val typeParam = listOf(createProjection(classDescriptor.defaultType, Variance.INVARIANT, null))
-        val propertyFromSerializer = companionDescriptor.getGeneratedSerializerDescriptor().getMemberScope(typeParam)
-            .getContributedVariables(name, NoLookupLocation.FROM_BUILTINS).single()
-
         val propertyDescriptor = PropertyDescriptorImpl.create(
-            companionDescriptor, Annotations.EMPTY, Modality.OPEN, DescriptorVisibilities.PUBLIC, false, name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source, false, false, false, false, false, false
+            thisDescriptor, Annotations.EMPTY, modality, visibility, false, name,
+            CallableMemberDescriptor.Kind.SYNTHESIZED, thisDescriptor.source, false, false, false, false, false, false
         )
 
         val extensionReceiverParameter: ReceiverParameterDescriptor? = null // kludge to disambiguate call
         propertyDescriptor.setType(
-            propertyFromSerializer.type,
-            propertyFromSerializer.typeParameters,
-            companionDescriptor.thisAsReceiverParameter,
+            type,
+            typeParameters,
+            thisDescriptor.thisAsReceiverParameter,
             extensionReceiverParameter,
             emptyList()
         )
 
         val propertyGetter = PropertyGetterDescriptorImpl(
-            propertyDescriptor, Annotations.EMPTY, Modality.OPEN, DescriptorVisibilities.PUBLIC, false, false, false,
-            CallableMemberDescriptor.Kind.SYNTHESIZED, null, companionDescriptor.source
+            propertyDescriptor, Annotations.EMPTY, modality, visibility, false, false, false,
+            CallableMemberDescriptor.Kind.SYNTHESIZED, null, thisDescriptor.source
         )
+        propertyGetter.initialize(type)
 
-        propertyGetter.initialize(propertyFromSerializer.type)
-        propertyDescriptor.initialize(propertyGetter, null)
-        propertyDescriptor.overriddenDescriptors = listOf(propertyFromSerializer)
-
+        val backingField = if (needBackingField) FieldDescriptorImpl(Annotations.EMPTY, propertyDescriptor) else null
+        propertyDescriptor.initialize(propertyGetter, null, backingField, null)
         return propertyDescriptor
     }
 
@@ -650,7 +661,7 @@ object KSerializerDescriptorResolver {
                 serializerClass,
                 listOf(TypeProjectionImpl(param.defaultType))
             )
-        val desc = SimpleSyntheticPropertyDescriptor(serializerDescriptor, "$typeArgPrefix$index", pType)
+        val desc = doCreateSerializerProperty(serializerDescriptor, Name.identifier("$typeArgPrefix$index"), pType, needBackingField = true)
         return listOf(desc)
     }
 }

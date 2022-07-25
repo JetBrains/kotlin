@@ -5,18 +5,26 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.mapValueParametersIndexed
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -32,7 +40,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
@@ -41,8 +48,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SA
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isEnumWithLegacyGeneratedSerializer
 
 object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER", true)
 
@@ -53,18 +58,18 @@ open class SerializerIrGenerator(
     final override val compilerContext: SerializationPluginContext,
     metadataPlugin: SerializationDescriptorSerializerPlugin?,
     private val serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
-) : AbstractSerialGenerator(null, irClass.descriptor), IrBuilderExtension {
+) : AbstractIrGenerator(irClass), IrBuilderExtension {
     protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
-    protected val properties = bindingContext.serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
+    protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
     protected val serializableProperties = properties.serializableProperties
     protected val isGeneratedSerializer = irClass.descriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer) // TODO TODO
 
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
         { true }
-    )?.takeIf { it.origin == IrDeclarationOrigin.GeneratedByPlugin(SerializationPluginKey) }
+    )?.takeIf { it.isFromPlugin() }
 
     protected val anySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -103,7 +108,7 @@ open class SerializerIrGenerator(
 
         // how to (auto)create backing field and getter/setter?
         compilerContext.symbolTable.withReferenceScope(irClass) {
-            prop = generateSimplePropertyWithBackingField(desc.descriptor, irClass) // TODO check if this works correctly with old FE
+            prop = generateSimplePropertyWithBackingField(desc.descriptor, irClass)
 
             // TODO: Do not use descriptors here
             localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().map { prop ->
@@ -600,7 +605,7 @@ open class SerializerIrGenerator(
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableIrClass.typeParameters.isNotEmpty()) {
-            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.let {
+            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin() }?.let {
                 generateGenericFieldsAndConstructor(it.owner)
             }
         }
