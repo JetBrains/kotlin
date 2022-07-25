@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.createS
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateSimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -299,6 +301,7 @@ private object NativeTestSupport {
                     this += when (clazz) {
                         TestRoots::class -> computeTestRoots(enclosingTestClass)
                         GeneratedSources::class -> computeGeneratedSourceDirs(testProcessSettings.get(), nativeTargets, enclosingTestClass)
+                        DisabledTestDataFiles::class -> computeDisabledTestDataFiles(enclosingTestClass)
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
@@ -318,6 +321,30 @@ private object NativeTestSupport {
         return enclosingTestClass.findTestConfiguration()
             ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { it.findTestConfiguration() }
             ?: fail { "No @${TestConfiguration::class.simpleName} annotation found on test classes" }
+    }
+
+    private fun computeDisabledTestDataFiles(enclosingTestClass: Class<*>): DisabledTestDataFiles {
+        val filesAndDirectories = buildSet {
+            fun contributeSourceLocations(sourceLocations: Array<String>) {
+                sourceLocations.forEach { expandGlobTo(getAbsoluteFile(it), this) }
+            }
+
+            fun recurse(clazz: Class<*>) {
+                clazz.allInheritedAnnotations.forEach { annotation ->
+                    when (annotation) {
+                        is DisabledTests -> contributeSourceLocations(annotation.sourceLocations)
+                        is DisabledTestsIfProperty -> if (System.getProperty(annotation.property.propertyName) == annotation.propertyValue) {
+                            contributeSourceLocations(annotation.sourceLocations)
+                        }
+                    }
+                }
+                clazz.declaredClasses.forEach(::recurse)
+            }
+
+            recurse(enclosingTestClass)
+        }
+
+        return DisabledTestDataFiles(filesAndDirectories)
     }
 
     private fun computeTestRoots(enclosingTestClass: Class<*>): TestRoots {

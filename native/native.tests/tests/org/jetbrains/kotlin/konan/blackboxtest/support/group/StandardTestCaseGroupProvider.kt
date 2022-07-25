@@ -31,17 +31,24 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         check(testCaseGroupId is TestCaseGroupId.TestDataDir)
 
         return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
-            val testDataFiles = testCaseGroupId.dir.listFiles()
+            val testDataDir = testCaseGroupId.dir
+            val testDataFiles = testDataDir.listFiles()
                 ?: return@computeIfAbsent null // `null` means that there is no such testDataDir.
 
-            val testCases = testDataFiles.mapNotNull { testDataFile ->
-                if (!testDataFile.isFile || testDataFile.extension != "kt")
-                    return@mapNotNull null
+            val excludes: Set<File> = settings.get<DisabledTestDataFiles>().filesAndDirectories
+            if (testDataDir in excludes)
+                return@computeIfAbsent TestCaseGroup.ALL_DISABLED
 
-                createTestCase(testDataFile, settings)
-            }
+            val (excludedTestDataFiles, includedTestDataFiles) = testDataFiles
+                .filter { file -> file.isFile && file.extension == "kt" }
+                .partition { file -> file in excludes }
 
-            TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = testCases)
+            val disabledTestCaseIds = hashSetOf<TestCaseId>()
+            excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
+
+            val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
+
+            TestCaseGroup.Default(disabledTestCaseIds, testCases)
         }
     }
 

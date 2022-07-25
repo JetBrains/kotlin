@@ -49,9 +49,13 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
         check(testCaseGroupId is TestCaseGroupId.TestDataDir)
 
         return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
-            if (testCaseGroupId.dir in excludes) return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+            val testDataDir = testCaseGroupId.dir
 
-            val (excludedTestDataFiles, testDataFiles) = testCaseGroupId.dir.listFiles()
+            val excludes: Set<File> = settings.get<DisabledTestDataFiles>().filesAndDirectories
+            if (testDataDir in excludes)
+                return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+
+            val (excludedTestDataFiles, testDataFiles) = testDataDir.listFiles()
                 ?.filter { file -> file.isFile && file.extension == "kt" }
                 ?.partition { file -> file in excludes }
                 ?: return@computeIfAbsent null
@@ -85,9 +89,6 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
     }
 
     companion object {
-        /** Test data files or test data directories that are excluded from testing. */
-        private val excludes: Set<File> = listOf<String>().mapToSet(::getAbsoluteFile)
-
         /** Tests that should be compiled and executed as standalone tests. */
         private val standalones: Set<File> = listOf(
             // Comparison of type information obtained with reflection against non-patched string literal:
