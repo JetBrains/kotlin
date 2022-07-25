@@ -51,37 +51,21 @@ public class KotlinStaticDeclarationProvider internal constructor(
             }
             ?: emptyList()
 
-    override fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.classMap[packageFqName]
-            ?.filter { ktClassOrObject ->
-                ktClassOrObject.inScope
-            }
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
 
-    override fun getTypeAliasNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.typeAliasMap[packageFqName]
-            ?.filter { ktTypeAlias ->
-                ktTypeAlias.inScope
-            }
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
+    override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
+        val classifiers = index.classMap[packageFqName].orEmpty() + index.typeAliasMap[packageFqName].orEmpty()
+        return classifiers.filter { it.inScope }
+            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+    }
 
-    override fun getPropertyNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.topLevelPropertyMap[packageFqName]
-            ?.filter { ktProperty ->
-                ktProperty.inScope
-            }
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
 
-    override fun getFunctionsNamesInPackage(packageFqName: FqName): Set<Name> =
-        index.topLevelFunctionMap[packageFqName]
-            ?.filter { ktNamedFunction ->
-                ktNamedFunction.inScope
-            }
-            ?.mapNotNullTo(mutableSetOf()) { it.nameAsName }
-            ?: emptySet()
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
+        val callables = index.topLevelPropertyMap[packageFqName].orEmpty() + index.topLevelFunctionMap[packageFqName].orEmpty()
+        return callables
+            .filter { it.inScope }
+            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+    }
+
 
     override fun getFacadeFilesInPackage(packageFqName: FqName): Collection<KtFile> =
         index.facadeFileMap[packageFqName]

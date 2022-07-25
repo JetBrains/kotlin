@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -34,9 +34,9 @@ internal class KtFirPackageScope(
     private val builder: KtSymbolByFirBuilder,
     override val token: KtLifetimeToken,
     private val searchScope: GlobalSearchScope,
+    private val declarationProvider: KotlinDeclarationProvider,
     private val targetPlatform: TargetPlatform,
 ) : KtScope {
-    private val declarationsProvider = project.createDeclarationProvider(searchScope)
     private val packageProvider = project.createPackageProvider(searchScope)
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -48,17 +48,14 @@ internal class KtFirPackageScope(
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         hashSetOf<Name>().apply {
-            addAll(declarationsProvider.getFunctionsNamesInPackage(fqName))
-            addAll(declarationsProvider.getPropertyNamesInPackage(fqName))
-
+            addAll(declarationProvider.getTopLevelCallableNamesInPackage(fqName))
             addAll(collectGeneratedTopLevelCallables())
         }
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         hashSetOf<Name>().apply {
-            addAll(declarationsProvider.getClassNamesInPackage(fqName))
-            addAll(declarationsProvider.getTypeAliasNamesInPackage(fqName))
+            addAll(declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName))
 
             JavaPsiFacade.getInstance(project)
                 .findPackage(fqName.asString())

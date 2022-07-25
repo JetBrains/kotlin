@@ -51,8 +51,7 @@ internal class KtFirStarImportingScope(
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
-                declarationProvider.getFunctionsNamesInPackage(import.packageFqName) +
-                        declarationProvider.getPropertyNamesInPackage(import.packageFqName)
+                declarationProvider.getTopLevelCallableNamesInPackage(import.packageFqName)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
@@ -69,8 +68,7 @@ internal class KtFirStarImportingScope(
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
-                declarationProvider.getClassNamesInPackage(import.packageFqName) +
-                        declarationProvider.getTypeAliasNamesInPackage(import.packageFqName)
+                declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(import.packageFqName)
             } else {
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()

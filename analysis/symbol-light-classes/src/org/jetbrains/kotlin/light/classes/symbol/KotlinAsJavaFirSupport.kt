@@ -34,7 +34,7 @@ class KotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport
         packageFqName: FqName,
         searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope).run {
-        getClassNamesInPackage(packageFqName).flatMap {
+        getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName).flatMap {
             getAllClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
         }
     }
