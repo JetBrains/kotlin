@@ -35,8 +35,8 @@ dependencies {
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe-core/0.9.0-dev/dataframe-core-0.9.0-dev.jar"))
-    implementation(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe-core/0.9.0-dev/dataframe-core-0.9.0-dev.jar"))
-
+    //implementation(files("/home/nikitak/.m2/repository/org/jetbrains/kotlinx/dataframe-core/0.9.0-dev/dataframe-core-0.9.0-dev.jar"))
+    implementation("org.jetbrains.kotlinx:dataframe:0.9.0-dev")
 }
 
 optInToExperimentalCompilerApi()
@@ -46,6 +46,14 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.FirImplementationDetail"
     }
 }
+
+publish {
+    artifactId = "kotlin-dataframe-compiler"
+}
+//
+runtimeJar()
+//sourcesJar()
+//javadocJar()
 
 sourceSets {
     "main" { projectDefault() }

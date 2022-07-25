@@ -1,34 +1,30 @@
-FILE: Schema1.kt
+FILE: Schema2.kt
     internal final fun schemaTest(): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>| = R|org/jetbrains/kotlinx/dataframe/plugin/testing/schemaRender/schema1|()
-        local final fun col0(v: R|kotlin/Int|): R|kotlin/Unit| {
+        local final fun col0(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col0|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Int|>|(Int(0)))
+        <Inapplicable(INAPPLICABLE): <local>/col0>#(R|<local>/df|.<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
         local final fun col1(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col1|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        <Inapplicable(INAPPLICABLE): <local>/col1>#(R|<local>/df|.<Unresolved name: functions>#.<CS errors: kotlin/collections/get>#<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)).<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
         local final fun col2(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col2|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.functionReturnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        <Inapplicable(INAPPLICABLE): <local>/col2>#(R|<local>/df|.<Unresolved name: functions>#.<CS errors: kotlin/collections/get>#<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)).<Ambiguity: returnType, [org/jetbrains/kotlinx/dataframe/98.returnType, org/jetbrains/kotlinx/dataframe/98.returnType]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
         local final fun col3(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col3|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.parameters|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|>|(Int(0))).R|org/jetbrains/kotlinx/dataframe/98.name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        <Inapplicable(INAPPLICABLE): <local>/col3>#((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|.R|org/jetbrains/kotlinx/dataframe/name|.R|kotlin/String.get|(Int(0)))
         local final fun col4(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col4|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.parameters|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|>|(Int(0))).R|org/jetbrains/kotlinx/dataframe/98.returnType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
-        local final fun col5(v: R|kotlin/String?|): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): <local>/col4>#((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.function|.<Ambiguity: returnType, [org/jetbrains/kotlinx/dataframe/98.returnType, org/jetbrains/kotlinx/dataframe/98.returnType]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
+        local final fun col5(v: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        R|<local>/col5|((this@R|/schemaTest|, (this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.parameters|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/98>|>|(Int(0))).R|org/jetbrains/kotlinx/dataframe/98.defaultValue|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String?|>|(Int(0)))
-        local final fun col6(v: R|kotlin/String|): R|kotlin/Unit| {
-        }
-
-        R|<local>/col6|((this@R|/schemaTest|, R|<local>/df|).R|org/jetbrains/kotlinx/dataframe/99.receiverType|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/String|>|(Int(0)))
+        <Inapplicable(INAPPLICABLE): <local>/col5>#(R|<local>/df|.<None of the following candidates is applicable because of receiver type mismatch: [org/jetbrains/kotlinx/dataframe/api/group]>#<R|ERROR CLASS: Cannot infer argument for type parameter T|, R|ERROR CLASS: Cannot infer argument for type parameter G|>.<Unresolved name: nestedGroup>#.<Ambiguity: name, [org/jetbrains/kotlinx/dataframe/98.name, org/jetbrains/kotlinx/dataframe/98.name]>#.R|kotlin/collections/get|<R|kotlin/Int|, R|ERROR CLASS: Cannot infer argument for type parameter V|>(Int(0)))
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe

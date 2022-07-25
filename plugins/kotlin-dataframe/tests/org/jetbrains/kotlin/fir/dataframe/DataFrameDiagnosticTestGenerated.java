@@ -80,5 +80,11 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
         public void testSchema1() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/diagnostics/schemaRender/Schema1.kt");
         }
+
+        @Test
+        @TestMetadata("Schema2.kt")
+        public void testSchema2() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/diagnostics/schemaRender/Schema2.kt");
+        }
     }
 }
