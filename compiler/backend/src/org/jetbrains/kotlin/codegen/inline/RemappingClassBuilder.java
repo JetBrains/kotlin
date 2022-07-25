@@ -103,7 +103,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
-            @NotNull String @Nullable [] exceptions
+            @Nullable String[] exceptions
     ) {
         String newDescriptor = remapper.mapMethodDesc(desc);
         // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.

@@ -38,7 +38,8 @@ public abstract class MethodTransformer {
         }
     }
 
-    public static <V extends Value> @Nullable Frame<@NotNull V> @NotNull [] analyze(
+    @NotNull
+    public static <V extends Value> Frame<V>[] analyze(
             @NotNull String internalClassName,
             @NotNull MethodNode node,
             @NotNull Interpreter<V> interpreter

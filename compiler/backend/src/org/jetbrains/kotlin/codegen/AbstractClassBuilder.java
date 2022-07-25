@@ -82,7 +82,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
-            @NotNull String @Nullable [] exceptions
+            @Nullable String[] exceptions
     ) {
         MethodVisitor visitor = getVisitor().visitMethod(access, name, desc, signature, exceptions);
         if (visitor == null) {

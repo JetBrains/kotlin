@@ -49,7 +49,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
-            @NotNull String @Nullable [] exceptions
+            @Nullable String[] exceptions
     ) {
         return getDelegate().newMethod(origin, access, name, desc, signature, exceptions);
     }

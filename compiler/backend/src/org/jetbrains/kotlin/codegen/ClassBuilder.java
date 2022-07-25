@@ -42,7 +42,7 @@ public interface ClassBuilder {
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
-            @NotNull String @Nullable [] exceptions
+            @Nullable String[] exceptions
     );
 
     @NotNull RecordComponentVisitor newRecordComponent(

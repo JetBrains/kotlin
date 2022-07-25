@@ -146,7 +146,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
-            @NotNull String @Nullable [] exceptions
+            @Nullable String[] exceptions
     ) {
         MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
 
