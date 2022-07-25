@@ -458,7 +458,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true, nonTraversable = true)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true)
         }
 
         annotationArgumentMapping.configure {

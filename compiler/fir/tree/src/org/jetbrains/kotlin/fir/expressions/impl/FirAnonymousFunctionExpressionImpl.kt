@@ -22,14 +22,14 @@ internal class FirAnonymousFunctionExpressionImpl(
 ) : FirAnonymousFunctionExpression() {
     override val typeRef: FirTypeRef get() = anonymousFunction.typeRef
     override val annotations: List<FirAnnotation>
-        get() = emptyList()
+        get() = anonymousFunction.annotations
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         anonymousFunction.replaceTypeRef(newTypeRef) // TODO WUT
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        require(newAnnotations.isEmpty())
+        anonymousFunction.replaceAnnotations(newAnnotations)
     }
 
     override fun replaceAnonymousFunction(newAnonymousFunction: FirAnonymousFunction) {

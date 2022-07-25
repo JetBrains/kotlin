@@ -22,10 +22,10 @@ internal class FirAnonymousObjectExpressionImpl(
     override var anonymousObject: FirAnonymousObject,
 ) : FirAnonymousObjectExpression() {
     override val annotations: List<FirAnnotation>
-        get() = emptyList()
+        get() = anonymousObject.annotations
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        require(newAnnotations.isEmpty())
+        anonymousObject.replaceAnnotations(newAnnotations)
     }
 
     override fun replaceAnonymousObject(newAnonymousObject: FirAnonymousObject) {

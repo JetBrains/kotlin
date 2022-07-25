@@ -1036,6 +1036,12 @@ abstract class FirVisitor<out R, in D> {
         qualifiedAccess.contextReceiverArguments.forEach { it.accept(this, data) }
         qualifiedAccess.typeArguments.forEach { it.accept(this, data) }
         qualifiedAccess.explicitReceiver?.accept(this, data)
+        if (qualifiedAccess.dispatchReceiver !== qualifiedAccess.explicitReceiver) {
+            qualifiedAccess.dispatchReceiver.accept(this, data)
+        }
+        if (qualifiedAccess.extensionReceiver !== qualifiedAccess.explicitReceiver && qualifiedAccess.extensionReceiver !== qualifiedAccess.dispatchReceiver) {
+            qualifiedAccess.extensionReceiver.accept(this, data)
+        }
     }
 
     open fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): R  = visitElement(checkNotNullCall, data)
@@ -1129,6 +1135,12 @@ abstract class FirVisitor<out R, in D> {
         qualifiedAccessExpression.contextReceiverArguments.forEach { it.accept(this, data) }
         qualifiedAccessExpression.typeArguments.forEach { it.accept(this, data) }
         qualifiedAccessExpression.explicitReceiver?.accept(this, data)
+        if (qualifiedAccessExpression.dispatchReceiver !== qualifiedAccessExpression.explicitReceiver) {
+            qualifiedAccessExpression.dispatchReceiver.accept(this, data)
+        }
+        if (qualifiedAccessExpression.extensionReceiver !== qualifiedAccessExpression.explicitReceiver && qualifiedAccessExpression.extensionReceiver !== qualifiedAccessExpression.dispatchReceiver) {
+            qualifiedAccessExpression.extensionReceiver.accept(this, data)
+        }
     }
 
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): R  = visitElement(propertyAccessExpression, data)
@@ -1140,6 +1152,12 @@ abstract class FirVisitor<out R, in D> {
         propertyAccessExpression.contextReceiverArguments.forEach { it.accept(this, data) }
         propertyAccessExpression.typeArguments.forEach { it.accept(this, data) }
         propertyAccessExpression.explicitReceiver?.accept(this, data)
+        if (propertyAccessExpression.dispatchReceiver !== propertyAccessExpression.explicitReceiver) {
+            propertyAccessExpression.dispatchReceiver.accept(this, data)
+        }
+        if (propertyAccessExpression.extensionReceiver !== propertyAccessExpression.explicitReceiver && propertyAccessExpression.extensionReceiver !== propertyAccessExpression.dispatchReceiver) {
+            propertyAccessExpression.extensionReceiver.accept(this, data)
+        }
     }
 
     open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R  = visitElement(functionCall, data)
@@ -1150,6 +1168,12 @@ abstract class FirVisitor<out R, in D> {
         functionCall.contextReceiverArguments.forEach { it.accept(this, data) }
         functionCall.typeArguments.forEach { it.accept(this, data) }
         functionCall.explicitReceiver?.accept(this, data)
+        if (functionCall.dispatchReceiver !== functionCall.explicitReceiver) {
+            functionCall.dispatchReceiver.accept(this, data)
+        }
+        if (functionCall.extensionReceiver !== functionCall.explicitReceiver && functionCall.extensionReceiver !== functionCall.dispatchReceiver) {
+            functionCall.extensionReceiver.accept(this, data)
+        }
         functionCall.argumentList.accept(this, data)
         functionCall.calleeReference.accept(this, data)
     }
@@ -1162,6 +1186,12 @@ abstract class FirVisitor<out R, in D> {
         integerLiteralOperatorCall.contextReceiverArguments.forEach { it.accept(this, data) }
         integerLiteralOperatorCall.typeArguments.forEach { it.accept(this, data) }
         integerLiteralOperatorCall.explicitReceiver?.accept(this, data)
+        if (integerLiteralOperatorCall.dispatchReceiver !== integerLiteralOperatorCall.explicitReceiver) {
+            integerLiteralOperatorCall.dispatchReceiver.accept(this, data)
+        }
+        if (integerLiteralOperatorCall.extensionReceiver !== integerLiteralOperatorCall.explicitReceiver && integerLiteralOperatorCall.extensionReceiver !== integerLiteralOperatorCall.dispatchReceiver) {
+            integerLiteralOperatorCall.extensionReceiver.accept(this, data)
+        }
         integerLiteralOperatorCall.argumentList.accept(this, data)
         integerLiteralOperatorCall.calleeReference.accept(this, data)
     }
@@ -1174,6 +1204,12 @@ abstract class FirVisitor<out R, in D> {
         implicitInvokeCall.contextReceiverArguments.forEach { it.accept(this, data) }
         implicitInvokeCall.typeArguments.forEach { it.accept(this, data) }
         implicitInvokeCall.explicitReceiver?.accept(this, data)
+        if (implicitInvokeCall.dispatchReceiver !== implicitInvokeCall.explicitReceiver) {
+            implicitInvokeCall.dispatchReceiver.accept(this, data)
+        }
+        if (implicitInvokeCall.extensionReceiver !== implicitInvokeCall.explicitReceiver && implicitInvokeCall.extensionReceiver !== implicitInvokeCall.dispatchReceiver) {
+            implicitInvokeCall.extensionReceiver.accept(this, data)
+        }
         implicitInvokeCall.argumentList.accept(this, data)
         implicitInvokeCall.calleeReference.accept(this, data)
     }
@@ -1198,6 +1234,12 @@ abstract class FirVisitor<out R, in D> {
         componentCall.argumentList.accept(this, data)
         componentCall.calleeReference.accept(this, data)
         componentCall.explicitReceiver.accept(this, data)
+        if (componentCall.dispatchReceiver !== componentCall.explicitReceiver) {
+            componentCall.dispatchReceiver.accept(this, data)
+        }
+        if (componentCall.extensionReceiver !== componentCall.explicitReceiver && componentCall.extensionReceiver !== componentCall.dispatchReceiver) {
+            componentCall.extensionReceiver.accept(this, data)
+        }
     }
 
     open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): R  = visitElement(callableReferenceAccess, data)
@@ -1208,6 +1250,12 @@ abstract class FirVisitor<out R, in D> {
         callableReferenceAccess.contextReceiverArguments.forEach { it.accept(this, data) }
         callableReferenceAccess.typeArguments.forEach { it.accept(this, data) }
         callableReferenceAccess.explicitReceiver?.accept(this, data)
+        if (callableReferenceAccess.dispatchReceiver !== callableReferenceAccess.explicitReceiver) {
+            callableReferenceAccess.dispatchReceiver.accept(this, data)
+        }
+        if (callableReferenceAccess.extensionReceiver !== callableReferenceAccess.explicitReceiver && callableReferenceAccess.extensionReceiver !== callableReferenceAccess.dispatchReceiver) {
+            callableReferenceAccess.extensionReceiver.accept(this, data)
+        }
         callableReferenceAccess.calleeReference.accept(this, data)
     }
 
@@ -1219,6 +1267,12 @@ abstract class FirVisitor<out R, in D> {
         thisReceiverExpression.contextReceiverArguments.forEach { it.accept(this, data) }
         thisReceiverExpression.typeArguments.forEach { it.accept(this, data) }
         thisReceiverExpression.explicitReceiver?.accept(this, data)
+        if (thisReceiverExpression.dispatchReceiver !== thisReceiverExpression.explicitReceiver) {
+            thisReceiverExpression.dispatchReceiver.accept(this, data)
+        }
+        if (thisReceiverExpression.extensionReceiver !== thisReceiverExpression.explicitReceiver && thisReceiverExpression.extensionReceiver !== thisReceiverExpression.dispatchReceiver) {
+            thisReceiverExpression.extensionReceiver.accept(this, data)
+        }
         thisReceiverExpression.calleeReference.accept(this, data)
     }
 
@@ -1350,6 +1404,12 @@ abstract class FirVisitor<out R, in D> {
         variableAssignment.contextReceiverArguments.forEach { it.accept(this, data) }
         variableAssignment.typeArguments.forEach { it.accept(this, data) }
         variableAssignment.explicitReceiver?.accept(this, data)
+        if (variableAssignment.dispatchReceiver !== variableAssignment.explicitReceiver) {
+            variableAssignment.dispatchReceiver.accept(this, data)
+        }
+        if (variableAssignment.extensionReceiver !== variableAssignment.explicitReceiver && variableAssignment.extensionReceiver !== variableAssignment.dispatchReceiver) {
+            variableAssignment.extensionReceiver.accept(this, data)
+        }
         variableAssignment.lValueTypeRef.accept(this, data)
         variableAssignment.rValue.accept(this, data)
     }
@@ -1439,6 +1499,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: D): R  = visitElement(userTypeRef, data)
 
     private fun visitUserTypeRefChildren(userTypeRef: FirUserTypeRef, data: D) {
+        for (part in userTypeRef.qualifier) {
+    part.typeArgumentList.typeArguments.forEach { it.accept(this, data) }
+}
         userTypeRef.annotations.forEach { it.accept(this, data) }
     }
 

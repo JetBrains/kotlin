@@ -63,3 +63,6 @@ inline fun <D> FirAnnotationCall.transformArgumentList(transformer: FirTransform
 
 inline fun <D> FirAnnotationCall.transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
     apply { replaceCalleeReference(calleeReference.transform(transformer, data)) }
+
+inline fun <D> FirAnnotationCall.transformArgumentMapping(transformer: FirTransformer<D>, data: D): FirAnnotationCall  = 
+    apply { replaceArgumentMapping(argumentMapping.transform(transformer, data)) }

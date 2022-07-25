@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 import java.io.File
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
 import org.jetbrains.kotlin.fir.tree.generator.model.FirField
@@ -113,8 +114,36 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
                         withIndent {
                             for (field in allFirFields) {
                                 if (field.withGetter || field.nonReplaceable ?: false) continue
+                                if (field is FirField && field.nonTraversable) continue
+                                if (element == FirTreeBuilder.userTypeRef) {
+                                    // TODO
+                                    println(
+                                        """
+                                        |for (part in $varName.qualifier) {
+                                        |    part.typeArgumentList.typeArguments.forEach { it.accept(this, data) }
+                                        |}
+                                        """.trimMargin()
+                                    )
+                                }
                                 when (field.name) {
                                     "dispatchReceiver", "extensionReceiver", "subjectVariable", "companionObject" -> {
+                                    }
+
+                                    "explicitReceiver" -> {
+                                        val explicitReceiver = element["explicitReceiver"]!!
+                                        val dispatchReceiver = element["dispatchReceiver"]!!
+                                        val extensionReceiver = element["extensionReceiver"]!!
+                                        println(
+                                            """
+                                    |${explicitReceiver.acceptString()}
+                                    |        if ($varName.dispatchReceiver !== $varName.explicitReceiver) {
+                                    |            ${dispatchReceiver.acceptString()}
+                                    |        }
+                                    |        if ($varName.extensionReceiver !== $varName.explicitReceiver && $varName.extensionReceiver !== $varName.dispatchReceiver) {
+                                    |            ${extensionReceiver.acceptString()}
+                                    |        }
+                                        """.trimMargin(),
+                                        )
                                     }
 
                                     else -> {
@@ -147,9 +176,6 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
                                 }
                             }
                         }
-//                            }
-//                            println("}")
-//                            println()
                     }
                     println("}")
                     println()

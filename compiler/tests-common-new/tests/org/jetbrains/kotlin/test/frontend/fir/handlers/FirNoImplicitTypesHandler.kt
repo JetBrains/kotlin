@@ -34,7 +34,7 @@ class FirNoImplicitTypesHandler(testServices: TestServices) : FirAnalysisHandler
                         appendLine("$count implicit types were found:")
                     }
                     val types = visitor.detectedImplicitTypesParents.joinToString(separator = "\n") {
-                        "   - Type in ${it.render()}"
+                        "   - Type in ${it.render()} ${it::class}"
                     }
                     append(types)
                 }

@@ -29,7 +29,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
         println("@file:Suppress(\"UNUSED_PARAMETER\")")
         println("package $VISITOR_PACKAGE")
         println()
-        elements.forEach { println("import $VISITOR_PACKAGE.FirElementKind.*") }
+        println("import $VISITOR_PACKAGE.FirElementKind.*")
         elements.forEach { println("import ${it.fullQualifiedName}") }
         elements.flatMap {
             it.allFirFields.map { field -> "${it.packageName}.transform${field.name.replaceFirstChar(Char::uppercaseChar)}" }
@@ -51,8 +51,7 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 print("open fun ")
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
                 println(
-                    "transform${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                            .typeWithArguments}${element.multipleUpperBoundsList()}{",
+                    "transform${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType.typeWithArguments}${element.multipleUpperBoundsList()}{",
                 )
                 withIndent {
                     println("return transformElement($varName, data)")
@@ -98,7 +97,25 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                         if (field.nonReplaceable ?: false) continue
                         if (field is FirField && field.nonTraversable) continue
                         when {
-                            field.name == "subjectVariable" -> {}
+                            field.name in setOf("dispatchReceiver", "extensionReceiver", "subjectVariable", "companionObject") -> {}
+                            field.name == "explicitReceiver" -> {
+                                println("$varName.transformExplicitReceiver(this, data)")
+                                println(
+                                    """
+                                |if ($varName.dispatchReceiver !== $varName.explicitReceiver) {
+                                |              $varName.transformDispatchReceiver(this, data)
+                                |        }
+                                """.trimMargin(),
+                                )
+                                println(
+                                    """
+                                    |if ($varName.extensionReceiver !== $varName.explicitReceiver && $varName.extensionReceiver !== $varName.dispatchReceiver) {
+                                    |            $varName.transformExtensionReceiver(this, data)
+                                    |        }
+                                    """.trimMargin(),
+                                )
+                            }
+
                             else -> {
                                 println("${varName}.transform${field.name.replaceFirstChar(Char::uppercaseChar)}(this, data)")
                             }
@@ -133,56 +150,3 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
 
     return GeneratedFile(file, stringBuilder.toString())
 }
-
-
-//    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-//        typeRef.accept(visitor, data)
-//        annotations.forEach { it.accept(visitor, data) }
-//        calleeReference.accept(visitor, data)
-//        val subjectVariable_ = subjectVariable
-//        if (subjectVariable_ != null) {
-//            subjectVariable_.accept(visitor, data)
-//        } else {
-//            subject?.accept(visitor, data)
-//        }
-//        branches.forEach { it.accept(visitor, data) }
-//    }
-//
-//    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        transformCalleeReference(transformer, data)
-//        transformSubject(transformer, data)
-//        transformBranches(transformer, data)
-//        transformOtherChildren(transformer, data)
-//        return this
-//    }
-//
-//    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        annotations.transformInplace(transformer, data)
-//        return this
-//    }
-//
-//    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        calleeReference = calleeReference.transform(transformer, data)
-//        return this
-//    }
-//
-//    override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        if (subjectVariable != null) {
-//            subjectVariable = subjectVariable?.transform(transformer, data)
-//            subject = subjectVariable?.initializer
-//        } else {
-//            subject = subject?.transform(transformer, data)
-//        }
-//        return this
-//    }
-//
-//    override fun <D> transformBranches(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        branches.transformInplace(transformer, data)
-//        return this
-//    }
-//
-//    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
-//        typeRef = typeRef.transform(transformer, data)
-//        transformAnnotations(transformer, data)
-//        return this
-//    }

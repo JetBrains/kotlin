@@ -7,139 +7,6 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
-import org.jetbrains.kotlin.fir.visitors.FirElementKind.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -1943,6 +1810,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         annotationCall.transformTypeArguments(this, data)
         annotationCall.transformArgumentList(this, data)
         annotationCall.transformCalleeReference(this, data)
+        annotationCall.transformArgumentMapping(this, data)
         return annotationCall
     }
 
@@ -2005,8 +1873,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         qualifiedAccess.transformContextReceiverArguments(this, data)
         qualifiedAccess.transformTypeArguments(this, data)
         qualifiedAccess.transformExplicitReceiver(this, data)
-        qualifiedAccess.transformDispatchReceiver(this, data)
-        qualifiedAccess.transformExtensionReceiver(this, data)
+        if (qualifiedAccess.dispatchReceiver !== qualifiedAccess.explicitReceiver) {
+              qualifiedAccess.transformDispatchReceiver(this, data)
+        }
+        if (qualifiedAccess.extensionReceiver !== qualifiedAccess.explicitReceiver && qualifiedAccess.extensionReceiver !== qualifiedAccess.dispatchReceiver) {
+            qualifiedAccess.transformExtensionReceiver(this, data)
+        }
         return qualifiedAccess
     }
 
@@ -2091,8 +1963,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         qualifiedAccessExpression.transformContextReceiverArguments(this, data)
         qualifiedAccessExpression.transformTypeArguments(this, data)
         qualifiedAccessExpression.transformExplicitReceiver(this, data)
-        qualifiedAccessExpression.transformDispatchReceiver(this, data)
-        qualifiedAccessExpression.transformExtensionReceiver(this, data)
+        if (qualifiedAccessExpression.dispatchReceiver !== qualifiedAccessExpression.explicitReceiver) {
+              qualifiedAccessExpression.transformDispatchReceiver(this, data)
+        }
+        if (qualifiedAccessExpression.extensionReceiver !== qualifiedAccessExpression.explicitReceiver && qualifiedAccessExpression.extensionReceiver !== qualifiedAccessExpression.dispatchReceiver) {
+            qualifiedAccessExpression.transformExtensionReceiver(this, data)
+        }
         return qualifiedAccessExpression
     }
 
@@ -2103,8 +1979,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         propertyAccessExpression.transformContextReceiverArguments(this, data)
         propertyAccessExpression.transformTypeArguments(this, data)
         propertyAccessExpression.transformExplicitReceiver(this, data)
-        propertyAccessExpression.transformDispatchReceiver(this, data)
-        propertyAccessExpression.transformExtensionReceiver(this, data)
+        if (propertyAccessExpression.dispatchReceiver !== propertyAccessExpression.explicitReceiver) {
+              propertyAccessExpression.transformDispatchReceiver(this, data)
+        }
+        if (propertyAccessExpression.extensionReceiver !== propertyAccessExpression.explicitReceiver && propertyAccessExpression.extensionReceiver !== propertyAccessExpression.dispatchReceiver) {
+            propertyAccessExpression.transformExtensionReceiver(this, data)
+        }
         return propertyAccessExpression
     }
 
@@ -2114,8 +1994,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         functionCall.transformContextReceiverArguments(this, data)
         functionCall.transformTypeArguments(this, data)
         functionCall.transformExplicitReceiver(this, data)
-        functionCall.transformDispatchReceiver(this, data)
-        functionCall.transformExtensionReceiver(this, data)
+        if (functionCall.dispatchReceiver !== functionCall.explicitReceiver) {
+              functionCall.transformDispatchReceiver(this, data)
+        }
+        if (functionCall.extensionReceiver !== functionCall.explicitReceiver && functionCall.extensionReceiver !== functionCall.dispatchReceiver) {
+            functionCall.transformExtensionReceiver(this, data)
+        }
         functionCall.transformArgumentList(this, data)
         functionCall.transformCalleeReference(this, data)
         return functionCall
@@ -2127,8 +2011,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         integerLiteralOperatorCall.transformContextReceiverArguments(this, data)
         integerLiteralOperatorCall.transformTypeArguments(this, data)
         integerLiteralOperatorCall.transformExplicitReceiver(this, data)
-        integerLiteralOperatorCall.transformDispatchReceiver(this, data)
-        integerLiteralOperatorCall.transformExtensionReceiver(this, data)
+        if (integerLiteralOperatorCall.dispatchReceiver !== integerLiteralOperatorCall.explicitReceiver) {
+              integerLiteralOperatorCall.transformDispatchReceiver(this, data)
+        }
+        if (integerLiteralOperatorCall.extensionReceiver !== integerLiteralOperatorCall.explicitReceiver && integerLiteralOperatorCall.extensionReceiver !== integerLiteralOperatorCall.dispatchReceiver) {
+            integerLiteralOperatorCall.transformExtensionReceiver(this, data)
+        }
         integerLiteralOperatorCall.transformArgumentList(this, data)
         integerLiteralOperatorCall.transformCalleeReference(this, data)
         return integerLiteralOperatorCall
@@ -2140,8 +2028,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         implicitInvokeCall.transformContextReceiverArguments(this, data)
         implicitInvokeCall.transformTypeArguments(this, data)
         implicitInvokeCall.transformExplicitReceiver(this, data)
-        implicitInvokeCall.transformDispatchReceiver(this, data)
-        implicitInvokeCall.transformExtensionReceiver(this, data)
+        if (implicitInvokeCall.dispatchReceiver !== implicitInvokeCall.explicitReceiver) {
+              implicitInvokeCall.transformDispatchReceiver(this, data)
+        }
+        if (implicitInvokeCall.extensionReceiver !== implicitInvokeCall.explicitReceiver && implicitInvokeCall.extensionReceiver !== implicitInvokeCall.dispatchReceiver) {
+            implicitInvokeCall.transformExtensionReceiver(this, data)
+        }
         implicitInvokeCall.transformArgumentList(this, data)
         implicitInvokeCall.transformCalleeReference(this, data)
         return implicitInvokeCall
@@ -2152,7 +2044,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         delegatedConstructorCall.transformArgumentList(this, data)
         delegatedConstructorCall.transformContextReceiverArguments(this, data)
         delegatedConstructorCall.transformConstructedTypeRef(this, data)
-        delegatedConstructorCall.transformDispatchReceiver(this, data)
         delegatedConstructorCall.transformCalleeReference(this, data)
         return delegatedConstructorCall
     }
@@ -2162,11 +2053,15 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         componentCall.transformAnnotations(this, data)
         componentCall.transformContextReceiverArguments(this, data)
         componentCall.transformTypeArguments(this, data)
-        componentCall.transformDispatchReceiver(this, data)
-        componentCall.transformExtensionReceiver(this, data)
         componentCall.transformArgumentList(this, data)
         componentCall.transformCalleeReference(this, data)
         componentCall.transformExplicitReceiver(this, data)
+        if (componentCall.dispatchReceiver !== componentCall.explicitReceiver) {
+              componentCall.transformDispatchReceiver(this, data)
+        }
+        if (componentCall.extensionReceiver !== componentCall.explicitReceiver && componentCall.extensionReceiver !== componentCall.dispatchReceiver) {
+            componentCall.transformExtensionReceiver(this, data)
+        }
         return componentCall
     }
 
@@ -2176,8 +2071,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         callableReferenceAccess.transformContextReceiverArguments(this, data)
         callableReferenceAccess.transformTypeArguments(this, data)
         callableReferenceAccess.transformExplicitReceiver(this, data)
-        callableReferenceAccess.transformDispatchReceiver(this, data)
-        callableReferenceAccess.transformExtensionReceiver(this, data)
+        if (callableReferenceAccess.dispatchReceiver !== callableReferenceAccess.explicitReceiver) {
+              callableReferenceAccess.transformDispatchReceiver(this, data)
+        }
+        if (callableReferenceAccess.extensionReceiver !== callableReferenceAccess.explicitReceiver && callableReferenceAccess.extensionReceiver !== callableReferenceAccess.dispatchReceiver) {
+            callableReferenceAccess.transformExtensionReceiver(this, data)
+        }
         callableReferenceAccess.transformCalleeReference(this, data)
         return callableReferenceAccess
     }
@@ -2188,8 +2087,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         thisReceiverExpression.transformContextReceiverArguments(this, data)
         thisReceiverExpression.transformTypeArguments(this, data)
         thisReceiverExpression.transformExplicitReceiver(this, data)
-        thisReceiverExpression.transformDispatchReceiver(this, data)
-        thisReceiverExpression.transformExtensionReceiver(this, data)
+        if (thisReceiverExpression.dispatchReceiver !== thisReceiverExpression.explicitReceiver) {
+              thisReceiverExpression.transformDispatchReceiver(this, data)
+        }
+        if (thisReceiverExpression.extensionReceiver !== thisReceiverExpression.explicitReceiver && thisReceiverExpression.extensionReceiver !== thisReceiverExpression.dispatchReceiver) {
+            thisReceiverExpression.transformExtensionReceiver(this, data)
+        }
         thisReceiverExpression.transformCalleeReference(this, data)
         return thisReceiverExpression
     }
@@ -2305,8 +2208,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         variableAssignment.transformContextReceiverArguments(this, data)
         variableAssignment.transformTypeArguments(this, data)
         variableAssignment.transformExplicitReceiver(this, data)
-        variableAssignment.transformDispatchReceiver(this, data)
-        variableAssignment.transformExtensionReceiver(this, data)
+        if (variableAssignment.dispatchReceiver !== variableAssignment.explicitReceiver) {
+              variableAssignment.transformDispatchReceiver(this, data)
+        }
+        if (variableAssignment.extensionReceiver !== variableAssignment.explicitReceiver && variableAssignment.extensionReceiver !== variableAssignment.dispatchReceiver) {
+            variableAssignment.transformExtensionReceiver(this, data)
+        }
         variableAssignment.transformLValueTypeRef(this, data)
         variableAssignment.transformRValue(this, data)
         return variableAssignment

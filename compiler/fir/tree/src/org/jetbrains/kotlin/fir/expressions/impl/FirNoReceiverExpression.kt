@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirElementKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 object FirNoReceiverExpression : FirExpression() {
     override val source: KtSourceElement? = null
-    override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val typeRef: FirTypeRef = FirImplicitUnitTypeRef(null)
     override val annotations: List<FirAnnotation> get() = emptyList()
 
 
