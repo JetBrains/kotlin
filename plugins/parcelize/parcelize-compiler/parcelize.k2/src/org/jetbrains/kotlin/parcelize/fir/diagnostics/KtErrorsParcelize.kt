@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DELEG
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.INNER_MODIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.NAME_IDENTIFIER
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OVERRIDE_MODIFIER
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -43,8 +45,8 @@ object KtErrorsParcelize {
     val PARCELER_SHOULD_BE_OBJECT by error0<PsiElement>()
     val PARCELER_TYPE_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val DUPLICATING_TYPE_PARCELERS by error0<PsiElement>()
-    val REDUNDANT_TYPE_PARCELER by warning1<PsiElement, KtClassOrObject>()
-    val CLASS_SHOULD_BE_PARCELIZE by error1<PsiElement, KtClassOrObject>()
+    val REDUNDANT_TYPE_PARCELER by warning1<PsiElement, FirClassSymbol<*>>()
+    val CLASS_SHOULD_BE_PARCELIZE by error1<PsiElement, FirClassSymbol<*>>()
     val FORBIDDEN_DEPRECATED_ANNOTATION by error0<PsiElement>()
     val DEPRECATED_ANNOTATION by warning0<PsiElement>()
     val DEPRECATED_PARCELER by error0<PsiElement>()

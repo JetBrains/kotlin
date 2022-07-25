@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.parcelize.fir.diagnostics
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECATED_ANNOTATION
