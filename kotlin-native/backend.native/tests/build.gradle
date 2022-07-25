@@ -99,12 +99,14 @@ ext.isExperimentalMM = !(project.globalTestArgs.contains("-memory-model") &&
 ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
 ext.isAggressiveGC = project.globalTestArgs.contains("-Xbinary=gcSchedulerType=aggressive")
 ext.isCmsGC = project.globalTestArgs.contains("-Xgc=cms") || !project.globalTestArgs.any { it.startsWith("-Xgc=") }
+ext.runtimeAssertionsPanic = false
 
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
 if (project.globalTestArgs.contains("-g") && (cacheTesting == null)) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         extraOpts "-Xbinary=runtimeAssertionsMode=panic"
     }
+    ext.runtimeAssertionsPanic = true
 }
 
 if (!isExperimentalMM) {
@@ -5691,7 +5693,7 @@ if (isAppleTarget(project)) {
 
     frameworkTest("testMultipleFrameworksStatic") {
          // this test doesn't work with caches. For now caches are enabled only if isExperimentalMM is true, even if cacheTesting is passed
-         if (cacheTesting != null && isExperimentalMM) {
+         if (cacheTesting != null && isExperimentalMM && !runtimeAssertionsPanic) {
             // See https://youtrack.jetbrains.com/issue/KT-34261.
             expectedExitStatus = 134
          }
