@@ -55,7 +55,7 @@ class JvmSymbols(
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
-    private val kotlinEnumPackage: IrPackageFragment = createPackage(FqName("kotlin.enums"))
+    private val kotlinEnumsPackage: IrPackageFragment = createPackage(FqName("kotlin.enums"))
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
@@ -97,7 +97,7 @@ class JvmSymbols(
                 "kotlin" -> kotlinPackage
                 "kotlin.coroutines" -> kotlinCoroutinesPackage
                 "kotlin.coroutines.jvm.internal" -> kotlinCoroutinesJvmInternalPackage
-                "kotlin.enums" -> kotlinEnumPackage
+                "kotlin.enums" -> kotlinEnumsPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
                 "kotlin.jvm" -> kotlinJvmPackage

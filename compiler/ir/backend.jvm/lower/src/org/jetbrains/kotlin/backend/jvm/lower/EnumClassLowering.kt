@@ -52,7 +52,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
      * ```
      * enum MyEnum extends Enum<MyEnum> {
      *     private static final synthetic MyEnum[] $VALUES
-     *     private static final synthetic List<MyEnum> $ENTRIES;
+     *     private static final synthetic EnumEntries<MyEnum> $ENTRIES;
      *
      *     <clinit> {
      *         A = new MyEnum("A", 0);
@@ -66,7 +66,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
      *     }
      *
      *     // Should be RO property from Kotlin standpoint
-     *     public static List<MyEnum> getEntries() {
+     *     public static EnumEntries<MyEnum> getEntries() {
      *         return $ENTRIES;
      *     }
      *
@@ -351,9 +351,7 @@ internal fun IrBuilderWithScope.irCreateEnumEntriesIndy(
         putValueArgument(3, irVararg(context.irBuiltIns.anyType, emptyList()))
         putValueArgument(4, irBoolean(false))
     }
-    // Bind it to temp var and pass to ctor
-    val supplier = createTmpVariable(indyCall, "supplier")
     +irCall(symbols.createEnumEntries).apply {
-        putValueArgument(0, irGet(supplier))
+        putValueArgument(0, indyCall)
     }
 })

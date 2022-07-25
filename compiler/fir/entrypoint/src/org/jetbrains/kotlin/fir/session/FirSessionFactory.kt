@@ -197,6 +197,7 @@ object FirSessionFactory : FirAbstractSessionFactory() {
         }
     }
 
+    @OptIn(SessionConfiguration::class)
     @TestOnly
     fun createEmptySession(): FirSession {
         return object : FirSession(null, Kind.Source) {}.apply {
