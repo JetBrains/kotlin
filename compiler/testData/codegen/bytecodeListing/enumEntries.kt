@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JVM_IR
-
-// WITH_RUNTIME
 // !LANGUAGE: +EnumEntries
+// TARGET_BACKEND: JVM_IR
+// FULL_JDK
+// WITH_STDLIB
 
 enum class SimpleEnum {
     A, B, C

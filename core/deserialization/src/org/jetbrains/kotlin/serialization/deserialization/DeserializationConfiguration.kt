@@ -36,5 +36,8 @@ interface DeserializationConfiguration {
     val preserveDeclarationsOrdering: Boolean
         get() = false
 
+    val supportEnumEntries: Boolean
+        get() = false
+
     object Default : DeserializationConfiguration
 }

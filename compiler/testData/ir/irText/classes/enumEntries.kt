@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +EnumEntries
 // TARGET_BACKEND: JVM_IR
 // FULL_JDK

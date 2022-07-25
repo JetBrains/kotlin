@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_ENTRIES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,11 +27,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
+import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
 
 class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateSpecialMembers(irClass: IrClass) {
         generateValues(irClass)
         generateValueOf(irClass)
+        generateEntries(irClass)
     }
 
     private fun generateValues(irClass: IrClass) {
@@ -46,7 +49,9 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valuesFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null, emptyList())
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(
+                    irFunction, null, null, emptyList()
+                )
                 irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
             }
         )
@@ -65,8 +70,34 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valueOfFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null, emptyList())
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(
+                    irFunction, null, null, emptyList()
+                )
                 irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
+            }
+        )
+    }
+
+    private fun generateEntries(irClass: IrClass) {
+        val entriesProperty = irClass.descriptor.staticScope.findFirstVariable(ENUM_ENTRIES.identifier) {
+            it.dispatchReceiverParameter == null && it.extensionReceiverParameter == null
+        } ?: return
+
+        irClass.addMember(
+            context.symbolTable.declareProperty(
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                entriesProperty
+            ).also { irProperty ->
+                irProperty.getter = context.symbolTable.declareSimpleFunctionWithOverrides(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
+                    entriesProperty.getter!!
+                ).also { getter ->
+                    getter.correspondingPropertySymbol = irProperty.symbol
+                    getter.returnType = entriesProperty.returnType!!.toIrType()
+                    getter.body = IrSyntheticBodyImpl(irProperty.startOffset, irProperty.endOffset, IrSyntheticBodyKind.ENUM_ENTRIES)
+                }
             }
         )
     }
