@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.parcelize
 
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
-import org.jetbrains.kotlin.parcelize.serializers.ParcelSerializer
 import org.jetbrains.kotlin.parcelize.serializers.isParcelable
+import org.jetbrains.kotlin.parcelize.serializers.matchesFqNameWithSupertypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
@@ -27,9 +26,12 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
@@ -239,27 +241,57 @@ open class ParcelizeDeclarationChecker : DeclarationChecker {
         }
 
         val type = descriptor.type
-
         if (!type.isError) {
-            val asmType = typeMapper.mapType(type, mode = TypeMappingMode.CLASS_DECLARATION)
+            val customParcelerTypes =
+                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { (mappedType, _) ->
+                    mappedType
+                }.toSet()
 
-            try {
-                val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
-                val context = ParcelSerializer.ParcelSerializerContext(
-                    typeMapper,
-                    typeMapper.mapClass(containerClass),
-                    parcelers,
-                    FrameMap()
-                )
-
-                ParcelSerializer.get(type, asmType, context, strict = true)
-            } catch (e: IllegalArgumentException) {
-                // get() throws IllegalArgumentException on unknown types
+            if (!checkParcelableType(type, customParcelerTypes)) {
                 val reportElement = parameter.typeReference ?: parameter.nameIdentifier ?: parameter
                 diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement))
             }
         }
     }
+
+    private fun checkParcelableType(type: KotlinType, customParcelerTypes: Set<KotlinType>): Boolean {
+        if (type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES)
+            || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
+            || type in customParcelerTypes) {
+            return true
+        }
+
+        val upperBound = type.getErasedUpperBound()
+        val descriptor = upperBound.constructor.declarationDescriptor as? ClassDescriptor
+            ?: return false
+
+        if (descriptor.kind.isSingleton || descriptor.kind.isEnumClass) {
+            return true
+        }
+
+        val fqName = descriptor.fqNameSafe.asString()
+        if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
+            return true
+        }
+
+        if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
+            return upperBound.arguments.all {
+                checkParcelableType(it.type, customParcelerTypes)
+            }
+        }
+
+        for (superFqName in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES) {
+            if (type.matchesFqNameWithSupertypes(superFqName)) {
+                return true
+            }
+        }
+
+        return type.isBuiltinFunctionalTypeOrSubtype
+    }
+
+    private fun KotlinType.getErasedUpperBound(): KotlinType =
+        constructor.declarationDescriptor?.safeAs<TypeParameterDescriptor>()?.representativeUpperBound?.getErasedUpperBound()
+            ?: this
 
     private fun ClassDescriptor.hasCustomParceler(): Boolean {
         val companionObjectSuperTypes = companionObjectDescriptor?.let { TypeUtils.getAllSupertypes(it.defaultType) } ?: return false
