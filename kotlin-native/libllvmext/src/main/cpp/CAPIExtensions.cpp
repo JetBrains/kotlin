@@ -10,6 +10,7 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Transforms/Utils/Cloning.h>
+#include <llvm/Transforms/Instrumentation/ThreadSanitizer.h>
 
 using namespace llvm;
 
@@ -52,4 +53,8 @@ void LLVMSetNoTailCall(LLVMValueRef Call) {
 int LLVMInlineCall(LLVMValueRef call) {
   InlineFunctionInfo IFI;
   return InlineFunction(*unwrap<CallBase>(call), IFI).isSuccess();
+}
+
+void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM) {
+  unwrap(PM)->add(createThreadSanitizerLegacyPassPass());
 }

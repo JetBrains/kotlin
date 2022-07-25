@@ -60,6 +60,19 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
+        when {
+            it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
+            produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
+            produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
+            it !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
+            else -> null
+        }?.let {message ->
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            return@takeIf false
+        }
+        return@takeIf true
+    }
 
     private val defaultMemoryModel get() =
         if (target.supportsThreads()) {
@@ -226,7 +239,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
 
     private val defaultAllocationMode get() = when {
-        memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() -> AllocationMode.MIMALLOC
+        memoryModel == MemoryModel.EXPERIMENTAL && target.supportsMimallocAllocator() && sanitizer == null -> {
+            AllocationMode.MIMALLOC
+        }
         else -> AllocationMode.STD
     }
 
@@ -364,6 +379,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
             runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
+            sanitizer != null -> "with sanitizers enabled"
             else -> null
         }
         CacheSupport(

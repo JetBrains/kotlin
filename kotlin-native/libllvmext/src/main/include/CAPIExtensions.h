@@ -25,6 +25,8 @@ void LLVMSetNoTailCall(LLVMValueRef Call);
 
 int LLVMInlineCall(LLVMValueRef call);
 
+void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM);
+
 # ifdef __cplusplus
 }
 # endif
