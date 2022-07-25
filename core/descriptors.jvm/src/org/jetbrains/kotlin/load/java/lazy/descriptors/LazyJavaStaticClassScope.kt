@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyJavaStaticClassScope(
     c: LazyJavaResolverContext,
@@ -55,6 +55,9 @@ class LazyJavaStaticClassScope(
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
         declaredMemberIndex().getFieldNames().toMutableSet().apply {
             flatMapJavaStaticSupertypesScopes(ownerDescriptor, this) { it.getVariableNames() }
+            if (jClass.isEnum) {
+                add(StandardNames.ENUM_ENTRIES)
+            }
         }
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = emptySet()
@@ -66,14 +69,16 @@ class LazyJavaStaticClassScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
-        result.addAll(resolveOverridesForStaticMembers(
-            name,
-            functionsFromSupertypes,
-            result,
-            ownerDescriptor,
-            c.components.errorReporter,
-            c.components.kotlinTypeChecker.overridingUtil
-        ))
+        result.addAll(
+            resolveOverridesForStaticMembers(
+                name,
+                functionsFromSupertypes,
+                result,
+                ownerDescriptor,
+                c.components.errorReporter,
+                c.components.kotlinTypeChecker.overridingUtil
+            )
+        )
 
         if (jClass.isEnum) {
             when (name) {
@@ -112,6 +117,12 @@ class LazyJavaStaticClassScope(
                     c.components.kotlinTypeChecker.overridingUtil
                 )
             })
+        }
+        if (jClass.isEnum) {
+            when (name) {
+                StandardNames.ENUM_ENTRIES ->
+                    result.addIfNotNull(createEnumEntriesProperty(ownerDescriptor))
+            }
         }
     }
 

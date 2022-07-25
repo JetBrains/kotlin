@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
@@ -466,7 +467,7 @@ class PSICallResolver(
             dispatchReceiver: ReceiverValueWithSmartCastInfo?,
             extensionReceiver: ReceiverValueWithSmartCastInfo?
         ): Collection<VariableDescriptor> {
-            return candidateInterceptor.interceptVariableCandidates(
+            val result = candidateInterceptor.interceptVariableCandidates(
                 initialResults,
                 this,
                 context,
@@ -477,6 +478,14 @@ class PSICallResolver(
                 dispatchReceiver,
                 extensionReceiver
             )
+            if (name != StandardNames.ENUM_ENTRIES || languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+                return result
+            }
+            return result.filter {
+                it !is PropertyDescriptor || !it.isSynthesized ||
+                        it.dispatchReceiverParameter != null || it.extensionReceiverParameter != null ||
+                        (it.containingDeclaration as? ClassDescriptor)?.kind != ClassKind.ENUM_CLASS
+            }
         }
     }
 
