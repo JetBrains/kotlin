@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,12 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
+import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
@@ -55,7 +58,6 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun checkParcelableClassProperty(
         property: FirProperty,
         containingClassSymbol: FirRegularClassSymbol,
@@ -63,17 +65,91 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
         reporter: DiagnosticReporter
     ) {
         val type = property.returnTypeRef.coneType
-        if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(context.session)) return
-        /*
-         * TODO: abstract code from ParcelSerializer or IrParcelSerializerFactory to avoid duplication
-         *    of allowed types checking
-         */
+        if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(context.session) || property.hasIgnoredOnParcel()) {
+            return
+        }
+
+        val session = context.session
+        val customParcelerTypes = getCustomParcelerTypes(property.annotations + containingClassSymbol.annotations, session)
+        if (!checkParcelableType(type, customParcelerTypes, session)) {
+            reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
+        }
+    }
+
+    private fun getCustomParcelerTypes(annotations: List<FirAnnotation>, session: FirSession): Set<ConeKotlinType> =
+        annotations.mapNotNullTo(mutableSetOf()) { annotation ->
+            if (annotation.fqName(session) in ParcelizeNames.TYPE_PARCELER_FQ_NAMES && annotation.typeArguments.size == 2) {
+                annotation.typeArguments[0].toConeTypeProjection().type
+            } else {
+                null
+            }
+        }
+
+    private fun checkParcelableType(type: ConeKotlinType, customParcelerTypes: Set<ConeKotlinType>, session: FirSession): Boolean {
+        if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
+            return true
+        }
+
+        val upperBound = type.getErasedUpperBound(session)
+        val symbol = upperBound?.toRegularClassSymbol(session)
+            ?: return false
+
+        if (symbol.classKind.isSingleton || symbol.classKind.isEnumClass) {
+            return true
+        }
+
+        val fqName = symbol.classId.asFqNameString()
+        if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
+            return true
+        }
+
+        if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
+            return upperBound.typeArguments.all { projection ->
+                projection.type?.let { checkParcelableType(it, customParcelerTypes, session) } ?: false
+            }
+        }
+
+        return with(session.typeContext) {
+            type.anySuperTypeConstructor {
+                it is ConeKotlinType &&
+                        (it.classId?.asFqNameString() in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES ||
+                                it.isBuiltinFunctionalType(session))
+            }
+        }
+    }
+
+    private fun ConeKotlinType.getErasedUpperBound(session: FirSession): ConeClassLikeType? =
+        when (this) {
+            is ConeClassLikeType ->
+                fullyExpandedType(session)
+
+            is ConeTypeParameterType -> {
+                val bounds = lookupTag.typeParameterSymbol.resolvedBounds
+                val representativeBound = bounds.firstOrNull {
+                    val kind = it.coneType.toRegularClassSymbol(session)?.classKind
+                        ?: return@firstOrNull false
+                    kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
+                } ?: bounds.first()
+                representativeBound.coneType.getErasedUpperBound(session)
+            }
+
+            else ->
+                null
+        }
+
+    private fun ConeKotlinType.hasParcelerAnnotation(session: FirSession): Boolean {
+        for (annotation in customAnnotations) {
+            val fqName = annotation.fqName(session)
+            if (fqName in ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES || fqName in ParcelizeNames.WRITE_WITH_FQ_NAMES) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun FirProperty.hasIgnoredOnParcel(): Boolean {
         return annotations.hasIgnoredOnParcel() || (getter?.annotations?.hasIgnoredOnParcel() ?: false)
     }
-
 
     private fun List<FirAnnotation>.hasIgnoredOnParcel(): Boolean {
         return this.any {
