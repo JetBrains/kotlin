@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.IndexNotReadyException
+import com.intellij.openapi.diagnostic.ControlFlowException
 
 /**
  * Lazily calculated value which runs postCompute in the same thread,
@@ -78,10 +80,10 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     _postCompute!!(key, calculated, data)
                     calculated
                 } catch (e: Throwable) {
-                    if (e is ProcessCanceledException) {
-                        value = ValueIsNotComputed
-                    } else {
+                    if (exceptionShouldBeSavedInCache(e)) {
                         value = ExceptionWasThrownDuringValueComputation(e)
+                    } else {
+                        value = ValueIsNotComputed
                     }
                     throw e
                 }
@@ -98,6 +100,13 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
             }
         }
     }
+
+    private fun exceptionShouldBeSavedInCache(e: Throwable): Boolean = when (e) {
+        is IndexNotReadyException -> false
+        is ControlFlowException -> false
+        else -> true
+    }
+
 
     @Suppress("UNCHECKED_CAST")
     fun getValueIfComputed(): VALUE? = when (val snapshot = value) {
