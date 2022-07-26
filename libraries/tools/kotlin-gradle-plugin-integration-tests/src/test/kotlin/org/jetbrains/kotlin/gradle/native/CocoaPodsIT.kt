@@ -832,6 +832,22 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
+    fun testWarningOfDefaultLinkingType() {
+        with(project) {
+            build("tasks") {
+                assertSuccessful()
+                assertContains("Cocoapods Gradle plugin uses default STATIC linking type for frameworks.")
+            }
+            gradleBuildScript().appendToCocoapodsBlock("framework { isStatic = true }")
+            build("tasks") {
+                assertSuccessful()
+                assertNotContains("Cocoapods Gradle plugin uses default STATIC linking type for frameworks.")
+            }
+        }
+    }
+
+
+    @Test
     fun testSyncFramework() {
         with(project) {
             hooks.addHook {

@@ -277,10 +277,24 @@ class Framework(
      */
     fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
 
+    internal var isStaticWasReassigned = false
+
+    //Hack: Cocoapods plugin overrides default value, but we want to track user-side reassigning
+    internal fun setIsStaticSilently(value: Boolean) {
+        val wasReassigned = isStaticWasReassigned
+        isStatic = value
+        isStaticWasReassigned = wasReassigned
+    }
+
     /**
      * Specifies if the framework is linked as a static library (false by default).
+     * Note: Cocoapods plugin links frameworks as a static library by default!
      */
     var isStatic = false
+        set(value) {
+            isStaticWasReassigned = true
+            field = value
+        }
 
     object BitcodeEmbeddingMode {
         val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
