@@ -49,7 +49,7 @@ interface Fe10AnalysisFacade {
 
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
-    val contextElement: KtElement,
+    contextElement: KtElement,
     val token: KtLifetimeToken
 ) : Fe10AnalysisFacade by facade {
     val resolveSession: ResolveSession = getResolveSession(contextElement)
