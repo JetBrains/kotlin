@@ -64,7 +64,8 @@ TEST(ScopedThreadTest, EmptyThreadName) {
 }
 
 TEST(ScopedThreadTest, JoinsInDestructor) {
-    std::atomic<bool> exited = false;
+    // Not atomic for TSAN to complain if we didn't synchronize with join.
+    bool exited = false;
     {
         ScopedThread([&exited] {
             // Give a chance for the outer scope to go on.
@@ -72,11 +73,12 @@ TEST(ScopedThreadTest, JoinsInDestructor) {
             exited = true;
         });
     }
-    EXPECT_THAT(exited.load(), true);
+    EXPECT_THAT(exited, true);
 }
 
 TEST(ScopedThreadTest, ManualJoin) {
-    std::atomic<bool> exited = false;
+    // Not atomic for TSAN to complain if we didn't synchronize with join.
+    bool exited = false;
     ScopedThread thread([&exited] {
         // Give a chance for the outer scope to go on.
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -85,15 +87,15 @@ TEST(ScopedThreadTest, ManualJoin) {
     EXPECT_THAT(thread.joinable(), true);
     thread.join();
     EXPECT_THAT(thread.joinable(), false);
-    EXPECT_THAT(exited.load(), true);
+    EXPECT_THAT(exited, true);
 }
 
 TEST(ScopedThreadTest, Detach) {
+    std::atomic<bool> doExit = false;
     std::atomic<bool> exited = false;
     {
-        ScopedThread thread([&exited] {
-            // Give a chance for the outer scope to go on.
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        ScopedThread thread([&doExit, &exited] {
+            while (!doExit.load()) {}
             exited = true;
         });
         EXPECT_THAT(thread.joinable(), true);
@@ -101,8 +103,7 @@ TEST(ScopedThreadTest, Detach) {
         EXPECT_THAT(thread.joinable(), false);
     }
     EXPECT_THAT(exited.load(), false);
-    // Wait for the thread to set `exited` before terminating test, otherwise the thread will write
-    // into freed `exited`.
+    doExit = true;
     while (!exited.load()) {
     }
 }
