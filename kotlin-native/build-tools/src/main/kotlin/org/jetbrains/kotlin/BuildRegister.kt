@@ -102,7 +102,12 @@ open class BuildRegister : DefaultTask() {
             append("\"buildNumberSuffix\": ${buildNumberSuffix?.let { "\"$buildNumberSuffix\"" } ?: buildNumberSuffix}}")
         }
         if (onlyBranch == null || onlyBranch == branch) {
-            println(sendPostRequest("$performanceServer/register", requestBody))
+            try {
+                println(sendPostRequest("$performanceServer/register", requestBody))
+            } catch (t: Throwable) {
+                println("Failed to send POST to '$performanceServer/register'")
+                throw t
+            }
         } else {
             println("Skipping registration. Current branch $branch, need registration for $onlyBranch!")
         }
