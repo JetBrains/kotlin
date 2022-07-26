@@ -451,6 +451,9 @@ class ComposerLambdaMemoization(
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         // Memoize the instance created by using the :: operator
+        if (expression.symbol.owner.isLocal) {
+            declarationContextStack.recordLocalCapture(expression.symbol.owner)
+        }
         val result = super.visitFunctionReference(expression)
         val functionContext = currentFunctionContext ?: return result
         if (expression.valueArgumentsCount != 0) {
