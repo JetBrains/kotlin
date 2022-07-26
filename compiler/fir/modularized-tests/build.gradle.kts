@@ -46,7 +46,6 @@ sourceSets {
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    dependsOn(":dist")
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String

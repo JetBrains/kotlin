@@ -27,6 +27,5 @@ sourceSets {
 testsJar {}
 
 projectTest(parallel = true) {
-    dependsOn(":dist")
     workingDir = rootDir
 }

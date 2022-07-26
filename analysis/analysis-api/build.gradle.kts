@@ -41,6 +41,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 testsJar()
 
 projectTest {
-    dependsOn(":dist")
     workingDir = rootDir
 }

@@ -22,7 +22,6 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(":dist")
     workingDir = rootDir
 }
 
