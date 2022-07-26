@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.render
@@ -122,17 +123,7 @@ internal class KtFirSymbolProvider(
     }
 
     override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol {
-        val firClass =
-            when (val firClassLike = psi.resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)) {
-                is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(firResolveSession.useSiteFirSession)
-                    ?: errorWithAttachment("${firClassLike.fir::class} should be expanded to the expected type alias") {
-                        withFirSymbolAttachment("firClassLikeSymbol", firClassLike)
-                        withPsiAttachment("ktClassOrObject", psi)
-                    }
-                is FirAnonymousObjectSymbol -> firClassLike
-                is FirRegularClassSymbol -> firClassLike
-            }
-
+        val firClass = psi.resolveToFirClassLikeSymbol()
         return firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(firClass)
     }
 
@@ -140,10 +131,19 @@ internal class KtFirSymbolProvider(
         require(psi !is KtObjectDeclaration || psi.parent !is KtObjectLiteralExpression)
         // A KtClassOrObject may also map to an FirEnumEntry. Hence, we need to return null in this case.
         if (psi is KtEnumEntry) return null
-        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
-            psi.resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
-        )
+        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(psi.resolveToFirClassLikeSymbol() as FirRegularClassSymbol)
+    }
 
+    private fun KtClassOrObject.resolveToFirClassLikeSymbol(): FirClassSymbol<*> {
+        return when (val firClassLike = resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)) {
+            is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(firResolveSession.useSiteFirSession)
+                ?: errorWithAttachment("${firClassLike.fir::class} should be expanded to the expected type alias") {
+                    withFirSymbolAttachment("firClassLikeSymbol", firClassLike)
+                    withPsiAttachment("ktClassOrObject", this@resolveToFirClassLikeSymbol)
+                }
+            is FirAnonymousObjectSymbol -> firClassLike
+            is FirRegularClassSymbol -> firClassLike
+        }
     }
 
     override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol {
