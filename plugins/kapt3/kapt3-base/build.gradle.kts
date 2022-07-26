@@ -22,5 +22,4 @@ testsJar {}
 projectTest {
     useJUnitPlatform()
     workingDir = rootDir
-    dependsOn(":dist")
 }
