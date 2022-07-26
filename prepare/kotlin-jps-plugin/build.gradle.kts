@@ -3,9 +3,15 @@ plugins {
 }
 
 dependencies {
+    @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginMavenDependencies"]
         .let { it as List<String> }
         .forEach { implementation(project(it)) }
+
+    @Suppress("UNCHECKED_CAST")
+    rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"]
+        .let { it as List<String> }
+        .forEach { implementation(it) { isTransitive = false } }
 }
 
 @Suppress("UNCHECKED_CAST")
