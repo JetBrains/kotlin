@@ -13,7 +13,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
@@ -31,7 +31,7 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
         abstract val gradleUserHomeDir: DirectoryProperty
 
         @get:Internal
-        abstract val buildMetricsReporterService: Property<BuildMetricsReporterService>
+        abstract val buildMetricsService: Property<BuildMetricsService>
     }
 
     @get:Classpath
@@ -44,7 +44,7 @@ abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntryS
 
         val granularity = getClassSnapshotGranularity(classpathEntryInputDirOrJar, parameters.gradleUserHomeDir.get().asFile)
 
-        val buildMetricsReporterService = parameters.buildMetricsReporterService.orNull
+        val buildMetricsReporterService = parameters.buildMetricsService.orNull
         val metricsReporter = buildMetricsReporterService?.let { BuildMetricsReporterImpl() } ?: DoNothingBuildMetricsReporter
 
         val startTimeMs = System.currentTimeMillis()

@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
-import org.jetbrains.kotlin.gradle.report.HttpReportService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
@@ -92,12 +92,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinGradleBuildServices.registerIfAbsent(project).get()
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
-        BuildMetricsReporterService.registerIfAbsent(project)?.also {
+        BuildMetricsService.registerIfAbsent(project)?.also {
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
-        }
-
-        HttpReportService.registerIfAbsent(project, kotlinPluginVersion)?.also {
-            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
+            BuildReportsService.registerIfAbsent(project, it)
         }
     }
 

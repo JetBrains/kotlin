@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.report
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
-import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.utils.Printer
 import org.jetbrains.kotlin.gradle.utils.asString
@@ -16,24 +15,8 @@ import org.jetbrains.kotlin.gradle.utils.formatSize
 import org.jetbrains.kotlin.gradle.utils.formatTime
 import java.io.File
 import java.io.Serializable
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.max
-
-internal class PlainTextBuildReportWriterDataProcessor(
-    val reportingSettings: FileReportSettings,
-    val rootProjectName: String
-) : BuildExecutionDataProcessor, Serializable {
-    override fun process(build: BuildExecutionData, log: Logger) {
-        val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-        val reportFile = reportingSettings.buildReportDir.resolve("${rootProjectName}-build-$ts.txt")
-
-        PlainTextBuildReportWriter(
-            outputFile = reportFile,
-            printMetrics = reportingSettings.includeMetricsInReport
-        ).process(build, log)
-    }
-}
 
 internal class PlainTextBuildReportWriter(
     private val outputFile: File,

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
@@ -73,7 +73,7 @@ constructor(
         get() = injected
 
     @get:Internal
-    internal abstract val buildMetricsReporterService: Property<BuildMetricsReporterService?>
+    internal abstract val buildMetricsService: Property<BuildMetricsService?>
 
     @get:Internal
     val metrics: Property<BuildMetricsReporter> = project.objects
@@ -330,7 +330,7 @@ constructor(
                     buildMetrics.addMetric(BuildPerformanceMetric.BUNDLE_SIZE, it)
                 }
 
-            buildMetricsReporterService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
+            buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
         }
     }
 

@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import org.jetbrains.kotlin.project.model.LanguageSettings
@@ -58,9 +59,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .disallowChanges()
 
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
-            BuildMetricsReporterService.registerIfAbsent(project)?.let {
-                task.buildMetricsReporterService.value(it)
+            val buildMetricsService = BuildMetricsService.registerIfAbsent(project)?.also {
+                task.buildMetricsService.value(it)
             }
+
+            buildMetricsService?.let { BuildReportsService.registerIfAbsent(project, it) }
+                ?.let { task.buildReportsService.value(it) }
 
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                 task.kotlinDaemonJvmArguments.set(providers.provider {

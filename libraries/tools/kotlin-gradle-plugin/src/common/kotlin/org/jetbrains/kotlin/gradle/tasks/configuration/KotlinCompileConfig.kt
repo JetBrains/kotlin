@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -111,18 +111,18 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         }
         project.extensions.extraProperties[TRANSFORMS_REGISTERED] = true
 
-        val buildMetricsReporterService = BuildMetricsReporterService.registerIfAbsent(project)
+        val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
         project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
             it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
             it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
             it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
-            buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
+            buildMetricsService?.apply { it.parameters.buildMetricsService.set(this) }
         }
         project.dependencies.registerTransform(ClasspathEntrySnapshotTransform::class.java) {
             it.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
             it.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
             it.parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
-            buildMetricsReporterService?.apply { it.parameters.buildMetricsReporterService.set(this) }
+            buildMetricsService?.apply { it.parameters.buildMetricsService.set(this) }
         }
     }
 

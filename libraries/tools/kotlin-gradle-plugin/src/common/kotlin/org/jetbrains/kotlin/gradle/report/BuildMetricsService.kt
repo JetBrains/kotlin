@@ -20,27 +20,17 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
-import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
-import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
-abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterService.Parameters>,
-    OperationCompletionListener, AutoCloseable {
-
-    interface Parameters : BuildServiceParameters {
-        var buildDataProcessors: List<BuildExecutionDataProcessor>
-        var startParameters: GradleBuildStartParameters
-        var reportingSettings: ReportingSettings
-    }
+abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, OperationCompletionListener {
 
     private val log = Logging.getLogger(this.javaClass)
 
     // Tasks and transforms' records
-    private val buildOperationRecords = ConcurrentLinkedQueue<BuildOperationRecord>()
-    private val failureMessages = ConcurrentLinkedQueue<String>()
+    internal val buildOperationRecords = ConcurrentLinkedQueue<BuildOperationRecord>()
+    internal val failureMessages = ConcurrentLinkedQueue<String>()
 
     // Info for tasks only
     private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter>()
@@ -102,55 +92,24 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
         }
     }
 
-    override fun close() {
-        val buildData = BuildExecutionData(
-            startParameters = parameters.startParameters,
-            failureMessages = failureMessages.toList(),
-            buildOperationRecord = buildOperationRecords.sortedBy { it.startTimeMs }
-        )
-        parameters.buildDataProcessors.forEach { it.process(buildData, log) }
-    }
-
     companion object {
+        private val serviceClass = BuildMetricsService::class.java
+        private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-        fun getStartParameters(project: Project) = project.gradle.startParameter.let {
-            GradleBuildStartParameters(
-                tasks = it.taskRequests.flatMap { it.args },
-                excludedTasks = it.excludedTaskNames,
-                currentDir = it.currentDir.path,
-                projectProperties = it.projectProperties.map {(key, value) -> "$key: $value"},
-                systemProperties = it.systemPropertiesArgs.map {(key, value) -> "$key: $value"},
-            )
-        }
-
-        fun registerIfAbsent(project: Project): Provider<BuildMetricsReporterService>? {
-            val serviceClass = BuildMetricsReporterService::class.java
-            val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
-
+        fun registerIfAbsent(project: Project): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<BuildMetricsReporterService>
+                return it.service as Provider<BuildMetricsService>
             }
 
+            //do not need to collect metrics if there aren't consumers for this data
             val reportingSettings = reportingSettings(project.rootProject)
             if (reportingSettings.buildReportOutputs.isEmpty()) {
                 return null
             }
 
-            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
-                val buildDataProcessors = mutableListOf<BuildExecutionDataProcessor>()
-                reportingSettings.fileReportSettings?.let { fileReportSettings ->
-                    buildDataProcessors.add(PlainTextBuildReportWriterDataProcessor(fileReportSettings, project.rootProject.name))
-                }
-                reportingSettings.singleOutputFile?.let { singleOutputFile ->
-                    buildDataProcessors.add(MetricsWriter(singleOutputFile.absoluteFile))
-                }
-
-                it.parameters.startParameters = getStartParameters(project)
-                it.parameters.buildDataProcessors = buildDataProcessors
-                it.parameters.reportingSettings = reportingSettings
-            }!!
+            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {}!!
         }
 
     }

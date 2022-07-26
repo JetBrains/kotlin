@@ -12,7 +12,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -211,8 +211,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"
                     task._destinationDirectory = binary.distribution.directory
 
-                    BuildMetricsReporterService.registerIfAbsent(project)?.let {
-                        task.buildMetricsReporterService.value(it)
+                    BuildMetricsService.registerIfAbsent(project)?.let {
+                        task.buildMetricsService.value(it)
                     }
 
                     task.dependsOn(
