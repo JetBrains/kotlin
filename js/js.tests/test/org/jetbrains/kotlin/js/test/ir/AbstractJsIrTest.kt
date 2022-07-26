@@ -210,14 +210,12 @@ open class AbstractFirJsTest(
         super.configure(builder)
         with (builder) {
             defaultDirectives {
-//                +ConfigurationDirectives.WITH_STDLIB
-//                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-//                val runIc = getBoolean("kotlin.js.ir.icMode")
-//                if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
-//                if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
-//                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
-//                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
-//                if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
+                val runIc = getBoolean("kotlin.js.ir.icMode")
+                if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
+                if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
+                if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
+                if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
+                if (getBoolean("kotlin.js.ir.newIr2Js", true)) +JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             }
