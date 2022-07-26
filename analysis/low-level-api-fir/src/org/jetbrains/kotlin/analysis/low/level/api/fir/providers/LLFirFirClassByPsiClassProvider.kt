@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
@@ -17,9 +19,12 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.checkWithAttachment
 import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.utils.withAttachmentBuilder
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
     fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol? {
@@ -31,12 +36,37 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             "${LLFirFirClassByPsiClassProvider::class.simpleName} can create only non-kotlin classes"
         }
 
+        checkWithAttachment(
+            psiClass !is ClsElementImpl || !psiClass.hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString()), {
+                "${LLFirFirClassByPsiClassProvider::class.simpleName} can create only non-kotlin classes, but got ${psiClass::class} with ${JvmAnnotationNames.METADATA_FQ_NAME.asString()} annotation"
+            }
+        ) {
+            it.withAttachmentBuilder("psiClass") {
+                appendLine("file: ${psiClass.containingFile?.virtualFile?.path}")
+                appendLine("PsiClass:")
+                appendLine(psiClass.text)
+            }
+        }
+
         if (psiClass.qualifiedName == null) {
             return null // not yet supported
         }
 
         val firClassSymbol = createFirClassFromFirProvider(psiClass)
-        check(firClassSymbol.fir.psi == psiClass)
+        checkWithAttachment(
+            firClassSymbol.fir.psi == psiClass,
+            { "resulted FirClass.psi != requested PsiClass" }
+        ) {
+            it.withAttachmentBuilder("info") {
+                appendLine("Requested ${psiClass::class.java.name}:")
+                appendLine("path: ${psiClass.containingFile?.virtualFile?.path}")
+                appendLine("modificationStamp: ${psiClass.containingFile.modificationStamp}")
+                appendLine()
+                appendLine("Got ${firClassSymbol.fir.psi!!::class.java.name}")
+                appendLine("path: ${firClassSymbol.fir.psi?.containingFile?.virtualFile?.path}")
+                appendLine("modificationStamp: ${firClassSymbol.fir.psi?.containingFile?.modificationStamp}")
+            }
+        }
         return firClassSymbol
     }
 
@@ -60,10 +90,10 @@ val LLFirSession.firClassByPsiClassProvider: LLFirFirClassByPsiClassProvider by 
 
 private val PsiClass.classIdIfNonLocal: ClassId?
     get() {
-        val packageName = (containingFile as? PsiJavaFile)?.packageName ?: return null
-        val packageFqName = FqName(packageName)
+        val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
+        val qualifiedName = qualifiedName ?: return null
+        val relatedClassName = qualifiedName.removePrefix("$packageName.")
+        if (relatedClassName.isEmpty()) return null
 
-        val classesNames = generateSequence(this) { it.containingClass }.map { it.name }.toList().asReversed()
-        if (classesNames.any { it == null }) return null
-        return ClassId(packageFqName, FqName(classesNames.joinToString(separator = ".")), false)
+        return ClassId(FqName(packageName), FqName(relatedClassName), false)
     }
