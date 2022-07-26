@@ -18,7 +18,7 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:light-classes-base"))
-    api(project(":compiler:backend"))
+    api(project(":compiler:backend.common.jvm"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
