@@ -169,6 +169,10 @@ internal class KtFirSymbolProvider(
         return firs.asSequence().map { firSymbol -> firSymbolBuilder.buildSymbol(firSymbol) }
     }
 
+    override fun getPackageSymbolIfPackageExists(packageFqName: FqName): KtPackageSymbol? {
+        return firSymbolBuilder.createPackageSymbolIfOneExists(packageFqName)
+    }
+
     override val ROOT_PACKAGE_SYMBOL: KtPackageSymbol = KtFirPackageSymbol(FqName.ROOT, firResolveSession.project, token)
 
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {

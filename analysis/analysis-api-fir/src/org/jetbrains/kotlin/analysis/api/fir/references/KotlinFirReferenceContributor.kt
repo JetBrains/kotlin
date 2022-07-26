@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import org.jetbrains.kotlin.analysis.api.fir.references.KtFirKDocReference
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
@@ -18,6 +19,7 @@ class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
             registerProvider(factory = ::KtFirArrayAccessReference)
             registerProvider(factory = ::KtFirConstructorDelegationReference)
             registerProvider(factory = ::KtFirCollectionLiteralReference)
+            registerProvider(factory = ::KtFirKDocReference)
 
             registerMultiProvider<KtSimpleNameExpression> { nameReferenceExpression ->
                 when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = true)) {

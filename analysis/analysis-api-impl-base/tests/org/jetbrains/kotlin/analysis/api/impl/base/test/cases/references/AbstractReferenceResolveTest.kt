@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
@@ -30,11 +31,17 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModu
                 +ConfigurationDirectives.WITH_STDLIB
             }
             useDirectives(Directives)
+            forTestsMatching("analysis/analysis-api/testData/referenceResolve/kDoc/*") {
+                defaultDirectives {
+                    +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
+                    +AnalysisApiTestDirectives.IGNORE_FE10
+                }
+            }
         }
     }
 
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
+        val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
         val ktReferences = findReferencesAtCaret(mainKtFile, caretPosition)
         if (ktReferences.isEmpty()) {

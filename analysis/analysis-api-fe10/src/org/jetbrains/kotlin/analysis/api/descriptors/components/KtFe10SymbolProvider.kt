@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -125,6 +126,11 @@ internal class KtFe10SymbolProvider(
             .asSequence()
             .filter { it.name == name }
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtCallableSymbol }
+    }
+
+    override fun getPackageSymbolIfPackageExists(packageFqName: FqName): KtPackageSymbol? {
+        if (analysisContext.resolveSession.packageFragmentProvider.isEmpty(packageFqName)) return null
+        return KtFe10PackageSymbol(packageFqName, analysisContext)
     }
 
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {

@@ -28,6 +28,8 @@ import kotlin.reflect.KClass
 abstract class AnalysisApiTestConfigurator {
     open val testPrefix: String? get() = null
 
+    abstract val frontendKind: FrontendKind
+
     abstract val analyseInDependentSession: Boolean
 
     abstract fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)

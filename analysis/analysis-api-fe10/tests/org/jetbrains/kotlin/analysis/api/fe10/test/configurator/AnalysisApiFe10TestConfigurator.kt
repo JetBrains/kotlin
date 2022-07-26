@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtMainModu
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -27,6 +28,8 @@ import kotlin.io.path.nameWithoutExtension
 
 object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
+
+    override val frontendKind: FrontendKind get() = FrontendKind.Fe10
 
     override val testPrefix: String
         get() = "descriptors"
