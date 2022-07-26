@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
+    override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {

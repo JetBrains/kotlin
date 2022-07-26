@@ -1,0 +1,2 @@
+Resolved to:
+0: (in kotlin.collections) abstract class AbstractCollection<out E> : kotlin.collections.Collection<E>
