@@ -32,40 +32,42 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class CliFe10AnalysisFacade(project: Project) : Fe10AnalysisFacade {
-    private val handler by lazy { KtFe10AnalysisHandlerExtension.getInstance(project) }
-
-    override fun getResolveSession(element: KtElement): ResolveSession {
-        return handler.resolveSession ?: error("Resolution is not performed")
-    }
-
-    override fun getDeprecationResolver(element: KtElement): DeprecationResolver {
-        return handler.deprecationResolver ?: error("Resolution is not performed")
-    }
-
-    override fun getCallResolver(element: KtElement): CallResolver {
-        return handler.callResolver ?: error("Resolution is not performed")
-    }
-
-    override fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer {
-        return handler.kotlinToResolvedCallTransformer ?: error("Resolution is not performed")
-    }
-
-    override fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>> {
-        return handler.overloadingConflictResolver ?: error("Resolution is not performed")
-    }
-
-    override fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner {
-        return handler.kotlinTypeRefiner ?: error("Resolution is not performed")
+class CliFe10AnalysisFacade : Fe10AnalysisFacade {
+    override fun getComponentProvider(element: KtElement): Fe10ComponentProvider {
+        return CliFe10ComponentProvider { KtFe10AnalysisHandlerExtension.getInstance(element.project) }
     }
 
     override fun analyze(element: KtElement, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
-        return getResolveSession(element).bindingContext
+        return getComponentProvider(element).resolveSession.bindingContext
     }
 
     override fun getOrigin(file: VirtualFile): KtSymbolOrigin {
         return KtSymbolOrigin.SOURCE
     }
+}
+
+private class CliFe10ComponentProvider(handlerFactory: () -> KtFe10AnalysisHandlerExtension) : Fe10ComponentProvider {
+    private val handler by lazy(handlerFactory)
+
+    override val resolveSession: ResolveSession
+        get() = sure(handler.resolveSession)
+
+    override val deprecationResolver: DeprecationResolver
+        get() = sure(handler.deprecationResolver)
+
+    override val callResolver: CallResolver
+        get() = sure(handler.callResolver)
+
+    override val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
+        get() = sure(handler.kotlinToResolvedCallTransformer)
+
+    override val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>
+        get() = sure(handler.overloadingConflictResolver)
+
+    override val kotlinTypeRefiner: KotlinTypeRefiner
+        get() = sure(handler.kotlinTypeRefiner)
+
+    private fun <T : Any> sure(value: T?) = value ?: error("Resolution is not performed")
 }
 
 class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {

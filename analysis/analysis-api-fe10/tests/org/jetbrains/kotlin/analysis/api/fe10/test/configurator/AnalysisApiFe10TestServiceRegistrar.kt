@@ -34,7 +34,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider(project))
-            registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
+            registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade())
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(enabled = true))
 
             registerService(SymbolLightClassFacadeCache::class.java)

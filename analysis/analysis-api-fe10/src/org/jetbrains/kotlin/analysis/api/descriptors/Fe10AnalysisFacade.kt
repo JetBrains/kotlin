@@ -29,12 +29,7 @@ interface Fe10AnalysisFacade {
         }
     }
 
-    fun getResolveSession(element: KtElement): ResolveSession
-    fun getDeprecationResolver(element: KtElement): DeprecationResolver
-    fun getCallResolver(element: KtElement): CallResolver
-    fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer
-    fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>>
-    fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner
+    fun getComponentProvider(element: KtElement): Fe10ComponentProvider
 
     fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 
@@ -47,18 +42,20 @@ interface Fe10AnalysisFacade {
     }
 }
 
+interface Fe10ComponentProvider {
+    val resolveSession: ResolveSession
+    val deprecationResolver: DeprecationResolver
+    val callResolver: CallResolver
+    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
+    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>
+    val kotlinTypeRefiner: KotlinTypeRefiner
+}
+
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
     contextElement: KtElement,
     val token: KtLifetimeToken
-) : Fe10AnalysisFacade by facade {
-    val resolveSession: ResolveSession = getResolveSession(contextElement)
-    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
-    val callResolver: CallResolver = getCallResolver(contextElement)
-    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer = getKotlinToResolvedCallTransformer(contextElement)
-    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>> = getOverloadingConflictResolver(contextElement)
-    val kotlinTypeRefiner: KotlinTypeRefiner = getKotlinTypeRefiner(contextElement)
-
+) : Fe10AnalysisFacade by facade, Fe10ComponentProvider by facade.getComponentProvider(contextElement) {
     val builtIns: KotlinBuiltIns
         get() = resolveSession.moduleDescriptor.builtIns
 
