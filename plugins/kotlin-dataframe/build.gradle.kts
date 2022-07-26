@@ -55,9 +55,14 @@ runtimeJar()
 //sourcesJar()
 //javadocJar()
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {

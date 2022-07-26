@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.dataframe;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

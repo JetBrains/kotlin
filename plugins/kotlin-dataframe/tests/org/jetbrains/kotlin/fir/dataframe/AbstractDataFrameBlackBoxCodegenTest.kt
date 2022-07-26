@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler

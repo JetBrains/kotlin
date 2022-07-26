@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -92,6 +93,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "enum_1" to Infer.Type,
                 "kproperty_1" to KPropertyApproximation("i", TypeApproximationImpl("kotlin.Int", false)),
                 "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
+                "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
+                "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
             )
             return map[id]
         }

@@ -3,6 +3,7 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.testing.*
+import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.*
 import org.jetbrains.kotlinx.dataframe.plugin.testing.schemaRender.*
 
 /*

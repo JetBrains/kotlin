@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.fir.dataframe.services.commonFirWithPluginFrontendConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 
