@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -17,6 +14,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.asJava.KtLightClassMarker
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(KtAnalysisApiInternals::class)
@@ -26,18 +25,24 @@ internal class KtFirSymbolProviderByJavaPsi(
     override fun getNamedClassSymbol(psiClass: PsiClass): KtNamedClassOrObjectSymbol? {
         if (psiClass.qualifiedName == null) return null
         if (psiClass is PsiTypeParameter) return null
+        if (psiClass is KtLightClassMarker) return null
+        if (psiClass.isKotlinCompiledClass()) return null
+
         val module = psiClass.getKtModule(analysisSession.project)
         val provider = firResolveSession.getSessionFor(module).firClassByPsiClassProvider
         val firClass = provider.getFirClass(psiClass) ?: return null
         return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(firClass)
     }
 
+    private fun PsiClass.isKotlinCompiledClass() =
+        this is ClsElementImpl && hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
+
     override fun getCallableSymbol(callable: PsiMember): KtCallableSymbol? {
         if (callable !is PsiMethod && callable !is PsiField) return null
         val name = callable.name?.let(Name::identifier) ?: return null
         val containingClass = callable.containingClass ?: return null
         val classSymbol = getNamedClassSymbol(containingClass) ?: return null
-        return with(analysisSession)  {
+        return with(analysisSession) {
             classSymbol.getDeclaredMemberScope()
                 .getCallableSymbols { it == name }
                 .firstOrNull { it.psi == callable }
