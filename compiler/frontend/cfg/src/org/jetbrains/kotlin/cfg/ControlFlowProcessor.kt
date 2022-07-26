@@ -840,9 +840,9 @@ class ControlFlowProcessor(
                 if (jumpCrossesTryCatchBoundary(expression, loop)) {
                     generateJumpsToCatchAndFinally()
                 }
-                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+//                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopExitPoint(loop)?.let { builder.jump(it, expression) }
-                }
+//                }
             }
         }
 
@@ -852,9 +852,9 @@ class ControlFlowProcessor(
                 if (jumpCrossesTryCatchBoundary(expression, loop)) {
                     generateJumpsToCatchAndFinally()
                 }
-                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+//                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopConditionEntryPoint(loop)?.let { builder.jump(it, expression) }
-                }
+//                }
             }
         }
 
