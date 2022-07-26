@@ -92,24 +92,6 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
     }
 }
 
-fun Project.configureShadowJarSubstitutionInCompileClasspath() {
-    val substitutionMap = mapOf(":kotlin-reflect" to ":kotlin-reflect-api")
-
-    fun configureSubstitution(substitution: DependencySubstitution) {
-        val requestedProject = (substitution.requested as? ProjectComponentSelector)?.projectPath ?: return
-        val replacementProject = substitutionMap[requestedProject] ?: return
-        substitution.useTarget(project(replacementProject), "Non-default shadow jars should not be used in compile classpath")
-    }
-
-    sourceSets.all {
-        for (configName in listOf(compileOnlyConfigurationName, compileClasspathConfigurationName)) {
-            configurations.getByName(configName).resolutionStrategy.dependencySubstitution {
-                all(::configureSubstitution)
-            }
-        }
-    }
-}
-
 fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<ShadowJar> =
     compilerShadowJar(taskName) {
         configureEmbeddableCompilerRelocation()

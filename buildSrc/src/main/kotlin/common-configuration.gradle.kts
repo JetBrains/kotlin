@@ -87,8 +87,6 @@ fun Project.configureJavaCompile() {
 
 fun Project.configureJavaBasePlugin() {
     plugins.withId("java-base") {
-        project.configureShadowJarSubstitutionInCompileClasspath()
-
         fun File.toProjectRootRelativePathOrSelf() = (relativeToOrNull(rootDir)?.takeUnless { it.startsWith("..") } ?: this).path
 
         fun FileCollection.printClassPath(role: String) =
