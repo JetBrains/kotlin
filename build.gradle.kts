@@ -276,11 +276,14 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
 extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-daemon-client",
     ":kotlin-build-common",
-    ":kotlin-reflect",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
     ":native:kotlin-native-utils"
+)
+
+extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
+    commonDependency("org.jetbrains.kotlin:kotlin-reflect")
 )
 
 extra["compilerArtifactsForIde"] = listOfNotNull(

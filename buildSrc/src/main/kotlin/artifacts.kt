@@ -264,7 +264,7 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
         }
 
         for (libraryDependency in libraryDependencies) {
-            fatJarContents(libraryDependency)
+            fatJarContents(libraryDependency) { isTransitive = false }
         }
     }
 
