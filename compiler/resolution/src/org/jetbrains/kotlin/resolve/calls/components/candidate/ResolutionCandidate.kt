@@ -29,8 +29,12 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     override val isSuccessful: Boolean
         get() {
             processParts(stopOnFirstError = true)
-            return resultingApplicabilities.minOrNull()!!.isSuccess && !getSystem().hasContradiction
+            // Note: candidate with K1_RESOLVED_WITH_ERROR is exceptionally treated as successful
+            return resultingApplicabilities.minOrNull()!!.isSuccessOrSuccessWithError && !getSystem().hasContradiction
         }
+
+    private val CandidateApplicability.isSuccessOrSuccessWithError: Boolean
+        get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
 
     override val resultingApplicability: CandidateApplicability
         get() {

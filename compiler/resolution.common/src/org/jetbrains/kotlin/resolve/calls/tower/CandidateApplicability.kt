@@ -25,7 +25,7 @@ enum class CandidateApplicability {
     // Below has isSuccess = true
     RESOLVED_LOW_PRIORITY,
     K2_PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
-    RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
+    RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that change resolve
 
     // Tower resolve does not go to further scopes if candidate with applicability below is found
 
@@ -34,5 +34,16 @@ enum class CandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
 }
 
+/**
+ * This property determines that the considered candidate is "successful" in terms of having no resolve errors.
+ * Note that it does not necessarily mean tower resolve should stop on this candidate.
+ */
 val CandidateApplicability.isSuccess: Boolean
-    get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
+    get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY && this != CandidateApplicability.K1_RESOLVED_WITH_ERROR
+
+/**
+ * This property determines that tower resolve should stop on the candidate/group with this applicability
+ * and should not go to further scope levels. Note that candidate can still have error(s).
+ */
+val CandidateApplicability.shouldStopResolve: Boolean
+    get() = this == CandidateApplicability.K2_DSL_SCOPE_VIOLATION || this >= CandidateApplicability.K2_SYNTHETIC_RESOLVED
