@@ -157,7 +157,7 @@ class NotCallableExpectedType(
 ) : CallableReferenceInapplicableDiagnostic(argument)
 
 class AdaptedCallableReferenceIsUsedWithReflection(val argument: CallableReferenceResolutionAtom) :
-    CallableReferenceInapplicableDiagnostic(argument, K1_RESOLVED_WITH_ERROR)
+    CallableReferenceInapplicableDiagnostic(argument, RESOLVED_WITH_ERROR)
 
 // SmartCasts
 class SmartCastDiagnostic(
@@ -194,7 +194,7 @@ class UnstableSmartCastResolutionError(
 class UnstableSmartCastDiagnosticError(
     argument: ExpressionKotlinCallArgument,
     targetType: UnwrappedType,
-) : UnstableSmartCast(argument, targetType, K1_RESOLVED_WITH_ERROR)
+) : UnstableSmartCast(argument, targetType, RESOLVED_WITH_ERROR)
 
 class UnsafeCallError(
     val receiver: SimpleKotlinCallArgument,
@@ -282,7 +282,7 @@ class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : Kotl
 class NotEnoughInformationForLambdaParameter(
     val lambdaArgument: LambdaKotlinCallArgument,
     val parameterIndex: Int
-) : KotlinCallDiagnostic(K1_RESOLVED_WITH_ERROR) {
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(lambdaArgument, this)
     }

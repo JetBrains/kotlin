@@ -129,7 +129,7 @@ class Unsupported(val message: String, val source: KtSourceElement? = null) : Re
 
 object PropertyAsOperator : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
 
-class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(K2_DSL_SCOPE_VIOLATION)
+class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
 

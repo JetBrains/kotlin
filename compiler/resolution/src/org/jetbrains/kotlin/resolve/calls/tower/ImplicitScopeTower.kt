@@ -114,13 +114,13 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
     }
 }
 
-class ContextReceiverAmbiguity : ResolutionDiagnostic(K1_RESOLVED_WITH_ERROR) {
+class ContextReceiverAmbiguity : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-class UnsupportedContextualDeclarationCall : ResolutionDiagnostic(K1_RESOLVED_WITH_ERROR) {
+class UnsupportedContextualDeclarationCall : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
