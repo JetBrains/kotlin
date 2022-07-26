@@ -74,4 +74,20 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
         """
         )
     }
+
+    // Regression test for b/180168881
+    fun testFunctionReferenceWithinInferredComposableLambda() = ensureSetup {
+        testCompile(
+            """
+                import androidx.compose.runtime.Composable
+
+                fun Problem() {
+                    fun foo() { }
+                    val lambda: @Composable ()->Unit = {
+                        ::foo
+                    }
+                }
+        """
+        )
+    }
 }
