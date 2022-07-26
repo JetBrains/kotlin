@@ -45,6 +45,8 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     private val buildUuid = UUID.randomUUID().toString()
     private var executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
+    private var buildMetricsService: Provider<BuildMetricsService>? = null
+
 
     init {
         log.info("Build report service is registered. Unique build id: $buildUuid")
@@ -115,7 +117,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     }
 
     private fun addBuildScanReport(project: Project) {
-        if (parameters.reportingSettings.get().buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
+        if (parameters.reportingSettings.buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
             val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
             project.rootProject.extensions.findByName("buildScan")
                 ?.also {
