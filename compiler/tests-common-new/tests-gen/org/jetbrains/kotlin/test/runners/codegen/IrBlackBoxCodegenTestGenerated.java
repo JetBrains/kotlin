@@ -15994,6 +15994,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt53202.kt")
+        public void testKt53202() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202.kt");
+        }
+
+        @Test
+        @TestMetadata("kt53202_funLiteral.kt")
+        public void testKt53202_funLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_funLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("nestedLambdas.kt")
         public void testNestedLambdas() throws Exception {
             runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
