@@ -19,7 +19,7 @@ dependencies {
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
     testImplementation(commonDependency("junit"))
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
-    testImplementation(kotlin("reflect"))
+    testImplementation(project(":kotlin-reflect"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 }
 
