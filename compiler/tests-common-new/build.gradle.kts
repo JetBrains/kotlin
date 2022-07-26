@@ -32,7 +32,7 @@ dependencies {
      */
     testApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testApi(commonDependency("one.util:streamex"))
-    testApi(commonDependency("net.java.dev.jna:jna"))
+    testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
     testApi(intellijJavaRt())
