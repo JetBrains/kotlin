@@ -36,6 +36,7 @@ interface Fe10AnalysisFacade {
     fun getOrigin(file: VirtualFile): KtSymbolOrigin
 
     enum class AnalysisMode {
+        FULL_WITH_ALL_CHECKS,
         FULL,
         PARTIAL_WITH_DIAGNOSTICS,
         PARTIAL

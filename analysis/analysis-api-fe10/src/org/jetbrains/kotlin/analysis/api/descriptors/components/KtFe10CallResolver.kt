@@ -61,10 +61,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.asSimpleType
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.contains
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isTypeVariable
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -176,7 +172,7 @@ internal class KtFe10CallResolver(
     }
 
     override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> =
-        with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
+        with(analysisContext.analyze(psi, AnalysisMode.FULL_WITH_ALL_CHECKS)) {
             if (psi.isNotResolvable()) return emptyList()
 
             val resolvedKtCallInfo = resolveCall(psi)

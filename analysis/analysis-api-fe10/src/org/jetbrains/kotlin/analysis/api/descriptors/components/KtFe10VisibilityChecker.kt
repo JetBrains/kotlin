@@ -60,7 +60,7 @@ internal class KtFe10VisibilityChecker(
                 analysisContext.languageVersionSettings
             )
         } else {
-            val bindingContext = analysisContext.analyze(useSiteDeclaration, AnalysisMode.FULL)
+            val bindingContext = analysisContext.analyze(useSiteDeclaration, AnalysisMode.FULL_WITH_ALL_CHECKS)
 
             val lexicalScope = position.getResolutionScope(bindingContext)
             if (lexicalScope != null) {

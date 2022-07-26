@@ -108,7 +108,7 @@ internal class KtFe10TypeProvider(
 
     override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: position
-        val bindingContext = analysisContext.analyze(elementToAnalyze)
+        val bindingContext = analysisContext.analyze(elementToAnalyze, AnalysisMode.FULL_WITH_ALL_CHECKS)
 
         val lexicalScope = position.getResolutionScope(bindingContext) ?: return emptyList()
         return lexicalScope.getImplicitReceiversHierarchy().map { it.type.toKtType(analysisContext) }
