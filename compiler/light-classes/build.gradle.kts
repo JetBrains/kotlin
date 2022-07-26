@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:light-classes-base"))
+    api(project(":analysis:light-classes-base"))
     api(project(":compiler:util"))
     api(project(":compiler:backend"))
     api(project(":compiler:frontend"))

@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
-    implementation(project(":compiler:light-classes-base"))
+    implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-api"))
