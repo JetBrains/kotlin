@@ -28,5 +28,6 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsBuiltinNameClashChecker,
             FirJsInheritanceChecker,
             FirJsRuntimeAnnotationChecker,
+            FirJsExternalChecker,
         )
 }

@@ -13,16 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.isPredefinedObject
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsExternalChecker.DEFINED_EXTERNALLY_PROPERTY_NAMES
 import org.jetbrains.kotlin.fir.analysis.withoutLast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.name.StandardClassIds.Callables.JsDefinedExternally
-import org.jetbrains.kotlin.name.StandardClassIds.Callables.JsNoImpl
 
 object FirJsDefinedExternallyCallChecker : FirQualifiedAccessChecker() {
-    private val DEFINED_EXTERNALLY_PROPERTY_NAMES = setOf(JsNoImpl, JsDefinedExternally)
-
     override fun check(expression: FirQualifiedAccess, context: CheckerContext, reporter: DiagnosticReporter) {
         val reference = expression.calleeReference.resolved ?: return
         val symbol = reference.resolvedSymbol as? FirCallableSymbol<*> ?: return

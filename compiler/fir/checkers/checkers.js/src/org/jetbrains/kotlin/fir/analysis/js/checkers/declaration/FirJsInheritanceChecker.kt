@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirJsInheritanceChecker : FirBasicDeclarationChecker() {
@@ -64,11 +65,12 @@ object FirJsInheritanceChecker : FirBasicDeclarationChecker() {
         val scope = declaration.symbol.unsubstitutedScope(context)
 
         val members = scope.collectAllFunctions()
-            .map { it.fir }
+            .filterIsInstance<FirIntersectionOverrideFunctionSymbol>()
             .filter {
-                val container = it.getContainingClassSymbol(session)
-                container == declaration && !it.isReal && it.getAllOverridden(session, context).isNotEmpty()
+                val container = it.getContainingClassSymbol(session)?.fir
+                container == declaration && it.intersections.isNotEmpty()
             }
+            .map { it.fir }
 
         return members.firstOrNull {
             FirDeclarationWithContext(it, context).isOverridingExternalWithOptionalParams()
