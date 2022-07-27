@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.findCompositeProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -101,11 +102,9 @@ class KotlinKarma(
     }
 
     private fun usePropBrowsers() {
-        val propKey = "kotlin.target.${compilation.target.name}.js.test.browsers"
-        val localPropFile = project.projectDir.resolve("local.properties").takeIf(File::exists)
-            ?: project.rootDir.resolve("local.properties").takeIf(File::exists)
-        val propBrowsers = localPropFile?.reader()?.use { Properties().apply { load(it) } }?.getProperty(propKey)
-            ?: project.findProperty(propKey)?.toString()?.split(",")
+        val propKey = "kotlin.js.browser.karma.browsers"
+        val propValue = project.findCompositeProperty("$propKey.${compilation.target.name}") ?: project.findCompositeProperty(propKey)
+        val propBrowsers = propValue?.toString()?.split(",")
         propBrowsers?.forEach {
             when (it.trim().toLowerCase()) {
                 "chrome" -> useChrome()
