@@ -563,10 +563,7 @@ interface IrBuilderExtension {
         }
 
         irAccessor.body = when (isGetter) {
-            true -> {
-                irAccessor.returnType = irAccessor.returnType.kClassToJClassIfNeeded()
-                generateDefaultGetterBody(descriptor as PropertyGetterDescriptor, irAccessor)
-            }
+            true -> generateDefaultGetterBody(descriptor as PropertyGetterDescriptor, irAccessor)
             false -> generateDefaultSetterBody(descriptor as PropertySetterDescriptor, irAccessor)
         }
 
@@ -597,7 +594,10 @@ interface IrBuilderExtension {
                     propertyIrType,
                     receiver
                 ).let {
-                    if (propertyIrType.isKClass()) kClassExprToJClassIfNeeded(startOffset, endOffset, it) else it
+                    if (propertyIrType.isKClass()) {
+                        irAccessor.returnType = irAccessor.returnType.kClassToJClassIfNeeded()
+                        kClassExprToJClassIfNeeded(startOffset, endOffset, it)
+                    } else it
                 }
             )
         )
@@ -1115,6 +1115,7 @@ interface IrBuilderExtension {
             } else {
                 constructors.find { it.owner.lastArgumentIsAnnotationArray() } ?: run {
                     // not found - we are using old serialization runtime without this feature
+                    // todo: optimize allocating an empty array when no annotations defined, maybe use old constructor?
                     needToCopyAnnotations = false
                     constructors.single { it.owner.isPrimary }
                 }
