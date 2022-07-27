@@ -61,21 +61,18 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private val context: IrPluginContext,
     private val symbolRemapper: DeepCopySymbolRemapper,
-    private val typeRemapper: TypeRemapper,
-    private val typeTranslator: TypeTranslator,
+    typeRemapper: TypeRemapper,
     symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
 
@@ -348,14 +345,11 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private fun IrType.isComposable(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
-
-    private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 }
 
 class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
-    private val typeTranslator: TypeTranslator,
     private val composerType: IrType
 ) : TypeRemapper {
 
@@ -380,8 +374,6 @@ class ComposerTypeRemapper(
 
     private fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
         any { it.annotationClass?.isClassWithFqName(fqName.toUnsafe()) ?: false }
-
-    private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrType.isFunction(): Boolean {

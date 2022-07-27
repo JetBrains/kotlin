@@ -17,13 +17,11 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.util.keyFMap.KeyFMap
+import java.util.WeakHashMap
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import java.util.WeakHashMap
 
 /**
  * This class is meant to have the shape of a BindingTrace object that could exist and flow
@@ -51,9 +49,5 @@ class WeakBindingTrace {
 
 private val ComposeTemporaryGlobalBindingTrace = WeakBindingTrace()
 
-@Suppress("unused")
-val GeneratorContext.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
-@Suppress("unused")
-val GenerationState.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
 @Suppress("unused")
 val IrPluginContext.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace

@@ -571,7 +571,7 @@ class ComposerLambdaMemoization(
         return super.visitConstructorCall(expression)
     }
 
-    @ObsoleteDescriptorBasedAPI
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun visitComposableFunctionExpression(
         expression: IrFunctionExpression,
         declarationContext: DeclarationContext
@@ -677,7 +677,6 @@ class ComposerLambdaMemoization(
         ).markAsComposableSingleton()
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         val declarationContext = declarationContextStack.peek()
             ?: return super.visitFunctionExpression(expression)
@@ -699,7 +698,6 @@ class ComposerLambdaMemoization(
         }
     }
 
-    @ObsoleteDescriptorBasedAPI
     private fun wrapFunctionExpression(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression,
@@ -708,7 +706,7 @@ class ComposerLambdaMemoization(
         val function = expression.function
         val argumentCount = function.valueParameters.size
 
-        val isJs = context.moduleDescriptor.platform.isJs()
+        val isJs = context.platform.isJs()
         if (argumentCount > MAX_RESTART_ARGUMENT_COUNT && isJs) {
             error(
                 "only $MAX_RESTART_ARGUMENT_COUNT parameters " +
