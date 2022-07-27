@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(dn: dynamic<!REDUNDANT_NULLABLE!>?<!>, d: dynamic, dnn: dynamic<!REDUNDANT_NULLABLE!>?<!><!REDUNDANT_NULLABLE!>?<!>) {

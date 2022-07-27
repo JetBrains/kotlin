@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 open class A
 
 interface I

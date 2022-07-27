@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 external fun foo(): Int = definedExternally
 
 external fun bar(): Unit {

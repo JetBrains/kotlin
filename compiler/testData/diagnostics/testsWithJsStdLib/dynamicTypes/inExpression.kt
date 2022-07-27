@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 fun foo() {
     val a: dynamic = Any()
     println(a in setOf(1, 2))

@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 @Retention(AnnotationRetention.BINARY)
 annotation class X
 

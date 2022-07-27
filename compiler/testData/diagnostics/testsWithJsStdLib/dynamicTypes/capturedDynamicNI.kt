@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // SKIP_TXT
 

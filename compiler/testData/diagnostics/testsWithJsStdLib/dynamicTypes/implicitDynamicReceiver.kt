@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.test() {
     val v1 = foo()
     v1.isDynamic() // to check that anything is resolvable

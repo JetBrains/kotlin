@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // FILE: a.kt
 @file:JsQualifier(<!WRONG_JS_QUALIFIER!>""<!>)
 
