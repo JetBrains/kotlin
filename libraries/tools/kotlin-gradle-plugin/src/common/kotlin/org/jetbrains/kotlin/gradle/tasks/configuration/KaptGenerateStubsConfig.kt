@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
 import org.jetbrains.kotlin.gradle.internal.buildKaptSubpluginOptions
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
-import java.util.concurrent.Callable
+import org.jetbrains.kotlin.gradle.utils.isParentOf
+import java.io.File
+import java.nio.file.Files
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
@@ -33,6 +36,26 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             task.libraries.from({ kotlinCompileTask.libraries })
             task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
             task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
+            // KotlinCompile will also have as input output from KaptGenerateStubTask and KaptTask
+            // We are filtering them to avoid failed UP-TO-DATE checks
+            val kaptJavaSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedSourcesDir(
+                project,
+                compilation.compilationPurpose
+            )
+            val kaptKotlinSourcesDir = Kapt3GradleSubplugin.getKaptGeneratedKotlinSourcesDir(
+                project,
+                compilation.compilationPurpose
+            )
+            val destinationDirectory = task.destinationDirectory
+            val stubsDir = task.stubsDir
+            task.source(
+                kotlinCompileTask
+                    .javaSources
+                    .filter(KaptFilterSpec(destinationDirectory, stubsDir, kaptJavaSourcesDir)),
+                kotlinCompileTask
+                    .sources
+                    .filter(KaptFilterSpec(destinationDirectory, stubsDir, kaptKotlinSourcesDir))
+            )
         }
     }
 
@@ -81,5 +104,26 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             }
             return@provider compilerPluginOptions
         }
+    }
+
+    // Drop `isEmptyDirectory` check after min supported Gradle version will be bumped to 6.8
+    // It will be covered by '@IgnoreEmptyDirectories' input annotation
+    private class KaptFilterSpec(
+        private val destinationDirectory: DirectoryProperty,
+        private val stubsDir: DirectoryProperty,
+        private val additionalParentToCheck: File
+    ) : Spec<File> {
+        override fun isSatisfiedBy(element: File): Boolean {
+            return !element.isEmptyDirectory &&
+                    element.isSourceRootAllowed()
+        }
+
+        private val File.isEmptyDirectory: Boolean
+            get() = with(toPath()) { Files.isDirectory(this) && !Files.list(this).use { it.findFirst().isPresent } }
+
+        private fun File.isSourceRootAllowed(): Boolean =
+            !destinationDirectory.get().asFile.isParentOf(this) &&
+                    !stubsDir.asFile.get().isParentOf(this) &&
+                    !additionalParentToCheck.isParentOf(this)
     }
 }

@@ -67,10 +67,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Incremental
     abstract val additionalSources: ConfigurableFileCollection
 
-    private fun File.isSourceRootAllowed(): Boolean =
-        !destinationDirectory.get().asFile.isParentOf(this) &&
-                !stubsDir.asFile.get().isParentOf(this)
-
     override fun skipCondition(): Boolean = sources.isEmpty && javaSources.isEmpty
 
     // Task need to run even if there is no Kotlin sources, but only Java
@@ -79,10 +75,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     override val sources: FileCollection = super.sources
-        .asFileTree
-        .matching { patternFilterable ->
-            patternFilterable.include { it.isDirectory || it.file.isSourceRootAllowed() }
-        }
 
     @get:Internal
     override val scriptSources: FileCollection = objectFactory.fileCollection()
@@ -98,12 +90,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             classpathSnapshotProperties.classpath,
             classpathSnapshotProperties.classpathSnapshot
         )
-
-    override val javaSources: FileCollection = super.javaSources
-        .asFileTree
-        .matching { patternFilterable ->
-            patternFilterable.include { it.isDirectory || it.file.isSourceRootAllowed() }
-        }
 
     @get:Internal
     internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>

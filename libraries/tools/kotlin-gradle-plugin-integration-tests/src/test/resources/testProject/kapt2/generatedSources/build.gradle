@@ -1,0 +1,23 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class) {
+    source("src/proto/generated")
+}
+
+tasks.withType(JavaCompile.class).configureEach {
+    source("src/proto/generated")
+}
+
+dependencies {
+    // Mapstruct
+    implementation("org.mapstruct:mapstruct:1.5.1.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.5.1.Final")
+}
