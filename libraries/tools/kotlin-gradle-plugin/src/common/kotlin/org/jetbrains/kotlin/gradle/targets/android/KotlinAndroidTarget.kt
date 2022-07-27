@@ -67,7 +67,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     var publishLibraryVariantsGroupedByFlavor = false
 
     private fun checkPublishLibraryVariantsExist() {
-        fun AbstractAndroidProjectHandler.getLibraryVariantNames() =
+        fun AndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
                 project.forEachVariant {
                     if (getLibraryOutputTask(it) != null)
@@ -99,7 +99,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
     }
 
-    private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+    private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
 
         val publishableVariants = mutableListOf<BaseVariant>()
             .apply { project.forEachVariant { add(it) } }
@@ -173,7 +173,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         }.toSet()
     }
 
-    private fun AbstractAndroidProjectHandler.createAndroidUsageContexts(
+    private fun AndroidProjectHandler.createAndroidUsageContexts(
         variant: BaseVariant,
         compilation: KotlinCompilation<*>,
         artifactClassifier: String?,

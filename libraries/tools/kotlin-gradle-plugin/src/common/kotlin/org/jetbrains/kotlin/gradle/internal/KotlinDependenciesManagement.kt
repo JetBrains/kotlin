@@ -216,7 +216,7 @@ private fun chooseAndAddStdlibDependency(
 
 private fun androidMainSourceSetName(project: Project): String {
     val target = project.findAndroidTarget() ?: error("No Android target found")
-    return AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(target, "main")
+    return AndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(target, "main")
 }
 
 private fun isRelatedToAndroidTestSourceSet(project: Project, kotlinSourceSet: KotlinSourceSet): Boolean {
@@ -230,7 +230,7 @@ private fun isRelatedToAndroidTestSourceSet(project: Project, kotlinSourceSet: K
 
     (androidExtension.testVariants + androidExtension.unitTestVariants).forEach { variant ->
         if (variant.sourceSets.any {
-                kotlinSourceSet.name == AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(androidTarget, it.name)
+                kotlinSourceSet.name == AndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(androidTarget, it.name)
             }
         ) return true
     }
