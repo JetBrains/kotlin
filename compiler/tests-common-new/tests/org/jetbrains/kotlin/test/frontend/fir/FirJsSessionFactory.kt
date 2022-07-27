@@ -67,7 +67,6 @@ object FirJsSessionFactory {
 
             val otherProviders = listOf(
                 FirBuiltinSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
-                FirCloneableSymbolProvider(this, builtinsModuleData, kotlinScopeProvider),
                 FirDependenciesSymbolProviderImpl(this)
             )
 
