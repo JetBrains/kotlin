@@ -250,18 +250,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "C<A()>:Test.kt")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
                   if (condition) {
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
                   }
                   A(%composer, 0)
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -277,13 +268,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun FakeBox(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(FakeBox)<conten...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
               content(%composer, 0b1110 and %changed)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
               %composer.endReplaceableGroup()
             }
         """
@@ -2988,13 +2973,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C<A()>:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
-                    }
                     A(%composer, 0)
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
@@ -4340,9 +4319,6 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     %composer.startReplaceableGroup(<>)
                     sourceInformation(%composer, "C<T(2)>,<T(4)>:Test.kt")
                     if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                      if (isTraceInProgress()) {
-                        traceEventStart(<>, %changed, -1, "ComposableSingletons%TestKt.lambda-1.<anonymous>.<anonymous> (Test.kt:6)")
-                      }
                       T(2, %composer, 0b0110)
                       %composer.startReplaceableGroup(<>)
                       sourceInformation(%composer, "*<T(3)>")
@@ -4351,9 +4327,6 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                       }
                       %composer.endReplaceableGroup()
                       T(4, %composer, 0b0110)
-                      if (isTraceInProgress()) {
-                        traceEventEnd()
-                      }
                     } else {
                       %composer.skipToGroupEnd()
                     }
@@ -4440,13 +4413,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C<Text("...>:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, "Test.<anonymous> (Test.kt:19)")
-                    }
                     Text("%c %cl", %composer, 0)
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
@@ -4520,13 +4487,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
                 get() {
                   sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, "CurrentHolder.<get-current> (Test.kt:8)")
-                  }
                   val tmp0 = 0
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                   sourceInformationMarkerEnd(%composer)
                   return tmp0
                 }
@@ -4580,13 +4541,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C<Text("...>:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, "Test.<anonymous> (Test.kt:31)")
-                    }
                     Text("%c %cl", %composer, 0)
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
-                    }
                   } else {
                     %composer.skipToGroupEnd()
                   }
@@ -4680,9 +4635,6 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C*<Leaf(0...>:Test.kt")
                   if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
-                    }
                     repeat(1) { it: Int ->
                       %composer.startReplaceableGroup(<>)
                       sourceInformation(%composer, "*<Leaf(0...>")
@@ -4691,9 +4643,6 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                       }
                       %composer.endReplaceableGroup()
                       Leaf(0, %composer, 0b0110, 0)
-                    }
-                    if (isTraceInProgress()) {
-                      traceEventEnd()
                     }
                   } else {
                     %composer.skipToGroupEnd()
