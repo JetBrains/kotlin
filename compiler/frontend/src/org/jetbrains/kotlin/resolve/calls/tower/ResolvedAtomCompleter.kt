@@ -330,7 +330,10 @@ class ResolvedAtomCompleter(
         }
 
         val descriptor = topLevelTrace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? SimpleFunctionDescriptorImpl
-            ?: throw AssertionError("No function descriptor for resolved lambda argument")
+            ?:
+            // Normally we should not be here, but in IDE partial resolve mode lambda analysis can be dropped,
+            // and it's possible we don't have any descriptor
+            return
 
         val substitutedLambdaTypes = substituteFunctionLiteralDescriptor(lambda, descriptor, resultSubstitutor)
 

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
@@ -48,7 +49,11 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
     expectedType: KotlinType,
     expressionType: KotlinType?
 ): Boolean {
-    if (!TypeUtils.contains(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
+    if (!TypeUtils.contains(expectedType) {
+            // We have to check expected type is available otherwise we'll get an exception
+            !noExpectedType(it) && (it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing())
+        }
+    ) return false
 
     val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
         is CallPosition.ValueArgumentPosition ->
