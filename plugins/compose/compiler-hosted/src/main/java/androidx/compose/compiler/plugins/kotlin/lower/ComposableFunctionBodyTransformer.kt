@@ -601,6 +601,24 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
+    private val currentMarkerProperty: IrProperty? by guardedLazy {
+        composerIrClass.properties
+            .firstOrNull {
+                it.name == KtxNameConventions.CURRENTMARKER
+            }
+    }
+
+    private val endToMarkerFunction: IrSimpleFunction? by guardedLazy {
+        composerIrClass
+            .functions
+            .firstOrNull {
+                it.name == KtxNameConventions.ENDTOMARKER && it.valueParameters.size == 1
+            }
+    }
+
+    private val rollbackGroupMarkerEnabled get() =
+        currentMarkerProperty != null && endToMarkerFunction != null
+
     private val endRestartGroupFunction by guardedLazy {
         composerIrClass
             .functions
@@ -926,6 +944,7 @@ class ComposableFunctionBodyTransformer(
                         )
                     else -> null
                 },
+                *scope.markerPreamble.statements.toTypedArray(),
                 *bodyPreamble.statements.toTypedArray(),
                 *transformed.statements.toTypedArray(),
                 when {
@@ -1008,7 +1027,7 @@ class ComposableFunctionBodyTransformer(
 
         scope.dirty = dirty
 
-        val (nonReturningBody, returnVar) = body.asBodyAndResultVar()
+        val (nonReturningBody, returnVar) = body.asBodyAndResultVar(declaration)
 
         val emitTraceMarkers = traceEventMarkersEnabled && !scope.isInlinedLambda
 
@@ -1076,6 +1095,7 @@ class ComposableFunctionBodyTransformer(
                         irStartReplaceableGroup(body, scope, irFunctionSourceKey())
                     else null,
                     *sourceInformationPreamble.statements.toTypedArray(),
+                    *scope.markerPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformedBody,
@@ -1091,6 +1111,7 @@ class ComposableFunctionBodyTransformer(
                 body.endOffset,
                 listOfNotNull(
                     *sourceInformationPreamble.statements.toTypedArray(),
+                    *scope.markerPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformed,
@@ -1265,6 +1286,7 @@ class ComposableFunctionBodyTransformer(
                     scope,
                     irFunctionSourceKey()
                 ),
+                *scope.markerPreamble.statements.toTypedArray(),
                 *skipPreamble.statements.toTypedArray(),
                 transformedBody,
                 if (returnVar == null) end() else null,
@@ -1827,6 +1849,9 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
+    fun irCurrentMarker() =
+        irMethodCall(irCurrentComposer(), currentMarkerProperty!!.getter!!)
+
     private fun irIsSkipping() =
         irMethodCall(irCurrentComposer(), isSkippingFunction.getter!!)
     private fun irDefaultsInvalid() =
@@ -1869,7 +1894,9 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun IrBody.asBodyAndResultVar(): Pair<IrContainerExpression, IrVariable?> {
+    private fun IrBody.asBodyAndResultVar(
+        expectedTarget: IrFunction? = null
+    ): Pair<IrContainerExpression, IrVariable?> {
         val original = IrCompositeImpl(
             startOffset,
             endOffset,
@@ -1880,7 +1907,10 @@ class ComposableFunctionBodyTransformer(
         var block: IrStatementContainer? = original
         var expr: IrStatement? = block?.statements?.lastOrNull()
         while (expr != null && block != null) {
-            if (expr is IrReturn) {
+            if (
+                expr is IrReturn &&
+                (expectedTarget == null || expectedTarget == expr.returnTargetSymbol.owner)
+            ) {
                 block.statements.pop()
                 return if (expr.value.type.isUnitOrNullableUnit() ||
                     expr.value.type.isNothing() ||
@@ -2238,6 +2268,12 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), endMovableFunction)
     }
 
+    private fun irEndToMarker(marker: IrExpression): IrExpression {
+        return irMethodCall(irCurrentComposer(), endToMarkerFunction!!).apply {
+            putValueArgument(0, marker)
+        }
+    }
+
     private fun irJoinKeyChain(keyExprs: List<IrExpression>): IrExpression {
         return keyExprs.reduce { accumulator, value ->
             irMethodCall(irCurrentComposer(), joinKeyFunction).apply {
@@ -2299,7 +2335,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun irTemporary(
+    fun irTemporary(
         value: IrExpression,
         nameHint: String? = null,
         irType: IrType = value.type,
@@ -2397,6 +2433,15 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    private fun IrExpression.variablePrefix(variable: IrVariable) =
+        IrBlockImpl(
+            startOffset,
+            endOffset,
+            type,
+            null,
+            listOf(variable, this)
+        )
+
     private fun IrExpression.wrap(
         before: List<IrExpression> = emptyList(),
         after: List<IrExpression> = emptyList()
@@ -2452,15 +2497,7 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun mutableStatementContainer(): IrContainerExpression {
-        // NOTE(lmr): It's important to use IrComposite here so that we don't introduce any new
-        // scopes
-        return IrCompositeImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType
-        )
-    }
+    private fun mutableStatementContainer() = mutableStatementContainer(context)
 
     private fun encounteredComposableCall(withGroups: Boolean, isCached: Boolean) {
         var scope: Scope? = currentScope
@@ -2546,6 +2583,9 @@ class ComposableFunctionBodyTransformer(
                     scope.markCoalescableGroup(coalescableScope, realizeGroup, makeEnd)
                     break@loop
                 }
+                is Scope.CallScope -> {
+                    // Ignore
+                }
                 else -> error("Unexpected scope type")
             }
             scope = scope.parent
@@ -2557,16 +2597,43 @@ class ComposableFunctionBodyTransformer(
         extraEndLocation: (IrExpression) -> Unit
     ) {
         var scope: Scope? = currentScope
+        val blockScopeMarks = mutableListOf<Scope.BlockScope>()
+        var leavingInlinedLambda = false
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
                     if (scope.function == symbol.owner) {
-                        scope.markReturn(extraEndLocation)
+                        if (
+                            !(
+                                leavingInlinedLambda ||
+                                (scope.isInlinedLambda && scope.inComposableCall)
+                            ) ||
+                            !rollbackGroupMarkerEnabled
+                        ) {
+                            blockScopeMarks.forEach {
+                                it.markReturn(extraEndLocation)
+                            }
+                            scope.markReturn(extraEndLocation)
+                        } else {
+                            val functionScope = scope
+                            if (functionScope.isInlinedLambda) {
+                                val marker = irGet(functionScope.allocateMarker())
+                                extraEndLocation(irEndToMarker(marker))
+                            } else {
+                                functionScope.markReturn {
+                                    val marker = irGet(functionScope.allocateMarker())
+                                    extraEndLocation(irEndToMarker(marker))
+                                    extraEndLocation(it)
+                                }
+                            }
+                        }
+
                         break@loop
                     }
+                    if (scope.isInlinedLambda) leavingInlinedLambda = true
                 }
                 is Scope.BlockScope -> {
-                    scope.markReturn(extraEndLocation)
+                    blockScopeMarks.add(scope)
                 }
                 else -> {
                     /* Do nothing, continue traversing */
@@ -2816,9 +2883,14 @@ class ComposableFunctionBodyTransformer(
             withGroups = !expression.symbol.owner.isReadonly(),
             isCached = false
         )
+
+        val callScope = Scope.CallScope(expression, this)
+
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
-        expression.transformChildrenVoid()
+        inScope(callScope) {
+            expression.transformChildrenVoid()
+        }
 
         val ownerFn = expression.symbol.owner
         val numValueParams = ownerFn.valueParameters.size
@@ -2940,7 +3012,9 @@ class ComposableFunctionBodyTransformer(
         )
         recordCallInSource(call = expression)
 
-        return expression
+        return callScope.marker?.let {
+            expression.variablePrefix(it)
+        } ?: expression
     }
 
     private fun canElideRememberGroup(): Boolean {
@@ -3655,6 +3729,13 @@ class ComposableFunctionBodyTransformer(
             val isInlinedLambda: Boolean
                 get() = transformer.inlineLambdaInfo.isInlineLambda(function)
 
+            val inComposableCall: Boolean
+                get() = (parent as? Scope.CallScope)?.expression?.let { call ->
+                    with(transformer) {
+                        call.isTransformedComposableCall() || call.isSyntheticComposableCall()
+                    }
+                } == true
+
             val metrics: FunctionMetrics = transformer.metricsFor(function)
 
             private var lastTemporaryIndex: Int = 0
@@ -3687,6 +3768,21 @@ class ComposableFunctionBodyTransformer(
                 private set
 
             var dirty: IrChangedBitMaskValue? = null
+
+            val markerPreamble = mutableStatementContainer(transformer.context)
+            private var marker: IrVariable? = null
+
+            fun allocateMarker(): IrVariable = marker ?: run {
+                val parent = parent
+                return (if (isInlinedLambda && parent is Scope.CallScope) {
+                    parent.allocateMarker()
+                } else transformer.irTemporary(
+                    transformer.irCurrentMarker(),
+                    getNameForTemporary("marker")
+                ).also { markerPreamble.statements.add(it) }).also {
+                    marker = it
+                }
+            }
 
             // Parameter information is an index from the sorted order of the parameters to the
             // actual order. This is used to reorder the fields of the lambda class generated for
@@ -4124,6 +4220,25 @@ class ComposableFunctionBodyTransformer(
                 }
         }
         class ParametersScope : BlockScope("parameters")
+
+        class CallScope(
+            val expression: IrCall,
+            private val transformer: ComposableFunctionBodyTransformer
+        ) : Scope("call") {
+            var marker: IrVariable? = null
+                private set
+
+            fun allocateMarker(): IrVariable = marker
+                ?: transformer.irTemporary(
+                    transformer.irCurrentMarker(),
+                    getNameForTemporary("marker")
+                ).also { marker = it }
+
+            private fun getNameForTemporary(nameHint: String?) =
+                functionScope?.getNameForTemporary(nameHint)
+                    ?: error("Expected to be in a function")
+        }
+
         class ComposableLambdaScope : BlockScope("composableLambda") {
             override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean): Boolean {
                 return sourceInformationEnabled
@@ -4484,3 +4599,13 @@ private inline operator fun <T> GuardedLazy<T>.getValue(thisRef: Any?, property:
     value(property.name)
 
 private fun <T> guardedLazy(initializer: () -> T) = GuardedLazy<T>(initializer)
+
+private fun mutableStatementContainer(context: IrPluginContext): IrContainerExpression {
+    // NOTE(lmr): It's important to use IrComposite here so that we don't introduce any new
+    // scopes
+    return IrCompositeImpl(
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        context.irBuiltIns.unitType
+    )
+}
