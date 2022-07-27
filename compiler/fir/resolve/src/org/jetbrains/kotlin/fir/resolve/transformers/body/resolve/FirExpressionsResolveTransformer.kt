@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -526,10 +529,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val leftArgument = assignmentOperatorStatement.leftArgument.transformSingle(transformer, ResolutionMode.ContextIndependent)
         val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
 
-        val generator = GeneratorOfPlusAssignCalls(assignmentOperatorStatement, operation, leftArgument, rightArgument)
-
         // x.plusAssign(y)
-        val assignOperatorCall = generator.createAssignOperatorCall()
+        val assignOperatorCall =
+            GeneratorOfPlusAssignCalls(assignmentOperatorStatement, operation, leftArgument, rightArgument).createAssignOperatorCall()
         val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
             assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
@@ -537,7 +539,48 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val assignIsSuccessful = assignCallReference?.isError == false
 
         // x = x + y
-        val simpleOperatorCall = generator.createSimpleOperatorCall()
+        val lhsReference = leftArgument.toReference()
+        val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
+        val lhsVariable = lhsSymbol?.fir
+        val lhsIsVar = lhsVariable?.isVar == true
+        val lhsReceiver = (leftArgument as? FirQualifiedAccessExpression)?.explicitReceiver?.takeUnless {
+            it is FirThisReceiverExpression ||
+                    (it is FirPropertyAccessExpression && (it.calleeReference.resolvedSymbol as? FirPropertySymbol)?.isLocal == true)
+        }
+        val lhsReceiverFakeSource =
+            (lhsReceiver as? FirQualifiedAccessExpression)?.calleeReference?.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+        val tempForLhsReceiver = lhsReceiver?.let {
+            generateTemporaryVariable(
+                session.moduleData,
+                source = lhsReceiverFakeSource,
+                name = SpecialNames.LOCAL,
+                initializer = it
+            )
+        }
+        val tempForLhsReceiverAccess = tempForLhsReceiver?.let {
+            buildPropertyAccessExpression {
+                this.source = lhsReceiverFakeSource
+                calleeReference = buildResolvedNamedReference {
+                    this.source = lhsReceiverFakeSource
+                    name = it.name
+                    resolvedSymbol = it.symbol
+                }
+            }
+        }
+        if (tempForLhsReceiverAccess != null) {
+            val oldReceiver = leftArgument.explicitReceiver
+            leftArgument.replaceExplicitReceiver(tempForLhsReceiverAccess)
+            if (oldReceiver != null) {
+                (leftArgument as? FirPropertyAccessExpressionImpl)?.let {
+                    if (it.dispatchReceiver === oldReceiver) it.dispatchReceiver = tempForLhsReceiverAccess
+                    if (it.extensionReceiver === oldReceiver) it.extensionReceiver = tempForLhsReceiverAccess
+                }
+            }
+        }
+
+        val simpleOperatorCall =
+            GeneratorOfPlusAssignCalls(assignmentOperatorStatement, operation, leftArgument, rightArgument)
+                .createSimpleOperatorCall()
         val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
             simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
         }
@@ -558,11 +601,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
         val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
 
-        val lhsReference = leftArgument.toReference()
-        val lhsSymbol = lhsReference?.resolvedSymbol as? FirVariableSymbol<*>
-        val lhsVariable = lhsSymbol?.fir
-        val lhsIsVar = lhsVariable?.isVar == true
-
         fun chooseAssign(): FirStatement {
             dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, noExpectedType)
@@ -570,14 +608,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return resolvedAssignCall
         }
 
-        fun chooseOperator(): FirStatement {
-            dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
-            callCompleter.completeCall(
-                resolvedOperatorCall,
-                lhsVariable?.returnTypeRef ?: noExpectedType,
-                expectedTypeMismatchIsReportedInChecker = true
-            )
-            dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
+        fun buildDSimpleAssignment(lhsExpression: FirExpression): FirStatement {
             val assignment =
                 buildVariableAssignment {
                     source = assignmentOperatorStatement.source
@@ -585,11 +616,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     calleeReference = when {
                         lhsIsVar -> lhsReference!!
                         else -> buildErrorNamedReference {
-                            source = when (leftArgument) {
-                                is FirFunctionCall -> leftArgument.source
+                            source = when (lhsExpression) {
+                                is FirFunctionCall -> lhsExpression.source
                                 is FirQualifiedAccess ->
-                                    leftArgument.calleeReference.source
-                                else -> leftArgument.source
+                                    lhsExpression.calleeReference.source
+
+                                else -> lhsExpression.source
                             }
                             diagnostic = when {
                                 // Use a stub diagnostic to suppress unresolved error here because it would be reported by other logic
@@ -599,7 +631,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                             }
                         }
                     }
-                    (leftArgument as? FirQualifiedAccess)?.let {
+                    (lhsExpression as? FirQualifiedAccess)?.let {
                         dispatchReceiver = it.dispatchReceiver
                         extensionReceiver = it.extensionReceiver
                         contextReceiverArguments.addAll(it.contextReceiverArguments)
@@ -607,6 +639,26 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     annotations += assignmentOperatorStatement.annotations
                 }
             return assignment.transform(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        fun chooseOperator(): FirStatement {
+            dataFlowAnalyzer.enterFunctionCall(resolvedOperatorCall)
+            callCompleter.completeCall(
+                resolvedOperatorCall,
+                lhsVariable?.returnTypeRef ?: noExpectedType,
+                expectedTypeMismatchIsReportedInChecker = true
+            )
+            dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
+            val res = if (lhsReceiver != null) {
+                val block = buildBlock {
+                    statements += tempForLhsReceiver!!
+                    statements += buildDSimpleAssignment(leftArgument)
+                }
+                transformer.transformBlock(block, ResolutionMode.ContextIndependent)
+                transformer.transformPropertyAccessExpression(tempForLhsReceiverAccess!!, ResolutionMode.ContextIndependent)
+                block
+            } else buildDSimpleAssignment(leftArgument)
+            return res
         }
 
         fun reportAmbiguity(): FirStatement {
@@ -635,6 +687,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     else -> chooseAssign()
                 }
             }
+
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
             leftArgument.typeRef.coneType is ConeDynamicType -> chooseAssign()
