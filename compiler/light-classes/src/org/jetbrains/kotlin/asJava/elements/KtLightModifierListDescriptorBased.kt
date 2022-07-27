@@ -101,14 +101,6 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     }
 }
 
-class KtLightSimpleModifierList(
-    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
-) : KtLightModifierListDescriptorBased<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
-    override fun hasModifierProperty(name: String) = name in modifiers
-
-    override fun copy() = KtLightSimpleModifierList(owner, modifiers)
-}
-
 private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>): List<KtLightAnnotationForSourceEntry> {
     val lightModifierListOwner = lightModifierList.parent
 
