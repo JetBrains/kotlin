@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.plugins.ExtraPropertiesExtension
 
 @Deprecated("Conventions are deprecated in Gradle")
 internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
@@ -43,6 +42,3 @@ internal inline fun <reified T : Any> Any.addExtension(name: String, extension: 
 
 internal inline fun <reified T : Any> Any.getExtension(name: String): T? =
     (this as ExtensionAware).extensions.getByName(name) as T?
-
-inline val Any.extraProperties: ExtraPropertiesExtension
-    get() = (this as ExtensionAware).extensions.extraProperties
