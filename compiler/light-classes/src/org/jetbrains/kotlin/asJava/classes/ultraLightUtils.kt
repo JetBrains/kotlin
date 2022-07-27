@@ -245,7 +245,7 @@ internal fun KtUltraLightSupport.mapType(
     return createTypeFromCanonicalText(kotlinType, canonicalSignature, psiContext)
 }
 
-private fun KtUltraLightSupport.createTypeFromCanonicalText(
+private fun createTypeFromCanonicalText(
     kotlinType: KotlinType?,
     canonicalSignature: String,
     psiContext: PsiElement,
