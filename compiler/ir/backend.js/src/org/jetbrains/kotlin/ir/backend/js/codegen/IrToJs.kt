@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrFileToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.processClassModels
@@ -211,6 +212,7 @@ class IrToJs(
         for (fragment in unit.packageFragments) {
             for (declaration in fragment.declarations) {
                 if (declaration is IrDeclarationWithName) {
+                    if (declaration.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN) continue
                     export(declaration)
                 }
 

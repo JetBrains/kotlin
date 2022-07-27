@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 // Returns null if constant expression could not be parsed
 fun translateJsCodeIntoStatementList(code: IrExpression, context: JsIrBackendContext): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
-
+    // FIXME: Provide debug info
     return parseJsCode(foldString(code, context) ?: return null)
 }
 

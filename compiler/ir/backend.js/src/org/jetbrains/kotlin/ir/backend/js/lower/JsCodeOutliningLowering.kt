@@ -16,22 +16,20 @@ import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // Outlines `kotlin.js.js(code: String)` calls where JS code references Kotlin locals.
 // Makes locals usages explicit.
@@ -43,6 +41,10 @@ class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLowe
 
         val replacer = JsCodeOutlineTransformer(backendContext, container)
         irBody.transformChildrenVoid(replacer)
+    }
+
+    companion object {
+        val OUTLINED_JS_CODE_ORIGIN = object : IrDeclarationOriginImpl("OUTLINED_JS_CODE") {}
     }
 }
 
@@ -144,18 +146,17 @@ private class JsCodeOutlineTransformer(
 
         // Building outlined IR function skeleton
         val outlinedFunction = backendContext.irFactory.buildFun {
-            name = Name.identifier("outlinedJsCode$")
+            name = Name.identifier(container.safeAs<IrDeclarationWithName>()?.name?.asString()?.let { "$it\$outlinedJsCode\$" }
+                                       ?: "outlinedJsCode\$")
             returnType = backendContext.dynamicType
             isExternal = true
-            origin = JsIrBackendContext.callableClosureOrigin
+            origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
         }
         // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
         outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        outlinedFunction.parent = when (container) {
-            is IrDeclarationParent -> container
-            else -> container.parent
-        }
-        kotlinLocalsUsedInJs.forEach { local ->
+        outlinedFunction.parent = container.file
+        container.file.declarations.add(outlinedFunction)
+        kotlinLocalsUsedInJs.values.forEach { local ->
             outlinedFunction.addValueParameter {
                 name = local.name
                 type = local.type
@@ -175,28 +176,18 @@ private class JsCodeOutlineTransformer(
                 newStatements += JsReturn(JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)))
             }
         }
-        val newFun = JsFunction(emptyScope, JsBlock(newStatements), "")
-        kotlinLocalsUsedInJs.forEach { irParameter ->
-            newFun.parameters.add(JsParameter(JsName(irParameter.name.identifier, false)))
+        val newFun = JsFunction(emptyScope, JsBlock(newStatements), "Outlined js() call")
+        kotlinLocalsUsedInJs.keys.forEach { jsName ->
+            newFun.parameters.add(JsParameter(jsName))
         }
 
-        with(backendContext.createIrBuilder(container.symbol)) {
-            // Add @JsFun("function (used_local1, used_local2, ..) { ... }") annotation to outlined function
-            val jsFunCtor = backendContext.intrinsics.jsFunAnnotationSymbol.constructors.single()
-            val jsFunCall =
-                irCall(jsFunCtor).apply {
-                    putValueArgument(0, irString(newFun.toString()))
-                }
-            outlinedFunction.annotations = listOf(jsFunCall)
+        backendContext.addOutlinedJsCode(outlinedFunction.symbol, newFun)
 
-            val outlinedFunctionCall = irCall(outlinedFunction).apply {
-                kotlinLocalsUsedInJs.forEachIndexed { index, local ->
+        return with(backendContext.createIrBuilder(container.symbol)) {
+            irCall(outlinedFunction).apply {
+                kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
                     putValueArgument(index, irGet(local))
                 }
-            }
-            return irComposite {
-                +outlinedFunction
-                +outlinedFunctionCall
             }
         }
     }
@@ -249,9 +240,9 @@ private class KotlinLocalsUsageCollector(
 ) : RecursiveJsVisitor() {
     private val functionStack = mutableListOf<JsFunction?>(null)
     private val processedNames = mutableSetOf<String>()
-    private val kotlinLocalsUsedInJs = mutableListOf<IrValueDeclaration>()
+    private val kotlinLocalsUsedInJs = mutableMapOf<JsName, IrValueDeclaration>()
 
-    val usedLocals: List<IrValueDeclaration>
+    val usedLocals: Map<JsName, IrValueDeclaration>
         get() = kotlinLocalsUsedInJs
 
     override fun visitFunction(x: JsFunction) {
@@ -267,7 +258,9 @@ private class KotlinLocalsUsageCollector(
         // We will also collect shadowed usages, but it is OK since the same shadowing will be present in generated JS code.
         // Keeping track of processed names to avoid registering them multiple times
         if (processedNames.add(name.ident) && !name.isDeclaredInsideJsCode()) {
-            kotlinLocalsUsedInJs.addIfNotNull(findValueDeclarationWithName(name.ident))
+            findValueDeclarationWithName(name.ident)?.let {
+                kotlinLocalsUsedInJs[name] = it
+            }
         }
     }
 

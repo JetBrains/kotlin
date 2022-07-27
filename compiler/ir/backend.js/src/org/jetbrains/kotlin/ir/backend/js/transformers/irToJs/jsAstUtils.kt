@@ -55,10 +55,7 @@ fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(Js
 fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, classNameRef)
 
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
-    val jsFun = declaration.getJsFunAnnotation()
-    if (jsFun != null) {
-        // JsFun internal annotation must have string containing valid function expression
-        val function = (parseJsCode(jsFun)!!.single() as JsExpressionStatement).expression as JsFunction
+    context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
         function.name = name
         return function
     }

@@ -1,8 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1283
 package foo
 
-// In the IR backend the injected JS code is outlined.
-// CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: test
 // CHECK_NOT_CALLED_IN_SCOPE: function=sum scope=test
 
 internal inline fun sum(x: Int, y: Int): Int = js("var a = x; a + y")

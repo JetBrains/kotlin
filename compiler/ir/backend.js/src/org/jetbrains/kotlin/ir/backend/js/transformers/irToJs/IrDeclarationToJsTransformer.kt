@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -14,6 +15,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         require(!declaration.isExpect)
+        if (declaration.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN) return JsEmpty
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 

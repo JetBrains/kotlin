@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -214,7 +213,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        if (context.checkIfJsCode(expression.symbol) || context.checkIfAnnotatedWithJsFunc(expression.symbol)) {
+        if (context.checkIfJsCode(expression.symbol) || context.checkIfHasAssociatedJsCode(expression.symbol)) {
             return JsCallTransformer(expression, context).generateExpression()
         }
         return translateCall(expression, context, this).withSource(expression, context)

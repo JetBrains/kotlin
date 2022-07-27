@@ -34,6 +34,6 @@ class JsPolyfills {
     private fun Sequence<IrDeclaration>.asImplementationList(): List<JsStatement> =
         map { it.getJsPolyfill()!! }
             .distinct()
-            .flatMap { parseJsCode(it).orEmpty() }
+            .flatMap { parseJsCode(it).orEmpty() } // FIXME!!!
             .toList()
 }

@@ -74,7 +74,7 @@ class JsCallTransformer(private val jsOrJsFuncCall: IrCall, private val context:
                     ?: compilationException("Cannot compute js code", jsOrJsFuncCall)
             }
 
-            context.checkIfAnnotatedWithJsFunc(jsOrJsFuncCall.symbol) ->
+            context.checkIfHasAssociatedJsCode(jsOrJsFuncCall.symbol) ->
                 FunctionWithJsFuncAnnotationInliner(jsOrJsFuncCall, context).generateResultStatement()
 
             else -> compilationException("`js` function call or function with @JsFunc annotation expected", jsOrJsFuncCall)
