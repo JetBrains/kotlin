@@ -121,6 +121,8 @@ extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz) 
 }
 
 static void setAssociatedTypeInfo(Class clazz, const TypeInfo* typeInfo) {
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
   // Note: [NSValue valueWithPointer:] uses autorelease (without possibility to eliminate this at the call site),
   // so using alloc-init sequence to avoid this.
   NSValue* value = [[NSValue alloc] initWithBytes:&typeInfo objCType:@encode(void*)];
@@ -315,6 +317,8 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
     return;
   }
 
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
   const TypeInfo* typeInfo = typeAdapter->kotlinTypeInfo;
   bool isClassForPackage = typeInfo == nullptr;
   if (!isClassForPackage) {
@@ -378,6 +382,8 @@ static void initTypeAdapters() {
 static void Kotlin_ObjCExport_initializeImpl() {
   RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector != nullptr, "unexpected initialization order");
   RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector != nullptr, "unexpected initialization order");
+
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   initTypeAdapters();
 
@@ -865,6 +871,8 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 }
 
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
   std_support::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
 
@@ -1052,6 +1060,8 @@ static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) 
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
+
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   int classIndex = (anonymousClassNextId++);
   std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();

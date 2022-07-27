@@ -135,6 +135,9 @@ void DisposeCString(char* cstring) {
 }
 
 ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
+    // Note: this function can be called in "Native" thread state. But this is fine:
+    //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
+    //   because the accessed object is off-heap, imitating permanent static objects.
     const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
     size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
     size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));

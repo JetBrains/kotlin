@@ -298,6 +298,8 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
     return createdClass;
   }
 
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
   Class newClass = allocateClass(info);
 
   RuntimeAssert(newClass != nullptr, "Failed to allocate Objective-C class");
