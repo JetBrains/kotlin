@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachme
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.utils.checkWithAttachment
 import org.jetbrains.kotlin.utils.errorWithAttachment
 
@@ -67,8 +68,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
                 is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry -> {
                     val klass = declaration.containingClass() ?: return emptyList()
                     if (klass.classId.isLocal) return null
-                    @OptIn(LookupTagInternals::class)
-                    klass.toFirRegularClass(declaration.moduleData.session)
+                    klass.toFirRegularClassFromSameSession(declaration.moduleData.session)
                 }
                 else -> return null
             }
@@ -84,6 +84,11 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
         it.withFirAttachment("containingClassFir", containingClass)
     }
     return if (!containingClass.isLocal) containingClass.collectForNonLocal().asReversed() else null
+}
+
+private fun ConeClassLikeLookupTag.toFirRegularClassFromSameSession(useSiteSession: FirSession): FirRegularClass? {
+    if (this is ConeClassLookupTagWithFixedSymbol) return symbol.fir as? FirRegularClass
+    return useSiteSession.firProvider.getFirClassifierByFqName(classId) as? FirRegularClass
 }
 
 fun FirDeclaration.collectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile =
