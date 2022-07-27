@@ -38,6 +38,9 @@ FILE: repeatedModifier.kt
         public final static fun valueOf(value: R|kotlin/String|): R|C| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<C>|
+            public get(): R|kotlin/enums/EnumEntries<C>|
+
     }
     public open class E : R|kotlin/Any| {
         public constructor(int: R|kotlin/Int| = Int(5)): R|E| {

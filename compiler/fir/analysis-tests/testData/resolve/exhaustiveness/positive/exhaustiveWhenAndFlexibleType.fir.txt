@@ -13,6 +13,9 @@ FILE: main.kt
         public final static fun valueOf(value: R|kotlin/String|): R|E| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
+
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval e: R|E!| = Q|Utils|.R|/Utils.getEnum|()

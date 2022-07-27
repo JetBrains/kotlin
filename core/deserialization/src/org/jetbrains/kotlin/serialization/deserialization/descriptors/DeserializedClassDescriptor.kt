@@ -54,7 +54,7 @@ class DeserializedClassDescriptor(
 
     private val staticScope =
         if (kind == ClassKind.ENUM_CLASS)
-            StaticScopeForKotlinEnum(c.storageManager, this, c.components.configuration.supportEnumEntries)
+            StaticScopeForKotlinEnum(c.storageManager, this)
         else
             MemberScope.Empty
 

@@ -56,6 +56,9 @@ FILE: conflictingOverloads.kt
         public final static fun valueOf(value: R|kotlin/String|): R|B| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
     }
     public final val u: R|kotlin/Int| = Int(10)
         public get(): R|kotlin/Int|

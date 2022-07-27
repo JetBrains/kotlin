@@ -16,4 +16,7 @@ public final enum class StaticMembersInEnum : R|kotlin/Enum<test/StaticMembersIn
     public final static fun valueOf(value: R|kotlin/String|): R|test/StaticMembersInEnum| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/StaticMembersInEnum>|
+        public get(): R|kotlin/enums/EnumEntries<test/StaticMembersInEnum>|
+
 }

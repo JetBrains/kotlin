@@ -83,6 +83,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<ExplicitlyMarkedEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExplicitlyMarkedEnum
     public final /*synthesized*/ fun values(): kotlin.Array<ExplicitlyMarkedEnum>
 }
@@ -112,6 +113,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<ExplicitlyMarkedEnumCustom>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExplicitlyMarkedEnumCustom
     public final /*synthesized*/ fun values(): kotlin.Array<ExplicitlyMarkedEnumCustom>
 }
@@ -133,6 +135,7 @@ public final enum class MarkedNameEnum : kotlin.Enum<MarkedNameEnum> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MarkedNameEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MarkedNameEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MarkedNameEnum>
 }
@@ -154,6 +157,7 @@ public final enum class SimpleEnum : kotlin.Enum<SimpleEnum> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SimpleEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SimpleEnum
     public final /*synthesized*/ fun values(): kotlin.Array<SimpleEnum>
 }

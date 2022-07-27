@@ -12,6 +12,9 @@ FILE: annotationOnDeclarationWithDifferentArguments.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final annotation class MyAnnotation : R|kotlin/Annotation| {
         public constructor(intValue: R|kotlin/Int|, stringValue: R|kotlin/String|, enumValue: R|SomeEnum|, kClasses: R|kotlin/Array<out kotlin/reflect/KClass<*>>|, annotation: R|MyOtherAnnotation|): R|MyAnnotation| {

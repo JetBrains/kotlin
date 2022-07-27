@@ -23,6 +23,9 @@ public final enum class Enum : R|kotlin/Enum<test/Enum>| {
     public final val c: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/Enum>|
+        public get(): R|kotlin/enums/EnumEntries<test/Enum>|
+
     private constructor(): R|test/Enum|
 
     public final static enum entry ENTRY1: R|test/Enum|

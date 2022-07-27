@@ -25,6 +25,4 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
     override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName)
 
     override val readDeserializedContracts: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts)
-
-    override val supportEnumEntries: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
 }

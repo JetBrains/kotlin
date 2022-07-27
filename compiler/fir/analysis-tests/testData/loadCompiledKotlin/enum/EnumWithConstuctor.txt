@@ -8,6 +8,9 @@ public final enum class En : R|kotlin/Enum<test/En>| {
     public final val b: R|kotlin/Boolean|
         public get(): R|kotlin/Boolean|
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/En>|
+        public get(): R|kotlin/enums/EnumEntries<test/En>|
+
     public final val i: R|kotlin/Int|
         public get(): R|kotlin/Int|
 

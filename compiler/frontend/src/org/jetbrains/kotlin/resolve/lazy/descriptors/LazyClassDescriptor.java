@@ -134,7 +134,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.kind = classLikeInfo.getClassKind();
         this.staticScope = kind == ClassKind.ENUM_CLASS ?
                            new StaticScopeForKotlinEnum(
-                                   storageManager, this, c.getLanguageVersionSettings().supportsFeature(LanguageFeature.EnumEntries)
+                                   storageManager, this
                            ) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();

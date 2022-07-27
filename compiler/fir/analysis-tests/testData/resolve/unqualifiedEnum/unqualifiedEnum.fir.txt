@@ -15,6 +15,9 @@ FILE: unqualifiedEnum.kt
         public final static fun valueOf(value: R|kotlin/String|): R|test/Sample| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<test/Sample>|
+            public get(): R|kotlin/enums/EnumEntries<test/Sample>|
+
     }
     public final fun trivial(s: R|test/Sample|): R|kotlin/Int| {
         ^trivial when (R|<local>/s|) {

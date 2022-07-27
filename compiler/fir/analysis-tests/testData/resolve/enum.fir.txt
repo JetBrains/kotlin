@@ -51,6 +51,9 @@ FILE: enum.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final enum class E : R|kotlin/Enum<E>| {
         public final static enum entry A: R|E|
@@ -63,6 +66,9 @@ FILE: enum.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|E| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
 
     }
     public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
@@ -108,5 +114,8 @@ FILE: enum.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|EnumClass| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }

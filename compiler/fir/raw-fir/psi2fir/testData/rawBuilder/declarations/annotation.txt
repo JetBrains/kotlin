@@ -49,6 +49,9 @@ FILE: annotation.kt
         public final static [ContainingClassKey=My] fun valueOf(value: R|kotlin/String|): R|My| {
         }
 
+        public final static [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
+            public get(): R|kotlin/enums/EnumEntries<My>|
+
     }
     @base() public? final? fun foo(@base() y: @base() Int): Int {
         @base() local final? fun bar(@base() z: @base() Int): <implicit> {

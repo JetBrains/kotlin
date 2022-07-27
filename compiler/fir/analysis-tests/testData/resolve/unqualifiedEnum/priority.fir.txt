@@ -14,6 +14,9 @@ FILE: first.kt
         public final static fun valueOf(value: R|kotlin/String|): R|first/First| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<first/First>|
+            public get(): R|kotlin/enums/EnumEntries<first/First>|
+
     }
     public final val THREE: R|first/First| = Q|first/First|.R|first/First.ONE|
         public get(): R|first/First|
@@ -32,6 +35,9 @@ FILE: second.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|second/Second| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<second/Second>|
+            public get(): R|kotlin/enums/EnumEntries<second/Second>|
 
     }
     public final val ONE: R|second/Second| = Q|second/Second|.R|second/Second.THREE|

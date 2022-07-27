@@ -481,10 +481,10 @@ class PSICallResolver(
             if (name != StandardNames.ENUM_ENTRIES || languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
                 return result
             }
-            return result.filter {
-                it !is PropertyDescriptor || !it.isSynthesized ||
-                        it.dispatchReceiverParameter != null || it.extensionReceiverParameter != null ||
-                        (it.containingDeclaration as? ClassDescriptor)?.kind != ClassKind.ENUM_CLASS
+            return result.filterNot {
+                it is PropertyDescriptor && it.isSynthesized &&
+                        it.dispatchReceiverParameter == null && it.extensionReceiverParameter == null &&
+                        (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
             }
         }
     }
