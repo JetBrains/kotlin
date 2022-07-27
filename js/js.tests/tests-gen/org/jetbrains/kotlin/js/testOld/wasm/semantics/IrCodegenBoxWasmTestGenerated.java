@@ -3312,6 +3312,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/classLiteral/bareArray.kt");
         }
 
+        @TestMetadata("classEquality.kt")
+        public void testClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/classEquality.kt");
+        }
+
+        @TestMetadata("primitiveClassEquality.kt")
+        public void testPrimitiveClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

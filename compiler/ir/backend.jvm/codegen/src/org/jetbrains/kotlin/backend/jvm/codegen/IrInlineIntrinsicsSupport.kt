@@ -44,7 +44,7 @@ class IrInlineIntrinsicsSupport(
         get() = context.state
 
     override fun putClassInstance(v: InstructionAdapter, type: IrType) {
-        ExpressionCodegen.generateClassInstance(v, type, typeMapper)
+        ExpressionCodegen.generateClassInstance(v, type, typeMapper, wrapPrimitives = false)
     }
 
     override fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker) {

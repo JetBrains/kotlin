@@ -5134,6 +5134,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("classEquality.kt")
+        public void testClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/classEquality.kt");
+        }
+
+        @Test
+        @TestMetadata("primitiveClassEquality.kt")
+        public void testPrimitiveClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
+        }
+
+        @Test
         @TestMetadata("primitiveKClassEquality.kt")
         public void testPrimitiveKClassEquality() throws Exception {
             runTest("compiler/testData/codegen/box/classLiteral/primitiveKClassEquality.kt");
