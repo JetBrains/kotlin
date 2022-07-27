@@ -110,7 +110,6 @@ class ComposerParamTransformer(
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun lower(module: IrModuleFragment) {
         currentModule = module
 
@@ -123,7 +122,6 @@ class ComposerParamTransformer(
         val typeRemapper = ComposerTypeRemapper(
             context,
             symbolRemapper,
-            typeTranslator,
             composerType
         )
         // for each declaration, we create a deepCopy transformer It is important here that we
@@ -132,8 +130,7 @@ class ComposerParamTransformer(
         val transformer = DeepCopyIrTreeWithSymbolsPreservingMetadata(
             context,
             symbolRemapper,
-            typeRemapper,
-            typeTranslator
+            typeRemapper
         ).also { typeRemapper.deepCopy = it }
         module.transformChildren(
             transformer,
