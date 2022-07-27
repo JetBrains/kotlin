@@ -793,6 +793,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/callableReference/constructor.kt");
         }
 
+        @TestMetadata("inlineCallableReference.kt")
+        public void testInlineCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
+        }
+
         @TestMetadata("innerGenericConstuctor.kt")
         public void testInnerGenericConstuctor() throws Exception {
             runTest("compiler/testData/codegen/boxInline/callableReference/innerGenericConstuctor.kt");

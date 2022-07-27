@@ -40863,6 +40863,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("inlineCallableReference.kt")
+            public void testInlineCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/inlineCallableReference.kt");
+            }
+
+            @Test
             @TestMetadata("innerGenericConstuctor.kt")
             public void testInnerGenericConstuctor() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/innerGenericConstuctor.kt");

@@ -395,7 +395,7 @@ class FunctionInlining(
                     for (index in 0 until irFunctionReference.typeArgumentsCount)
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }.implicitCastIfNeededTo(irCall.type)
-                return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
+                return super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
             }
 
             override fun visitElement(element: IrElement) = element.accept(this, null)
