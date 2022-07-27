@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -210,15 +207,7 @@ class MemberScopeTowerLevel(
         return processMembers(info, processor) { consumer ->
             withMemberCallLookup(lookupTracker, info) { lookupCtx ->
                 lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
-                this.processPropertiesByName(info.name) processor@{
-                    if (info.name == StandardNames.ENUM_ENTRIES &&
-                        !session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries) &&
-                        it is FirPropertySymbol &&
-                        it.callableId.callableName == StandardNames.ENUM_ENTRIES &&
-                        it.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
-                    ) {
-                        return@processor
-                    }
+                this.processPropertiesByName(info.name) {
                     lookupCtx.recordCallableMemberLookup(it)
                     consumer(it)
                 }
