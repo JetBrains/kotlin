@@ -26074,6 +26074,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt46969.kt")
+                public void testKt46969() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/kt46969.kt");
+                }
+
+                @Test
                 @TestMetadata("markedReceiverWithCapturedTypeArgument.kt")
                 public void testMarkedReceiverWithCapturedTypeArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/markedReceiverWithCapturedTypeArgument.kt");
