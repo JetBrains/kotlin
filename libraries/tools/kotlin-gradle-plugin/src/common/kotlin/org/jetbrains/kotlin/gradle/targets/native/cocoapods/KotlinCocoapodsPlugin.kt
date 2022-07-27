@@ -388,6 +388,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.license.set(cocoapodsExtension.license)
             it.authors.set(cocoapodsExtension.authors)
             it.summary.set(cocoapodsExtension.summary)
+            it.source.set(cocoapodsExtension.source)
             it.frameworkName = project.provider { cocoapodsExtension.frameworkNameInternal }
             it.ios = project.provider { cocoapodsExtension.ios }
             it.osx = project.provider { cocoapodsExtension.osx }
