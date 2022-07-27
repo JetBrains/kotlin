@@ -12,8 +12,7 @@ import org.gradle.api.internal.plugins.DslObject
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
-import org.jetbrains.kotlin.gradle.plugin.addConvention
+import org.jetbrains.kotlin.gradle.plugin.AndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
 
 internal const val IS_ANDROID_SOURCE_SET = "android-source-set"

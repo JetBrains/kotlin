@@ -6,19 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.SourceKind
-import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.*
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
@@ -31,11 +26,8 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
-import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
-import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
@@ -48,8 +40,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
-import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
-import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
@@ -720,7 +710,7 @@ internal open class KotlinAndroidPlugin(
 
     companion object {
         const val MINIMAL_SUPPORTED_AGP_VERSION = "3.6.4"
-        fun androidTargetHandler(): AbstractAndroidProjectHandler {
+        fun androidTargetHandler(): AndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
 
             if (androidPluginVersion != null) {
@@ -732,11 +722,7 @@ internal open class KotlinAndroidPlugin(
                 }
             }
 
-            val kotlinTools = KotlinConfigurationTools(
-                tasksProvider
-            )
-
-            return Android25ProjectHandler(kotlinTools)
+            return AndroidProjectHandler(KotlinConfigurationTools(tasksProvider))
         }
 
         internal fun Project.dynamicallyApplyWhenAndroidPluginIsApplied(
@@ -774,240 +760,6 @@ class KotlinConfigurationTools internal constructor(
     val kotlinTasksProvider: KotlinTasksProvider
 )
 
-abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTools: KotlinConfigurationTools) {
-    companion object {
-        fun kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget: KotlinAndroidTarget, androidSourceSetName: String) =
-            lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSetName)
-    }
-
-    protected val logger = Logging.getLogger(this.javaClass)
-
-    abstract fun getFlavorNames(variant: BaseVariant): List<String>
-    abstract fun getBuildTypeName(variant: BaseVariant): String
-    abstract fun getLibraryOutputTask(variant: BaseVariant): Any?
-
-    protected open fun checkVariantIsValid(variant: BaseVariant) = Unit
-
-    protected open fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) = Unit
-
-    protected abstract fun wireKotlinTasks(
-        project: Project,
-        compilation: KotlinJvmAndroidCompilation,
-        androidPlugin: BasePlugin,
-        androidExt: BaseExtension,
-        variantData: BaseVariant,
-        javaTask: TaskProvider<out AbstractCompile>,
-        kotlinTask: TaskProvider<out KotlinCompile>
-    )
-
-    fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
-        syncKotlinAndAndroidSourceSets(kotlinAndroidTarget)
-
-        val project = kotlinAndroidTarget.project
-        val ext = project.extensions.getByName("android") as BaseExtension
-
-        val kotlinOptions = KotlinJvmOptionsImpl()
-        kotlinOptions.noJdk = true
-        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
-
-        val plugin = androidPluginIds
-            .asSequence()
-            .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
-            .firstOrNull()
-            ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
-                                                    "plugins to be applied to the project:\n\t" +
-                                                    androidPluginIds.joinToString("\n\t") { "* $it" })
-
-        project.forEachVariant { variant ->
-            val variantName = getVariantName(variant)
-
-            // Create the compilation and configure it first, then add to the compilations container. As this code is executed
-            // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
-            // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
-            kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
-                compilation.androidVariant = variant
-
-                setUpDependencyResolution(variant, compilation)
-
-                preprocessVariant(variant, compilation, project, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
-
-                @Suppress("UNCHECKED_CAST")
-                (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
-            }
-
-        }
-
-        project.whenEvaluated {
-            forEachVariant { variant ->
-                val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                postprocessVariant(variant, compilation, project, ext, plugin)
-
-                val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
-                subpluginEnvironment.addSubpluginOptions(project, compilation)
-            }
-            checkAndroidAnnotationProcessorDependencyUsage(project)
-
-            addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
-        }
-
-        project.includeKotlinToolingMetadataInApk()
-
-        addAndroidUnitTestTasksAsDependenciesToAllTest(project)
-    }
-
-    /**
-     * The Android variants have their configurations extendsFrom relation set up in a way that only some of the configurations of the
-     * variants propagate the dependencies from production variants to test ones. To make this dependency propagation work for the Kotlin
-     * source set dependencies as well, we need to add them to the Android source sets' api/implementation-like configurations,
-     * not just the classpath-like configurations of the variants.
-     */
-    private fun addKotlinDependenciesToAndroidSourceSets(
-        project: Project,
-        kotlinAndroidTarget: KotlinAndroidTarget
-    ) {
-        fun addDependenciesToAndroidSourceSet(
-            androidSourceSet: AndroidSourceSet,
-            apiConfigurationName: String,
-            implementationConfigurationName: String,
-            compileOnlyConfigurationName: String,
-            runtimeOnlyConfigurationName: String
-        ) {
-            if (project.configurations.findByName(androidSourceSet.apiConfigurationName) != null) {
-                project.addExtendsFromRelation(androidSourceSet.apiConfigurationName, apiConfigurationName)
-            } else {
-                // If any dependency is added to this configuration, report an error:
-                project.configurations.getByName(apiConfigurationName).dependencies.all {
-                    throw InvalidUserCodeException(
-                        "API dependencies are not allowed for Android source set ${androidSourceSet.name}. " +
-                                "Please use an implementation dependency instead."
-                    )
-                }
-            }
-            project.addExtendsFromRelation(androidSourceSet.implementationConfigurationName, implementationConfigurationName)
-            project.addExtendsFromRelation(androidSourceSet.compileOnlyConfigurationName, compileOnlyConfigurationName)
-            project.addExtendsFromRelation(androidSourceSet.runtimeOnlyConfigurationName, runtimeOnlyConfigurationName)
-        }
-
-        /** First, just add the dependencies from Kotlin source sets created for the Android source sets,
-         * see [org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.configureTarget]
-         */
-        (project.extensions.getByName("android") as BaseExtension).sourceSets.forEach { androidSourceSet ->
-            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, androidSourceSet.name)
-            project.kotlinExtension.sourceSets.findByName(kotlinSourceSetName)?.let { kotlinSourceSet ->
-                addDependenciesToAndroidSourceSet(
-                    androidSourceSet,
-                    kotlinSourceSet.apiConfigurationName,
-                    kotlinSourceSet.implementationConfigurationName,
-                    kotlinSourceSet.compileOnlyConfigurationName,
-                    kotlinSourceSet.runtimeOnlyConfigurationName
-                )
-            }
-        }
-    }
-
-    private fun addAndroidUnitTestTasksAsDependenciesToAllTest(project: Project) {
-        val allTestTaskName = project.kotlinTestRegistry.allTestsTaskName
-        project.tasks.matching { it.name == allTestTaskName }.configureEach { task ->
-            task.dependsOn(project.provider {
-                val androidUnitTestTasks = mutableListOf<Any>()
-                forEachVariant(project) { variant ->
-                    if (variant is UnitTestVariant) {
-                        // There's no API for getting the Android unit test tasks from the variant, so match them by name:
-                        androidUnitTestTasks.add(project.provider {
-                            project.tasks.matching { it.name == lowerCamelCaseName("test", variant.name) }
-                        })
-                    }
-                }
-                androidUnitTestTasks
-            })
-        }
-    }
-
-    private fun preprocessVariant(
-        variantData: BaseVariant,
-        compilation: KotlinJvmAndroidCompilation,
-        project: Project,
-        rootKotlinOptions: KotlinJvmOptionsImpl,
-        tasksProvider: KotlinTasksProvider
-    ) {
-        // This function is called before the variantData is completely filled by the Android plugin.
-        // The fine details of variantData, such as AP options or Java sources, should not be trusted here.
-
-        checkVariantIsValid(variantData)
-        val variantDataName = getVariantName(variantData)
-        logger.kotlinDebug("Process variant [$variantDataName]")
-
-        val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
-
-        val configAction = KotlinCompileConfig(compilation)
-        configAction.configureTask { task ->
-            task.parentKotlinOptions.value(rootKotlinOptions).disallowChanges()
-            task.useModuleDetection.value(true).disallowChanges()
-            // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))
-            task.description = "Compiles the $variantDataName kotlin."
-        }
-        tasksProvider.registerKotlinJVMTask(project, compilation.compileKotlinTaskName, compilation.kotlinOptions, configAction)
-
-        // Register the source only after the task is created, because the task is required for that:
-        compilation.source(defaultSourceSet)
-
-        compilation.androidVariant.forEachKotlinSourceSet(
-            compilation.target as KotlinAndroidTarget,
-            project.kotlinExtension
-        ) { kotlinSourceSet ->
-            compilation.source(kotlinSourceSet)
-        }
-    }
-
-    private fun postprocessVariant(
-        variantData: BaseVariant,
-        compilation: KotlinJvmAndroidCompilation,
-        project: Project,
-        androidExt: BaseExtension,
-        androidPlugin: BasePlugin
-    ) {
-
-        getTestedVariantData(variantData)?.let { testedVariant ->
-            val testedVariantName = getVariantName(testedVariant)
-            val testedCompilation = compilation.target.compilations.getByName(testedVariantName)
-            compilation.associateWith(testedCompilation)
-        }
-
-        val javaTask = variantData.getJavaTaskProvider()
-        val kotlinTask = compilation.compileKotlinTaskProvider
-        compilation.androidVariant.forEachJavaSourceDir { sources ->
-            kotlinTask.configure {
-                it.setSource(sources.dir)
-                it.dependsOn(sources)
-            }
-        }
-        wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
-    }
-}
-
-internal inline fun BaseVariant.forEachKotlinSourceSet(
-    kotlinAndroidTarget: KotlinAndroidTarget,
-    kotlinExtension: KotlinProjectExtension,
-    action: (KotlinSourceSet) -> Unit
-) {
-    sourceSets
-        .mapNotNull { provider ->
-            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, provider.name)
-            kotlinExtension.sourceSets.findByName(kotlinSourceSetName)
-        }
-        .forEach(action)
-}
-
-internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(action: (SourceDirectorySet) -> Unit) {
-    sourceSets
-        .mapNotNull { it.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME) }
-        .forEach(action)
-}
-
-internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
-    getSourceFolders(SourceKind.JAVA).forEach(action)
-}
 
 internal fun ifKaptEnabled(project: Project, block: () -> Unit) {
     var triggered = false
