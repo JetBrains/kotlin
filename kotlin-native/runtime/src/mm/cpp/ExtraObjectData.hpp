@@ -44,7 +44,7 @@ public:
     void Uninstall() noexcept;
 
 #ifdef KONAN_OBJC_INTEROP
-    void** GetAssociatedObjectLocation() noexcept { return &associatedObject_; }
+    std::atomic<void*>& AssociatedObject() noexcept { return associatedObject_; }
 #endif
     bool HasAssociatedObject() noexcept;
     void DetachAssociatedObject() noexcept;
@@ -89,7 +89,7 @@ private:
     std::atomic<uint32_t> flags_ = 0;
 
 #ifdef KONAN_OBJC_INTEROP
-    void* associatedObject_ = nullptr;
+    std::atomic<void*> associatedObject_ = nullptr;
 #endif
 
     std::atomic<ObjHeader*> weakReferenceCounterOrBaseObject_;

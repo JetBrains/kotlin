@@ -12,33 +12,6 @@ ALWAYS_INLINE inline T atomicAdd(volatile T* where, T what) {
 #endif
 }
 
-template <typename T>
-ALWAYS_INLINE inline T compareAndSwap(volatile T* where, T expectedValue, T newValue) {
-#ifndef KONAN_NO_THREADS
-  return __sync_val_compare_and_swap(where, expectedValue, newValue);
-#else
-   T oldValue = *where;
-   if (oldValue == expectedValue) {
-        *where = newValue;
-   }
-   return oldValue;
-#endif
-}
-
-template <typename T>
-ALWAYS_INLINE inline bool compareAndSet(volatile T* where, T expectedValue, T newValue) {
-#ifndef KONAN_NO_THREADS
-  return __sync_bool_compare_and_swap(where, expectedValue, newValue);
-#else
-   T oldValue = *where;
-   if (oldValue == expectedValue) {
-        *where = newValue;
-        return true;
-   }
-   return false;
-#endif
-}
-
 #pragma clang diagnostic push
 
 #if (KONAN_ANDROID || KONAN_IOS || KONAN_WATCHOS || KONAN_LINUX) && (KONAN_ARM32 || KONAN_X86 || KONAN_MIPS32 || KONAN_MIPSEL32)
@@ -49,24 +22,77 @@ ALWAYS_INLINE inline bool compareAndSet(volatile T* where, T expectedValue, T ne
 #pragma clang diagnostic ignored "-Watomic-alignment"
 #endif
 
+// as if (std::atomic<T> where).compare_exchange_strong(expectedValue, newValue)
 template <typename T>
+ALWAYS_INLINE inline bool compareExchange(volatile T& where, T &expectedValue, T newValue) {
+#ifndef KONAN_NO_THREADS
+#ifdef KONAN_NO_64BIT_ATOMIC
+    static_assert(sizeof(T) <= 4);
+#endif
+    return __atomic_compare_exchange_n(&where, &expectedValue, newValue, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    T oldValue = where;
+    if (oldValue == expectedValue) {
+        where = newValue;
+        return true;
+    }
+    expectedValue = oldValue;
+    return false;
+#endif
+}
+
+template <typename T>
+ALWAYS_INLINE inline T compareAndSwap(volatile T* where, T expectedValue, T newValue) {
+    compareExchange(*where, expectedValue, newValue);
+    return expectedValue;
+}
+
+template <typename T>
+ALWAYS_INLINE inline bool compareAndSet(volatile T* where, T expectedValue, T newValue) {
+    return compareExchange(*where, expectedValue, newValue);
+}
+
+
+template <int model = __ATOMIC_SEQ_CST, typename T>
 ALWAYS_INLINE inline void atomicSet(volatile T* where, T what) {
 #ifndef KONAN_NO_THREADS
-  __atomic_store(where, &what, __ATOMIC_SEQ_CST);
+#ifdef KONAN_NO_64BIT_ATOMIC
+  static_assert(sizeof(T) <= 4);
+#endif
+  __atomic_store(where, &what, model);
 #else
   *where = what;
 #endif
 }
 
 template <typename T>
-ALWAYS_INLINE inline T atomicGet(volatile T* where) {
+ALWAYS_INLINE inline void atomicSetRelease(volatile T* where, T what) {
+    return atomicSet<__ATOMIC_RELEASE>(where, what);
+}
+
+
+template <int model = __ATOMIC_SEQ_CST, typename T>
+ALWAYS_INLINE inline T atomicGet(volatile const T* where) {
 #ifndef KONAN_NO_THREADS
+#ifdef KONAN_NO_64BIT_ATOMIC
+  static_assert(sizeof(T) <= 4);
+#endif
   T what;
-  __atomic_load(where, &what, __ATOMIC_SEQ_CST);
+  __atomic_load(where, &what, model);
   return what;
 #else
   return *where;
 #endif
+}
+
+template <typename T>
+ALWAYS_INLINE inline T atomicGetAcquire(volatile const T* where) {
+    return atomicGet<__ATOMIC_ACQUIRE>(where);
+}
+
+template <typename T>
+ALWAYS_INLINE inline T atomicGetRelaxed(volatile const T* where) {
+    return atomicGet<__ATOMIC_RELAXED>(where);
 }
 
 #pragma clang diagnostic pop

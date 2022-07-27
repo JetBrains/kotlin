@@ -579,15 +579,21 @@ internal abstract class FunctionGenerationContext(
 
     fun param(index: Int): LLVMValueRef = LLVMGetParam(this.function, index)!!
 
-    fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
-        val result = LLVMBuildLoad(builder, value, name)!!
+    fun load(address: LLVMValueRef, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
+        val value = LLVMBuildLoad(builder, address, name)!!
+        if (memoryOrder != null) {
+            LLVMSetOrdering(value, memoryOrder)
+        }
         // Use loadSlot() API for that.
         assert(!isObjectRef(value))
-        return result
+        return value
     }
 
-    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = ""): LLVMValueRef {
+    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "", memoryOrder: LLVMAtomicOrdering? = null): LLVMValueRef {
         val value = LLVMBuildLoad(builder, address, name)!!
+        if (memoryOrder != null) {
+            LLVMSetOrdering(value, memoryOrder)
+        }
         if (isObjectRef(value) && isVar) {
             val slot = resultSlot ?: alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
@@ -1138,7 +1144,7 @@ internal abstract class FunctionGenerationContext(
 
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
         val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
-        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr)
+        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         // Clear two lower bits.
         val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
@@ -1317,7 +1323,7 @@ internal abstract class FunctionGenerationContext(
         }
         val bbInit = basicBlock("label_init", startLocationInfo, endLocationInfo)
         val bbExit = basicBlock("label_continue", startLocationInfo, endLocationInfo)
-        val objectVal = loadSlot(objectPtr, false)
+        val objectVal = loadSlot(objectPtr, false, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
         val objectInitialized = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
         val bbCurrent = currentBlock
         condBr(objectInitialized, bbExit, bbInit)

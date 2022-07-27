@@ -58,19 +58,21 @@ ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
 
 #ifdef KONAN_OBJC_INTEROP
 
-void* ObjHeader::GetAssociatedObject() {
-    if (!has_meta_object()) {
+void* ObjHeader::GetAssociatedObject() const {
+    auto metaObject = meta_object_or_null();
+    if (metaObject == nullptr) {
         return nullptr;
     }
-    return *GetAssociatedObjectLocation();
-}
-
-void** ObjHeader::GetAssociatedObjectLocation() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetAssociatedObjectLocation();
+    return mm::ExtraObjectData::FromMetaObjHeader(metaObject).AssociatedObject().load(std::memory_order_acquire);
 }
 
 void ObjHeader::SetAssociatedObject(void* obj) {
-    *GetAssociatedObjectLocation() = obj;
+    return mm::ExtraObjectData::FromMetaObjHeader(meta_object()).AssociatedObject().store(obj, std::memory_order_release);
+}
+
+void* ObjHeader::CasAssociatedObject(void* expectedObj, void* obj) {
+    mm::ExtraObjectData::FromMetaObjHeader(meta_object()).AssociatedObject().compare_exchange_strong(expectedObj, obj);
+    return expectedObj;
 }
 
 #endif // KONAN_OBJC_INTEROP

@@ -38308,6 +38308,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @UseExtTestCaseGroupProvider()
+        public class TopLevelInitializtion {
+            @Test
+            public void testAllFilesPresentInTopLevelInitializtion() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("concurrent.kt")
+            public void testConcurrent() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/concurrent.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")

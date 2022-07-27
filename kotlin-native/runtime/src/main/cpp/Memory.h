@@ -59,35 +59,38 @@ struct ObjHeader {
       }
   }
 
+  TypeInfo* typeInfoOrMetaRelaxed() const { return atomicGetRelaxed(&typeInfoOrMeta_);}
+  TypeInfo* typeInfoOrMetaAcquire() const { return atomicGetAcquire(&typeInfoOrMeta_);}
+
   const TypeInfo* type_info() const {
-    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
+    return clearPointerBits(typeInfoOrMetaAcquire(), OBJECT_TAG_MASK)->typeInfo_;
   }
 
   bool has_meta_object() const {
-      return AsMetaObject(typeInfoOrMeta_) != nullptr;
+      return meta_object_or_null() != nullptr;
   }
 
   MetaObjHeader* meta_object() {
-      if (auto* metaObject = AsMetaObject(typeInfoOrMeta_)) {
+      if (auto* metaObject = AsMetaObject(typeInfoOrMetaAcquire())) {
           return metaObject;
       }
       return createMetaObject(this);
   }
 
-  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMeta_); }
+  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMetaAcquire()); }
 
   ALWAYS_INLINE ObjHeader* GetWeakCounter();
   ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
 
 
 #ifdef KONAN_OBJC_INTEROP
-  ALWAYS_INLINE void* GetAssociatedObject();
-  ALWAYS_INLINE void** GetAssociatedObjectLocation();
+  ALWAYS_INLINE void* GetAssociatedObject() const;
   ALWAYS_INLINE void SetAssociatedObject(void* obj);
+  ALWAYS_INLINE void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
   inline bool local() const {
-    unsigned bits = getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
+    unsigned bits = getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK);
     return (bits & (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER)) ==
         (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
   }
@@ -98,10 +101,10 @@ struct ObjHeader {
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
-  inline bool heap() const { return getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK) == 0; }
+  inline bool heap() const { return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == 0; }
 
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);
