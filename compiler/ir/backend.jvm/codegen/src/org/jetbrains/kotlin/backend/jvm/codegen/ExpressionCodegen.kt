@@ -1390,21 +1390,22 @@ class ExpressionCodegen(
         return MaterialValue(this@ExpressionCodegen, JAVA_STRING_TYPE, context.irBuiltIns.stringType)
     }
 
-    override fun visitGetClass(expression: IrGetClass, data: BlockInfo) =
-        generateClassLiteralReference(expression, true, data)
+    override fun visitGetClass(expression: IrGetClass, data: BlockInfo): PromisedValue =
+        generateClassLiteralReference(expression, wrapIntoKClass = true, wrapPrimitives = false, data = data)
 
-    override fun visitClassReference(expression: IrClassReference, data: BlockInfo) =
-        generateClassLiteralReference(expression, true, data)
+    override fun visitClassReference(expression: IrClassReference, data: BlockInfo): PromisedValue =
+        generateClassLiteralReference(expression, wrapIntoKClass = true, wrapPrimitives = false, data = data)
 
     fun generateClassLiteralReference(
         classReference: IrExpression,
         wrapIntoKClass: Boolean,
+        wrapPrimitives: Boolean,
         data: BlockInfo
-    ): PromisedValue {
+    ): MaterialValue {
         when (classReference) {
             is IrGetClass -> {
                 // TODO transform one sort of access into the other?
-                JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
+                JavaClassProperty.invokeWith(classReference.argument.accept(this, data), wrapPrimitives)
             }
             is IrClassReference -> {
                 val classType = classReference.classType
@@ -1416,7 +1417,7 @@ class ExpressionCodegen(
                     }
                 }
 
-                generateClassInstance(mv, classType, typeMapper)
+                generateClassInstance(mv, classType, typeMapper, wrapPrimitives)
             }
             else -> {
                 throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
@@ -1521,9 +1522,9 @@ class ExpressionCodegen(
         get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
 
     companion object {
-        internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper) {
+        internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
             val asmType = typeMapper.mapType(classType)
-            if (classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
+            if (wrapPrimitives || classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
                 v.aconst(typeMapper.boxType(classType))
             } else {
                 v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")

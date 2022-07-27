@@ -3687,6 +3687,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/classLiteral/bareArray.kt");
         }
 
+        @Test
+        @TestMetadata("classEquality.kt")
+        public void testClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/classEquality.kt");
+        }
+
+        @Test
+        @TestMetadata("primitiveClassEquality.kt")
+        public void testPrimitiveClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
         @TestDataPath("$PROJECT_ROOT")

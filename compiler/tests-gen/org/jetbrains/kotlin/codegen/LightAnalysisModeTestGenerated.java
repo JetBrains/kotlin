@@ -4402,6 +4402,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/classLiteral/bareArray.kt");
         }
 
+        @TestMetadata("classEquality.kt")
+        public void testClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/classEquality.kt");
+        }
+
+        @TestMetadata("primitiveClassEquality.kt")
+        public void testPrimitiveClassEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/classLiteral/primitiveClassEquality.kt");
+        }
+
         @TestMetadata("primitiveKClassEquality.kt")
         public void testPrimitiveKClassEquality() throws Exception {
             runTest("compiler/testData/codegen/box/classLiteral/primitiveKClassEquality.kt");

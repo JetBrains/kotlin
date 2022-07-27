@@ -18,15 +18,10 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isEnumEntry
-import org.jetbrains.kotlin.ir.util.isIntegerConst
-import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -110,15 +105,21 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
 
         // We can use reference equality for enums, otherwise we fall back to boxed equality.
-        val aIsEnum = a.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
-        val bIsEnum = b.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
-        return if (aIsEnum || bIsEnum) {
-            referenceEquals(a, b, leftType, codegen, data)
-        } else {
-            a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
-            b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
-            genAreEqualCall(codegen.mv)
-            MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
+        return when {
+            a.isEnumValue || b.isEnumValue ->
+                referenceEquals(a, b, leftType, codegen, data)
+
+            a.isClassValue && b.isClassValue -> {
+                val leftValue = codegen.generateClassLiteralReference(a, wrapIntoKClass = false, wrapPrimitives = true, data = data)
+                val rightValue = codegen.generateClassLiteralReference(b, wrapIntoKClass = false, wrapPrimitives = true, data = data)
+                BooleanComparison(operator, leftValue, rightValue)
+            }
+            else -> {
+                a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
+                b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
+                genAreEqualCall(codegen.mv)
+                MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
+            }
         }
     }
 
@@ -139,6 +140,12 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             BooleanComparison(operator, leftValue, rightValue)
         }
     }
+
+    private val IrExpression.isEnumValue: Boolean
+        get() = type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
+
+    private val IrExpression.isClassValue: Boolean
+        get() = this is IrGetClass || this is IrClassReference
 }
 
 

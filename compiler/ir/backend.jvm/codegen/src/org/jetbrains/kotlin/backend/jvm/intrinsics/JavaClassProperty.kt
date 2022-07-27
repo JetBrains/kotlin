@@ -30,7 +30,7 @@ object JavaClassProperty : IntrinsicMethod() {
         value.mv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
     }
 
-    fun invokeWith(value: PromisedValue) =
+    fun invokeWith(value: PromisedValue, wrapPrimitives: Boolean) =
         when {
             value.type == Type.VOID_TYPE ->
                 invokeGetClass(value.materializedAt(AsmTypes.UNIT_TYPE, value.codegen.context.irBuiltIns.unitType))
@@ -38,14 +38,18 @@ object JavaClassProperty : IntrinsicMethod() {
                 invokeGetClass(value.materializedAtBoxed(value.irType))
             isPrimitive(value.type) -> {
                 value.discard()
-                value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
+                if (wrapPrimitives) {
+                    value.mv.aconst(boxType(value.type))
+                } else {
+                    value.mv.getstatic(boxType(value.type).internalName, "TYPE", "Ljava/lang/Class;")
+                }
             }
             else ->
                 invokeGetClass(value.materialized())
         }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        invokeWith(expression.extensionReceiver!!.accept(codegen, data))
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+        invokeWith(expression.extensionReceiver!!.accept(codegen, data), wrapPrimitives = false)
         return with(codegen) { expression.onStack }
     }
 }
