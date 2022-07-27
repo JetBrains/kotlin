@@ -22,9 +22,7 @@ extern "C" const void **Kotlin_callsCheckerKnownFunctions = nullptr;
 extern "C" int Kotlin_callsCheckerKnownFunctionsCount = 0;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
-        "\x01_close",
         "\x01_mprotect",
-        "close",
         "mprotect",
         "posix_memalign",
 
