@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.*
 

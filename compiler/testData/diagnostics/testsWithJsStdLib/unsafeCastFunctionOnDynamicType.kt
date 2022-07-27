@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 
 fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>().also {

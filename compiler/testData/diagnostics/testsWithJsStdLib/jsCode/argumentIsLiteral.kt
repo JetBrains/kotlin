@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 val a = "1"
 
 fun nonConst(): String = "1"

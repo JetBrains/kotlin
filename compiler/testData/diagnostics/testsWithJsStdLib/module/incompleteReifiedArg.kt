@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 inline fun <T, reified K> bar() {}
 
 fun foo() {

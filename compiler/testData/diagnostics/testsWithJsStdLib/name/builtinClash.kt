@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// FIR_IDENTICAL
 class C {
     class <!JS_BUILTIN_NAME_CLASH!>prototype<!>
 
