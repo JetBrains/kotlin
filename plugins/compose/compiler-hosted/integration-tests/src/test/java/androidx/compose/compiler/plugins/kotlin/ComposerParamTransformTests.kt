@@ -380,13 +380,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example)<conten...>:Test.kt#2487m")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
               content(%composer, 0b1110 and %changed)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
               %composer.endReplaceableGroup()
             }
             @NonRestartableComposable
@@ -401,13 +395,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "C:Test.kt#2487m")
                 if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
                   Unit
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                 } else {
                   %composer.skipToGroupEnd()
                 }
@@ -670,28 +658,16 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                       %composer.startReplaceableGroup(<>)
                       sourceInformation(%composer, "C<emit>:Test.kt#2487m")
                       if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                        if (isTraceInProgress()) {
-                          traceEventStart(<>, %changed, -1, <>)
-                        }
                         emit({ %composer: Composer?, %changed: Int ->
                           %composer.startReplaceableGroup(<>)
                           sourceInformation(%composer, "C<compos...>:Test.kt#2487m")
                           if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                            if (isTraceInProgress()) {
-                              traceEventStart(<>, %changed, -1, <>)
-                            }
                             composable(%composer, 0b1110 and %dirty)
-                            if (isTraceInProgress()) {
-                              traceEventEnd()
-                            }
                           } else {
                             %composer.skipToGroupEnd()
                           }
                           %composer.endReplaceableGroup()
                         }, %composer, 0)
-                        if (isTraceInProgress()) {
-                          traceEventEnd()
-                        }
                       } else {
                         %composer.skipToGroupEnd()
                       }
@@ -712,13 +688,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(emit)<compos...>:Test.kt#2487m")
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
                   composable(%composer, 0b1110 and %changed)
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                   %composer.endReplaceableGroup()
                 }
             """.trimIndent()

@@ -2592,24 +2592,12 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
               if (%default and 0b0001 !== 0) {
                 label = ""
               }
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
               c(<this>, label, %composer, 0b1110 and %changed or 0b01110000 and %changed)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
             @Composable
             @ExplicitGroupsComposable
             fun c(foo: Foo, label: String, %composer: Composer?, %changed: Int) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
               print(label)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             }
         """
     )
@@ -3345,13 +3333,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
                 get() {
                   sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
                   val tmp0 = %composer.hashCode()
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                   sourceInformationMarkerEnd(%composer)
                   return tmp0
                 }
@@ -3932,13 +3914,7 @@ class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransfomr
               val current: Int
                 @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
                 get() {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
                   val tmp0 = %composer.hashCode()
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
                   return tmp0
                 }
               @ReadOnlyComposable

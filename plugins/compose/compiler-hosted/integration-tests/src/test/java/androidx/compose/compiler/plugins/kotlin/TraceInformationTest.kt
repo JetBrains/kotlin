@@ -85,4 +85,85 @@ class TraceInformationTest : ComposeIrTransformTest() {
         """,
         truncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY
     )
+
+    @Test
+    fun testInlineFunctionsDonotGenerateTraceMarkers() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            inline fun Wrapper(content: @Composable () -> Unit) = content()
+
+            @Composable
+            fun Test(condition: Boolean) {
+                A()
+                Wrapper {
+                    A()
+                    if (!condition) return
+                    A()
+                }
+                A()
+            }
+        """,
+        """
+            @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
+            fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")
+              content(%composer, 0b1110 and %changed)
+              %composer.endReplaceableGroup()
+            }
+            @Composable
+            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<A()>,<Wrappe...>,<A()>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                A(%composer, 0)
+                Wrapper({ %composer: Composer?, %changed: Int ->
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
+                  if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    A(%composer, 0)
+                    if (!condition) {
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
+                      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                        Test(condition, %composer, %changed or 0b0001)
+                      }
+                      return
+                    }
+                    A(%composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, 0)
+                A(%composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(condition, %composer, %changed or 0b0001)
+              }
+            }
+        """,
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun A() { }
+        """
+    )
 }

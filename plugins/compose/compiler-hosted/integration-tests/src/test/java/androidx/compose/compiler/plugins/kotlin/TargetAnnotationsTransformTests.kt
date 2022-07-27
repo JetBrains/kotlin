@@ -235,13 +235,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C<Text("...>:Test.kt")
               if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
                 Text("test", %composer, 0b0110)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -918,29 +912,17 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
           if (%default and 0b0001 !== 0) {
             modifier = Companion
           }
-          if (isTraceInProgress()) {
-            traceEventStart(<>, %changed, -1, <>)
-          }
           val tmp0_measurePolicy = localBoxMeasurePolicy
           Layout({ %composer: Composer?, %changed: Int ->
             %composer.startReplaceableGroup(<>)
             sourceInformation(%composer, "C<conten...>:Test.kt")
             if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
               content(LocalBoxScopeInstance, %composer, 0b0110 or 0b01110000 and %changed)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
             } else {
               %composer.skipToGroupEnd()
             }
             %composer.endReplaceableGroup()
           }, modifier, tmp0_measurePolicy, %composer, 0b000110000000 or 0b01110000 and %changed shl 0b0011, 0)
-          if (isTraceInProgress()) {
-            traceEventEnd()
-          }
           %composer.endReplaceableGroup()
         }
         """
@@ -1010,13 +992,7 @@ class TargetAnnotationsTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C:Test.kt")
               if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
                 Unit
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
               } else {
                 %composer.skipToGroupEnd()
               }
