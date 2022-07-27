@@ -2018,7 +2018,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN,
-            "Calls having a form of ''suspend fun'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the argument of the call with parens: ''suspend(fun() { ... })''"
+            "Calls having a form of ''suspend fun'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Surround the argument of the call with parens: ''suspend(fun() { ... })''." +
+            " See https://youtrack.jetbrains.com/issue/KT-49264"
         )
         map.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited")
 

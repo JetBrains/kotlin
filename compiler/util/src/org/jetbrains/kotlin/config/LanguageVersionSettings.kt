@@ -256,7 +256,6 @@ enum class LanguageFeature(
     ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes(KOTLIN_1_8, kind = BUG_FIX), // KT-29168
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_8, kind = BUG_FIX),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
-    ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
     SynchronizedSuspendError(KOTLIN_1_8),
     EnableDfaWarningsInK2(KOTLIN_1_8, kind = OTHER), // KT-50965
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
@@ -282,6 +281,7 @@ enum class LanguageFeature(
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, kind = BUG_FIX), // KT-52502
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_1_9, kind = BUG_FIX), // KT-47986
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
+    ModifierNonBuiltinSuspendFunError(KOTLIN_1_9),
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
