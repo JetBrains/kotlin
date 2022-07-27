@@ -936,7 +936,6 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("KT-46651: kapt is tracking source files properly with configuration cache enabled")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
     fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
         project(
@@ -1005,6 +1004,14 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("assemble") {
                 assertTasksSkipped(":kaptGenerateStubsKotlin")
             }
+        }
+    }
+
+    @DisplayName("KT-52761: generated sources attached to compile task are also used by generate stubs task")
+    @GradleTest
+    fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
+        project("generatedSources".withPrefix, gradleVersion) {
+            build("assemble")
         }
     }
 }
