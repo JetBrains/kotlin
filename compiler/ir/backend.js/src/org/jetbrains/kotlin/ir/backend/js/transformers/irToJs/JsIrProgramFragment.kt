@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
+import java.io.File
 
 class JsIrProgramFragment(val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
@@ -128,7 +129,14 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
         fun import(moduleHeader: JsIrModuleHeader): JsName {
             return importedModules.getOrPut(moduleHeader) {
                 val jsModuleName = JsName(moduleHeader.moduleName, false)
-                JsImportedModule(moduleHeader.externalModuleName, jsModuleName, null, relativeRequirePath)
+                val relativeRequirePath = relativeRequirePath(moduleHeader)
+
+                JsImportedModule(
+                    moduleHeader.externalModuleName,
+                    jsModuleName,
+                    null,
+                    relativeRequirePath
+                )
             }.internalName
         }
 
@@ -148,6 +156,21 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
             if (it.hasJsExports) import(it) else null
         }
         return CrossModuleReferences(importedModules.values.toList(), transitiveExport, exportNames, resultImports)
+    }
+
+    private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String? {
+        if (!this.relativeRequirePath) return null
+
+        val parentMain = File(header.externalModuleName).parentFile
+
+        if (parentMain == null) return "./${moduleHeader.externalModuleName}"
+
+        val relativePath = File(moduleHeader.externalModuleName)
+            .toRelativeString(parentMain)
+            .replace(File.separator, "/")
+
+        return relativePath.takeIf { it.startsWith("../") }
+            ?: "./$relativePath"
     }
 }
 

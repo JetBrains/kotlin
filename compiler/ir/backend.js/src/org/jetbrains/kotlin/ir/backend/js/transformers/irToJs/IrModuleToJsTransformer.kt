@@ -253,7 +253,7 @@ class IrModuleToJsTransformer(
             }
 
             val moduleName = declareFreshGlobal(module.safeName)
-            modules += JsImportedModule(module.externalModuleName(), moduleName, null, relativeRequirePath)
+            modules += JsImportedModule(module.externalModuleName(), moduleName, null, null)
 
             names.forEach {
                 imports += JsVars(JsVars.JsVar(JsName(it, false), JsNameRef(it, ReservedJsNames.makeCrossModuleNameRef(moduleName))))
