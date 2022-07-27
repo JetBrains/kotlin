@@ -120,10 +120,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     task.dependsOn(binary.linkSyncTask)
                     val entryFileProvider = binary.linkSyncTask.flatMap { syncTask ->
-                        binary.linkTask.flatMap { linkTask ->
-                            linkTask.outputFileProperty.map {
-                                syncTask.destinationDir.resolve(it.name)
-                            }
+                        binary.linkTask.map {
+                            syncTask.destinationDir.resolve(it.outputFileProperty.get().name)
                         }
                     }
 
@@ -207,13 +205,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    task.dependsOn(binary.linkSyncTask)
-                    val entryFileProvider = binary.linkSyncTask.flatMap { linkSyncTask ->
-                        binary.linkTask.flatMap { linkTask ->
-                            linkTask.outputFileProperty.map {
-                                linkSyncTask.destinationDir.resolve(it.name)
-                            }
-                        }
+                    val entryFileProvider = binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputName.get() + ".js")
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
@@ -72,6 +73,10 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                     }
                 )
                 .disallowChanges()
+
+            task.outputName.value(task.project.provider {
+                (task.kotlinOptions as KotlinJsOptionsImpl).outputName ?: compilation.ownModuleName
+            }).disallowChanges()
 
             task.optionalOutputFile.fileProvider(
                 task.outputFileProperty.flatMap { outputFile ->

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import java.io.File
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData

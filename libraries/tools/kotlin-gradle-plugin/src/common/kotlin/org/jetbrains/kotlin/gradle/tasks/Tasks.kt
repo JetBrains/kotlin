@@ -980,18 +980,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal abstract val defaultDestinationDirectory: DirectoryProperty
 
-    // This can be file or directory
+    @Deprecated("Use destinationDirectory and moduleName instead")
     @get:Internal
     abstract val outputFileProperty: Property<File>
 
-    @Deprecated("Please use outputFileProperty, this is kept for backwards compatibility.", replaceWith = ReplaceWith("outputFileProperty"))
-    @get:Internal
-    val outputFile: File
-        get() = outputFileProperty.get()
-
-    @get:OutputFile
-    @get:Optional
-    abstract val optionalOutputFile: RegularFileProperty
+    @get:Input
+    abstract val outputName: Property<String>
 
     // Workaround to add additional compiler args based on the exising one
     // Currently there is a logic to add additional compiler arguments based on already existing one.
@@ -1018,14 +1012,17 @@ abstract class Kotlin2JsCompile @Inject constructor(
         (compilerOptions as CompilerJsOptionsDefault).fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        try {
-            outputFileProperty.get().canonicalPath
-        } catch (ex: Throwable) {
-            logger.warn("IO EXCEPTION: outputFile: ${outputFileProperty.get().path}")
-            throw ex
+        if (kotlinOptions.isIrBackendEnabled()) {
+            if (kotlinOptions.outputFile != null) {
+                args.outputDir = (kotlinOptions as KotlinJsOptionsImpl).destDir
+                kotlinOptions.outputFile?.let { args.outputName = File(it).nameWithoutExtension }
+            } else {
+                args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
+                args.outputName = outputName.get()
+            }
+        } else {
+            args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
         }
-
-        args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
 
         if (defaultsOnly) return
 
