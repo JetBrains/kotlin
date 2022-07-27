@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -311,7 +313,12 @@ class Fir2IrVisitor(
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement {
         if (property.isLocal) return visitLocalVariable(property)
-        val irProperty = declarationStorage.getCachedIrProperty(property)!!
+        val irProperty = declarationStorage.getCachedIrProperty(property)
+            ?: return IrErrorExpressionImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT),
+                "Stub for Enum.entries"
+            )
         return conversionScope.withProperty(irProperty, property) {
             memberGenerator.convertPropertyContent(irProperty, property, containingClass = conversionScope.containerFirClass())
         }
