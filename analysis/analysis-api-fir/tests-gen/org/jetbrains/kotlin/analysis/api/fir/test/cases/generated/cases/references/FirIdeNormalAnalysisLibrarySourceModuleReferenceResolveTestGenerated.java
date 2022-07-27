@@ -940,6 +940,22 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Imports {
+            @Test
+            public void testAllFilesPresentInImports() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("TypeAliasedImport.kt")
+            public void testTypeAliasedImport() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/imports/TypeAliasedImport.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/localContext")
         @TestDataPath("$PROJECT_ROOT")
         public class LocalContext {
