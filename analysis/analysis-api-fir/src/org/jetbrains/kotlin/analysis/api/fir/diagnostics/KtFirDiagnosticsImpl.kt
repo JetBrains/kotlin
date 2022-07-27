@@ -1445,6 +1445,21 @@ internal class JsBuiltinNameClashImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.JsBuiltinNameClash(), KtAbstractFirDiagnostic<KtElement>
 
+internal class JsNameClashImpl(
+    override val name: String,
+    override val existing: KtSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsNameClash(), KtAbstractFirDiagnostic<KtElement>
+
+internal class JsFakeNameClashImpl(
+    override val name: String,
+    override val override: KtSymbol,
+    override val existing: KtSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsFakeNameClash(), KtAbstractFirDiagnostic<KtElement>
+
 internal class NoContextReceiverImpl(
     override val contextReceiverRepresentation: KtType,
     override val firDiagnostic: KtPsiDiagnostic,

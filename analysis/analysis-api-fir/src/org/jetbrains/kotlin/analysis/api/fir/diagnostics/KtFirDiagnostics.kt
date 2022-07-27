@@ -1204,6 +1204,19 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val name: String
     }
 
+    abstract class JsNameClash : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameClash::class
+        abstract val name: String
+        abstract val existing: KtSymbol
+    }
+
+    abstract class JsFakeNameClash : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsFakeNameClash::class
+        abstract val name: String
+        abstract val override: KtSymbol
+        abstract val existing: KtSymbol
+    }
+
     abstract class NoContextReceiver : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = NoContextReceiver::class
         abstract val contextReceiverRepresentation: KtType

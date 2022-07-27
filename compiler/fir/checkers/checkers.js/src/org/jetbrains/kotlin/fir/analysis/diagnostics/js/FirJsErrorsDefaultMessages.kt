@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_BUILTIN_NAME_CLASH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_FAKE_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS
@@ -124,6 +127,18 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
             "Can''t put non-external declarations in file marked with {0} annotation",
             RENDER_TYPE
+        )
+        map.put(
+            JS_NAME_CLASH,
+            "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
+            STRING,
+            FIR
+        )
+        map.put(
+            JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",
+            STRING,
+            FIR,
+            FIR
         )
 
         map.checkMissingMessages(FirJsErrors)

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -42,6 +43,15 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
         val JS_BUILTIN_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("name")
+        }
+        val JS_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<FirDeclaration>("existing")
+        }
+        val JS_FAKE_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("name")
+            parameter<FirDeclaration>("override")
+            parameter<FirDeclaration>("existing")
         }
     }
 

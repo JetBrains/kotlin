@@ -1694,6 +1694,23 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.JS_NAME_CLASH) { firDiagnostic ->
+        JsNameClashImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_FAKE_NAME_CLASH) { firDiagnostic ->
+        JsFakeNameClashImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firSymbolBuilder.buildSymbol(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_CONTEXT_RECEIVER) { firDiagnostic ->
         NoContextReceiverImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
