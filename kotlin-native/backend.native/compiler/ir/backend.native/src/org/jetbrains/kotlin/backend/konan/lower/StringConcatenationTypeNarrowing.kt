@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.types.*
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
 /**
  * This pass replaces calls to:
  * - StringBuilder.append(Any?) with StringBuilder.append(String?)
- * - StringBuilder.append(Any) with StringBuilder.append(String)
  * - String.plus(Any?) with String.plusImpl(String)
  * - String?.plus(Any?) with String.plusImpl(String)
  * For this, toString() is called for non-String arguments. This call can be later devirtualized, improving escape analysis
@@ -39,10 +37,6 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     private val namePlusImpl = Name.identifier("plusImpl")
     private val nameAppend = Name.identifier("append")
 
-    private val appendStringFunction = stringBuilder.functions.single {  // StringBuilder.append(String)
-        it.name == nameAppend &&
-                it.valueParameters.singleOrNull()?.type?.isString() == true
-    }
     private val appendNullableStringFunction = stringBuilder.functions.single {  // StringBuilder.append(String?)
         it.name == nameAppend &&
                 it.valueParameters.singleOrNull()?.type?.isNullableString() == true
@@ -67,16 +61,8 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         return with(expression) {
             builder.at(this)
             when (symbol) {
-                appendAnyFunction.symbol -> {  // StringBuilder.append(Any?)
-                    val argument = getValueArgument(0)!!
-                    if (argument.type.isNullable()) {
-                        // Transform `StringBuilder.append(Any?)` to `StringBuilder.append(ARG?.toString())`, using "StringBuilder.append(String?)"
-                        buildConcatenationCall(appendNullableStringFunction, dispatchReceiver!!, buildNullableArgToNullableString(argument))
-                    } else {
-                        // Transform `StringBuilder.append(Any)` to `StringBuilder.append(ARG.toString())`, using "StringBuilder.append(String)"
-                        buildConcatenationCall(appendStringFunction, dispatchReceiver!!, buildNonNullableArgToString(argument))
-                    }
-                }
+                appendAnyFunction.symbol -> // StringBuilder.append(Any?)
+                    buildConcatenationCall(appendNullableStringFunction, dispatchReceiver!!, buildArgForAppend(getValueArgument(0)!!))
 
                 context.irBuiltIns.memberStringPlus ->
                     buildConcatenationCall(plusImplFunction, dispatchReceiver!!, buildNullableArgToString(getValueArgument(0)!!))
@@ -89,7 +75,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         }
     }
 
-    private fun IrCall.buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
+    private fun buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
             builder.irCall(function.symbol, function.returnType, valueArgumentsCount = 1, typeArgumentsCount = 0)
                     .apply {
                         putValueArgument(0, argument)
@@ -99,6 +85,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     /** Builds snippet of type String
      * - "if(argument==null) "null" else argument.toString()", if argument's type is nullable. Note: fortunately, all "null" string structures are unified
      * - "argument.toString()", otherwise
+     * Note: should side effects are possible, temporary val is introduced
      */
     private fun buildNullableArgToString(argument: IrExpression): IrExpression =
             if (argument.type.isNullable()) {
@@ -108,13 +95,26 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             } else buildNonNullableArgToString(argument)
 
     /** Builds snippet of type String?
-     * "if(argument==null) null else argument.toString()", that is similar to "argument?.toString()"
+     * - "if(argument==null) null else argument.toString()" (that is similar to "argument?.toString()"), if argument's type is nullable.
+     * - "argument.toString()", otherwise
+     * Note: should side effects are possible, temporary val is introduced
      */
-    private fun buildNullableArgToNullableString(argument: IrExpression): IrExpression =
-            builder.irBlock {
-                nullableArgToStringType(argument, context.irBuiltIns.stringType.makeNullable(), irNull())
+    private fun buildArgForAppend(argument: IrExpression): IrExpression =
+            if (argument.type.isNullable()) {
+                // Transform argument of `StringBuilder.append(Any?)` to `ARG?.toString()`, of type "String?"
+                builder.irBlock {
+                    nullableArgToStringType(argument, context.irBuiltIns.stringType.makeNullable(), irNull())
+                }
+            } else {
+                // Transform argument of `StringBuilder.append(Any)` to `ARG.toString()`, of type "String"
+                buildNonNullableArgToString(argument)
             }
 
+    /** Builds snippet of type String:
+     *      val arg = argument
+     *      if (arg==null) ifNull else arg.toString()
+     *  In case "argument" is IrGetValue => temporary val is omitted due to side effect absence
+     */
     private fun IrBlockBuilder.nullableArgToStringType(argument: IrExpression, stringType: IrType, ifNull: IrExpression) {
         val (firstExpression, secondExpression) = twoExpressionsForSubsequentUsages(argument)
         +irIfThenElse(
