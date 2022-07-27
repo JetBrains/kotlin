@@ -289,7 +289,7 @@ internal class KtUltraLightParameterForDescriptor(
     override fun isVarArgs() = _isVarArgs
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
-        descriptor.obtainLightAnnotations(support, this)
+        descriptor.obtainLightAnnotations(this)
     }
 
     private val _parameterType by getAndAddLazy {

@@ -263,7 +263,7 @@ internal class KtUltraLightMethodForDescriptor(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
-        methodDescriptor.obtainLightAnnotations(support, this)
+        methodDescriptor.obtainLightAnnotations(this)
     }
 
     override val qualifiedNameForNullabilityAnnotation: String? by getAndAddLazy {
