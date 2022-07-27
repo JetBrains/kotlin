@@ -38,7 +38,8 @@ internal class KtFirNonStarImportingScope(
                         import.packageFqName,
                         importedClassId?.relativeClassName,
                         importedClassId,
-                        import.importedName
+                        import.importedName,
+                        import.aliasName,
                     ).let(::add)
                 }
             }
@@ -60,10 +61,10 @@ internal class KtFirNonStarImportingScope(
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        imports.mapNotNullTo(hashSetOf()) { it.callableName }
+        imports.flatMapTo(hashSetOf()) { listOfNotNull(it.callableName, it.aliasName) }
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        imports.mapNotNullTo((hashSetOf())) { it.relativeClassName?.shortName() }
+        imports.flatMapTo((hashSetOf())) { listOfNotNull(it.relativeClassName?.shortName(), it.aliasName) }
     }
 }
