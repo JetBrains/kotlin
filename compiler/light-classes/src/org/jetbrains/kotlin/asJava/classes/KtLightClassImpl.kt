@@ -31,11 +31,10 @@ private class KtLightClassModifierList(containingClass: KtLightClassForSourceDec
 }
 
 // light class for top level or (inner/nested of top level) source declarations
-abstract class KtLightClassImpl @JvmOverloads constructor(
+abstract class KtLightClassImpl constructor(
     classOrObject: KtClassOrObject,
     jvmDefaultMode: JvmDefaultMode,
-    forceUsingOldLightClasses: Boolean = false
-) : KtLightClassForSourceDeclaration(classOrObject, jvmDefaultMode, forceUsingOldLightClasses) {
+) : KtLightClassForSourceDeclaration(classOrObject, jvmDefaultMode) {
     fun getDescriptor() =
         LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
 

@@ -33,7 +33,6 @@ import javax.swing.Icon
 abstract class KtLightClassForSourceDeclaration(
     protected val classOrObject: KtClassOrObject,
     protected val jvmDefaultMode: JvmDefaultMode,
-    private val forceUsingOldLightClasses: Boolean = false
 ) : KtLightClassBase(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
 
