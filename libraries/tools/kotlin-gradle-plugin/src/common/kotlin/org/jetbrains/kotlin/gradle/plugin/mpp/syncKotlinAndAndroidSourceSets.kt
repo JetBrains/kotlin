@@ -80,7 +80,7 @@ private fun syncKotlinAndAndroidSourceDirs(
 
     The Kotlin source set would win in this scenario.
      */
-    if (disambiguationClassifier == null || !androidSourceSet.name.startsWith(disambiguationClassifier)) {
+    if (!androidSourceSet.name.startsWith(disambiguationClassifier)) {
         kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
     }
 

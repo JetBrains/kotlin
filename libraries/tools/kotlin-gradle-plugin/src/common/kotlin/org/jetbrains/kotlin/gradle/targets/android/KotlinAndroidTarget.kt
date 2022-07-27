@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
 abstract class KotlinAndroidTarget @Inject constructor(
-    override val targetName: String,
+    final override val targetName: String,
     project: Project
 ) : AbstractKotlinTarget(project) {
 
-    override var disambiguationClassifier: String? = null
-        internal set
+    final override val disambiguationClassifier: String = targetName
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.androidJvm
