@@ -210,6 +210,9 @@ object StandardClassIds {
         val clone = "clone".callableId(Cloneable)
 
         val not = "not".callableId(Boolean)
+
+        val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
+        val JsNoImpl = "noImpl".callableId(BASE_JS_PACKAGE)
     }
 }
 
