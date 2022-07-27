@@ -176,11 +176,9 @@ internal interface DecoyTransformBase {
     ): IrSymbol = resolveBySignatureInModule(idSignature, FUNCTION_SYMBOL, moduleDescriptor.name)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrDeclaration.isDecoy(): Boolean =
     hasAnnotationSafe(DecoyFqNames.Decoy)
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrDeclaration.isDecoyImplementation(): Boolean =
     hasAnnotationSafe(DecoyFqNames.DecoyImplementation)
 
