@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.ArrayFqNames
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal object FirAnnotationValueConverter {
     fun toNamedConstantValue(
@@ -53,6 +54,7 @@ internal object FirAnnotationValueConverter {
                 // Anno(*[1,2,3])
                 false
             }
+
             else -> {
                 // Anno(a = [1,2,3]) v.s. Anno(1) or Anno(1,2,3)
                 !isNamed()
@@ -86,16 +88,20 @@ internal object FirAnnotationValueConverter {
             is FirNamedArgumentExpression -> {
                 expression.convertConstantExpression(session)
             }
+
             is FirSpreadArgumentExpression -> {
                 expression.convertConstantExpression(session)
             }
+
             is FirVarargArgumentsExpression -> {
                 arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(sourcePsi)
             }
+
             is FirArrayOfCall -> {
                 // Desugared collection literals.
                 KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), sourcePsi)
             }
+
             is FirFunctionCall -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
@@ -116,24 +122,29 @@ internal object FirAnnotationValueConverter {
                             )
                         } else null
                     }
+
                     is FirNamedFunctionSymbol -> {
                         // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
                             argumentList.arguments.single().convertConstantExpression(session)
                         else null
                     }
+
                     else -> null
                 }
             }
+
             is FirPropertyAccessExpression -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirEnumEntrySymbol -> {
                         KtEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi)
                     }
+
                     else -> null
                 }
             }
+
             is FirGetClassCall -> {
                 val symbol = (argument as? FirResolvedQualifier)?.symbol
                 when {
@@ -142,9 +153,11 @@ internal object FirAnnotationValueConverter {
                         symbol.fir.psi as KtClassOrObject,
                         sourcePsi
                     )
+
                     else -> KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue(symbol.classId, sourcePsi)
                 }
             }
+
             else -> null
         } ?: FirCompileTimeConstantEvaluator.evaluate(this, KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
             ?.convertConstantExpression()
