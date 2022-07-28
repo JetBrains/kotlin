@@ -126,7 +126,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(delegatedConstructorCall, "FirLazyDelegatedConstructorCall") {
-            val error = """error("FirLazyDelegatedConstructorCallThis should be calculated before accessing")"""
+            val error = """error("FirLazyDelegatedConstructorCall should be calculated before accessing")"""
             default("source") {
                 value = error
                 withGetter = true
@@ -140,10 +140,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("contextReceiverArguments") {
-                value = error
-                withGetter = true
-            }
-            default("constructedTypeRef") {
                 value = error
                 withGetter = true
             }

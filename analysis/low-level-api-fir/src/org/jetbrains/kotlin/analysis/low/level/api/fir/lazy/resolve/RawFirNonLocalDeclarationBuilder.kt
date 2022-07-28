@@ -17,20 +17,67 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
+internal abstract class RawFirNonLocalBuilder<Output>(
+    session: FirSession,
+    baseScopeProvider: FirScopeProvider,
+    protected val originalDeclaration: FirTypeParameterRefsOwner?,
+) :
+    RawFirBuilder(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+    override fun addCapturedTypeParameters(
+        status: Boolean,
+        declarationSource: KtSourceElement?,
+        currentFirTypeParameters: List<FirTypeParameterRef>
+    ) {
+        if (originalDeclaration != null && declarationSource?.psi == originalDeclaration.psi) {
+            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
+        } else {
+            super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
+        }
+    }
+
+    protected abstract fun process(containingClass: FirRegularClass?): Output
+    protected fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): Output {
+        if (!iterator.hasNext()) {
+            return process(containingClass)
+        }
+
+        val parent = iterator.next()
+        if (parent !is FirRegularClass) return moveNext(iterator, containingClass = null)
+
+        val classOrObject = parent.psi
+        check(classOrObject is KtClassOrObject)
+
+        withChildClassName(classOrObject.nameAsSafeName, isExpect = classOrObject.hasExpectModifier() || context.containerIsExpect) {
+            withCapturedTypeParameters(
+                parent.isInner,
+                declarationSource = null,
+                parent.typeParameters.subList(0, classOrObject.typeParameters.size)
+            ) {
+                registerSelfType(classOrObject.toDelegatedSelfType(parent))
+                return moveNext(iterator, parent)
+            }
+        }
+    }
+
+    private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
+        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+}
+
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
-    private val originalDeclaration: FirTypeParameterRefsOwner,
+    originalDeclaration: FirTypeParameterRefsOwner?,
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
-) : RawFirBuilder(session, baseScopeProvider, psiMode = PsiHandlingMode.IDE, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+) : RawFirNonLocalBuilder<FirDeclaration>(session, baseScopeProvider, originalDeclaration) {
 
     companion object {
         fun buildWithReplacement(
@@ -61,7 +108,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             rootNonLocalDeclaration: KtDeclaration,
         ): FirDeclaration {
             val functionsToRebind = when (val originalDeclaration = designation.declaration) {
-                is FirSimpleFunction -> setOf(originalDeclaration)
+                is FirFunction -> setOf(originalDeclaration)
                 is FirProperty -> setOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
                 else -> null
             }
@@ -69,7 +116,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
-                originalDeclaration = designation.declaration as FirTypeParameterRefsOwner,
+                originalDeclaration = designation.declaration as? FirTypeParameterRefsOwner,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
             )
@@ -88,7 +135,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         declarationSource: KtSourceElement?,
         currentFirTypeParameters: List<FirTypeParameterRef>
     ) {
-        if (declarationSource?.psi == originalDeclaration.psi) {
+        if (originalDeclaration != null && declarationSource?.psi == originalDeclaration.psi) {
             super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
         } else {
             super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
@@ -128,40 +175,108 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 additionalAnnotations = additionalAnnotations
             )
         }
-    }
 
-    private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
-        if (!iterator.hasNext()) {
-            val visitor = VisitorWithReplacement()
-            return when (declarationToBuild) {
-                is KtProperty -> {
-                    val ownerSymbol = containingClass?.symbol
-                    val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
-                    visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
+        private fun extractContructorConversionParams(classOrObject: KtClassOrObject): ConstructorConversionParams {
+            val typeParameters = ArrayList<FirTypeParameterRef>()
+            context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
+            var delegatedSuperTypeRef: FirTypeRef? = null
+            var superTypeCallEntry: KtSuperTypeCallEntry? = null
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, FirRegularClassSymbol(context.currentClassId))
+            classOrObject.superTypeListEntries.forEachIndexed { _, superTypeListEntry ->
+                when (superTypeListEntry) {
+                    is KtSuperTypeCallEntry -> {
+                        delegatedSuperTypeRef = superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
+                        superTypeCallEntry = superTypeListEntry
+                    }
                 }
-                else -> visitor.convertElement(declarationToBuild)
-            } as FirDeclaration
+            }
+            if (delegatedSuperTypeRef == null) {
+                delegatedSuperTypeRef = if (classOrObject is KtClass && classOrObject.isEnum()) implicitEnumType else implicitAnyType
+            }
+            return ConstructorConversionParams(superTypeCallEntry, delegatedSuperTypeRef!!, selfType, typeParameters)
         }
 
-        val parent = iterator.next()
-        if (parent !is FirRegularClass) return moveNext(iterator, containingClass = null)
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit): FirElement {
+            val classOrObject = constructor.getContainingClassOrObject()
+            val params = extractContructorConversionParams(classOrObject)
+            return constructor.toFirConstructor(
+                params.superTypeCallEntry,
+                params.superType,
+                params.selfType,
+                classOrObject,
+                params.typeParameters,
+                containingClassIsExpectClass = false
+            )
+        }
 
-        val classOrObject = parent.psi
-        check(classOrObject is KtClassOrObject)
-
-        withChildClassName(classOrObject.nameAsSafeName, isExpect = classOrObject.hasExpectModifier() || context.containerIsExpect) {
-            withCapturedTypeParameters(
-                parent.isInner,
-                declarationSource = null,
-                parent.typeParameters.subList(0, classOrObject.typeParameters.size)
-            ) {
-                registerSelfType(classOrObject.toDelegatedSelfType(parent))
-                return moveNext(iterator, parent)
-            }
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit): FirElement {
+            val classOrObject = constructor.getContainingClassOrObject()
+            val params = extractContructorConversionParams(classOrObject)
+            return constructor.toFirConstructor(params.superType, params.selfType, classOrObject, params.typeParameters)
         }
     }
 
-    private fun PsiElement?.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
-        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+    override fun process(containingClass: FirRegularClass?): FirDeclaration {
+        val visitor = VisitorWithReplacement()
+        return when (declarationToBuild) {
+            is KtProperty -> {
+                val ownerSymbol = containingClass?.symbol
+                val ownerTypeArgumentsCount = containingClass?.typeParameters?.size
+                visitor.convertProperty(declarationToBuild, ownerSymbol, ownerTypeArgumentsCount)
+            }
+
+            else -> visitor.convertElement(declarationToBuild)
+        } as FirDeclaration
+    }
+
+    private data class ConstructorConversionParams(
+        val superTypeCallEntry: KtSuperTypeCallEntry?,
+        val superType: FirTypeRef,
+        val selfType: FirTypeRef,
+        val typeParameters: List<FirTypeParameterRef>,
+    )
 }
 
+internal class RawFirNonLocalAnnotationsBuilder private constructor(
+    session: FirSession,
+    baseScopeProvider: FirScopeProvider,
+    originalDeclaration: FirClassLikeDeclaration,
+) : RawFirNonLocalBuilder<List<FirAnnotation>>(
+    session,
+    baseScopeProvider,
+    originalDeclaration
+) {
+    companion object {
+        fun build(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            designation: FirDeclarationDesignation,
+            rootNonLocalDeclaration: KtDeclaration,
+        ): List<FirAnnotation> {
+            val builder = RawFirNonLocalAnnotationsBuilder(
+                session = session,
+                baseScopeProvider = scopeProvider,
+                originalDeclaration = designation.declaration as FirClassLikeDeclaration,
+            )
+            builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
+            return builder.moveNext(designation.path.iterator(), containingClass = null)
+        }
+    }
+
+    override fun process(containingClass: FirRegularClass?): List<FirAnnotation> {
+        check(originalDeclaration is FirClassLikeDeclaration)
+        val classLike = originalDeclaration.psi
+        check(classLike is KtClassLikeDeclaration)
+        return withChildClassName(classLike.nameAsSafeName, isExpect = classLike.hasExpectModifier() || context.containerIsExpect) {
+            AnnotationVisitor().extractAnnotations(classLike)
+        }
+    }
+
+    private inner class AnnotationVisitor : Visitor() {
+        fun extractAnnotations(element: KtAnnotated): List<FirAnnotation> {
+            val result = ArrayList<FirAnnotation>()
+            element.extractAnnotationsTo(result)
+            return result
+        }
+    }
+}

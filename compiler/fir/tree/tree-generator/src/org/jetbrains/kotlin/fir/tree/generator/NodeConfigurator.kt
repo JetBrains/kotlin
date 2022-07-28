@@ -375,7 +375,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         constructor.configure {
             +annotations
             +symbol("FirConstructorSymbol")
-            +field("delegatedConstructor", delegatedConstructorCall, nullable = true).withTransform()
+            +field("delegatedConstructor", delegatedConstructorCall, nullable = true, withReplace = true).withTransform()
             +body(nullable = true)
             +booleanField("isPrimary")
         }
@@ -389,7 +389,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         valueParameter.configure {
             +symbol("FirValueParameterSymbol")
-            +field("defaultValue", expression, nullable = true)
+            +field("defaultValue", expression, nullable = true, withReplace = true)
             generateBooleanFields("crossinline", "noinline", "vararg")
         }
 
@@ -419,7 +419,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         anonymousInitializer.configure {
-            +body(nullable = true)
+            +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
         }
 

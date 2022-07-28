@@ -178,6 +178,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
     }
 
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+    }
+
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
     }
 
