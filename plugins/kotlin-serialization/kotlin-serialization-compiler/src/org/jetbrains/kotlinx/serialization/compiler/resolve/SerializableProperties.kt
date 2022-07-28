@@ -6,15 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.psi.KtParameter
@@ -26,16 +17,11 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isInterface
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInitializePropertyFromParameter
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInternalSerializable
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.isInternallySerializableEnum
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
-interface ISerializableProperties<D, T, S : ISerializableProperty<D, T>> {
+interface ISerializableProperties<S : ISerializableProperty> {
     val serializableProperties: List<S>
     val isExternallySerializable: Boolean
     val serializableConstructorProperties: List<S>
@@ -43,7 +29,7 @@ interface ISerializableProperties<D, T, S : ISerializableProperty<D, T>> {
 }
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) :
-    ISerializableProperties<PropertyDescriptor, KotlinType, SerializableProperty> {
+    ISerializableProperties<SerializableProperty> {
     private val primaryConstructorParameters: List<ValueParameterDescriptor> =
         serializableClass.unsubstitutedPrimaryConstructor?.valueParameters ?: emptyList()
 
@@ -91,7 +77,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 else
                     SerializableProperties(supers, bindingContext).serializableProperties + first + second
             }
-            .let { unsort(serializableClass, it) }
+            .let { restoreCorrectOrderFromClassProtoExtension(serializableClass, it) }
 
         isExternallySerializable =
             serializableClass.isInternallySerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
@@ -134,7 +120,7 @@ fun PropertyDescriptor.declaresDefaultValue(): Boolean {
 }
 
 
-internal val ISerializableProperties<*, *, *>.goldenMask: Int
+internal val ISerializableProperties<*>.goldenMask: Int
     get() {
         var goldenMask = 0
         var requiredBit = 1
@@ -147,7 +133,7 @@ internal val ISerializableProperties<*, *, *>.goldenMask: Int
         return goldenMask
     }
 
-internal val ISerializableProperties<*, *, *>.goldenMaskList: List<Int>
+internal val ISerializableProperties<*>.goldenMaskList: List<Int>
     get() {
         val maskSlotCount = serializableProperties.bitMaskSlotCount()
         val goldenMaskList = MutableList(maskSlotCount) { 0 }
@@ -162,7 +148,7 @@ internal val ISerializableProperties<*, *, *>.goldenMaskList: List<Int>
         return goldenMaskList
     }
 
-internal fun List<ISerializableProperty<*, *>>.bitMaskSlotCount() = size / 32 + 1
+internal fun List<ISerializableProperty>.bitMaskSlotCount() = size / 32 + 1
 internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32
 
 internal fun BindingContext.serializablePropertiesFor(
@@ -174,81 +160,10 @@ internal fun BindingContext.serializablePropertiesFor(
     return props
 }
 
-private fun unsort(descriptor: ClassDescriptor, props: List<SerializableProperty>): List<SerializableProperty> {
+internal fun <P: ISerializableProperty> restoreCorrectOrderFromClassProtoExtension(descriptor: ClassDescriptor, props: List<P>): List<P> {
     if (descriptor !is DeserializedClassDescriptor) return props
     val correctOrder: List<Name> = descriptor.classProto.getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
         .map { descriptor.c.nameResolver.getName(it) }
-    val propsMap = props.associateBy { it.descriptor.name }
+    val propsMap = props.associateBy { it.originalDescriptorName }
     return correctOrder.map { propsMap.getValue(it) }
-}
-
-class IrSerializableProperties(
-    override val serializableProperties: List<IrSerializableProperty>,
-    override val isExternallySerializable: Boolean,
-    override val serializableConstructorProperties: List<IrSerializableProperty>,
-    override val serializableStandaloneProperties: List<IrSerializableProperty>
-) : ISerializableProperties<IrProperty, IrSimpleType, IrSerializableProperty> {
-}
-
-internal fun serializablePropertiesForIrBackend(
-    classDescriptor: IrClass,
-    serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null
-): IrSerializableProperties {
-    val properties = classDescriptor.properties.toList()
-    val primaryConstructorParams = classDescriptor.primaryConstructor?.valueParameters.orEmpty()
-    val primaryParamsAsProps = properties.associateBy { it.name }.let { namesMap ->
-        primaryConstructorParams.mapNotNull {
-            if (it.name !in namesMap) null else namesMap.getValue(it.name) to it.hasDefaultValue()
-        }.toMap()
-    }
-
-    fun isPropSerializable(it: IrProperty) =
-        if (classDescriptor.isInternalSerializable) !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)
-        else !DescriptorVisibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName)) || primaryParamsAsProps.contains(
-            it
-        ))
-
-    val (primaryCtorSerializableProps, bodySerializableProps) = properties
-        .asSequence()
-        .filter { !it.isFakeOverride && !it.isDelegated }
-        .filter(::isPropSerializable)
-        .map {
-            val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
-            // FIXME: workaround because IrLazyProperty doesn't deserialize information about backing fields. Fallback to descriptor won't work with FIR.
-            val isPropertyFromAnotherModuleDeclaresDefaultValue = it.descriptor is DeserializedPropertyDescriptor &&  it.descriptor.declaresDefaultValue()
-            val isPropertyWithBackingFieldFromAnotherModule = it.descriptor is DeserializedPropertyDescriptor && (it.descriptor.backingField != null || isPropertyFromAnotherModuleDeclaresDefaultValue)
-            IrSerializableProperty(
-                it,
-                isConstructorParameterWithDefault,
-                it.backingField != null || isPropertyWithBackingFieldFromAnotherModule,
-                it.backingField?.initializer.let { init -> init != null && !init.expression.isInitializePropertyFromParameter() } || isConstructorParameterWithDefault
-                        || isPropertyFromAnotherModuleDeclaresDefaultValue
-            )
-        }
-        .filterNot { it.transient }
-        .partition { primaryParamsAsProps.contains(it.descriptor) }
-
-    val serializableProps = run {
-        val supers = classDescriptor.getParentClassNotAny()
-        if (supers == null || !supers.isInternalSerializable)
-            primaryCtorSerializableProps + bodySerializableProps
-        else
-            serializablePropertiesForIrBackend(
-                supers,
-                serializationDescriptorSerializer
-            ).serializableProperties + primaryCtorSerializableProps + bodySerializableProps
-    } // todo: implement unsorting
-
-    val isExternallySerializable =
-        classDescriptor.isInternallySerializableEnum() || primaryConstructorParams.size == primaryParamsAsProps.size
-
-    return IrSerializableProperties(serializableProps, isExternallySerializable, primaryCtorSerializableProps, bodySerializableProps)
-}
-
-fun IrClass.getParentClassNotAny(): IrClass? {
-    val parentClass =
-        superTypes
-            .mapNotNull { it.classOrNull?.owner }
-            .singleOrNull { it.kind == ClassKind.CLASS || it.kind == ClassKind.ENUM_CLASS } ?: return null
-    return if (parentClass.defaultType.isAny()) null else parentClass
 }

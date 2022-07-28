@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 
 // TODO KT-53096
@@ -39,3 +39,8 @@ fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor
 }
 
 val Sequence<IrConstructor>.primary get() = find { it.isPrimary } ?: error("Expected to have a primary constructor")
+
+fun IrClass.addDefaultConstructorIfAbsent(ctx: IrPluginContext) {
+    val declaration = constructors.primary
+    if (declaration.body == null) declaration.body = ctx.generateBodyForDefaultConstructor(declaration)
+}

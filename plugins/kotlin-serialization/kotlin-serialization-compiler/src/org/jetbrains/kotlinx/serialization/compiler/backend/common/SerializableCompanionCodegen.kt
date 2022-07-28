@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
