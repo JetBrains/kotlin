@@ -74,17 +74,17 @@ public final class Foo /* Foo*/ {
 
   private static final error.NonExistentClass contextBean;
 
+  private static final int f1;
+
+  private static final int prop3;
+
+  private static int prop7;
+
   protected java.lang.String protectedLateinitVar;
 
   public error.NonExistentClass subject;
 
   public java.lang.String internalVarPrivateSet;
-
-  public static final int f1;
-
-  public static final int prop3;
-
-  public static int prop7;
 
   @org.jetbrains.annotations.NotNull()
   protected final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()

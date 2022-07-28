@@ -1,16 +1,16 @@
 public final class C /* C*/ {
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  public static java.lang.String x;
+  private static java.lang.String x;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c1;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c;
 
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
-
-  @org.jetbrains.annotations.NotNull()
-  public static java.lang.String c1;
-
-  @org.jetbrains.annotations.NotNull()
-  public static java.lang.String c;
 
   @kotlin.jvm.JvmStatic()
   public static final void foo();//  foo()
