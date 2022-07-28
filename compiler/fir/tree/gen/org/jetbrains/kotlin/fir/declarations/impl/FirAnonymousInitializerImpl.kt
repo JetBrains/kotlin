@@ -63,4 +63,8 @@ internal class FirAnonymousInitializerImpl(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
+    }
 }

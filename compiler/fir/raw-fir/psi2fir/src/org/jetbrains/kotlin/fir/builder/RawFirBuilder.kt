@@ -82,10 +82,8 @@ open class RawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        return runOnStabs {
-            val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
-            return@runOnStabs this.toKtPsiSourceElement(actualKind)
-        }
+        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+        return this.toKtPsiSourceElement(actualKind)
     }
 
     override val PsiElement.elementType: IElementType
@@ -193,7 +191,7 @@ open class RawFirBuilder(
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
             convertSafe() ?: implicitUnitType
 
-        private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
+        protected fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
             convertSafe() ?: buildErrorTypeRef {
                 source = this@toFirOrErrorType?.toFirSourceElement()
                 diagnostic = ConeSimpleDiagnostic(
@@ -640,7 +638,7 @@ open class RawFirBuilder(
             annotated.extractAnnotationsTo(this.annotations)
         }
 
-        private fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotation>) {
+        protected fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotation>) {
             for (annotationEntry in annotationEntries) {
                 container += annotationEntry.convert<FirAnnotation>()
             }
@@ -850,7 +848,7 @@ open class RawFirBuilder(
             return delegatedSuperTypeRef!! to delegateFieldsMap.takeIf { it.isNotEmpty() }
         }
 
-        private fun KtPrimaryConstructor?.toFirConstructor(
+        protected fun KtPrimaryConstructor?.toFirConstructor(
             superTypeCallEntry: KtSuperTypeCallEntry?,
             delegatedSuperTypeRef: FirTypeRef,
             delegatedSelfTypeRef: FirTypeRef,
@@ -863,7 +861,18 @@ open class RawFirBuilder(
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall =
                 if (containingClassIsExpectClass) null else {
-                    when (mode) {
+                    if (this == null && owner !is KtEnumEntry) {
+                        buildDelegatedConstructorCall {
+                            source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                            constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                            isThis = false
+                            calleeReference = buildExplicitSuperReference {
+                                source =
+                                    this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
+                            }
+                        }
+                    } else when (mode) {
                         BodyBuildingMode.NORMAL -> {
                             buildDelegatedConstructorCall {
                                 source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
@@ -878,7 +887,10 @@ open class RawFirBuilder(
                                 superTypeCallEntry?.extractArgumentsTo(this)
                             }
                         }
-                        BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall({ isThis = false })
+                        BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall {
+                            isThis = false
+                            constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+                        }
                     }
                 }
 
@@ -1469,7 +1481,7 @@ open class RawFirBuilder(
             }
         }
 
-        private fun KtSecondaryConstructor.toFirConstructor(
+        protected fun KtSecondaryConstructor.toFirConstructor(
             delegatedSuperTypeRef: FirTypeRef,
             delegatedSelfTypeRef: FirTypeRef,
             owner: KtClassOrObject,
@@ -1493,7 +1505,10 @@ open class RawFirBuilder(
                 symbol = FirConstructorSymbol(callableIdForClassConstructor())
                 delegatedConstructor = when (mode) {
                     BodyBuildingMode.NORMAL -> getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef)
-                    BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall({ isThis = true })
+                    BodyBuildingMode.LAZY_BODIES -> buildLazyDelegatedConstructorCall {
+                        isThis = true
+                        constructedTypeRef = delegatedSelfTypeRef
+                    }
                 }
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
@@ -2570,8 +2585,10 @@ enum class BodyBuildingMode {
     NORMAL,
 
     /**
-     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock] for function bodies, constructors & getters/setters
-     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression] for property initializers
+     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock] for function bodies, init blocks, constructors & getters/setters
+     * Build [org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression] for property initializers, contracts, default argument values
+     *   and annotation arguments
+     * Build [ord.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall] for delegated constructor calls
      */
     LAZY_BODIES;
 

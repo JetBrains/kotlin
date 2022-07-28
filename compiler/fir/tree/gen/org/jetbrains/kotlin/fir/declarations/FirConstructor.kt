@@ -65,6 +65,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    abstract fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?)
+
     abstract override fun replaceBody(newBody: FirBlock?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructor

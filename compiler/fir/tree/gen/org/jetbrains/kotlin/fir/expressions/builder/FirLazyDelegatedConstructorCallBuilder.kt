@@ -28,11 +28,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
+    lateinit var constructedTypeRef: FirTypeRef
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirDelegatedConstructorCall {
         return FirLazyDelegatedConstructorCall(
+            constructedTypeRef,
             isThis,
         )
     }
