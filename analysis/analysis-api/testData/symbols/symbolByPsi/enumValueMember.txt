@@ -47,7 +47,7 @@ KtPropertyGetterSymbol:
   isDefault: false
   isExtension: false
   isInline: false
-  isOverride: false
+  isOverride: true
   modality: FINAL
   origin: SOURCE
   receiverType: null

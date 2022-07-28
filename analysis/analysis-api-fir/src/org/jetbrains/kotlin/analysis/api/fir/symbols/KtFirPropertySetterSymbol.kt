@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modalityOrFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.name.CallableId
 
@@ -45,7 +48,21 @@ internal class KtFirPropertySetterSymbol(
 
     override val isDefault: Boolean get() = withValidityAssertion { firSymbol.fir is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
-    override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
+    override val isOverride: Boolean
+        get() = withValidityAssertion {
+            if (firSymbol.isOverride) return true
+            val propertySymbol = firSymbol.fir.propertySymbol ?: return@withValidityAssertion false
+            if (!propertySymbol.isOverride) return false
+            val session = firResolveSession.useSiteFirSession
+            val containingClassScope = firSymbol.dispatchReceiverType?.scope(
+                session,
+                firResolveSession.getScopeSessionFor(session),
+                FakeOverrideTypeCalculator.DoNothing
+            ) ?: return false
+            val overriddenProperties = containingClassScope.getDirectOverriddenProperties(propertySymbol)
+            overriddenProperties.any { it.isVar }
+        }
+
     override val hasBody: Boolean get() = withValidityAssertion { firSymbol.fir.body != null }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
