@@ -100,10 +100,7 @@ FILE: secondaryConstructor.kt
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| {
-            super<R|kotlin/Any|>()
-            [RAW_FIR] lval a: <implicit> = x#
-        }
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| { LAZY_BLOCK }
 
     }
 
