@@ -117,22 +117,22 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
 
 public final class ConstContainer /* ConstContainer*/ {
   @org.jetbrains.annotations.NotNull()
-  private static final java.lang.String str = "one" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
   public static final ConstContainer INSTANCE;
 
-  private static final double complexFloat = 5.118281745910645 /* initializer type: double */;
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String str = "one" /* initializer type: java.lang.String */;
 
-  private static final double e = 2.7182818284 /* initializer type: double */;
+  public static final double complexFloat = 5.118281745910645 /* initializer type: double */;
 
-  private static final float eFloat = 2.7182817f /* initializer type: float */;
+  public static final double e = 2.7182818284 /* initializer type: double */;
 
-  private static final int one = 1 /* initializer type: int */;
+  public static final float eFloat = 2.7182817f /* initializer type: float */;
 
-  private static final long complexLong = 2L /* initializer type: long */;
+  public static final int one = 1 /* initializer type: int */;
 
-  private static final long oneLong = 1L /* initializer type: long */;
+  public static final long complexLong = 2L /* initializer type: long */;
+
+  public static final long oneLong = 1L /* initializer type: long */;
 
   private  ConstContainer();//  .ctor()
 

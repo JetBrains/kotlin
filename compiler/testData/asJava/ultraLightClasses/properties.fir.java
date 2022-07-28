@@ -9,12 +9,6 @@ public final class Foo /* Foo*/ {
   private final java.lang.Object arrayConst;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
-  private final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
@@ -31,6 +25,12 @@ public final class Foo /* Foo*/ {
 
   @org.jetbrains.annotations.NotNull()
   private kotlin.Lazy<java.lang.String> lazyProp$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Foo.Companion Companion;

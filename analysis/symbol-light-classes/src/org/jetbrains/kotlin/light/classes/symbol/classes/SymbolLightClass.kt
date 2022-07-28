@@ -225,9 +225,10 @@ internal open class SymbolLightClass(
         fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
             val isJvmField = propertySymbol.hasJvmFieldAnnotation()
             val isLateInit = (propertySymbol as? KtKotlinPropertySymbol)?.isLateInit == true
+            val isConst = (propertySymbol as? KtKotlinPropertySymbol)?.isConst == true
 
             val forceStatic = classOrObjectSymbol.isObject
-            val takePropertyVisibility = !isCompanionObject && (isLateInit || isJvmField)
+            val takePropertyVisibility = !isCompanionObject && (isLateInit || isJvmField || isConst)
 
             createField(
                 declaration = propertySymbol,
