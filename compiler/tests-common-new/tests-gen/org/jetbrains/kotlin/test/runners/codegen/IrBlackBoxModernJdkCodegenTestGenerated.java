@@ -200,6 +200,40 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InnerClass {
+                @Test
+                public void testAllFilesPresentInInnerClass() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("threadState_10.kt")
+                public void testThreadState_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass/threadState_10.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_11.kt")
+                public void testThreadState_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass/threadState_11.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_8.kt")
+                public void testThreadState_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass/threadState_8.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_9.kt")
+                public void testThreadState_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass/threadState_9.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective")
             @TestDataPath("$PROJECT_ROOT")
             public class Reflective {
@@ -485,6 +519,76 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
                 @TestMetadata("constable_9.kt")
                 public void testConstable_9() throws Exception {
                     runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable/constable_9.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InnerClass {
+                @Test
+                public void testAllFilesPresentInInnerClass() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("threadState_10.kt")
+                public void testThreadState_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_10.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_11.kt")
+                public void testThreadState_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_11.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_12.kt")
+                public void testThreadState_12() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_12.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_13.kt")
+                public void testThreadState_13() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_13.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_14.kt")
+                public void testThreadState_14() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_14.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_15.kt")
+                public void testThreadState_15() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_15.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_16.kt")
+                public void testThreadState_16() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_16.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_17.kt")
+                public void testThreadState_17() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_17.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_8.kt")
+                public void testThreadState_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_8.kt");
+                }
+
+                @Test
+                @TestMetadata("threadState_9.kt")
+                public void testThreadState_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_9.kt");
                 }
             }
         }
