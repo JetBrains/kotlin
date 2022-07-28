@@ -1197,6 +1197,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("badInlinedBreakContinue.kt")
+        public void testBadInlinedBreakContinue() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/badInlinedBreakContinue.kt");
+        }
+
+        @Test
         @TestMetadata("bangbang.kt")
         public void testBangbang() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/bangbang.kt");
@@ -1236,6 +1242,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("breakContinueInLoopHeader.kt")
         public void testBreakContinueInLoopHeader() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInLoopHeader.kt");
+        }
+
+        @Test
+        @TestMetadata("breakContinueInNoInlineLambda.kt")
+        public void testBreakContinueInNoInlineLambda() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/breakContinueInNoInlineLambda.kt");
         }
 
         @Test

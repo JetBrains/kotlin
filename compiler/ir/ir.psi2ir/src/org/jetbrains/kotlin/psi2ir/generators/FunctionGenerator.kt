@@ -40,26 +40,29 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     @JvmOverloads
     fun generateFunctionDeclaration(
         ktFunction: KtNamedFunction,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        parentLoopResolver: LoopResolver? = null
     ): IrSimpleFunction =
         declareSimpleFunction(
             ktFunction,
             ktFunction.receiverTypeReference,
             ktFunction.contextReceivers.mapNotNull { it.typeReference() },
             origin,
-            getOrFail(BindingContext.FUNCTION, ktFunction)
+            getOrFail(BindingContext.FUNCTION, ktFunction),
+            parentLoopResolver
         ) {
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
-    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
+    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral, parentLoopResolver: LoopResolver? = null): IrSimpleFunction {
         val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
         return declareSimpleFunction(
             ktFunction,
             null,
             emptyList(),
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-            lambdaDescriptor
+            lambdaDescriptor,
+            parentLoopResolver
         ) {
             generateLambdaBody(ktFunction, lambdaDescriptor)
         }
@@ -80,11 +83,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktContextReceivers: List<KtElement>,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
+        parentLoopResolver: LoopResolver? = null,
         generateBody: BodyGenerator.() -> IrBody?
     ): IrSimpleFunction =
         declareSimpleFunctionInner(descriptor, ktFunction, origin).buildWithScope { irFunction ->
             generateFunctionParameterDeclarationsAndReturnType(irFunction, ktFunction, ktReceiver, ktContextReceivers)
-            irFunction.body = createBodyGenerator(irFunction.symbol).generateBody()
+            irFunction.body = createBodyGenerator(irFunction.symbol, parentLoopResolver).generateBody()
         }
 
     private fun declareSimpleFunctionInner(

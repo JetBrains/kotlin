@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.BreakContinueInInlineLambdas
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitQualifiedAccessToUninitializedEnumEntry
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -840,9 +841,9 @@ class ControlFlowProcessor(
                 if (jumpCrossesTryCatchBoundary(expression, loop)) {
                     generateJumpsToCatchAndFinally()
                 }
-//                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+                if (languageVersionSettings.supportsFeature(BreakContinueInInlineLambdas) || jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopExitPoint(loop)?.let { builder.jump(it, expression) }
-//                }
+                }
             }
         }
 
@@ -852,9 +853,9 @@ class ControlFlowProcessor(
                 if (jumpCrossesTryCatchBoundary(expression, loop)) {
                     generateJumpsToCatchAndFinally()
                 }
-//                if (jumpDoesNotCrossFunctionBoundary(expression, loop)) {
+                if (languageVersionSettings.supportsFeature(BreakContinueInInlineLambdas) || jumpDoesNotCrossFunctionBoundary(expression, loop)) {
                     builder.getLoopConditionEntryPoint(loop)?.let { builder.jump(it, expression) }
-//                }
+                }
             }
         }
 

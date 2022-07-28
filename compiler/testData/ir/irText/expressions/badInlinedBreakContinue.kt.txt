@@ -1,0 +1,137 @@
+inline fun foo(block: Function0<Unit>) {
+  block.invoke()
+}
+
+fun test1() {
+  error("") /* ErrorCallExpression */
+  local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()
+  local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()
+  foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)
+}
+
+fun test2() {
+  L1@ while (true) { // BLOCK
+    error("") /* ErrorCallExpression */
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+.invoke()
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+.invoke()
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+)
+  }
+}
+
+fun test3() {
+  L1@ while (true) { // BLOCK
+    val lambda: Function0<Unit> = local fun <anonymous>() {
+      error("") /* ErrorCallExpression */
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+.invoke()
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+.invoke()
+      foo(block = local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
+)
+      foo(block = local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
+)
+      foo(block = local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+)
+      foo(block = local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+)
+    }
+
+  }
+}
+
+fun test4() {
+  while (local fun <anonymous>(): Nothing {
+    return error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (local fun <anonymous>(): Nothing {
+    return error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke() /*as Boolean */) { // BLOCK
+  }
+  while (local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke() /*as Boolean */) { // BLOCK
+  }
+  while (foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+) /*as Boolean */) { // BLOCK
+  }
+  while (foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+) /*as Boolean */) { // BLOCK
+  }
+  while (foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+) /*as Boolean */) { // BLOCK
+  }
+  while (foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+) /*as Boolean */) { // BLOCK
+  }
+}

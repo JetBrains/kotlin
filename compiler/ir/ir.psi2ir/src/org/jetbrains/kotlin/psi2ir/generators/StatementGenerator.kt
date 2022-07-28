@@ -551,6 +551,35 @@ class StatementGenerator(
 
     override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, data: Nothing?): IrStatement =
         ReflectionReferencesGenerator(this).generateCallableReference(expression)
+
+    fun isInlineableFunctionLiteral(expression: KtExpression): Boolean {
+        if (expression !is KtLambdaExpression && !(expression is KtNamedFunction && expression.name == null)) {
+            return false
+        }
+        var wrapper: PsiElement = expression
+        while ((wrapper.parent as? KtElement)?.deparenthesize() == expression) {
+            wrapper = wrapper.parent
+        }
+        val parent = wrapper.parent
+        val call = when (parent) {
+            is KtCallExpression -> parent
+            is KtValueArgument ->
+                (parent.parent as? KtCallExpression) ?: ((parent.parent as? KtValueArgumentList)?.parent as? KtCallExpression)
+                ?: return false
+            else -> return false
+        }
+
+        if (call.calleeExpression == wrapper) {
+            return true
+        }
+
+        val resolvedCall = getResolvedCall(call)!!
+        if ((resolvedCall.resultingDescriptor as? FunctionDescriptor)?.isInline == true) {
+            return resolvedCall.valueArguments.entries.find { it.value.arguments.any { a -> a.asElement() == parent } }?.key?.isNoinline == false
+        }
+
+        return false
+    }
 }
 
 abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
