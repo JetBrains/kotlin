@@ -7,8 +7,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -23,14 +21,9 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.enumEntries
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.getClassFromInternalSerializationPackage
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.getClassFromRuntime
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialNameValue
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.CallingConventions
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 
 class SerializerForEnumsGenerator(
     irClass: IrClass,

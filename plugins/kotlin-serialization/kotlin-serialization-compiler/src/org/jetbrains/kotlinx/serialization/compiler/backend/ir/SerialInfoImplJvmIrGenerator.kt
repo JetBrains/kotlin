@@ -42,7 +42,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 class SerialInfoImplJvmIrGenerator(
     private val context: SerializationPluginContext,
     private val moduleFragment: IrModuleFragment,
-) : IrBuilderExtension {
+) : IrBuilderWithPluginContext {
     override val compilerContext: SerializationPluginContext
         get() = context
 
