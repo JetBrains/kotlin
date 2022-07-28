@@ -317,6 +317,8 @@ task teamCityStat(type:Exec) {
     if (teamcityConfig) {
         def buildProperties = new Properties()
         buildProperties.load(new FileInputStream(teamcityConfig))
+        println("TC properties:")
+        buildProperties.keys().each { println(it)}
         teamcityUrl = buildProperties.getProperty("teamcity.serverUrl")
     }
     def analyzer = findAnalyzerBinary()
