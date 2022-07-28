@@ -68,6 +68,33 @@ fun generatedPlusMemberString(str1: String, str2: String): String {
 
 data class Foo(val bar: Int)
 
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+// CHECK call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-NOT Foo#toString(){}kotlin.String
+
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+
+// CHECK: ret %struct.ObjHeader*
+fun manualPlusMemberFoo(str1: String, foo: Foo): kotlin.String =
+        str1 + foo
+
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+// CHECK call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-NOT Foo#toString(){}kotlin.String
+
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+
+// CHECK: ret %struct.ObjHeader*
+fun manualPlusMemberMaybeFoo(str1: String, foo: Foo?): kotlin.String =
+        str1 + foo
+
 @Test
 fun runTest() {
     val foo = Foo(42)
@@ -77,4 +104,7 @@ fun runTest() {
     println(generatedPlusMemberAny("foo", null))
     println(generatedPlusMemberAny("foo", foo))
     println(generatedPlusMemberString("foo", "bar"))
+    println(manualPlusMemberFoo("foo", Foo(42)))
+    println(manualPlusMemberMaybeFoo("foo", Foo(42)))
+    println(manualPlusMemberMaybeFoo("foo", null))
 }

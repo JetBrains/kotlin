@@ -4,3 +4,7 @@ Foo(bar=42),bar
 null,null
 Foo(bar=42),bar
 null,bar
+Foo(bar=42),Foo(bar=42)
+null,Foo(bar=42)
+Foo(bar=42),Foo(bar=42)
+Foo(bar=42),null

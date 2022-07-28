@@ -77,6 +77,43 @@ fun generatedPlusExtensionString(maybeStr: String?, str: String): String {
 
 data class Foo(val bar: Int)
 
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String
+
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+
+// CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+
+// CHECK: ret %struct.ObjHeader*
+
+fun generatedPlusExtensionFoo(maybeStr: String?, foo: Foo): String {
+    return "$maybeStr$foo"
+}
+
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+
+// CHECK: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+
+// CHECK: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String
+
+// CHECK-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-NOT: kfun:kotlin.String#plus(kotlin.Any?)
+
+// CHECK: ret %struct.ObjHeader*
+
+fun generatedPlusExtensionMaybeFoo(maybeStr: String?, foo: Foo?): String {
+    return "$maybeStr$foo"
+}
+
 @Test
 fun runTest() {
     val foo = Foo(42)
@@ -88,4 +125,7 @@ fun runTest() {
     println(generatedPlusExtensionAny(null, null))
     println(generatedPlusExtensionString("foo", "bar"))
     println(generatedPlusExtensionString(null, "bar"))
+    println(generatedPlusExtensionFoo(null, Foo(42)))
+    println(generatedPlusExtensionMaybeFoo("foo", Foo(42)))
+    println(generatedPlusExtensionMaybeFoo("foo", null))
 }

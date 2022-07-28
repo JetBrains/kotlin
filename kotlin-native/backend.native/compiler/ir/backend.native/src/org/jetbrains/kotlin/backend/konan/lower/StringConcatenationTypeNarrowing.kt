@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * This pass replaces calls to:
@@ -134,9 +135,15 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
     private fun buildNonNullableArgToString(argument: IrExpression): IrExpression {
         return if (argument.type.isString() || argument.type.isNullableString())
             argument
-        else builder
-                .irCall(context.ir.symbols.memberToString, context.irBuiltIns.stringType, valueArgumentsCount = 1, typeArgumentsCount = 0)
-                .apply { dispatchReceiver = argument }
+        else {
+            val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
+                it.name == OperatorNameConventions.TO_STRING && it.valueParameters.isEmpty()
+            }?.symbol
+            val callee = calleeOrNull ?: context.ir.symbols.memberToString  // defaults to `Any.toString()`
+            builder
+                    .irCall(callee, callee.owner.returnType, valueArgumentsCount = 0, typeArgumentsCount = 0)
+                    .apply { dispatchReceiver = argument }
+        }
     }
 
     /**

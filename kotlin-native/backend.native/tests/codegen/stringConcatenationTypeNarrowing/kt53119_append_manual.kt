@@ -67,6 +67,21 @@ fun appendString(str: String): String {
 
 data class Foo(val bar: Int)
 
+// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendFoo(codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo)
+// CHECK: %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+
+// CHECK-NOT: Foo#toString(){}kotlin.String"
+// CHECK-NOT: %struct.ObjHeader* @"kfun:kotlin.text.StringBuilder#append
+// CHECK: ret %struct.ObjHeader*
+
+fun appendFoo(foo: Foo): String {
+    val sb = kotlin.text.StringBuilder()
+    sb.append(foo)
+    return sb.toString()
+}
+
 @Test
 fun runTest() {
     val foo = Foo(42)
@@ -76,4 +91,5 @@ fun runTest() {
     println(appendMaybeString("foo"))
     println(appendMaybeString(null))
     println(appendString("foo"))
+    println(appendFoo(foo))
 }
