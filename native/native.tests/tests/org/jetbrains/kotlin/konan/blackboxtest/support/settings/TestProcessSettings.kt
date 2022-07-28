@@ -101,11 +101,21 @@ internal enum class MemoryModel(val compilerFlags: List<String>?) {
 }
 
 /**
- * Thread state checked. Can be applied only with [MemoryModel.EXPERIMENTAL] and [OptimizationMode.DEBUG].
+ * Thread state checked. Can be applied only with [MemoryModel.EXPERIMENTAL], [OptimizationMode.DEBUG], [CacheMode.WithoutCache].
  */
 internal enum class ThreadStateChecker(val compilerFlag: String?) {
     DISABLED(null),
     ENABLED("-Xcheck-state-at-external-calls");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
+/**
+ * Type of sanitizer. Can be applied only with [CacheMode.WithoutCache]
+ */
+internal enum class Sanitizer(val compilerFlag: String?) {
+    NONE(null),
+    THREAD("-Xbinary=sanitizer=thread");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }

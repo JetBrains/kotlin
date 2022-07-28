@@ -119,6 +119,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     optimizationMode: OptimizationMode,
     private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
+    private val sanitizer: Sanitizer,
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     freeCompilerArgs: TestCompilerArgs,
@@ -138,6 +139,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         add("-repo", home.librariesDir.path)
         memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
     }
@@ -164,6 +166,7 @@ internal class LibraryCompilation(
     optimizationMode = settings.get(),
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -196,6 +199,7 @@ internal class ExecutableCompilation(
     optimizationMode = settings.get(),
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
     gcType = settings.get(),
     gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,

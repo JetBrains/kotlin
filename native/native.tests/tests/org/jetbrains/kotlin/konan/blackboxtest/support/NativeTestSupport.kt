@@ -152,6 +152,7 @@ private object NativeTestSupport {
                 "Thread state checker can be enabled only with debug optimization mode"
             }
         }
+        val sanitizer = computeSanitizer(enforcedProperties)
 
         val gcType = computeGCType(enforcedProperties)
         if (gcType != GCType.UNSPECIFIED) {
@@ -178,6 +179,9 @@ private object NativeTestSupport {
             assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
                 "Thread state checker can not be used with cache"
             }
+            assertEquals(Sanitizer.NONE, sanitizer) {
+                "Sanitizer can not be used with cache"
+            }
         }
 
         output += optimizationMode
@@ -186,6 +190,7 @@ private object NativeTestSupport {
         output += gcType
         output += gcScheduler
         output += nativeTargets
+        output += sanitizer
         output += CacheMode::class to cacheMode
         output += computeTestMode(enforcedProperties)
         output += computeForcedStandaloneTestKind(enforcedProperties)
@@ -210,6 +215,9 @@ private object NativeTestSupport {
             ClassLevelProperty.USE_THREAD_STATE_CHECKER.readValue(enforcedProperties, String::toBooleanStrictOrNull, default = false)
         return if (useThreadStateChecker) ThreadStateChecker.ENABLED else ThreadStateChecker.DISABLED
     }
+
+    private fun computeSanitizer(enforcedProperties: EnforcedProperties): Sanitizer =
+        ClassLevelProperty.SANITIZER.readValue(enforcedProperties, Sanitizer.values(), default = Sanitizer.NONE)
 
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
         ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.values(), default = GCType.UNSPECIFIED)
