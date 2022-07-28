@@ -756,8 +756,12 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             module.files += this
         }
 
-        override fun equals(other: Any?) = (other as? ExtTestFile)?.name == name
-        override fun hashCode() = name.hashCode()
+        override fun equals(other: Any?): Boolean {
+            if (other !is ExtTestFile) return false
+            return other.name == name && other.module == module
+        }
+
+        override fun hashCode() = name.hashCode() * 31 + module.hashCode()
     }
 
     private class ExtTestFileFactory : TestFiles.TestFileFactory<ExtTestModule, ExtTestFile> {
