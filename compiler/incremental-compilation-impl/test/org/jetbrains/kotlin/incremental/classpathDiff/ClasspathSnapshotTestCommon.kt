@@ -100,7 +100,7 @@ abstract class ClasspathSnapshotTestCommon {
          * Kotlin compiler to generate classes. However, kotlin-compiler.jar is currently not available in CI builds, so we need to
          * pre-compile the classes locally and put them in the test data to check in.
          */
-        @Synchronized // To safe-guard shared variable preCompiledKotlinClassesDirs
+        @Synchronized // To safeguard shared variable preCompiledKotlinClassesDirs
         private fun preCompileKotlinFilesIfNecessary(
             srcDir: File,
             preCompiledKotlinClassesDir: File,
@@ -195,7 +195,12 @@ internal fun snapshotClasspath(
     granularity: ClassSnapshotGranularity? = null
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
-    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
+    val classpathEntrySourceDirs = if (classpathSourceDir.listFiles()!!.size == 1) {
+        listOf(classpathSourceDir)
+    } else {
+        classpathSourceDir.listFiles()!!.sortedBy { it.name }
+    }
+    val classpathEntrySnapshots = classpathEntrySourceDirs.map { classpathEntrySourceDir ->
         val classFiles = compileAll(classpathEntrySourceDir, tmpDir, classpath)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
