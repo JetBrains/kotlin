@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInterpretationTests {
     @Test
+    @TestMetadata("add.kt")
+    public void testAdd() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/add.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInInterpretation() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/interpretation"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }

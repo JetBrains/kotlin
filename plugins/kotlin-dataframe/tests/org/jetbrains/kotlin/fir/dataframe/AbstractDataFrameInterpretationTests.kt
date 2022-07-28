@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import kotlinx.serialization.decodeFromString
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,10 +27,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
-import org.jetbrains.kotlinx.dataframe.plugin.InsertClauseApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.KPropertyApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.*
 import kotlin.test.assertEquals
 
 abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest() {
@@ -73,6 +71,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     val call = functionCall.arguments[1].unwrapArgument() as FirFunctionCall
                     val interpreter = call.loadInterpreter()!!
                     val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
+
                     assertEquals(expectedResult(id) ?: "no result for id $id", result, message = id)
                 }
             }
@@ -95,6 +94,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "kproperty_2" to KPropertyApproximation("name", TypeApproximationImpl("kotlin.Int", false)),
                 "addExpression_1" to TypeApproximationImpl("kotlin.Int", nullable = false),
                 "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
+                "add0_schema" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
+                "add0" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}},{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"untitled","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
             )
             return map[id]
         }
