@@ -78,10 +78,8 @@ open class RawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(kind: KtFakeSourceElementKind?): KtPsiSourceElement {
-        return runOnStabs {
-            val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
-            return@runOnStabs this.toKtPsiSourceElement(actualKind)
-        }
+        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: KtRealSourceElementKind
+        return this.toKtPsiSourceElement(actualKind)
     }
 
     override val PsiElement.elementType: IElementType
