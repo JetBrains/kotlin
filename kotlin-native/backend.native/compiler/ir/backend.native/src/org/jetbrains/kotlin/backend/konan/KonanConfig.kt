@@ -380,6 +380,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
             runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
             sanitizer != null -> "with sanitizers enabled"
+            runtimeLogs != null -> "with runtime logs"
             else -> null
         }
         CacheSupport(
