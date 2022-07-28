@@ -22,7 +22,8 @@ interface KtUltraLightSupport {
     val moduleDescriptor: ModuleDescriptor
     val languageVersionSettings: LanguageVersionSettings
     val jvmTarget: JvmTarget
-    val jvmDefaultMode: JvmDefaultMode get() = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
 
     fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
 }
+
+internal val KtUltraLightSupport.jvmDefaultMode: JvmDefaultMode get() = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
