@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -84,6 +85,12 @@ abstract class KotlinJvmTarget @Inject constructor(
             javaSourceSet.output.setResourcesDir(Callable { compilation.output.resourcesDirProvider })
 
             setupDependenciesCrossInclusionForJava(compilation, javaSourceSet)
+        }
+
+        project.afterEvaluate {
+            javaSourceSets.all { javaSourceSet ->
+                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
+            }
         }
 
         // Eliminate the Java output configurations from dependency resolution to avoid ambiguity between them and
@@ -203,6 +210,41 @@ abstract class KotlinJvmTarget @Inject constructor(
             javaSourceSet.implementationConfigurationName
         ).forEach { configurationName ->
             project.addExtendsFromRelation(compilation.runtimeDependencyConfigurationName, configurationName)
+        }
+    }
+
+    private fun copyUserDefinedAttributesToJavaConfigurations(javaSourceSet: SourceSet) {
+        val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
+            javaSourceSet::class
+                .functions
+                .find { it.name == "getCompileConfigurationName" }
+                ?.call(javaSourceSet)
+                ?.cast<String>()
+                ?.takeIf { project.configurations.findByName(it) != null }
+        } else null
+
+        val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
+            javaSourceSet::class
+                .functions
+                .find { it.name == "getRuntimeConfigurationName" }
+                ?.call(javaSourceSet)
+                ?.cast<String>()
+                ?.takeIf { project.configurations.findByName(it) != null }
+        } else null
+
+        listOfNotNull(
+            compileConfigurationName,
+            javaSourceSet.compileClasspathConfigurationName,
+            runtimeConfigurationName,
+            javaSourceSet.runtimeClasspathConfigurationName,
+            javaSourceSet.apiConfigurationName,
+            javaSourceSet.implementationConfigurationName,
+            javaSourceSet.compileOnlyConfigurationName,
+            javaSourceSet.runtimeOnlyConfigurationName,
+        ).mapNotNull {
+            project.configurations.findByName(it)
+        }.forEach { configuration ->
+            copyAttributes(attributes, configuration.attributes)
         }
     }
 
