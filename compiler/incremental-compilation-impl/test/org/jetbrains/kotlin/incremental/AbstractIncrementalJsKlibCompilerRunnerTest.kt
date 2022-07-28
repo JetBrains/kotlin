@@ -9,7 +9,9 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         K2JSCompilerArguments().apply {
             libraries = "build/js-ir-runtime/full-runtime.klib"
-            outputFile = File(destinationDir, "${testDir.name}.$KLIB_FILE_EXTENSION").path
+            outputDir = destinationDir.path
+            outputName = testDir.name
+            outputFile = null
             sourceMap = false
             irProduceKlibDir = false
             irProduceKlibFile = true

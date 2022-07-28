@@ -106,7 +106,8 @@ abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
     override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.irProduceKlibDir = true
         args.irOnly = true
-        args.outputFile = outDir.resolve("out.klib").absolutePath
+        args.outputDir = outDir.normalize().absolutePath
+        args.outputName = "out"
     }
 }
 
