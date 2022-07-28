@@ -37,8 +37,14 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         null
     }
 
+    val buildScanSettings = if (buildReportOutputTypes.contains(BuildReportType.BUILD_SCAN)) {
+        BuildScanSettings(properties.buildReportBuildScanCustomValuesLimit)
+    } else {
+        null
+    }
+
     //temporary solution. support old property
-    val oldSingleBuildMetric =  properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
+    val oldSingleBuildMetric = properties.singleBuildMetricsFile?.also { buildReportOutputTypes.add(BuildReportType.SINGLE_FILE) }
 
     val singleOutputFile = if (buildReportOutputTypes.contains(BuildReportType.SINGLE_FILE)) {
         properties.buildReportSingleFile ?: oldSingleBuildMetric
@@ -49,6 +55,7 @@ internal fun reportingSettings(rootProject: Project): ReportingSettings {
         buildReportLabel = properties.buildReportLabel,
         fileReportSettings = fileReportSettings,
         httpReportSettings = httpReportSettings,
+        buildScanReportSettings = buildScanSettings,
         buildReportOutputs = buildReportOutputTypes,
         singleOutputFile = singleOutputFile,
     )

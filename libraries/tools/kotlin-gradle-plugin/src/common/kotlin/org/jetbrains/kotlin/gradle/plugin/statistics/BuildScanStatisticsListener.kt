@@ -23,11 +23,11 @@ class BuildScanStatisticsListener(
     val projectName: String,
     val label: String?,
     val kotlinVersion: String,
-    val buildUuid: String
+    private val buildUuid: String,
+    private val customValuesLimit: Int
 ) : OperationCompletionListener, AutoCloseable {
     companion object {
         const val lengthLimit = 100_000
-        const val customValuesLimit = 950 //git plugin and others can add custom values as well
     }
 
     private val tags = LinkedHashSet<String>()
@@ -72,7 +72,10 @@ class BuildScanStatisticsListener(
                         buildScan.value(data.taskName, it)
                         customValues++
                     } else {
-                        log.debug("Statistic data for ${data.taskName} was cut due to custom values limit.")
+                        log.debug(
+                            "Can't add any more custom values into build scan." +
+                                    " Statistic data for ${data.taskName} was cut due to custom values limit."
+                        )
                     }
                 }
             } else {

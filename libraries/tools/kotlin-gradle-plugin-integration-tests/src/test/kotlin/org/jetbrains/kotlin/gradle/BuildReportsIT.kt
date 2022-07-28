@@ -99,13 +99,28 @@ class BuildReportsIT : KGPBaseTest() {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
                 "compileKotlin",
-                "-Pkotlin.internal.single.build.metrics.file=${metricsFile.absolutePath}"
+                "-Pkotlin.build.report.output=SINGLE_FILE",
+                "-Pkotlin.build.report.single_file=${metricsFile.absolutePath}"
             )
 
             assertTrue { metricsFile.exists() }
             // test whether we can deserialize data from the file
             ObjectInputStream(metricsFile.inputStream().buffered()).use { input ->
                 input.readObject() as GradleBuildMetricsData
+            }
+        }
+    }
+
+    @DisplayName("custom value limit")
+    @GradleTest
+    fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.build.report.output=BUILD_SCAN",
+                "-Pkotlin.build.report.build_scan.custom_values_limit=0"
+            ) {
+                assertOutputContains("Can't add any more custom values into build scan")
             }
         }
     }
