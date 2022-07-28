@@ -64,6 +64,9 @@ class SamWithReceiverComponentRegistrar : ComponentRegistrar {
         StorageComponentContainerContributor.registerExtension(project, CliSamWithReceiverComponentContributor(annotations))
         FirExtensionRegistrarAdapter.registerExtension(project, FirSamWithReceiverExtensionRegistrar(annotations))
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }
 
 class CliSamWithReceiverComponentContributor(val annotations: List<String>) : StorageComponentContainerContributor {

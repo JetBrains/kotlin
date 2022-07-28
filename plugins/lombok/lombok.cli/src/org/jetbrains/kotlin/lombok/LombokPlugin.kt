@@ -43,6 +43,9 @@ class LombokComponentRegistrar : ComponentRegistrar {
             )
         registerComponents(project, configuration)
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }
 
 object LombokConfigurationKeys {
