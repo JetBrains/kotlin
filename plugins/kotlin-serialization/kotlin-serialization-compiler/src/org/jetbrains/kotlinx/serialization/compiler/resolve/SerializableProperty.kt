@@ -16,58 +16,32 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecialSerializers
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.genericIndex
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialNameValue
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.serializableWith
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 
-class SerializableProperty(
-    override val descriptor: PropertyDescriptor,
-    override val isConstructorParameterWithDefault: Boolean,
-    hasBackingField: Boolean,
-    declaresDefaultValue: Boolean
-) : ISerializableProperty<PropertyDescriptor, KotlinType> {
-    override val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
-    override val type = descriptor.type
-    override val genericIndex = type.genericIndex
-    val module = descriptor.module
-    val serializableWith = descriptor.serializableWith ?: analyzeSpecialSerializers(module, descriptor.annotations)?.defaultType
-    override val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
-    override val transient = descriptor.annotations.serialTransient || !hasBackingField
-    val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
-        descriptor.annotationsWithArguments()
-}
-
-interface ISerializableProperty<D, T> {
-    val descriptor: D
+interface ISerializableProperty {
     val isConstructorParameterWithDefault: Boolean
     val name: String
-    val type: T
-    val genericIndex: Int?
+    val originalDescriptorName: Name
     val optional: Boolean
     val transient: Boolean
 }
 
-class IrSerializableProperty(
-    override val descriptor: IrProperty,
+class SerializableProperty(
+    val descriptor: PropertyDescriptor,
     override val isConstructorParameterWithDefault: Boolean,
     hasBackingField: Boolean,
     declaresDefaultValue: Boolean
-) : ISerializableProperty<IrProperty, IrSimpleType> {
+) : ISerializableProperty {
     override val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
-    override val type = descriptor.getter!!.returnType as IrSimpleType
-    override val genericIndex = type.genericIndex
-    fun serializableWith(ctx: SerializationPluginContext) = descriptor.annotations.serializableWith() ?: analyzeSpecialSerializers(ctx, descriptor.annotations)
-    override val optional = !descriptor.annotations.hasAnnotation(SerializationAnnotations.requiredAnnotationFqName) && declaresDefaultValue
-    override val transient = descriptor.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName) || !hasBackingField
+    override val originalDescriptorName: Name = descriptor.name
+    val type = descriptor.type
+    val genericIndex = type.genericIndex
+    val module = descriptor.module
+    val serializableWith = descriptor.serializableWith ?: analyzeSpecialSerializers(module, descriptor.annotations)?.defaultType
+    override val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
+    override val transient = descriptor.annotations.serialTransient || !hasBackingField
 }
+

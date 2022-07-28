@@ -6,8 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.functionByName
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -18,12 +16,9 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.getClassFromInternalSerializationPackage
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.getClassFromRuntime
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.CallingConventions
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 
 class SerializerForInlineClassGenerator(
     irClass: IrClass,
@@ -44,7 +39,7 @@ class SerializerForInlineClassGenerator(
         val inlineEncoder = irTemporary(encodeInlineCall, nameHint = "inlineEncoder")
 
         val property = serializableProperties.first()
-        val value = getFromBox(irGet(saveFunc.valueParameters[1]), property)
+        val value = getProperty(irGet(saveFunc.valueParameters[1]), property.ir)
 
         // inlineEncoder.encodeInt/String/SerializableValue
         val elementCall = formEncodeDecodePropertyCall(irGet(inlineEncoder), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
@@ -109,6 +104,4 @@ class SerializerForInlineClassGenerator(
             listOf(expression)
         )
 
-    private fun IrBlockBodyBuilder.getFromBox(expression: IrExpression, serializableProperty: IrSerializableProperty): IrExpression =
-        getProperty(expression, serializableProperty.descriptor)
 }
