@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.util.containers.MultiMap
@@ -19,8 +20,8 @@ interface KotlinReferenceProviderContributor {
     fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar)
 
     companion object {
-        fun getInstance(): KotlinReferenceProviderContributor =
-            ServiceManager.getService(KotlinReferenceProviderContributor::class.java)
+        fun getInstance(project: Project): KotlinReferenceProviderContributor =
+            ServiceManager.getService(project, KotlinReferenceProviderContributor::class.java)
     }
 }
 

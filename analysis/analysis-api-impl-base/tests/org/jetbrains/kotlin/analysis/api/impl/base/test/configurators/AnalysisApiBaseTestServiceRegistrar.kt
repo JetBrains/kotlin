@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-    }
+    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
@@ -43,13 +42,9 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
             registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
-        }
-    }
-
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        application.apply {
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
         }
-
     }
+
+    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
 }

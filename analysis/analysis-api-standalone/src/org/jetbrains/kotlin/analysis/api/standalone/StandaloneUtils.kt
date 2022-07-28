@@ -79,6 +79,8 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [KotlinDeclarationProviderFactory]
  *   * [KotlinPackageProviderFactory]
  *   * [PackagePartProviderFactory]
+ *   * [KotlinReferenceProvidersService]
+ *   * [KotlinReferenceProviderContributor]
  *
  *  Note that [ProjectStructureProvider] is built by using
  *    * given [ktFiles] as Kotlin sources
@@ -120,6 +122,16 @@ internal fun configureProjectEnvironment(
     project.registerService(
         KotlinAnnotationsResolverFactory::class.java,
         KotlinStaticAnnotationsResolverFactory(ktFiles)
+    )
+
+    project.registerService(
+        KotlinReferenceProvidersService::class.java,
+        HLApiReferenceProviderService::class.java
+    )
+
+    project.registerService(
+        KotlinReferenceProviderContributor::class.java,
+        KotlinFirReferenceContributor::class.java
     )
 
     RegisterComponentService.registerLLFirResolveSessionService(project)
