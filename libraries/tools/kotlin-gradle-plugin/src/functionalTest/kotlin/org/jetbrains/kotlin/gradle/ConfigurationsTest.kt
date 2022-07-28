@@ -218,4 +218,79 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             }
         }
     }
+
+    @Test
+    fun `test that jvm target attributes are propagated to java configurations`() {
+        val disambiguationAttribute = org.gradle.api.attributes.Attribute.of("disambiguationAttribute", String::class.java)
+        val project = buildProjectWithMPP {
+
+            kotlin {
+                jvm("plainJvm") {
+                    attributes { attribute(disambiguationAttribute, "plainJvm") }
+                }
+
+                jvm("jvmWithJava") {
+                    withJava()
+                    attributes { attribute(disambiguationAttribute, "jvmWithJava") }
+                }
+            }
+        }
+
+        //NB: There is no "api" configuration registered by Java Plugin
+        val javaConfigurations = listOf(
+            "compileClasspath",
+            "runtimeClasspath",
+            "implementation",
+            "compileOnly",
+            "runtimeOnly"
+        )
+
+        val kotlinJvmConfigurations = listOf(
+            "jvmWithJavaCompileClasspath",
+            "jvmWithJavaRuntimeClasspath",
+            "jvmWithJavaApi",
+            "jvmWithJavaImplementation",
+            "jvmWithJavaCompileOnly",
+            "jvmWithJavaRuntimeOnly",
+        )
+
+        val outgoingConfigurations = listOf(
+            "jvmWithJavaApiElements",
+            "jvmWithJavaRuntimeElements",
+        )
+
+        val testJavaConfigurations = listOf(
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        )
+
+        val jvmWithJavaTestConfigurations = listOf(
+            "jvmWithJavaTestCompileClasspath",
+            "jvmWithJavaTestRuntimeClasspath",
+            "jvmWithJavaTestApi",
+            "jvmWithJavaTestCompileOnly",
+            "jvmWithJavaTestImplementation",
+            "jvmWithJavaTestRuntimeOnly"
+        )
+
+        val expectedConfigurationsWithDisambiguationAttribute = javaConfigurations +
+                kotlinJvmConfigurations +
+                outgoingConfigurations +
+                testJavaConfigurations +
+                jvmWithJavaTestConfigurations
+
+        with(project.evaluate()) {
+            val actualConfigurationsWithDisambiguationAttribute = configurations
+                .filter { it.attributes.getAttribute(disambiguationAttribute) == "jvmWithJava" }
+                .map { it.name }
+
+            assertEquals(
+                expectedConfigurationsWithDisambiguationAttribute.sorted(),
+                actualConfigurationsWithDisambiguationAttribute.sorted()
+            )
+        }
+    }
 }
