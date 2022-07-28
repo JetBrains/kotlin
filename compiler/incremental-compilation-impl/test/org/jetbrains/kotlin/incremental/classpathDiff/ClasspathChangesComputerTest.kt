@@ -38,14 +38,14 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     abstract fun testMixedClassSnapshotGranularities()
 
     @Test
-    abstract fun testImpactAnalysis()
+    abstract fun testImpactComputation_SupertypesInheritors()
 }
 
 class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testAbiVersusNonAbiChanges() {
-        val changes = computeClasspathChanges(File(testDataDir, "testAbiVersusNonAbiChanges/src/kotlin"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testAbiVersusNonAbiChanges/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "publicPropertyChangedType", scope = "com.example.SomeClass"),
@@ -58,7 +58,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements() {
-        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/kotlin"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testModifiedAddedRemovedElements/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 // ModifiedClassUnchangedMembers
@@ -90,7 +90,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
-        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/kotlin"), tmpDir, CLASS_LEVEL)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testModifiedAddedRemovedElements/src"), tmpDir, CLASS_LEVEL)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
@@ -109,8 +109,8 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testMixedClassSnapshotGranularities() {
-        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("kotlin", "current-classpath", tmpDir)
-        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("kotlin", "previous-classpath", tmpDir)
+        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("KotlinOnly", "current-classpath", tmpDir)
+        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("KotlinOnly", "previous-classpath", tmpDir)
 
         val changes = computeClasspathChanges(currentClasspathSnapshot, previousClasspathSnapshot)
         Changes(
@@ -132,8 +132,8 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     @Test
-    override fun testImpactAnalysis() {
-        val changes = computeClasspathChanges(File(testDataDir, "testImpactAnalysis_KotlinOnly/src"), tmpDir)
+    override fun testImpactComputation_SupertypesInheritors() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testImpactComputation_SupertypesInheritors/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "changedProperty", scope = "com.example.ChangedSuperClass"),
@@ -156,7 +156,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     fun testTopLevelMembers() {
-        val changes = computeClasspathChanges(File(testDataDir, "testTopLevelMembers_KotlinOnly/src"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testTopLevelMembers/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "modifiedTopLevelProperty", scope = "com.example"),
@@ -174,7 +174,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     fun testDifferentClassKinds() {
-        val changes = computeClasspathChanges(File(testDataDir, "testDifferentClassKinds_KotlinOnly/src"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testDifferentClassKinds/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 // NormalClass
@@ -214,7 +214,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     fun testConstantsAndInlineFunctions() {
-        val changes = computeClasspathChanges(File(testDataDir, "testConstantsAndInlineFunctions_KotlinOnly/src"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testConstantsAndInlineFunctions/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.CompanionObject"),
@@ -238,7 +238,7 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testAbiVersusNonAbiChanges() {
-        val changes = computeClasspathChanges(File(testDataDir, "testAbiVersusNonAbiChanges/src/java"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testAbiVersusNonAbiChanges/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "publicFieldChangedType", scope = "com.example.SomeClass"),
@@ -251,7 +251,7 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements() {
-        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir)
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testModifiedAddedRemovedElements/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 // ModifiedClassUnchangedMembers
@@ -283,7 +283,7 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
-        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir, CLASS_LEVEL)
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testModifiedAddedRemovedElements/src"), tmpDir, CLASS_LEVEL)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
@@ -302,8 +302,8 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testMixedClassSnapshotGranularities() {
-        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("java", "current-classpath", tmpDir)
-        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("java", "previous-classpath", tmpDir)
+        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("JavaOnly", "current-classpath", tmpDir)
+        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("JavaOnly", "previous-classpath", tmpDir)
 
         val changes = computeClasspathChanges(currentClasspathSnapshot, previousClasspathSnapshot)
         Changes(
@@ -325,8 +325,8 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     @Test
-    override fun testImpactAnalysis() {
-        val changes = computeClasspathChanges(File(testDataDir, "testImpactAnalysis_JavaOnly/src"), tmpDir)
+    override fun testImpactComputation_SupertypesInheritors() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testImpactComputation_SupertypesInheritors/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "changedField", scope = "com.example.ChangedSuperClass"),
@@ -354,9 +354,8 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
     //   - Java class converted to Kotlin class
 
     @Test
-    fun testImpactAnalysis() {
-        val changes =
-            computeClasspathChanges(File(testDataDir, "testImpactAnalysis_KotlinAndJava/src"), tmpDir)
+    fun testImpactComputation_SupertypesInheritors() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinAndJava/testImpactComputation_SupertypesInheritors/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "changedProperty", scope = "com.example.ChangedKotlinSuperClass"),
@@ -393,7 +392,7 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
 private fun testMixedClassSnapshotGranularities_snapshotClasspath(
     language: String, classpathSourceDirName: String, tmpDir: TemporaryFolder
 ): ClasspathSnapshot {
-    val classes = compileAll(File("$testDataDir/testMixedClassSnapshotGranularities/src/$language/$classpathSourceDirName/0"), tmpDir)
+    val classes = compileAll(File("$testDataDir/$language/testMixedClassSnapshotGranularities/src/$classpathSourceDirName"), tmpDir)
 
     fun getGranularity(classFile: ClassFile): ClassSnapshotGranularity {
         val granularity = when (val className = classFile.asFile().nameWithoutExtension) {
