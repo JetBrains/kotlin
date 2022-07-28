@@ -365,6 +365,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
             // TODO: it should be disabled but test infrastructure need to be reworked for that
             runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> null
+            runtimeLogs != null -> "with runtime logs"
             else -> null
         }
         CacheSupport(
