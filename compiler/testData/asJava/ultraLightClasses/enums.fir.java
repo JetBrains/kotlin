@@ -39,6 +39,7 @@ public enum ProtocolState /* ProtocolState*/ {
   WAITING {
      WAITING();//  .ctor()
 
+    @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
     public ProtocolState signal();//  signal()
 
@@ -46,6 +47,7 @@ public enum ProtocolState /* ProtocolState*/ {
   TALKING {
      TALKING();//  .ctor()
 
+    @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
     public ProtocolState signal();//  signal()
 
@@ -67,6 +69,7 @@ public enum ProtocolState /* ProtocolState*/ {
 public static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
    WAITING();//  .ctor()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
 
@@ -75,6 +78,7 @@ public static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolSta
 public static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolState {
    TALKING();//  .ctor()
 
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public ProtocolState signal();//  signal()
 

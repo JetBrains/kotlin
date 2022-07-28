@@ -101,6 +101,9 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
 
+  @java.lang.Override()
+  public void run();//  run()
+
   @kotlin.jvm.JvmStatic()
   public static final int zoo();//  zoo()
 
@@ -110,8 +113,6 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   private  Obj();//  .ctor()
 
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
-
-  public void run();//  run()
 
 }
 

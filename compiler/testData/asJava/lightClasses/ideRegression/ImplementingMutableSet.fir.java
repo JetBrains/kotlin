@@ -9,6 +9,16 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 
   private static final int ARRAY_THRESHOLD;
 
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public java.util.Iterator<T> iterator();//  iterator()
+
+  @java.lang.Override()
+  public boolean add(T);//  add(T)
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public static final <T> SmartSet<T> create();// <T>  create()
@@ -17,16 +27,9 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   @org.jetbrains.annotations.NotNull()
   public static final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
 
-  @org.jetbrains.annotations.NotNull()
-  public java.util.Iterator<T> iterator();//  iterator()
-
   private  SmartSet();//  .ctor()
 
-  public boolean add(T);//  add(T)
-
   public int getSize();//  getSize()
-
-  public void clear();//  clear()
 
   public void setSize(int);//  setSize(int)
 

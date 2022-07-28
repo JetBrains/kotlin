@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.RETENTION_POLICY_ENUM
 import org.jetbrains.kotlin.name.*
@@ -108,6 +109,13 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     val parentIsAnnotation = (parent as? PsiClass)?.isAnnotationType == true
 
     val result = mutableListOf<PsiAnnotation>()
+
+    if (parent is SymbolLightMethod) {
+        if (parent.isDelegated || parent.isOverride()) {
+            result.add(SymbolLightSimpleAnnotation(java.lang.Override::class.java.name, parent))
+        }
+    }
+
     if (annotations.isEmpty()) {
         if (parentIsAnnotation) {
             result.add(createRetentionRuntimeAnnotation(parent))

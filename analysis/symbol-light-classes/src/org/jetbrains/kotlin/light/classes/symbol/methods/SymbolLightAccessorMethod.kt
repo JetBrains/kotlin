@@ -191,4 +191,6 @@ internal class SymbolLightAccessorMethod(
     override fun getParameterList(): PsiParameterList = _parametersList
 
     override fun isValid(): Boolean = super.isValid() && propertyAccessorSymbol.isValid()
+
+    override fun isOverride(): Boolean = propertyAccessorSymbol.isOverride
 }

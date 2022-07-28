@@ -1,4 +1,5 @@
 public final class MyList /* MyList*/ implements kotlin.collections.List<java.lang.String> {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.lang.String get(int);//  get(int)
 
@@ -17,11 +18,13 @@ public abstract class MySet /* MySet*/<T>  implements ASet<T> {
 }
 
 public abstract class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractMutableSet<T> {
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public java.util.Iterator<T> iterator();//  iterator()
 
-  private  SmartSet();//  .ctor()
-
+  @java.lang.Override()
   public boolean add(T);//  add(T)
+
+  private  SmartSet();//  .ctor()
 
 }
