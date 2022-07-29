@@ -313,6 +313,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
          * @param flatten does archive contains subdirectory that needs to be expanded
          * @param isAllowInsecureProtocol enables communication with a repository over an insecure HTTP connection.
          */
+        @Deprecated("Will be removed in a 1.8 version. Use pods published as a git repository instead")
         @JvmOverloads
         fun url(url: String, flatten: Boolean = false, isAllowInsecureProtocol: Boolean = false): PodLocation = Url(URI(url), flatten, isAllowInsecureProtocol)
 

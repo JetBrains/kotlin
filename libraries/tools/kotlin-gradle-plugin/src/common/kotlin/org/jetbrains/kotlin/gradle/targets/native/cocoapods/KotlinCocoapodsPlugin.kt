@@ -458,12 +458,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     it.podName = project.provider { pod.name.asValidTaskName() }
                     it.podSource = project.provider<Git> { podSource }
                 }
-
-                is Url -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
-                    it.podName = project.provider { pod.name.asValidTaskName() }
-                    it.podSource = project.provider<Url> { podSource }
+                is Url -> {
+                    SingleWarningPerBuild.show(project, "Direct pod downloading by url will be removed in a 1.8 version. Use pods published as a git repository instead.")
+                    project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
+                        it.podName = project.provider { pod.name.asValidTaskName() }
+                        it.podSource = project.provider<Url> { podSource }
+                    }
                 }
-
                 else -> return@all
             }
 
