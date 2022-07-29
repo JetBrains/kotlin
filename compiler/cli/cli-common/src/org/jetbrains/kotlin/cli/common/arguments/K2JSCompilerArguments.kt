@@ -16,6 +16,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         @JvmStatic private val serialVersionUID = 0L
     }
 
+    @GradleDeprecatedOption(
+        "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName",
+        "1.10",
+        DeprecationLevel.WARNING
+    )
     @GradleOption(
         value = DefaultValues.StringNullDefault::class,
         gradleInputType = GradleInputTypes.INTERNAL // handled by task 'outputFileProperty'
