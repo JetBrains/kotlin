@@ -140,7 +140,15 @@ data class DirtyData(
     val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
     val dirtyClassesFqNames: Collection<FqName> = emptyList(),
     val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
-)
+) {
+    operator fun plus(processChangesAndNotify: DirtyData): DirtyData {
+        return DirtyData(
+            dirtyLookupSymbols + processChangesAndNotify.dirtyLookupSymbols,
+            dirtyClassesFqNames + processChangesAndNotify.dirtyClassesFqNames,
+            dirtyClassesFqNamesForceRecompile + processChangesAndNotify.dirtyClassesFqNamesForceRecompile
+        )
+    }
+}
 
 fun ChangesCollector.getDirtyData(
     caches: Iterable<IncrementalCacheCommon>,

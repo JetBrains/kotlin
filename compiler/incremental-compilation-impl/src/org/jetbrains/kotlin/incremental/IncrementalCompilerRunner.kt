@@ -129,7 +129,7 @@ abstract class IncrementalCompilerRunner<
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
     ): ExitCode {
-        var caches = createCacheManager(args, projectDir)
+        val caches = createCacheManager(args, projectDir)
         var rebuildReason = BuildAttribute.INTERNAL_ERROR
 
         val classpathAbiSnapshot =
@@ -353,7 +353,7 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val expectActualTracker = ExpectActualTrackerImpl()
-            val incrementalApiService = IncrementalExtensionImpl(lookupTracker, caches.platformCache::getApiListenerFqName)
+            val incrementalApiService = IncrementalExtensionImpl(lookupTracker, caches.platformCache)
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
 
@@ -404,8 +404,11 @@ abstract class IncrementalCompilerRunner<
 
             val changesCollector = ChangesCollector()
             reporter.measure(BuildTime.IC_UPDATE_CACHES) {
-                caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
-                caches.platformCache.updateListenerSubscriptions(incrementalApiService.incrementalChangesManager.listenersMap.mapKeys { it.key.id })
+                caches.platformCache.updateComplementaryFiles(
+                    dirtySources,
+                    listOf(expectActualTracker, incrementalApiService.complementaryFilesTracker)
+                )
+                caches.platformCache.updateListenerSubscriptions(incrementalApiService)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
                 updateCaches(services, caches, generatedFiles, changesCollector)
@@ -417,26 +420,27 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
-            incrementalApiService.processChangesAndNotify(changesCollector.changes().map { it.fqName }, caches.platformCache)
             val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(
                 listOf(caches.platformCache),
+                reporter
+            ) + incrementalApiService.getDirtyDataFromExternalListeners(
+                changesCollector, listOf(caches.platformCache),
                 reporter
             )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
-            val dirtyLookupsFromCompilerPlugins = incrementalApiService.dirtyLookupFqNames.map {
-
-                val scope = it.parent().asString()
-                val name = it.shortName().identifier
-                LookupSymbol(name, scope)
+            val cache = caches.platformCache
+            val filesToRecompileFromListeners = mutableListOf<File>()
+            for (change in changesCollector.changes()) {
+                val dirtyFilesByChild = cache.getChildListenerFqNames(cache.getSubtypesOf(change.fqName).toList())
+                val dirtyFilesByParent = cache.getParentListenerFqNames(cache.getSupertypesOf(change.fqName).toList())
+                filesToRecompileFromListeners.addAll(dirtyFilesByChild + dirtyFilesByParent)
             }
 
-            incrementalApiService.dirtyLookupFqNames.clear()
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
             with(dirtySources) {
                 clear()
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
-                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupsFromCompilerPlugins, reporter))
                 addAll(
                     mapClassesFqNamesToFiles(
                         listOf(caches.platformCache),
@@ -448,6 +452,7 @@ abstract class IncrementalCompilerRunner<
                 if (!compiledInThisIterationSet.containsAll(forceToRecompileFiles)) {
                     addAll(forceToRecompileFiles)
                 }
+                addAll(filesToRecompileFromListeners)
             }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)

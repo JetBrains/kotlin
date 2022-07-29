@@ -168,6 +168,8 @@ open class IncrementalJvmCache(
                 protoMap.remove(className, changesCollector)
                 classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
                 classAttributesMap.remove(className.fqNameForClassNameWithoutDollars)
+                parentListenersMap.remove(className.fqNameForClassNameWithoutDollars)
+                childListenersMap.remove(className.fqNameForClassNameWithoutDollars)
                 internalNameToSource.remove(className.internalName)
 
                 // TODO NO_CHANGES? (delegates only)
@@ -369,7 +371,7 @@ open class IncrementalJvmCache(
             changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData, packageProtoKey = key)
         }
 
-        internal fun check(
+        fun check(
             className: JvmClassName, classProto: ProtoBuf.Class, stringTable: JvmStringTable, changesCollector: ChangesCollector
         ) {
             val key = className.internalName

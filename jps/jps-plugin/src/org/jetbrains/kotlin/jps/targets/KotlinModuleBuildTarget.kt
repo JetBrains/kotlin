@@ -265,7 +265,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
                 dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget)
         val expectActualTracker = environment.services[ExpectActualTracker::class.java] as ExpectActualTrackerImpl
 
-        jpsIncrementalCache.updateComplementaryFiles(changedAndRemovedFiles, expectActualTracker)
+        jpsIncrementalCache.updateComplementaryFiles(changedAndRemovedFiles, listOf(expectActualTracker))
     }
 
     open fun makeServices(
@@ -306,7 +306,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     )
 
     inner class SourcesToCompile(
-        sources: Collection<KotlinModuleBuildTarget.Source>,
+        sources: Collection<Source>,
         val removedFiles: Collection<File>
     ) {
         val allFiles = sources.map { it.file }

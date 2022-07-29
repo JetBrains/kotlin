@@ -6,21 +6,34 @@
 package org.jetbrains.kotlin.incremental.components
 
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
-abstract class IncrementalExtension(val lookupTracker: LookupTracker) {
-    abstract fun addListener(listener: ICListener)
-    abstract fun subscribe(listenerId: String, fqNames: List<FqName>)
-    abstract fun unsubscribe(listenerId: String, fqNames: List<FqName>)
-    abstract fun markLookupAsDirty(fqNames: List<FqName>)
+abstract class IncrementalExtension(private val lookupTracker: LookupTracker) {
+    // safe mode
+    fun addLookup(
+        filePath: String,
+        position: Position = Position.NO_POSITION,
+        scopeFqName: String,
+        scopeKind: ScopeKind,
+        name: String
+    ) = lookupTracker.record(
+        filePath,
+        position,
+        scopeFqName,
+        scopeKind,
+        name
+    )
+
+    abstract fun registerComplementary(first: File, second: File)
+    abstract fun subscribeOnHierarchyChange(type: HierarchyListenerType, fqName: FqName, files: List<File>)
+
+    // pro mode
+    abstract fun subscribeOnAllChanges(listener: IncrementalChangesListener)
 }
 
-abstract class ICListener {
-    abstract val id: String // unique
-    abstract val type: IncrementalListenerType
-    abstract fun onChange(fqNames: Set<FqName>)
-}
+abstract class IncrementalChangesListener
 
 // listener types
-sealed class IncrementalListenerType
-object ParentListenerType : IncrementalListenerType()
-object ChildListenerType : IncrementalListenerType()
+interface HierarchyListenerType
+class ParentListenerType : HierarchyListenerType
+class ChildListenerType : HierarchyListenerType

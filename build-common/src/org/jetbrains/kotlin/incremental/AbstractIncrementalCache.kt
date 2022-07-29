@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.EnumeratorStringDescriptor
+import org.jetbrains.kotlin.incremental.api.IncrementalExtensionImpl
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -39,10 +40,12 @@ interface IncrementalCacheCommon {
     fun markDirty(removedAndCompiledSources: Collection<File>)
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
     fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File>
-    fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl)
+    fun updateComplementaryFiles(dirtyFiles: Collection<File>, trackers: List<ExpectActualTrackerImpl>)
     fun dump(): String
 
     fun isSealed(className: FqName): Boolean?
+    fun getChildListenerFqNames(fqNames: List<FqName>): List<File>
+    fun getParentListenerFqNames(fqNames: List<FqName>): List<File>
 }
 
 /**
@@ -62,7 +65,8 @@ abstract class AbstractIncrementalCache<ClassName>(
         protected val SOURCE_TO_CLASSES = "source-to-classes"
         @JvmStatic
         protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
-        private val API_LISTENERS_DATA = "api-listeners-data"
+        private val CHILD_LISTENERS_DATA = "child-listeners-data"
+        private val PARENT_LISTENERS_DATA = "parent-listeners-data"
     }
 
     private val dependents = arrayListOf<AbstractIncrementalCache<ClassName>>()
@@ -82,7 +86,9 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
-    private val apiListenersDataMap = registerMap(ApiListenersDataMap(API_LISTENERS_DATA.storageFile))
+    protected val parentListenersMap = registerMap(ApiListenersDataMap(CHILD_LISTENERS_DATA.storageFile, pathConverter))
+    protected val childListenersMap = registerMap(ApiListenersDataMap(PARENT_LISTENERS_DATA.storageFile, pathConverter))
+
 
     /**
      * A file X is a complementary to a file Y if they contain corresponding expect/actual declarations.
@@ -106,8 +112,14 @@ abstract class AbstractIncrementalCache<ClassName>(
         return classAttributesMap[className]?.isSealed
     }
 
-    fun getApiListenerFqName(listenerId: String): List<FqName> {
-        return apiListenersDataMap[listenerId].toList()
+    override fun getChildListenerFqNames(fqNames: List<FqName>): List<File> {
+        val fqNamesInMap: Collection<FqName> = childListenersMap.keys.intersect(fqNames)
+        return fqNamesInMap.flatMap{ childListenersMap[it] }.toList()
+    }
+
+    override fun getParentListenerFqNames(fqNames: List<FqName>): List<File> {
+        val fqNamesInMap: Collection<FqName> = parentListenersMap.keys.intersect(fqNames)
+        return fqNamesInMap.flatMap{ parentListenersMap[it] }.toList()
     }
 
     override fun getSourceFileIfClass(fqName: FqName): File? =
@@ -183,6 +195,8 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
 
         removedFqNames.forEach {
+            parentListenersMap.remove(it)
+            childListenersMap.remove(it)
             classFqNameToSourceMap.remove(it)
             classAttributesMap.remove(it)
         }
@@ -220,31 +234,35 @@ abstract class AbstractIncrementalCache<ClassName>(
         return complementaryFiles
     }
 
-    override fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl) {
+    override fun updateComplementaryFiles(dirtyFiles: Collection<File>, trackers: List<ExpectActualTrackerImpl>) {
         dirtyFiles.forEach {
             complementaryFilesMap.remove(it)
         }
 
         val actualToExpect = hashMapOf<File, MutableSet<File>>()
-        for ((expect, actuals) in expectActualTracker.expectToActualMap) {
-            for (actual in actuals) {
-                actualToExpect.getOrPut(actual) { hashSetOf() }.add(expect)
+        for (tracker in trackers) {
+            for ((expect, actuals) in tracker.expectToActualMap) {
+                for (actual in actuals) {
+                    actualToExpect.getOrPut(actual) { hashSetOf() }.add(expect)
+                }
+                complementaryFilesMap[expect] = actuals
             }
-            complementaryFilesMap[expect] = actuals
-        }
 
-        for ((actual, expects) in actualToExpect) {
-            complementaryFilesMap[actual] = expects
+            for ((actual, expects) in actualToExpect) {
+                complementaryFilesMap[actual] = expects
+            }
         }
     }
 
-    fun updateListenerSubscriptions(updatedListenersMap: Map<String, List<FqName>>) {
-        val connectedListenerIds = updatedListenersMap.keys
-        apiListenersDataMap.keys.forEach { key ->
-            if(key !in connectedListenerIds) apiListenersDataMap.remove(key)
+    fun updateListenerSubscriptions(incrementalExtension: IncrementalExtensionImpl) {
+        val updatedChildListenersMap = incrementalExtension.childListenersMap
+        val updatedParentListenersMap = incrementalExtension.parentListenersMap
+
+        updatedChildListenersMap.forEach {
+            childListenersMap[it.key] = it.value
         }
-        updatedListenersMap.forEach {
-            apiListenersDataMap.set(it.key, it.value)
+        updatedParentListenersMap.forEach {
+            parentListenersMap[it.key] = it.value
         }
     }
 }

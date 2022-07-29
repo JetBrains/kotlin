@@ -5,79 +5,48 @@
 
 package org.jetbrains.kotlin.incremental.api
 
-import org.jetbrains.kotlin.incremental.AbstractIncrementalCache
+import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
-class IncrementalExtensionImpl(lookupTracker: LookupTracker, private val getCachedFqNames: (String) -> List<FqName>) : IncrementalExtension(lookupTracker) {
-    val incrementalChangesManager = IncrementalChangesManager()
-    val dirtyLookupFqNames = mutableListOf<FqName>()
+class IncrementalExtensionImpl(lookupTracker: LookupTracker, val cache: AbstractIncrementalCache<*>) : IncrementalExtension(lookupTracker) {
+    val complementaryFilesTracker = ExpectActualTrackerImpl()
+    var parentListenersMap = hashMapOf<FqName, MutableSet<File>>()
+    var childListenersMap = hashMapOf<FqName, MutableSet<File>>()
+    private var allChangesListeners = mutableListOf<ChangesListener>()
 
-    override fun addListener(listener: ICListener) {
-        if (incrementalChangesManager.listenersMap[listener] != null)
-            throw Exception("Listener with the same id has already been installed") // TODO: is it ok to throw here?
-        incrementalChangesManager.listenersMap[listener] = getCachedFqNames(listener.id)
+    override fun registerComplementary(first: File, second: File) {
+        complementaryFilesTracker.report(first, second)
     }
 
-    override fun subscribe(listenerId: String, fqNames: List<FqName>) {
-        incrementalChangesManager.subscribe(listenerId, fqNames)
+    override fun subscribeOnHierarchyChange(type: HierarchyListenerType, fqName: FqName, files: List<File>) {
+        when (type) {
+            is ParentListenerType -> parentListenersMap
+            is ChildListenerType -> childListenersMap
+            else -> error("Unknown listener type")
+        }.getOrPut(fqName) { HashSet() }.addAll(files)
     }
 
-    override fun unsubscribe(listenerId: String, fqNames: List<FqName>) {
-        incrementalChangesManager.unsubscribe(listenerId, fqNames)
+    override fun subscribeOnAllChanges(listener: IncrementalChangesListener) {
+        if (listener !is ChangesListener) throw ClassCastException("Listener should be derived from org.jetbrains.kotlin.incremental.api.ChangesListener")
+        allChangesListeners.add(listener)
     }
 
-    override fun markLookupAsDirty(fqNames: List<FqName>) {
-        dirtyLookupFqNames.addAll(fqNames)
-    }
-
-    fun processChangesAndNotify(changedFqNames: List<FqName>, platformCache: AbstractIncrementalCache<*>) {
-        for (entry in groupListeners()) {
-            val listenerType = entry.key
-            val listener = entry.value
-            val fqNamesToNotify = when (listenerType) {
-                ParentListenerType -> {
-                    changedFqNames.flatMap { platformCache.getSupertypesOf(it) }
-                }
-                ChildListenerType -> {
-                    changedFqNames.flatMap { platformCache.getSubtypesOf(it) }
-                }
-            }
-            listener.forEach { it.onChange(fqNamesToNotify.intersect(incrementalChangesManager.getSubscribedFqNames(it.id))) }
+    fun getDirtyDataFromExternalListeners(
+        changesCollector: ChangesCollector,
+        caches: Iterable<IncrementalCacheCommon>,
+        reporter: ICReporter
+    ): DirtyData {
+        var dirtyData = DirtyData()
+        allChangesListeners.forEach {
+            dirtyData += it.onChange(changesCollector, caches, reporter)
         }
-    }
-
-    private fun groupListeners(): MutableMap<IncrementalListenerType, List<ICListener>> {
-        val groupedListeners = mutableMapOf<IncrementalListenerType, List<ICListener>>()
-        incrementalChangesManager.listenersMap.keys.map {
-            if (groupedListeners[it.type] == null) {
-                groupedListeners[it.type] = listOf(it)
-            } else {
-                groupedListeners[it.type] = groupedListeners[it.type]!! + it
-            }
-        }
-        return groupedListeners
+        return dirtyData
     }
 }
 
-class IncrementalChangesManager {
-    var listenersMap = mutableMapOf<ICListener, List<FqName>>()
-
-    fun subscribe(listenerId: String, fqNames: List<FqName>) {
-        val listener = listenersMap.keys.singleOrNull { it.id == listenerId }
-            ?: throw Exception("There is no listener with id: $listenerId")
-        listenersMap[listener] = listenersMap[listener]!! + fqNames
-    }
-
-    fun unsubscribe(listenerId: String, fqNames: List<FqName>) {
-        val listener = listenersMap.keys.singleOrNull { it.id == listenerId }
-            ?: throw Exception("There is no listener with id: $listenerId")
-        listenersMap[listener] = listenersMap[listener]!! - fqNames
-    }
-
-
-    fun getSubscribedFqNames(listenerId: String): List<FqName> {
-        return listenersMap.filter { it.key.id == listenerId}.map { it.value }.singleOrNull() ?: emptyList()
-    }
+abstract class ChangesListener : IncrementalChangesListener() {
+    abstract fun onChange(changes: ChangesCollector, caches: Iterable<IncrementalCacheCommon>, reporter: ICReporter): DirtyData
 }
-

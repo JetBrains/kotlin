@@ -311,8 +311,6 @@ object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorS
 
 object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
 
-object FqNameCollectionExternalizer : CollectionExternalizer<FqName>(FqNameExternalizer, { HashSet() })
-
 fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
 
 fun DataInput.readString(): String = StringExternalizer.read(this)

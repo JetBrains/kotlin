@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.dumpCollection
 
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
-class ApiListenersDataMap(storageFile: File) : BasicStringMap<Collection<FqName>>(storageFile, FqNameCollectionExternalizer) {
+class ApiListenersDataMap(
+    storageFile: File,
+    private val pathConverter: FileToPathConverter
+) : BasicStringMap<Collection<String>>(storageFile, EnumeratorStringDescriptor(), StringCollectionExternalizer) {
 
-    operator fun get(listenerId: String): Collection<FqName> {
-        return storage[listenerId] ?: setOf()
+    operator fun set(fqName: FqName, dependantFiles: Collection<File>) {
+        storage[fqName.asString()] = dependantFiles.map(pathConverter::toPath)
     }
 
-    operator fun set(listenerId: String, subscribedFqNames: List<FqName>) {
-        val oldValue = storage[listenerId]
-        if (oldValue == subscribedFqNames) return
-        storage[listenerId] = subscribedFqNames
-    }
+    operator fun get(fqName: FqName): Collection<File> =
+        storage[fqName.asString()].orEmpty().map(pathConverter::toFile)
 
-    fun remove(listenerId: String) {
-        storage.remove(listenerId)
-    }
+    override fun dumpValue(value: Collection<String>) =
+        value.dumpCollection()
 
-    val keys: Collection<String>
-        get() = storage.keys
+    fun remove(fqName: FqName): Collection<File> =
+        get(fqName).also { storage.remove(fqName.asString()) }
 
-
-    override fun dumpValue(value: Collection<FqName>): String = value.map { it.toString() }.dumpCollection()
+    val keys: Collection<FqName>
+        get() = storage.keys.map { FqName(it) }
 }
