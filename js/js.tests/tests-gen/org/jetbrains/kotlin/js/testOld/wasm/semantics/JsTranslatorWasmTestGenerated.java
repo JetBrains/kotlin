@@ -125,6 +125,11 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
             runTest("js/js.translator/testData/box/native/classObject.kt");
         }
 
+        @TestMetadata("externalValWithOverridenVar.kt")
+        public void testExternalValWithOverridenVar() throws Exception {
+            runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
+        }
+
         @TestMetadata("kt2209.kt")
         public void testKt2209() throws Exception {
             runTest("js/js.translator/testData/box/native/kt2209.kt");

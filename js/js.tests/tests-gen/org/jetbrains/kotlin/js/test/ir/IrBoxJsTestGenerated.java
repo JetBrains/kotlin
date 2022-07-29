@@ -7971,6 +7971,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("externalValWithOverridenVar.kt")
+        public void testExternalValWithOverridenVar() throws Exception {
+            runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
+        }
+
+        @Test
         @TestMetadata("inheritanceFromNativeClass.kt")
         public void testInheritanceFromNativeClass() throws Exception {
             runTest("js/js.translator/testData/box/native/inheritanceFromNativeClass.kt");

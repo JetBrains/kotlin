@@ -77,7 +77,8 @@ private fun IrDeclaration.addRootsTo(
             }
         }
         this is IrSimpleFunction -> {
-            if (correspondingPropertySymbol?.owner?.isExported(context) == true) {
+            val correspondingProperty = correspondingPropertySymbol?.owner ?: return
+            if (correspondingProperty.isExported(context)) {
                 acceptVoid(nestedVisitor)
             }
         }

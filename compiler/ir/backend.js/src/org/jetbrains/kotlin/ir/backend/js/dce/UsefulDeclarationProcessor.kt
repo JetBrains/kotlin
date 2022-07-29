@@ -185,6 +185,10 @@ abstract class UsefulDeclarationProcessor(
             }
         }
 
+        if (declaration is IrSimpleFunction && declaration.isAccessorForOverriddenExternalField()) {
+            declaration.enqueue(declaration.correspondingPropertySymbol!!.owner, "overrides external property")
+        }
+
         // A hack to enforce property lowering.
         // Until a getter is accessed it doesn't get moved to the declaration list.
         if (declaration is IrProperty) {
@@ -195,6 +199,14 @@ abstract class UsefulDeclarationProcessor(
                 findOverriddenContagiousDeclaration()?.let { enqueue(declaration, "(setter) overrides useful declaration") }
             }
         }
+    }
+
+    private fun IrSimpleFunction.isAccessorForOverriddenExternalField(): Boolean {
+        return correspondingPropertySymbol?.owner?.isExternalOrOverriddenExternal() ?: false
+    }
+
+    private fun IrProperty.isExternalOrOverriddenExternal(): Boolean {
+        return isEffectivelyExternal() || overriddenSymbols.any { it.owner.isExternalOrOverriddenExternal() }
     }
 
     protected open fun handleAssociatedObjects(): Unit = Unit

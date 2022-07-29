@@ -416,7 +416,7 @@ fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean
 
     if (parentAsClass.isExported(context)) return true
 
-    return overriddenStableProperty(context)
+    return isAccessorOfOverriddenStableProperty(context)
 }
 
 fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Boolean {
@@ -429,10 +429,14 @@ fun IrSimpleFunction.overriddenStableProperty(context: JsIrBackendContext): Bool
     return overridesExternal() || property.getJsName() != null
 }
 
-private fun IrSimpleFunction.overridesExternal(): Boolean {
+fun IrSimpleFunction.isAccessorOfOverriddenStableProperty(context: JsIrBackendContext): Boolean {
+    return overriddenStableProperty(context) || correspondingPropertySymbol!!.owner.overridesExternal()
+}
+
+private fun IrOverridableDeclaration<*>.overridesExternal(): Boolean {
     if (this.isEffectivelyExternal()) return true
 
-    return this.overriddenSymbols.any { it.owner.overridesExternal() }
+    return overriddenSymbols.any { (it.owner as IrOverridableDeclaration<*>).overridesExternal() }
 }
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
