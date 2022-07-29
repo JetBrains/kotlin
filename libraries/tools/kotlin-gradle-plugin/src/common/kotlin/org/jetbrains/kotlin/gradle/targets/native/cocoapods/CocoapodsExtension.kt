@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodDownloadUrlTask
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.tasks.addArgs
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.net.URI
@@ -305,19 +305,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         override fun getName(): String = name
 
         /**
-         * Url to archived (tar, jar, zip) pod folder, that should contain the podspec file and all sources required by it.
-         *
-         * Archive name should match pod name.
-         *
-         * @param url url to tar, jar or zip archive.
-         * @param flatten does archive contains subdirectory that needs to be expanded
-         * @param isAllowInsecureProtocol enables communication with a repository over an insecure HTTP connection.
-         */
-        @Deprecated("Will be removed in a 1.8 version. Use pods published as a git repository instead")
-        @JvmOverloads
-        fun url(url: String, flatten: Boolean = false, isAllowInsecureProtocol: Boolean = false): PodLocation = Url(URI(url), flatten, isAllowInsecureProtocol)
-
-        /**
          * Path to local pod
          */
         fun path(podspecDirectory: String): PodLocation = Path(File(podspecDirectory))
@@ -347,26 +334,15 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         }
 
         sealed class PodLocation {
-            internal abstract fun getLocalPath(project: Project, podName: String): String
-
-            data class Url(
-                @get:Input val url: URI,
-                @get:Input var flatten: Boolean,
-                @get:Input var isAllowInsecureProtocol: Boolean
-            ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).absolutePath
-                }
-            }
+            internal abstract fun getPodSourcePath(): String
 
             data class Path(
                 @get:InputDirectory
                 @get:IgnoreEmptyDirectories
                 val dir: File
             ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    return dir.absolutePath
-                }
+                @Internal
+                override fun getPodSourcePath() = ":path => '${dir.absolutePath}'"
             }
 
             data class Git(
@@ -375,8 +351,14 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 @get:Input @get:Optional var tag: String? = null,
                 @get:Input @get:Optional var commit: String? = null
             ) : PodLocation() {
-                override fun getLocalPath(project: Project, podName: String): String {
-                    return project.cocoapodsBuildDirs.externalSources("git").resolve(podName).absolutePath
+                @Internal
+                override fun getPodSourcePath() = buildString {
+                    append(":git => '$url'")
+                    when {
+                        branch != null -> append(", :branch => '$branch'")
+                        tag != null -> append(", :tag => '$tag'")
+                        commit != null -> append(", :commit => '$commit'")
+                    }
                 }
             }
         }

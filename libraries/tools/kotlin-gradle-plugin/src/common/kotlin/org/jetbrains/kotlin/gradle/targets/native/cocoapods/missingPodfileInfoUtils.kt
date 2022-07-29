@@ -19,9 +19,11 @@ class MissingSpecReposMessage(override val missingInfo: SpecRepos) : MissingInfo
         get() = missingInfo.getAll().joinToString(separator = "\n") { "source '$it'" }
 }
 
-class MissingCocoapodsMessage(override val missingInfo: CocoapodsDependency, private val project: Project) :
-    MissingInfoMessage<CocoapodsDependency> {
+class MissingCocoapodsMessage(
+    override val missingInfo: CocoapodsDependency,
+    private val project: Project
+) : MissingInfoMessage<CocoapodsDependency> {
     override val missingMessage: String
-        get() = "pod '${missingInfo.name}'${missingInfo.source?.let { ", :path => '${it.getLocalPath(project, missingInfo.name)}'" } ?: ""}"
+        get() = "pod '${missingInfo.name}'${missingInfo.source?.let { ", ${it.getPodSourcePath()}" }.orEmpty()}"
 }
 
