@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
@@ -117,6 +118,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val jsIrOutputGranularity: KotlinJsIrOutputGranularity
         get() = property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
+
+    val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
+        get() = property("kotlin.js.ir.development.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
+            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
+
+    val jsIrGeneratedTypeScriptValidationProdStrategy: KotlinIrJsGeneratedTSValidationStrategy
+        get() = property("kotlin.js.ir.production.typescript.validation.strategy")?.let { KotlinIrJsGeneratedTSValidationStrategy.byArgument(it) }
+            ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")

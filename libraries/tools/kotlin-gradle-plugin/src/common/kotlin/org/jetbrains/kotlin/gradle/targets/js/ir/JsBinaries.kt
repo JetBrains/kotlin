@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
+import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -50,6 +51,8 @@ sealed class JsIrBinary(
 
     val linkSyncTaskName: String = linkSyncTaskName()
 
+    val validateGeneratedTsTaskName: String = validateTypeScriptTaskName()
+
     val linkSyncTask: TaskProvider<Copy>
         get() = target.project.tasks
             .withType<Copy>()
@@ -61,6 +64,14 @@ sealed class JsIrBinary(
             compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             name,
             COMPILE_SYNC
+        )
+
+    private fun validateTypeScriptTaskName(): String =
+        lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            name,
+            TypeScriptValidationTask.NAME
         )
 
     val target: KotlinTarget
