@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import utils.assertNotNull
 import java.net.URL
 import java.nio.file.Paths
 
@@ -131,10 +132,8 @@ class LinkableContentTest : BaseAbstractTest() {
                 Assertions.assertEquals(2, packageChildren.size)
                 packageChildren.forEach {
                     val name = it.name.substringBefore("Class")
-                    val crl = it.safeAs<ClasslikePageNode>()?.content?.safeAs<ContentGroup>()?.children?.last()
-                        ?.safeAs<ContentGroup>()?.children?.last()?.safeAs<ContentGroup>()?.children?.lastOrNull()
-                        ?.safeAs<ContentTable>()?.children?.singleOrNull()
-                        ?.safeAs<ContentGroup>()?.children?.singleOrNull().safeAs<ContentResolvedLink>()
+                    val signature = it.safeAs<ClasslikePageNode>()?.content?.dfs { it is ContentGroup && it.dci.kind == ContentKind.Symbol }.assertNotNull("signature")
+                    val crl = signature.children.last().children[1].safeAs<ContentResolvedLink>()
                     Assertions.assertEquals(
                         "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L3",
                         crl?.address

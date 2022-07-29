@@ -407,7 +407,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
         ) {
             renderingStage = { _, _ ->
                 val sourceLink = writerPlugin.writer.renderedContent("root/testpackage/-kotlin-enum/index.html")
-                    .select("div[data-togglable=Sources]")
+                    .select(".symbol .floating-right")
                     .select("a[href]")
                     .attr("href")
 
