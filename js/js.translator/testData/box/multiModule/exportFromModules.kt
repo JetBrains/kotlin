@@ -31,7 +31,6 @@ package demoPackage.b
 fun moduleBFunction() = "B"
 
 // MODULE: main(ModuleA2, ModuleB)
-// NO_COMMON_FILES
 // MODULE_KIND: COMMON_JS
 // FILE: main.kt
 
