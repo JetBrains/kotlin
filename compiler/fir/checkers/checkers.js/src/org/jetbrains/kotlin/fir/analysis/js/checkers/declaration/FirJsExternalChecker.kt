@@ -257,24 +257,28 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun FirClass.collectSupertypesWithInfo(): Map<FirTypeRef, Boolean> {
-        val isDelegatedSupertype = superConeTypes.keysToMap { false }.toMutableMap()
+    fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirField?> {
+        // We don't care about the same cone type being represented
+        // by multiple type refs since this is an error anyway.
+        val superConesToSuperTypeRefs = superTypeRefs.groupingBy { it.coneType }.reduce { _, accumulator, _ -> accumulator }
+        val superTypeRefsToDelegate = superTypeRefs.keysToMap<FirTypeRef, FirField?> { null }.toMutableMap()
 
         for (it in declarations) {
             if (it is FirField && it.name.asString().startsWith("<$\$delegate_")) {
                 val type = it.returnTypeRef.coneType as? ConeClassLikeType ?: continue
-                isDelegatedSupertype[type] = true
+                val correspondingTypeRef = superConesToSuperTypeRefs[type] ?: continue
+                superTypeRefsToDelegate[correspondingTypeRef] = it
             }
         }
 
-        return superTypeRefs.zip(isDelegatedSupertype.values).toMap()
+        return superTypeRefsToDelegate
     }
 
     private fun FirDeclarationWithContext<*>.checkDelegation(reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration || !isEffectivelyExternal()) return
 
         if (declaration is FirClass) {
-            for ((superType, isDelegated) in declaration.collectSupertypesWithInfo()) {
+            for ((superType, delegate) in declaration.collectSupertypesWithDelegates()) {
                 val symbol = superType.coneType.toSymbol(session) as? FirClassSymbol<*>
 
                 when {
@@ -282,7 +286,7 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
                         // TODO: report on valueArgumentsList
                         reporter.reportOn(superType.source, FirJsErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, context)
                     }
-                    isDelegated -> {
+                    delegate != null -> {
                         reporter.reportOn(superType.source, FirJsErrors.EXTERNAL_DELEGATION, context)
                     }
                 }
