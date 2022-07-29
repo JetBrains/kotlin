@@ -641,6 +641,8 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    private val traceEventMarkersEnabled get() = traceEventEndFunction != null
+
     private val sourceInformationMarkerEndFunction by guardedLazy {
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKEREND)
@@ -866,9 +868,13 @@ class ComposableFunctionBodyTransformer(
 
         var (transformed, returnVar) = body.asBodyAndResultVar()
 
+        val emitTraceMarkers = traceEventMarkersEnabled && !scope.function.isInline
+
         transformed = transformed.apply {
             transformChildrenVoid()
-            wrapWithTraceEvents(irFunctionSourceKey(), scope)
+            if (emitTraceMarkers) {
+                wrapWithTraceEvents(irFunctionSourceKey(), scope)
+            }
         }
 
         buildPreambleStatementsAndReturnIfSkippingPossible(
@@ -886,7 +892,7 @@ class ComposableFunctionBodyTransformer(
         if (!elideGroups) {
             scope.realizeGroup {
                 irComposite(statements = listOfNotNull(
-                    irTraceEventEnd(),
+                    if (emitTraceMarkers) irTraceEventEnd() else null,
                     irEndReplaceableGroup()
                 ))
             }
@@ -996,11 +1002,15 @@ class ComposableFunctionBodyTransformer(
 
         val (nonReturningBody, returnVar) = body.asBodyAndResultVar()
 
+        val emitTraceMarkers = traceEventMarkersEnabled && !scope.isInlinedLambda
+
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
         val transformed = nonReturningBody.apply {
             transformChildrenVoid()
-            wrapWithTraceEvents(irFunctionSourceKey(), scope)
+            if (emitTraceMarkers) {
+                wrapWithTraceEvents(irFunctionSourceKey(), scope)
+            }
         }
 
         canSkipExecution = buildPreambleStatementsAndReturnIfSkippingPossible(
@@ -1020,7 +1030,7 @@ class ComposableFunctionBodyTransformer(
             dirty
         } else changedParam
 
-        if (traceEventEndFunction != null) {
+        if (emitTraceMarkers) {
             scope.realizeEndCalls {
                 irTraceEventEnd()!!
             }

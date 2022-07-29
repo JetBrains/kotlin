@@ -200,13 +200,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C:Test.kt")
               if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
                 Unit
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
               } else {
                 %composer.skipToGroupEnd()
               }
