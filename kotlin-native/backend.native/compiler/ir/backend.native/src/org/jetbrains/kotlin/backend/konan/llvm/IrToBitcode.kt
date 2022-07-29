@@ -270,8 +270,12 @@ internal class CodeGeneratorVisitor(
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
 
-        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?, resultSlot: LLVMValueRef?) =
-                evaluateSimpleFunctionCall(function, args, resultLifetime, superClass, resultSlot)
+        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?, resultSlot: LLVMValueRef?): LLVMValueRef {
+            val allArgs = args.toMutableList() //               TODO: do it in a more general fashion.
+            if (codegen.functionHasOuterStackParam(function) || (superClass == null && (function as? IrSimpleFunction)?.isOverridable == true))
+                allArgs.add(llvm.kNullInt8Ptr)
+            return evaluateSimpleFunctionCall(function, allArgs, resultLifetime, superClass, resultSlot)
+        }
 
         override fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> =
                 this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
@@ -2490,13 +2494,20 @@ internal class CodeGeneratorVisitor(
         val function = callee.symbol.owner
         require(!function.isSuspend) { "Suspend functions should be lowered out at this point"}
 
+        val isVirtual = callee.superQualifierSymbol == null && function.isOverridable
+        val allArgs = buildList(args.size) {
+            addAll(args)
+            // TODO: do it in a more general fashion.
+            if (codegen.functionHasOuterStackParam(function) || isVirtual)
+                add(llvm.kNullInt8Ptr)
+        }
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, resultSlot)
-            function.isBuiltInOperator -> evaluateOperatorCall(callee, args)
+            function.isBuiltInOperator -> evaluateOperatorCall(callee, allArgs)
             function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
             function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> evaluateFileThreadLocalInitializerCall(function)
             function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> evaluateFileStandaloneThreadLocalInitializerCall(function)
-            else -> evaluateSimpleFunctionCall(function, args, resultLifetime, callee.superQualifierSymbol?.owner, resultSlot)
+            else -> evaluateSimpleFunctionCall(function, allArgs, resultLifetime, callee.superQualifierSymbol?.owner, resultSlot)
         }
     }
 
@@ -2580,29 +2591,35 @@ internal class CodeGeneratorVisitor(
         return lifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
     }
 
-    private fun evaluateConstructorCall(callee: IrConstructorCall, args: List<LLVMValueRef>, resultSlot: LLVMValueRef?): LLVMValueRef {
-        context.log{"evaluateConstructorCall        : ${ir2string(callee)}"}
+    private fun evaluateConstructorCall(callSite: IrConstructorCall, args: List<LLVMValueRef>, resultSlot: LLVMValueRef?): LLVMValueRef {
+        context.log{"evaluateConstructorCall        : ${ir2string(callSite)}"}
         return memScoped {
-            val constructedClass = callee.symbol.owner.constructedClass
+            val constructor = callSite.symbol.owner
+            val constructedClass = constructor.constructedClass
             val thisValue = when {
                 constructedClass.isArray -> {
                     assert(args.isNotEmpty() && args[0].type == llvm.int32Type)
                     functionGenerationContext.allocArray(constructedClass, args[0],
-                            resultLifetime(callee), currentCodeContext.exceptionHandler, resultSlot = resultSlot)
+                            resultLifetime(callSite), currentCodeContext.exceptionHandler, resultSlot = resultSlot)
                 }
                 constructedClass == context.ir.symbols.string.owner -> {
                     // TODO: consider returning the empty string literal instead.
                     assert(args.isEmpty())
                     functionGenerationContext.allocArray(constructedClass, count = llvm.kImmInt32Zero,
-                            lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler, resultSlot = resultSlot)
+                            lifetime = resultLifetime(callSite), exceptionHandler = currentCodeContext.exceptionHandler, resultSlot = resultSlot)
                 }
 
-                constructedClass.isObjCClass() -> error("Call should've been lowered: ${callee.dump()}")
+                constructedClass.isObjCClass() -> error("Call should've been lowered: ${callSite.dump()}")
 
-                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee), resultSlot = resultSlot)
+                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callSite), resultSlot = resultSlot)
             }
-            evaluateSimpleFunctionCall(callee.symbol.owner,
-                    listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
+            val allArgs = buildList(args.size + 1) {
+                add(thisValue)
+                addAll(args)
+                if (codegen.functionHasOuterStackParam(constructor))
+                    add(llvm.kNullInt8Ptr)
+            }
+            evaluateSimpleFunctionCall(constructor, allArgs, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
             thisValue
         }
     }
@@ -2784,8 +2801,13 @@ internal class CodeGeneratorVisitor(
             functionGenerationContext.bitcast(thisPtrArgType, thisPtr)
         }
 
-        return callDirect(constructor, listOf(thisPtrArg) + args,
-                Lifetime.IRRELEVANT /* no value returned */, null)
+        val allArgs = buildList(args.size + 1) {
+            add(thisPtrArg)
+            addAll(args)
+            if (codegen.functionHasOuterStackParam(constructor))
+                add(llvm.kNullInt8Ptr)
+        }
+        return callDirect(constructor, allArgs, Lifetime.IRRELEVANT /* no value returned */, null)
     }
 
     //-------------------------------------------------------------------------//

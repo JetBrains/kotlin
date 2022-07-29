@@ -38,6 +38,7 @@ internal class OverriddenFunctionInfo(
 ) {
     val needBridge: Boolean
         get() = function.target.needBridgeTo(overriddenFunction)
+                || (function.isReal && function.hasAnnotation(KonanFqNames.gcUnsafeCall))
 
     val bridgeDirections: BridgeDirections
         get() = function.target.bridgeDirectionsTo(overriddenFunction)
@@ -58,7 +59,7 @@ internal class OverriddenFunctionInfo(
 
     fun getImplementation(context: Context): IrSimpleFunction? {
         val target = function.target
-        val implementation = if (!needBridge)
+        val implementation = if (!canBeCalledVirtually || !needBridge)
             target
         else {
             val bridgeOwner = if (inheritsBridge) {

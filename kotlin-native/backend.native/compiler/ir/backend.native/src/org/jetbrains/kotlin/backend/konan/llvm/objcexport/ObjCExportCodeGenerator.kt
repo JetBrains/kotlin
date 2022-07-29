@@ -392,7 +392,7 @@ internal class ObjCExportCodeGenerator(
 
         val value = genValue(Lifetime.ARGUMENT)
 
-        return callFromBridge(conversion.owner.llvmFunction, listOf(value), resultLifetime)
+        return callFromBridge(conversion.owner.llvmFunction, listOf(value, llvm.kNullInt8Ptr), resultLifetime)
     }
 
     private fun generateTypeAdaptersForKotlinTypes(spec: ObjCExportCodeSpec?): List<ObjCTypeAdapter> {
@@ -744,7 +744,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
-                listOf(param(0)),
+                listOf(param(0), llvm.kNullInt8Ptr),
                 Lifetime.IRRELEVANT
         )
 
@@ -950,7 +950,12 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         } else {
             codegen.llvmFunction(target)
         }
-        call(llvmCallable, args, resultLifetime, exceptionHandler)
+        val allArgs = buildList(args.size + 1) {
+            addAll(args)
+            if (functionHasOuterStackParam(target) || isVirtual)
+                add(llvm.kNullInt8Ptr)
+        }
+        call(llvmCallable, allArgs, resultLifetime, exceptionHandler)
     }
 }
 
@@ -1088,7 +1093,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             MethodBridge.ReturnValue.Suspend -> {
                 val coroutineSuspended = callFromBridge(
                         codegen.llvmFunction(context.ir.symbols.objCExportGetCoroutineSuspended.owner),
-                        emptyList(),
+                        listOf(llvm.kNullInt8Ptr),
                         Lifetime.STACK
                 )
                 ifThen(icmpNe(targetResult!!, coroutineSuspended)) {
@@ -1159,7 +1164,7 @@ private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
             resultLifetime = Lifetime.ARGUMENT
     )
 
-    call(target.llvmFunction, listOf(arrayInstance) + args, resultLifetime, exceptionHandler)
+    call(target.llvmFunction, listOf(arrayInstance) + args + llvm.kNullInt8Ptr, resultLifetime, exceptionHandler)
     arrayInstance
 }
 
@@ -1244,7 +1249,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     // TODO: consider placing interception into the converter to reduce code size.
                     val intercepted = callFromBridge(
                             context.ir.symbols.objCExportInterceptedContinuation.owner.llvmFunction,
-                            listOf(continuation),
+                            listOf(continuation, llvm.kNullInt8Ptr),
                             Lifetime.ARGUMENT
                     )
 
@@ -1349,7 +1354,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                 // which is indicated by the return value:
                 callFromBridge(
                         context.ir.symbols.objCExportGetCoroutineSuspended.owner.llvmFunction,
-                        emptyList(),
+                        listOf(llvm.kNullInt8Ptr),
                         Lifetime.RETURN_VALUE
                 )
             }

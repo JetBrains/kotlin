@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
@@ -90,10 +91,10 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
         }
     }
 }
-internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
-
-    val symbols = context.ir.symbols
-    lateinit var runtimeJobFunction: IrSimpleFunction
+internal class WorkersBridgesBuilding(val generationState: NativeGenerationState) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
+    private val context = generationState.context
+    private val symbols = context.ir.symbols
+    private lateinit var runtimeJobFunction: IrSimpleFunction
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat {
@@ -177,6 +178,9 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         typeArgumentsCount = 0,
                         reflectionTarget = null)
                 )
+
+                generationState.lambdasReferencedFromNative += bridge
+
                 return expression
             }
         })
@@ -184,7 +188,8 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     }
 }
 
-internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
+internal class BridgesBuilding(val generationState: NativeGenerationState) : ClassLoweringPass {
+    private val context = generationState.context
 
     override fun lower(irClass: IrClass) {
         val builtBridges = mutableSetOf<IrSimpleFunction>()
@@ -194,14 +199,14 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             for (overriddenFunction in function.allOverriddenFunctions) {
                 val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction)
                 val bridgeDirections = overriddenFunctionInfo.bridgeDirections
-                if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
+                if (overriddenFunctionInfo.needBridge && overriddenFunctionInfo.canBeCalledVirtually
                         && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
                     buildBridge(overriddenFunctionInfo, irClass)
                     builtBridges += function
                 }
             }
         }
-        irClass.transformChildrenVoid(object: IrElementTransformerVoid() {
+        irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 // Skip nested.
                 return declaration
@@ -226,15 +231,16 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
         })
     }
 
-    private fun buildBridge(overriddenFunction: OverriddenFunctionInfo, irClass: IrClass) {
-        irClass.declarations.add(context.buildBridge(
-                startOffset          = irClass.startOffset,
-                endOffset            = irClass.endOffset,
-                overriddenFunction   = overriddenFunction,
-                targetSymbol         = overriddenFunction.function.symbol,
-                superQualifierSymbol = irClass.symbol)
-        )
-    }
+    private fun buildBridge(overriddenFunction: OverriddenFunctionInfo, irClass: IrClass) =
+            context.buildBridge(
+                    startOffset = irClass.startOffset,
+                    endOffset = irClass.endOffset,
+                    overriddenFunction = overriddenFunction,
+                    targetSymbol = overriddenFunction.function.symbol,
+                    superQualifierSymbol = irClass.symbol
+            ).also {
+                irClass.declarations.add(it)
+            }
 }
 
 internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {

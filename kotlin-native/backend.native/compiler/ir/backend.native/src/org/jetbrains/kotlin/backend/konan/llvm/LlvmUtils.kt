@@ -272,6 +272,15 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, va
 internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, paramTypes: List<LLVMTypeRef>) =
         functionType(returnType, isVarArg, *paramTypes.toTypedArray())
 
+internal fun getFunctionParameterTypes(functionType: LLVMTypeRef): List<LLVMTypeRef> = memScoped {
+    val numberOfParameters = LLVMCountParamTypes(functionType)
+    val paramTypes = allocArray<LLVMTypeRefVar>(numberOfParameters)
+    LLVMGetParamTypes(functionType, paramTypes)
+    ArrayList<LLVMTypeRef>(numberOfParameters).also {
+        for (index in 0 until numberOfParameters)
+            it.add(paramTypes[index]!!)
+    }
+}
 
 fun llvm2string(value: LLVMValueRef?): String {
   if (value == null) return "<null>"

@@ -1145,6 +1145,8 @@ private class InteropTransformer(
                                 typeArgument.isMarkedNullable == signatureType.isMarkedNullable) { renderCompilerError(expression) }
                     }
 
+                    generationState.lambdasReferencedFromNative.add(target)
+
                     generateCFunctionPointer(target as IrSimpleFunction, expression)
                 }
                 IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
@@ -1226,6 +1228,8 @@ private class InteropTransformer(
                             targetSymbol,
                             typeArgumentsCount = 0,
                             reflectionTarget = null)
+
+                    generationState.lambdasReferencedFromNative.add(targetSymbol.owner)
 
                     builder.irCall(symbols.executeImpl).apply {
                         putValueArgument(0, expression.dispatchReceiver)

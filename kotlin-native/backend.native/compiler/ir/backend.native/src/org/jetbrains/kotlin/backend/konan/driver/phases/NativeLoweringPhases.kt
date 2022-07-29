@@ -392,15 +392,16 @@ private val typeOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(coroutinesPhase)
 )
 
-private val bridgesPhase = createFileLoweringPhase(
-        { context, irFile ->
-            BridgesBuilding(context).runOnFilePostfix(irFile)
-            WorkersBridgesBuilding(context).lower(irFile)
-        },
+private val bridgesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>(
         name = "Bridges",
         description = "Bridges building",
-        prerequisite = setOf(coroutinesPhase)
-)
+        prerequisite = setOf(coroutinesPhase),
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+) { context, irFile ->
+    BridgesBuilding(context).runOnFilePostfix(irFile)
+    WorkersBridgesBuilding(context).lower(irFile)
+    irFile
+}
 
 private val autoboxPhase = createFileLoweringPhase(
         ::Autoboxing,

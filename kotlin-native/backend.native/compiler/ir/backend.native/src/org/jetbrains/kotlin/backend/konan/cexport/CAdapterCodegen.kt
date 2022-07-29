@@ -46,10 +46,30 @@ internal class CAdapterCodegen(
                 val function = declaration as FunctionDescriptor
                 val irFunction = irSymbol.owner as IrFunction
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val signature = LlvmFunctionSignature(irFunction, this@CAdapterCodegen)
-                val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)
+                val llvmCallable = codegen.llvmFunction(irFunction)
+                val numParams = llvmCallable.numParams
+                val returnType = llvmCallable.returnType
+                val parameterTypes = getFunctionParameterTypes(llvmCallable.functionType).map { LlvmParamType(it) }.toMutableList()
+                val (bridgeFunctionSignature, outerStackParamIndex) = if (!functionHasOuterStackParam(irFunction) && !irFunction.isOverridable) {
+                    LlvmFunctionSignature(
+                            returnType = LlvmRetType(returnType),
+                            parameterTypes = parameterTypes,
+                            isVararg = false,
+                    ) to numParams
+                } else {
+                    val outerStackParamIndex = if (isObjectType(returnType))
+                        parameterTypes.size - 2
+                    else
+                        parameterTypes.size - 1
+                    parameterTypes.removeAt(outerStackParamIndex)
+                    LlvmFunctionSignature(
+                            returnType = LlvmRetType(returnType),
+                            parameterTypes = parameterTypes,
+                            isVararg = false,
+                    ) to outerStackParamIndex
+                }
                 // If function is virtual, we need to resolve receiver properly.
-                generateFunction(codegen, bridgeFunctionProto) {
+                generateFunction(codegen, bridgeFunctionSignature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)) {
                     val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) && irFunction.isOverridable) {
                         codegen.getVirtualFunctionTrampoline(irFunction as IrSimpleFunction)
                     } else {
@@ -58,7 +78,14 @@ internal class CAdapterCodegen(
                         codegen.llvmFunction(irFunction)
                     }
 
-                    val args = signature.parameterTypes.indices.map { param(it) }
+                    //val args = signature.parameterTypes.indices.map { param(it) }
+                    val args = (0 until numParams).map { index ->
+                        if (index < outerStackParamIndex)
+                            param(index)
+                        else if (index == outerStackParamIndex)
+                            llvm.kNullInt8Ptr
+                        else param(index - 1)
+                    }
                     val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                     ret(result)
                 }

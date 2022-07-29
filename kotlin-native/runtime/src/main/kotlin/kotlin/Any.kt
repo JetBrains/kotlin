@@ -50,3 +50,6 @@ public open class Any {
         return "$className@$hashCodeStr"
     }
 }
+
+@GCUnsafeCall("Kotlin_Any_equals")
+external private fun equalsImpl(thiz: Any, other: Any?): Boolean
