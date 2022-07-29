@@ -27,12 +27,12 @@ internal object KDocReferenceResolver {
             val pathSegments = fqName.pathSegments()
             if (pathSegments.size == 1) {
                 val singleSegment = pathSegments.single()
-                when {
-                    owner is KtConstructorSymbol -> {
-                        collectConstructorParameterSymbols(owner, singleSegment)
+                when (ownerSymbol) {
+                    is KtConstructorSymbol -> {
+                        collectConstructorParameterSymbols(ownerSymbol, singleSegment)
                     }
 
-                    ownerSymbol is KtNamedClassOrObjectSymbol -> {
+                    is KtNamedClassOrObjectSymbol -> {
                         collectPrimaryConstructorParameterSymbols(ownerSymbol, singleSegment)
                     }
                 }
@@ -65,8 +65,8 @@ internal object KDocReferenceResolver {
         addAll(scope.getClassifierSymbols { it == shortName })
     }
 
-    context(KtAnalysisSession, MutableCollection<KtSymbol>)
-    private fun collectConstructorParameterSymbols(owner: KtFunctionLikeSymbol, name: Name) {
+    context(KtAnalysisSession)
+    private fun MutableCollection<KtSymbol>.collectConstructorParameterSymbols(owner: KtFunctionLikeSymbol, name: Name) {
         for (valueParameter in owner.valueParameters) {
             if (valueParameter.name == name) {
                 add(valueParameter)
@@ -105,8 +105,8 @@ internal object KDocReferenceResolver {
         getPackageSymbolIfPackageExists(packageFqName)?.let(::add)
     }
 
-    context(KtAnalysisSession, MutableCollection<KtSymbol>)
-    private fun collectSymbolsByClassId(classId: ClassId) {
+    context(KtAnalysisSession)
+    private fun MutableCollection<KtSymbol>.collectSymbolsByClassId(classId: ClassId) {
         classId.getCorrespondingToplevelClassOrObjectSymbol()?.let(::add)
     }
 
