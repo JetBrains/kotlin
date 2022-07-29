@@ -29,8 +29,8 @@ fun eliminateDeadDeclarations(
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
 
-    val usefulDeclarations = JsUsefulDeclarationProcessor(context, printReachabilityInfo, removeUnusedAssociatedObjects)
-        .collectDeclarations(allRoots)
+    val usefulDeclarationProcessor = JsUsefulDeclarationProcessor(context, printReachabilityInfo, removeUnusedAssociatedObjects)
+    val usefulDeclarations = usefulDeclarationProcessor.collectDeclarations(allRoots)
 
     val uselessDeclarationsProcessor =
         UselessDeclarationsRemover(removeUnusedAssociatedObjects, usefulDeclarations, context, context.dceRuntimeDiagnostic)
@@ -38,7 +38,7 @@ fun eliminateDeadDeclarations(
     modules.forEach { module ->
         module.files.forEach {
             it.acceptVoid(uselessDeclarationsProcessor)
-            context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarations)
+            context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarationProcessor.usefulPolyfilledDeclarations)
         }
     }
 }

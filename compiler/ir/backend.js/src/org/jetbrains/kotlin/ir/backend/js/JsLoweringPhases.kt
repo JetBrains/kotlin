@@ -734,10 +734,18 @@ private val blockDecomposerLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(typeOperatorLoweringPhase, suspendFunctionsLoweringPhase)
 )
 
+private val jsClassUsageInReflectionPhase = makeBodyLoweringPhase(
+    ::JsClassUsageInReflectionLowering,
+    name = "JsClassUsageInReflectionLowering",
+    description = "[Optimization] Eliminate ClassReference and GetClassExpression usages in a simple case of usage raw js constructor",
+    prerequisite = setOf(functionInliningPhase)
+)
+
 private val classReferenceLoweringPhase = makeBodyLoweringPhase(
     ::ClassReferenceLowering,
     name = "ClassReferenceLowering",
-    description = "Handle class references"
+    description = "Handle class references",
+    prerequisite = setOf(jsClassUsageInReflectionPhase)
 )
 
 private val primitiveCompanionLoweringPhase = makeBodyLoweringPhase(
@@ -845,6 +853,7 @@ val loweringList = listOf<Lowering>(
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,
+    jsClassUsageInReflectionPhase,
     propertiesLoweringPhase,
     primaryConstructorLoweringPhase,
     delegateToPrimaryConstructorLoweringPhase,
