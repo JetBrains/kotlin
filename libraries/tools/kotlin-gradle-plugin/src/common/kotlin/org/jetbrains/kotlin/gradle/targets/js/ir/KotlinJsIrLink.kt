@@ -60,7 +60,8 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
 
-    private val platformType by project.provider {
+    @get:Internal
+    val platformType by project.provider {
         compilation.platformType
     }
 

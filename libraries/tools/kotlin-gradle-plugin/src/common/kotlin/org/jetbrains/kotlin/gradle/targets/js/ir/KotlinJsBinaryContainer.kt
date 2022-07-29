@@ -42,10 +42,8 @@ constructor(
     private fun configureBinaryen(binary: JsIrBinary, binaryenDsl: BinaryenExec.() -> Unit) {
         val linkTask = binary.linkTask
 
-        val compiledMjsFile = linkTask.flatMap { it.outputFileProperty }
-
-        val compiledWasmFile = compiledMjsFile.map {
-            it.parentFile.resolve("${it.nameWithoutExtension}.wasm")
+        val compiledWasmFile = linkTask.map { link ->
+            link.destinationDirectory.asFile.get().resolve(link.outputName.get() + ".wasm")
         }
 
         //TODO This is temporary solution that overrides compiled files that triggers recompile and reoptimize wasm every time (when binaryen is enabled)
