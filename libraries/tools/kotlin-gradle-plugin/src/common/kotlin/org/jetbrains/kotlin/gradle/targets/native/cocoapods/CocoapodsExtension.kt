@@ -354,10 +354,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 @get:Input var isAllowInsecureProtocol: Boolean
             ) : PodLocation() {
                 override fun getLocalPath(project: Project, podName: String): String {
-                    val fileName = url.toString().substringAfterLast("/")
-                    val extension = PodDownloadUrlTask.getFileExtension(fileName) ?: error("Unknown file extension: $fileName")
-                    val dirName = fileName.substringBeforeLast(".$extension")
-                    return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).resolve(dirName).absolutePath
+                    return project.cocoapodsBuildDirs.externalSources("url").resolve(podName).absolutePath
                 }
             }
 
