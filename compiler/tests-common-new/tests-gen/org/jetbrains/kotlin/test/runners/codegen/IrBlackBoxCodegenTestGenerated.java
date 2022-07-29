@@ -8945,6 +8945,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineLambdaInvocation.kt")
+            public void testInlineLambdaInvocation() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlineLambdaInvocation.kt");
+            }
+
+            @Test
             @TestMetadata("inlineWithStack.kt")
             public void testInlineWithStack() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlineWithStack.kt");
@@ -8996,6 +9002,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("kt9022Or.kt")
             public void testKt9022Or() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/kt9022Or.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaPassedToInlineFunction.kt")
+            public void testLambdaPassedToInlineFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/lambdaPassedToInlineFunction.kt");
             }
 
             @Test

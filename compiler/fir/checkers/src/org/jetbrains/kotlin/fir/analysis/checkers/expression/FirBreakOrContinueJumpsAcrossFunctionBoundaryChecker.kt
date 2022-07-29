@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker() {
     override fun check(expression: FirLoopJump, context: CheckerContext, reporter: DiagnosticReporter) {
         val errorPathElements = ArrayDeque<FirElement>()
 
-        fun findPathAndCheck(element: FirElement?): Boolean {
+        fun findPathAndCheck(element: FirElement?, isInline: Boolean = false): Boolean {
             fun findPathAndCheckWithAddingErrorElement(errorElement: FirElement, checkElement: FirElement?): Boolean {
                 errorPathElements.addLast(errorElement)
                 val result = findPathAndCheck(checkElement)
@@ -51,7 +54,16 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                     }
                 }
                 is FirVariable -> return findPathAndCheck(element.initializer)
+                is FirLambdaArgumentExpression -> return findPathAndCheck(element.expression, isInline)
                 is FirWrappedExpression -> return findPathAndCheck(element.expression)
+                is FirFunctionCall -> {
+                    val fn = (element.calleeReference.resolvedSymbol as? FirFunctionSymbol)
+                    element.arguments.forEachIndexed { i, argument ->
+                        if (findPathAndCheck(argument, fn?.resolvedStatus?.isInline == true && !fn.valueParameterSymbols[i].isNoinline)) {
+                            return true
+                        }
+                    }
+                }
                 is FirCall -> {
                     for (argument in element.arguments) {
                         if (findPathAndCheck(argument)) {
@@ -70,7 +82,10 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                     errorPathElements.removeLast()
                 }
                 is FirFunction -> {
-                    if (findPathAndCheckWithAddingErrorElement(element, element.body)) {
+                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.BreakContinueInInlineLambdas)
+                        && isInline && findPathAndCheck(element.body)
+                        || findPathAndCheckWithAddingErrorElement(element, element.body)
+                    ) {
                         return true
                     }
 
@@ -90,7 +105,9 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                 }
                 is FirAnonymousInitializer -> return findPathAndCheckWithAddingErrorElement(element, element.body)
                 is FirAnonymousObjectExpression -> return findPathAndCheckWithAddingErrorElement(element, element.anonymousObject)
-                is FirAnonymousFunctionExpression -> return findPathAndCheckWithAddingErrorElement(element, element.anonymousFunction)
+                is FirAnonymousFunctionExpression ->
+                    return if (isInline) findPathAndCheck(element.anonymousFunction, true)
+                    else findPathAndCheckWithAddingErrorElement(element, element.anonymousFunction)
             }
 
             return false

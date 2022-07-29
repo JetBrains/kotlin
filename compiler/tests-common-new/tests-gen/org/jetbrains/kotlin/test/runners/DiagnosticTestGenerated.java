@@ -5483,6 +5483,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("breakContinueIninlineWhenFeatureDisabled.kt")
+            public void testBreakContinueIninlineWhenFeatureDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakContinueIninlineWhenFeatureDisabled.kt");
+            }
+
+            @Test
             @TestMetadata("breakInsideLocal.kt")
             public void testBreakInsideLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/breakInsideLocal.kt");
