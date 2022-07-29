@@ -13,10 +13,10 @@ kotlin {
         browser {
             commonWebpackConfig {
                 cssSupport {
-                    enabled = true
+                    enabled.set(true)
                 }
                 scssSupport {
-                    enabled = true
+                    enabled.set(true)
                 }
             }
         }
