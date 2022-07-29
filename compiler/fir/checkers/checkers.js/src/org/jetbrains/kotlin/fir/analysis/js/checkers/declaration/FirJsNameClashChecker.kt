@@ -38,6 +38,14 @@ object FirJsNameClashChecker : FirBasicDeclarationChecker() {
         checkDeclaration(declaration, context, reporter)
     }
 
+    private val FirDeclaration.declarationKind
+        get() = when (this) {
+            is FirFunction -> FirFunction::class
+            is FirProperty -> FirProperty::class
+            is FirClassLikeDeclaration -> FirClassLikeDeclaration::class
+            else -> this::class
+        }
+
     private fun checkDeclaration(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPrimaryConstructor || declaration is FirTypeAlias) return
 
@@ -56,12 +64,16 @@ object FirJsNameClashChecker : FirBasicDeclarationChecker() {
                 val name = suggested.names.last()
                 val existing = scope[name]
                 // NB: The original checker also checks if a "common diagnostic"
-                // hasn't been reported previously
+                // hasn't been reported previously, and it was used to prevent reporting
+                // JS_NAME_CLASH for usual redeclarations not related to JsName.
+                val isJsNameInvolved = declaration.name?.asString() != name || existing?.name?.asString() != name
+                val areDifferentDeclarations = declaration.declarationKind != existing?.declarationKind
                 if (
                     existing != null &&
                     existing != declaration &&
                     existing.isActual == declaration.isActual &&
-                    existing.isExpect == declaration.isExpect
+                    existing.isExpect == declaration.isExpect &&
+                    (isJsNameInvolved || areDifferentDeclarations)
                 ) {
                     reporter.reportOn(declaration.source, FirJsErrors.JS_NAME_CLASH, name, existing, context)
                     if (
