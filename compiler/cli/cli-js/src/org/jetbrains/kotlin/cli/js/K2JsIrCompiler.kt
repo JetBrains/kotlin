@@ -416,9 +416,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceModule
             }
 
-
             if (arguments.wasm) {
-                val outputFile = File(arguments.outputFile)
                 val (allModules, backendContext) = compileToLoweredIr(
                     depsDescriptors = module,
                     phaseConfig = PhaseConfig(wasmPhases),
@@ -439,8 +437,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 writeCompilationResult(
                     result = res,
-                    dir = outputFile.parentFile,
-                    fileNameBase = outputFile.nameWithoutExtension
+                    dir = outputDir,
+                    fileNameBase = outputName
                 )
 
                 return OK
