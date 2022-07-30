@@ -201,7 +201,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                kotlin.target.compilations["main"].kotlinOptions.jvmTarget = "1.8"
                 dependencies { implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") }
                 """.trimIndent()
             )
@@ -669,7 +668,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             """.trimIndent()
         )
 
-        build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName", forceOutput = true) {
+        build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
             checkAnyItemsContains.forEach { pattern ->
