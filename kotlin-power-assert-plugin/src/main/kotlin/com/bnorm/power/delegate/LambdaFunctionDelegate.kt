@@ -33,12 +33,13 @@ class LambdaFunctionDelegate(
   override fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
-    arguments: List<IrExpression?>,
-    message: IrExpression
+    extensionReceiver: IrExpression?,
+    valueArguments: List<IrExpression?>,
+    messageArgument: IrExpression
   ): IrExpression = with(builder) {
     val expression = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
-      +irReturn(message)
+      +irReturn(messageArgument)
     }
-    irCallCopy(overload, original, arguments, expression)
+    irCallCopy(overload, original, extensionReceiver, valueArguments, expression)
   }
 }

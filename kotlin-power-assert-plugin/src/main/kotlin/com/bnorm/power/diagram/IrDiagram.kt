@@ -18,14 +18,13 @@ package com.bnorm.power.diagram
 
 import com.bnorm.power.irString
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irConcat
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -36,20 +35,18 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.addArgument
 
 fun IrBuilderWithScope.irDiagramString(
-  file: IrFile,
-  fileSource: String,
+  sourceFile: SourceFile,
   prefix: IrExpression? = null,
-  original: IrExpression,
+  call: IrCall,
   variables: List<IrTemporaryVariable>
 ): IrExpression {
+  val callInfo = sourceFile.getSourceRangeInfo(call)
+  val callIndent = callInfo.startColumnNumber
 
-  val originalInfo = file.info(original)
-  val callIndent = originalInfo.startColumnNumber
-
-  val stackValues = variables.map { it.toValueDisplay(fileSource, callIndent, file, originalInfo) }
+  val stackValues = variables.map { it.toValueDisplay(sourceFile, callIndent, callInfo) }
 
   val valuesByRow = stackValues.groupBy { it.row }
-  val rows = fileSource.substring(original)
+  val rows = sourceFile.getText(callInfo)
     .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
     .split("\n")
 
@@ -102,19 +99,17 @@ private data class ValueDisplay(
 )
 
 private fun IrTemporaryVariable.toValueDisplay(
-  fileSource: String,
+  fileSource: SourceFile,
   callIndent: Int,
-  file: IrFile,
   originalInfo: SourceRangeInfo
 ): ValueDisplay {
-  val source = fileSource.substring(original)
-    .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
-
-  val info = file.info(original)
+  val info = fileSource.getSourceRangeInfo(original)
   var indent = info.startColumnNumber - callIndent
   var row = info.startLineNumber - originalInfo.startLineNumber
 
-  val columnOffset = findDisplayOffset(original, source)
+  val source = fileSource.getText(info)
+    .replace("\n" + " ".repeat(callIndent), "\n") // Remove additional indentation
+  val columnOffset = findDisplayOffset(fileSource, original, source)
 
   val prefix = source.substring(0, columnOffset)
   val rowShift = prefix.count { it == '\n' }
@@ -161,17 +156,19 @@ private fun IrTemporaryVariable.toValueDisplay(
  * ```
  */
 private fun findDisplayOffset(
+  sourceFile: SourceFile,
   expression: IrExpression,
   source: String
 ): Int {
   return when (expression) {
-    is IrMemberAccessExpression<*> -> memberAccessOffset(expression, source)
+    is IrMemberAccessExpression<*> -> memberAccessOffset(sourceFile, expression, source)
     is IrTypeOperatorCall -> typeOperatorOffset(expression, source)
     else -> 0
   }
 }
 
 private fun memberAccessOffset(
+  sourceFile: SourceFile,
   expression: IrMemberAccessExpression<*>,
   source: String
 ): Int {
@@ -193,12 +190,12 @@ private fun memberAccessOffset(
       ?: expression.extensionReceiver
       ?: expression.getValueArgument(0).takeIf { owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
       ?: return 0
-    var offset = receiver.endOffset - expression.startOffset
+    val expressionInfo = sourceFile.getSourceRangeInfo(expression)
+    var offset = receiver.endOffset - expressionInfo.startOffset + 1
     if (receiver is IrConst<*> && receiver.kind == IrConstKind.String) offset++ // String constants don't include the quote
-    if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
 
     // Continue until there is a non-whitespace character
-    while (source[offset].isWhitespace()) {
+    while (source[offset].isWhitespace() || source[offset] == '.') {
       offset++
       if (offset >= source.length) return 0
     }
@@ -218,9 +215,6 @@ private fun typeOperatorOffset(
     else -> 0
   }
 }
-
-fun String.substring(expression: IrElement) = substring(expression.startOffset, expression.endOffset)
-fun IrFile.info(expression: IrElement) = fileEntry.getSourceRangeInfo(expression.startOffset, expression.endOffset)
 
 fun StringBuilder.indent(indentation: Int): StringBuilder {
   repeat(indentation) { append(" ") }

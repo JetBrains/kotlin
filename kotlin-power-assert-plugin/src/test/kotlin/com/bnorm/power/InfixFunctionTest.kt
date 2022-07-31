@@ -26,7 +26,7 @@ import kotlin.test.fail
 
 class InfixFunctionTest {
   @Test
-  fun `infix functions include receiver`() {
+  fun `infix function call includes receiver`() {
     val actual = execute(
       """
       (1 + 1) mustEqual (2 + 4)
@@ -38,6 +38,122 @@ class InfixFunctionTest {
          |                 |
          |                 6
          2
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `infix function call with constant receiver`() {
+    val actual = execute(
+      """
+      1 mustEqual (2 + 4)
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      1 mustEqual (2 + 4)
+                     |
+                     6
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `infix function call with constant parameter`() {
+    val actual = execute(
+      """
+      (1 + 1) mustEqual 6
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      (1 + 1) mustEqual 6
+         |
+         2
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `infix function call with only constants`() {
+    val actual = execute(
+      """
+      2 mustEqual 6
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      Assertion failed
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `non-infix function call includes receiver`() {
+    val actual = execute(
+      """
+      (1 + 1).mustEqual(2 + 4)
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      (1 + 1).mustEqual(2 + 4)
+         |                |
+         |                6
+         2
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `non-infix function call with constant receiver`() {
+    val actual = execute(
+      """
+      1.mustEqual(2 + 4)
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      1.mustEqual(2 + 4)
+                    |
+                    6
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `non-infix function call with constant parameter`() {
+    val actual = execute(
+      """
+      (1 + 1).mustEqual(6)
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      (1 + 1).mustEqual(6)
+         |
+         2
+      """.trimIndent(),
+      actual.trim()
+    )
+  }
+
+  @Test
+  fun `non-infix function call with only constants`() {
+    val actual = execute(
+      """
+      2.mustEqual(6)
+      """.trimIndent()
+    )
+    assertEquals(
+      """
+      Assertion failed
       """.trimIndent(),
       actual.trim()
     )
