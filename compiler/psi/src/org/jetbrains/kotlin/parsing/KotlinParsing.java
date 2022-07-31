@@ -497,25 +497,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull NameParsingMode nameParsingModeForObject,
             @NotNull DeclarationParsingMode declarationParsingMode
     ) {
-        IElementType keywordToken = tt();
-
-        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            return parseClass(detector.isEnumDetected(), true);
-        }
-        else if (keywordToken == FUN_KEYWORD) {
-            return parseFunction();
-        }
-        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            return parseProperty(declarationParsingMode);
-        }
-        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            return parseTypeAlias();
-        }
-        else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(nameParsingModeForObject, true);
-            return OBJECT_DECLARATION;
-        } else if (keywordToken == IDENTIFIER && detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-            return parseClass(true, false);
+        switch (getTokenId()) {
+            case CLASS_KEYWORD_Id:
+            case INTERFACE_KEYWORD_Id:
+                return parseClass(detector.isEnumDetected(), true);
+            case FUN_KEYWORD_Id:
+                return parseFunction();
+            case VAL_KEYWORD_Id:
+            case VAR_KEYWORD_Id:
+                return parseProperty(declarationParsingMode);
+            case TYPE_ALIAS_KEYWORD_Id:
+                return parseTypeAlias();
+            case OBJECT_KEYWORD_Id:
+                parseObject(nameParsingModeForObject, true);
+                return OBJECT_DECLARATION;
+            case IDENTIFIER_Id:
+                if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
+                    return parseClass(true, false);
+                }
         }
 
         return null;
