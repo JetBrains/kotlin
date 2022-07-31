@@ -47,4 +47,10 @@ public class LastBefore extends AbstractTokenStreamPattern {
         previousLookForResult = lookForResult;
         return false;
     }
+
+    @Override
+    public void reset() {
+        super.reset();
+        previousLookForResult = false;
+    }
 }

@@ -133,6 +133,33 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     private KotlinExpressionParsing myExpressionParsing;
 
+    private final FirstBefore lastDotAfterReceiverLParPattern = new FirstBefore(
+            new AtSet(RECEIVER_TYPE_TERMINATORS),
+            new AbstractTokenStreamPredicate() {
+                @Override
+                public boolean matching(boolean topLevel) {
+                    if (topLevel && atSet(definitelyOutOfReceiverSet)) {
+                        return true;
+                    }
+                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
+                }
+            }
+    );
+
+    private final LastBefore lastDotAfterReceiverNotLParPattern = new LastBefore(
+            new AtSet(RECEIVER_TYPE_TERMINATORS),
+            new AbstractTokenStreamPredicate() {
+                @Override
+                public boolean matching(boolean topLevel) {
+                    if (topLevel && (atSet(definitelyOutOfReceiverSet) || at(LPAR))) return true;
+                    if (topLevel && at(IDENTIFIER)) {
+                        IElementType lookahead = lookahead(1);
+                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
+                    }
+                    return false;
+                }
+            });
+
     private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
     }
@@ -1848,41 +1875,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private int lastDotAfterReceiver() {
-        if (at(LPAR)) {
-            return matchTokenStreamPredicate(
-                    new FirstBefore(
-                            new AtSet(RECEIVER_TYPE_TERMINATORS),
-                            new AbstractTokenStreamPredicate() {
-                                @Override
-                                public boolean matching(boolean topLevel) {
-                                    if (topLevel && definitelyOutOfReceiver()) {
-                                        return true;
-                                    }
-                                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
-                                }
-                            }
-                    ));
-        }
-        else {
-            return matchTokenStreamPredicate(
-                    new LastBefore(
-                            new AtSet(RECEIVER_TYPE_TERMINATORS),
-                            new AbstractTokenStreamPredicate() {
-                                @Override
-                                public boolean matching(boolean topLevel) {
-                                    if (topLevel && (definitelyOutOfReceiver() || at(LPAR))) return true;
-                                    if (topLevel && at(IDENTIFIER)) {
-                                        IElementType lookahead = lookahead(1);
-                                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
-                                    }
-                                    return false;
-                                }
-                            }));
-        }
-    }
-
-    private boolean definitelyOutOfReceiver() {
-        return atSet(definitelyOutOfReceiverSet);
+        AbstractTokenStreamPattern pattern = at(LPAR) ? lastDotAfterReceiverLParPattern : lastDotAfterReceiverNotLParPattern;
+        pattern.reset();
+        return matchTokenStreamPredicate(pattern);
     }
 
     /*
