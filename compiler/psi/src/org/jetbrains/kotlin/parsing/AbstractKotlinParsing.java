@@ -78,6 +78,16 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     }
 
     protected boolean expect(KtToken expectation, String message, TokenSet recoverySet) {
+        if (expect(expectation)) {
+            return true;
+        }
+
+        errorWithRecovery(message, recoverySet);
+
+        return false;
+    }
+
+    protected boolean expect(KtToken expectation) {
         if (at(expectation)) {
             advance(); // expectation
             return true;
@@ -86,8 +96,6 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         if (expectation == KtTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
             advance();
         }
-
-        errorWithRecovery(message, recoverySet);
 
         return false;
     }

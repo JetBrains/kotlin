@@ -287,7 +287,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
          *   ;
          */
         PsiBuilder.Marker packageDirective = mark();
-        parseModifierList(DEFAULT, TokenSet.EMPTY);
+        parseModifierList(TokenSet.EMPTY);
 
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
@@ -495,7 +495,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        parseModifierList(detector, TokenSet.EMPTY);
 
         IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
 
@@ -550,46 +550,36 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * (modifier | annotation)*
      */
-    boolean parseModifierList(
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return parseModifierList(null, annotationParsingMode, noModifiersBefore);
+    boolean parseModifierList(@NotNull TokenSet noModifiersBefore) {
+        return parseModifierList(null, noModifiersBefore);
     }
 
-    boolean parseAnnotationsList(
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return doParseModifierList(null, TokenSet.EMPTY, annotationParsingMode, noModifiersBefore);
+    void parseAnnotationsList(@NotNull TokenSet noModifiersBefore) {
+        doParseModifierList(null, TokenSet.EMPTY, AnnotationParsingMode.DEFAULT, noModifiersBefore);
     }
 
     /**
      * (modifier | annotation)*
-     *
+     * <p>
      * Feeds modifiers (not annotations) into the passed consumer, if it is not null
      *
      * @param noModifiersBefore is a token set with elements indicating when met them
      *                          that previous token must be parsed as an identifier rather than modifier
      */
-    boolean parseModifierList(
-            @Nullable Consumer<IElementType> tokenConsumer,
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, annotationParsingMode, noModifiersBefore);
+    boolean parseModifierList(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
+        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, AnnotationParsingMode.DEFAULT, noModifiersBefore);
     }
 
-    private boolean parseFunctionTypeValueParameterModifierList() {
-        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+    private void parseFunctionTypeValueParameterModifierList() {
+        doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
     }
 
-    private boolean parseTypeModifierList() {
-        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
+    private void parseTypeModifierList() {
+        doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
     }
 
-    private boolean parseTypeArgumentModifierList() {
-        return doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, COMMA_COLON_GT_SET);
+    private void parseTypeArgumentModifierList() {
+        doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, COMMA_COLON_GT_SET);
     }
 
     private boolean doParseModifierListBody(
@@ -951,7 +941,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType(/* allowSimpleIntersectionTypes */ false);
+        parseUserType();
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
@@ -1053,7 +1043,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(DEFAULT, TokenSet.EMPTY);
+        boolean hasConstructorModifiers = parseModifierList(TokenSet.EMPTY);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET)) {
@@ -1192,7 +1182,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(DEFAULT, COMMA_SEMICOLON_RBRACE_SET);
+        parseModifierList(COMMA_SEMICOLON_RBRACE_SET);
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             advance(); // IDENTIFIER
@@ -1301,7 +1291,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        parseModifierList(detector, TokenSet.EMPTY);
 
         IElementType declType = parseMemberDeclarationRest(detector);
 
@@ -1605,7 +1595,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
                 PsiBuilder.Marker property = mark();
 
-                parseModifierList(DEFAULT, COMMA_RPAR_COLON_EQ_SET);
+                parseModifierList(COMMA_RPAR_COLON_EQ_SET);
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
 
@@ -1659,7 +1649,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private PropertyComponentKind parsePropertyComponent(PropertyComponentKind.Collector notAllowedKind) {
         PsiBuilder.Marker propertyComponent = mark();
 
-        parseModifierList(DEFAULT, TokenSet.EMPTY);
+        parseModifierList(TokenSet.EMPTY);
 
         PropertyComponentKind propertyComponentKind;
         if (at(GET_KEYWORD)) {
@@ -1701,7 +1691,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (propertyComponentKind == PropertyComponentKind.SET) {
                 PsiBuilder.Marker parameterList = mark();
                 PsiBuilder.Marker setterParameter = mark();
-                parseModifierList(DEFAULT, COMMA_COLON_RPAR_SET);
+                parseModifierList(COMMA_COLON_RPAR_SET);
                 expect(IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET);
 
                 if (at(COLON)) {
@@ -1748,7 +1738,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     @NotNull
-    IElementType parseFunction() {
+    private IElementType parseFunction() {
         return parseFunction(false);
     }
 
@@ -1883,11 +1873,17 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * IDENTIFIER
      */
-    private boolean parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, TokenSet recoverySet, boolean nameRequired) {
-        if (!nameRequired && atSet(nameFollow)) return true; // no name
+    private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, TokenSet recoverySet, boolean nameRequired) {
+        if (!nameRequired && atSet(nameFollow)) return; // no name
 
-        String expectingMessage = "Expecting " + title + " name" + (!receiverFound ? " or receiver type" : "");
-        return expect(IDENTIFIER, expectingMessage, recoverySet);
+        if (expect(IDENTIFIER)) {
+            return;
+        }
+
+        errorWithRecovery(
+                "Expecting " + title + " name" + (!receiverFound ? " or receiver type" : ""),
+                recoverySet
+        );
     }
 
     /*
@@ -2135,7 +2131,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker mark = mark();
 
-        parseModifierList(DEFAULT, GT_COMMA_COLON_SET);
+        parseModifierList(GT_COMMA_COLON_SET);
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
@@ -2209,7 +2205,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType(allowSimpleIntersectionTypes);
+            parseUserType();
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
@@ -2323,7 +2319,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType(boolean allowSimpleIntersectionTypes) {
+    private void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2416,15 +2412,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      *  (optionalProjection type){","}
      */
-    private PsiBuilder.Marker parseTypeArgumentList() {
-        if (!at(LT)) return null;
+    private void parseTypeArgumentList() {
+        if (!at(LT)) return;
 
         PsiBuilder.Marker list = mark();
 
         tryParseTypeArgumentList(TokenSet.EMPTY);
 
         list.done(TYPE_ARGUMENT_LIST);
-        return list;
     }
 
     boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
@@ -2566,7 +2561,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private boolean parseValueParameter(boolean rollbackOnFailure, boolean typeRequired) {
         PsiBuilder.Marker parameter = mark();
 
-        parseModifierList(DEFAULT, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+        parseModifierList(NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD
@@ -2667,10 +2662,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS(false, true, true, true),
         NO_ANNOTATIONS(false, false, false, false);
 
-        boolean isFileAnnotationParsingMode;
-        boolean allowAnnotations;
-        boolean withSignificantWhitespaceBeforeArguments;
-        boolean typeContext;
+        final boolean isFileAnnotationParsingMode;
+        final boolean allowAnnotations;
+        final boolean withSignificantWhitespaceBeforeArguments;
+        final boolean typeContext;
 
         AnnotationParsingMode(
                 boolean isFileAnnotationParsingMode,

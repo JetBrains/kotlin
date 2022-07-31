@@ -32,5 +32,6 @@ public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
     void enableJoiningComplexTokens();
     void disableJoiningComplexTokens();
 
+    @Override
     boolean isWhitespaceOrComment(@NotNull IElementType elementType);
 }
