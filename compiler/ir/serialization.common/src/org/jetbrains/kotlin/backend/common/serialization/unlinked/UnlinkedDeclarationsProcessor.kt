@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.appendDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedIrElementRenderer.renderError
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UsedClassifierSymbolStatus.Companion.isUnlinked
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -22,9 +24,10 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
+import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class UnlinkedDeclarationsProcessor(
     private val builtIns: IrBuiltIns,
@@ -32,14 +35,9 @@ internal class UnlinkedDeclarationsProcessor(
     private val unlinkedMarkerTypeHandler: UnlinkedMarkerTypeHandler,
     private val messageLogger: IrMessageLogger
 ) {
-    companion object {
-        private val ERROR_ORIGIN = object : IrStatementOriginImpl("LINKAGE ERROR") {}
-    }
-
     fun addLinkageErrorIntoUnlinkedClasses() {
         usedClassifierSymbols.forEachClassSymbolToPatch { unlinkedSymbol ->
             val clazz = unlinkedSymbol.owner
-            clazz.reportUnlinkedSymbolsWarning("Class", clazz.fqNameForIrSerialization)
 
             val anonInitializer = clazz.declarations.firstNotNullOfOrNull { it as? IrAnonymousInitializer }
                 ?: builtIns.irFactory.createAnonymousInitializer(
@@ -53,36 +51,10 @@ internal class UnlinkedDeclarationsProcessor(
                     clazz.declarations.add(it)
                 }
             anonInitializer.body.statements.clear()
-            anonInitializer.body.statements.add(clazz.throwLinkageError(clazz.symbol))
+            anonInitializer.body.statements += clazz.throwLinkageError() // TODO: which exactly classifiers are unlinked?
 
             clazz.superTypes = clazz.superTypes.filter { !it.isUnlinked() }
         }
-    }
-
-    private fun IrDeclaration.location(): IrMessageLogger.Location? = fileOrNull?.location(startOffset)
-
-    private fun IrFile.location(offset: Int): IrMessageLogger.Location {
-        val module = module.name
-        val fileEntry = fileEntry
-        val fileName = fileEntry.name
-        val lineNumber = fileEntry.getLineNumber(offset) + 1 // since humans count from 1, not 0
-        val columnNumber = fileEntry.getColumnNumber(offset) + 1
-        // unsure whether should module name be added here
-        return IrMessageLogger.Location("$module @ $fileName", lineNumber, columnNumber)
-    }
-
-    private fun IrDeclaration.reportUnlinkedSymbolsWarning(kind: String, fqn: FqName, localName: Name? = null) =
-        reportWarning(
-            buildString {
-                append(kind).append(" declaration ")
-                if (localName != null) append(localName.asString()).append(" at ")
-                append(fqn.asString()).append(" contains unlinked symbols")
-            },
-            location()
-        )
-
-    private fun reportWarning(message: String, location: IrMessageLogger.Location?) {
-        messageLogger.report(IrMessageLogger.Severity.WARNING, message, location)
     }
 
     fun signatureTransformer(): IrElementTransformerVoid = SignatureTransformer()
@@ -117,10 +89,8 @@ internal class UnlinkedDeclarationsProcessor(
 
         override fun visitField(declaration: IrField): IrStatement {
             if (declaration.type.isUnlinked()) {
-                val fqn = declaration.correspondingPropertySymbol?.owner?.fqNameWhenAvailable ?: declaration.fqNameForIrSerialization
-                val kind = if (declaration.correspondingPropertySymbol != null) "Property" else "Field"
-                declaration.reportUnlinkedSymbolsWarning(kind, fqn)
-
+                // TODO: it would be more precise to use the set of unlinked symbols than a collection of unlinked types here.
+                declaration.logLinkageError(listOfNotNull((declaration.type as? IrSimpleType)?.classifier))
                 declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                 declaration.initializer = null
             } else {
@@ -131,11 +101,8 @@ internal class UnlinkedDeclarationsProcessor(
 
         override fun visitVariable(declaration: IrVariable): IrStatement {
             if (declaration.type.isUnlinked()) {
-                val fqn = declaration.parent.fqNameForIrSerialization
-                val localName = declaration.name
-                val kind = if (declaration.isVar) "var" else "val"
-                declaration.reportUnlinkedSymbolsWarning(kind, fqn, localName)
-
+                // TODO: it would be more precise to use the set of unlinked symbols than a collection of unlinked types here.
+                declaration.logLinkageError(listOfNotNull((declaration.type as? IrSimpleType)?.classifier))
                 declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                 declaration.initializer = null
             } else {
@@ -199,37 +166,23 @@ internal class UnlinkedDeclarationsProcessor(
             if (!isImplementedFakeOverride && removedUnlinkedTypes.isEmpty()) {
                 transformChildrenVoid()
             } else {
-                val functionKind = when {
-                    this@transformBodyIfNecessary is IrSimpleFunction && correspondingPropertySymbol != null -> "property accessor"
-                    this@transformBodyIfNecessary is IrConstructor -> "constructor"
-                    else -> "function"
-                }
-
                 val errorMessages = listOfNotNull(
                     if (isImplementedFakeOverride)
                         buildString {
-                            append("Abstract ").append(functionKind).append(" ")
-                            append(fqNameForIrSerialization.asString())
-                            append(" is not implemented in non-abstract class ")
-                            append(parent.fqNameForIrSerialization.asString())
+                            append("Abstract ").appendDeclaration(this@transformBodyIfNecessary)
+                            append(" is not implemented in non-abstract ").appendDeclaration(parentAsClass)
                         }
                     else null,
-                    if (removedUnlinkedTypes.isNotEmpty())
-                        buildString {
-                            append("The signature of ").append(functionKind).append(" ")
-                            append(fqNameForIrSerialization.asString())
-                            append(" contains unlinked symbols: ")
-                            removedUnlinkedTypes.joinTo(this) { it.render() }
-                        }
-                    else null
+                    if (removedUnlinkedTypes.isNotEmpty()) {
+                        // TODO: it would be more precise to use the set of unlinked symbols than a collection of unlinked types here.
+                        composeUnlinkedSymbolsErrorMessage(removedUnlinkedTypes.mapNotNull { (it as? IrSimpleType)?.classifier })
+                    } else null
                 )
-
-                errorMessages.forEach { reportWarning(it, location()) }
 
                 body?.let { body ->
                     val bb = body as IrBlockBody
                     bb.statements.clear()
-                    bb.statements.add(throwLinkageError(unlinkedSymbol = null, errorMessages.joinToString(separator = "; ")))
+                    bb.statements += throwLinkageError(errorMessages, location())
                 }
             }
 
@@ -240,7 +193,7 @@ internal class UnlinkedDeclarationsProcessor(
     private fun IrSymbol.isUnlinked(): Boolean {
         if (!isBound) return true
         when (this) {
-            is IrClassifierSymbol -> this.isUnlinked()
+            is IrClassifierSymbol -> isUnlinked()
             is IrPropertySymbol -> {
                 owner.getter?.let { if (it.symbol.isUnlinked()) return true }
                 owner.setter?.let { if (it.symbol.isUnlinked()) return true }
@@ -280,12 +233,34 @@ internal class UnlinkedDeclarationsProcessor(
         return with(unlinkedMarkerTypeHandler) { isUnlinkedMarkerType() }
     }
 
-    private fun IrElement.throwLinkageError(unlinkedSymbol: IrSymbol?, message: String = "Unlinked IR symbol"): IrCall {
-        val messageLiteral = message + unlinkedSymbol?.signature?.render()?.let { " $it" }.orEmpty()
+    private fun IrElement.composeUnlinkedSymbolsErrorMessage(unlinkedSymbols: Collection<IrSymbol>) =
+        renderError(this@composeUnlinkedSymbolsErrorMessage, unlinkedSymbols)
+
+    private fun IrDeclaration.throwLinkageError(unlinkedSymbols: Collection<IrSymbol> = emptyList()): IrCall =
+        throwLinkageError(
+            messages = listOf(composeUnlinkedSymbolsErrorMessage(unlinkedSymbols)),
+            location = location()
+        )
+
+    private fun IrElement.throwLinkageError(messages: List<String>, location: Location?): IrCall {
+        check(messages.isNotEmpty())
+
+        messages.forEach { logLinkageError(it, location) }
 
         val irCall = IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, ERROR_ORIGIN)
-        irCall.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messageLiteral))
+        irCall.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messages.joinToString("\n")))
         return irCall
+    }
+
+    private fun IrDeclaration.logLinkageError(unlinkedSymbols: Collection<IrSymbol>) {
+        logLinkageError(
+            composeUnlinkedSymbolsErrorMessage(unlinkedSymbols),
+            location()
+        )
+    }
+
+    private fun logLinkageError(message: String, location: Location?) {
+        messageLogger.report(Severity.WARNING, message, location) // It's OK. We log it as a warning.
     }
 
     fun usageTransformer(): IrElementTransformerVoid = UsageTransformer()
@@ -302,118 +277,106 @@ internal class UnlinkedDeclarationsProcessor(
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
             expression.transformChildrenVoid()
 
-            val checkType = expression.typeOperandClassifier
-
-            if (!checkType.isUnlinked()) return expression
-
-            reportWarning(
-                "TypeOperator contains unlinked symbol ${checkType.signature?.render() ?: ""}",
-                currentFile?.location(expression.startOffset)
-            )
-
-            val composite = IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType)
-
-            composite.statements.add(expression.argument)
-            composite.statements.add(expression.throwLinkageError(expression.typeOperandClassifier))
-
-            return composite
+            val classifierSymbol = expression.typeOperandClassifier
+            return if (classifierSymbol.isUnlinked())
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType).apply {
+                    statements += expression.argument
+                    statements += expression.throwLinkageError(classifierSymbol)
+                }
+            else
+                expression
         }
 
         override fun visitExpression(expression: IrExpression): IrExpression {
-            if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType()) {
-                reportWarning("Expression type contains unlinked symbol", currentFile?.location(expression.startOffset))
-                return expression.throwLinkageError(unlinkedSymbol = null, "Unlinked type of IR expression")
-            }
-            return super.visitExpression(expression)
+            return if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType())
+                expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
+            else
+                super.visitExpression(expression)
         }
 
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid()
-            val symbol = expression.symbol
 
-            if (!symbol.isUnlinked() && !expression.type.isUnlinked()) return expression
+            return if (!expression.symbol.isUnlinked() && !expression.type.isUnlinked())
+                expression
+            else
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
+                    statements.addIfNotNull(expression.dispatchReceiver)
+                    statements.addIfNotNull(expression.extensionReceiver)
 
-            reportWarning(
-                "Accessing declaration with unlinked symbol ${symbol.signature?.render() ?: ""}",
-                currentFile?.location(expression.startOffset)
-            )
+                    for (i in 0 until expression.valueArgumentsCount) {
+                        statements.addIfNotNull(expression.getValueArgument(i))
+                    }
 
-            val composite = IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin)
-
-            expression.dispatchReceiver?.let { composite.statements.add(it) }
-            expression.extensionReceiver?.let { composite.statements.add(it) }
-
-            for (i in 0 until expression.valueArgumentsCount) {
-                val arg = expression.getValueArgument(i)
-                arg?.let { composite.statements.add(it) }
-            }
-
-            composite.statements.add(
-                if (!symbol.isBound)
-                    expression.throwLinkageError(symbol)
-                else
-                    expression.throwLinkageError(symbol, "Unlinked type in signature of IR symbol")
-            )
-
-            return composite
+                    statements += expression.throwLinkageError() // TODO: which exactly classifiers are unlinked?
+                }
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {
             expression.transformChildrenVoid()
-            val symbol = expression.symbol
-            if (!symbol.isUnlinked()) {
-                return expression
-            }
 
-            reportWarning(
-                "Accessing field contains unlinked symbol ${symbol.signature?.render()}",
-                currentFile?.location(expression.startOffset)
-            )
-
-            val composite = IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin)
-            expression.receiver?.let { composite.statements.add(it) }
-            if (expression is IrSetField) {
-                composite.statements.add(expression.value)
-            }
-            composite.statements.add(
-                if (!symbol.isBound)
-                    expression.throwLinkageError(symbol)
-                else
-                    expression.throwLinkageError(symbol, "Field type is unlinked in IR symbol")
-            )
-            return composite
+            return if (!expression.symbol.isUnlinked())
+                expression
+            else
+                IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType, expression.origin).apply {
+                    statements.addIfNotNull(expression.receiver)
+                    if (expression is IrSetField)
+                        statements += expression.value
+                    statements += expression.throwLinkageError(expression.symbol)
+                }
         }
 
         override fun visitClassReference(expression: IrClassReference): IrExpression {
-            if (expression.symbol.isUnlinked()) {
-                reportWarning(
-                    "Accessing class contains unlinked symbol ${expression.symbol.signature?.render()}",
-                    currentFile?.location(expression.startOffset)
-                )
-                return expression.throwLinkageError(expression.symbol)
-            }
-            return expression
+            return if (expression.symbol.isUnlinked())
+                expression.throwLinkageError(expression.symbol)
+            else
+                expression
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
             declaration.transformChildrenVoid()
 
-            fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddens() {
+            fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
                 overriddenSymbols = overriddenSymbols.filter { it.isBound }
             }
 
             for (member in declaration.declarations) {
                 when (member) {
-                    is IrSimpleFunction -> member.filterOverriddens()
+                    is IrSimpleFunction -> member.filterOverriddenSymbols()
                     is IrProperty -> {
-                        member.filterOverriddens()
-                        member.getter?.filterOverriddens()
-                        member.setter?.filterOverriddens()
+                        member.filterOverriddenSymbols()
+                        member.getter?.filterOverriddenSymbols()
+                        member.setter?.filterOverriddenSymbols()
                     }
                 }
             }
 
             return declaration
         }
+
+        private fun IrExpression.throwLinkageError(unlinkedSymbol: IrSymbol? = null): IrCall =
+            throwLinkageError(
+                messages = listOf(composeUnlinkedSymbolsErrorMessage(listOfNotNull(unlinkedSymbol))),
+                location = locationIn(currentFile)
+            )
     }
+
+    companion object {
+        private val ERROR_ORIGIN = object : IrStatementOriginImpl("LINKAGE ERROR") {}
+    }
+}
+
+private fun IrDeclaration.location(): Location? = locationIn(fileOrNull)
+
+private fun IrElement.locationIn(currentFile: IrFile?): Location? {
+    if (currentFile == null) return null
+
+    val moduleName = currentFile.module.name
+    val fileEntry = currentFile.fileEntry
+    val fileName = fileEntry.name
+    val lineNumber = fileEntry.getLineNumber(startOffset) + 1 // since humans count from 1, not 0
+    val columnNumber = fileEntry.getColumnNumber(startOffset) + 1
+
+    // unsure whether should module name be added here
+    return Location("$moduleName @ $fileName", lineNumber, columnNumber)
 }
