@@ -165,7 +165,12 @@ fun generateJsCode(
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
-    val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
+    val transformer = IrModuleToJsTransformer(
+        context,
+        null,
+        true,
+        nameTables,
+    )
     return transformer.generateModule(listOf(moduleFragment)).outputs[TranslationMode.FULL]!!.jsCode
 }
 
