@@ -199,6 +199,123 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun copyToSymlinkDestination() {
+        val root = createTempDirectory("copyTo-root").cleanupRecursively()
+        val targetFile = createTempFile(root, "targetFile").also { it.writeText("target file") }
+        val targetDirectory = createTempDirectory(root, "targetDirectory").also { it.resolve("a").createFile() }
+
+        // copy file
+        val srcFile = createTempFile(root, "srcFile").also { it.writeText("source file") }
+        val dstFile = root.resolve("dstFile").tryCreateSymbolicLinkTo(targetFile) ?: return
+
+        assertFailsWith<FileAlreadyExistsException> {
+            srcFile.copyTo(dstFile)
+        }
+        assertFailsWith<FileAlreadyExistsException> {
+            srcFile.copyTo(dstFile, LinkOption.NOFOLLOW_LINKS)
+        }
+        assertTrue(dstFile.isSymbolicLink())
+        assertEquals("target file", dstFile.readText())
+
+        // copy directory
+        val srcDirectory = createTempDirectory(root, "srcDirectory")
+        val dstDirectory = root.resolve("dstDirectory").tryCreateSymbolicLinkTo(targetDirectory) ?: return
+
+        assertFailsWith<FileAlreadyExistsException> {
+            srcDirectory.copyTo(dstDirectory)
+        }
+        assertFailsWith<FileAlreadyExistsException> {
+            srcDirectory.copyTo(dstDirectory, LinkOption.NOFOLLOW_LINKS)
+        }
+        assertTrue(dstDirectory.isSymbolicLink())
+        assertEquals("a", dstDirectory.listDirectoryEntries().single().name)
+
+        // overwrite file
+        srcFile.copyTo(dstFile, overwrite = true)
+        assertFalse(dstFile.isSymbolicLink())
+        assertEquals("source file", dstFile.readText())
+        assertEquals("target file", targetFile.readText())
+
+        dstFile.deleteExisting()
+        dstFile.tryCreateSymbolicLinkTo(targetFile)!!
+        srcFile.copyTo(dstFile, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS)
+        assertFalse(dstFile.isSymbolicLink())
+        assertEquals("source file", dstFile.readText())
+        assertEquals("target file", targetFile.readText())
+
+        // overwrite directory
+        srcDirectory.copyTo(dstDirectory, overwrite = true)
+        assertFalse(dstDirectory.isSymbolicLink())
+        assertEquals(emptyList(), dstDirectory.listDirectoryEntries())
+        assertEquals("a", targetDirectory.listDirectoryEntries().single().name)
+
+        dstDirectory.deleteExisting()
+        dstDirectory.tryCreateSymbolicLinkTo(targetDirectory)!!
+        srcDirectory.copyTo(dstDirectory, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS)
+        assertFalse(dstDirectory.isSymbolicLink())
+        assertEquals(emptyList(), dstDirectory.listDirectoryEntries())
+        assertEquals("a", targetDirectory.listDirectoryEntries().single().name)
+    }
+
+    @Test
+    fun copyToBrokenSymlinkDestination() {
+        val root = createTempDirectory("copyTo-root").cleanupRecursively()
+        val symlinkTarget = root.resolve("target")
+
+        // copy file
+        val srcFile = createTempFile(root, "srcFile").also { it.writeText("source file") }
+        val dstFile = root.resolve("dstFile").tryCreateSymbolicLinkTo(symlinkTarget) ?: return
+
+        assertFailsWith<FileAlreadyExistsException> {
+            srcFile.copyTo(dstFile)
+        }
+        assertFailsWith<FileAlreadyExistsException> {
+            srcFile.copyTo(dstFile, LinkOption.NOFOLLOW_LINKS)
+        }
+        assertTrue(dstFile.isSymbolicLink())
+        assertFailsWith<NoSuchFileException> {
+            dstFile.readText()
+        }
+
+        // copy directory
+        val srcDirectory = createTempDirectory(root, "srcDirectory")
+        val dstDirectory = root.resolve("dstDirectory").tryCreateSymbolicLinkTo(symlinkTarget) ?: return
+
+        assertFailsWith<FileAlreadyExistsException> {
+            srcDirectory.copyTo(dstDirectory)
+        }
+        assertFailsWith<FileAlreadyExistsException> {
+            srcDirectory.copyTo(dstDirectory, LinkOption.NOFOLLOW_LINKS)
+        }
+        assertTrue(dstDirectory.isSymbolicLink())
+        assertFailsWith<FileSystemException> { // Fails with NoSuchFileException in Unix, NotDirectoryException in Windows.
+            dstDirectory.listDirectoryEntries()
+        }
+
+        // overwrite file
+        srcFile.copyTo(dstFile, overwrite = true)
+        assertFalse(dstFile.isSymbolicLink())
+        assertEquals("source file", dstFile.readText())
+
+        dstFile.deleteExisting()
+        dstFile.tryCreateSymbolicLinkTo(symlinkTarget)!!
+        srcFile.copyTo(dstFile, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS)
+        assertFalse(dstFile.isSymbolicLink())
+        assertEquals("source file", dstFile.readText())
+
+        // overwrite directory
+        srcDirectory.copyTo(dstDirectory, overwrite = true)
+        assertFalse(dstDirectory.isSymbolicLink())
+        assertEquals(emptyList(), dstDirectory.listDirectoryEntries())
+
+        dstDirectory.deleteExisting()
+        dstDirectory.tryCreateSymbolicLinkTo(symlinkTarget)!!
+        srcDirectory.copyTo(dstDirectory, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS)
+        assertFalse(dstDirectory.isSymbolicLink())
+        assertEquals(emptyList(), dstDirectory.listDirectoryEntries())
+    }
+
+    @Test
     fun copyToNameWithoutParent() {
         val currentDir = Path("").absolute()
         val srcFile = createTempFile().cleanup()
