@@ -15,8 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -34,9 +33,6 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     internal val currentJvm: Provider<Jvm> = objects
         .property(Jvm.current())
         .chainedFinalizeValueOnRead()
-
-    @get:Internal
-    internal var providedJvmExplicitlySet = false
 
     @get:Internal
     internal val providedJvm: Property<Jvm> = objects
@@ -109,74 +105,38 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
         objects,
-        { providedJvmExplicitlySet = true },
         kotlinCompileTaskProvider
     )
 
     final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter =
         DefaultJavaToolchainSetter(providedJvm, kotlinCompileTaskProvider)
 
-    /**
-     * Updates [task] 'jvmTarget' if user has configured toolchain and not 'jvmTarget'.
-     *
-     *  Should be called on execution state to ensure 'jvmTarget' is set to correct value even on
-     *  reusing configuration cache.
-     *
-     * Should be called on task execution phase!
-     */
-    internal fun updateJvmTarget(
-        task: KotlinCompile,
-        args: K2JVMCompilerArguments
-    ) {
-        if (providedJvmExplicitlySet) {
-            val jdkVersion = javaVersion.get()
-
-            // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
-            val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptions.orNull)
-                .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
-
-            if (appliedJvmTargets.isEmpty()) {
-                // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                // that is not accepted by Kotlin compiler
-                val toolchainJvmTarget = when (jdkVersion) {
-                    JavaVersion.VERSION_1_9 -> "9"
-                    JavaVersion.VERSION_1_10 -> "10"
-                    else -> jdkVersion.toString()
-                }
-                task.kotlinOptions.jvmTarget = toolchainJvmTarget
-                args.jvmTarget = toolchainJvmTarget
-            }
-        }
-    }
-
     private abstract class JvmTargetUpdater(
         private val kotlinCompileTaskProvider: () -> KotlinCompile?
     ) {
         fun updateJvmTarget(
-            jdkVersion: JavaVersion
+            jdkVersion: Provider<JavaVersion>
         ) {
             kotlinCompileTaskProvider()?.let { task ->
-                // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
-                val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptions.orNull)
-                    .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
-
-                if (appliedJvmTargets.isEmpty()) {
-                    // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                    // that is not accepted by Kotlin compiler
-                    task.kotlinOptions.jvmTarget = when (jdkVersion) {
-                        JavaVersion.VERSION_1_9 -> "9"
-                        JavaVersion.VERSION_1_10 -> "10"
-                        else -> jdkVersion.toString()
+                task.compilerOptions.jvmTarget.convention(
+                    jdkVersion.map { version ->
+                        // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
+                        // that is not accepted by Kotlin compiler
+                        val normalizedVersion = when (version) {
+                            JavaVersion.VERSION_1_9 -> "9"
+                            JavaVersion.VERSION_1_10 -> "10"
+                            else -> version.toString()
+                        }
+                        JvmTarget.fromTarget(normalizedVersion)
                     }
-                }
+                )
             }
         }
     }
 
-    private class DefaultJdkSetter(
+    private inner class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
         private val objects: ObjectFactory,
-        private val updateProvidedJdkCallback: () -> Unit,
         kotlinCompileTaskProvider: () -> KotlinCompile?
     ) : JvmTargetUpdater(kotlinCompileTaskProvider),
         KotlinJavaToolchain.JdkSetter {
@@ -192,10 +152,9 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 "Supplied jdkHomeLocation does not exist. You supplied: $jdkHomeLocation"
             }
 
-            updateProvidedJdkCallback.invoke()
+            updateJvmTarget(javaVersion)
             providedJvm.set(
                 objects.providerWithLazyConvention {
-                    updateJvmTarget(jdkVersion)
                     Jvm.discovered(jdkHomeLocation, null, jdkVersion)
                 }
             )
@@ -210,12 +169,11 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
-            providedJvmExplicitlySet = true
+            updateJvmTarget(javaVersion)
             providedJvm.set(
                 javaLauncher.map {
                     val metadata = javaLauncher.get().metadata
                     val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
-                    updateJvmTarget(javaVersion)
                     Jvm.discovered(
                         metadata.installationPath.asFile,
                         null,

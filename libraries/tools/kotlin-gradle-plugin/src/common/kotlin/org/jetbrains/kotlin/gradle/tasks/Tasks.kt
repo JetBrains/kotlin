@@ -696,8 +696,6 @@ abstract class KotlinCompile @Inject constructor(
             )
         )
 
-        defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
-
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
         }

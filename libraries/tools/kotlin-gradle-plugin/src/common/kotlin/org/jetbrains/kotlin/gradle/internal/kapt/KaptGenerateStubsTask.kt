@@ -113,7 +113,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         (compilerOptions as CompilerJvmOptionsDefault).fillCompilerArguments(args)
 
         // Copied from KotlinCompile
-        defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
         }
