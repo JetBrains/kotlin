@@ -3,22 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DuplicatedCode")
 
-/* Associate compilations are not yet supported by the IDE. KT-34102 */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
+package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.HelpTasksPlugin
-import org.gradle.buildinit.plugins.BuildInitPlugin
-import org.gradle.buildinit.plugins.WrapperPlugin
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class WhenEvaluatedAndroidOrderingTest {
 
