@@ -22,7 +22,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
         kotlin.jvm()
 
@@ -38,7 +38,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
         kotlin.jvm()
 
@@ -62,7 +62,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
         kotlin.jvm()
 

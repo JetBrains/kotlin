@@ -162,7 +162,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     fun `test compilation and source set configurations don't clash`() {
         val project = buildProjectWithMPP {
             androidLibrary {
-                compileSdkVersion(30)
+                compileSdk = 30
             }
 
             kotlin {

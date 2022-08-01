@@ -222,6 +222,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         /* Not yet, executed, because Android is not applied yet */
         assertNoWarningMessage()
 
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
         assertEquals(Messages.FAILED_GETTING_ANDROID_GRADLE_PLUGIN_VERSION_STRING, assertSingleWarningMessage())
     }
@@ -229,6 +230,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - android is applied before the health check call`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
@@ -241,6 +243,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - WhenAndroidIsApplied - called multiple times - still emits only a single message`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         repeat(10) {
@@ -277,6 +280,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - is not executed when android plugin is applied - kotlin-android plugin`() {
         val project = ProjectBuilder.builder().build()
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-android")
         project.plugins.apply(LibraryPlugin::class.java)
 

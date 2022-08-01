@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * In Gradle 6.7-rc-1 BuildEventsListenerRegistry service is not created in we need it in order
  * to instantiate AGP. This creates a fake one and injects it - http://b/168630734.
+ * https://github.com/gradle/gradle/issues/16774 (Waiting for Gradle 7.5)
  */
 internal fun addBuildEventsListenerRegistryMock(project: Project) {
     try {
