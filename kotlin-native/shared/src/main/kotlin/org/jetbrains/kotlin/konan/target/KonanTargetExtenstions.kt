@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.konan.target
 
 // TODO: This all needs to go to konan.properties
@@ -17,7 +22,7 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
         is KonanTarget.MINGW_X86 -> true
         is KonanTarget.MINGW_X64 -> true
         is KonanTarget.MACOS_X64 -> true
-         is KonanTarget.MACOS_ARM64 -> true
+        is KonanTarget.MACOS_ARM64 -> true
         is KonanTarget.LINUX_ARM64 -> true
         is KonanTarget.LINUX_ARM32_HFP -> true
         is KonanTarget.ANDROID_X64 -> true
@@ -59,3 +64,10 @@ fun KonanTarget.supportedSanitizers(): List<SanitizerKind> =
         // TODO: Support macOS arm64
         else -> listOf()
     }
+
+// should be consistent with KONAN_TARGET_HAS_ADDRESS_DEPENDENCY macro
+fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
+     when (this.architecture) {
+         Architecture.X86, Architecture.X64, Architecture.ARM32, Architecture.ARM64 -> true
+         Architecture.MIPS32, Architecture.MIPSEL32, Architecture.WASM32 -> false
+     }

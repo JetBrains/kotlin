@@ -62,8 +62,24 @@ struct ObjHeader {
   TypeInfo* typeInfoOrMetaRelaxed() const { return atomicGetRelaxed(&typeInfoOrMeta_);}
   TypeInfo* typeInfoOrMetaAcquire() const { return atomicGetAcquire(&typeInfoOrMeta_);}
 
+  /**
+   * Formally, this code data races with installing ExtraObject. Even though, we are okey, with reading
+   * both typeInfo and meta-object pointer, llvm memory model doesn't guarantee, that if we are able to
+   * see metaObject, written by other thread, we would be able to see metaObject->typeInfo.
+   *
+   * To make this correct with llvm memory model we need to use [LLVMAtomicOrdering.LLVMAtomicOrderingAcquire] here.
+   * Unfortunately, this is dramatically harmful for performance on arm architecture. So, we are using
+   * [LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic] for both this read and following load of metaObject->typeInfo.
+   * At this point, we have no data race, but llvm memory model allows uninitialized value to be read from metaObject->typeInfo.
+   *
+   * Hardware guaranties on many supported platforms doesn't allow this to happen.
+   */
   const TypeInfo* type_info() const {
-    return clearPointerBits(typeInfoOrMetaAcquire(), OBJECT_TAG_MASK)->typeInfo_;
+#ifdef KONAN_TARGET_HAS_ADDRESS_DEPENDENCY
+      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
+#else
+      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaAcquire(), OBJECT_TAG_MASK)->typeInfo_);
+#endif
   }
 
   bool has_meta_object() const {

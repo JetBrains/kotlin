@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
@@ -52,6 +52,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
+    val targetHasAddressDependency get() = target.hasAddressDependencyInMemoryModel()
     internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.

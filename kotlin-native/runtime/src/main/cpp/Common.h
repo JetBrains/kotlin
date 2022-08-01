@@ -52,4 +52,9 @@
 #define KONAN_TYPE_INFO_HAS_WRITABLE_PART 1
 #endif
 
+// should be consistent with hasAddressDependencyInMemoryModel function
+#if defined(KONAN_X64) || defined(KONAN_X86) || defined(KONAN_ARM32) || defined(KONAN_ARM64)
+#define KONAN_TARGET_HAS_ADDRESS_DEPENDENCY 1
+#endif
+
 #endif // RUNTIME_COMMON_H

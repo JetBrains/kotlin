@@ -78,7 +78,8 @@ public:
 
     // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
     explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo *info) noexcept :
-        typeInfo_(info), weakReferenceCounterOrBaseObject_(objHeader) {
+        typeInfo_(nullptr), weakReferenceCounterOrBaseObject_(objHeader) {
+        atomicSetRelease(&typeInfo_, info);
     }
     ~ExtraObjectData();
 private:

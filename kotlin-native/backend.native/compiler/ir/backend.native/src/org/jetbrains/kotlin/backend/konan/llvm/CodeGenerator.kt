@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.llvm
@@ -1144,13 +1144,24 @@ internal abstract class FunctionGenerationContext(
 
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
         val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
-        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
+
+        val memoryOrder = if (context.config.targetHasAddressDependency) {
+            /**
+             * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
+             * Check comment in ObjHeader::type_info for details.
+             */
+            LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
+        } else {
+            LLVMAtomicOrdering.LLVMAtomicOrderingAcquire
+        }
+
+        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr, memoryOrder = memoryOrder)
         // Clear two lower bits.
         val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
         val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
-        return load(typeInfoPtrPtr)
+        return load(typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
     fun lookupInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
