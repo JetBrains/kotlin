@@ -67,15 +67,16 @@ digraph smartcastFromArgument_kt {
                     color=blue
                     27 [label="Enter block"];
                     28 [label="Access variable R|<local>/a|"];
-                    29 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                    30 [label="Exit block"];
+                    29 [label="Smart cast: R|<local>/a|"];
+                    30 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    31 [label="Exit block"];
                 }
-                31 [label="Exit when branch result"];
-                32 [label="Exit when"];
+                32 [label="Exit when branch result"];
+                33 [label="Exit when"];
             }
-            33 [label="Exit block"];
+            34 [label="Exit block"];
         }
-        34 [label="Exit function test" style="filled" fillcolor=red];
+        35 [label="Exit function test" style="filled" fillcolor=red];
     }
     11 -> {12};
     12 -> {13};
@@ -85,14 +86,14 @@ digraph smartcastFromArgument_kt {
     16 -> {17};
     17 -> {21 18};
     18 -> {19};
-    19 -> {34};
+    19 -> {35};
     19 -> {20} [style=dotted];
     20 -> {22} [style=dotted];
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {26 25};
-    25 -> {32};
+    25 -> {33};
     26 -> {27};
     27 -> {28};
     28 -> {29};
@@ -101,5 +102,6 @@ digraph smartcastFromArgument_kt {
     31 -> {32};
     32 -> {33};
     33 -> {34};
+    34 -> {35};
 
 }

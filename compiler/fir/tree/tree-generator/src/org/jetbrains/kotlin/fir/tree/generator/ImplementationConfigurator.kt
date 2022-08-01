@@ -189,12 +189,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        noImpl(expressionWithSmartcast)
-        noImpl(expressionWithSmartcastToNothing)
-
-        noImpl(whenSubjectExpressionWithSmartcast)
-        noImpl(whenSubjectExpressionWithSmartcastToNothing)
-
         impl(getClassCall) {
             default("argument") {
                 value = "argumentList.arguments.first()"
@@ -357,6 +351,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(wrappedDelegateExpression) {
             default("typeRef") {
                 delegate = "expression"
+            }
+        }
+
+        impl(smartCastExpression) {
+            default("isStable") {
+                value = "smartcastStability == SmartcastStability.STABLE_VALUE"
+                withGetter = true
             }
         }
 
@@ -562,7 +563,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirIntegerLiteralOperatorCallImpl",
             "FirContextReceiverImpl",
             "FirClassReferenceExpressionImpl",
-            "FirGetClassCallImpl"
+            "FirGetClassCallImpl",
+            "FirSmartCastExpressionImpl"
         )
         configureFieldInAllImplementations(
             field = "typeRef",

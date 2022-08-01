@@ -70,17 +70,18 @@ digraph delayedAssignment_kt {
                     26 [label="Function call: R|/A.A|()"];
                     27 [label="Assignment: R|<local>/a|"];
                     28 [label="Access variable R|<local>/a|"];
-                    29 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                    30 [label="Exit block"];
+                    29 [label="Smart cast: R|<local>/a|"];
+                    30 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    31 [label="Exit block"];
                 }
-                31 [label="Exit when branch result"];
-                32 [label="Exit when"];
+                32 [label="Exit when branch result"];
+                33 [label="Exit when"];
             }
-            33 [label="Access variable R|<local>/a|"];
-            34 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
-            35 [label="Exit block"];
+            34 [label="Access variable R|<local>/a|"];
+            35 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+            36 [label="Exit block"];
         }
-        36 [label="Exit function test" style="filled" fillcolor=red];
+        37 [label="Exit function test" style="filled" fillcolor=red];
     }
     9 -> {10};
     10 -> {11};
@@ -96,7 +97,7 @@ digraph delayedAssignment_kt {
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {32};
+    23 -> {33};
     24 -> {25};
     25 -> {26};
     26 -> {27};
@@ -109,5 +110,6 @@ digraph delayedAssignment_kt {
     33 -> {34};
     34 -> {35};
     35 -> {36};
+    36 -> {37};
 
 }

@@ -14,10 +14,11 @@ digraph smartcastAfterReassignment_kt {
             4 [label="Const: String()"];
             5 [label="Assignment: R|<local>/x|"];
             6 [label="Access variable R|<local>/x|"];
-            7 [label="Access variable R|kotlin/String.length|"];
-            8 [label="Exit block"];
+            7 [label="Smart cast: R|<local>/x|"];
+            8 [label="Access variable R|kotlin/String.length|"];
+            9 [label="Exit block"];
         }
-        9 [label="Exit function test_1" style="filled" fillcolor=red];
+        10 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
@@ -28,45 +29,46 @@ digraph smartcastAfterReassignment_kt {
     6 -> {7};
     7 -> {8};
     8 -> {9};
+    9 -> {10};
 
     subgraph cluster_2 {
         color=red
-        10 [label="Enter function test_2" style="filled" fillcolor=red];
+        11 [label="Enter function test_2" style="filled" fillcolor=red];
         subgraph cluster_3 {
             color=blue
-            11 [label="Enter block"];
-            12 [label="Const: Null(null)"];
-            13 [label="Variable declaration: lvar x: R|kotlin/String?|"];
+            12 [label="Enter block"];
+            13 [label="Const: Null(null)"];
+            14 [label="Variable declaration: lvar x: R|kotlin/String?|"];
             subgraph cluster_4 {
                 color=blue
-                14 [label="Enter when"];
+                15 [label="Enter when"];
                 subgraph cluster_5 {
                     color=blue
-                    15 [label="Enter when branch condition "];
-                    16 [label="Access variable R|<local>/x|"];
-                    17 [label="Const: Null(null)"];
-                    18 [label="Equality operator =="];
-                    19 [label="Exit when branch condition"];
+                    16 [label="Enter when branch condition "];
+                    17 [label="Access variable R|<local>/x|"];
+                    18 [label="Const: Null(null)"];
+                    19 [label="Equality operator =="];
+                    20 [label="Exit when branch condition"];
                 }
-                20 [label="Synthetic else branch"];
-                21 [label="Enter when branch result"];
+                21 [label="Synthetic else branch"];
+                22 [label="Enter when branch result"];
                 subgraph cluster_6 {
                     color=blue
-                    22 [label="Enter block"];
-                    23 [label="Const: String()"];
-                    24 [label="Assignment: R|<local>/x|"];
-                    25 [label="Exit block"];
+                    23 [label="Enter block"];
+                    24 [label="Const: String()"];
+                    25 [label="Assignment: R|<local>/x|"];
+                    26 [label="Exit block"];
                 }
-                26 [label="Exit when branch result"];
-                27 [label="Exit when"];
+                27 [label="Exit when branch result"];
+                28 [label="Exit when"];
             }
-            28 [label="Access variable R|<local>/x|"];
-            29 [label="Access variable R|kotlin/String.length|"];
-            30 [label="Exit block"];
+            29 [label="Access variable R|<local>/x|"];
+            30 [label="Smart cast: R|<local>/x|"];
+            31 [label="Access variable R|kotlin/String.length|"];
+            32 [label="Exit block"];
         }
-        31 [label="Exit function test_2" style="filled" fillcolor=red];
+        33 [label="Exit function test_2" style="filled" fillcolor=red];
     }
-    10 -> {11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
@@ -75,9 +77,9 @@ digraph smartcastAfterReassignment_kt {
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {21 20};
-    20 -> {27};
-    21 -> {22};
+    19 -> {20};
+    20 -> {22 21};
+    21 -> {28};
     22 -> {23};
     23 -> {24};
     24 -> {25};
@@ -87,29 +89,31 @@ digraph smartcastAfterReassignment_kt {
     28 -> {29};
     29 -> {30};
     30 -> {31};
+    31 -> {32};
+    32 -> {33};
 
     subgraph cluster_7 {
         color=red
-        32 [label="Enter function test_3" style="filled" fillcolor=red];
+        34 [label="Enter function test_3" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            33 [label="Enter block"];
-            34 [label="Const: Null(null)"];
-            35 [label="Variable declaration: lvar x: R|kotlin/String?|"];
-            36 [label="Const: String()"];
-            37 [label="Assignment: R|<local>/x|"];
-            38 [label="Access variable R|<local>/x|"];
-            39 [label="Access variable R|kotlin/String.length|"];
-            40 [label="Const: Null(null)"];
-            41 [label="Assignment: R|<local>/x|"];
-            42 [label="Access variable R|<local>/x|"];
-            43 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
-            44 [label="Exit block"];
+            35 [label="Enter block"];
+            36 [label="Const: Null(null)"];
+            37 [label="Variable declaration: lvar x: R|kotlin/String?|"];
+            38 [label="Const: String()"];
+            39 [label="Assignment: R|<local>/x|"];
+            40 [label="Access variable R|<local>/x|"];
+            41 [label="Smart cast: R|<local>/x|"];
+            42 [label="Access variable R|kotlin/String.length|"];
+            43 [label="Const: Null(null)"];
+            44 [label="Assignment: R|<local>/x|"];
+            45 [label="Access variable R|<local>/x|"];
+            46 [label="Smart cast: R|<local>/x|"];
+            47 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+            48 [label="Exit block"];
         }
-        45 [label="Exit function test_3" style="filled" fillcolor=red];
+        49 [label="Exit function test_3" style="filled" fillcolor=red];
     }
-    32 -> {33};
-    33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
@@ -121,5 +125,9 @@ digraph smartcastAfterReassignment_kt {
     42 -> {43};
     43 -> {44};
     44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
 
 }

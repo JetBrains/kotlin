@@ -135,9 +135,13 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // where componentN calls will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
     object DesugaredComponentFunctionCall : KtFakeSourceElementKind()
 
-    // when smart casts applied to the expression, its wrapped into FirExpressionWithSmartcast
+    // when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
     // which type reference will have a fake source refer to a original source element of it
     object SmartCastedTypeRef : KtFakeSourceElementKind()
+
+    // when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
+    // this kind used for such FirSmartCastExpressions itself
+    object SmartCastExpression : KtFakeSourceElementKind()
 
     // for safe call expressions like a?.foo() the FirSafeCallExpression is generated
     // and it have a fake source

@@ -201,6 +201,9 @@ internal class KtFirCallResolver(
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
             )
+            is FirSmartCastExpression -> originalExpression.toKtCallInfo(
+                psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall
+            )
             else -> null
         }
     }
@@ -465,7 +468,7 @@ internal class KtFirCallResolver(
                     isImplicitInvoke
                 )
             }
-            is FirExpressionWithSmartcast -> createKtCall(psi, fir.originalExpression, candidate, resolveFragmentOfCall)
+            is FirSmartCastExpression -> (fir.originalExpression as? FirResolvable)?.let { createKtCall(psi, it, candidate, resolveFragmentOfCall) }
             else -> null
         }
     }
@@ -707,7 +710,7 @@ internal class KtFirCallResolver(
     private fun FirExpression.toKtReceiverValue(): KtReceiverValue? {
         val psi = psi
         return when (this) {
-            is FirExpressionWithSmartcast -> {
+            is FirSmartCastExpression -> {
                 val result = originalExpression.toKtReceiverValue()
                 if (result != null && isStable) {
                     KtSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())

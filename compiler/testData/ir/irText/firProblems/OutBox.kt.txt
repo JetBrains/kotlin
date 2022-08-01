@@ -1,0 +1,24 @@
+class Box<out T : Foo> {
+  constructor(foo: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val foo: T
+    field = foo
+    get
+
+  val str: String
+    get(): String {
+      var foo: Foo = <this>.<get-foo>()
+      when {
+        foo is Buz -> { // BLOCK
+          return foo /*as Buz */(super<Buz>).#str /*!! String */
+        }
+      }
+      return ""
+    }
+
+}
+

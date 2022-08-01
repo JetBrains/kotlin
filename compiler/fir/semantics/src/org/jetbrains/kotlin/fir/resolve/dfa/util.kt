@@ -99,6 +99,7 @@ val FirElement.symbol: FirBasedSymbol<*>?
         is FirDeclaration -> symbol
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> selector.symbol
+        is FirSmartCastExpression -> originalExpression.symbol
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||
@@ -116,6 +117,6 @@ internal val FirResolvable.symbol: FirBasedSymbol<*>?
 
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {
-        is FirExpressionWithSmartcast -> originalExpression
+        is FirSmartCastExpression -> originalExpression
         else -> this
     }

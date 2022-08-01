@@ -334,42 +334,44 @@ digraph smartcastToNothing_kt {
                     color=blue
                     116 [label="Enter block"];
                     117 [label="Access variable R|<local>/a|"];
-                    118 [label="Enter safe call"];
-                    119 [label="Access variable R|kotlin/String.length|"];
-                    120 [label="Exit safe call"];
-                    121 [label="Variable declaration: lval b: R|kotlin/Int?|"];
-                    122 [label="Exit block"];
+                    118 [label="Smart cast: R|<local>/a|"];
+                    119 [label="Enter safe call"];
+                    120 [label="Access variable R|kotlin/String.length|"];
+                    121 [label="Exit safe call"];
+                    122 [label="Variable declaration: lval b: R|kotlin/Int?|"];
+                    123 [label="Exit block"];
                 }
-                123 [label="Exit when branch result"];
-                124 [label="Exit when"];
+                124 [label="Exit when branch result"];
+                125 [label="Exit when"];
             }
             subgraph cluster_31 {
                 color=blue
-                125 [label="Enter when"];
+                126 [label="Enter when"];
                 subgraph cluster_32 {
                     color=blue
-                    126 [label="Enter when branch condition "];
-                    127 [label="Access variable R|<local>/a|"];
-                    128 [label="Type operator: (R|<local>/a| is R|kotlin/Nothing|)"];
-                    129 [label="Exit when branch condition"];
+                    127 [label="Enter when branch condition "];
+                    128 [label="Access variable R|<local>/a|"];
+                    129 [label="Type operator: (R|<local>/a| is R|kotlin/Nothing|)"];
+                    130 [label="Exit when branch condition"];
                 }
-                130 [label="Synthetic else branch"];
-                131 [label="Enter when branch result"];
+                131 [label="Synthetic else branch"];
+                132 [label="Enter when branch result"];
                 subgraph cluster_33 {
                     color=blue
-                    132 [label="Enter block"];
-                    133 [label="Access variable R|<local>/a|"];
-                    134 [label="Stub" style="filled" fillcolor=gray];
-                    135 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
-                    136 [label="Variable declaration: lval b: R|kotlin/Int|" style="filled" fillcolor=gray];
-                    137 [label="Exit block" style="filled" fillcolor=gray];
+                    133 [label="Enter block"];
+                    134 [label="Access variable R|<local>/a|"];
+                    135 [label="Smart cast: R|<local>/a|"];
+                    136 [label="Stub" style="filled" fillcolor=gray];
+                    137 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
+                    138 [label="Variable declaration: lval b: R|kotlin/Int|" style="filled" fillcolor=gray];
+                    139 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                138 [label="Exit when branch result" style="filled" fillcolor=gray];
-                139 [label="Exit when"];
+                140 [label="Exit when branch result" style="filled" fillcolor=gray];
+                141 [label="Exit when"];
             }
-            140 [label="Exit block"];
+            142 [label="Exit block"];
         }
-        141 [label="Exit function test_1" style="filled" fillcolor=red];
+        143 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     107 -> {108};
     108 -> {109};
@@ -378,11 +380,11 @@ digraph smartcastToNothing_kt {
     111 -> {112};
     112 -> {113};
     113 -> {115 114};
-    114 -> {124};
+    114 -> {125};
     115 -> {116};
     116 -> {117};
-    117 -> {118 120};
-    118 -> {119};
+    117 -> {118};
+    118 -> {119 121};
     119 -> {120};
     120 -> {121};
     121 -> {122};
@@ -393,18 +395,20 @@ digraph smartcastToNothing_kt {
     126 -> {127};
     127 -> {128};
     128 -> {129};
-    129 -> {131 130};
-    130 -> {139};
-    131 -> {132};
+    129 -> {130};
+    130 -> {132 131};
+    131 -> {141};
     132 -> {133};
-    133 -> {141}    [label=onUncaughtException];
-    133 -> {134} [style=dotted];
-    134 -> {135} [style=dotted];
+    133 -> {134};
+    134 -> {135};
+    135 -> {143}    [label=onUncaughtException];
     135 -> {136} [style=dotted];
     136 -> {137} [style=dotted];
     137 -> {138} [style=dotted];
     138 -> {139} [style=dotted];
-    139 -> {140};
-    140 -> {141};
+    139 -> {140} [style=dotted];
+    140 -> {141} [style=dotted];
+    141 -> {142};
+    142 -> {143};
 
 }

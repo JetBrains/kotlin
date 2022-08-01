@@ -429,6 +429,10 @@ class FirCallCompletionResultsWriterTransformer(
         )
     }
 
+    override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ExpectedArgumentType?): FirStatement {
+        return smartCastExpression.transformOriginalExpression(this, data)
+    }
+
     private inner class TypeUpdaterForDelegateArguments : FirTransformer<Any?>() {
         override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element

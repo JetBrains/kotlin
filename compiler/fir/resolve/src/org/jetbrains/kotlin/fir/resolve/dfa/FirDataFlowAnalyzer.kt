@@ -168,6 +168,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun isAccessToUnstableLocalVariable(expression: FirExpression): Boolean {
         val qualifiedAccessExpression = when (expression) {
+            is FirSmartCastExpression -> expression.originalExpression as FirQualifiedAccessExpression
             is FirQualifiedAccessExpression -> expression
             is FirWhenSubjectExpression -> {
                 val whenExpression = expression.whenRef.value
@@ -1002,6 +1003,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         processConditionalContract(qualifiedAccessExpression)
     }
 
+    fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
+        graphBuilder.exitSmartCastExpression(smartCastExpression).mergeIncomingFlow()
+    }
+
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
         val node = graphBuilder.enterSafeCall(safeCall).mergeIncomingFlow()
         val previousNode = node.firstPreviousNode
@@ -1239,7 +1244,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 
-        variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)
+        variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer.unwrapSmartcastExpression())
             ?.let { initializerVariable ->
                 val isInitializerStable =
                     initializerVariable.isStable || (initializerVariable.hasLocalStability && initializer.isAccessToStableVariable())
@@ -1274,7 +1279,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun FirExpression.isAccessToStableVariable(): Boolean =
-        this is FirQualifiedAccessExpression && !isAccessToUnstableLocalVariable(this)
+        !isAccessToUnstableLocalVariable(this)
 
     private val RealVariable.isStable get() = stability == PropertyStability.STABLE_VALUE
     private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR

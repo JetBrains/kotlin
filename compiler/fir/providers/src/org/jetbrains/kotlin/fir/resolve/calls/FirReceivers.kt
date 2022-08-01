@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
@@ -66,7 +69,7 @@ open class ExpressionReceiverValue(
         if (receiverExpr is FirCheckNotNullCall) {
             receiverExpr = receiverExpr.arguments.firstOrNull()
         }
-        if (receiverExpr is FirExpressionWithSmartcast) {
+        if (receiverExpr is FirSmartCastExpression) {
             return receiverExpr.smartcastScope(useSiteSession, scopeSession)
         }
         return type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
@@ -107,11 +110,16 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         receiverExpression = if (type == originalReceiverExpression.typeRef.coneType) {
             originalReceiverExpression
         } else {
-            buildExpressionWithSmartcast {
+            buildSmartCastExpression {
                 originalExpression = originalReceiverExpression
-                smartcastType = originalReceiverExpression.typeRef.resolvedTypeFromPrototype(type)
+                this.source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
+                smartcastType = buildResolvedTypeRef {
+                    source = originalReceiverExpression.typeRef.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
+                    this.type = type
+                }
                 typesFromSmartCast = listOf(type)
                 smartcastStability = SmartcastStability.STABLE_VALUE
+                typeRef = smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             }
         }
         implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)

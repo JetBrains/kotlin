@@ -490,29 +490,14 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +intField("componentIndex")
         }
 
-        wrappedExpressionWithSmartcast.configure {
-            withArg("E", expression)
+        smartCastExpression.configure {
             +typeRefField
-            +field("originalExpression", "E", packageName = null)
+            +field("originalExpression", expression).withTransform()
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
-            +field("originalType", typeRef)
             +field("smartcastType", typeRef)
+            +field("smartcastTypeWithoutNullableNothing", typeRef, nullable = true)
             +booleanField("isStable")
             +smartcastStability
-        }
-
-        wrappedExpressionWithSmartcastToNothing.configure {
-            withArg("E", expression)
-            parentArg(wrappedExpressionWithSmartcast, "E", "E")
-            +field("smartcastTypeWithoutNullableNothing", typeRef)
-        }
-
-        expressionWithSmartcast.configure {
-            parentArg(wrappedExpressionWithSmartcast, "E", qualifiedAccessExpression)
-        }
-
-        expressionWithSmartcastToNothing.configure {
-            parentArg(wrappedExpressionWithSmartcastToNothing, "E", qualifiedAccessExpression)
         }
 
         safeCallExpression.configure {
@@ -579,14 +564,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         whenSubjectExpression.configure {
             +field("whenRef", whenRefType)
-        }
-
-        whenSubjectExpressionWithSmartcast.configure {
-            parentArg(wrappedExpressionWithSmartcast, "E", whenSubjectExpression)
-        }
-
-        whenSubjectExpressionWithSmartcastToNothing.configure {
-            parentArg(wrappedExpressionWithSmartcastToNothing, "E", whenSubjectExpression)
         }
 
         wrappedExpression.configure {

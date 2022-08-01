@@ -461,6 +461,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
+    @TestMetadata("smartCastExpression.kt")
+    public void testSmartCastExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/smartCastExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastInvokeReceiver.kt")
+    public void testSmartCastInvokeReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/smartCastInvokeReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("SuperTypePrimaryConstructor.kt")
     public void testSuperTypePrimaryConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/SuperTypePrimaryConstructor.kt");

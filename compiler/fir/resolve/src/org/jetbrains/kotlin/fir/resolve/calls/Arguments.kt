@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
@@ -66,7 +67,7 @@ fun Candidate.resolveArgumentExpression(
         // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
         // NB: argument.regularQualifiedAccess is either a call or a qualified access
         is FirSafeCallExpression -> {
-            val nestedQualifier = argument.selector
+            val nestedQualifier = (argument.selector as? FirExpression)?.unwrapSmartcastExpression()
             if (nestedQualifier is FirQualifiedAccessExpression) {
                 resolveSubCallArgument(
                     csBuilder,
@@ -403,7 +404,7 @@ private fun checkApplicabilityForArgumentType(
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
-        val smartcastExpression = argument as? FirExpressionWithSmartcast
+        val smartcastExpression = argument as? FirSmartCastExpression
         if (smartcastExpression != null && !smartcastExpression.isStable) {
             val unstableType = smartcastExpression.smartcastType.coneType
             if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {

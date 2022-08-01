@@ -263,39 +263,13 @@ class Fir2IrImplicitCastInserter(
         return this
     }
 
-    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: IrElement): IrExpression {
-        return if (expressionWithSmartcast.isStable) {
-            implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: IrElement): IrElement {
+        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
+        return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
+            implicitCastOrExpression(data as IrExpression, smartCastExpression.typeRef)
         } else {
             data as IrExpression
         }
-    }
-
-    override fun visitExpressionWithSmartcastToNothing(
-        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
-        data: IrElement
-    ): IrElement {
-        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
-        return data
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcast(
-        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
-        data: IrElement
-    ): IrElement {
-        return if (whenSubjectExpressionWithSmartcast.isStable) {
-            implicitCastOrExpression(data as IrExpression, whenSubjectExpressionWithSmartcast.typeRef)
-        } else {
-            data as IrExpression
-        }
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
-        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
-        data: IrElement
-    ): IrElement {
-        // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
-        return data
     }
 
     internal fun implicitCastFromDispatchReceiver(

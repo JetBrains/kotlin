@@ -166,7 +166,7 @@ object CheckDispatchReceiver : ResolutionStage() {
         val smartcastedReceiver = when (explicitReceiverExpression) {
             is FirCheckNotNullCall -> explicitReceiverExpression.argument
             else -> explicitReceiverExpression
-        } as? FirExpressionWithSmartcast
+        } as? FirSmartCastExpression
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
@@ -184,7 +184,7 @@ object CheckDispatchReceiver : ResolutionStage() {
                 UnstableSmartCast(
                     smartcastedReceiver,
                     targetType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalType.coneType, targetType)
+                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalExpression.typeRef.coneType, targetType)
                 )
             )
         } else if (isReceiverNullable) {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
@@ -260,8 +261,9 @@ class CallAndReferenceGenerator(
     // However, FE 1.0 does it, and currently we have no better way to provide these receivers.
     // See KT-49507 and KT-48954 as good examples for cases we try to handle here
     private fun FirExpression.superQualifierSymbolForField(fieldSymbol: IrFieldSymbol): IrClassSymbol? {
-        if (this !is FirQualifiedAccess) return null
-        if (calleeReference is FirSuperReference) return superQualifierSymbol()
+        val unwrapped = this.unwrapSmartcastExpression()
+        if (unwrapped !is FirQualifiedAccess) return null
+        if (unwrapped.calleeReference is FirSuperReference) return superQualifierSymbol()
         if (fieldSymbol.owner.correspondingPropertySymbol != null) return null
         val originalContainingClass = fieldSymbol.owner.parentClassOrNull ?: return null
         val ownContainingClass = typeRef.toIrType().classifierOrNull?.owner as? IrClass ?: return null

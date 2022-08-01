@@ -906,8 +906,8 @@ class FirRenderer(
             visitQualifiedAccessExpression(thisReceiverExpression)
         }
 
-        override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
-            visitQualifiedAccessExpression(expressionWithSmartcast)
+        override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
+            smartCastExpression.originalExpression.accept(this)
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {

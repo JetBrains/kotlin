@@ -38,25 +38,26 @@ digraph elvisReturnSimple_kt {
                     color=blue
                     16 [label="Enter block"];
                     17 [label="Access variable R|<local>/s|"];
-                    18 [label="Access variable R|kotlin/String.length|"];
-                    19 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
-                    20 [label="Stub" style="filled" fillcolor=gray];
-                    21 [label="Exit block" style="filled" fillcolor=gray];
+                    18 [label="Smart cast: R|<local>/s|"];
+                    19 [label="Access variable R|kotlin/String.length|"];
+                    20 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
+                    21 [label="Stub" style="filled" fillcolor=gray];
+                    22 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                22 [label="Exit when branch result" style="filled" fillcolor=gray];
-                23 [label="Exit when"];
+                23 [label="Exit when branch result" style="filled" fillcolor=gray];
+                24 [label="Exit when"];
             }
-            24 [label="Exit lhs of ?:"];
-            25 [label="Enter rhs of ?:"];
-            26 [label="Const: Int(0)"];
-            27 [label="Jump: ^stringReturnInLeftLen Int(0)"];
-            28 [label="Stub" style="filled" fillcolor=gray];
-            29 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
-            30 [label="Exit ?:" style="filled" fillcolor=gray];
-            31 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
-            32 [label="Exit block" style="filled" fillcolor=gray];
+            25 [label="Exit lhs of ?:"];
+            26 [label="Enter rhs of ?:"];
+            27 [label="Const: Int(0)"];
+            28 [label="Jump: ^stringReturnInLeftLen Int(0)"];
+            29 [label="Stub" style="filled" fillcolor=gray];
+            30 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
+            31 [label="Exit ?:" style="filled" fillcolor=gray];
+            32 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+            33 [label="Exit block" style="filled" fillcolor=gray];
         }
-        33 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
+        34 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
@@ -72,27 +73,28 @@ digraph elvisReturnSimple_kt {
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {23};
+    14 -> {24};
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {33};
-    19 -> {20} [style=dotted];
+    19 -> {20};
+    20 -> {34};
     20 -> {21} [style=dotted];
     21 -> {22} [style=dotted];
     22 -> {23} [style=dotted];
-    23 -> {24};
+    23 -> {24} [style=dotted];
     24 -> {25};
-    24 -> {29} [style=dotted];
     25 -> {26};
+    25 -> {30} [style=dotted];
     26 -> {27};
-    27 -> {33};
-    27 -> {28} [style=dotted];
-    28 -> {30} [style=dotted];
-    29 -> {30} [style=dotted];
+    27 -> {28};
+    28 -> {34};
+    28 -> {29} [style=dotted];
+    29 -> {31} [style=dotted];
     30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33} [style=dotted];
+    33 -> {34} [style=dotted];
 
 }
