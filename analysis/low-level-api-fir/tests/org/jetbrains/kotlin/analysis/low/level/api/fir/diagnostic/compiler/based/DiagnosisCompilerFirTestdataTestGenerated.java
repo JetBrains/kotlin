@@ -4111,6 +4111,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 public void testSafeCalls() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCalls.kt");
                 }
+
+                @Test
+                @TestMetadata("unstableSmartCastOnSafeCallArgument.kt")
+                public void testUnstableSmartCastOnSafeCallArgument() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/unstableSmartCastOnSafeCallArgument.kt");
+                }
             }
 
             @Nested

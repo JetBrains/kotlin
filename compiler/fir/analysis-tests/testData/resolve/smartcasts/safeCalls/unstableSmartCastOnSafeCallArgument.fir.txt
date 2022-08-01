@@ -1,0 +1,38 @@
+FILE: unstableSmartCastOnSafeCallArgument.kt
+    public abstract class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val bar: R|Bar?|
+            public get(): R|Bar?|
+
+    }
+    public abstract class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val buz: R|Buz?|
+            public get(): R|Buz?|
+
+    }
+    public final class Buz : R|kotlin/Any| {
+        public constructor(): R|Buz| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun takesNullable(b: R|Buz?|): R|kotlin/Unit| {
+    }
+    public final fun takesNonNull(b: R|Buz|): R|kotlin/Unit| {
+    }
+    public final fun foo(foo: R|Foo|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| }, Null(null)) ->  {
+                R|/takesNullable|(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| })
+                <Inapplicable(INAPPLICABLE): /takesNonNull>#(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| })
+            }
+        }
+
+    }

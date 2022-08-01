@@ -832,6 +832,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithMemberInvoke.kt");
     }
 
+    @Test
+    @TestMetadata("whenSelectorSmartCast.kt")
+    public void testWhenSelectorSmartCast() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/whenSelectorSmartCast.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments")
     @TestDataPath("$PROJECT_ROOT")

@@ -310,6 +310,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(smartCastExpression) {
+        }
+
         builder(tryExpression) {
             default("calleeReference", "FirStubReference")
             useTypes(stubReferenceType)

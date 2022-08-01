@@ -386,4 +386,8 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     open fun visitAnnotationExitNode(node: AnnotationExitNode, data: D): R {
         return visitNode(node, data)
     }
+
+    open fun visitSmartCastExpressionExitNode(node: SmartCastExpressionExitNode, data: D): R {
+        return visitNode(node, data)
+    }
 }

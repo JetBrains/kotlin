@@ -264,3 +264,6 @@ fun ControlFlowGraphBuilder.createExitDefaultArgumentsNode(fir: FirValueParamete
 
 fun ControlFlowGraphBuilder.createComparisonExpressionNode(fir: FirComparisonExpression): ComparisonExpressionNode =
     ComparisonExpressionNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createSmartCastExitNode(fir: FirSmartCastExpression): SmartCastExpressionExitNode =
+    SmartCastExpressionExitNode(currentGraph, fir, levelCounter, createId())

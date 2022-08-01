@@ -2597,12 +2597,6 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
-        @TestMetadata("JCTree.kt")
-        public void testJCTree() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
-        }
-
-        @Test
         @TestMetadata("kt19251.kt")
         public void testKt19251() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt19251.kt");
@@ -2636,6 +2630,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("MultiList.kt")
         public void testMultiList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
+        }
+
+        @Test
+        @TestMetadata("OutBox.kt")
+        public void testOutBox() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/OutBox.kt");
         }
 
         @Test

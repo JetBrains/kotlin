@@ -75,6 +75,7 @@ fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
 
 fun FirExpression.toReference(): FirReference? {
     if (this is FirWrappedArgumentExpression) return expression.toResolvedCallableReference()
+    if (this is FirSmartCastExpression) return originalExpression.toReference()
     return (this as? FirResolvable)?.calleeReference
 }
 

@@ -3652,6 +3652,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testSafeCalls() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCalls.kt");
             }
+
+            @TestMetadata("unstableSmartCastOnSafeCallArgument.kt")
+            public void testUnstableSmartCastOnSafeCallArgument() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/unstableSmartCastOnSafeCallArgument.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability")

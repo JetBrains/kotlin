@@ -62,7 +62,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
         is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
-        is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
+        is FirSmartCastExpression -> originalExpression.unwrapElement()
         is FirSafeCallExpression -> selector.unwrapElement()
         is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
         is FirCheckNotNullCall -> argument.unwrapElement()

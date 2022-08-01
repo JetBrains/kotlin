@@ -857,3 +857,12 @@ object FirStub : FirElement {
         return this
     }
 }
+
+
+// ----------------------------------- Smart-cast node -----------------------------------
+
+class SmartCastExpressionExitNode(owner: ControlFlowGraph, override val fir: FirSmartCastExpression, level: Int, id: Int) : CFGNode<FirSmartCastExpression>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitSmartCastExpressionExitNode(this, data)
+    }
+}

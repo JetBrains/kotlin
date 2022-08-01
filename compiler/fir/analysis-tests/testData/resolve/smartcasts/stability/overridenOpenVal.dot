@@ -66,15 +66,16 @@ digraph overridenOpenVal_kt {
                     color=blue
                     22 [label="Enter block"];
                     23 [label="Access variable R|/A.x|"];
-                    24 [label="Access variable R|kotlin/String.length|"];
-                    25 [label="Exit block"];
+                    24 [label="Smart cast: this@R|/B|.R|/A.x|"];
+                    25 [label="Access variable R|kotlin/String.length|"];
+                    26 [label="Exit block"];
                 }
-                26 [label="Exit when branch result"];
-                27 [label="Exit when"];
+                27 [label="Exit when branch result"];
+                28 [label="Exit when"];
             }
-            28 [label="Exit block"];
+            29 [label="Exit block"];
         }
-        29 [label="Exit function test_1" style="filled" fillcolor=red];
+        30 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     13 -> {14};
     14 -> {15};
@@ -83,7 +84,7 @@ digraph overridenOpenVal_kt {
     17 -> {18};
     18 -> {19};
     19 -> {21 20};
-    20 -> {27};
+    20 -> {28};
     21 -> {22};
     22 -> {23};
     23 -> {24};
@@ -92,58 +93,59 @@ digraph overridenOpenVal_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
+    29 -> {30};
 
     subgraph cluster_9 {
         color=red
-        30 [label="Enter class B" style="filled" fillcolor=red];
-        31 [label="Exit class B" style="filled" fillcolor=red];
+        31 [label="Enter class B" style="filled" fillcolor=red];
+        32 [label="Exit class B" style="filled" fillcolor=red];
     }
-    30 -> {31} [color=green];
+    31 -> {32} [color=green];
 
     subgraph cluster_10 {
         color=red
-        32 [label="Enter function test_2" style="filled" fillcolor=red];
+        33 [label="Enter function test_2" style="filled" fillcolor=red];
         subgraph cluster_11 {
             color=blue
-            33 [label="Enter block"];
+            34 [label="Enter block"];
             subgraph cluster_12 {
                 color=blue
-                34 [label="Enter when"];
+                35 [label="Enter when"];
                 subgraph cluster_13 {
                     color=blue
-                    35 [label="Enter when branch condition "];
-                    36 [label="Access variable R|<local>/b|"];
-                    37 [label="Access variable R|/A.x|"];
-                    38 [label="Type operator: (R|<local>/b|.R|/A.x| is R|kotlin/String|)"];
-                    39 [label="Exit when branch condition"];
+                    36 [label="Enter when branch condition "];
+                    37 [label="Access variable R|<local>/b|"];
+                    38 [label="Access variable R|/A.x|"];
+                    39 [label="Type operator: (R|<local>/b|.R|/A.x| is R|kotlin/String|)"];
+                    40 [label="Exit when branch condition"];
                 }
-                40 [label="Synthetic else branch"];
-                41 [label="Enter when branch result"];
+                41 [label="Synthetic else branch"];
+                42 [label="Enter when branch result"];
                 subgraph cluster_14 {
                     color=blue
-                    42 [label="Enter block"];
-                    43 [label="Access variable R|<local>/b|"];
-                    44 [label="Access variable R|/A.x|"];
-                    45 [label="Access variable R|kotlin/String.length|"];
-                    46 [label="Exit block"];
+                    43 [label="Enter block"];
+                    44 [label="Access variable R|<local>/b|"];
+                    45 [label="Access variable R|/A.x|"];
+                    46 [label="Smart cast: R|<local>/b|.R|/A.x|"];
+                    47 [label="Access variable R|kotlin/String.length|"];
+                    48 [label="Exit block"];
                 }
-                47 [label="Exit when branch result"];
-                48 [label="Exit when"];
+                49 [label="Exit when branch result"];
+                50 [label="Exit when"];
             }
-            49 [label="Exit block"];
+            51 [label="Exit block"];
         }
-        50 [label="Exit function test_2" style="filled" fillcolor=red];
+        52 [label="Exit function test_2" style="filled" fillcolor=red];
     }
-    32 -> {33};
     33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {41 40};
-    40 -> {48};
-    41 -> {42};
+    39 -> {40};
+    40 -> {42 41};
+    41 -> {50};
     42 -> {43};
     43 -> {44};
     44 -> {45};
@@ -152,5 +154,7 @@ digraph overridenOpenVal_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
+    50 -> {51};
+    51 -> {52};
 
 }

@@ -238,7 +238,7 @@ internal class OperatorExpressionGenerator(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean
     ): IrExpression {
-        val isOriginalNullable = (this as? FirExpressionWithSmartcast)?.originalExpression?.typeRef?.isMarkedNullable ?: false
+        val isOriginalNullable = (this as? FirSmartCastExpression)?.originalExpression?.typeRef?.isMarkedNullable ?: false
         val irExpression = visitor.convertToIrExpression(this)
         val operandType = if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType
         val targetType = comparisonInfo?.comparisonType

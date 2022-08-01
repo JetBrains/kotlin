@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated
     }
 
     @Test
+    @TestMetadata("bothImplicitReceiversSmartCast.kt")
+    public void testBothImplicitReceiversSmartCast() throws Exception {
+        runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/bothImplicitReceiversSmartCast.kt");
+    }
+
+    @Test
     @TestMetadata("multiSmartcastAsReceiver_stable.kt")
     public void testMultiSmartcastAsReceiver_stable() throws Exception {
         runTest("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo/multiSmartcastAsReceiver_stable.kt");

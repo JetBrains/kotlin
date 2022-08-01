@@ -231,11 +231,12 @@ internal class KtFirExpressionTypeProvider(
         }
 
         when (val fir = expression.getOrBuildFir(analysisSession.firResolveSession)) {
-            is FirExpressionWithSmartcastToNothing -> if (fir.isStable) {
-                return DefiniteNullability.DEFINITELY_NULL
-            }
-            is FirExpressionWithSmartcast -> if (fir.isStable && fir.isNotNullable()) {
-                return DefiniteNullability.DEFINITELY_NOT_NULL
+            is FirSmartCastExpression -> if (fir.isStable) {
+                if (fir.smartcastTypeWithoutNullableNothing != null) {
+                    return DefiniteNullability.DEFINITELY_NULL
+                } else if (fir.isNotNullable()) {
+                    return DefiniteNullability.DEFINITELY_NOT_NULL
+                }
             }
             is FirExpression -> if (fir.isNotNullable()) {
                 return DefiniteNullability.DEFINITELY_NOT_NULL

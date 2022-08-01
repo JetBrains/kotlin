@@ -160,9 +160,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         when (result) {
             is FirQualifiedAccessExpression -> {
+                // TODO: Is it really needed?
                 dataFlowAnalyzer.enterQualifiedAccessExpression()
-                result = components.transformQualifiedAccessUsingSmartcastInfo(result)
                 dataFlowAnalyzer.exitQualifiedAccessExpression(result)
+                result = components.transformQualifiedAccessUsingSmartcastInfo(result)
+                if (result is FirSmartCastExpression) {
+                    dataFlowAnalyzer.exitSmartCastExpression(result)
+                }
             }
             is FirResolvedQualifier -> {
                 dataFlowAnalyzer.exitResolvedQualifierNode(result)
@@ -375,7 +379,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
                 val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall)
-                val resultExplicitReceiver = resultExpression.explicitReceiver
+                val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)

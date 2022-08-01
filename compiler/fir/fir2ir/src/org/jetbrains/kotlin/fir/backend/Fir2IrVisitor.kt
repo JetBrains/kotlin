@@ -554,34 +554,10 @@ class Fir2IrVisitor(
         return visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
-    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: Any?): IrElement {
         // Generate the expression with the original type and then cast it to the smart cast type.
-        val value = convertToIrExpression(expressionWithSmartcast.originalExpression)
-        return implicitCastInserter.visitExpressionWithSmartcast(expressionWithSmartcast, value)
-    }
-
-    override fun visitExpressionWithSmartcastToNothing(
-        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
-        data: Any?
-    ): IrElement {
-        // This should not be materialized. Generate the expression with the original expression.
-        return convertToIrExpression(expressionWithSmartcastToNothing.originalExpression)
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcast(
-        whenSubjectExpressionWithSmartcast: FirWhenSubjectExpressionWithSmartcast,
-        data: Any?
-    ): IrElement {
-        val value = visitWhenSubjectExpression(whenSubjectExpressionWithSmartcast.originalExpression, data)
-        return implicitCastInserter.visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast, value)
-    }
-
-    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
-        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
-        data: Any?
-    ): IrElement {
-        // This should not be materialized. Generate the expression with the original expression.
-        return visitWhenSubjectExpression(whenSubjectExpressionWithSmartcastToNothing.originalExpression, data)
+        val value = convertToIrExpression(smartCastExpression.originalExpression)
+        return implicitCastInserter.visitSmartCastExpression(smartCastExpression, value)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
@@ -663,7 +639,7 @@ class Fir2IrVisitor(
         return when (expression) {
             null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
-            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirExpressionWithSmartcast ->
+            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirSmartCastExpression ->
                 convertToIrExpression(expression)
             else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
                 val variableAsFunctionMode = calleeReference is FirResolvedNamedReference &&

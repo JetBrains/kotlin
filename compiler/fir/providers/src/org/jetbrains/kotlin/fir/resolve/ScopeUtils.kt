@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -25,17 +24,16 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
-fun FirExpressionWithSmartcast.smartcastScope(
+fun FirSmartCastExpression.smartcastScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession
 ): FirTypeScope? {
-    val smartcastType =
-        if (this is FirExpressionWithSmartcastToNothing) smartcastTypeWithoutNullableNothing.coneType else smartcastType.coneType
+    val smartcastType = smartcastTypeWithoutNullableNothing?.coneType ?: smartcastType.coneType
     val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     if (isStable) {
         return smartcastScope
     }
-    val originalScope = originalType.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    val originalScope = originalExpression.typeRef.coneType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
         ?: return smartcastScope
 
     if (smartcastScope == null) {

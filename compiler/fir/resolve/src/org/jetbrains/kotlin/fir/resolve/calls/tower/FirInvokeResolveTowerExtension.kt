@@ -318,7 +318,9 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
             nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
         }
-    }.build().let(::transformQualifiedAccessUsingSmartcastInfo)
+    }.build().let {
+        transformQualifiedAccessUsingSmartcastInfo(it)
+    }
 }
 
 private class InvokeReceiverResolveTask(

@@ -24,6 +24,12 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiSingleFileTest()
                     appendLine("expression: ${expression.text}")
                     appendLine("isStable: ${smartCastInfo?.isStable}")
                     appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render()}")
+
+                    val receiverSmartCasts = expression.getImplicitReceiverSmartCast()
+                    for (receiverSmartCast in receiverSmartCasts) {
+                        appendLine("receiver: ${receiverSmartCast.kind}")
+                        appendLine("    smartCastType: ${receiverSmartCast.type.render()}")
+                    }
                 }
             }
         }

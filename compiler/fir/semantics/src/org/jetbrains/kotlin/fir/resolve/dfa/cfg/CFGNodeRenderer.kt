@@ -44,6 +44,7 @@ fun CFGNode<*>.render(): String =
                 is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
                 is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
                 is TypeOperatorCallNode -> "Type operator: \"${CfgRenderer.renderElementAsString(fir)}\""
+                is SmartCastExpressionExitNode -> "Smart cast: \"${CfgRenderer.renderElementAsString(fir)}\""
                 is EqualityOperatorCallNode -> "Equality operator ${fir.operation.operator}"
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"

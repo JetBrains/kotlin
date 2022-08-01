@@ -322,24 +322,24 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
-): FirQualifiedAccessExpression {
+): FirExpression {
+    val (stability, typesFromSmartCast) =
+        dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
+            ?: return qualifiedAccessExpression
     val builder = transformExpressionUsingSmartcastInfo(
         qualifiedAccessExpression,
-        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
-        ::FirExpressionWithSmartcastBuilder,
-        ::FirExpressionWithSmartcastToNothingBuilder
+        stability, typesFromSmartCast
     ) ?: return qualifiedAccessExpression
     return builder.build()
 }
 
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     whenSubjectExpression: FirWhenSubjectExpression
-): FirWhenSubjectExpression {
+): FirExpression {
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression) ?: return whenSubjectExpression
     val builder = transformExpressionUsingSmartcastInfo(
         whenSubjectExpression,
-        dataFlowAnalyzer::getTypeUsingSmartcastInfo,
-        ::FirWhenSubjectExpressionWithSmartcastBuilder,
-        ::FirWhenSubjectExpressionWithSmartcastToNothingBuilder
+        stability, typesFromSmartCast
     ) ?: return whenSubjectExpression
     return builder.build()
 }
@@ -347,13 +347,18 @@ fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
 private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
-private inline fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
+private fun FirSmartCastExpressionBuilder.applyResultTypeRef() {
+    typeRef =
+        if (smartcastStability == SmartcastStability.STABLE_VALUE)
+            smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        else
+            originalExpression.typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+}
+private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
-    smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?,
-    smartcastBuilder: () -> FirWrappedExpressionWithSmartcastBuilder<T>,
-    smartcastToNothingBuilder: () -> FirWrappedExpressionWithSmartcastToNothingBuilder<T>
-): FirWrappedExpressionWithSmartcastBuilder<T>? {
-    val (stability, typesFromSmartCast) = smartcastExtractor(expression) ?: return null
+    stability: PropertyStability,
+    typesFromSmartCast: MutableList<ConeKotlinType>
+): FirSmartCastExpressionBuilder? {
     val smartcastStability = stability.impliedSmartcastStability
         ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
             SmartcastStability.CAPTURED_VARIABLE
@@ -395,20 +400,24 @@ private inline fun <T : FirExpression> BodyResolveComponents.transformExpression
             annotations += expression.resultType.annotations
             delegatedTypeRef = expression.resultType
         }
-        return smartcastToNothingBuilder().apply {
+        return FirSmartCastExpressionBuilder().apply {
             originalExpression = expression
+            source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
             smartcastType = intersectedTypeRef
             smartcastTypeWithoutNullableNothing = reducedIntersectedTypeRef
             this.typesFromSmartCast = typesFromSmartCast
             this.smartcastStability = smartcastStability
+            applyResultTypeRef()
         }
     }
 
-    return smartcastBuilder().apply {
+    return FirSmartCastExpressionBuilder().apply {
         originalExpression = expression
+        source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
         smartcastType = intersectedTypeRef
         this.typesFromSmartCast = typesFromSmartCast
         this.smartcastStability = smartcastStability
+        applyResultTypeRef()
     }
 }
 
@@ -419,7 +428,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
 ) {
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
-    val receiverType = ((nullableReceiverExpression as? FirExpressionWithSmartcastToNothing)
+    val receiverType = ((nullableReceiverExpression as? FirSmartCastExpression)
         ?.takeIf { it.isStable }
         ?.smartcastTypeWithoutNullableNothing
         ?: nullableReceiverExpression.typeRef)
