@@ -2585,6 +2585,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportInnerClass.kt")
+        public void testExportInnerClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportInnerClass.kt");
+        }
+
+        @Test
         @TestMetadata("exportInterface.kt")
         public void testExportInterface() throws Exception {
             runTest("js/js.translator/testData/box/export/exportInterface.kt");
@@ -2648,6 +2654,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("reservedModuleName.kt")
         public void testReservedModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("js/js.translator/testData/box/export/vararg.kt");
         }
     }
 

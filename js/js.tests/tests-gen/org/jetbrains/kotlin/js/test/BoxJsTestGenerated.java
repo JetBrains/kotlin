@@ -2119,6 +2119,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportInnerClass.kt")
+        public void testExportInnerClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportInnerClass.kt");
+        }
+
+        @Test
         @TestMetadata("exportInterface.kt")
         public void testExportInterface() throws Exception {
             runTest("js/js.translator/testData/box/export/exportInterface.kt");
@@ -2176,6 +2182,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("reservedModuleName.kt")
         public void testReservedModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("js/js.translator/testData/box/export/vararg.kt");
         }
     }
 
