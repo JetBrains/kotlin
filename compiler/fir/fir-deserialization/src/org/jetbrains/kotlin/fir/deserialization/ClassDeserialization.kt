@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
@@ -196,7 +195,9 @@ fun deserializeClassToSymbol(
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
-        addSerializableIfNeeded(classId)
+        session.deserializedClassConfigurator?.run {
+            configure(classId)
+        }
 
         declarations.sortWith(object : Comparator<FirDeclaration> {
             override fun compare(a: FirDeclaration, b: FirDeclaration): Int {
@@ -232,6 +233,9 @@ fun deserializeClassToSymbol(
 
         classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
             it.moduleName = nameResolver.getString(idx)
+        }
+        session.deserializedClassConfigurator?.run {
+            it.configure(classId)
         }
     }
 }
@@ -300,3 +304,17 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, di
         dispatchReceiverType = dispatchReceiver!!
     }
 }
+
+abstract class DeserializedClassConfigurator(val session: FirSession) : FirSessionComponent {
+    open fun FirRegularClassBuilder.configure(classId: ClassId) {}
+
+    open fun FirRegularClass.configure(classId: ClassId) {}
+}
+
+class JvmDeserializedClassConfigurator(session: FirSession): DeserializedClassConfigurator(session) {
+    override fun FirRegularClassBuilder.configure(classId: ClassId) {
+        addSerializableIfNeeded(classId)
+    }
+}
+
+val FirSession.deserializedClassConfigurator: DeserializedClassConfigurator? by FirSession.nullableSessionComponentAccessor()

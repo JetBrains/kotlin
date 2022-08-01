@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
+import org.jetbrains.kotlin.fir.deserialization.DeserializedClassConfigurator
+import org.jetbrains.kotlin.fir.deserialization.JvmDeserializedClassConfigurator
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
@@ -85,6 +87,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
         FirJvmDefaultModeComponent::class,
         FirJvmDefaultModeComponent(languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))
     )
+    register(DeserializedClassConfigurator::class, JvmDeserializedClassConfigurator(this))
 }
 
 // -------------------------- Resolve components --------------------------
