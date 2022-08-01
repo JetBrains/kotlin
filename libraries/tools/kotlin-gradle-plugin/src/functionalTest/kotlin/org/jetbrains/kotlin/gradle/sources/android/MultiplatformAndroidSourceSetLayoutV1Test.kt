@@ -1,23 +1,27 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-/* Associate compilations are not yet supported by the IDE. KT-34102 */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
+@file:Suppress("DEPRECATION", "DuplicatedCode", "FunctionName")
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.sources.android
 
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Action
+import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
+import org.jetbrains.kotlin.gradle.setAndroidMultiplatformSourceSetLayoutVersion
 import kotlin.test.*
 
-class SyncKotlinAndAndroidSourceSetsTest {
+class MultiplatformAndroidSourceSetLayoutV1Test {
 
     private lateinit var project: ProjectInternal
     private lateinit var kotlin: KotlinMultiplatformExtension
@@ -27,6 +31,8 @@ class SyncKotlinAndAndroidSourceSetsTest {
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
         addBuildEventsListenerRegistryMock(project)
+        project.setAndroidMultiplatformSourceSetLayoutVersion(1)
+
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
@@ -36,7 +42,6 @@ class SyncKotlinAndAndroidSourceSetsTest {
 
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension
-
     }
 
 
@@ -93,21 +98,19 @@ class SyncKotlinAndAndroidSourceSetsTest {
     @Test
     fun `two product flavor dimensions`() {
         android.flavorDimensions("pricing", "releaseType")
-        android.productFlavors(
-            Action {
-                it.create("beta").dimension = "releaseType"
-                it.create("production").dimension = "releaseType"
-                it.create("free").dimension = "pricing"
-                it.create("paid").dimension = "pricing"
-            }
-        )
+        android.productFlavors {
+            it.create("beta").dimension = "releaseType"
+            it.create("production").dimension = "releaseType"
+            it.create("free").dimension = "pricing"
+            it.create("paid").dimension = "pricing"
+        }
         kotlin.android()
         project.evaluate()
 
         fun assertSourceSetsExist(androidName: String, kotlinName: String) {
             val androidSourceSet = assertNotNull(android.sourceSets.findByName(androidName), "Expected Android source set '$androidName'")
             val kotlinSourceSet = assertNotNull(kotlin.sourceSets.findByName(kotlinName), "Expected Kotlin source set '$kotlinName'")
-            assertSame(kotlinSourceSet.kotlin, androidSourceSet.kotlinSourceSet)
+            assertSame(kotlinSourceSet, androidSourceSet.kotlinSourceSet)
         }
 
         assertSourceSetsExist("freeBetaDebug", "androidFreeBetaDebug")
@@ -178,18 +181,24 @@ class SyncKotlinAndAndroidSourceSetsTest {
     }
 
     @Test
-    fun `AndroidSourceSet#kotlinSourceSet extension`() {
+    fun `AndroidSourceSet#kotlinSourceSet convention`() {
         kotlin.android()
 
+        fun AndroidSourceSet.kotlinSourceSetByConvention(): KotlinSourceSet =
+            (this as HasConvention).convention.plugins["kotlin"] as KotlinSourceSet
+
         val main = android.sourceSets.getByName("main")
-        assertSame(kotlin.sourceSets.getByName("androidMain").kotlin, main.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidMain"), main.kotlinSourceSetByConvention())
 
         val test = android.sourceSets.getByName("test")
-        assertSame(kotlin.sourceSets.getByName("androidTest").kotlin, test.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidTest"), test.kotlinSourceSetByConvention())
 
         val androidTest = android.sourceSets.getByName("androidTest")
-        assertSame(kotlin.sourceSets.getByName("androidAndroidTest").kotlin, androidTest.kotlinSourceSet)
+        assertSame(kotlin.sourceSets.getByName("androidAndroidTest"), androidTest.kotlinSourceSetByConvention())
     }
+
+    private val AndroidSourceSet.kotlinSourceSet
+        get() = project.findKotlinSourceSet(this) ?: fail("Missing KotlinSourceSet for AndroidSourceSet: $name")
 }
 
 private fun <T> Set<T>.allPairs(): Sequence<Pair<T, T>> {
