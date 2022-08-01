@@ -106,32 +106,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private final static TokenSet CLASS_INTERFACE_SET = TokenSet.create(CLASS_KEYWORD, INTERFACE_KEYWORD);
 
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        KotlinParsing kotlinParsing = new KotlinParsing(builder);
-        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builder, kotlinParsing);
-        return kotlinParsing;
+        return new KotlinParsing(builder, true);
     }
 
     private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
-        KotlinParsing kotlinParsing = new KotlinParsing(builderForByClause);
-        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, kotlinParsing) {
-            @Override
-            protected boolean parseCallWithClosure() {
-                if (builderForByClause.getStackSize() > 0) {
-                    return super.parseCallWithClosure();
-                }
-                return false;
-            }
-
-            @Override
-            protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-                return createForByClause(builder);
-            }
-        };
-        return kotlinParsing;
+        return new KotlinParsing(new SemanticWhitespaceAwarePsiBuilderForByClause(builder), false);
     }
 
-    private KotlinExpressionParsing myExpressionParsing;
+    private final KotlinExpressionParsing myExpressionParsing;
 
     private final FirstBefore lastDotAfterReceiverLParPattern = new FirstBefore(
             new AtSet(RECEIVER_TYPE_TERMINATORS),
@@ -160,8 +142,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
             });
 
-    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isTopLevel) {
         super(builder);
+        myExpressionParsing = isTopLevel
+                              ? new KotlinExpressionParsing(builder, this)
+                              : new KotlinExpressionParsing(builder, this) {
+                                  @Override
+                                  protected boolean parseCallWithClosure() {
+                                      if (((SemanticWhitespaceAwarePsiBuilderForByClause) builder).getStackSize() > 0) {
+                                          return super.parseCallWithClosure();
+                                      }
+                                      return false;
+                                  }
+
+                                  @Override
+                                  protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+                                      return createForByClause(builder);
+                                  }
+                              };
     }
 
     /*
