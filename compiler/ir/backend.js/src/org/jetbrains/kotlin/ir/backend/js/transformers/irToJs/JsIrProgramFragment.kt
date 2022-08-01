@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.extensions.IrToJsExtensionKey
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -24,10 +25,16 @@ class JsIrProgramFragment(val packageFqn: String) {
     val polyfills = JsCompositeBlock()
 }
 
+sealed class JsModuleOrigin {
+    object Source : JsModuleOrigin()
+    class Extension(val extensionKey: IrToJsExtensionKey) : JsModuleOrigin()
+}
+
 class JsIrModule(
     val moduleName: String,
     val externalModuleName: String,
-    val fragments: List<JsIrProgramFragment>
+    val fragments: List<JsIrProgramFragment>,
+    var origin: JsModuleOrigin = JsModuleOrigin.Source
 ) {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
@@ -97,7 +104,14 @@ class CrossModuleDependenciesResolver(private val headers: List<JsIrModuleHeader
             }
         }
 
-        return headers.associateWith { headerToBuilder[it]!!.buildCrossModuleRefs() }
+        val references = mutableMapOf<JsIrModuleHeader, CrossModuleReferences>()
+        val (generatedByExtensionsHeaders, sourceHeaders) = headers.partition { it.associatedModule?.origin is JsModuleOrigin.Extension }
+
+        sourceHeaders.associateWithTo(references) { headerToBuilder[it]!!.buildCrossModuleRefs() }
+        // Generated modules can affect module order, so we separate them explicitly
+        generatedByExtensionsHeaders.associateWithTo(references) { headerToBuilder[it]!!.buildCrossModuleRefs(sourceHeaders) }
+
+        return references
     }
 }
 
@@ -117,7 +131,7 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
         exportNames = exports.sorted().associateWith { index++.toJsIdentifier() }
     }
 
-    fun buildCrossModuleRefs(): CrossModuleReferences {
+    fun buildCrossModuleRefs(additionalImports: List<JsIrModuleHeader> = emptyList()): CrossModuleReferences {
         buildExportNames()
         val importedModules = mutableMapOf<JsIrModuleHeader, JsImportedModule>()
 
@@ -127,6 +141,8 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val header: JsIrModuleHead
                 JsImportedModule(moduleHeader.externalModuleName, jsModuleName, null, relativeRequirePath)
             }.internalName
         }
+
+        additionalImports.forEach { import(it) }
 
         val resultImports = imports.associate { crossModuleRef ->
             val tag = crossModuleRef.tag
