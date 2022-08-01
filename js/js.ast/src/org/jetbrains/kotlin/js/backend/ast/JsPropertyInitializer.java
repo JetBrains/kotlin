@@ -59,4 +59,9 @@ public class JsPropertyInitializer extends SourceInfoAwareJsNode {
     public JsPropertyInitializer deepCopy() {
         return new JsPropertyInitializer(labelExpr.deepCopy(), valueExpr.deepCopy()).withMetadataFrom(this);
     }
+
+    @Override
+    public String toString() {
+        return labelExpr + ": " + valueExpr;
+    }
 }
