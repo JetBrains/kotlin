@@ -57,6 +57,7 @@ public actual fun Throwable.stackTraceToString(): String {
     val pw = PrintWriter(sw)
     printStackTrace(pw)
     pw.flush()
+    pw.close()
     return sw.toString()
 }
 
