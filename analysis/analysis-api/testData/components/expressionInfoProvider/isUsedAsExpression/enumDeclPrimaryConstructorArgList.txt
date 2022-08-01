@@ -1,0 +1,3 @@
+expression: PRIMARY_CONSTRUCTOR
+text: (val i: Int)
+isUsedAsExpression: false

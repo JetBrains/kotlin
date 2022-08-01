@@ -1,0 +1,3 @@
+expression: DOT_QUALIFIED_EXPRESSION
+text: x.length
+isUsedAsExpression: true

@@ -1,0 +1,3 @@
+expression: CALL_EXPRESSION
+text: mutableListOf()
+isUsedAsExpression: true

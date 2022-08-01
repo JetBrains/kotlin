@@ -1,0 +1,5 @@
+expression: ANNOTATED_EXPRESSION
+text: @Deprecated("") {
+        it.length
+    }
+isUsedAsExpression: true

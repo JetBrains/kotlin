@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 internal class KtFe10ExpressionInfoProvider(
     override val analysisSession: KtFe10AnalysisSession
@@ -39,5 +37,10 @@ internal class KtFe10ExpressionInfoProvider(
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>  {
         val bindingContext = analysisContext.analyze(whenExpression)
         return WhenChecker.getMissingCases(whenExpression, bindingContext)
+    }
+
+    override fun isUsedAsExpression(expression: KtExpression): Boolean {
+        val bindingContext = analysisContext.analyze(expression)
+        return expression.isUsedAsExpression(bindingContext)
     }
 }

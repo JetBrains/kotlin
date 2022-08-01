@@ -1,0 +1,3 @@
+expression: TYPE_PARAMETER
+text: T : Serializeable
+isUsedAsExpression: false

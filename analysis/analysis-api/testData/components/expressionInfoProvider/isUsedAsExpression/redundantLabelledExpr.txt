@@ -1,0 +1,3 @@
+expression: LABELED_EXPRESSION
+text: four@4
+isUsedAsExpression: false

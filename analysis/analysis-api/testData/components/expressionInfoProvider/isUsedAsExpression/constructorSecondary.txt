@@ -1,0 +1,5 @@
+expression: SECONDARY_CONSTRUCTOR
+text: constructor(x: Int) {
+        x + 4
+    }
+isUsedAsExpression: false
