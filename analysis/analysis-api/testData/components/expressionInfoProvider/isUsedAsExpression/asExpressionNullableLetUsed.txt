@@ -1,0 +1,5 @@
+expression: CALL_EXPRESSION
+text: let {
+        it.length
+    }
+isUsedAsExpression: true

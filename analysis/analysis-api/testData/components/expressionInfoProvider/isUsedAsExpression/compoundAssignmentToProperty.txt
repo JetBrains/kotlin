@@ -1,0 +1,3 @@
+expression: BINARY_EXPRESSION
+text: c.property -= 20
+isUsedAsExpression: false

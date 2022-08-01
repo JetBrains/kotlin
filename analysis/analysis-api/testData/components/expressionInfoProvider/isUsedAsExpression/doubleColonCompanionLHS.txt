@@ -1,0 +1,3 @@
+expression: DOT_QUALIFIED_EXPRESSION
+text: C.Companion
+isUsedAsExpression: true

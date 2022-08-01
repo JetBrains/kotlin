@@ -1,0 +1,3 @@
+expression: CONSTRUCTOR_DELEGATION_REFERENCE
+text: this
+isUsedAsExpression: false

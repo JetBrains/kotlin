@@ -1,0 +1,3 @@
+expression: OPERATION_REFERENCE
+text: !
+isUsedAsExpression: false
