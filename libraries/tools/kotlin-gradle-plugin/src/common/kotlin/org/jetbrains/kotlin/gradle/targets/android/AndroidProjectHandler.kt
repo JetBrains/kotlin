@@ -28,7 +28,6 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
@@ -36,7 +35,8 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.syncKotlinAndAndroidSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.setupKotlinAndroidSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
@@ -55,18 +55,13 @@ import java.util.concurrent.Callable
 internal class AndroidProjectHandler(
     private val kotlinConfigurationTools: KotlinConfigurationTools
 ) {
-    companion object {
-        fun kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget: KotlinAndroidTarget, androidSourceSetName: String) =
-            lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSetName)
-    }
-
     private val logger = Logging.getLogger(this.javaClass)
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
-        syncKotlinAndAndroidSourceSets(kotlinAndroidTarget)
-
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
+
+        setupKotlinAndroidSourceSets(kotlinAndroidTarget)
 
         val kotlinOptions = KotlinJvmOptionsImpl()
         kotlinOptions.noJdk = true
@@ -109,7 +104,7 @@ internal class AndroidProjectHandler(
             }
             checkAndroidAnnotationProcessorDependencyUsage(project)
 
-            addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
+            addKotlinDependenciesToAndroidSourceSets(project)
         }
 
         project.includeKotlinToolingMetadataInApk()
@@ -123,10 +118,7 @@ internal class AndroidProjectHandler(
      * source set dependencies as well, we need to add them to the Android source sets' api/implementation-like configurations,
      * not just the classpath-like configurations of the variants.
      */
-    private fun addKotlinDependenciesToAndroidSourceSets(
-        project: Project,
-        kotlinAndroidTarget: KotlinAndroidTarget
-    ) {
+    private fun addKotlinDependenciesToAndroidSourceSets(project: Project) {
         fun addDependenciesToAndroidSourceSet(
             androidSourceSet: AndroidSourceSet,
             apiConfigurationName: String,
@@ -154,8 +146,7 @@ internal class AndroidProjectHandler(
          * see [org.jetbrains.kotlin.gradle.plugin.AndroidProjectHandler.configureTarget]
          */
         (project.extensions.getByName("android") as BaseExtension).sourceSets.forEach { androidSourceSet ->
-            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, androidSourceSet.name)
-            project.kotlinExtension.sourceSets.findByName(kotlinSourceSetName)?.let { kotlinSourceSet ->
+            project.findKotlinSourceSet(androidSourceSet)?.let { kotlinSourceSet ->
                 addDependenciesToAndroidSourceSet(
                     androidSourceSet,
                     kotlinSourceSet.apiConfigurationName,
@@ -212,10 +203,7 @@ internal class AndroidProjectHandler(
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
 
-        compilation.androidVariant.forEachKotlinSourceSet(
-            compilation.target as KotlinAndroidTarget,
-            project.kotlinExtension
-        ) { kotlinSourceSet ->
+        compilation.androidVariant.forEachKotlinSourceSet(project) { kotlinSourceSet ->
             compilation.source(kotlinSourceSet)
         }
     }
@@ -464,22 +452,17 @@ class AndroidTestedVariantArtifactsFilter(
 }
 
 internal inline fun BaseVariant.forEachKotlinSourceSet(
-    kotlinAndroidTarget: KotlinAndroidTarget,
-    kotlinExtension: KotlinProjectExtension,
-    action: (KotlinSourceSet) -> Unit
+    project: Project, action: (KotlinSourceSet) -> Unit
 ) {
     sourceSets
-        .mapNotNull { provider ->
-            val kotlinSourceSetName = AndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, provider.name)
-            kotlinExtension.sourceSets.findByName(kotlinSourceSetName)
-        }
-        .forEach(action)
+        .forEach { provider -> action(project.findKotlinSourceSet(provider) ?: return@forEach) }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(action: (SourceDirectorySet) -> Unit) {
+internal inline fun BaseVariant.forEachKotlinSourceDirectorySet(
+    project: Project, action: (SourceDirectorySet) -> Unit
+) {
     sourceSets
-        .mapNotNull { it.getExtension<SourceDirectorySet>(KOTLIN_DSL_NAME) }
-        .forEach(action)
+        .forEach { androidSourceSet -> action(project.findKotlinSourceSet(androidSourceSet)?.kotlin ?: return@forEach) }
 }
 
 internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {

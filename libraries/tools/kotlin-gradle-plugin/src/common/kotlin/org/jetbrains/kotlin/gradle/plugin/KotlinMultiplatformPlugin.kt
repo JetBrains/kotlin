@@ -191,7 +191,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     @Deprecated("Migrate to the new Kotlin source sets and use the addCommonSourceSetToPlatformSourceSet(Named, Project) overload")
     protected open fun addCommonSourceSetToPlatformSourceSet(sourceSet: SourceSet, platformProject: Project) = Unit
 
-    @Deprecated("Retained for older Kotlin/Native MPP plugin binary compatibility")
+    @Deprecated("Retained for older Kotlin/Native MPP plugin binary compatibility", level = DeprecationLevel.ERROR)
     protected val SourceSet.kotlin: SourceDirectorySet?
         get() {
             @Suppress("DEPRECATION")

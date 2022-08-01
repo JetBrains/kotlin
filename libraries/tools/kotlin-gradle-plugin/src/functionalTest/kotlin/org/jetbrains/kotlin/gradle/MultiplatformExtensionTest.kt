@@ -15,6 +15,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
@@ -110,4 +111,8 @@ fun Project.enableKpmModelMapping(enabled: Boolean = true) {
 
 fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
     project.propertiesExtension.set(KOTLIN_STDLIB_DEFAULT_DEPENDENCY, enabled.toString())
+}
+
+fun Project.setAndroidMultiplatformSourceSetLayoutVersion(version: Int) {
+    project.propertiesExtension.set(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION, version.toString())
 }
