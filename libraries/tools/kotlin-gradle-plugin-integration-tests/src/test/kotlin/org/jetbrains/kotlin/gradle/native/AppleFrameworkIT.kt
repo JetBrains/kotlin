@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.util.AGPVersion
+import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
@@ -177,6 +178,36 @@ class AppleFrameworkIT : BaseGradleIT() {
             build(":shared:embedAndSignCustomAppleFrameworkForXcode", options = options) {
                 assertTasksFailed(":shared:embedAndSignCustomAppleFrameworkForXcode")
                 assertContains("Please run the embedAndSignCustomAppleFrameworkForXcode task from Xcode")
+            }
+        }
+    }
+
+    @Test
+    fun `check that static framework for Arm64 is built but is not embedded`() {
+        with(Project("sharedAppleFramework")) {
+            val options: BuildOptions = defaultBuildOptions().copy(
+                customEnvironmentVariables = mapOf(
+                    "CONFIGURATION" to "debug",
+                    "SDK_NAME" to "iphoneos123",
+                    "ARCHS" to "arm64",
+                    "TARGET_BUILD_DIR" to "no use",
+                    "FRAMEWORKS_FOLDER_PATH" to "no use"
+                )
+            )
+            setupWorkingDir()
+            projectDir.resolve("shared/build.gradle.kts").modify {
+                it.replace(
+                    "baseName = \"sdk\"",
+                    "baseName = \"sdk\"\nisStatic = true"
+                )
+            }
+
+            build("embedAndSignAppleFrameworkForXcode", options = options) {
+                assertSuccessful()
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
+                assertTasksNotExecuted(":shared:embedAndSignAppleFrameworkForXcode")
+                assertFileExists("/shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework")
+                assertNoSuchFile("/shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
             }
         }
     }
