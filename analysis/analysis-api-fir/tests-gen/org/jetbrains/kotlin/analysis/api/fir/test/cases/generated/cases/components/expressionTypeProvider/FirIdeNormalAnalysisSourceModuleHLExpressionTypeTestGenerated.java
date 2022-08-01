@@ -185,6 +185,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     }
 
     @Test
+    @TestMetadata("singleExpressionLambdaBody.kt")
+    public void testSingleExpressionLambdaBody() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/singleExpressionLambdaBody.kt");
+    }
+
+    @Test
     @TestMetadata("smartcast_asCallArg.kt")
     public void testSmartcast_asCallArg() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/smartcast_asCallArg.kt");

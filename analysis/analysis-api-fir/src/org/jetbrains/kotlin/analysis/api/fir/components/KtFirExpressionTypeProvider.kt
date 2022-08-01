@@ -96,7 +96,12 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
+        val firDeclaration = when {
+            declaration is KtNamedFunction && declaration.name == null ->
+                declaration.getOrBuildFirOfType<FirAnonymousFunctionExpression>(firResolveSession).anonymousFunction
+            else ->
+                declaration.getOrBuildFirOfType<FirCallableDeclaration>(firResolveSession)
+        }
         return firDeclaration.returnTypeRef.coneType.asKtType()
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -18,7 +19,13 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile).let {
+            if (it is KtBlockExpression && it.statements.size == 1 && it.textRange == it.statements.single().textRange) {
+                it.statements.single()
+            } else {
+                it
+            }
+        }
         val expression = when (selected) {
             is KtExpression -> selected
             is KtValueArgument -> selected.getArgumentExpression()

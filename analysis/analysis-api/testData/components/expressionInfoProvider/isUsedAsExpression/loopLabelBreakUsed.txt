@@ -1,0 +1,3 @@
+expression: BREAK
+text: break@outer
+isUsedAsExpression: false

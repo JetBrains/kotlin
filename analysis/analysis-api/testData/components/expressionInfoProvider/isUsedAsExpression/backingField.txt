@@ -1,0 +1,4 @@
+expression: PROPERTY
+text: val names: List<String>                            // clearly tells the type of the property upfront
+        field: MutableList<String> = mutableListOf()
+isUsedAsExpression: false

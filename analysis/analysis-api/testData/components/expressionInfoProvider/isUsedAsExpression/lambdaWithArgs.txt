@@ -1,0 +1,5 @@
+expression: LAMBDA_EXPRESSION
+text: { x, y ->
+        x + y
+    }
+isUsedAsExpression: true
