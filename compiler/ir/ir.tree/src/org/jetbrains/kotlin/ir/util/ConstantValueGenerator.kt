@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -30,6 +30,8 @@ abstract class ConstantValueGenerator(
     private val typeTranslator: TypeTranslator,
 ) {
     protected abstract fun extractAnnotationOffsets(annotationDescriptor: AnnotationDescriptor): Pair<Int, Int>
+
+    protected abstract fun extractAnnotationParameterOffsets(annotationDescriptor: AnnotationDescriptor, argumentName: Name): Pair<Int, Int>
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -192,7 +194,8 @@ abstract class ConstantValueGenerator(
             val argumentIndex = valueParameter.index
             val argumentValue = annotationDescriptor.allValueArguments[valueParameter.name] ?: continue
             val adjustedValue = adjustAnnotationArgumentValue(argumentValue, valueParameter)
-            val irArgument = generateAnnotationValueAsExpression(UNDEFINED_OFFSET, UNDEFINED_OFFSET, adjustedValue, valueParameter)
+            val (parameterStartOffset, parameterEndOffset) = extractAnnotationParameterOffsets(annotationDescriptor, valueParameter.name)
+            val irArgument = generateAnnotationValueAsExpression(parameterStartOffset, parameterEndOffset, adjustedValue, valueParameter)
             irCall.putValueArgument(argumentIndex, irArgument)
         }
 

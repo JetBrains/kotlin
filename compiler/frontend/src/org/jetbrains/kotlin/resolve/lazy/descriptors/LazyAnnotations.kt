@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.AnnotationResolverImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -108,19 +107,26 @@ class LazyAnnotationDescriptor(
         LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, it))
     } ?: c.scope
 
-    override val allValueArguments by c.storageManager.createLazyValue {
+    private val valueArgumentsWithSourceInfo by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
         AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
-        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<Name, ConstantValue<*>>()
+        if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap()
 
         resolutionResults.resultingCall.valueArguments.mapNotNull { (valueParameter, resolvedArgument) ->
             if (resolvedArgument == null) null
             else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)?.let { value ->
-                valueParameter.name to value
+                valueParameter.name to (value to resolvedArgument.arguments.firstOrNull()?.getArgumentExpression().toSourceElement())
             }
         }.toMap()
     }
+
+    override val allValueArguments by c.storageManager.createLazyValue {
+        valueArgumentsWithSourceInfo.mapValues { it.value.first }
+    }
+
+    override fun getSourceForArgument(name: Name): SourceElement =
+        valueArgumentsWithSourceInfo[name]?.second ?: SourceElement.NO_SOURCE
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(type)
