@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_ENTRIES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
@@ -33,7 +34,9 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
     fun generateSpecialMembers(irClass: IrClass) {
         generateValues(irClass)
         generateValueOf(irClass)
-        generateEntries(irClass)
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+            generateEntries(irClass)
+        }
     }
 
     private fun generateValues(irClass: IrClass) {
