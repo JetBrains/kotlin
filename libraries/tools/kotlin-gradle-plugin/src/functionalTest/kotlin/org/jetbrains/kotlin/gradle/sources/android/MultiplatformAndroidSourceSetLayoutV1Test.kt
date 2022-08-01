@@ -99,10 +99,10 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
     fun `two product flavor dimensions`() {
         android.flavorDimensions("pricing", "releaseType")
         android.productFlavors {
-            it.create("beta").dimension = "releaseType"
-            it.create("production").dimension = "releaseType"
-            it.create("free").dimension = "pricing"
-            it.create("paid").dimension = "pricing"
+            create("beta").dimension = "releaseType"
+            create("production").dimension = "releaseType"
+            create("free").dimension = "pricing"
+            create("paid").dimension = "pricing"
         }
         kotlin.android()
         project.evaluate()

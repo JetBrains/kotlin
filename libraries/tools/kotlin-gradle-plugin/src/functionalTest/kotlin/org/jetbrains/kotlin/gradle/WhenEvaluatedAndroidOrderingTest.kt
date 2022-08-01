@@ -66,6 +66,6 @@ class WhenEvaluatedAndroidOrderingTest {
     private fun Project.applyAndroidLibraryPlugin() {
         project.plugins.apply("android-library")
         val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
     }
 }

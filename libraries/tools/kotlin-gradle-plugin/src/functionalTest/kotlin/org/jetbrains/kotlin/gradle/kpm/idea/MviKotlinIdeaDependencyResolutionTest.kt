@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.commonizer.stdlib
+import org.jetbrains.kotlin.gradle.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.android.androidPrototype
 import org.jetbrains.kotlin.gradle.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.gradle.kpm.applyKpmPlugin
@@ -179,9 +180,10 @@ class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyR
         val project = buildProject()
 
         /* Setup Android */
+        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
         val android = project.extensions.getByType(LibraryExtension::class.java)
-        android.compileSdkVersion(30)
+        android.compileSdk = 31
 
 
         val kotlin = project.applyKpmPlugin {

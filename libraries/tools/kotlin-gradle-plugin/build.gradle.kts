@@ -1,7 +1,7 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.pill.PillExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     id("gradle-plugin-common-configuration")
@@ -91,13 +91,13 @@ dependencies {
     }
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        "functionalTestImplementation"("com.android.tools.build:gradle:4.0.1") {
-            because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
-        }
-        "functionalTestImplementation"(gradleKotlinDsl())
-        "functionalTestImplementation"(project(":kotlin-gradle-plugin-kpm-android"))
-        "functionalTestImplementation"(project(":kotlin-tooling-metadata"))
-        "functionalTestImplementation"(testFixtures(project(":kotlin-gradle-plugin-idea")))
+        val functionalTestImplementation by configurations.getting
+        functionalTestImplementation("com.android.tools.build:gradle:7.2.1")
+        functionalTestImplementation("com.android.tools.build:gradle-api:7.2.1")
+        functionalTestImplementation(gradleKotlinDsl())
+        functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
+        functionalTestImplementation(project(":kotlin-tooling-metadata"))
+        functionalTestImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     }
 
     testCompileOnly(project(":compiler"))
@@ -113,6 +113,12 @@ dependencies {
     testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
+}
+
+tasks.withType<Test>().named("functionalTest").configure {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    })
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
