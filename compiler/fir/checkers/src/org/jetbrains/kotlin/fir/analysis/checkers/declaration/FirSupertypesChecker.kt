@@ -87,7 +87,7 @@ object FirSupertypesChecker : FirClassChecker() {
             val fullyExpandedType = coneType.fullyExpandedType(context.session)
             val symbol = fullyExpandedType.toSymbol(context.session)
 
-            checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
+            checkClassCannotBeExtendedDirectly(declaration, symbol, reporter, superTypeRef, context)
 
             if (coneType.typeArguments.isNotEmpty()) {
                 checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
