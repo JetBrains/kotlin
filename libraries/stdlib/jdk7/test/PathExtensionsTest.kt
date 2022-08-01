@@ -148,6 +148,57 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun copyToRestrictedReadSource() {
+        val root = createTempDirectory("copyTo-root").cleanupRecursively()
+
+        // copy file
+        val srcFile = createTempFile(root, "srcFile")
+        val dstFile = root.resolve("dstFile")
+
+        withRestrictedRead(srcFile, alsoReset = listOf(dstFile)) {
+            assertFailsWith<AccessDeniedException> { srcFile.copyTo(dstFile) } // fails to copy restricted file
+        }
+
+        // copy directory
+        val srcDirectory = createTempDirectory(root, "srcDirectory")
+        val dstDirectory = root.resolve("dstDirectory")
+
+        withRestrictedRead(srcDirectory, alsoReset = listOf(dstDirectory)) {
+            srcDirectory.copyTo(dstDirectory) // successfully copies restricted directory
+            assertFalse(dstDirectory.isReadable()) // copies access permissions
+        }
+    }
+
+    @Test
+    fun copyToRestrictedWriteDestination() {
+        val root = createTempDirectory("copyTo-root").cleanupRecursively()
+
+        // copy file
+        val srcFile = createTempFile(root, "srcFile")
+        val dstFile = createTempFile(root, "dstFile")
+
+        withRestrictedWrite(dstFile) {
+            assertFailsWith<FileAlreadyExistsException> { srcFile.copyTo(dstFile) }
+            try {
+                srcFile.copyTo(dstFile, overwrite = true) // successfully overwrites restricted file in Unix
+                assertTrue(dstFile.isWritable()) // copies access permissions
+            } catch (_: AccessDeniedException) {
+                // Windows does not allow to overwrite readonly file
+            }
+        }
+
+        // copy directory
+        val srcDirectory = createTempDirectory(root, "srcDirectory")
+        val dstDirectory = createTempDirectory(root, "dstDirectory")
+
+        withRestrictedWrite(dstDirectory) {
+            assertFailsWith<FileAlreadyExistsException> { srcDirectory.copyTo(dstDirectory) }
+            srcDirectory.copyTo(dstDirectory, overwrite = true) // successfully overwrites restricted directory
+            assertTrue(dstDirectory.isWritable()) // copies access permissions
+        }
+    }
+
+    @Test
     fun copyToNameWithoutParent() {
         val currentDir = Path("").absolute()
         val srcFile = createTempFile().cleanup()

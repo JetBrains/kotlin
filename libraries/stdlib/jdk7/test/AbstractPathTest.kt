@@ -61,7 +61,7 @@ abstract class AbstractPathTest {
         }
     }
 
-    fun withRestrictedRead(vararg paths: Path, block: () -> Unit) {
+    fun withRestrictedRead(vararg paths: Path, alsoReset: List<Path> = emptyList(), block: () -> Unit) {
         try {
             if (paths.all { it.toFile().setReadable(false) }) {
                 block()
@@ -70,6 +70,20 @@ abstract class AbstractPathTest {
             }
         } finally {
             paths.forEach { it.toFile().setReadable(true) }
+            alsoReset.forEach { it.toFile().setReadable(true) }
+        }
+    }
+
+    fun withRestrictedWrite(vararg paths: Path, alsoReset: List<Path> = emptyList(), block: () -> Unit) {
+        try {
+            if (paths.all { it.toFile().setWritable(false) }) {
+                block()
+            } else {
+                System.err.println("Couldn't restrict write access")
+            }
+        } finally {
+            paths.forEach { it.toFile().setWritable(true) }
+            alsoReset.forEach { it.toFile().setWritable(true) }
         }
     }
 }
