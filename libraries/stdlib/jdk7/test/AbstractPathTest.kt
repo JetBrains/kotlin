@@ -8,6 +8,7 @@ package kotlin.jdk7.test
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
 import kotlin.test.*
@@ -47,6 +48,16 @@ abstract class AbstractPathTest {
             } catch (e: Throwable) {
                 println("Failed to execute cleanup action for $path")
             }
+        }
+    }
+
+    fun Path.tryCreateSymbolicLinkTo(original: Path): Path? {
+        return try {
+            this.createSymbolicLinkPointingTo(original)
+        } catch (e: Exception) {
+            // the underlying OS may not support symbolic links or may require a privilege
+            println("Creating a symbolic link failed with $e")
+            null
         }
     }
 

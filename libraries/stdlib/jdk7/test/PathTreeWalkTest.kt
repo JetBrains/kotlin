@@ -28,16 +28,6 @@ class PathTreeWalkTest : AbstractPathTest() {
             return basedir
         }
 
-        fun Path.tryCreateSymbolicLinkTo(original: Path): Path? {
-            return try {
-                this.createSymbolicLinkPointingTo(original)
-            } catch (e: Exception) {
-                // the underlying OS may not support symbolic links or may require a privilege
-                println("Creating a symbolic link failed with $e")
-                null
-            }
-        }
-
         fun testVisitedFiles(expected: List<String>, walk: Sequence<Path>, basedir: Path, message: (() -> String)? = null) {
             val actual = walk.map { it.relativeToOrSelf(basedir).invariantSeparatorsPathString }
             assertEquals(expected.sorted(), actual.toList().sorted(), message?.invoke())
