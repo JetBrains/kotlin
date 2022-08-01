@@ -245,7 +245,7 @@ private inline fun <reified T> FirDeclarationWithContext<*>.findParent(): T? {
     return current?.declaration as? T
 }
 
-private fun FirDeclarationWithContext<*>.isExportedObject(): Boolean {
+fun FirDeclarationWithContext<*>.isExportedObject(): Boolean {
     if (declaration is FirMemberDeclaration) {
         if (declaration.visibility != Visibilities.Public) return false
     }
@@ -256,7 +256,7 @@ private fun FirDeclarationWithContext<*>.isExportedObject(): Boolean {
     return file?.hasAnnotation(StandardClassIds.Annotations.JsExport) == true
 }
 
-private fun getNameForAnnotatedObject(declaration: FirDeclaration, annotation: ClassId): String? {
+fun getNameForAnnotatedObject(declaration: FirDeclaration, annotation: ClassId): String? {
     return declaration.getAnnotationStringParameter(annotation)
 }
 
