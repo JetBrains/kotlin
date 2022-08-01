@@ -110,7 +110,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
         compilationDatabase.target(konanTarget) {
             entry {
                 val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(konanTarget.name)
-                directory.set(compileTask.outputDirectory)
+                directory.set(compileTask.compilerWorkingDirectory)
                 files.setFrom(compileTask.inputFiles)
                 arguments.set(args)
                 output.set(compileTask.outputFile.asFile.map { it.absolutePath })
@@ -135,6 +135,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                     this.inputFiles.include("**/*.cpp", "**/*.mm")
                     this.inputFiles.exclude("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
                     this.headersDirs.from(this.inputFiles.dir)
+                    this.compilerWorkingDirectory.set(project.layout.projectDirectory.dir("src"))
                     when (outputGroup) {
                         "test" -> this.group = VERIFICATION_BUILD_TASK_GROUP
                         "main" -> this.group = BUILD_TASK_GROUP
@@ -188,6 +189,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                         this.inputFiles.include("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
                         this.headersDirs.setFrom(it.headersDirs)
                         this.headersDirs.from(googleTestExtension.headersDirs)
+                        this.compilerWorkingDirectory.set(it.compilerWorkingDirectory)
                         this.group = VERIFICATION_BUILD_TASK_GROUP
                         this.description = "Compiles '${it.name}' tests to bitcode for $target${sanitizer.description}"
 
