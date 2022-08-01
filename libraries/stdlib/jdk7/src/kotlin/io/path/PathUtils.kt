@@ -199,7 +199,7 @@ private object PathRelativizer {
  * When [overwrite] is `true` and [target] is a directory, it is replaced only if it is empty.
  *
  * If this path is a directory, it is copied without its content, i.e. an empty [target] directory is created.
- * If you want to copy directory including its contents, use [copyRecursively].
+ * If you want to copy directory including its contents, use [copyToRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date, permissions, etc.
  *
@@ -238,7 +238,7 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * it is replaced only if it is empty.
  *
  * If this path is a directory, it is copied *without* its content, i.e. an empty [target] directory is created.
- * If you want to copy a directory including its contents, use [copyRecursively].
+ * If you want to copy a directory including its contents, use [copyToRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date,
  * permissions, etc. unless [COPY_ATTRIBUTES][StandardCopyOption.COPY_ATTRIBUTES] is used.

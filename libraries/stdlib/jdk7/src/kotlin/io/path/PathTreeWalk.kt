@@ -137,7 +137,7 @@ private fun PathNode.createsCycle(): Boolean {
 }
 
 
-private object LinkFollowing {
+internal object LinkFollowing {
     private val nofollowLinkOption = arrayOf(LinkOption.NOFOLLOW_LINKS)
     private val followLinkOption = emptyArray<LinkOption>()
 
