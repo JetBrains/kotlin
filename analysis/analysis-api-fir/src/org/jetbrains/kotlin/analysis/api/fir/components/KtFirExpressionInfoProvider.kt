@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KtExpressionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -15,8 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
-import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.*
+import kotlin.math.exp
 
 internal class KtFirExpressionInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -32,5 +34,29 @@ internal class KtFirExpressionInfoProvider(
     override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> {
         val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
         return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
+    }
+    
+    override fun isUsedAsExpression(expression: KtExpression): Boolean {
+        return when (val parent = expression.parent) {
+            is KtWhenExpression ->
+                parent.subjectExpression == expression &&
+                        !parent.entries.first().isElse
+            is KtWhenEntry ->
+                parent.expression == expression &&
+                        isUsedAsExpression(parent.parent as KtExpression)
+            is KtBlockExpression ->
+                parent.statements.last() == expression &&
+                        isUsedAsExpression(parent) &&
+                        analyze(parent) {
+                            parent.getKtType()?.isUnit == false
+                        }
+            is KtFunction ->
+                parent.bodyExpression == expression &&
+                        analyze(parent) {
+                            parent.getKtType()?.isUnit == false || expression.getKtType()?.isUnit == true
+                        }
+            else ->
+                true
+        }
     }
 }
