@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.LocalClassDataStorage
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -78,7 +79,7 @@ class JsIrBackendContext(
     val polyfills = JsPolyfills()
     val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
 
-    val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
+    override val localClassDataStorage = LocalClassDataStorage.ClassNames()
     val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     val minimizedNameGenerator: MinimizedNameGenerator =

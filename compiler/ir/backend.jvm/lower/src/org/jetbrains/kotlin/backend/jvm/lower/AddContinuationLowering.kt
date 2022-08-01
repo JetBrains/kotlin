@@ -319,10 +319,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 if (function.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
                     function.parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
                 ) {
-                    context.putLocalClassType(
-                        function.attributeOwnerId,
-                        Type.getObjectType("${context.getLocalClassType(function.parentAsClass)!!.internalName}$${function.name}$1")
-                    )
+                    context.localClassDataStorage[function.attributeOwnerId] =
+                        Type.getObjectType("${context.localClassDataStorage.getAsString(function.parentAsClass)!!}$${function.name}$1")
                 }
 
                 if (flag.capturesCrossinline || function.isInline) {

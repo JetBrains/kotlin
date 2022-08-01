@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.LocalClassDataStorage
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -277,17 +278,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         lazyValues[member] = newValue
     }
 
-    private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
-
-    fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
-
-    fun putLocalClassName(container: IrAttributeContainer, name: String) {
-        localClassNames[container.attributeOwnerId] = name
-    }
-
-    fun copyLocalClassName(source: IrAttributeContainer, destination: IrAttributeContainer) {
-        getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
-    }
+    override val localClassDataStorage = LocalClassDataStorage.ClassNames()
 
     /* test suite class -> test function names */
     val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.LocalClassDataStorage
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
@@ -175,4 +176,6 @@ class WasmBackendContext(
             }
         }
     }
+
+    override val localClassDataStorage = LocalClassDataStorage.ClassNames()
 }

@@ -75,6 +75,8 @@ interface CommonBackendContext : BackendContext, LoggingContext {
      */
     val inlineClassesUtils: InlineClassesUtils
         get() = DefaultInlineClassesUtils
+
+    val localClassDataStorage: LocalClassDataStorage<*>
 }
 
 /**

@@ -42,6 +42,6 @@ class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : In
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
-        context.putLocalClassType(declaration, Type.getObjectType(localClassName))
+        context.localClassDataStorage[declaration] = Type.getObjectType(localClassName)
     }
 }

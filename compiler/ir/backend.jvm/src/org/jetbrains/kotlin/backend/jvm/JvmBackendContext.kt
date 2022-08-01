@@ -89,14 +89,7 @@ class JvmBackendContext(
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
-    private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
-
-    fun getLocalClassType(container: IrAttributeContainer): Type? =
-        localClassType[container.attributeOwnerId]
-
-    fun putLocalClassType(container: IrAttributeContainer, value: Type) {
-        localClassType[container.attributeOwnerId] = value
-    }
+    override val localClassDataStorage = JvmLocalClassTypesStorage()
 
     val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
     val enclosingMethodOverride = ConcurrentHashMap<IrFunction, IrFunction>()

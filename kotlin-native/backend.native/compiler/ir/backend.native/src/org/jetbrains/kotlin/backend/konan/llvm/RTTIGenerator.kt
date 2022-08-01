@@ -570,16 +570,16 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         when {
             irClass.isAnonymousObject -> {
-                relativeName = context.getLocalClassName(irClass)
+                relativeName = context.localClassDataStorage[irClass]
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             irClass.isLocal -> {
-                relativeName = context.getLocalClassName(irClass)
+                relativeName = context.localClassDataStorage[irClass]
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
             }
             isLoweredFunctionReference(irClass) -> {
                 // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = context.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
+                relativeName = context.localClassDataStorage[irClass] ?: generateDefaultRelativeName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             else -> {

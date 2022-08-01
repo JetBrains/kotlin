@@ -55,7 +55,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         mapType(type as IrType, mode)
 
     private fun computeClassInternalName(irClass: IrClass): StringBuilder {
-        context.getLocalClassType(irClass)?.internalName?.let {
+        context.localClassDataStorage.getAsString(irClass)?.let {
             return StringBuilder(it)
         }
 
@@ -87,7 +87,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
     }
 
     fun classInternalName(irClass: IrClass): String {
-        context.getLocalClassType(irClass)?.internalName?.let { return it }
+        context.localClassDataStorage.getAsString(irClass)?.let { return it }
         context.classNameOverride[irClass]?.let { return it.internalName }
 
         return JvmCodegenUtil.sanitizeNameIfNeeded(

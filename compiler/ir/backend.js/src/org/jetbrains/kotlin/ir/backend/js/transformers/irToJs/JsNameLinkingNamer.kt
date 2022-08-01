@@ -24,7 +24,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
 
     private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
         return nameMap.getOrPut(this) {
-            val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
+            val name = (this as? IrClass)?.let { context.localClassDataStorage[this] } ?: let {
                 this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
             }
             JsName(sanitizeName(prefix + name), true)

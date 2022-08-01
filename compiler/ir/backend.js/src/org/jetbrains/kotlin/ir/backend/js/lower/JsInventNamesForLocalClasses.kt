@@ -18,7 +18,7 @@ class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : In
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
         if (declaration is IrClass) {
-            context.localClassNames[declaration] = localClassName
+            context.localClassDataStorage[declaration] = localClassName
         }
     }
 }
