@@ -172,6 +172,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val attributeContainer: ElementConfig by element(Declaration) {
         +field("attributeOwnerId", attributeContainer, mutable = true)
+        +field("attributeOwnerIdBeforeInline", attributeContainer, mutable = true, nullable = true) // null <=> this element wasn't inlined
     }
     val anonymousInitializer: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
@@ -496,6 +497,9 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("attributeOwnerId", attributeContainer, mutable = true) {
             baseDefaultValue = code("this")
+        }
+        +field("attributeOwnerIdBeforeInline", attributeContainer, mutable = true, nullable = true) {
+            baseDefaultValue = code("null")
         }
         +field("type", irTypeType, mutable = true)
     }

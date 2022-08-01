@@ -22,6 +22,8 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement,
         IrAttributeContainer {
     override var attributeOwnerId: IrAttributeContainer = this
 
+    override var attributeOwnerIdBeforeInline: IrAttributeContainer? = null
+
     abstract var type: IrType
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression

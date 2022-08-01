@@ -57,6 +57,7 @@ open class IrClassImpl(
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerIdBeforeInline: IrAttributeContainer? = null
 
     override var sealedSubclasses: List<IrClassSymbol> = emptyList()
 }

@@ -107,6 +107,7 @@ class IrLazyClass(
     }
 
     override var attributeOwnerId: IrAttributeContainer = this
+    override var attributeOwnerIdBeforeInline: IrAttributeContainer? = null
 
     val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
     val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver

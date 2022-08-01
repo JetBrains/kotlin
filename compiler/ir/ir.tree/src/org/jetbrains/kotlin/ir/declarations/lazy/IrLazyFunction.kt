@@ -105,6 +105,10 @@ class IrLazyFunction(
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 
+    override var attributeOwnerIdBeforeInline: IrAttributeContainer?
+        get() = null
+        set(_) = error("We should never need to change attributeOwnerIdBeforeInline of external declarations.")
+
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override val containerSource: DeserializedContainerSource?

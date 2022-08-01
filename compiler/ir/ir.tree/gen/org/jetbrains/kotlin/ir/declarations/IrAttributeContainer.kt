@@ -16,4 +16,6 @@ import org.jetbrains.kotlin.ir.IrElement
  */
 interface IrAttributeContainer : IrElement {
     var attributeOwnerId: IrAttributeContainer
+
+    var attributeOwnerIdBeforeInline: IrAttributeContainer?
 }
