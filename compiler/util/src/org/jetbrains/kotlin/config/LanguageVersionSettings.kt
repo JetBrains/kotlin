@@ -264,7 +264,7 @@ enum class LanguageFeature(
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
     DataObjects(KOTLIN_1_8), // KT-4107
     LightweightLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
-    BreakContinueInInlineLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
+    BreakContinueInInlineLambdas(KOTLIN_1_8, defaultState = State.ENABLED),
 
     // 1.9
 
