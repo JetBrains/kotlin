@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // FIR_IDENTICAL
 private fun ` .private `(): String = TODO("")
 

@@ -4699,6 +4699,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS) { firDiagnostic ->
+        NameContainsIllegalCharsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic as KtPsiDiagnostic,

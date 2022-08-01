@@ -94,4 +94,8 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<FirCallableSymbol<*>>("symbol")
         }
     }
+
+    val GENERAL_SYNTAX by object : DiagnosticGroup("General Syntax") {
+        val NAME_CONTAINS_ILLEGAL_CHARS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+    }
 }

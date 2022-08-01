@@ -3265,6 +3265,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val type: KtType
     }
 
+    abstract class NameContainsIllegalChars : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NameContainsIllegalChars::class
+    }
+
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
     }

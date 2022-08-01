@@ -3950,6 +3950,11 @@ internal class NonExternalDeclarationInInappropriateFileImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NonExternalDeclarationInInappropriateFile(), KtAbstractFirDiagnostic<KtElement>
 
+internal class NameContainsIllegalCharsImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NameContainsIllegalChars(), KtAbstractFirDiagnostic<KtElement>
+
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
