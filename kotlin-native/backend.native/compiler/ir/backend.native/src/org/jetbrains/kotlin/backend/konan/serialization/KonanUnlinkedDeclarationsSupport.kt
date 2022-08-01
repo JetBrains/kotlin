@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.BasicUnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -18,7 +19,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
  */
 class KonanUnlinkedDeclarationsSupport(
         override val builtIns: IrBuiltIns,
-        override val allowUnboundSymbols: Boolean
+        override val allowUnboundSymbols: Boolean,
+        override val getLocalClassName: (container: IrAttributeContainer) -> String?
 ) : BasicUnlinkedDeclarationsSupport() {
     override val handler = object : UnlinkedMarkerTypeHandler {
         override val unlinkedMarkerType = IrSimpleTypeImpl(

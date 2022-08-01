@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsUnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -114,8 +114,6 @@ fun compileIr(
         is MainModule.Klib -> dependencyModules
     }
 
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-
     val context = JsIrBackendContext(
         moduleDescriptor,
         irBuiltIns,
@@ -132,12 +130,18 @@ fun compileIr(
         icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED
     )
 
+    with(deserializer.unlinkedDeclarationsSupport) {
+        if (allowUnboundSymbols && this is JsUnlinkedDeclarationsSupport) {
+            getLocalClassName = context.localClassDataStorage
+        }
+    }
+
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)
     ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
     deserializer.postProcess()
-    if (!allowUnboundSymbols) {
+    if (!deserializer.unlinkedDeclarationsSupport.allowUnboundSymbols) {
         symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
     }
 

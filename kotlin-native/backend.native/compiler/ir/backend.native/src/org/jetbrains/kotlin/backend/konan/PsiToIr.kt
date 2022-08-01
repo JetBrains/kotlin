@@ -108,7 +108,7 @@ internal fun Context.psiToIr(
                         config.resolve.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
-        val unlinkedDeclarationsSupport = KonanUnlinkedDeclarationsSupport(generatorContext.irBuiltIns, allowUnboundSymbols)
+        val unlinkedDeclarationsSupport = KonanUnlinkedDeclarationsSupport(generatorContext.irBuiltIns, allowUnboundSymbols, localClassDataStorage)
 
         KonanIrLinker(
                 currentModule = moduleDescriptor,

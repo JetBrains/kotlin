@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.BasicUnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
@@ -17,6 +18,9 @@ class JsUnlinkedDeclarationsSupport(
     override val builtIns: IrBuiltIns,
     override val allowUnboundSymbols: Boolean
 ) : BasicUnlinkedDeclarationsSupport() {
+    // To be initialized later, when JsIrBackendContext is created.
+    override lateinit var getLocalClassName: (container: IrAttributeContainer) -> String?
+
     override val handler = object : UnlinkedMarkerTypeHandler {
         override val unlinkedMarkerType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
         override fun IrType.isUnlinkedMarkerType() = this is IrErrorType

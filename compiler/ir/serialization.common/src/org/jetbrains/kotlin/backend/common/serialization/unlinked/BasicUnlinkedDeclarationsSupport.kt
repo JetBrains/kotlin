@@ -162,7 +162,7 @@ abstract class BasicUnlinkedDeclarationsSupport : UnlinkedDeclarationsSupport {
     override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) {
         if (!allowUnboundSymbols) return
 
-        val processor = UnlinkedDeclarationsProcessor(builtIns, usedClassifierSymbols, handler, messageLogger)
+        val processor = UnlinkedDeclarationsProcessor(builtIns, usedClassifierSymbols, handler, messageLogger, getLocalClassName)
         processor.addLinkageErrorIntoUnlinkedClasses()
 
         val roots = lazyRoots()

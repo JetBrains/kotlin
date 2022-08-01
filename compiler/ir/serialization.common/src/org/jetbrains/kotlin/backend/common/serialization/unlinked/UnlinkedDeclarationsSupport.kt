@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -22,6 +23,8 @@ interface UnlinkedDeclarationsSupport {
 
     fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>)
 
+    val getLocalClassName: (container: IrAttributeContainer) -> String?
+
     interface UnlinkedMarkerTypeHandler {
         val unlinkedMarkerType: IrType
         fun IrType.isUnlinkedMarkerType(): Boolean
@@ -33,6 +36,7 @@ interface UnlinkedDeclarationsSupport {
             override fun markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun markUsedClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun processUnlinkedDeclarations(messageLogger: IrMessageLogger, lazyRoots: () -> List<IrElement>) = Unit
+            override val getLocalClassName: (container: IrAttributeContainer) -> String? = { null }
         }
     }
 }

@@ -17,7 +17,7 @@ interface LocalClassDataStorage<D> {
         this[source]?.let { data -> this[destination] = data }
     }
 
-    class ClassNames : LocalClassDataStorage<String> {
+    class ClassNames : LocalClassDataStorage<String>, Function1<IrAttributeContainer, String?> {
         private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
 
         override fun get(declaration: IrAttributeContainer): String? = localClassNames[declaration.attributeOwnerId]
@@ -27,5 +27,6 @@ interface LocalClassDataStorage<D> {
         }
 
         override fun getAsString(declaration: IrAttributeContainer): String? = this[declaration]
+        override fun invoke(declaration: IrAttributeContainer): String? = this[declaration]
     }
 }

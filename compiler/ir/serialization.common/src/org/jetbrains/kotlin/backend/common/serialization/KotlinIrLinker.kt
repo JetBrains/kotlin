@@ -51,7 +51,7 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    protected open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
+    open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport get() = UnlinkedDeclarationsSupport.DISABLED
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(

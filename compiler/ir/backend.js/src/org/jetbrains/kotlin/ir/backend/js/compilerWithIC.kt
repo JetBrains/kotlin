@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsUnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -62,6 +63,12 @@ fun compileWithIC(
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE
     )
+
+    with(deserializer.unlinkedDeclarationsSupport) {
+        if (allowUnboundSymbols && this is JsUnlinkedDeclarationsSupport) {
+            getLocalClassName = context.localClassDataStorage
+        }
+    }
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)
