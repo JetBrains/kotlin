@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.light.classes.symbol.FirLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.FirLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,11 +23,7 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
     override val stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val testDataFile = module.files.first {
-            it.originalFile.extension in DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-        }.originalFile.toPath()
-
-        val fqName = LightClassTestCommon.fqNameInTestDataFile(testDataFile.toFile())
+        val fqName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
 
         val ktFile = ktFiles.first()
         val lightClass = findLightClass(fqName, ktFile.project)
