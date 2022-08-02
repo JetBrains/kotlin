@@ -244,37 +244,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         project.multiplatformExtension.supportedTargets().all { target ->
             target.binaries
                 .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
-                .withType(Framework::class.java) {
-                    action.execute(it)
-                    if (!it.isStatic) {
-                        configureLinkingOptions(it)
-                    }
-                }
-        }
-    }
-
-    internal fun configureLinkingOptions(binary: NativeBinary, setRPath: Boolean = false) {
-        pods.all { pod ->
-            binary.linkTaskProvider.configure { task ->
-                if (HostManager.hostIsMac) {
-                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
-                    task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
-                    task.dependsOn(podBuildTaskProvider)
-                }
-
-                task.doFirst { _ ->
-                    val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
-                    val frameworkFileName = pod.moduleName + ".framework"
-                    val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
-
-                    val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
-                    if (frameworkFileExists) binary.linkerOpts.addArg("-framework", pod.moduleName)
-
-                    binary.linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
-
-                    if (setRPath) binary.linkerOpts.addArgs("-rpath", frameworkSearchPaths)
-                }
-            }
+                .withType(Framework::class.java) { action.execute(it) }
         }
     }
 

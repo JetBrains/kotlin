@@ -563,10 +563,44 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.ideaImportDependsOn(podImportTaskProvider)
     }
 
-    private fun configureTestBinaries(project: Project, cocoapodsExtension: CocoapodsExtension) {
+    private fun configureLinkingOptions(project: Project, cocoapodsExtension: CocoapodsExtension) {
         project.multiplatformExtension.supportedTargets().all { target ->
-            target.binaries.withType(TestExecutable::class.java) { testExecutable ->
-                cocoapodsExtension.configureLinkingOptions(testExecutable, setRPath = true)
+            target.binaries.all { binary ->
+                val testExecutable = binary is TestExecutable
+                val podFramework = binary is Framework && binary.name.startsWith(POD_FRAMEWORK_PREFIX)
+                if (testExecutable || podFramework) {
+                    configureLinkingOptions(project, cocoapodsExtension, binary)
+                }
+            }
+        }
+    }
+
+    private fun configureLinkingOptions(project: Project, cocoapodsExtension: CocoapodsExtension, nativeBinary: NativeBinary) {
+        cocoapodsExtension.pods.all { pod ->
+            nativeBinary.linkTaskProvider.configure { task ->
+                val binary = task.binary
+                if (HostManager.hostIsMac) {
+                    val podBuildTaskProvider = project.getPodBuildTaskProvider(binary.target, pod)
+                    task.inputs.file(podBuildTaskProvider.map { it.buildSettingsFile })
+                    task.dependsOn(podBuildTaskProvider)
+                }
+
+                task.doFirst { _ ->
+                    val isExecutable = binary is AbstractExecutable
+                    val isDynamicFramework = (binary is Framework && !binary.isStatic)
+
+                    val podBuildSettings = project.getPodBuildSettingsProperties(binary.target, pod)
+                    val frameworkFileName = pod.moduleName + ".framework"
+                    val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
+
+                    if (isExecutable || isDynamicFramework) {
+                        val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
+                        if (frameworkFileExists) binary.linkerOpts.addArg("-framework", pod.moduleName)
+                        binary.linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
+                    }
+
+                    if (isExecutable) binary.linkerOpts.addArgs("-rpath", frameworkSearchPaths)
+                }
             }
         }
     }
@@ -702,7 +736,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 )
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)
-            configureTestBinaries(project, cocoapodsExtension)
+            configureLinkingOptions(project, cocoapodsExtension)
         }
     }
 
