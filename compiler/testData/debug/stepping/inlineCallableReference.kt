@@ -37,5 +37,5 @@ inline fun f(block: () -> Unit) {
 // EXPECTATIONS JS_IR
 // test.kt:3 box
 // test.kt:5 box
-// test.kt:7 box
+// test.kt:8 box
 // test.kt:10 box

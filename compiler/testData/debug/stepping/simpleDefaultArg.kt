@@ -22,6 +22,3 @@ fun box(): String {
 // test.kt:3 ifoo$default
 // test.kt:3 ifoo$default
 // test.kt:4 ifoo
-// test.kt:4 ifoo
-// test.kt:3 ifoo$default
-// test.kt:8 box

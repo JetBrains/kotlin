@@ -23,4 +23,3 @@ fun box() {
 // test.kt:11 box
 // test.kt:11 box
 // test.kt:6 A.get_prop_wosl9o_k$
-// test.kt:6 A.get_prop_wosl9o_k$

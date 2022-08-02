@@ -27,4 +27,3 @@ inline fun bar(i: Int = 1) {
 // test.kt:8 foo$default
 // test.kt:8 foo$default
 // test.kt:8 foo$default
-// test.kt:8 foo$default

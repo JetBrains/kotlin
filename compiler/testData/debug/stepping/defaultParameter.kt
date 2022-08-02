@@ -29,6 +29,4 @@ fun box() {
 // test.kt:6 A.foo$default_dec9f7_k$
 // test.kt:6 A.foo$default_dec9f7_k$
 // test.kt:4 A.computeParam_vubdyi_k$
-// test.kt:4 A.computeParam_vubdyi_k$
-// test.kt:6 A.foo$default_dec9f7_k$
 // test.kt:6 A.foo$default_dec9f7_k$

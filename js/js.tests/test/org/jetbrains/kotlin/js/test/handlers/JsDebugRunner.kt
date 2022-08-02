@@ -182,9 +182,15 @@ class JsDebugRunner(testServices: TestServices) : AbstractJsArtifactsCollector(t
         val segment = if (columnNumber <= group.segments[0].generatedColumnNumber) {
             group.segments[0]
         } else {
-            group.segments.find {
-                columnNumber > it.generatedColumnNumber
+            val candidateIndex = group.segments.indexOfFirst {
+                columnNumber <= it.generatedColumnNumber
             }
+            if (candidateIndex < 0)
+                null
+            else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
+                group.segments[candidateIndex]
+            else
+                group.segments[candidateIndex - 1]
         }
         return segment?.sourceFileAndLine()
     }

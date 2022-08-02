@@ -69,13 +69,9 @@ fun testExpressionBody(nullable: String?) =
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:13 test
-// test.kt:13 test
 // test.kt:7 box
-// test.kt:13 test
 // test.kt:13 test
 // test.kt:8 box
 // test.kt:21 testExpressionBody
-// test.kt:21 testExpressionBody
 // test.kt:9 box
-// test.kt:21 testExpressionBody
 // test.kt:21 testExpressionBody

@@ -67,4 +67,3 @@ inline fun html(init: () -> Unit) {
 // EXPECTATIONS JS_IR
 // test.kt:19 box
 // test.kt:21 box
-// test.kt:21 box

@@ -18,4 +18,3 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:2 cond
-// test.kt:2 cond

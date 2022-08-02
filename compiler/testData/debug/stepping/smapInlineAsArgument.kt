@@ -40,10 +40,8 @@ fun fail() : String {
 // EXPECTATIONS JS_IR
 // test.kt:4 box
 // test.kt:20 fail
-// test.kt:20 fail
 // test.kt:4 box
 // test.kt:7 box
-// test.kt:20 fail
 // test.kt:20 fail
 // test.kt:16 box
 // test.kt:7 box
