@@ -41,6 +41,8 @@ internal abstract class FirLightParameter(containingDeclaration: FirLightMethod)
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {
             visitor.visitParameter(this)
+        } else {
+            visitor.visitElement(this)
         }
     }
 
