@@ -67,6 +67,11 @@
 -dontwarn org.w3c.dom.Window
 -dontwarn org.slf4j.**
 
+# This class in com.intellij.platform.utils has accidental dependency on Java 11,
+# but it is not used in the production code, so it should be fine to ignore this.
+# The fix commit in platform: cbf405263b98ef2ad0ecb0d5a47dc18e1b325c9f
+-dontwarn com.intellij.util.io.WalRecord$Companion
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'
