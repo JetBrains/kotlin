@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -89,9 +90,12 @@ fun assertCompiledKotlinSources(
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  */
-@Suppress("unused")
-fun BuildResult.assertNonIncrementalCompilation() {
-    assertOutputContains("Non-incremental compilation will be performed")
+fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) {
+    if (reason != null) {
+        assertOutputContains("$NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED: ${reason.name}")
+    } else {
+        assertOutputContains(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
+    }
 }
 
 /**
@@ -102,8 +106,10 @@ fun BuildResult.assertNonIncrementalCompilation() {
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  */
 fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<Path>) {
-    assertOutputDoesNotContain("Non-incremental compilation will be performed")
+    assertOutputDoesNotContain(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
 
     val actualCompiledKotlinFiles = extractCompiledKotlinFiles(output)
     assertSameFiles(expectedCompiledKotlinFiles, actualCompiledKotlinFiles, "Compiled Kotlin files differ:\n")
 }
+
+const val NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED = "Non-incremental compilation will be performed"
