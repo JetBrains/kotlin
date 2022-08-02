@@ -93,13 +93,15 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure framework of the pod built from this project.
      */
-    fun framework(configure: Framework.() -> Unit) = configureRegisteredFrameworks(configure)
+    fun framework(configure: Framework.() -> Unit) {
+        forAllPodFrameworks(configure)
+    }
 
     /**
      * Configure framework of the pod built from this project.
      */
-    fun framework(configure: Action<Framework>) = framework {
-        configure.execute(this)
+    fun framework(configure: Action<Framework>) {
+        forAllPodFrameworks(configure)
     }
 
     val ios: PodspecPlatformSettings = PodspecPlatformSettings("ios")
@@ -238,14 +240,16 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         configure.execute(this)
     }
 
-    private fun configureRegisteredFrameworks(configure: Framework.() -> Unit) {
+    private fun forAllPodFrameworks(action: Action<in Framework>) {
         project.multiplatformExtension.supportedTargets().all { target ->
-            target.binaries.withType(Framework::class.java) { framework ->
-                framework.configure()
-                if (!framework.isStatic) {
-                    configureLinkingOptions(framework)
+            target.binaries
+                .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+                .withType(Framework::class.java) {
+                    action.execute(it)
+                    if (!it.isStatic) {
+                        configureLinkingOptions(it)
+                    }
                 }
-            }
         }
     }
 
