@@ -844,16 +844,18 @@ abstract class KotlinCompile @Inject constructor(
             )
             when {
                 !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
-                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
+                // When inputChanges.isIncremental == true, we want to compile incrementally. However, if the incremental state (e.g. lookup
+                // caches or previous classpath snapshot) is missing, we need to compile non-incrementally. That could happen if in the
+                // previous run:
+                //   - Compilation happened using Kotlin daemon but with IC disabled (`kotlin.incremental=false`)
+                //   - Compilation happened without using Kotlin daemon (set by the user or caused by a fallback)
+                //   - Compilation was skipped because there were no sources to compile (see AbstractKotlinCompile.executeImpl)
+                // (Note that if compilation happened using Kotlin daemon and with IC enabled (the usual case), we have a guarantee that
+                // incremental state including classpath snapshot is always produced.)
                 !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
-                    // When this happens, it means that the classpath snapshot in the previous run was not saved for some reason. It's
-                    // likely that there were no source files to compile, so the task action was skipped (see
-                    // AbstractKotlinCompile.executeImpl), and therefore the classpath snapshot was not saved.
-                    // Missing classpath snapshot will make this run non-incremental, but because there were no source files to compile in
-                    // the previous run, *all* source files in this run (if there are any) need to be compiled anyway, so being
-                    // non-incremental is actually okay.
                     NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
                 }
+                inputChanges.getFileChanges(classpathSnapshotProperties.classpathSnapshot).none() -> NoChanges(classpathSnapshotFiles)
                 else -> ToBeComputedByIncrementalCompiler(classpathSnapshotFiles)
             }
         }

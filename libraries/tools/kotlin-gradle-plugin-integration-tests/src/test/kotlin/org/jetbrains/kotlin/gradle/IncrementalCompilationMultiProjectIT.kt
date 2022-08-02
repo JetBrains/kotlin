@@ -673,7 +673,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             // In the next build, compilation should be non-incremental as incremental state is missing
             build(":lib:compileKotlin") {
-                assertNonIncrementalCompilation(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
+                assertNonIncrementalCompilation(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             }
         }
     }
