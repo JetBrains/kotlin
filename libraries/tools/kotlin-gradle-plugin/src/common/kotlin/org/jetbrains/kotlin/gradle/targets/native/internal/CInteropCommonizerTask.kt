@@ -87,10 +87,10 @@ internal open class CInteropCommonizerTask
         .property<String>()
         .chainedFinalizeValueOnRead()
 
-    @get:Internal
+    @get:Classpath
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
-    @get:Internal
+    @get:Input
     internal val customJvmArgs: ListProperty<String> = objectFactory
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
