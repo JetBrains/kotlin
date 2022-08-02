@@ -717,22 +717,6 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWarningOfDefaultLinkingType() {
-        with(project) {
-            build("tasks") {
-                assertSuccessful()
-                assertContains("Cocoapods Gradle plugin uses default STATIC linking type for frameworks.")
-            }
-            gradleBuildScript().appendToCocoapodsBlock("framework { isStatic = true }")
-            build("tasks") {
-                assertSuccessful()
-                assertNotContains("Cocoapods Gradle plugin uses default STATIC linking type for frameworks.")
-            }
-        }
-    }
-
-
-    @Test
     fun testSyncFramework() {
         with(project) {
             hooks.addHook {
@@ -818,8 +802,9 @@ class CocoaPodsIT : BaseGradleIT() {
                 val framework = fileInWorkingDir("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
                 with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
                     assertTrue(isSuccessful)
-                    assertTrue(output.contains("\\(for architecture armv7\\):\\s+current ar archive".toRegex()))
-                    assertTrue(output.contains("\\(for architecture arm64\\):\\s+current ar archive".toRegex()))
+                    assertTrue(output.contains("universal binary with 2 architectures"))
+                    assertTrue(output.contains("(for architecture armv7)"))
+                    assertTrue(output.contains("(for architecture arm64)"))
                 }
             }
 

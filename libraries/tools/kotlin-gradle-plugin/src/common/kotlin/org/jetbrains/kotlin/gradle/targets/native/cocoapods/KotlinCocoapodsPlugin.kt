@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
@@ -153,7 +152,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework(POD_FRAMEWORK_PREFIX) {
                 baseName = project.name.asValidFrameworkName()
-                setIsStaticSilently(true)
             }
         }
     }
@@ -216,32 +214,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
         val frameworkLinkTask = targets.single().binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType).linkTaskProvider
         project.createSyncFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { it.asFile } }, frameworkLinkTask)
-    }
-
-    private fun checkFrameworkLinkingType(
-        project: Project,
-        kotlinExtension: KotlinMultiplatformExtension
-    ) = project.whenEvaluated {
-        val anyPodTarget = kotlinExtension.supportedTargets().firstOrNull() ?: return@whenEvaluated
-        val anyPodFramework = anyPodTarget.binaries.firstOrNull { binary ->
-            binary is Framework && binary.name.startsWith(POD_FRAMEWORK_PREFIX)
-        } as? Framework ?: return@whenEvaluated
-
-        val hasDefaultLinkingType = !anyPodFramework.isStaticWasReassigned
-        if (hasDefaultLinkingType) SingleWarningPerBuild.show(
-            project,
-            """
-                |Cocoapods Gradle plugin uses default STATIC linking type for frameworks.
-                |Set it up explicitly because the default behavior will be changed to DYNAMIC linking in the 1.8 version.
-                |kotlin {
-                |  cocoapods {
-                |    framework {
-                |      isStatic = true //or false
-                |    }
-                |  }
-                |}
-                |""".trimMargin()
-        )
     }
 
     private fun createSyncTask(
@@ -718,7 +690,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             registerDummyFrameworkTask(project, cocoapodsExtension)
             createSyncTask(project, kotlinExtension, cocoapodsExtension)
-            checkFrameworkLinkingType(project, kotlinExtension)
             registerPodspecTask(project, cocoapodsExtension)
 
             registerPodGenTask(project, kotlinExtension, cocoapodsExtension)
