@@ -62,7 +62,7 @@ internal fun irBuilder(
 
 private var topLevelInitializersCounter = 0
 
-internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean) {
+internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean, eager: Boolean) {
     val irField = IrFieldImpl(
             expression.startOffset, expression.endOffset,
             IrDeclarationOrigin.DEFINED,
@@ -78,6 +78,9 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
 
         if (threadLocal)
             annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
+
+        if (eager)
+            annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
 
         initializer = IrExpressionBodyImpl(startOffset, endOffset, expression)
     }
