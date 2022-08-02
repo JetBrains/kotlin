@@ -334,6 +334,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         }
 
         sealed class PodLocation {
+            @Internal
             internal abstract fun getPodSourcePath(): String
 
             data class Path(
@@ -341,7 +342,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 @get:IgnoreEmptyDirectories
                 val dir: File
             ) : PodLocation() {
-                @Internal
                 override fun getPodSourcePath() = ":path => '${dir.absolutePath}'"
             }
 
@@ -351,7 +351,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 @get:Input @get:Optional var tag: String? = null,
                 @get:Input @get:Optional var commit: String? = null
             ) : PodLocation() {
-                @Internal
                 override fun getPodSourcePath() = buildString {
                     append(":git => '$url'")
                     when {
