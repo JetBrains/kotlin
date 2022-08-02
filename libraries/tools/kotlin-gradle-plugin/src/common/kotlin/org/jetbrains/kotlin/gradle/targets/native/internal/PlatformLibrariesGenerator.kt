@@ -131,7 +131,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
             args.addArg("-mode", it)
         }
 
-        KotlinNativeLibraryGenerationRunner(this).run(args)
+        KotlinNativeLibraryGenerationRunner.fromProject(this).run(args)
     }
 
     fun generatePlatformLibsIfNeeded(): Unit = with(project) {

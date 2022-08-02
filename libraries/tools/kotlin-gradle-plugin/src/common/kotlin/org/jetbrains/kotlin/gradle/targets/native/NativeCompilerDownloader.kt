@@ -169,7 +169,7 @@ class NativeCompilerDownloader(
 
     fun downloadIfNeeded() {
 
-        val classpath = KotlinNativeToolRunner.Settings(project).classpath
+        val classpath = KotlinNativeToolRunner.Settings.fromProject(project).classpath
         if (classpath.isEmpty() || classpath.any { !it.exists() }) {
             downloadAndExtract()
         }

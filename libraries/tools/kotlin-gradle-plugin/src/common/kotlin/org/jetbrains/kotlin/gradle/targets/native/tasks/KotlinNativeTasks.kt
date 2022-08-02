@@ -389,7 +389,7 @@ constructor(
         kotlinOptions.freeCompilerArgs + ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
     }
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
     private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
 
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
@@ -482,7 +482,7 @@ constructor(
     final override val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings(project)
+    private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
 
     init {
         dependsOn(project.provider { compilation.compileKotlinTaskProvider })
@@ -591,7 +591,7 @@ constructor(
     private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
 
     private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs)
+        CacheBuilder.Settings.createWithProject(project, binary, konanTarget, localKotlinOptions, externalDependenciesArgs)
     }
 
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
@@ -890,7 +890,7 @@ internal class CacheBuilder(
         )
 
         companion object {
-            operator fun invoke(
+            fun createWithProject(
                 project: Project,
                 binary: NativeBinary,
                 konanTarget: KonanTarget,
@@ -899,7 +899,7 @@ internal class CacheBuilder(
             ): Settings {
                 val konanCacheKind = project.getKonanCacheKind(konanTarget)
                 return Settings(
-                    runnerSettings = KotlinNativeCompilerRunner.Settings(project),
+                    runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project),
                     konanCacheKind = konanCacheKind,
                     libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
@@ -1181,7 +1181,7 @@ open class CInteropProcess
     val outputFile: File
         get() = outputFileProvider.get()
 
-    private val runnerSettings = KotlinNativeToolRunner.Settings(project)
+    private val runnerSettings = KotlinNativeToolRunner.Settings.fromProject(project)
 
     // Inputs and outputs.
 

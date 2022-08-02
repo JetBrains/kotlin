@@ -67,14 +67,15 @@ internal abstract class KotlinNativeToolRunner(
         val jvmArgs: List<String>,
         val classpath: FileCollection
     ) {
-
-        constructor(project: Project) : this(
-            konanVersion = project.konanVersion,
-            konanHome = project.konanHome,
-            konanPropertiesFile = project.file("${project.konanHome}/konan/konan.properties"),
-            jvmArgs = project.jvmArgs,
-            classpath = project.files(project.kotlinNativeCompilerJar, "${project.konanHome}/konan/lib/trove4j.jar")
-        )
+        companion object {
+            fun fromProject(project: Project) = Settings(
+                konanVersion = project.konanVersion,
+                konanHome = project.konanHome,
+                konanPropertiesFile = project.file("${project.konanHome}/konan/konan.properties"),
+                jvmArgs = project.jvmArgs,
+                classpath = project.files(project.kotlinNativeCompilerJar, "${project.konanHome}/konan/lib/trove4j.jar")
+            )
+        }
     }
 
     final override val displayName get() = toolName
@@ -191,10 +192,12 @@ internal class KotlinNativeCompilerRunner(
         val parent: KotlinNativeToolRunner.Settings,
         val disableKonanDaemon: Boolean,
     ) {
-        constructor(project: Project) : this(
-            parent = KotlinNativeToolRunner.Settings(project),
-            disableKonanDaemon = project.disableKonanDaemon,
-        )
+        companion object {
+            fun fromProject(project: Project) = Settings(
+                parent = KotlinNativeToolRunner.Settings.fromProject(project),
+                disableKonanDaemon = project.disableKonanDaemon,
+            )
+        }
     }
 
     private val useArgFile get() = settings.disableKonanDaemon
@@ -225,10 +228,12 @@ internal class KotlinNativeLibraryGenerationRunner(
 ) :
     AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", settings, executionContext) {
 
-    constructor(project: Project): this(
-        settings = Settings(project),
-        executionContext = GradleExecutionContext.fromProject(project)
-    )
+    companion object {
+        fun fromProject(project: Project) = KotlinNativeLibraryGenerationRunner(
+            settings = Settings.fromProject(project),
+            executionContext = GradleExecutionContext.fromProject(project)
+        )
+    }
 
     // The library generator works for a long time so enabling C2 can improve performance.
     override val disableC2: Boolean = false
