@@ -69,9 +69,9 @@ val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
 val defaultSnapshotVersion: String by extra
 val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
 val kotlinVersion by extra(
-        findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
-            if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
-        } ?: buildNumber
+    findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
+        if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
+    } ?: buildNumber
 )
 
 val kotlinLanguageVersion by extra("1.8")
@@ -391,11 +391,12 @@ allprojects {
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
     repositories {
-        when(kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
-             null -> {}
+        when (kotlinBuildProperties.getOrNull("attachedIntellijVersion")) {
+            null -> {}
             "master" -> {
                 maven { setUrl("https://www.jetbrains.com/intellij-repository/snapshots") }
             }
+
             else -> {
                 kotlinBuildLocalRepo(project)
             }
@@ -437,9 +438,7 @@ allprojects {
 
 apply {
     from("libraries/commonConfiguration.gradle")
-    if (extra.has("isDeployStagingRepoGenerationRequired") &&
-        project.extra["isDeployStagingRepoGenerationRequired"] as Boolean == true
-    ) {
+    if (extra.has("isDeployStagingRepoGenerationRequired") && project.extra["isDeployStagingRepoGenerationRequired"] as Boolean) {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
     }
@@ -727,12 +726,14 @@ tasks {
 
     register("publishIdeArtifacts") {
         idePluginDependency {
+            @Suppress("UNCHECKED_CAST")
             dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:publish" })
         }
     }
 
     register("installIdeArtifacts") {
         idePluginDependency {
+            @Suppress("UNCHECKED_CAST")
             dependsOn((rootProject.extra["compilerArtifactsForIde"] as List<String>).map { "$it:install" })
         }
     }
