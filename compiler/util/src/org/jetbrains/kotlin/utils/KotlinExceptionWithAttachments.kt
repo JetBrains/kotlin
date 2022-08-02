@@ -18,16 +18,18 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     constructor(message: String?, cause: Throwable?) : super(message, cause) {
         if (cause is KotlinExceptionWithAttachments) {
-            attachments.addAll(
-                cause.attachments.map { a ->
-                    val content = a.openContentStream().use { it.reader(StandardCharsets.UTF_8).use { it.readText() } }
-                    Attachment("case_" + a.path, content)
-                }
-            )
+            cause.attachments.mapTo(attachments) { attachment ->
+                attachment.copyWithNewName("case_${attachment.path}")
+            }
         }
         if (cause != null) {
             withAttachment("causeThrowable", cause.stackTraceToString())
         }
+    }
+
+    private fun Attachment.copyWithNewName(newName: String): Attachment {
+        val content = String(bytes, StandardCharsets.UTF_8)
+        return Attachment(newName, content)
     }
 
     override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
@@ -39,7 +41,10 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 }
 
 
-fun KotlinExceptionWithAttachments.withAttachmentBuilder(name: String, buildContent: StringBuilder.() -> Unit): KotlinExceptionWithAttachments {
+fun KotlinExceptionWithAttachments.withAttachmentBuilder(
+    name: String,
+    buildContent: StringBuilder.() -> Unit
+): KotlinExceptionWithAttachments {
     return withAttachment(name, buildString { buildContent() })
 }
 
