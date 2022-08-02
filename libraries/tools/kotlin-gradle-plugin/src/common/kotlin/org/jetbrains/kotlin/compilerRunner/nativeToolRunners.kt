@@ -94,10 +94,8 @@ internal abstract class KotlinNativeToolRunner(
 
     final override val execSystemProperties by lazy {
         // Still set konan.home for versions prior to 1.4-M3.
-        val konanHomeRequired = settings.konanVersion.let {
-            !it.isAtLeast(1, 4, 0) ||
-                    it.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
-        }
+        val konanHomeRequired = !settings.konanVersion.isAtLeast(1, 4, 0) ||
+                settings.konanVersion.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
 
         listOfNotNull(
             if (konanHomeRequired) "konan.home" to settings.konanHome else null,
