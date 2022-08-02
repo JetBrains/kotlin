@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.generators.tests
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.tests.GenerateSteppedRangesCodegenTestData.Function
+import org.jetbrains.kotlin.generators.tests.GenerateSteppedRangesCodegenTestData.Function.*
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -42,6 +44,11 @@ object GenerateInRangeExpressionTestData {
         }
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_STDLIB")
+        if (rangeExpressions.any { "..<" in it }) {
+            println("// DONT_TARGET_EXACT_BACKEND: JVM")
+            println("// !LANGUAGE: +RangeUntilOperator")
+            println("@file:OptIn(ExperimentalStdlibApi::class)")
+        }
         println()
         println(header)
         println()
@@ -98,21 +105,23 @@ object GenerateInRangeExpressionTestData {
         println()
     }
 
-    private fun generateRangeOperatorTestCase(
-        name: String,
-        aExpression: String,
-        op: String,
-        bExpression: String,
+    private fun generateRangeOperatorTestCases(
+        namePrefix: String,
+        functions: List<Function>,
+        bounds: Pair<String, String>,
         elementExpressions: List<String>
     ) {
-        generateMatrixTestCase(
-            name,
-            listOf(
-                "$aExpression $op $bExpression",
-                "$bExpression $op $aExpression"
-            ),
-            elementExpressions
-        )
+        val (aExpression, bExpression) = bounds
+        for (function in functions) {
+            generateMatrixTestCase(
+                "$namePrefix${function.subdir.replaceFirstChar(Char::uppercase)}.kt",
+                listOf(
+                    "$aExpression${function.infixFunctionName}$bExpression",
+                    "$bExpression${function.infixFunctionName}$aExpression"
+                ),
+                elementExpressions
+            )
+        }
     }
 
     @JvmStatic
@@ -124,96 +133,42 @@ object GenerateInRangeExpressionTestData {
 
         val charLiterals = listOf("'0'", "'1'", "'2'", "'3'", "'4'")
 
+        val numbers = listOf("-1", "0", "1", "2", "3", "4")
+        fun String.wrapNegative() = if (this.startsWith("-")) "($this)" else this
+
         val integerLiterals =
-            listOf("(-1)", "0", "1", "2", "3", "4").flatMap {
-                listOf("$it.toByte()", "$it.toShort()", it, "$it.toLong()")
+            numbers.flatMap {
+                listOf("${it.wrapNegative()}.toByte()", "${it.wrapNegative()}.toShort()", it, it + "L")
             }
         val floatingPointLiterals =
-            listOf("(-1)", "0", "1", "2", "3", "4").flatMap {
-                listOf("$it.toFloat()", "$it.toDouble()")
+            numbers.flatMap {
+                listOf(it + "F", it + ".0")
             }
 
-        generateRangeOperatorTestCase(
-            "charRangeLiteral.kt",
-            "'1'",
-            "..",
-            "'3'",
-            charLiterals
-        )
-        generateRangeOperatorTestCase(
-            "charUntil.kt",
-            "'1'",
-            "until",
-            "'3'",
-            charLiterals
-        )
-        generateRangeOperatorTestCase(
-            "charDownTo.kt",
-            "'3'",
-            "downTo",
-            "'1'",
-            charLiterals
-        )
+        val unsignedNumbers = numbers.drop(1).map { it + "u" }
 
-        generateRangeOperatorTestCase(
-            "intRangeLiteral.kt",
-            "1",
-            "..",
-            "3",
-            integerLiterals
-        )
-        generateRangeOperatorTestCase(
-            "intUntil.kt",
-            "1",
-            "until",
-            "3",
-            integerLiterals
-        )
-        generateRangeOperatorTestCase(
-            "intDownTo.kt",
-            "3",
-            "downTo",
-            "1",
-            listOf("1")
-        )
+        val allFunctions = Function.values().toList()
+        val rangeFunctions = allFunctions - DOWN_TO
 
-        generateRangeOperatorTestCase(
-            "longRangeLiteral.kt",
-            "1L",
-            "..",
-            "3L",
-            integerLiterals
-        )
-        generateRangeOperatorTestCase(
-            "longUntil.kt",
-            "1L",
-            "until",
-            "3L",
-            integerLiterals
-        )
-        generateRangeOperatorTestCase(
-            "longDownTo.kt",
-            "3L",
-            "downTo",
-            "1L",
-            listOf("1L")
-        )
+        generateRangeOperatorTestCases("char", allFunctions, "'1'" to "'3'", charLiterals)
 
-        generateRangeOperatorTestCase(
-            "floatRangeLiteral.kt",
-            "1.0F",
-            "..",
-            "3.0F",
-            floatingPointLiterals
-        )
+        val intBounds = "1" to "3"
+        generateRangeOperatorTestCases("int", rangeFunctions, intBounds, integerLiterals)
+        generateRangeOperatorTestCases("int", listOf(DOWN_TO), intBounds, numbers)
 
-        generateRangeOperatorTestCase(
-            "doubleRangeLiteral.kt",
-            "1.0",
-            "..",
-            "3.0",
-            floatingPointLiterals
-        )
+        val longBounds = "1L" to "3L"
+        generateRangeOperatorTestCases("long", rangeFunctions, longBounds, integerLiterals)
+        generateRangeOperatorTestCases("long", listOf(DOWN_TO), longBounds, numbers.map { it + "L" })
+
+        generateRangeOperatorTestCases("uint", allFunctions, "1u" to "3u", unsignedNumbers)
+        generateRangeOperatorTestCases("ulong", allFunctions, "1uL" to "3uL", unsignedNumbers.map { it + "L" })
+
+        generateRangeOperatorTestCases("double", listOf(RANGE_TO, RANGE_UNTIL), "1.0" to "3.0", floatingPointLiterals)
+
+        val floatBounds = "1.0F" to "3.0F"
+        generateRangeOperatorTestCases("float", listOf(RANGE_TO), floatBounds, floatingPointLiterals)
+        // only Float in OpenEndRange<Float> operation is supported
+        generateRangeOperatorTestCases("float", listOf(RANGE_UNTIL), floatBounds, floatingPointLiterals.filter { "F" in it })
 
         generateMatrixTestCase(
             "arrayIndices.kt",

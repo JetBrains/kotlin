@@ -30093,9 +30093,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/charDownTo.kt");
                 }
 
-                @TestMetadata("charRangeLiteral.kt")
-                public void testCharRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeLiteral.kt");
+                @TestMetadata("charRangeTo.kt")
+                public void testCharRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeTo.kt");
                 }
 
                 @TestMetadata("charSequenceIndices.kt")
@@ -30113,14 +30113,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/collectionIndices.kt");
                 }
 
-                @TestMetadata("doubleRangeLiteral.kt")
-                public void testDoubleRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeLiteral.kt");
+                @TestMetadata("doubleRangeTo.kt")
+                public void testDoubleRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeTo.kt");
                 }
 
-                @TestMetadata("floatRangeLiteral.kt")
-                public void testFloatRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeLiteral.kt");
+                @TestMetadata("floatRangeTo.kt")
+                public void testFloatRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeTo.kt");
                 }
 
                 @TestMetadata("intDownTo.kt")
@@ -30128,9 +30128,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/intDownTo.kt");
                 }
 
-                @TestMetadata("intRangeLiteral.kt")
-                public void testIntRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeLiteral.kt");
+                @TestMetadata("intRangeTo.kt")
+                public void testIntRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeTo.kt");
                 }
 
                 @TestMetadata("intUntil.kt")
@@ -30143,14 +30143,44 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/longDownTo.kt");
                 }
 
-                @TestMetadata("longRangeLiteral.kt")
-                public void testLongRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeLiteral.kt");
+                @TestMetadata("longRangeTo.kt")
+                public void testLongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeTo.kt");
                 }
 
                 @TestMetadata("longUntil.kt")
                 public void testLongUntil() throws Exception {
                     runTest("compiler/testData/codegen/box/ranges/contains/generated/longUntil.kt");
+                }
+
+                @TestMetadata("uintDownTo.kt")
+                public void testUintDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintDownTo.kt");
+                }
+
+                @TestMetadata("uintRangeTo.kt")
+                public void testUintRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeTo.kt");
+                }
+
+                @TestMetadata("uintUntil.kt")
+                public void testUintUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/uintUntil.kt");
+                }
+
+                @TestMetadata("ulongDownTo.kt")
+                public void testUlongDownTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongDownTo.kt");
+                }
+
+                @TestMetadata("ulongRangeTo.kt")
+                public void testUlongRangeTo() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeTo.kt");
+                }
+
+                @TestMetadata("ulongUntil.kt")
+                public void testUlongUntil() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongUntil.kt");
                 }
             }
         }

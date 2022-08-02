@@ -46,7 +46,7 @@ object GenerateSteppedRangesCodegenTestData {
         }
     }
 
-    private enum class Function(val infixFunctionName: String, val subdir: String) {
+    enum class Function(val infixFunctionName: String, val subdir: String) {
         RANGE_TO("..", "rangeTo"),
         RANGE_UNTIL("..<", "rangeUntil"),
         UNTIL(" until ", "until"),
