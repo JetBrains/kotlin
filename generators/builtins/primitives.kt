@@ -240,9 +240,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateRangeTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
-            val returnType =
-                maxByDomainCapacity(thisKind, otherKind)
-                .let { if (it == PrimitiveType.CHAR) it else maxByDomainCapacity(it, PrimitiveType.INT) }
+            val returnType = maxByDomainCapacity(maxByDomainCapacity(thisKind, otherKind), PrimitiveType.INT)
             if (returnType == PrimitiveType.DOUBLE || returnType == PrimitiveType.FLOAT)
                 continue
             out.println("     /** Creates a range from this value to the specified [other] value. */")
