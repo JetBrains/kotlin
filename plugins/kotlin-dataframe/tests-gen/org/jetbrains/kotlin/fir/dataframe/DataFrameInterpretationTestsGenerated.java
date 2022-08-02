@@ -30,6 +30,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/interpretation"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("convert.kt")
+    public void testConvert() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/interpretation/convert.kt");
+    }
+
     @Nested
     @TestMetadata("plugins/kotlin-dataframe/testData/interpretation/atoms")
     @TestDataPath("$PROJECT_ROOT")

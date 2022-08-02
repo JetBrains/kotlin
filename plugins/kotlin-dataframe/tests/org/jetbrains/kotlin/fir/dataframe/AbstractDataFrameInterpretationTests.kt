@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,8 +20,12 @@ import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
@@ -28,7 +34,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.*
-import kotlin.test.assertEquals
 
 abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest() {
     lateinit var filePath: String
@@ -37,11 +42,12 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
         baseFirDiagnosticTestConfiguration()
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
+            +FIR_DUMP
         }
 
         useConfigurators(
+            ::DataFramePluginAnnotationsProvider,
             { testServices: TestServices -> Configurator(testServices, { filePath }) },
-            ::DataFramePluginAnnotationsProvider
         )
     }
 
@@ -55,15 +61,28 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
             module: TestModule,
             configuration: CompilerConfiguration
         ) {
+
+            val ids = List(100) {
+                val name = Name.identifier(it.toString())
+                ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), name)
+            }.toSet()
+            val queue = ArrayDeque(ids)
+            val state = mutableMapOf<ClassId, SchemaContext>()
+
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
-                    +{ session: FirSession -> InterpretersRunner(session, function) }
+                    +{ it: FirSession -> FirDataFrameExtensionsGenerator(it, ids, state) }
+                    +{ it: FirSession -> InterpretersRunner(it, queue, state) }
                 }
             })
         }
     }
 
-    class InterpretersRunner(session: FirSession, val function: () -> String) : FirExpressionResolutionExtension(session) {
+    class InterpretersRunner(
+        session: FirSession,
+        val queue: ArrayDeque<ClassId>,
+        val state: MutableMap<ClassId, SchemaContext>
+    ) : FirExpressionResolutionExtension(session) {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
                 if (it == "test") {
@@ -72,10 +91,12 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     val interpreter = call.loadInterpreter()!!
                     val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
 
-                    assertEquals(expectedResult(id) ?: "no result for id $id", result, message = id)
+                    withClue(id) {
+                        expectedResult(id) shouldBe result
+                    }
                 }
             }
-            return emptyList()
+            return coneKotlinTypes(functionCall, state, queue)
         }
 
         fun expectedResult(id: String): Any? {

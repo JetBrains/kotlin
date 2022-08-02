@@ -2,14 +2,12 @@ import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.plugin.testing.*
+import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.*
 
 @DataSchema
 interface Add0 {
     val a: Int
 }
-
-val ColumnsContainer<Add0>.a: DataColumn<Int>  get() = this["a"] as DataColumn<Int>
-val DataRow<Add0>.a: Int  get() = this["a"] as Int
 
 fun add0(df: DataFrame<Add0>) {
     test(id = "add0_schema", call = dataFrame(df))

@@ -61,75 +61,7 @@ class FirDataFrameReceiverInjector(
 ) : FirExpressionResolutionExtension(session) {
 
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
-        if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-        val processor = functionCall.loadInterpreter(session) ?: return emptyList()
-
-        val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
-
-        val types: MutableList<ConeClassLikeType> = mutableListOf()
-
-        // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
-        val rootMarker = callReturnType.typeArguments[0]
-
-        fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
-            val id = ids.removeLast()
-            val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
-                .constructClassType(emptyArray(), isNullable = false)
-            val properties = columns().map {
-                @Suppress("USELESS_IS_CHECK")
-                when (it) {
-                    is SimpleColumnGroup -> {
-                        val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
-                        val columnsContainerReturnType =
-                            ConeClassLikeTypeImpl(
-                                ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
-                                typeArguments = arrayOf(nestedClassMarker),
-                                isNullable = false
-                            )
-
-                        val dataRowReturnType =
-                            ConeClassLikeTypeImpl(
-                                ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-                                typeArguments = arrayOf(nestedClassMarker),
-                                isNullable = false
-                            )
-
-                        SchemaProperty(marker, it.name, dataRowReturnType, columnsContainerReturnType)
-                    }
-
-                    is SimpleFrameColumn -> {
-                        val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
-                        val frameColumnReturnType =
-                            ConeClassLikeTypeImpl(
-                                ConeClassLikeLookupTagImpl(DF_CLASS_ID),
-                                typeArguments = arrayOf(nestedClassMarker),
-                                isNullable = it.nullable
-                            )
-
-                        SchemaProperty(
-                            marker = marker,
-                            name = it.name,
-                            dataRowReturnType = frameColumnReturnType,
-                            columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef().projectOverDataColumnType()
-                        )
-                    }
-                    is SimpleCol -> SchemaProperty(
-                        marker = marker,
-                        name = it.name,
-                        dataRowReturnType = it.type.convert(),
-                        columnContainerReturnType = it.type.convert().toFirResolvedTypeRef().projectOverDataColumnType()
-                    )
-                    else -> TODO("shouldn't happen")
-                }
-            }
-            state[id] = SchemaContext(properties)
-            types += ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false)
-            return marker
-        }
-
-        dataFrameSchema.materialize(rootMarker)
-        return types
+        return coneKotlinTypes(functionCall, state, ids)
     }
 
     private fun findSchemaProcessor(functionCall: FirFunctionCall): SchemaModificationInterpreter? {
@@ -147,6 +79,84 @@ class FirDataFrameReceiverInjector(
     }
 
     object DataFramePluginKey : GeneratedDeclarationKey()
+}
+
+fun FirExpressionResolutionExtension.coneKotlinTypes(
+    functionCall: FirFunctionCall,
+    state: MutableMap<ClassId, SchemaContext>,
+    ids: ArrayDeque<ClassId>
+): List<ConeKotlinType> {
+    val callReturnType = functionCall.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return emptyList()
+    if (callReturnType.classId != DF_CLASS_ID) return emptyList()
+    val processor = functionCall.loadInterpreter(session) ?: return emptyList()
+
+    val dataFrameSchema = interpret(functionCall, processor)?.let { it.value as PluginDataFrameSchema } ?: return emptyList()
+
+    val types: MutableList<ConeClassLikeType> = mutableListOf()
+
+    // TODO: generate a new marker for each call when there is an API to cast functionCall result to this type
+    val rootMarker = callReturnType.typeArguments[0]
+
+    fun PluginDataFrameSchema.materialize(rootMarker: ConeTypeProjection? = null): ConeTypeProjection {
+        val id = ids.removeLast()
+        val marker = rootMarker ?: ConeClassLikeLookupTagImpl(id)
+            .constructClassType(emptyArray(), isNullable = false)
+        val properties = columns().map {
+            @Suppress("USELESS_IS_CHECK")
+            when (it) {
+                is SimpleColumnGroup -> {
+                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                    val columnsContainerReturnType =
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(COLUM_GROUP_CLASS_ID),
+                            typeArguments = arrayOf(nestedClassMarker),
+                            isNullable = false
+                        )
+
+                    val dataRowReturnType =
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
+                            typeArguments = arrayOf(nestedClassMarker),
+                            isNullable = false
+                        )
+
+                    SchemaProperty(marker, it.name, dataRowReturnType, columnsContainerReturnType)
+                }
+
+                is SimpleFrameColumn -> {
+                    val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize()
+                    val frameColumnReturnType =
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(DF_CLASS_ID),
+                            typeArguments = arrayOf(nestedClassMarker),
+                            isNullable = it.nullable
+                        )
+
+                    SchemaProperty(
+                        marker = marker,
+                        name = it.name,
+                        dataRowReturnType = frameColumnReturnType,
+                        columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef().projectOverDataColumnType()
+                    )
+                }
+
+                is SimpleCol -> SchemaProperty(
+                    marker = marker,
+                    name = it.name,
+                    dataRowReturnType = it.type.convert(),
+                    columnContainerReturnType = it.type.convert().toFirResolvedTypeRef().projectOverDataColumnType()
+                )
+
+                else -> TODO("shouldn't happen")
+            }
+        }
+        state[id] = SchemaContext(properties)
+        types += ConeClassLikeLookupTagImpl(id).constructClassType(emptyArray(), isNullable = false)
+        return marker
+    }
+
+    dataFrameSchema.materialize(rootMarker)
+    return types
 }
 
 private fun TypeApproximation.convert(): ConeKotlinType {
