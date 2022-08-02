@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 
 fun KotlinJsTargetDsl.calculateJsCompilerType(): KotlinJsCompilerType {
     return when {
-        this is KotlinJsTarget && this.irTarget == null -> KotlinJsCompilerType.LEGACY
-        this is KotlinJsIrTarget && !this.mixedMode -> KotlinJsCompilerType.IR
-        this is KotlinJsTarget && this.irTarget != null -> KotlinJsCompilerType.BOTH
+        this is KotlinJsTarget && !this.mixedMode -> KotlinJsCompilerType.LEGACY
+        this is KotlinJsIrTarget && this.legacyTarget == null  -> KotlinJsCompilerType.IR
+        this is KotlinJsIrTarget && this.legacyTarget != null -> KotlinJsCompilerType.BOTH
         else -> throw IllegalStateException("Unable to find previous Kotlin/JS compiler type for $this")
     }
 }

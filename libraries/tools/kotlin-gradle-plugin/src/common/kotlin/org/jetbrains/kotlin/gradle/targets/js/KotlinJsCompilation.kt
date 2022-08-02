@@ -43,7 +43,7 @@ abstract class KotlinJsCompilation @Inject internal constructor(
 
     internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
-    internal val binaries: KotlinJsBinaryContainer =
+    val binaries: KotlinJsBinaryContainer =
         target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             target,
