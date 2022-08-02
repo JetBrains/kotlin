@@ -54,4 +54,12 @@ internal abstract class FirLightAbstractAnnotation(parent: PsiElement) :
     abstract override fun hashCode(): Int
 
     override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitAnnotation(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }
