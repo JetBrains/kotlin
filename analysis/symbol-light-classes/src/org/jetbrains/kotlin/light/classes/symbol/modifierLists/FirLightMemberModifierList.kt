@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
@@ -16,6 +17,12 @@ internal class FirLightMemberModifierList<T : KtLightMember<*>>(
     private val modifiers: Set<String>,
     private val annotations: List<PsiAnnotation>
 ) : FirLightModifierList<T>(containingDeclaration) {
+    init {
+        annotations.forEach {
+            (it as? KtLightElementBase)?.parent = this
+        }
+    }
+
     override fun hasModifierProperty(name: String): Boolean {
         return when {
             name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false

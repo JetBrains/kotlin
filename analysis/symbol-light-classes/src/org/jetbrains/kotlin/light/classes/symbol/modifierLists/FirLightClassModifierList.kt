@@ -9,6 +9,7 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal class FirLightClassModifierList<T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
@@ -16,6 +17,12 @@ internal class FirLightClassModifierList<T : KtLightElement<KtModifierListOwner,
     private val modifiers: Set<String>,
     private val annotations: List<PsiAnnotation>
 ) : FirLightModifierList<T>(containingDeclaration) {
+    init {
+        annotations.forEach {
+            (it as? KtLightElementBase)?.parent = this
+        }
+    }
+
     override fun hasModifierProperty(name: String): Boolean = name in modifiers
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
