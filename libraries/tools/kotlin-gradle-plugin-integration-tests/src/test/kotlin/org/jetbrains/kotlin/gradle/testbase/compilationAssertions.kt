@@ -96,6 +96,8 @@ fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) 
     } else {
         assertOutputContains(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
     }
+    // Also check that incremental compilation was not attempted, failed, and fell back to non-incremental compilation
+    assertOutputDoesNotContain(PERFORMING_INCREMENTAL_COMPILATION)
 }
 
 /**
@@ -105,11 +107,24 @@ fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) 
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  */
-fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<Path>) {
+fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<Path>? = null) {
+    assertOutputContains(PERFORMING_INCREMENTAL_COMPILATION)
+    // Also check that incremental compilation did not fail and fall back to non-incremental compilation
     assertOutputDoesNotContain(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
 
-    val actualCompiledKotlinFiles = extractCompiledKotlinFiles(output)
-    assertSameFiles(expectedCompiledKotlinFiles, actualCompiledKotlinFiles, "Compiled Kotlin files differ:\n")
+    expectedCompiledKotlinFiles?.let {
+        assertSameFiles(expected = it, actual = extractCompiledKotlinFiles(output), "Compiled Kotlin files differ:\n")
+    }
 }
 
+/**
+ * Asserts that incremental compilation was attempted, failed, and fell back to non-incremental compilation.
+ *
+ * Note: Log level of output must be set to [LogLevel.DEBUG].
+ */
+fun BuildResult.assertIncrementalCompilationFellBackToNonIncremental() {
+    assertOutputContains("$NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
+}
+
+private const val PERFORMING_INCREMENTAL_COMPILATION = "Performing incremental compilation"
 const val NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED = "Non-incremental compilation will be performed"
