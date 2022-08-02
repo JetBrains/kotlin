@@ -110,18 +110,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
-    /**
-     * Configure framework name of the pod built from this project.
-     */
-    @Deprecated("Use 'baseName' property within framework{} block to configure framework name")
-    var frameworkName: String
-        get() = podFrameworkName.get()
-        set(value) {
-            configureRegisteredFrameworks {
-                baseName = value
-            }
-        }
-
     private val anyPodFramework = project.provider {
         val anyTarget = project.multiplatformExtension.supportedTargets().first()
         val anyFramework = anyTarget.binaries
