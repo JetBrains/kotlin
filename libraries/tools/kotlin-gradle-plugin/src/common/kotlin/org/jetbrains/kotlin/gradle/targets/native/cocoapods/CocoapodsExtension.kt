@@ -10,9 +10,11 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -113,16 +115,24 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
      */
     @Deprecated("Use 'baseName' property within framework{} block to configure framework name")
     var frameworkName: String
-        get() = frameworkNameInternal
+        get() = podFrameworkName.get()
         set(value) {
             configureRegisteredFrameworks {
                 baseName = value
             }
         }
 
-    internal var frameworkNameInternal: String = project.name.asValidFrameworkName()
+    private val anyPodFramework = project.provider {
+        val anyTarget = project.multiplatformExtension.supportedTargets().first()
+        val anyFramework = anyTarget.binaries
+            .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
+            .withType(Framework::class.java)
+            .first()
+        anyFramework
+    }
 
-    internal var useDynamicFramework: Boolean = false
+    internal val podFrameworkName = anyPodFramework.map { it.baseName }
+    internal val podFrameworkIsStatic = anyPodFramework.map { it.isStatic }
 
     /**
      * Configure custom Xcode Configurations to Native Build Types mapping
@@ -244,9 +254,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         project.multiplatformExtension.supportedTargets().all { target ->
             target.binaries.withType(Framework::class.java) { framework ->
                 framework.configure()
-                frameworkNameInternal = framework.baseName
-                useDynamicFramework = framework.isStatic.not()
-                if (useDynamicFramework) {
+                if (!framework.isStatic) {
                     configureLinkingOptions(framework)
                 }
             }
