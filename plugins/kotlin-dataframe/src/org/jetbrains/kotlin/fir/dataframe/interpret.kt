@@ -63,7 +63,17 @@ fun <T> FirExpressionResolutionExtension.interpret(
                 when (val expression = it.expression) {
                     is FirConstExpression<*> -> Interpreter.Success(expression.value!!)
                     is FirVarargArgumentsExpression -> {
-                        Interpreter.Success(expression.arguments.map { (it as FirConstExpression<*>).value })
+                        val args = expression.arguments.map {
+                            when (it) {
+                                is FirConstExpression<*> -> it.value
+                                is FirCallableReferenceAccess -> {
+                                    it.toKPropertyApproximation(session)
+                                }
+                                else -> TODO(it::class.toString())
+                            }
+
+                        }
+                        Interpreter.Success(args)
                     }
 
                     is FirFunctionCall -> {
@@ -88,18 +98,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         }
                     }
                     is FirCallableReferenceAccess -> {
-                        val propertyName = expression.calleeReference.name.identifier
-                        (expression.calleeReference as FirResolvedCallableReference).let {
-                            val symbol = it.toResolvedCallableSymbol()!!
-                            val columnName = symbol.annotations
-                                .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
-                                ?.let {
-                                    (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirConstExpression<*>).value as String
-                                }
-                            val kotlinType = symbol.resolvedReturnTypeRef.type
-                            val type = kotlinType.classId?.asFqNameString()!!
-                            Interpreter.Success(KPropertyApproximation(columnName ?: propertyName, TypeApproximation(type, kotlinType.isNullable)))
-                        }
+                        Interpreter.Success(expression.toKPropertyApproximation(session))
                     }
                     else -> TODO(expression::class.toString())
                 }
@@ -161,6 +160,21 @@ fun <T> FirExpressionResolutionExtension.interpret(
         }
     } else {
         error("")
+    }
+}
+
+private fun FirCallableReferenceAccess.toKPropertyApproximation(session: FirSession): KPropertyApproximation {
+    val propertyName = calleeReference.name.identifier
+    return (calleeReference as FirResolvedCallableReference).let {
+        val symbol = it.toResolvedCallableSymbol()!!
+        val columnName = symbol.annotations
+            .find { it.fqName(session)!!.asString() == ColumnName::class.qualifiedName!! }
+            ?.let {
+                (it.argumentMapping.mapping[Name.identifier(ColumnName::name.name)] as FirConstExpression<*>).value as String
+            }
+        val kotlinType = symbol.resolvedReturnTypeRef.type
+        val type = kotlinType.classId?.asFqNameString()!!
+        KPropertyApproximation(columnName ?: propertyName, TypeApproximation(type, kotlinType.isNullable))
     }
 }
 

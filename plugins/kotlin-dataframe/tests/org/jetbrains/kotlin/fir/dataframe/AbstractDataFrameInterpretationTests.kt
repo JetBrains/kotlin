@@ -92,7 +92,7 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                     val result = interpret(call, interpreter)?.value ?: TODO("test error cases")
 
                     withClue(id) {
-                        expectedResult(id) shouldBe result
+                        result shouldBe expectedResult(id)
                     }
                 }
             }
@@ -117,6 +117,10 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "addExpression_2" to TypeApproximationImpl("kotlin.Any", nullable = true),
                 "add0_schema" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
                 "add0" to pluginJsonFormat.decodeFromString<PluginDataFrameSchema>("""{"columns":[{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"a","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}},{"type":"org.jetbrains.kotlinx.dataframe.plugin.SimpleCol","name":"untitled","valuesType":{"type":"org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl","fqName":"kotlin.Int","nullable":false}}]}"""),
+                "varargKProperty_0" to listOf(
+                    KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
+                    KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
+                )
             )
             return map[id]
         }
