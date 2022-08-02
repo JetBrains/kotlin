@@ -11,6 +11,8 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.light.classes.symbol.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.FirLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -39,37 +41,82 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
     }
 
     private val lightAnnotationVisitor = object : JavaElementVisitor() {
+        private val declarationStack = ArrayDeque<PsiModifierListOwner>()
+
         override fun visitClass(aClass: PsiClass?) {
-            aClass?.annotations?.forEach { it.accept(this) }
+            if (aClass == null) return
+            declarationStack.addLast(aClass)
 
-            aClass?.fields?.forEach { it.accept(this) }
-            aClass?.methods?.forEach { it.accept(this) }
-            aClass?.innerClasses?.forEach { it.accept(this) }
+            aClass.annotations.forEach { it.accept(this) }
 
-            aClass?.typeParameterList?.typeParameters?.forEach { p -> p.annotations.forEach { it.accept(this) } }
+            aClass.fields.forEach { it.accept(this) }
+            aClass.methods.forEach { it.accept(this) }
+            aClass.innerClasses.forEach { it.accept(this) }
+
+            aClass.typeParameterList?.typeParameters?.forEach { it.accept(this) }
+
+            declarationStack.removeLast()
         }
 
         override fun visitField(field: PsiField?) {
-            field?.annotations?.forEach { it.accept(this) }
+            if (field == null) return
+            declarationStack.addLast(field)
 
-            field?.type?.annotations?.forEach { it.accept(this) }
+            field.annotations.forEach { it.accept(this) }
+
+            field.type.annotations.forEach { it.accept(this) }
+
+            declarationStack.removeLast()
         }
 
         override fun visitMethod(method: PsiMethod?) {
-            method?.annotations?.forEach { it.accept(this) }
+            if (method == null) return
+            declarationStack.addLast(method)
 
-            method?.returnType?.annotations?.forEach { it.accept(this) }
-            method?.parameterList?.parameters?.forEach { p -> p.annotations.forEach { it.accept(this) } }
-            method?.typeParameterList?.typeParameters?.forEach { p -> p.annotations.forEach { it.accept(this) } }
+            method.annotations.forEach { it.accept(this) }
+
+            method.returnType?.annotations?.forEach { it.accept(this) }
+            method.parameterList.parameters.forEach { it.accept(this) }
+
+            method.typeParameterList?.typeParameters?.forEach { it.accept(this) }
+
+            declarationStack.removeLast()
         }
 
-        override fun visitTypeElement(type: PsiTypeElement?) {
-            type?.annotations?.forEach { it.accept(this) }
+        override fun visitParameter(parameter: PsiParameter?) {
+            if (parameter == null) return
+            declarationStack.addLast(parameter)
+
+            parameter.annotations.forEach { it.accept(this) }
+
+            declarationStack.removeLast()
+        }
+
+        override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
+            if (classParameter == null) return
+            declarationStack.addLast(classParameter)
+
+            classParameter.annotations.forEach { it.accept(this) }
+
+            declarationStack.removeLast()
         }
 
         override fun visitAnnotation(annotation: PsiAnnotation?) {
-            if (annotation != null) {
-                TestCase.assertNotNull(annotation.owner)
+            if (annotation == null) return
+
+            val owner = annotation.owner
+            TestCase.assertNotNull(owner)
+            val lastDeclaration = declarationStack.last()
+            TestCase.assertEquals(lastDeclaration.modifierList, owner)
+            when (lastDeclaration) {
+                is PsiClass,
+                is PsiParameter ->
+                    TestCase.assertTrue(owner is FirLightClassModifierList<*>)
+                is PsiField,
+                is PsiMethod ->
+                    TestCase.assertTrue(owner is FirLightMemberModifierList<*>)
+                else ->
+                    throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
             }
         }
     }
