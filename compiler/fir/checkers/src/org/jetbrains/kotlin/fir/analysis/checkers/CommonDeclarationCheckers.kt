@@ -52,7 +52,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunctionTypeParametersSyntaxChecker,
             FirOperatorModifierChecker,
             FirTailrecFunctionChecker,
-            FirTopLevelFunctionsChecker,
             FirMemberFunctionsChecker,
         )
 
