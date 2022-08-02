@@ -24,6 +24,7 @@ import com.bnorm.power.diagram.IrTemporaryVariable
 import com.bnorm.power.diagram.Node
 import com.bnorm.power.diagram.SourceFile
 import com.bnorm.power.diagram.buildDiagramNesting
+import com.bnorm.power.diagram.buildDiagramNestingNullable
 import com.bnorm.power.diagram.buildTree
 import com.bnorm.power.diagram.irDiagramString
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -99,6 +100,8 @@ class PowerAssertCallTransformer(
       return super.visitCall(expression)
     }
 
+    val dispatchRoot =
+      if (expression.symbol.owner.isInfix) expression.dispatchReceiver?.let { buildTree(it) } else null
     val extensionRoot =
       if (expression.symbol.owner.isInfix) expression.extensionReceiver?.let { buildTree(it) } else null
     val messageArgument: IrExpression?
@@ -116,14 +119,21 @@ class PowerAssertCallTransformer(
     }
 
     // If all roots are null, there are no transformable parameters
-    if (extensionRoot == null && roots.all { it == null }) {
+    if (dispatchRoot == null && extensionRoot == null && roots.all { it == null }) {
       messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
       return super.visitCall(expression)
     }
 
     val symbol = currentScope!!.scope.scopeOwnerSymbol
     val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
-    return builder.diagram(expression, delegate, messageArgument, roots, extensionRoot)
+    return builder.diagram(
+      call = expression,
+      delegate = delegate,
+      messageArgument = messageArgument,
+      roots = roots,
+      dispatchRoot = dispatchRoot,
+      extensionRoot = extensionRoot
+    )
   }
 
   private fun DeclarationIrBuilder.diagram(
@@ -131,11 +141,13 @@ class PowerAssertCallTransformer(
     delegate: FunctionDelegate,
     messageArgument: IrExpression?,
     roots: List<Node?>,
+    dispatchRoot: Node? = null,
     extensionRoot: Node? = null
   ): IrExpression {
     fun recursive(
       index: Int,
-      extension: IrExpression? = null,
+      dispatch: IrExpression?,
+      extension: IrExpression?,
       arguments: List<IrExpression?>,
       variables: List<IrTemporaryVariable>
     ): IrExpression {
@@ -143,27 +155,25 @@ class PowerAssertCallTransformer(
         val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter, roots, call)
           ?.deepCopyWithSymbols(parent)
         val diagram = irDiagramString(sourceFile, prefix, call, variables)
-        return delegate.buildCall(this, call, extension, arguments, diagram)
+        return delegate.buildCall(this, call, dispatch, extension, arguments, diagram)
       } else {
         val root = roots[index]
         if (root == null) {
           val newArguments = arguments + call.getValueArgument(index)
-          return recursive(index + 1, extension, newArguments, variables)
+          return recursive(index + 1, dispatch, extension, newArguments, variables)
         } else {
-          return buildDiagramNesting(root) { argument, newVariables ->
+          return buildDiagramNesting(root, variables) { argument, newVariables ->
             val newArguments = arguments + argument
-            recursive(index + 1, extension, newArguments, variables + newVariables)
+            recursive(index + 1, dispatch, extension, newArguments, newVariables)
           }
         }
       }
     }
 
-    return if (extensionRoot != null) {
-      buildDiagramNesting(extensionRoot) { extension, newVariables ->
-        recursive(0, extension, emptyList(), newVariables)
+    return buildDiagramNestingNullable(dispatchRoot) { dispatch, newVariables ->
+      buildDiagramNestingNullable(extensionRoot, newVariables) { extension, newVariables ->
+        recursive(0, dispatch, extension, emptyList(), newVariables)
       }
-    } else {
-      recursive(0, null, emptyList(), emptyList())
     }
   }
 
@@ -216,7 +226,7 @@ class PowerAssertCallTransformer(
 
     return possible.mapNotNull { overload ->
       // Dispatch receivers must always match exactly
-      if (function.dispatchReceiverParameter != overload.owner.dispatchReceiverParameter) {
+      if (function.dispatchReceiverParameter?.type != overload.owner.dispatchReceiverParameter?.type) {
         return@mapNotNull null
       }
 

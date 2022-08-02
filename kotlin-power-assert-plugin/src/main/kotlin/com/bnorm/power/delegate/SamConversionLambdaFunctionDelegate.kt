@@ -20,11 +20,9 @@ import com.bnorm.power.irLambda
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irSamConversion
-import org.jetbrains.kotlin.ir.builders.typeOperator
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class SamConversionLambdaFunctionDelegate(
@@ -36,6 +34,7 @@ class SamConversionLambdaFunctionDelegate(
   override fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
+    dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
     messageArgument: IrExpression
@@ -44,6 +43,13 @@ class SamConversionLambdaFunctionDelegate(
       +irReturn(messageArgument)
     }
     val expression = irSamConversion(lambda, messageParameter.type)
-    irCallCopy(overload, original, extensionReceiver, valueArguments, expression)
+    irCallCopy(
+      overload = overload,
+      original = original,
+      dispatchReceiver = dispatchReceiver,
+      extensionReceiver = extensionReceiver,
+      valueArguments = valueArguments,
+      messageArgument = expression
+    )
   }
 }

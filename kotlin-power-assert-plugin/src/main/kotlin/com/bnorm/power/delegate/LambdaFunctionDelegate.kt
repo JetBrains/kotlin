@@ -33,6 +33,7 @@ class LambdaFunctionDelegate(
   override fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
+    dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
     messageArgument: IrExpression
@@ -40,6 +41,13 @@ class LambdaFunctionDelegate(
     val expression = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
       +irReturn(messageArgument)
     }
-    irCallCopy(overload, original, extensionReceiver, valueArguments, expression)
+    irCallCopy(
+      overload = overload,
+      original = original,
+      dispatchReceiver = dispatchReceiver,
+      extensionReceiver = extensionReceiver,
+      valueArguments = valueArguments,
+      messageArgument = expression
+    )
   }
 }
