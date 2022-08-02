@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
@@ -648,6 +649,35 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
+    @DisplayName("Test compilation when incremental state is missing")
+    @GradleTest
+    fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
+            build(
+                ":lib:compileKotlin",
+                "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.IN_PROCESS.propertyValue}"
+            ) {
+                assert(projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").listDirectoryEntries().isEmpty())
+            }
+
+            // Perform the next build using Kotlin daemon without making a change and check that tasks are up-to-date. This is to ensure
+            // that the `kotlin.compiler.execution.strategy` property used above is not an input to the KotlinCompile task; otherwise the
+            // test in the next build would not be effective.
+            build(":lib:compileKotlin") {
+                assertTasksUpToDate(":lib:$compileKotlinTaskName")
+            }
+
+            // Make a change in the source code
+            changeMethodSignatureInLib()
+
+            // In the next build, compilation should be non-incremental as incremental state is missing
+            build(":lib:compileKotlin") {
+                assertNonIncrementalCompilation(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
+            }
+        }
+    }
+
     @DisplayName("Test handling of failures caused by user errors")
     @GradleTest
     fun testFailureHandling_UserError(gradleVersion: GradleVersion) {
@@ -666,7 +696,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             buildAndFail(":lib:compileKotlin") {
                 assertTasksFailed(":lib:$compileKotlinTaskName")
                 assertOutputContains("Compilation error. See log for more details")
-                assertOutputDoesNotContain("Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
+                assertOutputDoesNotContain(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
             }
 
             // Fix the compile error in the source code
@@ -704,7 +734,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             // In the next build, compilation should be incremental and fail, then fall back to non-incremental compilation and succeed
             build(":lib:compileKotlin") {
-                assertOutputContains("Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_FAILED.name}")
+                assertNonIncrementalCompilation(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
                 // Also check that the output is not deleted (regression test for KT-49780)
                 assertFileExists(lookupFile)
             }
