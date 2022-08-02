@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.plugin.sources.android.singleTargetAndroidSourceSetLayout
-import org.jetbrains.kotlin.gradle.setAndroidMultiplatformSourceSetLayoutVersion
+import org.jetbrains.kotlin.gradle.setMultiplatformAndroidSourceSetLayoutVersion
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -27,10 +27,10 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
         project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
-        project.setAndroidMultiplatformSourceSetLayoutVersion(1)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(1)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
-        project.setAndroidMultiplatformSourceSetLayoutVersion(2)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
     }
 
@@ -43,14 +43,14 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
             "Expected v1 being set as default"
         )
 
-        project.setAndroidMultiplatformSourceSetLayoutVersion(2)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout)
 
-        project.setAndroidMultiplatformSourceSetLayoutVersion(1)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(1)
         assertEquals(multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout)
 
         /* Test unhappy path: Layout version 0 is unknown/unsupported */
-        project.setAndroidMultiplatformSourceSetLayoutVersion(0)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(0)
         assertFailsWith<IllegalArgumentException> {
             project.kotlinAndroidSourceSetLayout
         }
