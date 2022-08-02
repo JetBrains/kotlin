@@ -4,6 +4,11 @@ plugins {
     kotlin("multiplatform")
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 kotlin {
     val xcf = XCFramework()
     val otherXCFramework = XCFramework("other")
