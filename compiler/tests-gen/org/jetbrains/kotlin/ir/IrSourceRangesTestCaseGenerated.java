@@ -29,6 +29,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/annotations.kt");
+    }
+
     @TestMetadata("augmentedAssignmentWithExpression.kt")
     public void testAugmentedAssignmentWithExpression() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/augmentedAssignmentWithExpression.kt");

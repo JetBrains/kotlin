@@ -15,6 +15,10 @@
         @9:29..36 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @9:4..36 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @12:4..32 CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:<root>.C
+      annotations:
+        @11:4..32 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @11:14..31 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            @11:14..31 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @12:16..22 VALUE_PARAMETER name:x index:0 type:kotlin.Any
       @11:4..12:32 BLOCK_BODY
         @12:25..32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

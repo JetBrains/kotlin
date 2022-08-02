@@ -73,6 +73,10 @@
     @5:0..9:23 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test3
   @11:0..13:23 CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     @13:0..23 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test4 [primary]
+      annotations:
+        @12:0..28 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @12:10..27 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            @12:10..27 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @13:12..22 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @11:0..13:23 BLOCK_BODY
         @11:0..13:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

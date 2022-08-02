@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -47,10 +48,25 @@ abstract class AbstractIrSourceRangesTestCase : AbstractIrGeneratorTestCase() {
         val printer = Printer(out, "  ")
         val elementRenderer = RenderIrElementVisitor()
 
-        override fun visitElement(element: IrElement) {
+        private fun printElement(element: IrElement) {
             val sourceRangeInfo = fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
             printer.println("@${sourceRangeInfo.render()} ${element.accept(elementRenderer, null)}")
+        }
+
+        override fun visitElement(element: IrElement) {
+            printElement(element)
             printer.pushIndent()
+            if (element is IrAnnotationContainer && element.annotations.isNotEmpty()) {
+                printer.println("annotations:")
+                printer.pushIndent()
+                for (annotation in element.annotations) {
+                    printElement(annotation)
+                    printer.pushIndent()
+                    annotation.acceptChildrenVoid(this)
+                    printer.popIndent()
+                }
+                printer.popIndent()
+            }
             element.acceptChildrenVoid(this)
             printer.popIndent()
         }
