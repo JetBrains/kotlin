@@ -105,7 +105,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    private fun findLightClass(fqname: String, project: Project): PsiClass? {
+    protected fun findLightClass(fqname: String, project: Project): PsiClass? {
         return JavaElementFinder
             .getInstance(project)
             .findClass(fqname, GlobalSearchScope.allScope(project))
