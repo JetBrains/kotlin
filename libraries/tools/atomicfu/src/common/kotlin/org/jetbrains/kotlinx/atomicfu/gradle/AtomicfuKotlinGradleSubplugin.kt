@@ -20,8 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
 
-private const val ENABLE_JS_IR_TRANSFORMATION = "kotlinx.atomicfu.enableJsIrTransformation"
-private const val ENABLE_JVM_IR_TRANSFORMATION = "kotlinx.atomicfu.enableJvmIrTransformation"
+private const val EXTENSION_NAME = "atomicfuCompilerPlugin"
 
 class AtomicfuKotlinGradleSubplugin :
     KotlinCompilerPluginSupportPlugin {
@@ -29,16 +28,27 @@ class AtomicfuKotlinGradleSubplugin :
         const val ATOMICFU_ARTIFACT_NAME = "atomicfu"
     }
 
+    override fun apply(target: Project) {
+        target.extensions.add(EXTENSION_NAME, AtomicfuKotlinGradleExtension())
+        super.apply(target)
+    }
+
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
-        return (project.getBooleanProperty(ENABLE_JS_IR_TRANSFORMATION) && kotlinCompilation.target.isJs()) ||
-                (project.getBooleanProperty(ENABLE_JVM_IR_TRANSFORMATION) && (kotlinCompilation.target.isJvm()))
+        val config = project.extensions.findByName(EXTENSION_NAME) as? AtomicfuKotlinGradleExtension ?: AtomicfuKotlinGradleExtension()
+        return (config.isJsTransformationEnabled && kotlinCompilation.target.isJs()) ||
+                (config.isJvmTransformationEnabled && (kotlinCompilation.target.isJvm()))
     }
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
     ): Provider<List<SubpluginOption>> =
         kotlinCompilation.target.project.provider { emptyList() }
+
+    class AtomicfuKotlinGradleExtension {
+        var isJsTransformationEnabled = false
+        var isJvmTransformationEnabled = false
+    }
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(ATOMICFU_ARTIFACT_NAME)
@@ -48,13 +58,4 @@ class AtomicfuKotlinGradleSubplugin :
     private fun KotlinTarget.isJs() = platformType == KotlinPlatformType.js
 
     private fun KotlinTarget.isJvm() = platformType == KotlinPlatformType.jvm || platformType == KotlinPlatformType.androidJvm
-
-    private fun Project.getBooleanProperty(name: String) =
-        rootProject.findProperty(name)?.toString()?.toBooleanStrict() ?: false
-
-    private fun String.toBooleanStrict(): Boolean = when (this) {
-        "true" -> true
-        "false" -> false
-        else -> throw IllegalArgumentException("The string doesn't represent a boolean value: $this")
-    }
 }
