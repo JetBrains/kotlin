@@ -143,7 +143,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
                 newStatements
             )
 
-            return builder.irComposite(expression, expression.origin) {
+            return builder.irBlock(expression, expression.origin) {
                 +variable
                 +loop
                 +irGet(variable)
