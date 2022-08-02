@@ -37,7 +37,7 @@ class SingleTargetAndroidSourceSetLayoutTest {
 
     @Test
     fun `test - default configuration - AndroidSourceSet has associated KotlinSourceSet`() {
-        android.sourceSets.all { androidSourceSet -> project.assertSingleKotlinSourceSet(androidSourceSet) }
+        android.sourceSets.all { androidSourceSet -> project.getKotlinSourceSetOrFail(androidSourceSet) }
         project.evaluate()
     }
 
@@ -46,7 +46,7 @@ class SingleTargetAndroidSourceSetLayoutTest {
     fun `test - default configuration - AndroidSourceSet has KotlinSourceSet as convention`() {
         android.sourceSets.all { androidSourceSet ->
             assertSame(
-                project.assertSingleKotlinSourceSet(androidSourceSet),
+                project.getKotlinSourceSetOrFail(androidSourceSet),
                 (androidSourceSet as org.gradle.api.internal.HasConvention).convention.plugins["kotlin"] as? KotlinSourceSet,
                 "Expected Convention 'kotlin' on AndroidSourceSet: ${androidSourceSet.name}"
             )
@@ -66,7 +66,7 @@ class SingleTargetAndroidSourceSetLayoutTest {
         }
 
         android.sourceSets.all { androidSourceSet ->
-            val kotlinSourceSet = project.assertSingleKotlinSourceSet(androidSourceSet)
+            val kotlinSourceSet = project.getKotlinSourceSetOrFail(androidSourceSet)
             assertEquals(androidSourceSet.name, kotlinSourceSet.name)
         }
     }

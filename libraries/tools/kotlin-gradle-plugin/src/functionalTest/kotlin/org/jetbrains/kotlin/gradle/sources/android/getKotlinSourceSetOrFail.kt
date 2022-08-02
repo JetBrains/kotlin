@@ -8,13 +8,15 @@
 package org.jetbrains.kotlin.gradle.sources.android
 
 import com.android.build.gradle.api.AndroidSourceSet
+import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
+import org.jetbrains.kotlin.gradle.utils.androidExtension
 import kotlin.test.fail
 
-fun Project.assertSingleKotlinSourceSet(androidSourceSet: AndroidSourceSet): KotlinSourceSet {
+fun Project.getKotlinSourceSetOrFail(androidSourceSet: AndroidSourceSet): KotlinSourceSet {
     val kotlinSourceSets = kotlinExtension.sourceSets
         .filter { kotlinSourceSet -> kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == androidSourceSet.name }
 
@@ -30,4 +32,8 @@ fun Project.assertSingleKotlinSourceSet(androidSourceSet: AndroidSourceSet): Kot
     }
 
     return kotlinSourceSets.single()
+}
+
+fun Project.getKotlinSourceSetOrFail(androidSourceSet: SourceProvider): KotlinSourceSet {
+    return getKotlinSourceSetOrFail(androidExtension.sourceSets.getByName(androidSourceSet.name))
 }

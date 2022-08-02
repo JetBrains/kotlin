@@ -113,6 +113,6 @@ fun Project.enableDefaultStdlibDependency(enabled: Boolean = true) {
     project.propertiesExtension.set(KOTLIN_STDLIB_DEFAULT_DEPENDENCY, enabled.toString())
 }
 
-fun Project.setAndroidMultiplatformSourceSetLayoutVersion(version: Int) {
+fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {
     project.propertiesExtension.set(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION, version.toString())
 }

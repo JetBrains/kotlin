@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
-import org.jetbrains.kotlin.gradle.setAndroidMultiplatformSourceSetLayoutVersion
+import org.jetbrains.kotlin.gradle.setMultiplatformAndroidSourceSetLayoutVersion
 import kotlin.test.*
 
 class MultiplatformAndroidSourceSetLayoutV1Test {
@@ -31,7 +31,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
         addBuildEventsListenerRegistryMock(project)
-        project.setAndroidMultiplatformSourceSetLayoutVersion(1)
+        project.setMultiplatformAndroidSourceSetLayoutVersion(1)
 
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
@@ -141,7 +141,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
         kotlin.android()
         project.evaluate()
 
-        kotlin.sourceSets.toSet().allPairs()
+        kotlin.sourceSets.toSet().generatePairs()
             .forEach { (sourceSetA, sourceSetB) ->
                 val sourceDirsInBothSourceSets = sourceSetA.kotlin.srcDirs.intersect(sourceSetB.kotlin.srcDirs)
                 assertTrue(
@@ -151,7 +151,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
                 )
             }
 
-        android.sourceSets.toSet().allPairs()
+        android.sourceSets.toSet().generatePairs()
             .forEach { (sourceSetA, sourceSetB) ->
                 val sourceDirsInBothSourceSets = sourceSetA.java.srcDirs.intersect(sourceSetB.java.srcDirs)
                 assertTrue(
@@ -199,17 +199,4 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     private val AndroidSourceSet.kotlinSourceSet
         get() = project.findKotlinSourceSet(this) ?: fail("Missing KotlinSourceSet for AndroidSourceSet: $name")
-}
-
-private fun <T> Set<T>.allPairs(): Sequence<Pair<T, T>> {
-    val values = this.toList()
-    return sequence {
-        for (index in values.indices) {
-            val first = values[index]
-            for (remainingIndex in (index + 1)..values.lastIndex) {
-                val second = values[remainingIndex]
-                yield(first to second)
-            }
-        }
-    }
 }
