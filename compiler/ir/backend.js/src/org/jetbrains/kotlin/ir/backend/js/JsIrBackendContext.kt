@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.parseJsCode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
@@ -391,9 +391,10 @@ class JsIrBackendContext(
         val jsFunction = outlinedJsCodeFunctions[symbol]
         if (jsFunction != null) return jsFunction
         val jsFunAnnotation = symbol.owner.getAnnotation(JsAnnotations.jsFunFqn) ?: return null
-        val jsCode = jsFunAnnotation.getSingleConstStringArgument()
-        // FIXME: Provide debug info
-        val statements = parseJsCode(jsCode) ?: compilationException("Could not parse JS code", jsFunAnnotation)
+        val jsCode = jsFunAnnotation.getValueArgument(0)
+            ?: compilationException("@JsFun annotation must contain an argument", jsFunAnnotation)
+        val statements = translateJsCodeIntoStatementList(jsCode, this, symbol.owner)
+            ?: compilationException("Could not parse JS code", jsFunAnnotation)
         val parsedJsFunction = statements.singleOrNull()
             ?.safeAs<JsExpressionStatement>()
             ?.expression

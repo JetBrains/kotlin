@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -491,15 +494,22 @@ internal fun <T : JsNode> T.withSource(node: IrElement, context: JsGenerationCon
 private inline fun <T : JsNode> T.addSourceInfoIfNeed(node: IrElement, context: JsGenerationContext) {
     if (!context.staticContext.genSourcemaps) return
 
-    if (node.startOffset == UNDEFINED_OFFSET || node.endOffset == UNDEFINED_OFFSET) return
-
-    val fileEntry = context.currentFile.fileEntry
-
-    val path = fileEntry.name
-    val startLine = fileEntry.getLineNumber(node.startOffset)
-    val startColumn = fileEntry.getColumnNumber(node.startOffset)
+    val sourceInfo = node.getSourceInfo(context.currentFile.fileEntry) ?: return
 
     // TODO maybe it's better to fix in JsExpressionStatement
     val locationTarget = if (this is JsExpressionStatement) this.expression else this
-    locationTarget.source = JsLocation(path, startLine, startColumn)
+    locationTarget.source = sourceInfo
+}
+
+fun IrElement.getSourceInfo(container: IrDeclaration): JsLocation? {
+    val fileEntry = container.fileOrNull?.fileEntry ?: return null
+    return getSourceInfo(fileEntry)
+}
+
+fun IrElement.getSourceInfo(fileEntry: IrFileEntry): JsLocation? {
+    if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
+    val path = fileEntry.name
+    val startLine = fileEntry.getLineNumber(startOffset)
+    val startColumn = fileEntry.getColumnNumber(startOffset)
+    return JsLocation(path, startLine, startColumn)
 }

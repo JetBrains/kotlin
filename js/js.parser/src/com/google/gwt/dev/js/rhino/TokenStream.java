@@ -503,6 +503,7 @@ public class TokenStream {
         flags = 0;
         secondToLastPosition = position;
         lastPosition = position;
+        tokenPosition = position;
         lastTokenPosition = position;
     }
 
@@ -624,7 +625,7 @@ public class TokenStream {
             }
         } while (isJSSpace(c) || c == '\n');
 
-        tokenPosition = new CodePosition(in.getLineno(), Math.max(in.getOffset() - 1, 0));
+        tokenPosition = new CodePosition(in.getLineno(), in.getColumnno() - 1);
         if (c == EOF_CHAR)
             return EOF;
         if (c != '-' && c != '\n')

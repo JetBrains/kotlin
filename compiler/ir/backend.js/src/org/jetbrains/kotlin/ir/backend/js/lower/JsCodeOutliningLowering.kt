@@ -134,7 +134,7 @@ private class JsCodeOutlineTransformer(
             return null
 
         val jsCodeArg = expression.getValueArgument(0) ?: compilationException("Expected js code string", expression)
-        val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, backendContext) ?: return null
+        val jsStatements = translateJsCodeIntoStatementList(jsCodeArg, backendContext, container) ?: return null
 
         // Collect used Kotlin local variables and parameters.
         val scope = JsScopesCollector().apply { acceptList(jsStatements) }

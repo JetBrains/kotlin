@@ -51,9 +51,6 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
 
-fun IrAnnotationContainer.getJsPolyfill(): String? =
-    getAnnotation(JsAnnotations.JsPolyfillFqn)?.getSingleConstStringArgument()
-
 fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
     hasAnnotation(JsAnnotations.JsPolyfillFqn)
 
