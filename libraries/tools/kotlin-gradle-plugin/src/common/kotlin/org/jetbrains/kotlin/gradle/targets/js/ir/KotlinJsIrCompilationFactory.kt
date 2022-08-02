@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.getOrCreateDefaultSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -18,7 +19,7 @@ class KotlinJsIrCompilationFactory(
 
     override fun defaultSourceSetName(compilationName: String): String {
         return lowerCamelCaseName(
-            if (target.mixedMode)
+            if (target.legacyTarget != null)
                 target.disambiguationClassifierInPlatform
             else
                 target.disambiguationClassifier,

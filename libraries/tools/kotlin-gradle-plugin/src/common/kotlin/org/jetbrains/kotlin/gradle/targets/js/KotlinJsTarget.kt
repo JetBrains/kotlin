@@ -34,7 +34,8 @@ abstract class KotlinJsTarget
 @Inject
 constructor(
     project: Project,
-    platformType: KotlinPlatformType
+    platformType: KotlinPlatformType,
+    internal val mixedMode: Boolean
 ) :
     KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -53,46 +54,24 @@ constructor(
 
     internal val commonFakeApiElementsConfigurationName: String
         get() = lowerCamelCaseName(
-            irTarget?.let {
-                this.disambiguationClassifierInPlatform
-            } ?: disambiguationClassifier,
+            if (mixedMode)
+                disambiguationClassifierInPlatform
+            else
+                disambiguationClassifier,
             "commonFakeApiElements"
         )
 
     val disambiguationClassifierInPlatform: String?
-        get() = if (irTarget != null) {
-            disambiguationClassifier?.removeJsCompilerSuffix(LEGACY)
+        get() = if (mixedMode) {
+            disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
         } else {
             disambiguationClassifier
         }
 
-    override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
-        if (irTarget == null)
-            super.kotlinComponents
-        else {
-            val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
-            val usageContexts = createUsageContexts(mainCompilation) +
-                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
-
-            val componentName =
-                if (project.kotlinExtension is KotlinMultiplatformExtension)
-                    irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
-                else PRIMARY_SINGLE_COMPONENT_NAME
-
-            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
-
-            result.sourcesArtifacts = setOf(
-                sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
-            )
-
-            setOf(result)
-        }
-    }
-
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
         val usageContexts = super.createUsageContexts(producingCompilation)
 
-        if (isMpp!!) return usageContexts
+        if (isMpp!! || mixedMode) return usageContexts
 
         return usageContexts +
                 DefaultKotlinUsageContext(
@@ -103,26 +82,11 @@ constructor(
                 )
     }
 
-    override fun createKotlinVariant(
-        componentName: String,
-        compilation: KotlinCompilation<*>,
-        usageContexts: Set<DefaultKotlinUsageContext>
-    ): KotlinVariant {
-        return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
-            irTarget?.let {
-                artifactTargetName = targetName.removeJsCompilerSuffix(LEGACY)
-            }
-        }
-    }
-
     override val binaries: KotlinJsBinaryContainer
         get() = compilations.withType(KotlinJsCompilation::class.java)
             .named(MAIN_COMPILATION_NAME)
             .map { it.binaries }
             .get()
-
-    var irTarget: KotlinJsIrTarget? = null
-        internal set
 
     open var isMpp: Boolean? = null
         internal set
@@ -144,7 +108,7 @@ constructor(
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
 
-            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+            if (propertiesProvider.jsGenerateExecutableDefault && !mixedMode) {
                 binaries.executable()
             }
 
@@ -164,7 +128,6 @@ constructor(
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
-        irTarget?.browser(body)
     }
 
     //node.js
@@ -172,7 +135,7 @@ constructor(
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
 
-            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+            if (propertiesProvider.jsGenerateExecutableDefault && !mixedMode) {
                 binaries.executable()
             }
 
@@ -193,7 +156,6 @@ constructor(
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
-        irTarget?.nodejs(body)
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
@@ -220,6 +182,5 @@ constructor(
                 sourceMapEmbedSources = null
             }
         }
-        irTarget?.useCommonJs()
     }
 }

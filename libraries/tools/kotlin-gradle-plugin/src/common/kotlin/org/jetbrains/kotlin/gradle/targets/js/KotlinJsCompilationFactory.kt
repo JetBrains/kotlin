@@ -16,7 +16,7 @@ class KotlinJsCompilationFactory(
         get() = KotlinJsCompilation::class.java
 
     override fun defaultSourceSetName(compilationName: String): String {
-        val classifier = if (target is KotlinJsTarget && target.irTarget != null)
+        val classifier = if (target is KotlinJsTarget && target.mixedMode)
             target.disambiguationClassifierInPlatform
         else target.disambiguationClassifier
 
