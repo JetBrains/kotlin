@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
@@ -658,7 +657,9 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 ":lib:compileKotlin",
                 "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.IN_PROCESS.propertyValue}"
             ) {
-                assert(projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").listDirectoryEntries().isEmpty())
+                projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
+                    assert(!it.exists() || it.listDirectoryEntries().isEmpty())
+                }
             }
 
             // Perform the next build using Kotlin daemon without making a change and check that tasks are up-to-date. This is to ensure
@@ -673,7 +674,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             // In the next build, compilation should be non-incremental as incremental state is missing
             build(":lib:compileKotlin") {
-                assertNonIncrementalCompilation(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
+                assertNonIncrementalCompilation()
             }
         }
     }
@@ -692,11 +693,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 it.replace("fun a() {}", "fun a() { // Compile error: Missing closing bracket")
             }
 
-            // In the next build, compilation should be incremental and fail, and not fall back to non-incremental compilation
+            // In the next build, compilation should be incremental and fail (and not fall back to non-incremental compilation)
             buildAndFail(":lib:compileKotlin") {
+                assertIncrementalCompilation()
                 assertTasksFailed(":lib:$compileKotlinTaskName")
                 assertOutputContains("Compilation error. See log for more details")
-                assertOutputDoesNotContain(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
             }
 
             // Fix the compile error in the source code
@@ -734,7 +735,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             // In the next build, compilation should be incremental and fail, then fall back to non-incremental compilation and succeed
             build(":lib:compileKotlin") {
-                assertNonIncrementalCompilation(BuildAttribute.INCREMENTAL_COMPILATION_FAILED)
+                assertIncrementalCompilationFellBackToNonIncremental()
                 // Also check that the output is not deleted (regression test for KT-49780)
                 assertFileExists(lookupFile)
             }
@@ -746,7 +747,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             """
             $compileKotlinTaskName {
                 doLast {
-                    new File("$lookupFile").write("Invalid contents")
+                    new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")
                 }
             }
             """.trimIndent()

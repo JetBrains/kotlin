@@ -170,6 +170,7 @@ abstract class IncrementalCompilerRunner<
             when (compilationMode) {
                 is CompilationMode.Incremental -> {
                     try {
+                        reporter.debug { "Performing incremental compilation" }
                         val exitCode = if (withAbiSnapshot) {
                             compileIncrementally(
                                 args, caches, allSourceFiles, compilationMode, messageCollector,
