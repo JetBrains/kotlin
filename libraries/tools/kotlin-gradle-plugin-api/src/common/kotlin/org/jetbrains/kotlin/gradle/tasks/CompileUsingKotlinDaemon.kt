@@ -12,7 +12,7 @@ import org.gradle.api.tasks.Internal
 
 enum class KotlinCompilerExecutionStrategy(
     /**
-     * Value that should be passed for `kotlin.compiler.execution.strategy` Gradle or system property to choose the strategy
+     * Value that should be passed for `kotlin.compiler.execution.strategy` Gradle property to choose the strategy
      */
     val propertyValue: String
 ) {

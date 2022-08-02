@@ -75,33 +75,12 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
-    @DisplayName("Compilation via Kotlin daemon enabled using system property")
-    @GradleTest
-    fun testDaemonViaSystemProperty(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.DAEMON,
-            addHeapDumpOptions = false,
-            viaSystemProperty = true
-        )
-    }
-
     @DisplayName("Compilation inside Gradle daemon")
     @GradleTest
     fun testInProcess(gradleVersion: GradleVersion) {
         doTestExecutionStrategy(
             gradleVersion,
             KotlinCompilerExecutionStrategy.IN_PROCESS
-        )
-    }
-
-    @DisplayName("Compilation inside Gradle daemon enabled using system property")
-    @GradleTest
-    fun testInProcessViaSystemProperty(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.IN_PROCESS,
-            viaSystemProperty = true
         )
     }
 
@@ -114,21 +93,10 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
-    @DisplayName("Compilation via separate compiler process enabled via system property")
-    @GradleTest
-    fun testOutOfProcessViaSystemProperty(gradleVersion: GradleVersion) {
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
-            viaSystemProperty = true
-        )
-    }
-
     private fun doTestExecutionStrategy(
         gradleVersion: GradleVersion,
         executionStrategy: KotlinCompilerExecutionStrategy,
         addHeapDumpOptions: Boolean = true,
-        viaSystemProperty: Boolean = false
     ) {
         project(
             projectName = "kotlinBuiltins",
@@ -137,8 +105,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         ) {
             setupProject(this)
 
-            val cliArgPrefix = if (viaSystemProperty) "-D" else "-P"
-            val strategyCLIArg = "${cliArgPrefix}kotlin.compiler.execution.strategy=${executionStrategy.propertyValue}"
+            val strategyCLIArg = "-Pkotlin.compiler.execution.strategy=${executionStrategy.propertyValue}"
             val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
 
             build("build", strategyCLIArg) {
