@@ -118,5 +118,3 @@ fun invokeFunForLambda(call: IrCall) =
         .type
         .getClass()!!
         .invokeFun!!
-
-fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }

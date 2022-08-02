@@ -74,6 +74,8 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, notLoweredFunction)
         }
 
+        WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, notLoweredFunction)
+
         return notLoweredFunction
     }
 

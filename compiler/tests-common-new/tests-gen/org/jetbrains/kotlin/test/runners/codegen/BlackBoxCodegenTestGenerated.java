@@ -44196,6 +44196,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
+        public void testCallableReferenceInlinedFunFromOtherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/checkcast.kt");

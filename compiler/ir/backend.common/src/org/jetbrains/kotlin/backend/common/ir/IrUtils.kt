@@ -119,3 +119,5 @@ fun CommonBackendContext.createArrayOfExpression(
         putValueArgument(0, arg0)
     }
 }
+
+fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }

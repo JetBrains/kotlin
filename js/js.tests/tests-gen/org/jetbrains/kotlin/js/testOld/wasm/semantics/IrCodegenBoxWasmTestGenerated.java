@@ -29876,6 +29876,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFun.kt");
         }
 
+        @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
+        public void testCallableReferenceInlinedFunFromOtherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
+        }
+
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             runTest("compiler/testData/codegen/box/reified/checkcast.kt");

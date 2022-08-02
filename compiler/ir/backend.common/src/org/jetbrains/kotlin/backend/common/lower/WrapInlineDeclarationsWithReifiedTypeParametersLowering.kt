@@ -1,31 +1,29 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-/*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
-package org.jetbrains.kotlin.ir.backend.js.lower.inline
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.typeSubstitutionMap
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -59,48 +57,56 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                     context.irBuiltIns
                 )
 
-                val function = irFactory.addFunction(container.parent as IrDeclarationContainer) {
+                val function = irFactory.buildFun {
                     name = Name.identifier("${owner.name}${"$"}wrap")
-                    returnType = owner.returnType
-                    visibility = DescriptorVisibilities.PRIVATE
-                    origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-                }.also { function ->
+                    returnType = typeSubstitutor.substitute(owner.returnType)
+                    visibility = DescriptorVisibilities.LOCAL
+                    origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+                    startOffset = SYNTHETIC_OFFSET
+                    endOffset = SYNTHETIC_OFFSET
+                }.apply {
+                    parent = container as IrDeclarationParent
+                    val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                     owner.valueParameters.forEach { valueParameter ->
-                        function.addValueParameter(
+                        addValueParameter(
                             valueParameter.name,
                             typeSubstitutor.substitute(valueParameter.type)
                         )
                     }
-                    function.body = irFactory.createBlockBody(
+                    body = irFactory.createBlockBody(
                         expression.startOffset,
                         expression.endOffset
                     ) {
                         statements.add(
-                            JsIrBuilder.buildReturn(
-                                function.symbol,
-                                JsIrBuilder.buildCall(owner.symbol).also { call ->
+                            irBuilder.irReturn(
+                                irBuilder.irCall(owner.symbol).also { call ->
                                     call.dispatchReceiver = expression.dispatchReceiver
                                     call.extensionReceiver = expression.extensionReceiver
-                                    function.valueParameters.forEachIndexed { index, valueParameter ->
-                                        call.putValueArgument(index, JsIrBuilder.buildGetValue(valueParameter.symbol))
+                                    valueParameters.forEachIndexed { index, valueParameter ->
+                                        call.putValueArgument(index, irBuilder.irGet(valueParameter))
                                     }
                                     for (i in 0 until expression.typeArgumentsCount) {
                                         call.putTypeArgument(i, expression.getTypeArgument(i))
                                     }
                                 },
-                                owner.returnType
                             )
                         )
                     }
                 }
-                return IrFunctionReferenceImpl.fromSymbolOwner(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    function.symbol,
-                    function.typeParameters.size,
-                    expression.reflectionTarget
-                )
+                return context.createIrBuilder(container.symbol).irBlock(
+                    expression,
+                    origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                ) {
+                    +function
+                    +IrFunctionReferenceImpl.fromSymbolOwner(
+                        expression.startOffset,
+                        expression.endOffset,
+                        expression.type,
+                        function.symbol,
+                        function.typeParameters.size,
+                        expression.reflectionTarget
+                    )
+                }
             }
         })
     }
