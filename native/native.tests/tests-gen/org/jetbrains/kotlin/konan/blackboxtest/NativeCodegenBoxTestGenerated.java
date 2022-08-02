@@ -13256,6 +13256,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt53202_returns.kt")
+            public void testKt53202_returns() throws Exception {
+                runTest("compiler/testData/codegen/box/directInvokeOptimization/kt53202_returns.kt");
+            }
+
+            @Test
             @TestMetadata("nestedLambdas.kt")
             public void testNestedLambdas() throws Exception {
                 runTest("compiler/testData/codegen/box/directInvokeOptimization/nestedLambdas.kt");
