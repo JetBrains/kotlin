@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
 internal object KotlinAndroidSourceSets {
@@ -26,19 +22,12 @@ internal object KotlinAndroidSourceSets {
     ) {
         logger.debug("Applying ${KotlinAndroidSourceSetLayout::class.java.simpleName}: ${layout.name}")
 
-        val project = target.project
-        val kotlin = project.kotlinExtension
-        val android = project.androidExtension
-        val naming = layout.naming
-        val configurator = layout.sourceSetConfigurator
-        val checker = layout.checker
+        val android = target.project.androidExtension
+        val factory = KotlinAndroidSourceSetFactory(target, target.project.kotlinExtension, layout)
 
-        project.runProjectConfigurationHealthCheck {
-            checker.checkBeforeLayoutApplied(target, layout)
+        target.project.runProjectConfigurationHealthCheck {
+            layout.checker.checkBeforeLayoutApplied(target, layout)
         }
-
-        /* Ensures that each KotlinSourceSet only invokes the 'configurator' once */
-        val configuredKotlinSourceSets = mutableSetOf<KotlinSourceSet>()
 
         /*
         Hook eagerly into AndroidSourceSet creation
@@ -46,54 +35,23 @@ internal object KotlinAndroidSourceSets {
         make them available in the buildscript dsl immediately.
          */
         android.sourceSets.all { androidSourceSet ->
-            val kotlinSourceSetName = naming.kotlinSourceSetName(target.disambiguationClassifier, androidSourceSet.name) ?: return@all
-            val kotlinSourceSet = kotlin.getOrCreateKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
-
-            if (configuredKotlinSourceSets.add(kotlinSourceSet)) {
-                configurator.configure(target, kotlinSourceSet, androidSourceSet)
-                project.runProjectConfigurationHealthCheck {
-                    checker.checkCreatedSourceSet(target, layout, kotlinSourceSet, androidSourceSet)
-                }
-            }
+            val kotlinSourceSetName = layout.naming.kotlinSourceSetName(target.disambiguationClassifier, androidSourceSet.name)
+            factory.getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName ?: return@all, androidSourceSet)
         }
 
         /* Hook into Android's variant creation: This is invoked in 'afterEvaluate' */
-        forEachVariant(project) { variant ->
+        forEachVariant(target.project) { variant ->
             variant.sourceSets.forEach { sourceProvider ->
                 val androidSourceSet = android.sourceSets.findByName(sourceProvider.name) ?: return@forEach
-                val kotlinSourceSetName = naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name)
-                    ?: naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name, variant.type)
-                val kotlinSourceSet = kotlin.getOrCreateKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
 
-                if (configuredKotlinSourceSets.add(kotlinSourceSet)) {
-                    configurator.configure(target, kotlinSourceSet, androidSourceSet)
-                    project.runProjectConfigurationHealthCheck {
-                        checker.checkCreatedSourceSet(target, layout, kotlinSourceSet, androidSourceSet)
-                    }
-                }
-                configurator.configureWithVariant(target, kotlinSourceSet, variant)
+                val kotlinSourceSetName = layout.naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name)
+                    ?: layout.naming.kotlinSourceSetName(target.disambiguationClassifier, sourceProvider.name, variant.type)
+
+                val kotlinSourceSet = factory.getOrCreateConfiguredKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
+                layout.sourceSetConfigurator.configureWithVariant(target, kotlinSourceSet, variant)
             }
-        }
-    }
-
-
-    private fun KotlinProjectExtension.getOrCreateKotlinSourceSet(
-        name: String, androidSourceSet: AndroidSourceSet
-    ): KotlinSourceSet {
-        return sourceSets.getOrCreate(name) { kotlinSourceSet ->
-            kotlinSourceSet.androidSourceSetInfoOrNull?.let { info ->
-                check(info.kotlinSourceSetName == name) { "Bad 'androidSourceSetInfo' on $name: Bad 'kotlinSourceSetName'" }
-                check(info.androidSourceSetName == androidSourceSet.name) { "Bad 'androidSourceSetInfo' on $name: Bad 'androidSourceSetName'" }
-                return@getOrCreate
-            }
-
-            kotlinSourceSet.androidSourceSetInfo = KotlinAndroidSourceSetInfo.Mutable(
-                kotlinSourceSetName = name,
-                androidSourceSetName = androidSourceSet.name,
-                androidVariantType = AndroidBaseSourceSetName.byName(androidSourceSet.name)?.variantType ?: AndroidVariantType.Unknown
-            )
-
-            logger.debug("Created KotlinSourceSet: ${kotlinSourceSet.name} for AndroidSourceSet: ${androidSourceSet.name}")
         }
     }
 }
+
+
