@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
 
 internal interface KotlinAndroidSourceSetNaming {
 
@@ -29,6 +30,14 @@ internal interface KotlinAndroidSourceSetNaming {
         androidSourceSetName: String,
         type: AndroidVariantType
     ): String
+
+
+    /**
+     * Returns the name of the default KotlinSourceSet for a given Android compilation.
+     * Returns `null`, if this naming schema does not know about it. In this case, the
+     * 'default' defaultSourceSetName will be constructed by the compilation.
+     */
+    fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? = null
 
     /**
      * Always capable of creating the [KotlinSourceSet]'s name based upon the disambiguationClassifier and androidSourceSetName alone.

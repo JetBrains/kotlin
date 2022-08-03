@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal object MultiplatformLayoutV2KotlinAndroidSourceSetNaming : KotlinAndroidSourceSetNaming {
+    private val logger = Logging.getLogger(this::class.java)
+
     private val AndroidBaseSourceSetName.kotlinName
         get() = when (this) {
             AndroidBaseSourceSetName.Main -> "main"
@@ -29,6 +33,24 @@ internal object MultiplatformLayoutV2KotlinAndroidSourceSetNaming : KotlinAndroi
         type: AndroidVariantType
     ): String {
         return lowerCamelCaseName(disambiguationClassifier, replaceAndroidBaseSourceSetName(androidSourceSetName, type))
+    }
+
+    override fun defaultKotlinSourceSetName(compilation: AndroidCompilationDetails): String? {
+        val kotlinSourceSetName: String? = run {
+            val baseSourceSetName = compilation.androidVariant.type.androidBaseSourceSetName ?: return@run null
+            val androidSourceSetName = lowerCamelCaseName(
+                baseSourceSetName.takeIf { it != AndroidBaseSourceSetName.Main }?.name,
+                compilation.androidVariant.flavorName,
+                compilation.androidVariant.buildType.name
+            )
+            val androidSourceSet = compilation.androidVariant.sourceSets.find { it.name == androidSourceSetName } ?: return@run null
+            compilation.project.findKotlinSourceSet(androidSourceSet)?.name
+        }
+
+        if (kotlinSourceSetName == null) {
+            logger.warn("Can't determine 'defaultKotlinSourceSet' for android compilation: ${compilation.androidVariant.name}")
+        }
+        return kotlinSourceSetName
     }
 
     private fun replaceAndroidBaseSourceSetName(

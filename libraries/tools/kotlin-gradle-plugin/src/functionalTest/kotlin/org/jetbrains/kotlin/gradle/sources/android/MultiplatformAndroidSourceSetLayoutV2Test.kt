@@ -14,14 +14,14 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
-import org.jetbrains.kotlin.gradle.plugin.sources.android.androidTest
-import org.jetbrains.kotlin.gradle.plugin.sources.android.main
-import org.jetbrains.kotlin.gradle.plugin.sources.android.test
+import org.jetbrains.kotlin.gradle.plugin.mpp.AndroidCompilationDetails
+import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class MultiplatformAndroidSourceSetLayoutV2Test {
@@ -242,5 +242,75 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.sourceSets.main.manifest.srcFile(project.file("custom.xml"))
         project.evaluate()
         assertEquals(project.file("custom.xml"), android.sourceSets.main.manifest.srcFile)
+    }
+
+    @Test
+    fun `test - defaultKotlinSourceSetName - is determined for all compilations`() {
+        kotlin.android()
+        android.flavorDimensions.add("market")
+        android.flavorDimensions.add("price")
+        android.productFlavors.create("german").dimension = "market"
+        android.productFlavors.create("usa").dimension = "market"
+        android.productFlavors.create("paid").dimension = "price"
+        android.productFlavors.create("free").dimension = "price"
+        project.evaluate()
+
+        kotlin.android().compilations.all { compilation ->
+            val compilationDetails = compilation.compilationDetails as AndroidCompilationDetails
+            val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming.defaultKotlinSourceSetName(compilationDetails)
+            assertNotNull(
+                defaultKotlinSourceSetName,
+                "Expected non-null 'defaultKotlinSourceSetName' for compilation ${compilationDetails.compilation.name}"
+            )
+
+            val kotlinSourceSet = kotlin.sourceSets.getByName(defaultKotlinSourceSetName)
+
+            assertEquals(
+                setOf(compilation.androidVariant.name), kotlinSourceSet.androidSourceSetInfo.androidVariantNames,
+                "Expected KotlinSourceSet ${kotlinSourceSet.name} to only mention androidVariant ${compilation.androidVariant.name}"
+            )
+        }
+    }
+
+    @Test
+    fun `test - defaultKotlinSourceSetName`() {
+        kotlin.android()
+        android.flavorDimensions.add("market")
+        android.flavorDimensions.add("price")
+        android.productFlavors.create("german").dimension = "market"
+        android.productFlavors.create("usa").dimension = "market"
+        android.productFlavors.create("paid").dimension = "price"
+        android.productFlavors.create("free").dimension = "price"
+        project.evaluate()
+
+        assertEquals(
+            "androidGermanFreeDebug",
+            kotlin.android().compilations.getByName("germanFreeDebug").defaultSourceSet.name
+        )
+
+        assertEquals(
+            "androidUsaFreeDebug",
+            kotlin.android().compilations.getByName("usaFreeDebug").defaultSourceSet.name
+        )
+
+        assertEquals(
+            "androidGermanPaidRelease",
+            kotlin.android().compilations.getByName("germanPaidRelease").defaultSourceSet.name
+        )
+
+        assertEquals(
+            "androidUsaPaidRelease",
+            kotlin.android().compilations.getByName("usaPaidRelease").defaultSourceSet.name
+        )
+
+        assertEquals(
+            "androidUnitTestGermanFreeDebug",
+            kotlin.android().compilations.getByName("germanFreeDebugUnitTest").defaultSourceSet.name
+        )
+
+        assertEquals(
+            "androidInstrumentedTestGermanFreeDebug",
+            kotlin.android().compilations.getByName("germanFreeDebugAndroidTest").defaultSourceSet.name
+        )
     }
 }
