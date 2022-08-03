@@ -8,14 +8,45 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.test.assertNull
 
 @MppGradlePluginTests
-@DisplayName("Multiplatform Build Reproducibility")
+@DisplayName("Multiplatform Android Source Set Layout 2")
 class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
     @GradleAndroidTest
+    @DisplayName("test Android project with flavors")
     @AndroidTestVersions(minVersion = "7.0.4")
     fun testProjectWithFlavors(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
-        val buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        project(
+            "multiplatformAndroidSourceSetLayout2",
+            gradleVersion,
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("test") {
+                assertTasksExecuted(":testUsaPaidReleaseUnitTest")
+                assertTasksExecuted(":testUsaPaidDebugUnitTest")
+                assertTasksExecuted(":testUsaFreeReleaseUnitTest")
+                assertTasksExecuted(":testUsaFreeDebugUnitTest")
+
+                assertTasksExecuted(":testGermanPaidReleaseUnitTest")
+                assertTasksExecuted(":testGermanPaidDebugUnitTest")
+                assertTasksExecuted(":testGermanFreeReleaseUnitTest")
+                assertTasksExecuted(":testGermanFreeDebugUnitTest")
+
+                assertNull(task(":assembleUsaPaidDebugAndroidTest"))
+                assertNull(task(":assembleUsaFreeDebugAndroidTest"))
+                assertNull(task(":assembleGermanPaidDebugAndroidTest"))
+                assertNull(task(":assembleGermanFreeDebugAndroidTest"))
+            }
+
+            build("assembleAndroidTest") {
+                assertTasksExecuted(":assembleUsaPaidDebugAndroidTest")
+                assertTasksExecuted(":assembleUsaFreeDebugAndroidTest")
+                assertTasksExecuted(":assembleGermanPaidDebugAndroidTest")
+                assertTasksExecuted(":assembleGermanFreeDebugAndroidTest")
+            }
+        }
     }
 }

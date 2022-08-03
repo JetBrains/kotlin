@@ -35,21 +35,6 @@ internal fun KotlinAndroidSourceSetConfigurator(
     return CompositeKotlinAndroidSourceSetConfigurator(configurators.filterNotNull())
 }
 
-internal operator fun KotlinAndroidSourceSetConfigurator.plus(
-    other: KotlinAndroidSourceSetConfigurator
-): KotlinAndroidSourceSetConfigurator {
-    val configurators = when {
-        this is CompositeKotlinAndroidSourceSetConfigurator && other is CompositeKotlinAndroidSourceSetConfigurator ->
-            this.configurators + other.configurators
-
-        this is CompositeKotlinAndroidSourceSetConfigurator -> this.configurators + other
-        other is CompositeKotlinAndroidSourceSetConfigurator -> listOf(this) + other.configurators
-        else -> listOf(this, other)
-    }
-
-    return CompositeKotlinAndroidSourceSetConfigurator(configurators)
-}
-
 private class CompositeKotlinAndroidSourceSetConfigurator(
     val configurators: List<KotlinAndroidSourceSetConfigurator>
 ) : KotlinAndroidSourceSetConfigurator {
