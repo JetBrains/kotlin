@@ -303,6 +303,16 @@ class IrBuiltInsOverFir(
     override val primitiveIrTypes = listOf(booleanType) + primitiveIrTypesWithComparisons
     private val baseIrTypes = primitiveIrTypes + stringType
 
+    private val bitwiseOperators = arrayOf(OperatorNameConventions.AND, OperatorNameConventions.OR, OperatorNameConventions.XOR)
+    private val shiftOperators = arrayOf(OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR)
+    private val arithmeticOperators = arrayOf(
+        OperatorNameConventions.PLUS,
+        OperatorNameConventions.MINUS,
+        OperatorNameConventions.TIMES,
+        OperatorNameConventions.DIV,
+        OperatorNameConventions.REM
+    )
+
     private fun getPrimitiveArithmeticOperatorResultType(target: IrType, arg: IrType) =
         when {
             arg == doubleType -> arg
@@ -1063,10 +1073,10 @@ class IrBuiltInsOverFir(
         }
 
     private fun IrClass.createStandardBitwiseOps(thisType: IrType) {
-        for (op in arrayOf(OperatorNameConventions.AND, OperatorNameConventions.OR, OperatorNameConventions.XOR)) {
+        for (op in bitwiseOperators) {
             createMemberFunction(op, thisType, "other" to thisType, isOperator = true)
         }
-        for (op in arrayOf(OperatorNameConventions.SHL, OperatorNameConventions.SHR, OperatorNameConventions.USHR)) {
+        for (op in shiftOperators) {
             createMemberFunction(op, thisType, "bitCount" to intType, isOperator = true)
         }
         createMemberFunction(OperatorNameConventions.INV, thisType, isOperator = true)
@@ -1090,13 +1100,7 @@ class IrBuiltInsOverFir(
                 isOperator = true
             )
             val targetArithmeticReturnType = getPrimitiveArithmeticOperatorResultType(thisType, argument)
-            for (op in arrayOf(
-                OperatorNameConventions.PLUS,
-                OperatorNameConventions.MINUS,
-                OperatorNameConventions.TIMES,
-                OperatorNameConventions.DIV,
-                OperatorNameConventions.REM
-            )) {
+            for (op in arithmeticOperators) {
                 createMemberFunction(op, targetArithmeticReturnType, "other" to argument, isOperator = true)
             }
         }
