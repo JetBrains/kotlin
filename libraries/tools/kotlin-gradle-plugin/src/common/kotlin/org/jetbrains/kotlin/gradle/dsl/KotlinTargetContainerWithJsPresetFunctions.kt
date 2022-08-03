@@ -106,7 +106,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
         presets.getByName(
             lowerCamelCaseName(
                 "js",
-                if (compilerOrDefault == KotlinJsCompilerType.LEGACY) null else compilerOrDefault.lowerName
+                if (compilerOrDefault == KotlinJsCompilerType.IR) null else compilerOrDefault.lowerName
             )
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
