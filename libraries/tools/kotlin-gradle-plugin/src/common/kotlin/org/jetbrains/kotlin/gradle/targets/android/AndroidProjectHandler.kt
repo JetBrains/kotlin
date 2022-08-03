@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.setupKotlinAndroidSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -61,7 +61,7 @@ internal class AndroidProjectHandler(
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
 
-        setupKotlinAndroidSourceSets(kotlinAndroidTarget)
+        applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
         val kotlinOptions = KotlinJvmOptionsImpl()
         kotlinOptions.noJdk = true

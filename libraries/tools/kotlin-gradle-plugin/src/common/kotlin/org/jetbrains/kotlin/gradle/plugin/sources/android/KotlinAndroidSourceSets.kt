@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
 internal object KotlinAndroidSourceSets {
 
     private val logger = Logging.getLogger(this::class.java)
 
-    fun setupKotlinAndroidSourceSets(
+    fun applyKotlinAndroidSourceSetLayout(
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout = target.project.kotlinAndroidSourceSetLayout
     ) {
@@ -30,6 +31,11 @@ internal object KotlinAndroidSourceSets {
         val android = project.androidExtension
         val naming = layout.naming
         val configurator = layout.sourceSetConfigurator
+        val checker = layout.checker
+
+        project.runProjectConfigurationHealthCheck {
+            checker.checkBeforeLayoutApplied(target, layout)
+        }
 
         /* Ensures that each KotlinSourceSet only invokes the 'configurator' once */
         val configuredKotlinSourceSets = mutableSetOf<KotlinSourceSet>()
@@ -45,6 +51,9 @@ internal object KotlinAndroidSourceSets {
 
             if (configuredKotlinSourceSets.add(kotlinSourceSet)) {
                 configurator.configure(target, kotlinSourceSet, androidSourceSet)
+                project.runProjectConfigurationHealthCheck {
+                    checker.checkCreatedSourceSet(target, layout, kotlinSourceSet, androidSourceSet)
+                }
             }
         }
 
@@ -58,6 +67,9 @@ internal object KotlinAndroidSourceSets {
 
                 if (configuredKotlinSourceSets.add(kotlinSourceSet)) {
                     configurator.configure(target, kotlinSourceSet, androidSourceSet)
+                    project.runProjectConfigurationHealthCheck {
+                        checker.checkCreatedSourceSet(target, layout, kotlinSourceSet, androidSourceSet)
+                    }
                 }
                 configurator.configureWithVariant(target, kotlinSourceSet, variant)
             }
