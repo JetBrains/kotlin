@@ -34,7 +34,11 @@ internal object KotlinAndroidSourceSets {
         /* Ensures that each KotlinSourceSet only invokes the 'configurator' once */
         val configuredKotlinSourceSets = mutableSetOf<KotlinSourceSet>()
 
-        /* Hook eagerly into AndroidSourceSet creation */
+        /*
+        Hook eagerly into AndroidSourceSet creation
+        Some 'base' source sets shall be created eagerly, as soon as available, too also
+        make them available in the buildscript dsl immediately.
+         */
         android.sourceSets.all { androidSourceSet ->
             val kotlinSourceSetName = naming.kotlinSourceSetName(target.disambiguationClassifier, androidSourceSet.name) ?: return@all
             val kotlinSourceSet = kotlin.getOrCreateKotlinSourceSet(kotlinSourceSetName, androidSourceSet)
