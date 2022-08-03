@@ -9,6 +9,7 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
@@ -91,16 +92,28 @@ internal val GradleKpmModule.buildKotlinToolingMetadataTask: TaskProvider<BuildK
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     abstract class FromKpmModule
-    @Inject constructor (@get:Internal val module: GradleKpmModule) : BuildKotlinToolingMetadataTask() {
+        @Inject constructor (
+            @get:Internal
+            val module: GradleKpmModule,
+            private val projectLayout: ProjectLayout
+        ) : BuildKotlinToolingMetadataTask() {
 
-        override val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata").resolve(module.name)
+        override val outputDirectory: File get() = projectLayout
+            .buildDirectory
+            .get()
+            .asFile
+            .resolve("kotlinToolingMetadata")
+            .resolve(module.name)
 
         override fun buildKotlinToolingMetadata() = module.getKotlinToolingMetadata()
     }
 
-    abstract class FromKotlinExtension : BuildKotlinToolingMetadataTask() {
+    abstract class FromKotlinExtension
+        @Inject constructor(
+            private val projectLayout: ProjectLayout
+        ) : BuildKotlinToolingMetadataTask() {
 
-        override val outputDirectory: File = project.buildDir.resolve("kotlinToolingMetadata")
+        override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("kotlinToolingMetadata")
 
         override fun buildKotlinToolingMetadata() = project.kotlinExtension.getKotlinToolingMetadata()
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -39,6 +40,7 @@ internal open class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
+    private val projectLayout: ProjectLayout
 ) : AbstractCInteropCommonizerTask() {
 
     internal class CInteropGist(
@@ -80,7 +82,7 @@ internal open class CInteropCommonizerTask
 
     }
 
-    override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")
+    override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
 
     @get:Internal
     internal val kotlinPluginVersion: Property<String> = objectFactory

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -28,19 +29,18 @@ open class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
     @get:Input val outputKind: CompilerOutputKind,
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations
+    private val execOperations: ExecOperations,
+    private val projectLayout: ProjectLayout
 ) : DefaultTask() {
 
     @get:Input
     var baseName: String = project.name
 
-    private val buildDir = project.buildDir
-
     private val defaultDestinationDir: File get() {
         val kind = outputKind.visibleName
         val target = konanTarget.visibleName
         val type = if (debuggable) "debug" else "release"
-        return buildDir.resolve("out/$kind/$target/$type")
+        return projectLayout.buildDirectory.get().asFile.resolve("out/$kind/$target/$type")
     }
 
     private var customDestinationDir: File? = null

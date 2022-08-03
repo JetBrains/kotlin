@@ -19,6 +19,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -144,6 +145,10 @@ abstract class AbstractKotlinNativeCompile<
 @Inject constructor(
     private val objectFactory: ObjectFactory
 ): AbstractKotlinCompileTool<M>(objectFactory) {
+
+    @get:Inject
+    protected abstract val projectLayout: ProjectLayout
+
     @get:Internal
     abstract val compilation: K
 
@@ -294,10 +299,7 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Internal
-    internal val manifestFile: File by lazy {
-        val inputManifestFile = project.buildDir.resolve("tmp/$name/inputManifest")
-        inputManifestFile
-    }
+    internal val manifestFile: File get() = projectLayout.buildDirectory.asFile.get().resolve("tmp/$name/inputManifest")
 }
 
 // Remove it once actual K2NativeCompilerArguments will be available without 'kotlin.native.enabled = true' flag
