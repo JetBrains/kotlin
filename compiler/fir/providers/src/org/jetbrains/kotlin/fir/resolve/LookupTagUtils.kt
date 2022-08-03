@@ -118,6 +118,7 @@ fun ConeKotlinType.findClassRepresentation(
 ): ConeClassLikeLookupTag? =
     when (this) {
         is ConeClassLikeType -> this.fullyExpandedType(session).lookupTag
+        is ConeDynamicType -> upperBound.findClassRepresentation(dispatchReceiverParameterType, session)
         is ConeFlexibleType -> lowerBound.findClassRepresentation(dispatchReceiverParameterType, session)
         is ConeCapturedType -> constructor.supertypes.orEmpty()
             .findClassRepresentationThatIsSubtypeOf(dispatchReceiverParameterType, session)
