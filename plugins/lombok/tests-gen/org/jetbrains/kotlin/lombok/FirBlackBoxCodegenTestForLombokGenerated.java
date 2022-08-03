@@ -162,4 +162,10 @@ public class FirBlackBoxCodegenTestForLombokGenerated extends AbstractFirBlackBo
     public void testWith() throws Exception {
         runTest("plugins/lombok/testData/box/with.kt");
     }
+
+    @Test
+    @TestMetadata("withBooleanField.kt")
+    public void testWithBooleanField() throws Exception {
+        runTest("plugins/lombok/testData/box/withBooleanField.kt");
+    }
 }
