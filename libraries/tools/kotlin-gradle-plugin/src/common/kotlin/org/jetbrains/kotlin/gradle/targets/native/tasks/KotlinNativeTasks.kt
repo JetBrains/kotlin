@@ -23,6 +23,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -193,7 +194,7 @@ abstract class AbstractKotlinNativeCompile<
     abstract fun kotlinOptions(fn: Closure<*>)
 
     @get:Input
-    abstract val additionalCompilerOptions: Collection<String>
+    abstract val additionalCompilerOptions: Provider<Collection<String>>
 
     @get:Internal
     val languageSettings: LanguageSettings by project.provider {
@@ -277,7 +278,7 @@ abstract class AbstractKotlinNativeCompile<
             override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
             override var suppressWarnings = kotlinOptions.suppressWarnings
             override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = if (defaultsOnly) emptyList() else additionalCompilerOptions.toList()
+            override var freeCompilerArgs = if (defaultsOnly) emptyList() else additionalCompilerOptions.get().toList()
         }
 
         return buildKotlinNativeCommonArgs(
@@ -316,6 +317,7 @@ constructor(
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinNativeCompilationData<*>,
     private val objectFactory: ObjectFactory,
+    private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions> {
@@ -349,7 +351,7 @@ constructor(
         get() = super.outputFile
 
     @get:Input
-    val shortModuleName: String by project.provider { baseName }
+    val shortModuleName: String by providerFactory.provider { baseName }
 
     // Inputs and outputs.
     // region Sources.
@@ -382,12 +384,12 @@ constructor(
     // endregion.
 
     // region Kotlin options.
-    override val kotlinOptions: KotlinCommonOptions by project.provider {
+    override val kotlinOptions: KotlinCommonOptions by providerFactory.provider {
         compilation.kotlinOptions
     }
 
     @get:Input
-    override val additionalCompilerOptions: Collection<String> by lazy {
+    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
         kotlinOptions.freeCompilerArgs + ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList())
     }
 
@@ -435,7 +437,7 @@ constructor(
             override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
             override var suppressWarnings = kotlinOptions.suppressWarnings
             override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = additionalCompilerOptions.toList()
+            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
         }
 
         val plugins = listOfNotNull(
@@ -478,6 +480,7 @@ constructor(
     @Internal
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
+    private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonToolOptions, KotlinNativeCompilation, StubK2NativeCompilerArguments>(objectFactory) {
     @get:Internal
@@ -525,13 +528,15 @@ constructor(
         override var freeCompilerArgs: List<String> = listOf()
     }
 
+    private val nativeLinkArgs = PropertiesProvider(project).nativeLinkArgs
+
     // We propagate compilation free args to the link task for now (see KT-33717).
     @get:Input
-    override val additionalCompilerOptions: Collection<String> by lazy {
+    override val additionalCompilerOptions: Provider<Collection<String>> = providerFactory.provider {
         kotlinOptions.freeCompilerArgs +
                 compilation.kotlinOptions.freeCompilerArgs +
                 ((languageSettings as? DefaultLanguageSettingsBuilder)?.freeCompilerArgs ?: emptyList()) +
-                PropertiesProvider(project).nativeLinkArgs
+                nativeLinkArgs
     }
 
     override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()
@@ -587,7 +592,7 @@ constructor(
             override var allWarningsAsErrors = kotlinOptions.allWarningsAsErrors
             override var suppressWarnings = kotlinOptions.suppressWarnings
             override var verbose = kotlinOptions.verbose
-            override var freeCompilerArgs = additionalCompilerOptions.toList()
+            override var freeCompilerArgs = additionalCompilerOptions.get().toList()
         }
 
     private val externalDependenciesArgs by lazy { ExternalDependenciesBuilder(project, compilation).buildCompilerArgs() }
