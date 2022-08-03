@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
-    configBuilder: ProjectBuilder.() -> Unit = { Unit },
-    configProject: Project.() -> Unit
+    configBuilder: ProjectBuilder.() -> Unit = { },
+    configProject: Project.() -> Unit = {},
 ): ProjectInternal = ProjectBuilder
     .builder()
     .apply(configBuilder)
@@ -26,16 +26,15 @@ fun buildProject(
     .apply(configProject)
     .let { it as ProjectInternal }
 
-fun buildProjectWithMPP(code: Project.() -> Unit) = buildProject {
+fun buildProjectWithMPP(code: Project.() -> Unit = {}) = buildProject {
     project.plugins.apply("kotlin-multiplatform")
     code()
 }
 
-fun buildProjectWithKPM(code: Project.() -> Unit) = buildProject {
+fun buildProjectWithKPM(code: Project.() -> Unit= {}) = buildProject {
     project.plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
     code()
 }
-
 
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
     val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
