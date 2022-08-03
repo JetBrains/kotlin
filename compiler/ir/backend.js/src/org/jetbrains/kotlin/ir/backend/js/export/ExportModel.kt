@@ -70,7 +70,7 @@ sealed class ExportedClass : ExportedDeclaration() {
     abstract val name: String
     abstract val ir: IrClass
     abstract val members: List<ExportedDeclaration>
-    abstract val superClass: ExportedType?
+    abstract val superClasses: List<ExportedType>
     abstract val superInterfaces: List<ExportedType>
     abstract val nestedClasses: List<ExportedClass>
 }
@@ -79,7 +79,7 @@ data class ExportedRegularClass(
     override val name: String,
     val isInterface: Boolean = false,
     val isAbstract: Boolean = false,
-    override val superClass: ExportedType? = null,
+    override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
     val typeParameters: List<ExportedType.TypeParameter>,
     override val members: List<ExportedDeclaration>,
@@ -89,7 +89,7 @@ data class ExportedRegularClass(
 
 data class ExportedObject(
     override val name: String,
-    override val superClass: ExportedType? = null,
+    override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
@@ -115,6 +115,7 @@ sealed class ExportedType {
         object String : Primitive("string")
         object Throwable : Primitive("Error")
         object Any : Primitive("any")
+        object Unknown : Primitive("unknown")
         object Unit : Primitive("void")
         object Nothing : Primitive("never")
         object UniqueSymbol : Primitive("unique symbol")
@@ -147,16 +148,16 @@ sealed class ExportedType {
 
     class PropertyType(val container: ExportedType, val propertyName: ExportedType) : ExportedType()
 
-    class ImplicitlyExportedType(val type: ExportedType) : ExportedType() {
+    data class ImplicitlyExportedType(val type: ExportedType, val exportedSupertype: ExportedType) : ExportedType() {
         override fun withNullability(nullable: Boolean) =
-            ImplicitlyExportedType(type.withNullability(nullable))
+            ImplicitlyExportedType(type.withNullability(nullable), exportedSupertype.withNullability(nullable))
     }
 
     open fun withNullability(nullable: Boolean) =
         if (nullable) Nullable(this) else this
 
-    fun withImplicitlyExported(implicitlyExportedType: Boolean) =
-        if (implicitlyExportedType) ImplicitlyExportedType(this) else this
+    fun withImplicitlyExported(implicitlyExportedType: Boolean, exportedSupertype: ExportedType) =
+        if (implicitlyExportedType) ImplicitlyExportedType(this, exportedSupertype) else this
 }
 
 enum class ExportedVisibility(val keyword: String) {

@@ -13,7 +13,7 @@ declare namespace JS_TESTS {
             generic1<T>(x: T): T;
             generic2<T>(x: Nullable<T>): boolean;
             genericWithConstraint<T extends string>(x: T): T;
-            genericWithMultipleConstraints<T extends RegExpMatchArray & Error>(x: T): T;
+            genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & RegExpMatchArray & Error>(x: T): T;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Nullable<E>;
             inlineFun(x: number, callback: (p0: number) => void): void;
         }

@@ -163,3 +163,53 @@ enum class EC : I3 {
 
     override fun bay(): String = "bay"
 }
+
+// Save hierarhy
+
+@JsExport
+interface IA {
+    val foo: Any
+}
+
+@JsExport
+interface IG<T> {
+    fun process(value: T): Unit
+}
+
+interface IB : IA
+
+interface IC : IB {
+    override val foo: Any
+}
+
+interface ID : IC {
+    override val foo: Int
+}
+
+@JsExport
+open class Third<T>: Second()
+
+open class Forth<A>: Third<A>(), IB, ID {
+    override val foo: Int = 42
+}
+
+open class Fifth<B>: Forth<B>(), IG<B> {
+    override fun process(value: B) {}
+}
+
+@JsExport
+class Sixth: Fifth<Int>(), IC
+
+@JsExport
+open class First
+
+open class Second: First()
+
+@JsExport
+fun <T : Forth<String>> acceptForthLike(forth: T) {}
+
+@JsExport
+fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Second {}
+
+@JsExport
+val fifth = Fifth<Boolean>()
