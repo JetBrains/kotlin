@@ -9,8 +9,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

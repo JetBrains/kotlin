@@ -11,9 +11,6 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.mpp.androidLibrary
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget

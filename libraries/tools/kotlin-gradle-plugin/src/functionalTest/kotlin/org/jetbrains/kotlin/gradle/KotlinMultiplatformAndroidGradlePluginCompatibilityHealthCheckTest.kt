@@ -9,9 +9,6 @@ package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryPlugin
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithKPM
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginStringProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.AndroidGradlePluginVersionParser

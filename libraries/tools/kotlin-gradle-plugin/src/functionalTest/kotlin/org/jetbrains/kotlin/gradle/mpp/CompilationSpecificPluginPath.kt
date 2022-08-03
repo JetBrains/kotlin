@@ -10,6 +10,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.buildProject
+import org.jetbrains.kotlin.gradle.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.kotlin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import kotlin.test.*
