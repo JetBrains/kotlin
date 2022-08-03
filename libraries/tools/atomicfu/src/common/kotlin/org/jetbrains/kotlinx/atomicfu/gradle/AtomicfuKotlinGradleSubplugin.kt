@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlinx.atomicfu.gradle
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -29,15 +30,16 @@ class AtomicfuKotlinGradleSubplugin :
     }
 
     override fun apply(target: Project) {
-        target.extensions.add(EXTENSION_NAME, AtomicfuKotlinGradleExtension())
+        target.extensions.create(EXTENSION_NAME, AtomicfuKotlinGradleExtension::class.java)
         super.apply(target)
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
-        val config = project.extensions.findByName(EXTENSION_NAME) as? AtomicfuKotlinGradleExtension ?: AtomicfuKotlinGradleExtension()
-        return (config.isJsTransformationEnabled && kotlinCompilation.target.isJs()) ||
-                (config.isJvmTransformationEnabled && (kotlinCompilation.target.isJvm()))
+        val config = project.extensions.getByType(AtomicfuKotlinGradleExtension::class.java)
+            ?: throw GradleException("AtomicfuKotlinGradleExtension can not be found in ${project.name}")
+        return (config.isJsIrTransformationEnabled && kotlinCompilation.target.isJs()) ||
+                (config.isJvmIrTransformationEnabled && kotlinCompilation.target.isJvm())
     }
 
     override fun applyToCompilation(
@@ -46,8 +48,8 @@ class AtomicfuKotlinGradleSubplugin :
         kotlinCompilation.target.project.provider { emptyList() }
 
     class AtomicfuKotlinGradleExtension {
-        var isJsTransformationEnabled = false
-        var isJvmTransformationEnabled = false
+        var isJsIrTransformationEnabled = false
+        var isJvmIrTransformationEnabled = false
     }
 
     override fun getPluginArtifact(): SubpluginArtifact =
