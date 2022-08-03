@@ -163,15 +163,26 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             gradleBuildScript().appendText(
                 "\n" + """
                 dependencies {
-                    jvm6CompilationImplementation project(':${innerJvmProject.projectName}')
-                    jvm6TestCompilationRuntimeOnly project(':${innerJvmProject.projectName}')
-                    nodeJsCompilationImplementation project(':${innerJsProject.projectName}')
-                    nodeJsTestCompilationRuntimeOnly project(':${innerJsProject.projectName}')
+                    def jvmCompilations = kotlin.getTargets().getByName("jvm6").getCompilations()
+                    def jsCompilations = kotlin.getTargets().getByName("nodeJs").getCompilations()
+                    
+                    def jvmMainImplConfigName = jvmCompilations.getByName("main").getImplementationConfigurationName()
+                    def jvmTestImplConfigName = jvmCompilations.getByName("test").getImplementationConfigurationName()
+                    def jsMainImplConfigName = jsCompilations.getByName("main").getImplementationConfigurationName()
+                    def jsTestImplConfigName = jsCompilations.getByName("test").getImplementationConfigurationName()
+
+                    add(jvmMainImplConfigName, project(':${innerJvmProject.projectName}'))
+                    add(jvmTestImplConfigName, project(':${innerJvmProject.projectName}'))
+                    add(jsMainImplConfigName, project(':${innerJsProject.projectName}'))
+                    add(jsTestImplConfigName, project(':${innerJsProject.projectName}'))
                 }
             """.trimIndent()
             )
 
-            testResolveAllConfigurations(innerJvmProject.projectName, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary))
+            testResolveAllConfigurations(
+                innerJvmProject.projectName,
+                options = defaultBuildOptions().copy(warningMode = WarningMode.Summary),
+            )
         }
     }
 
