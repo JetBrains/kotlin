@@ -11,6 +11,7 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.mpp.androidLibrary
 import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.mpp.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
@@ -160,10 +161,15 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `test compilation and source set configurations don't clash`() {
         val project = buildProjectWithMPP {
+            androidLibrary {
+                compileSdkVersion(30)
+            }
+
             kotlin {
                 jvm()
                 js(BOTH)
                 linuxX64("linux")
+                android()
             }
         }
 
