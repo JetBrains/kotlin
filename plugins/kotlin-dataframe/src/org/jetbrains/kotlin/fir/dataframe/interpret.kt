@@ -116,7 +116,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         .statements.filterIsInstance<FirFunctionCall>()
                         .forEach { call ->
                             val schemaProcessor = call.loadInterpreter() ?: return@forEach
-                            interpret(call, schemaProcessor, mapOf("receiver" to Interpreter.Success(receiver)))
+                            interpret(call, schemaProcessor, mapOf("dsl" to Interpreter.Success(receiver)))
                         }
                 }.let { Interpreter.Success(it) }
             }
@@ -181,7 +181,7 @@ private fun FirCallableReferenceAccess.toKPropertyApproximation(session: FirSess
 internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
     val refinedArgument = mutableListOf<RefinedArgument>()
 
-    val parameterName = Name.identifier("this")
+    val parameterName = Name.identifier("receiver")
     explicitReceiver?.let {
         refinedArgument += RefinedArgument(parameterName, it)
     }
