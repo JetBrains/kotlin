@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.js.backend.ast.*
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
-    override fun visitFunction(declaration: IrFunction, data: JsGenerationContext) = JsEmpty.also {
-        assert(declaration.origin == JsIrBackendContext.callableClosureOrigin) {
-            "The only possible Function Declaration is one composed in Callable Reference Lowering"
-        }
+    override fun visitFunction(declaration: IrFunction, data: JsGenerationContext): JsStatement {
+        error("All functions must be already lowered")
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
