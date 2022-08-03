@@ -20,6 +20,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -300,7 +301,7 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Internal
-    internal val manifestFile: File get() = projectLayout.buildDirectory.asFile.get().resolve("tmp/$name/inputManifest")
+    internal val manifestFile: Provider<RegularFile> get() = projectLayout.buildDirectory.file("tmp/$name/inputManifest")
 }
 
 // Remove it once actual K2NativeCompilerArguments will be available without 'kotlin.native.enabled = true' flag
@@ -421,7 +422,7 @@ constructor(
 
         var sharedCompilationData: SharedCompilationData? = null
         if (compilation is KotlinNativeFragmentMetadataCompilationData) {
-            val manifestFile: File = manifestFile
+            val manifestFile: File = manifestFile.get().asFile
             manifestFile.ensureParentDirsCreated()
             val properties = java.util.Properties()
             properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest
