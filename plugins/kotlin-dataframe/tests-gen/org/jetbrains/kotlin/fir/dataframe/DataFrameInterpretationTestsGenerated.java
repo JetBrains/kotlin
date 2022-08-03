@@ -82,6 +82,12 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         }
 
         @Test
+        @TestMetadata("memberFunction.kt")
+        public void testMemberFunction() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/memberFunction.kt");
+        }
+
+        @Test
         @TestMetadata("string.kt")
         public void testString() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/string.kt");

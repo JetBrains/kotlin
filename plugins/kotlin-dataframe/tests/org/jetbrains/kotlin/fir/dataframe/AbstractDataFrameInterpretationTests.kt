@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximationImpl
 import org.jetbrains.kotlinx.dataframe.api.Infer
 import org.jetbrains.kotlinx.dataframe.plugin.*
+import org.jetbrains.kotlinx.dataframe.plugin.testing.atoms.Context
 
 abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest() {
     lateinit var filePath: String
@@ -120,7 +121,8 @@ abstract class AbstractDataFrameInterpretationTests : AbstractKotlinCompilerTest
                 "varargKProperty_0" to listOf(
                     KPropertyApproximation("col1", TypeApproximationImpl("kotlin.Int", false)),
                     KPropertyApproximation("col2", TypeApproximationImpl("kotlin.Int", true))
-                )
+                ),
+                "memberFunction_1" to Context(123),
             )
             return map[id]
         }

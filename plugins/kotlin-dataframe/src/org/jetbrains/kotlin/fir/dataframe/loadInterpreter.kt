@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
     val symbol =
-        (calleeReference as FirResolvedNamedReference).resolvedSymbol as FirNamedFunctionSymbol
+        (calleeReference as FirResolvedNamedReference).resolvedSymbol as FirCallableSymbol
     val argName = Name.identifier("interpreter")
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
