@@ -6,23 +6,38 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 internal class KtModuleProviderImpl(
     internal val mainModules: List<KtModule>,
 ) : ProjectStructureProvider() {
+    private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
+        KtNotUnderContentRootModuleImpl(
+            moduleDescription = "Standalone-not-under-content-root-module-without-psi-file"
+        )
+    }
+
+    private val notUnderContentRootModuleCache = ContainerUtil.createConcurrentWeakMap<PsiFile, KtNotUnderContentRootModule>()
+
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFileAsPsiFile = element.containingFile
-            ?: error("Can't get containing PsiFile for ${element.text}")
+            ?: return ktNotUnderContentRootModuleWithoutPsiFile
         // If an [element] is created on the fly, e.g., via [KtPsiFactory],
         // its containing [PsiFile] may not have [VirtualFile].
         // That also means the [element] is not bound to any [KtModule] either.
         val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
-            ?: error("Can't get containing VirtualFile for ${element.text} in $containingFileAsPsiFile")
+            ?: return notUnderContentRootModuleCache.getOrPut(containingFileAsPsiFile) {
+                KtNotUnderContentRootModuleImpl(
+                    moduleDescription = "Standalone-not-under-content-root-module-for-$containingFileAsPsiFile",
+                    psiFile = containingFileAsPsiFile
+                )
+            }
+
         return mainModules.first { module ->
             containingFileAsVirtualFile in module.contentScope
         }

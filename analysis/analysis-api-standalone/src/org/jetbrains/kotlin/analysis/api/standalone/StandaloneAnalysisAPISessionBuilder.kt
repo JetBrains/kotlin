@@ -144,6 +144,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             )
             registerService(LLFirBuiltinsSessionFactory::class.java, LLFirBuiltinsSessionFactory(this))
             RegisterComponentService.registerLLFirLibrarySessionFactory(this)
+            RegisterComponentService.registerLLFirNonUnderContentRootSessionFactory(this)
             RegisterComponentService.registerLLFirResolveSessionService(this)
             registerService(
                 PackagePartProviderFactory::class.java,
