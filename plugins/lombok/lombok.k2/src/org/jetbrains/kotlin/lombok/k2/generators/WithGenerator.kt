@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
@@ -91,7 +92,6 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
-            .filter { it.isVar }
             .collectWithNotNull { lombokService.getWith(it.symbol) ?: classWith }
             .takeIf { it.isNotEmpty() }
     }
