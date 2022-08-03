@@ -544,13 +544,6 @@ class AndroidCompilationDetails(
             other.implementationConfigurationName,
             other.compileOnlyConfigurationName
         )
-
-        compilation.runtimeDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
-            project,
-            other.apiConfigurationName,
-            other.implementationConfigurationName,
-            other.runtimeOnlyConfigurationName
-        )
     }
 
     override val kotlinDependenciesHolder: HasKotlinDependencies
