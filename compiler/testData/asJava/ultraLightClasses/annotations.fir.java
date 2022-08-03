@@ -44,7 +44,7 @@ public static final class Companion /* AnnoWithCompanion.Companion*/ {
 public abstract @interface Anno /* Anno*/ {
   public abstract Anno[] x();//  x()
 
-  public abstract java.lang.String p();//  p()
+  public abstract java.lang.String p() default "";//  p()
 
 }
 

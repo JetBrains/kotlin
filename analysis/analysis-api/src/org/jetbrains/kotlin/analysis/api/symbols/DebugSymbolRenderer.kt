@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
@@ -262,9 +259,16 @@ public object DebugSymbolRenderer {
                 append(value.constant.renderAsKotlinConstant())
                 append(")")
             }
+
             is KtNonConstantInitializerValue -> {
                 append("KtNonConstantInitializerValue(")
                 append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
+                append(")")
+            }
+
+            is KtConstantValueForAnnotation -> {
+                append("KtConstantValueForAnnotation(")
+                append(value.annotationValue.renderAsSourceCode())
                 append(")")
             }
         }

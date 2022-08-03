@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -29,10 +30,19 @@ public class KtConstantInitializerValue(
 ) : KtInitializerValue()
 
 /**
- * Property intialzer which cannot be represented as Kotlin const value.
+ * Property initializer which cannot be represented as Kotlin const value.
  *
  * See [KtConstantInitializerValue] for more info.
  */
 public class KtNonConstantInitializerValue(
+    override val initializerPsi: KtExpression?
+) : KtInitializerValue()
+
+/**
+ * Initializer of property of annotation, which can not be which cannot be represented as Kotlin const value,
+ *   but can be represented as [KtAnnotationValue]
+ */
+public class KtConstantValueForAnnotation(
+    public val annotationValue: KtAnnotationValue,
     override val initializerPsi: KtExpression?
 ) : KtInitializerValue()

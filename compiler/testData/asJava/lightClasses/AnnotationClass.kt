@@ -1,4 +1,6 @@
 // Anno
+// IGNORE_FIR
+// Ignored due to KT-53573
 
 annotation class Anno(
         val i: Int,

@@ -51,7 +51,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
-    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer() }
+    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(firResolveSession) }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality ?: firSymbol.invalidModalityError() }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
