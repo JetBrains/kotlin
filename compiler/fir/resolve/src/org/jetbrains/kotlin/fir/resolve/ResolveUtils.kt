@@ -346,7 +346,7 @@ fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
 private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
-private inline fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
+private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
     smartcastExtractor: (T) -> Pair<PropertyStability, MutableList<ConeKotlinType>>?,
     smartcastBuilder: () -> FirWrappedExpressionWithSmartcastBuilder<T>,
@@ -416,13 +416,19 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     session: FirSession,
     file: FirFile
 ) {
+    val rawReceiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
-    val receiverType = ((nullableReceiverExpression as? FirExpressionWithSmartcastToNothing)
-        ?.takeIf { it.isStable }
-        ?.smartcastTypeWithoutNullableNothing
-        ?: nullableReceiverExpression.typeRef)
-        .coneTypeSafe<ConeKotlinType>() ?: return
+    val receiverType = if (
+        rawReceiverType !is ConeDynamicType &&
+        nullableReceiverExpression is FirExpressionWithSmartcastToNothing &&
+        nullableReceiverExpression.isStable
+    ) {
+        nullableReceiverExpression.smartcastTypeWithoutNullableNothing.coneTypeSafe() ?: return
+    } else {
+        rawReceiverType
+    }
 
     val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
 
