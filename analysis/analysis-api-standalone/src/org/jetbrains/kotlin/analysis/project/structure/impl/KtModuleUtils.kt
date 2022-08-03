@@ -28,12 +28,11 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
-import org.jetbrains.kotlin.platform.jvm.JdkPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -102,7 +101,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
 ): ProjectStructureProvider = buildProjectStructureProvider {
     addModule(
         buildKtSourceModule {
-            val platform = TargetPlatform(setOf(JdkPlatform(JvmTarget.DEFAULT)))
+            val platform = JvmPlatforms.defaultJvmPlatform
             val moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
             val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
