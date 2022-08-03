@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -30,7 +29,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
     findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
-    firErrorWithAttachment("No fir element was found for", psi = this)
+    errorWithFirSpecificEntries("No fir element was found for", psi = this)
 }
 
 internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
@@ -45,7 +44,7 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
         firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
     }
     return fir
-        ?: firErrorWithAttachment("FirDeclaration was not found", psi = this)
+        ?: errorWithFirSpecificEntries("FirDeclaration was not found", psi = this)
 }
 
 internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclarationForAnyFirSourceDeclarationOfType(
@@ -95,12 +94,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         }
         this is KtConstructor<*> -> {
             val containingClass = containingClassOrObject
-                ?: firErrorWithAttachment("Container class should be not null for KtConstructor", psi = this)
+                ?: errorWithFirSpecificEntries("Container class should be not null for KtConstructor", psi = this)
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(provider)
-        else -> firErrorWithAttachment("Invalid container", psi = this)
+        else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
 }

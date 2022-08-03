@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
-import org.jetbrains.kotlin.utils.checkWithAttachment
-import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 
 class FirDeclarationDesignationWithFile(
     path: List<FirDeclaration>,
@@ -80,8 +78,8 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
         else -> return null
     } ?: return emptyList()
 
-    checkWithAttachment(containingClass is FirRegularClass, { "FirRegularClass as containing declaration expected" }) {
-        it.withFirAttachment("containingClassFir", containingClass)
+    checkWithAttachmentBuilder(containingClass is FirRegularClass, { "FirRegularClass as containing declaration expected" }) {
+        withFirEntry("containingClassFir", containingClass)
     }
     return if (!containingClass.isLocal) containingClass.collectForNonLocal().asReversed() else null
 }
@@ -92,20 +90,20 @@ private fun ConeClassLikeLookupTag.toFirRegularClassFromSameSession(useSiteSessi
 }
 
 fun FirDeclaration.collectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile =
-    tryCollectDesignation(firFile) ?: errorWithAttachment("No designation of local declaration") {
-        withFirAttachment("firFile", firFile)
+    tryCollectDesignation(firFile) ?: buildErrorWithAttachment("No designation of local declaration") {
+        withFirEntry("firFile", firFile)
     }
 
 fun FirDeclaration.collectDesignation(): FirDeclarationDesignation =
     tryCollectDesignation()
-        ?: errorWithAttachment("No designation of local declaration") {
-            withFirAttachment("FirDeclaration", this@collectDesignation)
+        ?: buildErrorWithAttachment("No designation of local declaration") {
+            withFirEntry("FirDeclaration", this@collectDesignation)
         }
 
 fun FirDeclaration.collectDesignationWithFile(): FirDeclarationDesignationWithFile =
     tryCollectDesignationWithFile()
-        ?: errorWithAttachment("No designation of local declaration") {
-            withFirAttachment("FirDeclaration", this@collectDesignationWithFile)
+        ?: buildErrorWithAttachment("No designation of local declaration") {
+            withFirEntry("FirDeclaration", this@collectDesignationWithFile)
         }
 
 fun FirDeclaration.tryCollectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile? =

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -35,8 +34,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.errorWithAttachment
-import org.jetbrains.kotlin.utils.withAttachmentDetailed
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.*
 
 internal abstract class LLFirResolvableResolveSession(
     private val sessionProvider: LLFirSessionProvider,
@@ -103,9 +102,9 @@ internal abstract class LLFirResolvableResolveSession(
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
         val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
-            ?: errorWithAttachment("Declaration should have non-local container") {
-                withPsiAttachment("ktDeclaration", ktDeclaration)
-                withAttachmentDetailed("module", module) { it.moduleDescription }
+            ?: buildErrorWithAttachment("Declaration should have non-local container") {
+                withPsiEntry("ktDeclaration", ktDeclaration)
+                withEntry("module", module) { it.moduleDescription }
             }
 
         if (ktDeclaration == nonLocalNamedDeclaration) {
