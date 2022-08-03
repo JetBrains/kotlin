@@ -19,6 +19,8 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
 }
 
 optInToExperimentalCompilerApi()
