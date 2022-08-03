@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -39,6 +40,13 @@ fun buildProjectWithKPM(code: Project.() -> Unit) = buildProject {
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
     val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
     kotlin.code()
+}
+
+fun Project.androidLibrary(code: LibraryExtension.() -> Unit) {
+    plugins.findPlugin("com.android.library") ?: plugins.apply("com.android.library")
+    val androidExtension = project.extensions.findByName("android") as? LibraryExtension
+        ?: throw IllegalStateException("Android library extension is missing in project")
+    androidExtension.code()
 }
 
 fun Project.projectModel(code: KotlinPm20ProjectExtension.() -> Unit) {
