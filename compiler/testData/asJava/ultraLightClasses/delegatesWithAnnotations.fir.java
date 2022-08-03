@@ -21,14 +21,14 @@ public abstract @interface Ann /* Ann*/ {
 }
 
 public abstract interface Base /* Base*/ {
-  @Ann(x = 1L, y = "134", z = java.lang.String.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = ?)
-  public abstract void foo(@Ann(x = 2L, y = "324", z = Ann.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = ?) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
+  @Ann(x = 1L, y = "134", z = java.lang.String.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = {})
+  public abstract void foo(@Ann(x = 2L, y = "324", z = Ann.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = {}) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
 
 }
 
 public final class Derived /* Derived*/ implements Base {
-  @Ann(x = 1L, y = "134", z = java.lang.String.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = ?)
-  public void foo(@Ann(x = 2L, y = "324", z = Ann.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = ?) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
+  @Ann(x = 1L, y = "134", z = java.lang.String.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = {})
+  public void foo(@Ann(x = 2L, y = "324", z = Ann.class, e = ?, depr = kotlin.DeprecationLevel.WARNING, t = {}) @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(java.lang.String)
 
   public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
 

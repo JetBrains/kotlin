@@ -57,6 +57,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
     @TestDataPath("$PROJECT_ROOT")
     public class Direct {
         @Test
+        @TestMetadata("aliasedThrowsOnFunction.kt")
+        public void testAliasedThrowsOnFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/aliasedThrowsOnFunction.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInDirect() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
@@ -83,6 +89,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDeclaratio
         @TestMetadata("onTypeAlias.kt")
         public void testOnTypeAlias() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onTypeAlias.kt");
+        }
+
+        @Test
+        @TestMetadata("varargParameter.kt")
+        public void testVarargParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargParameter.kt");
         }
     }
 

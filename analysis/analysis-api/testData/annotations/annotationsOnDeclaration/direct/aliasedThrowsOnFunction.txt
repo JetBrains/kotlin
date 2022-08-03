@@ -1,0 +1,5 @@
+KtDeclaration: KtNamedFunction bar
+annotations: [
+  kotlin/jvm/Throws(exceptionClasses = [java.io.IOException::class, MyException::class])
+    psi: KtAnnotationEntry
+]
