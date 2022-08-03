@@ -1,4 +1,3 @@
-// FIR_IDE_IGNORE
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // FILE: MyRecord.java
