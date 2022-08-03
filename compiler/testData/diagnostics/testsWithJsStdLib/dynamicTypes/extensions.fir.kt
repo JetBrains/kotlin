@@ -19,7 +19,7 @@ fun test(d: dynamic) {
     (d as String).onString()
     (d as Any).onAny()
     (d as Any?).onNullableAny()
-    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamic<!>()
+    (d as Any).onDynamic()
 }
 
 fun Any.onAny() {}

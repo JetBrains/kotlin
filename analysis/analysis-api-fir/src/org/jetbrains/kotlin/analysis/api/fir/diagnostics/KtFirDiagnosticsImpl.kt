@@ -3985,6 +3985,11 @@ internal class NameContainsIllegalCharsImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NameContainsIllegalChars(), KtAbstractFirDiagnostic<KtElement>
 
+internal class DynamicImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.Dynamic(), KtAbstractFirDiagnostic<KtElement>
+
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

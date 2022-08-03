@@ -83,6 +83,9 @@ object FirJsErrors {
     // General Syntax
     val NAME_CONTAINS_ILLEGAL_CHARS by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // Debug Info
+    val DYNAMIC by info0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }
