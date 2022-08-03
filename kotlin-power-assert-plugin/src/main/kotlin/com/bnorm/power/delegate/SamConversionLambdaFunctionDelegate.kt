@@ -19,11 +19,10 @@ package com.bnorm.power.delegate
 import com.bnorm.power.irLambda
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.typeOperator
+import org.jetbrains.kotlin.ir.builders.irSamConversion
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class SamConversionLambdaFunctionDelegate(
@@ -35,13 +34,22 @@ class SamConversionLambdaFunctionDelegate(
   override fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
-    arguments: List<IrExpression?>,
-    message: IrExpression
+    dispatchReceiver: IrExpression?,
+    extensionReceiver: IrExpression?,
+    valueArguments: List<IrExpression?>,
+    messageArgument: IrExpression
   ): IrExpression = with(builder) {
     val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
-      +irReturn(message)
+      +irReturn(messageArgument)
     }
-    val expression = typeOperator(messageParameter.type, lambda, IrTypeOperator.SAM_CONVERSION, messageParameter.type)
-    irCallCopy(overload, original, arguments, expression)
+    val expression = irSamConversion(lambda, messageParameter.type)
+    irCallCopy(
+      overload = overload,
+      original = original,
+      dispatchReceiver = dispatchReceiver,
+      extensionReceiver = extensionReceiver,
+      valueArguments = valueArguments,
+      messageArgument = expression
+    )
   }
 }

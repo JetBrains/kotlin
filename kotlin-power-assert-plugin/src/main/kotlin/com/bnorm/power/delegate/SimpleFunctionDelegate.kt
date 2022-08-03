@@ -31,7 +31,16 @@ class SimpleFunctionDelegate(
   override fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
-    arguments: List<IrExpression?>,
-    message: IrExpression
-  ): IrExpression = builder.irCallCopy(overload, original, arguments, message)
+    dispatchReceiver: IrExpression?,
+    extensionReceiver: IrExpression?,
+    valueArguments: List<IrExpression?>,
+    messageArgument: IrExpression
+  ): IrExpression = builder.irCallCopy(
+    overload = overload,
+    original = original,
+    dispatchReceiver = dispatchReceiver,
+    extensionReceiver = extensionReceiver,
+    valueArguments = valueArguments,
+    messageArgument = messageArgument
+  )
 }

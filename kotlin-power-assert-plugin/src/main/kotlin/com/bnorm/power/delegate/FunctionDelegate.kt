@@ -33,26 +33,30 @@ interface FunctionDelegate {
   fun buildCall(
     builder: IrBuilderWithScope,
     original: IrCall,
-    arguments: List<IrExpression?>,
-    message: IrExpression
+    dispatchReceiver: IrExpression?,
+    extensionReceiver: IrExpression?,
+    valueArguments: List<IrExpression?>,
+    messageArgument: IrExpression
   ): IrExpression
 
   fun IrBuilderWithScope.irCallCopy(
     overload: IrSimpleFunctionSymbol,
     original: IrCall,
-    arguments: List<IrExpression?>,
-    expression: IrExpression
+    dispatchReceiver: IrExpression?,
+    extensionReceiver: IrExpression?,
+    valueArguments: List<IrExpression?>,
+    messageArgument: IrExpression
   ): IrExpression {
     return irCall(overload, type = original.type).apply {
-      dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
-      extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
+      this.dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
+      this.extensionReceiver = (extensionReceiver ?: original.extensionReceiver)?.deepCopyWithSymbols(parent)
       for (i in 0 until original.typeArgumentsCount) {
         putTypeArgument(i, original.getTypeArgument(i))
       }
-      for ((i, argument) in arguments.withIndex()) {
+      for ((i, argument) in valueArguments.withIndex()) {
         putValueArgument(i, argument?.deepCopyWithSymbols(parent))
       }
-      putValueArgument(arguments.size, expression.deepCopyWithSymbols(parent))
+      putValueArgument(valueArguments.size, messageArgument.deepCopyWithSymbols(parent))
     }
   }
 }

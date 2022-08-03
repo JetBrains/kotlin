@@ -26,11 +26,20 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 fun IrBuilderWithScope.buildDiagramNesting(
   root: Node,
+  variables: List<IrTemporaryVariable> = emptyList(),
   call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression
 ): IrExpression {
-  return buildExpression(root, listOf()) { argument, subStack ->
+  return buildExpression(root, variables) { argument, subStack ->
     call(argument, subStack)
   }
+}
+
+fun IrBuilderWithScope.buildDiagramNestingNullable(
+  root: Node?,
+  variables: List<IrTemporaryVariable> = emptyList(),
+  call: IrBuilderWithScope.(IrExpression?, List<IrTemporaryVariable>) -> IrExpression
+): IrExpression {
+  return if (root != null) buildDiagramNesting(root, variables, call) else call(null, variables)
 }
 
 private fun IrBuilderWithScope.buildExpression(
