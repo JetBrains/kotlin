@@ -35,7 +35,7 @@ internal abstract class SymbolLightInterfaceOrAnnotationClass(
 
     private val _modifierList: PsiModifierList? by lazyPub {
 
-        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel), PsiModifier.ABSTRACT)
+        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel), PsiModifier.ABSTRACT)
         if (!isTopLevel && !classOrObjectSymbol.isInner) {
             modifiers.add(PsiModifier.STATIC)
         }

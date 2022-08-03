@@ -50,7 +50,7 @@ internal open class SymbolLightClass(
 
     private val _modifierList: PsiModifierList? by lazyPub {
 
-        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel))
+        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isNested = !isTopLevel))
         classOrObjectSymbol.computeSimpleModality()?.run {
             modifiers.add(this)
         }

@@ -105,8 +105,8 @@ internal class SymbolLightSimpleMethod(
 
         val visibility: String = functionSymbol.isOverride.ifTrue {
             tryGetEffectiveVisibility(functionSymbol)
-                ?.toPsiVisibilityForMember(isTopLevel)
-        } ?: functionSymbol.toPsiVisibilityForMember(isTopLevel = isTopLevel)
+                ?.toPsiVisibilityForMember()
+        } ?: functionSymbol.toPsiVisibilityForMember()
 
         modifiers.add(visibility)
 

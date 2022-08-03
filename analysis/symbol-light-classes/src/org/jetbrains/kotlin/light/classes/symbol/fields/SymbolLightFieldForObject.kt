@@ -34,7 +34,7 @@ internal class SymbolLightFieldForObject(
     override fun getName(): String = name
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val modifiers = setOf(objectSymbol.toPsiVisibilityForMember(isTopLevel = false), PsiModifier.STATIC, PsiModifier.FINAL)
+        val modifiers = setOf(objectSymbol.toPsiVisibilityForMember(), PsiModifier.STATIC, PsiModifier.FINAL)
         val notNullAnnotation = SymbolLightSimpleAnnotation(NotNull::class.java.name, this)
         SymbolLightMemberModifierList(this, modifiers, listOf(notNullAnnotation))
     }
