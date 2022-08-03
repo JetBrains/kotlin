@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -31,7 +34,11 @@ internal class SymbolLightFieldForEnumEntry(
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightFieldForEnumEntry,
             modifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
-            annotations = emptyList()
+            annotations = enumEntrySymbol.computeAnnotations(
+                this,
+                nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
+                annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD
+            )
         )
     }
 
