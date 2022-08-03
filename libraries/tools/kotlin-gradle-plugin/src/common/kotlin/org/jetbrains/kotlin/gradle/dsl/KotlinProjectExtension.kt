@@ -115,12 +115,26 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
         explicitApi = ExplicitApiMode.Warning
     }
 
+    /**
+     * Can be used to configure objects that are not yet created, or will be created in
+     * 'afterEvaluate' (e.g. typically Android source sets containing flavors and buildTypes)
+     *
+     * Will fail project evaluation if the domain object is not created before 'afterEvaluate' listeners in the buildscript.
+     *
+     * @param configure: Called inline, if the value is already present. Called once the domain object is created.
+     */
     @ExperimentalKotlinGradlePluginApi
     fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(name: String, configure: T.() -> Unit) {
         val invoked = AtomicBoolean(false)
         matching { it.name == name }.all { value -> if (!invoked.getAndSet(true)) value.configure() }
         project.whenEvaluated {
-            if (!invoked.getAndSet(true)) named(name).configure(configure)
+            if (!invoked.getAndSet(true)) {
+                /*
+                Expected to fail, since the listener was not called.
+                Letting Gradle fail here will result in a more natural error message
+                */
+                named(name).configure(configure)
+            }
         }
     }
 }

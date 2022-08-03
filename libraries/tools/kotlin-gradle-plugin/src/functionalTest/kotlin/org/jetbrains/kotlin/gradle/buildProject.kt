@@ -11,6 +11,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 
 fun buildProject(
@@ -32,6 +33,11 @@ fun buildProjectWithMPP(code: Project.() -> Unit = {}) = buildProject {
 
 fun buildProjectWithKPM(code: Project.() -> Unit= {}) = buildProject {
     project.plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
+    code()
+}
+
+fun buildProjectWithJvm(code: Project.() -> Unit = {}) = buildProject {
+    project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
     code()
 }
 
