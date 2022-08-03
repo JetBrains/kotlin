@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 
 abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDeclarationDesignation) {
     private var context: C? = null
@@ -57,7 +57,7 @@ private class FirDesignationState(val designation: FirDeclarationDesignation) {
 
     val currentDeclaration: FirDeclaration
         get() = currentDeclarationIfPresent
-            ?: firErrorWithAttachment("Went inside target declaration")
+            ?: errorWithFirSpecificEntries("Went inside target declaration")
 
     fun goNext() {
         if (canGoNext()) {

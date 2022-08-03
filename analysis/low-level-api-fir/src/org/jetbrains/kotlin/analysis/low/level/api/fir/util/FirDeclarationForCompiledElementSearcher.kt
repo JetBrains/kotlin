@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredConstructors
@@ -19,8 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
-import org.jetbrains.kotlin.utils.withAttachmentBuilder
 
 /**
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
@@ -34,17 +33,17 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             is KtNamedFunction -> findNonLocalFunction(ktDeclaration)
             is KtProperty -> findNonLocalProperty(ktDeclaration)
 
-            else -> firErrorWithAttachment("Unsupported compiled declaration of type", psi = ktDeclaration)
+            else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
         }
     }
 
     private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
         require(!declaration.isLocal)
         val classId = declaration.containingClassOrObject?.getClassId()
-            ?: firErrorWithAttachment("Non-local class should have classId", psi = declaration)
+            ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
         val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: firErrorWithAttachment("We should be able to find a symbol for $classId", psi = declaration)
+            ?: errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration)
 
         return (classCandidate.fir as? FirRegularClass)?.declarations?.first {
             it is FirEnumEntry && it.name == declaration.nameAsName
@@ -53,11 +52,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
     private fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
         val classId = declaration.getClassId()
-            ?: firErrorWithAttachment("Non-local class should have classId", psi = declaration)
+            ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
         val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: firErrorWithAttachment("We should be able to find a symbol for $classId", psi = declaration) {
-                withAttachment("classId", classId.asString())
+            ?: errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
+                withEntry("classId", classId) { it.asString() }
             }
 
         return classCandidate.fir
@@ -65,16 +64,16 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
-            ?: firErrorWithAttachment("Constructor must have outer class", psi = declaration)
+            ?: errorWithFirSpecificEntries("Constructor must have outer class", psi = declaration)
 
         require(!containingClass.isLocal)
         val classId = containingClass.getClassId()
-            ?: firErrorWithAttachment("Non-local class should have classId", psi = declaration)
+            ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
         val constructorCandidate =
             symbolProvider.getClassDeclaredConstructors(classId)
                 .singleOrNull { representSameConstructor(declaration, it.fir) }
-                ?: firErrorWithAttachment("We should be able to find a constructor", psi = declaration)
+                ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration)
 
         return constructorCandidate.fir
     }
@@ -86,7 +85,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val functionCandidate =
             candidates
                 .singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
-                ?: firErrorWithAttachment("We should be able to find a symbol for function", psi = declaration) {
+                ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                     withCandidates(candidates)
                 }
 
@@ -100,7 +99,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val candidates = symbolProvider.findPropertyCandidates(declaration)
         val propertyCandidate =
             candidates.singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
-                ?: firErrorWithAttachment("We should be able to find a symbol for property", psi = declaration) {
+                ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                     withCandidates(candidates)
                 }
 
@@ -124,7 +123,7 @@ private fun FirSymbolProvider.findCallableCandidates(
     }
 
     val containerClassId = declaration.containingClassOrObject?.getClassId()
-        ?: firErrorWithAttachment("No containing non-local declaration found for", psi = declaration)
+        ?: errorWithFirSpecificEntries("No containing non-local declaration found for", psi = declaration)
 
     return getClassDeclaredFunctionSymbols(containerClassId, declaration.nameAsSafeName) +
             getClassDeclaredPropertySymbols(containerClassId, declaration.nameAsSafeName)
@@ -138,16 +137,16 @@ private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstr
     return KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiConstructor, firConstructor)
 }
 
-private fun KotlinExceptionWithAttachments.withCandidates(candidates: List<FirBasedSymbol<*>>) {
-    withAttachmentBuilder("candidates") {
-        appendLine("Candidates count ${candidates.size}")
-        for ((index, candidate) in candidates.withIndex()) {
-            appendLine("Candidate $index, ${candidate::class.java}")
-            val ktModule = candidate.llFirModuleData.ktModule
-            appendLine("From ${ktModule::class.java} ${ktModule.moduleDescription}")
-            appendLine("Origin ${candidate.origin}")
-            appendLine(debugFirRenderer.renderElementAsString(candidate.fir))
-            appendLine()
+private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
+    withEntry("Candidates count", candidates.size.toString())
+    for ((index, candidate) in candidates.withIndex()) {
+        val ktModule = candidate.llFirModuleData.ktModule
+        withEntryGroup(index.toString()) {
+            withClassEntry("candidateClass", candidate)
+            withEntry("module", ktModule) { it.moduleDescription }
+            withEntry("origin", candidate.origin.toString())
+            withFirEntry("candidateFir", candidate.fir)
+
         }
     }
 }

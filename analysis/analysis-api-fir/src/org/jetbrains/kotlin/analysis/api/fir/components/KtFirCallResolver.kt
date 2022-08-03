@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -69,7 +68,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -155,7 +155,7 @@ internal class KtFirCallResolver(
                 when (val calleeReference = calleeReference) {
                     is FirResolvedNamedReference -> {
                         val call = createKtCall(psi, this, null, resolveFragmentOfCall)
-                            ?: firErrorWithAttachment("expect `createKtCall` to succeed for resolvable case", fir = this, psi = psi)
+                            ?: errorWithFirSpecificEntries("expect `createKtCall` to succeed for resolvable case", fir = this, psi = psi)
                         KtSuccessCallInfo(call)
                     }
                     is FirErrorNamedReference -> {
@@ -1167,9 +1167,9 @@ internal class KtFirCallResolver(
     }
 
     override fun unresolvedKtCallError(psi: KtElement): Nothing {
-        errorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
-            withPsiAttachment("psi", psi)
-            psi.getOrBuildFir(firResolveSession)?.let { withFirAttachment("fir", it) }
+        buildErrorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
+            withPsiEntry("psi", psi)
+            psi.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
         }
     }
 }
