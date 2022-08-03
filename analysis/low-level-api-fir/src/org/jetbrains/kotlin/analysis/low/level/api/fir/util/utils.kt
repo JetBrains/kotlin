@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.util.*
-import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
@@ -54,11 +52,11 @@ internal val FirElement.isErrorElement
 internal val FirDeclaration.ktDeclaration: KtDeclaration
     get() {
         val psi = psi
-            ?: firErrorWithAttachment("PSI element was not found", fir = this)
+            ?: errorWithFirSpecificEntries("PSI element was not found", fir = this)
         return when (psi) {
             is KtDeclaration -> psi
             is KtObjectLiteralExpression -> psi.objectDeclaration
-            else -> firErrorWithAttachment(
+            else -> errorWithFirSpecificEntries(
                 "FirDeclaration.psi (${this::class.simpleName}) should be KtDeclaration but was ${psi::class.simpleName}",
                 fir = this,
                 psi = psi,

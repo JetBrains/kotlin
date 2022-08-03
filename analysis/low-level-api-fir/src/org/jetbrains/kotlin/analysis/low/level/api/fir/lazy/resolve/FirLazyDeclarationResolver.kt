@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LazyTransformerFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.utils.errorWithAttachment
-import org.jetbrains.kotlin.utils.withAttachmentDetailed
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.*
 
 internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -106,9 +106,11 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
                 is FirField,
                 is FirTypeAlias,
                 is FirConstructor -> resolvePhase < FirResolvePhase.BODY_RESOLVE
+
                 else -> true
             }
         }
+
         else -> {
             check(resolvePhase == FirResolvePhase.BODY_RESOLVE) {
                 "Expected body resolve phase for origin $origin but found $resolvePhase"
@@ -288,6 +290,7 @@ internal class FirLazyDeclarationResolver(val moduleComponents: LLFirModuleResol
                 )
                 return
             }
+
             else -> {}
         }
 
@@ -429,7 +432,7 @@ private fun rethrowWithDetails(
     toPhase: FirResolvePhase?
 ): Nothing {
     if (e is ControlFlowException) throw e
-    errorWithAttachment(
+    buildErrorWithAttachment(
         buildString {
             val moduleData = firDeclarationToResolve.llFirModuleData
             appendLine("Error while resolving ${firDeclarationToResolve::class.java.name} ")
@@ -443,10 +446,10 @@ private fun rethrowWithDetails(
         },
         cause = e,
     ) {
-        withAttachmentDetailed("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
-        withAttachmentDetailed("session", firDeclarationToResolve.llFirSession) { it.toString() }
-        withAttachmentDetailed("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
-        withFirAttachment("firDeclarationToResolve", firDeclarationToResolve)
+        withEntry("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
+        withEntry("session", firDeclarationToResolve.llFirSession) { it.toString() }
+        withEntry("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
+        withFirEntry("firDeclarationToResolve", firDeclarationToResolve)
     }
 }
 

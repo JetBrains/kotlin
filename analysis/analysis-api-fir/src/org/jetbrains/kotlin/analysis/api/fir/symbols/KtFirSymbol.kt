@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.utils.errorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
 internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, KtLifetimeOwner {
     val firSymbol: S
@@ -63,16 +63,16 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
             is FirSyntheticProperty,
             is FirSyntheticPropertyAccessor -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
 
-            else -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
-                withFirAttachment("firToGetOrigin", this@ktSymbolOrigin)
+            else -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
+                withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
         }
     }
 
     FirDeclarationOrigin.ImportedFromObject -> {
         val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectData
-            ?: errorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
-                withFirAttachment("firToGetOrigin", this@ktSymbolOrigin)
+            ?: buildErrorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
+                withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
 
         importedFromObjectData.original.ktSymbolOrigin()
@@ -80,7 +80,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 
     FirDeclarationOrigin.WrappedIntegerOperator -> {
         val original = (this as FirSimpleFunction).originalForWrappedIntegerOperator?.fir
-            ?: firErrorWithAttachment(
+            ?: errorWithFirSpecificEntries(
                 "Declaration has WrappedIntegerOperator origin, but no originalForWrappedIntegerOperator present",
                 fir = this
             )
@@ -91,7 +91,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     is FirDeclarationOrigin.Plugin -> KtSymbolOrigin.PLUGIN
     FirDeclarationOrigin.RenamedForOverride -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.SubstitutionOverride -> KtSymbolOrigin.SUBSTITUTION_OVERRIDE
-    FirDeclarationOrigin.DynamicScope -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
-        withFirAttachment("firToGetOrigin", this@ktSymbolOrigin)
+    FirDeclarationOrigin.DynamicScope -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
+        withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
     }
 }

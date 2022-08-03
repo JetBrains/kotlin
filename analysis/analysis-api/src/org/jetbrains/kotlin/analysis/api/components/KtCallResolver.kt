@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtUnaryExpression
-import org.jetbrains.kotlin.utils.errorWithAttachment
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
@@ -21,8 +21,8 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
 
     public open fun unresolvedKtCallError(psi: KtElement): Nothing {
-        errorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
-            withPsiAttachment("psi", psi)
+        buildErrorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
+            withPsiEntry("psi", psi)
         }
     }
 }
