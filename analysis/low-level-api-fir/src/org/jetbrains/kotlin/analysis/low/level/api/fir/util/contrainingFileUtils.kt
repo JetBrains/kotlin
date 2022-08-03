@@ -17,6 +17,6 @@ fun FirDeclaration.getContainingFile(): FirFile? {
         is FirFile -> this
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration -> provider.getFirClassifierContainerFile(symbol)
-        else -> firErrorWithAttachment("Unsupported declaration ${this::class.java}", fir = this)
+        else -> errorWithFirSpecificEntries("Unsupported declaration ${this::class.java}", fir = this)
     }
 }

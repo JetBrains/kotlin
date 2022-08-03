@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.createEmptySession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
@@ -133,7 +133,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                     }
                 }
             }
-            else -> firErrorWithAttachment("Invalid type reference", fir = this)
+            else -> errorWithFirSpecificEntries("Invalid type reference", fir = this)
         }
         return if (isVararg) {
             rendered.asArrayType()
@@ -166,7 +166,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             }
             append(typeRef.renderTypeAsKotlinType())
         }
-        else -> firErrorWithAttachment("Invalid type reference", fir = this)
+        else -> errorWithFirSpecificEntries("Invalid type reference", fir = this)
     }
 
     private fun isTheSameTypes(
@@ -201,7 +201,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                 // Can be present as return type
                 "${lowerBound.renderTypeAsKotlinType()}..${upperBound.renderTypeAsKotlinType()}"
             }
-            else -> firErrorWithAttachment("Type should not be present in Kotlin declaration", coneType = this)
+            else -> errorWithFirSpecificEntries("Type should not be present in Kotlin declaration", coneType = this)
         }.replace('/', '.')
         return rendered + nullability.suffix
     }

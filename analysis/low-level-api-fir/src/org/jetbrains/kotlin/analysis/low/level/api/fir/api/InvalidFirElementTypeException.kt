@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
-import org.jetbrains.kotlin.utils.withAttachmentDetailed
+import org.jetbrains.kotlin.analysis.utils.errors.*
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -23,12 +23,14 @@ class InvalidFirElementTypeException(
     expectedFirClasses: List<KClass<*>>,
 ) : KotlinExceptionWithAttachments("") {
     init {
-        when (actualFirElement) {
-            is FirElement -> withFirAttachment("firElement", actualFirElement)
-            is FirBasedSymbol<*> -> withFirSymbolAttachment("firSymbol", actualFirElement)
-            is ConeKotlinType -> withConeTypeAttachment("coneType", actualFirElement)
-            null -> {}
-            else -> withAttachmentDetailed("element", actualFirElement) { it.toString() }
+        buildAttachment {
+            when (actualFirElement) {
+                is FirElement -> withFirEntry("firElement", actualFirElement)
+                is FirBasedSymbol<*> -> withFirSymbolEntry("firSymbol", actualFirElement)
+                is ConeKotlinType -> withConeTypeEntry("coneType", actualFirElement)
+                null -> {}
+                else -> withEntry("element", actualFirElement) { it.toString() }
+            }
         }
     }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.firErrorWithAttachment
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +27,7 @@ internal class KtFirTypeParameterType(
     override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
     override val symbol: KtTypeParameterSymbol by cached {
         builder.classifierBuilder.buildTypeParameterSymbolByLookupTag(coneType.lookupTag)
-            ?: firErrorWithAttachment("Type parameter was not found", coneType = coneType)
+            ?: errorWithFirSpecificEntries("Type parameter was not found", coneType = coneType)
     }
 
     override val annotationsList: KtAnnotationsList by cached {
