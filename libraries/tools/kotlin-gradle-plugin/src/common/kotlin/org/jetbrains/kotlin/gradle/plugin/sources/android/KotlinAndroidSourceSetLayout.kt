@@ -5,29 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.configurator.*
 
 internal data class KotlinAndroidSourceSetLayout(
     val name: String,
     val naming: KotlinAndroidSourceSetNaming,
-    val sourceSetConfigurator: KotlinAndroidSourceSetConfigurator
+    val sourceSetConfigurator: KotlinAndroidSourceSetConfigurator,
+    val checker: KotlinAndroidSourceSetLayoutChecker
 ) {
     override fun toString(): String = "KotlinAndroidSourceSetLayout: $name"
 }
 
 internal val singleTargetAndroidSourceSetLayout = KotlinAndroidSourceSetLayout(
-    name = "Kotlin/Android",
+    name = "Kotlin/Android-SourceSetLayout",
     naming = SingleTargetKotlinAndroidSourceSetNaming,
     sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
         KotlinAndroidSourceSetInfoConfigurator,
         AndroidKaptSourceSetConfigurator,
         AndroidSourceSetConventionConfigurator,
         SingleTargetSourceDirConfigurator,
-    )
+    ),
+    checker = KotlinAndroidSourceSetLayoutChecker()
 )
 
 internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayout(
-    name = "Multiplatform/Android V1",
+    name = "Multiplatform/Android-V1-SourceSetLayout",
     naming = MultiplatformLayoutV1KotlinAndroidSourceSetNaming,
     sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
         KotlinAndroidSourceSetInfoConfigurator,
@@ -36,11 +39,14 @@ internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayou
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV1DependsOnConfigurator,
         MultiplatformLayoutV1SourceDirConfigurator
+    ),
+    checker = KotlinAndroidSourceSetLayoutChecker(
+        MultiplatformLayoutV1PromoteV2Checker
     )
 )
 
 internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayout(
-    name = "Multiplatform/Android V2",
+    name = "Multiplatform/Android-V2-SourceSetLayout",
     naming = MultiplatformLayoutV2KotlinAndroidSourceSetNaming,
     sourceSetConfigurator = KotlinAndroidSourceSetConfigurator(
         KotlinAndroidSourceSetInfoConfigurator,
@@ -49,5 +55,10 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         MultiplatformLayoutV2DependsOnConfigurator,
         MultiplatformLayoutV2SourceDirConfigurator,
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
+    ),
+    checker = KotlinAndroidSourceSetLayoutChecker(
+        MultiplatformLayoutV2AgpRequirementChecker,
+        MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker,
+        MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker
     )
 )
