@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // ISSUE: KT-53451, KT-53370
 
 // FILE: UserData.java
