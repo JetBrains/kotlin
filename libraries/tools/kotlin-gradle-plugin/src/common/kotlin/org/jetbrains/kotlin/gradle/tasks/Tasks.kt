@@ -844,14 +844,15 @@ abstract class KotlinCompile @Inject constructor(
             )
             when {
                 !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
-                // When inputChanges.isIncremental == true, we want to compile incrementally. However, if the incremental state (e.g. lookup
-                // caches or previous classpath snapshot) is missing, we need to compile non-incrementally. That could happen if in the
-                // previous run:
-                //   - Compilation happened using Kotlin daemon but with IC disabled (`kotlin.incremental=false`)
-                //   - Compilation happened without using Kotlin daemon (set by the user or caused by a fallback)
-                //   - Compilation was skipped because there were no sources to compile (see AbstractKotlinCompile.executeImpl)
-                // (Note that if compilation happened using Kotlin daemon and with IC enabled (the usual case), we have a guarantee that
-                // incremental state including classpath snapshot is always produced.)
+                // When `inputChanges.isIncremental == true`, we want to compile incrementally. However, if the incremental state (e.g.
+                // lookup caches or previous classpath snapshot) is missing, we need to compile non-incrementally. There are a few cases:
+                //   1. Previous compilation happened using Kotlin daemon and with IC enabled (the usual case) => Incremental state
+                //      including classpath snapshot must have been produced (we have that guarantee in `IncrementalCompilerRunner`).
+                //   2. Previous compilation happened using Kotlin daemon but with IC disabled (e.g., by setting `kotlin.incremental=false`)
+                //      => This run will have `inputChanges.isIncremental = false` as `isIncrementalCompilationEnabled` is a task input.
+                //   3. Previous compilation happened without using Kotlin daemon (set by the user or caused by a fallback).
+                //   4. Previous compilation was skipped because there were no sources to compile (see `AbstractKotlinCompile.executeImpl`).
+                // In case 3 and 4, it is possible that `inputChanges.isIncremental == true` in this run and incremental state is missing.
                 !classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> {
                     NotAvailableDueToMissingClasspathSnapshot(classpathSnapshotFiles)
                 }
