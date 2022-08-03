@@ -45,6 +45,10 @@ import org.jetbrains.kotlin.psi.KtFile
  *   * [KotlinReferenceProvidersService]
  *   * [KotlinReferenceProviderContributor]
  */
+@Deprecated(
+    "Use StandaloneAnalysisAPISessionBuilder.",
+    ReplaceWith("buildStandaloneAnalysisAPISession { }")
+)
 public fun configureApplicationEnvironment(app: MockApplication) {
     if (app.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
         app.registerService(
@@ -83,6 +87,10 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *    * other Java sources in [compilerConfig] (set via [addJavaSourceRoots])
  *    * JVM class paths in [compilerConfig] (set via [addJvmClasspathRoots]) as library.
  */
+@Deprecated(
+    "Use StandaloneAnalysisAPISessionBuilder.",
+    ReplaceWith("buildStandaloneAnalysisAPISession { }")
+)
 public fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
