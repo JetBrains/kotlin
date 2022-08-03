@@ -42,12 +42,6 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     version = BuildConfig.PLUGIN_VERSION
   )
 
-  override fun getPluginArtifactForNative(): SubpluginArtifact = SubpluginArtifact(
-    groupId = BuildConfig.PLUGIN_GROUP_ID,
-    artifactId = BuildConfig.PLUGIN_ARTIFACT_ID + "-native",
-    version = BuildConfig.PLUGIN_VERSION
-  )
-
   override fun applyToCompilation(
     kotlinCompilation: KotlinCompilation<*>
   ): Provider<List<SubpluginOption>> {
