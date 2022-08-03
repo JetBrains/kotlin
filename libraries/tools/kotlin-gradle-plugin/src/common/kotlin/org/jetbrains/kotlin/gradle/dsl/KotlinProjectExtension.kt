@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -110,6 +113,15 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
 
     override fun explicitApiWarning() {
         explicitApi = ExplicitApiMode.Warning
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(name: String, configure: T.() -> Unit) {
+        val invoked = AtomicBoolean(false)
+        matching { it.name == name }.all { value -> if (!invoked.getAndSet(true)) value.configure() }
+        project.whenEvaluated {
+            if (!invoked.getAndSet(true)) named(name).configure(configure)
+        }
     }
 }
 
@@ -217,11 +229,13 @@ abstract class KotlinJsProjectExtension(project: Project) :
                         it.irPreset = null
                     }
                     .createTarget("js")
+
                 KotlinJsCompilerType.IR -> irPreset
                     .also {
                         it.mixedMode = false
                     }
                     .createTarget("js")
+
                 KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true

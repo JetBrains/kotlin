@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
-import org.jetbrains.kotlin.gradle.mpp.buildProject
 import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt

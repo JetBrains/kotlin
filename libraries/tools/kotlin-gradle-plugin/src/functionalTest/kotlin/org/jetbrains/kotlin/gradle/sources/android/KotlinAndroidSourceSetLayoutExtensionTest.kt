@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.gradle.sources.android
 
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1

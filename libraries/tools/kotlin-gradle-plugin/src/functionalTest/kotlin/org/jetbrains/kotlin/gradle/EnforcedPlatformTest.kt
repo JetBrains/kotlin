@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.mpp.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.mpp.kotlin
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
