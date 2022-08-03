@@ -37,7 +37,6 @@ class AtomicfuKotlinGradleSubplugin :
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
         val config = project.extensions.getByType(AtomicfuKotlinGradleExtension::class.java)
-            ?: throw GradleException("AtomicfuKotlinGradleExtension can not be found in ${project.name}")
         return (config.isJsIrTransformationEnabled && kotlinCompilation.target.isJs()) ||
                 (config.isJvmIrTransformationEnabled && kotlinCompilation.target.isJvm())
     }
