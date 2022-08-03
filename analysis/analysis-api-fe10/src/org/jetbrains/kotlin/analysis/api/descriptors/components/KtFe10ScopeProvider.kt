@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10FileScope
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10PackageScope
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeLexical
-import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10ScopeMember
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10LexicalScope
+import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10MemberScope
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
@@ -63,21 +62,21 @@ internal class KtFe10ScopeProvider(
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(descriptor.unsubstitutedMemberScope, analysisContext)
+        return KtFe10MemberScope(descriptor.unsubstitutedMemberScope, analysisContext)
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor), analysisContext)
+        return KtFe10MemberScope(DeclaredMemberScope(descriptor), analysisContext)
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope  {
         val descriptor = getDescriptor<ClassDescriptor>(classSymbol)
             ?: return getEmptyScope()
 
-        return KtFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), analysisContext)
+        return KtFe10MemberScope(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), analysisContext)
     }
 
     private class DeclaredMemberScope(
@@ -157,7 +156,7 @@ internal class KtFe10ScopeProvider(
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
         val descriptor = getDescriptor<ClassDescriptor>(symbol) ?: return getEmptyScope()
-        return KtFe10ScopeMember(descriptor.staticScope, analysisContext)
+        return KtFe10MemberScope(descriptor.staticScope, analysisContext)
     }
 
     override fun getEmptyScope(): KtScope {
@@ -190,14 +189,14 @@ internal class KtFe10ScopeProvider(
         val elementToAnalyze = positionInFakeFile.containingNonLocalDeclaration() ?: originalFile
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
+        val lexicalScope = getResolutionScope(positionInFakeFile, analysisContext, bindingContext)
         if (lexicalScope != null) {
-            val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
+            val compositeScope = KtCompositeScope(listOf(KtFe10LexicalScope(lexicalScope, analysisContext)), token)
             return KtScopeContext(compositeScope, collectImplicitReceivers(lexicalScope), token)
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
-        val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
+        val compositeScope = KtCompositeScope(listOf(KtFe10LexicalScope(fileScope, analysisContext)), token)
         return KtScopeContext(compositeScope, collectImplicitReceivers(fileScope), token)
     }
 

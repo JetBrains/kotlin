@@ -195,7 +195,7 @@ internal class KtFe10CallResolver(
                 handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
             }
 
-            val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
+            val resolutionScope = getResolutionScope(unwrappedPsi, analysisContext, this) ?: return emptyList()
             val call = unwrappedPsi.getCall(this)?.let {
                 if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
             } ?: return emptyList()

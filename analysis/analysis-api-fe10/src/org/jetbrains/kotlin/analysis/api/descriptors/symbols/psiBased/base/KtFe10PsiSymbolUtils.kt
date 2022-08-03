@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.Modality
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -125,11 +124,15 @@ internal fun KtDeclaration.calculateCallableId(allowLocal: Boolean): CallableId?
     )
 }
 
-internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): LexicalScope? {
-    for (parent in parentsWithSelf) {
-        if (parent is KtElement) {
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
-            if (scope != null) return scope
+internal fun getResolutionScope(element: PsiElement, analysisContext: Fe10AnalysisContext, bindingContext: BindingContext): LexicalScope? {
+    for (parent in element.parentsWithSelf) {
+        for (sibling in parent.siblings(forward = false, withItself = true)) {
+            if (sibling is KtElement) {
+                val scope = bindingContext[BindingContext.LEXICAL_SCOPE, sibling]
+                if (scope != null) {
+                    return scope
+                }
+            }
         }
 
         if (parent is KtClassBody) {
@@ -138,12 +141,14 @@ internal fun PsiElement.getResolutionScope(bindingContext: BindingContext): Lexi
                 return classDescriptor.scopeForMemberDeclarationResolution
             }
         }
+
         if (parent is KtFile) {
             break
         }
     }
 
-    return null
+    val containingFile = element.containingFile as? KtFile ?: return null
+    return analysisContext.fileScopeProvider.getFileResolutionScope(containingFile)
 }
 
 

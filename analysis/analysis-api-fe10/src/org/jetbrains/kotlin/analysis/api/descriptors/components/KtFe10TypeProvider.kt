@@ -108,7 +108,7 @@ internal class KtFe10TypeProvider(
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: position
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val lexicalScope = position.getResolutionScope(bindingContext) ?: return emptyList()
+        val lexicalScope = getResolutionScope(position, analysisContext, bindingContext) ?: return emptyList()
         return lexicalScope.getImplicitReceiversHierarchy().map { it.type.toKtType(analysisContext) }
     }
 

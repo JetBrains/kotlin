@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
@@ -50,6 +51,7 @@ interface Fe10ComponentProvider {
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
     val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>
     val kotlinTypeRefiner: KotlinTypeRefiner
+    val fileScopeProvider: FileScopeProvider
 }
 
 class Fe10AnalysisContext(

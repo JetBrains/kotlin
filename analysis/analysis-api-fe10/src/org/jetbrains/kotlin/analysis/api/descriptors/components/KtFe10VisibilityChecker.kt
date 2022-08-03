@@ -62,7 +62,7 @@ internal class KtFe10VisibilityChecker(
         } else {
             val bindingContext = analysisContext.analyze(useSiteDeclaration, AnalysisMode.FULL)
 
-            val lexicalScope = position.getResolutionScope(bindingContext)
+            val lexicalScope = getResolutionScope(position, analysisContext, bindingContext)
             if (lexicalScope != null) {
                 return lexicalScope.getImplicitReceiversHierarchy().any {
                     isVisible(it.value, targetDescriptor, useSiteDescriptor, analysisContext.languageVersionSettings)

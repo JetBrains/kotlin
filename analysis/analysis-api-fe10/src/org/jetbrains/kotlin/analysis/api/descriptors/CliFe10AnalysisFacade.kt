@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.results.createOverloadingConflictResol
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinToResolvedCallTransformer
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
@@ -67,6 +68,9 @@ private class CliFe10ComponentProvider(handlerFactory: () -> KtFe10AnalysisHandl
     override val kotlinTypeRefiner: KotlinTypeRefiner
         get() = sure(handler.kotlinTypeRefiner)
 
+    override val fileScopeProvider: FileScopeProvider
+        get() = sure(handler.fileScopeProvider)
+
     private fun <T : Any> sure(value: T?) = value ?: error("Resolution is not performed")
 }
 
@@ -96,6 +100,9 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
     var kotlinTypeRefiner: KotlinTypeRefiner? = null
         private set
 
+    var fileScopeProvider: FileScopeProvider? = null
+        private set
+
     override fun doAnalysis(
         project: Project,
         module: ModuleDescriptor,
@@ -109,6 +116,7 @@ class KtFe10AnalysisHandlerExtension : AnalysisHandlerExtension {
         callResolver = componentProvider.get()
         kotlinToResolvedCallTransformer = componentProvider.get()
         kotlinTypeRefiner = componentProvider.get()
+        fileScopeProvider = componentProvider.get()
 
         val builtIns = resolveSession!!.moduleDescriptor.builtIns
         val typeSpecificityComparator = componentProvider.get<TypeSpecificityComparator>()

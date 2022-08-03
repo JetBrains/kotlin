@@ -17,7 +17,7 @@ internal class KtFe10PackageScope(
     scope: MemberScope,
     private val owner: KtPackageSymbol,
     analysisContext: Fe10AnalysisContext
-) : KtFe10ScopeMember(scope, analysisContext) {
+) : KtFe10MemberScope(scope, analysisContext) {
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
         val packageFragmentProvider = analysisContext.resolveSession.packageFragmentProvider
         return packageFragmentProvider.getSubPackagesOf(owner.fqName, nameFilter)
