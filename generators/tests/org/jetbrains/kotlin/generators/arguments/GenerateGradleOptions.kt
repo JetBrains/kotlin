@@ -32,6 +32,9 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     val apiSrcDir = File("libraries/tools/kotlin-gradle-plugin-api/src/common/kotlin")
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/common/kotlin")
 
+    // specific Gradle types from internal compiler types
+    generateKotlinVersion(apiSrcDir, withPrinterToFile)
+
     // common interface
     val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions")
     val commonOptions = gradleOptions<CommonToolArguments>()
@@ -181,7 +184,7 @@ private inline fun <reified T : Any> List<KProperty1<T, *>>.filterToBeDeleted() 
 private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
     T::class.declaredMemberProperties.filter { it.findAnnotation<GradleOption>() != null }.filterToBeDeleted().sortedBy { it.name }
 
-private fun file(baseDir: File, fqName: FqName): File {
+internal fun file(baseDir: File, fqName: FqName): File {
     val fileRelativePath = fqName.asString().replace(".", "/") + ".kt"
     return File(baseDir, fileRelativePath)
 }
@@ -255,7 +258,7 @@ private fun Printer.generateImpl(
     println("}")
 }
 
-private fun Printer.generateDeclaration(
+internal fun Printer.generateDeclaration(
     modifiers: String,
     type: FqName,
     afterType: String? = null,
@@ -303,7 +306,7 @@ private fun Printer.generateDoc(property: KProperty1<*, *>) {
     println(" */")
 }
 
-private inline fun Printer.withIndent(fn: Printer.() -> Unit) {
+internal inline fun Printer.withIndent(fn: Printer.() -> Unit) {
     pushIndent()
     fn()
     popIndent()
