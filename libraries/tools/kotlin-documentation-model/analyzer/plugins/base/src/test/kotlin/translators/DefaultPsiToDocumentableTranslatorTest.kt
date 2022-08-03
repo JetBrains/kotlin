@@ -198,6 +198,70 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    fun `should resolve static imports used as annotation param values as literal values`() {
+        testInline(
+            """
+            |/src/main/java/test/JavaClassUsingAnnotation.java
+            |package test;
+            |
+            |import static test.JavaConstants.STRING;
+            |import static test.JavaConstants.INTEGER;
+            |import static test.JavaConstants.LONG;
+            |import static test.JavaConstants.BOOLEAN;
+            |import static test.JavaConstants.DOUBLE;
+            |import static test.JavaConstants.FLOAT;
+            |
+            |@JavaAnnotation(
+            |        stringValue = STRING, intValue = INTEGER, longValue = LONG,
+            |        booleanValue = BOOLEAN, doubleValue = DOUBLE, floatValue = FLOAT
+            |)
+            |public class JavaClassUsingAnnotation {
+            |}
+            |
+            |/src/main/java/test/JavaAnnotation.java
+            |package test;
+            |@Documented
+            |public @interface JavaAnnotation {
+            |    String stringValue();
+            |    int intValue();
+            |    long longValue();
+            |    boolean booleanValue();
+            |    double doubleValue();
+            |    float floatValue();
+            |}
+            |
+            |/src/main/java/test/JavaConstants.java
+            |package test;
+            |public class JavaConstants {
+            |    public static final String STRING = "STRING_CONSTANT_VALUE";
+            |    public static final int INTEGER = 5;
+            |    public static final long LONG = 6L;
+            |    public static final boolean BOOLEAN = true;
+            |    public static final double DOUBLE = 7.0d;
+            |    public static final float FLOAT = 8.0f;
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "JavaClassUsingAnnotation" }
+
+                val annotation = (testedClass as DClass).extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                checkNotNull(annotation)
+
+                assertEquals("JavaAnnotation", annotation.dri.classNames)
+                assertEquals(StringValue("STRING_CONSTANT_VALUE"), annotation.params["stringValue"])
+
+                assertEquals(IntValue(5), annotation.params["intValue"])
+                assertEquals(LongValue(6), annotation.params["longValue"])
+                assertEquals(BooleanValue(true), annotation.params["booleanValue"])
+                assertEquals(DoubleValue(7.0), annotation.params["doubleValue"])
+                assertEquals(FloatValue(8.0f), annotation.params["floatValue"])
+            }
+        }
+    }
+
     class OnlyPsiPlugin : DokkaPlugin() {
         private val dokkaBase by lazy { plugin<DokkaBase>() }
 
