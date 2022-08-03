@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.*
+import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
@@ -522,6 +523,10 @@ class AndroidCompilationDetails(
 
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
+
+    override val defaultSourceSetName: String by lazy {
+        project.kotlinAndroidSourceSetLayout.naming.defaultKotlinSourceSetName(this) ?: super.defaultSourceSetName
+    }
 
     /*
     * Example of how multiplatform dependencies from common would get to Android test classpath:
