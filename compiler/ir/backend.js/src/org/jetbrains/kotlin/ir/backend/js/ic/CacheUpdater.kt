@@ -322,8 +322,10 @@ class CacheUpdater(
                     }
                 }
 
-                val metadata = incrementalCache.fetchSourceFileFullMetadata(libSrcFile)
-                updatedMetadata[lib, libSrcFile] = DirtyFileMetadata(maybeImportedSignatures, metadata.directDependencies)
+                if (dirtySrcFiles[lib, libSrcFile] != null) {
+                    val metadata = incrementalCache.fetchSourceFileFullMetadata(libSrcFile)
+                    updatedMetadata[lib, libSrcFile] = DirtyFileMetadata(maybeImportedSignatures, metadata.directDependencies)
+                }
             }
         }
 
@@ -336,7 +338,7 @@ class CacheUpdater(
                         val (dependencyLib, dependencyFile) = idSignatureToFile[it] ?: (libFile to srcFile)
                         updatedMetadata[dependencyLib, dependencyFile]?.also { dependencyMetadata ->
                             dependencyMetadata.addInverseDependency(dependentLibFile, dependentSrcFile, it)
-                        } ?: notFoundIcError("metadata", dependencyLib, dependencyFile)
+                        }
                     }
                 }
 
@@ -348,7 +350,7 @@ class CacheUpdater(
 
                     updatedMetadata[dependencyLib, dependencyFile]?.also { dependencyMetadata ->
                         dependencyMetadata.addInverseDependency(libFile, srcFile, importedSignature)
-                    } ?: notFoundIcError("metadata", dependencyLib, dependencyFile)
+                    }
                 }
             }
         }

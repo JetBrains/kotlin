@@ -213,7 +213,7 @@ class IncrementalCache(private val library: KotlinLibrary, cachePath: String) {
 
     private fun commitSourceFileMetadata(srcFile: KotlinSourceFile, signatureToIndexMapping: Map<IdSignature, Int>) {
         val headerCacheFile = srcFile.getCacheFile(METADATA_SUFFIX)
-        val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile] ?: notFoundIcError("metadata", libraryFile, srcFile)
+        val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile] ?: return
         if (sourceFileMetadata.isEmpty()) {
             headerCacheFile.delete()
             return
