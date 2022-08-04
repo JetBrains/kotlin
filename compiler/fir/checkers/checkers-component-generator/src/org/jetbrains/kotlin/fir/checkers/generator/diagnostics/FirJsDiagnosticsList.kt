@@ -105,6 +105,10 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NAME_CONTAINS_ILLEGAL_CHARS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
+    val DYNAMICS by object : DiagnosticGroup("Dynamics") {
+        val DELEGATION_BY_DYNAMIC by error<KtElement>()
+    }
+
     val DEBUG_INFO by object : DiagnosticGroup("Debug Info") {
         val DYNAMIC by debugInfo<KtElement>()
     }

@@ -83,6 +83,9 @@ object FirJsErrors {
     // General Syntax
     val NAME_CONTAINS_ILLEGAL_CHARS by error0<KtElement>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // Dynamics
+    val DELEGATION_BY_DYNAMIC by error0<KtElement>()
+
     // Debug Info
     val DYNAMIC by info0<KtElement>()
 
