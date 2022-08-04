@@ -116,8 +116,8 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
 }
 
 // Try to find existing target with exact name
-// and with append suffix Legacy in case when compiler for found target is BOTH,
-// and removed suffix Legacy in case when current compiler is BOTH
+// and removed suffix IR in case when current compiler is BOTH
+// and with append suffix IR in case when compiler for found target is not BOTH
 private fun KotlinTargetContainerWithJsPresetFunctions.getExistingTarget(
     name: String,
     compiler: KotlinJsCompilerType?
@@ -142,13 +142,13 @@ private fun KotlinTargetContainerWithJsPresetFunctions.getExistingTarget(
     val targetNameCandidate = getTargetName(name, compiler)
 
     return targets.findByName(targetNameCandidate) as KotlinJsTargetDsl?
-        ?: getPreviousTarget(targetNameCandidate.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY), true)
-        ?: getPreviousTarget(lowerCamelCaseName(targetNameCandidate, KotlinJsCompilerType.LEGACY.lowerName), false)
+        ?: getPreviousTarget(targetNameCandidate.removeJsCompilerSuffix(KotlinJsCompilerType.IR), true)
+        ?: getPreviousTarget(lowerCamelCaseName(targetNameCandidate, KotlinJsCompilerType.IR.lowerName), false)
 }
 
 private fun getTargetName(name: String, compiler: KotlinJsCompilerType?): String {
     return lowerCamelCaseName(
         name,
-        if (compiler == KotlinJsCompilerType.BOTH) KotlinJsCompilerType.LEGACY.lowerName else null
+        if (compiler == KotlinJsCompilerType.BOTH) KotlinJsCompilerType.IR.lowerName else null
     )
 }
