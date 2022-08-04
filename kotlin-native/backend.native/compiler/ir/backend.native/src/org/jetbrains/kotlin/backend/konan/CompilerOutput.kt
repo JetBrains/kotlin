@@ -34,6 +34,7 @@ val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+    else -> error("Unknown compiler output kind")
 }
 
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
@@ -49,6 +50,7 @@ val KonanConfig.involvesLinkStage: Boolean
         CompilerOutputKind.STATIC-> true
         CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
         CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+        else -> error("Unknown compiler output kind")
     }
 
 val CompilerOutputKind.isCache: Boolean
@@ -255,6 +257,7 @@ internal fun produceOutput(context: Context) {
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         null -> {}
+        else -> error("Unknown compiler output kind")
     }
 }
 

@@ -34,6 +34,9 @@ enum class CompilerOutputKind {
     STATIC_CACHE {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
         override fun prefix(target: KonanTarget?) = target!!.family.staticPrefix
+    },
+    PRELIMINARY_CACHE {
+        override fun suffix(target: KonanTarget?) = ""
     };
 
     abstract fun suffix(target: KonanTarget? = null): String
