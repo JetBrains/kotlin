@@ -46,7 +46,7 @@ class AtomicfuKotlinGradleSubplugin :
     ): Provider<List<SubpluginOption>> =
         kotlinCompilation.target.project.provider { emptyList() }
 
-    class AtomicfuKotlinGradleExtension {
+    open class AtomicfuKotlinGradleExtension {
         var isJsIrTransformationEnabled = false
         var isJvmIrTransformationEnabled = false
     }
