@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs') {
+kotlin.targets.fromPreset(kotlin.presets.jsLegacy, 'nodeJs') {
     nodejs()
 }
 
