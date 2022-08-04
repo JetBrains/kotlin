@@ -719,7 +719,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             val argumentReceiverVariable = generateTemporaryVariable(
                 baseModuleData,
-                argumentReceiver?.toFirSourceElement(),
+                argumentReceiver?.toFirSourceElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement),
                 SpecialNames.RECEIVER,
                 initializer = receiverFir,
             ).also { statements += it }
@@ -799,7 +799,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
-                array?.toFirSourceElement(),
+                array?.toFirSourceElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement),
                 name = SpecialNames.ARRAY,
                 initializer = arrayReceiver,
             ).also { statements += it }
@@ -807,7 +807,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val indexVariables = indices.mapIndexed { i, index ->
                 generateTemporaryVariable(
                     baseModuleData,
-                    index.toFirSourceElement(),
+                    index.toFirSourceElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement),
                     name = SpecialNames.subscribeOperatorIndex(i),
                     index.convert()
                 ).also { statements += it }
@@ -835,7 +835,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 statements += buildFunctionCall {
                     source = desugaredSource
                     calleeReference = buildSimpleNamedReference {
-                        source = receiver.toFirSourceElement()
+                        source = receiver.toFirSourceElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
                         name = OperatorNameConventions.SET
                     }
                     explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
