@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiParameterList
@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.light.classes.symbol.FirLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterForSymbol
+import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
+import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightSuspendContinuationParameter
+import org.jetbrains.kotlin.light.classes.symbol.classes.FirLightClassBase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 

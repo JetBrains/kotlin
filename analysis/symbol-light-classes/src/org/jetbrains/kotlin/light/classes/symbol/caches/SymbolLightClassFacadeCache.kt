@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.utils.caches.*
 import org.jetbrains.kotlin.analysis.utils.collections.ConcurrentMapBasedCache
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.light.classes.symbol.FirLightClassForFacade
+import org.jetbrains.kotlin.light.classes.symbol.classes.FirLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.KtLightClassForDecompiledFacade
 import org.jetbrains.kotlin.name.FqName

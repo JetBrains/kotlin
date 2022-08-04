@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
+import org.jetbrains.kotlin.light.classes.symbol.classes.KtFirBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.name.ClassId

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiIdentifier
@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirLightAnnotationForAnnotationCall
+import org.jetbrains.kotlin.light.classes.symbol.methods.FirLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession)

@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.light.classes.symbol.codeReferences.FirLightPsiJavaCodeReferenceElementWithNoReference
+import org.jetbrains.kotlin.light.classes.symbol.codeReferences.FirLightPsiJavaCodeReferenceElementWithReference
 import org.jetbrains.kotlin.psi.*
 
 internal abstract class FirLightAbstractAnnotation(parent: PsiElement) :

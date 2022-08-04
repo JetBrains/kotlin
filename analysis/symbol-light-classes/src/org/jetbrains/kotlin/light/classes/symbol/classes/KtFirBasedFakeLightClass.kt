@@ -3,18 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
-import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 //TODO Make fake class symbol based
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 
 class KtFirBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
     KtFakeLightClass(kotlinOrigin) {

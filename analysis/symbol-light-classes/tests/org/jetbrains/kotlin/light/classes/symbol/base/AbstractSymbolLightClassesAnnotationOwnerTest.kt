@@ -10,8 +10,8 @@ import com.intellij.psi.*
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.light.classes.symbol.FirLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.FirLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices

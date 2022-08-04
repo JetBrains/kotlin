@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.elements.psiType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirPsiArrayInitializerMemberValue
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirPsiExpression
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirPsiLiteral
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.constants.KClassValue
 import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =

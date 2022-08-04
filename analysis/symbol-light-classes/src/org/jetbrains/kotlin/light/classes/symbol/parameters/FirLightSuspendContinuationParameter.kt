@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
@@ -19,6 +19,11 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.light.classes.symbol.FirLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.methods.FirLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 
 context(KtAnalysisSession)
 internal class FirLightSuspendContinuationParameter(

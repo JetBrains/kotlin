@@ -11,7 +11,7 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
-import org.jetbrains.kotlin.light.classes.symbol.elements.FirLightTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightTypeParameter
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 

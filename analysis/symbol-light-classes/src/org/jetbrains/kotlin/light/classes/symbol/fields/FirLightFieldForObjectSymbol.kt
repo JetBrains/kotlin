@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
 import org.jetbrains.annotations.NotNull
@@ -15,6 +15,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.light.classes.symbol.FirLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.annotations.FirLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 
 context(KtAnalysisSession)
 internal class FirLightFieldForObjectSymbol(

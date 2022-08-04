@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
@@ -25,6 +25,11 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.FirLightMemberImpl
+import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.classes.FirLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.tryGetEffectiveVisibility
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 context(KtAnalysisSession)

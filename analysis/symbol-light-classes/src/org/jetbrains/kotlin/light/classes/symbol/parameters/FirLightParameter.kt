@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.*
@@ -11,6 +11,9 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.methods.FirLightMethod
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameter(containingDeclaration: FirLightMethod) : PsiVariable, NavigationItem,

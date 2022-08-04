@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol
+package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -25,8 +25,14 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.classes.createField
-import org.jetbrains.kotlin.light.classes.symbol.classes.createMethods
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightField
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmMultifileClassAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject

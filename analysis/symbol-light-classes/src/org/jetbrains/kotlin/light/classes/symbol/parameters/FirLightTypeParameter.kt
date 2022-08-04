@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.elements
+package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.lang.Language
 import com.intellij.openapi.util.Pair
