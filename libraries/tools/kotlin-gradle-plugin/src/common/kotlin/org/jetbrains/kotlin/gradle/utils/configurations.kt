@@ -26,7 +26,7 @@ internal const val INTRANSITIVE = "intransitive"
 /**
  * Gradle Configuration Cache-friendly representation of resolved Configuration
  */
-internal class ResolvedDependencyGraph
+class ResolvedDependencyGraph
 private constructor(
     private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
     private val artifactCollection: ArtifactCollection
@@ -39,7 +39,7 @@ private constructor(
         artifactCollection = configuration.incoming.artifacts // lazy ArtifactCollection
     )
 
-    val root get() = resolvedComponentsRootProvider.value
+    val root: ResolvedComponentResult get() = resolvedComponentsRootProvider.value
     val files: FileCollection get() = artifactCollection.artifactFiles
     val artifacts get() = artifactCollection.artifacts
 

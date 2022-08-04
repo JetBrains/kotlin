@@ -7,11 +7,44 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
+
+private fun createForAllProjects(project: Project): Map<String, KotlinProjectStructureMetadata> {
+    //require(rootProject.rootProject === rootProject)
+    val rootProject = project.rootProject
+
+    return rootProject.allprojects.mapNotNull {
+        val psm = it.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata ?: return@mapNotNull null
+        it.path to psm
+    }.toMap()
+}
+
+class MppDependencyProjectStructureMetadataExtractor2(
+    val projectToPsm: Map<String, KotlinProjectStructureMetadata>
+) {
+  fun extractFromComponent(component: ResolvedComponentResult): KotlinProjectStructureMetadata? {
+      val id = component.id
+
+      // Check if it is project
+      if (id is ProjectComponentIdentifier) {
+          return projectToPsm[id.projectPath]
+      }
+
+      // Then it should be module
+      if (id !is ModuleComponentIdentifier) return null
+
+      // Find the metadata variant
+      // component.
+
+      TODO()
+  }
+}
 
 internal fun MppDependencyProjectStructureMetadataExtractor.Factory.create(
     project: Project,
