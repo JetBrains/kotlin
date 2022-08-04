@@ -2444,11 +2444,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/SameLineStatementRecovery.kt");
             }
 
-            @TestMetadata("TypeParameterBeforeEqualSign.kt")
-            public void testTypeParameterBeforeEqualSign() throws Exception {
-                runTest("compiler/testData/psi/recovery/TypeParameterBeforeEqualSign.kt");
-            }
-
             @TestMetadata("UnfinishedExtension.kt")
             public void testUnfinishedExtension() throws Exception {
                 runTest("compiler/testData/psi/recovery/UnfinishedExtension.kt");

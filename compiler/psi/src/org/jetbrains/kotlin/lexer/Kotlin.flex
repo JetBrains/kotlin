@@ -283,6 +283,7 @@ LONELY_BACKTICK=`
 "++"         { return KtTokens.PLUSPLUS  ; }
 "--"         { return KtTokens.MINUSMINUS; }
 "<="         { return KtTokens.LTEQ      ; }
+">="         { return KtTokens.GTEQ      ; }
 "=="         { return KtTokens.EQEQ      ; }
 "!="         { return KtTokens.EXCLEQ    ; }
 "&&"         { return KtTokens.ANDAND    ; }
