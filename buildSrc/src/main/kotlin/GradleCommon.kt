@@ -49,6 +49,7 @@ enum class GradlePluginVariant(
     GRADLE_MIN("main", "6.7", "6.9"),
     GRADLE_70("gradle70", "7.0", "7.0"),
     GRADLE_71("gradle71", "7.1", "7.1"),
+    GRADLE_75("gradle75", "7.5", "7.5"),
 }
 
 /**

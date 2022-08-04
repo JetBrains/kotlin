@@ -19,7 +19,7 @@ internal class JavaSourceSetsAccessorG6(
     override val sourceSetsIfAvailable: SourceSetContainer?
         get() = convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets
 
-    internal class JavaSourceSetAccessorVariantFactoryG70 : JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory {
+    internal class JavaSourceSetAccessorVariantFactoryG6 : JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory {
         override fun getInstance(project: Project): JavaSourceSetsAccessor = JavaSourceSetsAccessorG6(project.convention)
     }
 }
