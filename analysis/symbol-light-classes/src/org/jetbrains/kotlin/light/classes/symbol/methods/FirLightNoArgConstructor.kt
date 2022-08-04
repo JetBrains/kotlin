@@ -1,19 +1,18 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.light.classes.symbol.FirLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.classes.FirLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.parameters.FirLightParameterList
 
 context(KtAnalysisSession)
 internal class FirLightNoArgConstructor(

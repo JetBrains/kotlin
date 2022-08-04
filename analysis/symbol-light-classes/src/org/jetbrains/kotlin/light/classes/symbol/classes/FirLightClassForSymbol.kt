@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightFieldForObjectSymbol
 import org.jetbrains.kotlin.light.classes.symbol.methods.FirLightSimpleMethodForSymbol
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds

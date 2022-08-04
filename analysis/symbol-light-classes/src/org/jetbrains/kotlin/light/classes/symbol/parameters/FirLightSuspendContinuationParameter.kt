@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,21 +9,20 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtParameter
-
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.light.classes.symbol.FirLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.FirLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.methods.FirLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtParameter
 
 context(KtAnalysisSession)
 internal class FirLightSuspendContinuationParameter(
