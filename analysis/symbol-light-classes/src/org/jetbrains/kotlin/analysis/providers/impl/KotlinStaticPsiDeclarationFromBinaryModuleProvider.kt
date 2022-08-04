@@ -96,7 +96,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 
 // TODO: we can't register this in IDE yet due to non-trivial parameters: lib modules and jar file system.
 //  We need a session or facade that maintains such information
-public class KotlinStaticPsiDeclarationProviderFactory(
+class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,

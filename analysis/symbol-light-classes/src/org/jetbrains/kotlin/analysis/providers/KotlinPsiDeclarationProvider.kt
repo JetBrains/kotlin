@@ -16,23 +16,23 @@ import org.jetbrains.kotlin.name.ClassId
 /**
  * A [PsiMember] declaration provider for a given scope. Can be created via [KotlinPsiDeclarationProviderFactory].
  */
-public abstract class KotlinPsiDeclarationProvider {
+abstract class KotlinPsiDeclarationProvider {
     /**
      * Gets a collection of [PsiClass] by [ClassId]
      *
      * In standalone mode, this is simply [PsiClassStub]-based [PsiClass]
      */
-    public abstract fun getClassesByClassId(classId: ClassId): Collection<PsiClass>
+    abstract fun getClassesByClassId(classId: ClassId): Collection<PsiClass>
 
-    public abstract fun getProperties(callableId: CallableId): Collection<PsiMember>
-    public abstract fun getFunctions(callableId: CallableId): Collection<PsiMethod>
+    abstract fun getProperties(callableId: CallableId): Collection<PsiMember>
+    abstract fun getFunctions(callableId: CallableId): Collection<PsiMethod>
 }
 
-public abstract class KotlinPsiDeclarationProviderFactory {
-    public abstract fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider
+abstract class KotlinPsiDeclarationProviderFactory {
+    abstract fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider
 }
 
-public fun Project.createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider? =
+fun Project.createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider? =
     // TODO: avoid using fail-safe service loading once the factory has an easy-to-register ctor.
     getServiceIfCreated(KotlinPsiDeclarationProviderFactory::class.java)
         ?.createPsiDeclarationProvider(searchScope)

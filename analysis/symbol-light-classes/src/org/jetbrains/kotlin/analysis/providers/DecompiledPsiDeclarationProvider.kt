@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 
-public object DecompiledPsiDeclarationProvider {
-    public fun findPsi(ktSymbol: KtSymbol, project: Project): PsiElement? {
+object DecompiledPsiDeclarationProvider {
+    fun findPsi(ktSymbol: KtSymbol, project: Project): PsiElement? {
         return when (ktSymbol) {
             is KtConstructorSymbol -> providePsiForConstructor(ktSymbol, project)
             is KtFunctionLikeSymbol -> providePsiForFunction(ktSymbol, project)
