@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.diagnostic.ControlFlowException
+import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 
 /**
  * Lazily calculated value which runs postCompute in the same thread,
@@ -101,11 +102,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         }
     }
 
-    private fun exceptionShouldBeSavedInCache(e: Throwable): Boolean = when (e) {
-        is IndexNotReadyException -> false
-        is ControlFlowException -> false
-        else -> true
-    }
+    private fun exceptionShouldBeSavedInCache(exception: Throwable): Boolean =
+        !shouldIjPlatformExceptionBeRethrown(exception)
 
 
     @Suppress("UNCHECKED_CAST")
