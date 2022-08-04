@@ -70,6 +70,6 @@ class ImportsDumperTest : TestCaseWithTmpdir() {
 
 private fun String.relativizeAbsolutePaths(relativeTo: File): String {
     // JSON escapes slashes
-    val pattern = relativeTo.absoluteFile.toString().replace(File.separatorChar.toString(), "\\/")
+    val pattern = relativeTo.absoluteFile.toString().replace(File.separatorChar.toString(), "/")
     return this.replace(pattern, "\$TESTDATA_DIR$")
 }
