@@ -20,7 +20,7 @@ internal class FirLightNoArgConstructor(
     containingClass: FirLightClassBase,
     visibility: String,
     methodIndex: Int,
-): FirLightMethod(lightMemberOrigin, containingClass, methodIndex) {
+) : FirLightMethod(lightMemberOrigin, containingClass, methodIndex) {
     private val _name: String? = containingClass.name
 
     override fun getName(): String = _name ?: ""
@@ -60,8 +60,8 @@ internal class FirLightNoArgConstructor(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightNoArgConstructor &&
-                kotlinOrigin == other.kotlinOrigin &&
-                containingClass == other.containingClass)
+                        kotlinOrigin == other.kotlinOrigin &&
+                        containingClass == other.containingClass)
 
     override fun hashCode(): Int = containingClass.hashCode()
 

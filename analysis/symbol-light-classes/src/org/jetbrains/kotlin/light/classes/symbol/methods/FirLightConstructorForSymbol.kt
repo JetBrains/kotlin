@@ -73,8 +73,8 @@ internal class FirLightConstructorForSymbol(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightConstructorForSymbol &&
-                 kotlinOrigin == other.kotlinOrigin &&
-                 constructorSymbol == other.constructorSymbol)
+                        kotlinOrigin == other.kotlinOrigin &&
+                        constructorSymbol == other.constructorSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 

@@ -47,6 +47,7 @@ internal class FirLightFieldForPropertySymbol(
                 (kotlinOrigin as? KtProperty)?.delegateExpression?.let {
                     it.getKtType()?.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
                 }
+
             else -> {
                 propertySymbol.returnType.asPsiType(this@FirLightFieldForPropertySymbol, KtTypeMappingMode.RETURN_TYPE)
             }

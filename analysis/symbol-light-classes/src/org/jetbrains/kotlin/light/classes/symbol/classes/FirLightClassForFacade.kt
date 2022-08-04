@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightField
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmMultifileClassAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.fields.FirLightField
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.FirLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName

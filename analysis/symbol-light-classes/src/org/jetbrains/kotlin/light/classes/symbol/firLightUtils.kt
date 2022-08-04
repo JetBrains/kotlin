@@ -92,6 +92,7 @@ internal fun KtSymbolWithModality.computeModalityForMethod(
         result.add(PsiModifier.STATIC)
     }
 }
+
 context(KtAnalysisSession)
 internal fun PsiElement.tryGetEffectiveVisibility(symbol: KtCallableSymbol): Visibility? {
     if (symbol !is KtPropertySymbol && symbol !is KtFunctionSymbol) return null
@@ -122,6 +123,7 @@ private fun Visibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): 
     // Nested private class has PRIVATE visibility
     Visibilities.Private, Visibilities.PrivateToThis ->
         if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+
     Visibilities.Protected -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }
@@ -201,6 +203,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             FirPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
                 values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
             }
+
         is KtAnnotationApplicationValue ->
             FirLightSimpleAnnotation(
                 annotationValue.classId?.relativeClassName?.asString(),
@@ -208,6 +211,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
                 annotationValue.arguments,
                 annotationValue.psi
             )
+
         is KtConstantAnnotationValue -> {
             this.constantValue.createPsiLiteral(parent)?.let {
                 when (it) {
@@ -216,11 +220,13 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
                 }
             }
         }
+
         is KtEnumEntryAnnotationValue -> {
             val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
             val psiExpression = PsiElementFactory.getInstance(parent.project).createExpressionFromText(fqName, parent)
             FirPsiExpression(sourcePsi, parent, psiExpression)
         }
+
         KtUnsupportedAnnotationValue -> null
         is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> null
         is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
@@ -231,7 +237,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
 private fun KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
     val fqName = classId.asSingleFqName()
     val canonicalText = psiType(
-        fqName.asString(), parent, boxPrimitiveType = false /* TODO value.arrayNestedness > 0*/,
+        fqName.asString(), parent, boxPrimitiveType = false, /* TODO value.arrayNestedness > 0*/
     ).let(TypeConversionUtil::erasure).getCanonicalText(false)
     return try {
         PsiElementFactory.getInstance(parent.project).createExpressionFromText("$canonicalText.class", parent)

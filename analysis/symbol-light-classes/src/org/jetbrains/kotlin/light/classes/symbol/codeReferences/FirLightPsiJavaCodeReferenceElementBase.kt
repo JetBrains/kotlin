@@ -14,7 +14,7 @@ internal abstract class FirLightPsiJavaCodeReferenceElementBase(private val ktEl
 
     override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = emptyArray()
 
-    override fun processVariants(processor: PsiScopeProcessor) { }
+    override fun processVariants(processor: PsiScopeProcessor) {}
 
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult =
         JavaResolveResult.EMPTY

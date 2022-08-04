@@ -33,7 +33,7 @@ internal class FirLightParameterForReceiver private constructor(
 ) : FirLightParameter(method) {
 
     companion object {
-       context (KtAnalysisSession)
+        context (KtAnalysisSession)
         fun tryGet(
             callableSymbol: KtCallableSymbol,
             method: FirLightMethod

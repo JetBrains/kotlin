@@ -70,8 +70,10 @@ internal class FirLightSimpleMethodForSymbol(
                     when {
                         functionSymbol.isSuspend -> // Any?
                             return@l NullabilityType.Nullable
+
                         isVoidReturnType ->
                             return@l NullabilityType.Unknown
+
                         else ->
                             functionSymbol.returnType
                     }
@@ -145,8 +147,10 @@ internal class FirLightSimpleMethodForSymbol(
         val ktType = when {
             functionSymbol.isSuspend -> // Any?
                 analysisSession.builtinTypes.NULLABLE_ANY
+
             isVoidReturnType ->
                 return@lazyPub PsiType.VOID
+
             else ->
                 functionSymbol.returnType
         }

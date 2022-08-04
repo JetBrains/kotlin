@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.util.IncorrectOperationException
 
-internal class FirLightPsiJavaCodeReferenceElementWithNoReference(private val ktElement: PsiElement):
+internal class FirLightPsiJavaCodeReferenceElementWithNoReference(private val ktElement: PsiElement) :
     FirLightPsiJavaCodeReferenceElementBase(ktElement),
     PsiReference {
 

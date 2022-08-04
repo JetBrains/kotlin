@@ -26,6 +26,7 @@ internal class FirLightIdentifier(
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
                 ?: ktDeclaration.valueParameterList
                 ?: ktDeclaration.containingClassOrObject?.nameIdentifier
+
             is KtPropertyAccessor -> ktDeclaration.namePlaceholder
             is KtNamedDeclaration -> ktDeclaration.nameIdentifier
             else -> null

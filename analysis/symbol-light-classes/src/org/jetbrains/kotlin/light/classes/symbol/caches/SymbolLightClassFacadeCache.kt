@@ -52,6 +52,7 @@ class SymbolLightClassFacadeCache(private val project: Project) {
                 analyzeForLightClasses(firstFile) {
                     FirLightClassForFacade(firstFile.manager, facadeClassFqName, ktFiles)
                 }
+
             ktFiles.all { it.isCompiled } -> {
                 val file = ktFiles.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
                     ?: error("Can't find the representative decompiled file for $facadeClassFqName")
@@ -64,6 +65,7 @@ class SymbolLightClassFacadeCache(private val project: Project) {
                 ) ?: return null
                 KtLightClassForDecompiledFacade(clsDelegate, clsDelegate.parent, file, classOrObject, ktFiles)
             }
+
             else ->
                 error("Source and compiled files are mixed: $ktFiles}")
         }

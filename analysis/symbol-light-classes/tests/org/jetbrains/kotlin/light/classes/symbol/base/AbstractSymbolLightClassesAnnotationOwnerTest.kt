@@ -107,9 +107,11 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
                 is PsiClass,
                 is PsiParameter ->
                     TestCase.assertTrue(owner is FirLightClassModifierList<*>)
+
                 is PsiField,
                 is PsiMethod ->
                     TestCase.assertTrue(owner is FirLightMemberModifierList<*>)
+
                 else ->
                     throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
             }
