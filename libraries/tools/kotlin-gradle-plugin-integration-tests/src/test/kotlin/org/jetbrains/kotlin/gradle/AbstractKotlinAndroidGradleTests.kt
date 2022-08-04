@@ -1027,12 +1027,12 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
 
         project.projectDir.resolve("app/build.gradle").appendText(
             """
-        |
-        |androidExtensions {
-            |    experimental = true
             |
-        }
-        """.trimMargin()
+            |androidExtensions {
+            |    experimental = true
+            |}
+            |
+            """.trimMargin()
         )
 
         project.build("assembleDebug") {

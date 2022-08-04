@@ -13,12 +13,10 @@ import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -130,31 +128,30 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
                 )
             )
             kotlinCompilation.compileKotlinTaskProvider.configure {
-                it.androidLayoutResourceFiles.from(getLayoutDirectories(project, sourceSet.res.srcDirs))
+                it.androidLayoutResourceFiles.from(
+                    sourceSet.res.sourceDirectoryTrees.layoutDirectories
+                )
             }
         }
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = androidExtension.productFlavors
-            .mapNotNull { androidExtension.sourceSets.findByName(it.name) }
-
-        for (sourceSet in flavorSourceSets) {
-            addVariant(sourceSet)
+        androidExtension.productFlavors.configureEach { flavor ->
+            androidExtension.sourceSets.findByName(flavor.name)?.let {
+                addVariant(it)
+            }
         }
 
         return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
-    private fun getLayoutDirectories(project: Project, resDirectories: Iterable<File>): FileCollection {
-        fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
-
-        return project.files(Callable {
-            resDirectories.flatMap { resDir ->
-                (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
+    private val List<ConfigurableFileTree>.layoutDirectories
+        get() = map { tree ->
+            tree.matching {
+                it.include("**/layout/**")
+                it.include("**/layout-*/**")
             }
-        })
-    }
+        }
 
     private fun applyExperimental(
         kotlinCompile: TaskProvider<out KotlinCompile>,
@@ -178,55 +175,39 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(androidExtension, project, mainSourceSet))
 
-        fun addVariant(name: String, resDirectories: FileCollection) {
+        fun addVariant(name: String, resDirectories: List<ConfigurableFileTree>) {
             val optionValue = lazy {
                 buildString {
                     append(name)
                     append(';')
-                    resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
+                    resDirectories.map { it.dir }.joinTo(this, separator = ";") { it.canonicalPath }
                 }
             }
             pluginOptions += CompositeSubpluginOption(
                 "variant", optionValue, listOf(
                     SubpluginOption("variantName", name),
                     // use INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", resDirectories)
+                    FilesSubpluginOption(
+                        "resDirs",
+                        resDirectories.map { it.dir }
+                    )
                 )
             )
 
             kotlinCompile.configure {
-                it.inputs.files(getLayoutDirectories(project, resDirectories))
-                    .withPathSensitivity(PathSensitivity.RELATIVE)
-                    .withPropertyName("androidExtensionLayoutsFrom$name")
-                    .skipWhenEmpty(true)
-                    .run {
-                        if (GradleVersion.current() >= GradleVersion.version("6.8")) {
-                            ignoreEmptyDirectories()
-                        } else {
-                            this!!
-                        }
-                    }
+                it.androidLayoutResourceFiles.from(resDirectories.layoutDirectories)
             }
         }
 
         fun addSourceSetAsVariant(name: String) {
             val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
-            val srcDirs = sourceSet.res.srcDirs.toList()
+            val srcDirs = sourceSet.res.sourceDirectoryTrees
             if (srcDirs.isNotEmpty()) {
-                addVariant(sourceSet.name, project.files(srcDirs))
+                addVariant(sourceSet.name, srcDirs)
             }
         }
 
-        val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
-
-        forEachVariant(project) { variant ->
-            if (getTestedVariantData(variant) != null) return@forEachVariant
-            resDirectoriesForAllVariants += variant.getResDirectories()
-        }
-
-        val commonResDirectories = getCommonResDirectories(project, resDirectoriesForAllVariants)
-
-        addVariant("main", commonResDirectories)
+        addSourceSetAsVariant("main")
 
         getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
             addSourceSetAsVariant(buildTypeName)
@@ -251,19 +232,6 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
     }
 
     private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
-
-    private fun getCommonResDirectories(project: Project, resDirectories: List<FileCollection>): FileCollection {
-        val lazyFiles = lazy {
-            if (resDirectories.isEmpty()) {
-                emptySet<File>()
-            } else {
-                resDirectories.first().toMutableSet().apply {
-                    resDirectories.drop(1).forEach { retainAll(it) }
-                }
-            }
-        }
-        return project.files(Callable { lazyFiles.value })
-    }
 
     private fun getApplicationPackage(androidExtension: BaseExtension, project: Project, mainSourceSet: AndroidSourceSet): String {
         val manifestFile = mainSourceSet.manifest.srcFile
