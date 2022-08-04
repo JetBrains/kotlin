@@ -4,9 +4,6 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
-         <trust version="202.7660.26" file="ivy-202.7660.26.xml"/>
-         <trust version="203.6682.168" file="ivy-203.6682.168.xml"/>
-         <trust version="203.8084.24" file="ivy-203.8084.24.xml"/>
          <trust version="211.7442.40" file="ivy-211.7442.40.xml"/>
          <trust version="212.4746.92" file="ivy-212.4746.92.xml"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions"/>
