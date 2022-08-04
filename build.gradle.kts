@@ -55,7 +55,8 @@ pill {
     excludedDirs(
         "out",
         "buildSrc/build",
-        "buildSrc/prepare-deps/intellij-sdk/build"
+        "buildSrc/prepare-deps/intellij-sdk/build",
+        "intellij"
     )
 }
 
