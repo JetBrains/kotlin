@@ -104,6 +104,7 @@ data class ProcessOutput(
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun subprocess(program: Path, vararg args: String, action: (() -> Pair<Path, List<String>>)? = null): ProcessOutput {
     val start = System.currentTimeMillis()
     val process = ProcessBuilder(program.toString(), *args).start()
