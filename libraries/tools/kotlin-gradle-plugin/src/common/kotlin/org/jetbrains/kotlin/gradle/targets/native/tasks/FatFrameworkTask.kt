@@ -20,8 +20,11 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 class FrameworkDsymLayout(val rootDir: File) {
     init {
@@ -41,27 +44,43 @@ class FrameworkDsymLayout(val rootDir: File) {
     fun exists() = rootDir.exists()
 }
 
-class FrameworkLayout(val rootDir: File) {
+class FrameworkLayout(
+    val rootDir: File,
+    val isMacosFramework: Boolean
+) {
     init {
         require(rootDir.extension == "framework")
     }
 
     private val frameworkName = rootDir.nameWithoutExtension
+    private val macosVersionsDir = rootDir.resolve("Versions")
+    private val macosADir = macosVersionsDir.resolve("A")
+    private val macosResourcesDir = macosADir.resolve("Resources")
+    private val contentDir = if (isMacosFramework) macosADir else rootDir
 
-    val headerDir = rootDir.resolve("Headers")
-    val modulesDir = rootDir.resolve("Modules")
+    val headerDir = contentDir.resolve("Headers")
+    val modulesDir = contentDir.resolve("Modules")
 
-    val binary = rootDir.resolve(frameworkName)
+    val binary = contentDir.resolve(frameworkName)
     val header = headerDir.resolve("$frameworkName.h")
     val moduleFile = modulesDir.resolve("module.modulemap")
-    val infoPlist = rootDir.resolve("Info.plist")
+    val infoPlist = (if (isMacosFramework) macosResourcesDir else rootDir).resolve("Info.plist")
 
     val dSYM = FrameworkDsymLayout(rootDir.parentFile.resolve("$frameworkName.framework.dSYM"))
 
     fun mkdirs() {
         rootDir.mkdirs()
-        headerDir.mkdir()
-        modulesDir.mkdir()
+        headerDir.mkdirs()
+        modulesDir.mkdirs()
+        if (isMacosFramework) {
+            macosResourcesDir.mkdirs()
+            val root = rootDir.toPath()
+            Files.createSymbolicLink(root.resolve("Headers"), headerDir.toPath())
+            Files.createSymbolicLink(root.resolve("Modules"), modulesDir.toPath())
+            Files.createSymbolicLink(root.resolve("Resources"), macosResourcesDir.toPath())
+            Files.createSymbolicLink(root.resolve(frameworkName), binary.toPath())
+            Files.createSymbolicLink(macosVersionsDir.toPath().resolve("Current"), macosADir.toPath())
+        }
     }
 
     fun exists() = rootDir.exists()
@@ -83,7 +102,7 @@ class FrameworkDescriptor(
     }
 
     val name = file.nameWithoutExtension
-    val files = FrameworkLayout(file)
+    val files = FrameworkLayout(file, target.family == Family.OSX)
 }
 
 /**
@@ -123,9 +142,6 @@ open class FatFrameworkTask : DefaultTask() {
     @get:Internal
     val fatFramework: File
         get() = destinationDir.resolve(fatFrameworkName + ".framework")
-
-    private val fatFrameworkLayout: FrameworkLayout
-        get() = FrameworkLayout(fatFramework)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -212,6 +228,7 @@ open class FatFrameworkTask : DefaultTask() {
 
     private val FrameworkDescriptor.plistPlatform: String
         get() = when (target) {
+            MACOS_X64, MACOS_ARM64 -> "MacOSX"
             IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64 -> "iPhoneOS"
             TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
             WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "WatchOS"
@@ -358,7 +375,7 @@ open class FatFrameworkTask : DefaultTask() {
         }
     }
 
-    private fun mergeDSYM() {
+    private fun mergeDSYM(fatDsym: FrameworkDsymLayout) {
         val dsymInputs = archToFramework.mapValues { (_, framework) ->
             framework.files.dSYM
         }.filterValues {
@@ -369,7 +386,6 @@ open class FatFrameworkTask : DefaultTask() {
             return
         }
 
-        val fatDsym = fatFrameworkLayout.dSYM
         fatDsym.mkdirs()
 
         // Merge dSYM binary.
@@ -386,21 +402,22 @@ open class FatFrameworkTask : DefaultTask() {
 
     @TaskAction
     protected fun createFatFramework() {
-        val outFramework = fatFrameworkLayout
+        val outFramework = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
 
         outFramework.mkdirs()
         mergeBinaries(outFramework.binary)
         mergeHeaders(outFramework.header)
         createModuleFile(outFramework.moduleFile, fatFrameworkName)
         mergePlists(outFramework.infoPlist, fatFrameworkName)
-        mergeDSYM()
+        mergeDSYM(outFramework.dSYM)
     }
 
     companion object {
         private val supportedTargets = listOf(
             IOS_ARM32, IOS_ARM64, IOS_X64,
             WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
-            TVOS_ARM64, TVOS_X64
+            TVOS_ARM64, TVOS_X64,
+            MACOS_X64, MACOS_ARM64
         )
 
         fun isSupportedTarget(target: KotlinNativeTarget): Boolean {

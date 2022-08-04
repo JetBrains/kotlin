@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
+import org.jetbrains.kotlin.gradle.tasks.FrameworkLayout
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
+import java.io.File
 import java.util.*
 import kotlin.test.assertTrue
 
@@ -71,10 +73,39 @@ class FatFrameworkIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun smokeMacos() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "")
+                    .checkedReplace("iosArm64()", "macosArm64()")
+                    .checkedReplace("iosX64()", "macosX64()")
+            }
+
+            build("fat") {
+                checkSmokeBuild(
+                    archs = listOf("x64", "arm64"),
+                    targetPrefix = "macos",
+                    expectedPlistPlatform = "MacOSX",
+                    true
+                )
+
+                val binary = fileInWorkingDir("build/fat-framework/smoke.framework/Versions/A/smoke")
+                with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
+                    assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
+                }
+            }
+        }
+    }
+
     private fun CompiledProject.checkSmokeBuild(
         archs: List<String>,
         targetPrefix: String,
-        expectedPlistPlatform: String
+        expectedPlistPlatform: String,
+        isMacosFramework: Boolean = false
     ) {
         assertSuccessful()
         val linkTasks = archs.map {
@@ -89,17 +120,21 @@ class FatFrameworkIT : BaseGradleIT() {
         assertTasksExecuted(linkTasks)
         assertTasksExecuted(":fat")
 
-        assertFileExists("build/fat-framework/smoke.framework/smoke")
-        assertFileExists("build/fat-framework/smoke.framework/Headers/smoke.h")
-        assertFileExists("build/fat-framework/smoke.framework.dSYM/Contents/Resources/DWARF/smoke")
+        val frameworkLayout = FrameworkLayout(fileInWorkingDir("build/fat-framework/smoke.framework"), isMacosFramework)
 
-        val headerContent = fileInWorkingDir("build/fat-framework/smoke.framework/Headers/smoke.h").readText()
+        fun File.projectRelative() = relativeTo(File(workingDir, project.projectName)).path
+
+        assertFileExists(frameworkLayout.binary.projectRelative())
+        assertFileExists(frameworkLayout.header.projectRelative())
+        assertFileExists(frameworkLayout.dSYM.binary.projectRelative())
+
+        val headerContent = frameworkLayout.header.readText()
         assertTrue(
             headerContent.contains("+ (int32_t)foo __attribute__((swift_name(\"foo()\")));"),
             "Unexpected header content:\n$headerContent"
         )
 
-        val plistContent = fileInWorkingDir("build/fat-framework/smoke.framework/Info.plist")
+        val plistContent = frameworkLayout.infoPlist
             .readLines()
             .joinToString(separator = "\n") { it.trim() }
 
