@@ -44,11 +44,19 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                 if (!rootCallee.isInline)
                     return super.visitCall(expression, data)
 
-                val inlineLambdas = (0 until expression.valueArgumentsCount)
-                    .mapNotNull { index ->
-                        (expression.getValueArgument(index) as? IrFunctionExpression)?.function
-                            ?.takeIf { rootCallee.valueParameters[index].isInlineParameter() }
-                    }
+                expression.extensionReceiver = expression.extensionReceiver?.transform(this, data)
+                expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, data)
+                val inlineLambdas = mutableListOf<IrFunction>()
+                for (index in 0 until expression.valueArgumentsCount) {
+                    val argument = expression.getValueArgument(index)
+                    val inlineLambda = (argument as? IrFunctionExpression)?.function
+                        ?.takeIf { rootCallee.valueParameters[index].isInlineParameter() }
+                    if (inlineLambda == null)
+                        expression.putValueArgument(index, argument?.transform(this, data))
+                    else
+                        inlineLambdas.add(inlineLambda)
+                }
+
                 val localClasses = mutableSetOf<IrClass>()
                 val localFunctions = mutableSetOf<IrFunction>()
                 val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
@@ -104,14 +112,16 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                 LocalDeclarationsLowering(context).lower(irBlock, container, data, localClasses, adaptedFunctions)
                 irBlock.statements.addAll(0, localClasses)
 
-                expression.transformChildrenVoid(object : IrElementTransformerVoid() {
-                    override fun visitClass(declaration: IrClass): IrStatement {
-                        return IrCompositeImpl(
-                            declaration.startOffset, declaration.endOffset,
-                            context.irBuiltIns.unitType
-                        )
-                    }
-                })
+                for (lambda in inlineLambdas) {
+                    lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
+                        override fun visitClass(declaration: IrClass): IrStatement {
+                            return IrCompositeImpl(
+                                declaration.startOffset, declaration.endOffset,
+                                context.irBuiltIns.unitType
+                            )
+                        }
+                    })
+                }
                 localClasses.forEach { it.setDeclarationsParent(data) }
 
                 return irBlock
