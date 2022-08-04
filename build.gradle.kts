@@ -478,16 +478,61 @@ allprojects {
 
         mirrorRepo?.let(::maven)
 
-        maven(intellijRepo)
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+        maven(intellijRepo) {
+            content {
+                includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
+            }
+        }
+
+        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+                includeVersion("org.jetbrains.jps", "jps-javac-extension", "1")
+            }
+        }
+
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
+            content {
+                includeModule("org.jetbrains.dukat", "dukat")
+                includeModule("org.jetbrains.kotlin", "android-dx")
+                includeModule("org.jetbrains.kotlin", "jcabi-aether")
+                includeModule("org.jetbrains.kotlin", "kotlin-build-gradle-plugin")
+                includeModule("org.jetbrains.kotlin", "protobuf-lite")
+                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+                includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
+            }
+        }
+
+        maven("https://download.jetbrains.com/teamcity-repository") {
+            content {
+                includeModule("org.jetbrains.teamcity", "serviceMessages")
+                includeModule("org.jetbrains.teamcity.idea", "annotations")
+            }
+        }
+
+        maven("https://dl.google.com/dl/android/maven2") {
+            content {
+                includeGroup("com.android.tools")
+                includeGroup("com.android.tools.build")
+                includeGroup("com.android.tools.layoutlib")
+                includeGroup("com.android")
+                includeGroup("androidx.test")
+                includeGroup("androidx.annotation")
+            }
+        }
 
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        maven("https://dl.google.com/dl/android/maven2")
 
-        maven("https://download.jetbrains.com/teamcity-repository/")
-
-        jcenter()
+        @Suppress("DEPRECATION")
+        jcenter {
+            content {
+                includeVersionByRegex("net\\.rubygrapefruit", ".+", "0\\.14")
+                includeVersionByRegex("io\\.ktor", ".+", "1\\.1\\.5")
+                includeVersion("khttp", "khttp", "1.0.0")
+                includeVersion("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", "0.4.2")
+                includeVersion("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", "0.14.0")
+            }
+        }
     }
 }
 
