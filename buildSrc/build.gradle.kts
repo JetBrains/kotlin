@@ -16,8 +16,6 @@ buildscript {
             maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         }
 
-        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-
         project.bootstrapKotlinRepo?.let {
             maven(url = it)
         }
