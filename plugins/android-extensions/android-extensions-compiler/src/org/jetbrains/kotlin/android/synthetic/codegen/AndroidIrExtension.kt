@@ -121,7 +121,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
         }
 
     // NOTE: sparse array version intentionally not implemented; this plugin is deprecated
-    @OptIn(FirIncompatiblePluginAPI::class) // TODO: check that it still works with FIR
+    @OptIn(FirIncompatiblePluginAPI::class)
     private val mapFactory = pluginContext.referenceFunctions(FqName("kotlin.collections.mutableMapOf"))
         .single { it.owner.valueParameters.isEmpty() }
     private val mapGet = pluginContext.irBuiltIns.mapClass.owner.functions

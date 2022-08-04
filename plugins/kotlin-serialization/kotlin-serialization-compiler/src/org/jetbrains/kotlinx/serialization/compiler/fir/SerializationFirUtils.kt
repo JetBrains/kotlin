@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 
-// FIXME: why FirAnnotation.classId.asSingleFqName is available, but FirAnnotation.fqName() requires FirSession?
 internal val FirClassSymbol<*>.hasSerializableAnnotation
     get() = this.annotations.any {
         it.classId?.asSingleFqName()?.asString() == SerializationAnnotations.serializableAnnotationFqName.asString()
@@ -56,9 +55,8 @@ internal fun FirClassSymbol<*>.isInternallySerializableEnum(): Boolean =
 internal val FirClassSymbol<*>.shouldHaveGeneratedSerializer: Boolean
     get() = (isInternalSerializable && isFinalOrOpen()) || isInternallySerializableEnum()
 
-@OptIn(SymbolInternals::class)
 private fun FirClassSymbol<*>.isFinalOrOpen(): Boolean {
-    val modality = fir.status.modality
+    val modality = rawStatus.modality
     // null means default modality, final
     return (modality == null || modality == Modality.FINAL || modality == Modality.OPEN)
 }

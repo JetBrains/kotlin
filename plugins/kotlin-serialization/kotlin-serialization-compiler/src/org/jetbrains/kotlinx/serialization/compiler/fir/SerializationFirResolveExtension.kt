@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.typeWithStarProjections
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -56,7 +57,6 @@ val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEnti
 
 class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
-    // FIXME: I can't check status here
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
         val result = mutableSetOf<Name>()
         if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
@@ -65,22 +65,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             result += SerialEntityNames.SERIALIZER_CLASS_NAME
         return result
     }
-    /**
-     * It's not documented how these classes relate with getCallableNamesForClass
-     * Document says:
-     * 1.> If you generate some class using generateClassLikeDeclaration then you don't need to fill it's declarations.
-     * Q: Don't need or MUSTN'T?
-     *
-     * 2. > Instead of that you need to generate members via generateProperties/Functions/Constructors methods
-     * of same generation extension (this is important note if you have multiple generation extensions in your plugin)
-     *
-     * Q: Does this mean that for e.g. generated companion `generateFunctions` will be called regardless of provided predicate?
-     *
-     * 3. This method is stated to be called on SUPERTYPES, but getNestedClassifiersNames stated to be called after SUPERTYPES. How is this possible?
-     *
-     * 4. It is should be mentioned that supertypes for generated class should be added here,
-     * while supertypes for exisiting classes — in separate extension
-     */
+
     override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         return when (classId.shortClassName) {
             SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> {
@@ -93,17 +78,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         }
     }
 
-    /**
-     * 1. It is unclear that for `generateConstructors` to work, one need to return SpecialNames.INIT from here
-     * 1a. Also it is unclear that objects need constructors too.
-     *
-     * 2. If it is a user-written companion object, will I get here? Why?
-     *
-     * 3. Is it supposed to check that classSymbol does not already have same Name? How to add a generated overload?
-     *
-     * 4. It is unclear what to do with properties
-     *
-     */
+
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
         val classId = classSymbol.classId
         val result = mutableSetOf<Name>()
@@ -124,7 +99,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     SpecialNames.INIT,
                     SerialEntityNames.SAVE_NAME,
                     SerialEntityNames.LOAD_NAME,
-                    // FIXME: correctly create property?
                     SerialEntityNames.SERIAL_DESC_FIELD_NAME
                 )
                 if (classSymbol.superConeTypes.any {
@@ -147,7 +121,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     @OptIn(SymbolInternals::class)
     private fun <T> getFromSupertype(callableId: CallableId, owner: FirClassSymbol<*>, extractor: (FirTypeScope) -> List<T>): T {
-        val scopeSession = ScopeSession() // ????????
+        val scopeSession = ScopeSession()
         val scopes = lookupSuperTypes(
             owner, lookupInterfaces = true, deep = false, useSiteSession = session
         ).mapNotNull { useSiteSuperType ->
@@ -240,7 +214,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
 
     // FIXME: it seems that this list will always be used, why not provide it automatically?
     private val matchedClasses by lazy {
-        session.predicateBasedProvider.getSymbolsByPredicate(AnnotatedWith(setOf(SerializationAnnotations.serializableAnnotationFqName)))
+        session.predicateBasedProvider.getSymbolsByPredicate(FirSerializationPredicates.annotatedWithSerializable)
             .filterIsInstance<FirRegularClassSymbol>()
     }
 
@@ -267,7 +241,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 Modality.FINAL,
                 EffectiveVisibility.Public
             )
-            // FIXME: how to create annotations?
+            // TODO: add deprecate hidden
 //            annotations = listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module))))
 
 
@@ -286,11 +260,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             })
 
             superTypeRefs += buildResolvedTypeRef {
-                // FIXME: document how one gets type ref from FirClass
-                //  is this a correct one or should I go with buildTypeProjectionWithVariance ?
-                //  is this a correct place to add supertypes to synthetic declarations? Looks like FirSupertypesExtension does not see class.
-                // It seems that this code generates KSerializer<Box<[declared type param of Box]>> instead of KSerializer<Box<*>>, but it didn't matter for old FE
-                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.defaultType().toTypeProjection(Variance.INVARIANT)), isNullable = false)
+                @OptIn(SymbolInternals::class)
+                type = generatedSerializerClassId.constructClassLikeType(arrayOf(owner.fir.typeWithStarProjections()), isNullable = false)
             }
         }
         // TODO: add typed constructor
@@ -333,7 +304,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        // No predicate on final/open etc
-        register(AnnotatedWith(setOf(SerializationAnnotations.serializableAnnotationFqName)))
+        register(FirSerializationPredicates.annotatedWithSerializable)
     }
 }
