@@ -12,9 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfigurationG70
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG70
 import javax.inject.Inject
 
@@ -142,4 +141,6 @@ private fun Project.registerVariantImplementations() {
         JavaSourceSetsAccessorG70.JavaSourceSetAccessorVariantFactoryG70()
     factories[BasePluginConfiguration.BasePluginConfigurationVariantFactory::class] =
         BasePluginConfigurationG70.BasePluginConfigurationVariantFactoryG70()
+    factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
+        IdeaSyncDetectorG70.IdeaSyncDetectorVariantFactoryG70()
 }
