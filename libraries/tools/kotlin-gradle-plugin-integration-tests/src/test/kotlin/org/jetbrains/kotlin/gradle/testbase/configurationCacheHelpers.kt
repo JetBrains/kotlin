@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import java.net.URI
 import java.nio.file.Path
@@ -41,7 +42,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     // Then run a build where tasks states are deserialized to check that they work correctly in this mode
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        assertOutputContains("Reusing configuration cache.")
+        assertConfigurationCacheReused()
     }
 
     if (checkUpToDateOnRebuild) {
@@ -80,6 +81,10 @@ private fun GradleProject.assertConfigurationCacheReportNotCreated() {
     configurationCacheReportFile?.let { htmlReportFile ->
         fail("Configuration cache problems were found, check ${htmlReportFile.asClickableFileUrl} for details.")
     }
+}
+
+fun BuildResult.assertConfigurationCacheReused() {
+    assertOutputContains("Reusing configuration cache.")
 }
 
 val BuildOptions.withConfigurationCache: BuildOptions
