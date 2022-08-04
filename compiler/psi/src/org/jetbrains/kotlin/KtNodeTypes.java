@@ -149,8 +149,6 @@ public interface KtNodeTypes {
     IElementType CLASS_LITERAL_EXPRESSION  = new KtNodeType("CLASS_LITERAL_EXPRESSION", KtClassLiteralExpression.class);
     IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression.class);
 
-    IElementType TYPE_ARGUMENT_LIST_LIKE_EXPRESSION = new IElementType("TYPE_ARGUMENT_LIST_LIKE_EXPRESSION", null);
-
     IElementType OBJECT_LITERAL            = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression.class);
 
     IElementType WHEN                      = new KtNodeType("WHEN", KtWhenExpression.class);

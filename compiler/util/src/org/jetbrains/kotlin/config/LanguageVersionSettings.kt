@@ -265,7 +265,6 @@ enum class LanguageFeature(
     DataObjects(KOTLIN_1_8), // KT-4107
     LightweightLambdas(KOTLIN_1_8, defaultState = State.DISABLED),
     AllowExpressionAfterTypeReferenceWithoutSpacing(KOTLIN_1_8, kind = BUG_FIX), // KT-35811
-    AllowTypeArgumentListLikeExpressions(KOTLIN_1_8, kind = BUG_FIX), // KT-8263
 
     // 1.9
 

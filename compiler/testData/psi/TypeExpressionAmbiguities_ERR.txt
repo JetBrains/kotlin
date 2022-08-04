@@ -299,46 +299,50 @@ KtFile: TypeExpressionAmbiguities_ERR.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('c')
       PsiWhiteSpace('\n    ')
-      BINARY_EXPRESSION
-        BINARY_WITH_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('d')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(as)('as')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Foo')
-              PsiWhiteSpace(' ')
-              TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
-                <empty list>
-        OPERATION_REFERENCE
-          PsiElement(LT)('<')
-        PsiWhiteSpace(' ')
+      BINARY_WITH_TYPE
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+          PsiElement(IDENTIFIER)('d')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Foo')
+            PsiWhiteSpace(' ')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              PsiWhiteSpace(' ')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('bar')
+              PsiErrorElement:Expecting a '>'
+                <empty list>
       PsiWhiteSpace('\n    ')
-      BINARY_EXPRESSION
-        IS_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(is)('is')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Foo')
-              PsiWhiteSpace(' ')
-              TYPE_ARGUMENT_LIST_LIKE_EXPRESSION
-                <empty list>
-        OPERATION_REFERENCE
-          PsiElement(LT)('<')
-        PsiWhiteSpace(' ')
+      IS_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+          PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(is)('is')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Foo')
+            PsiWhiteSpace(' ')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              PsiWhiteSpace(' ')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('bar')
+              PsiErrorElement:Expecting a '>'
+                <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
