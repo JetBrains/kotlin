@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LazyTransfor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -428,7 +429,7 @@ private fun rethrowWithDetails(
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase?
 ): Nothing {
-    if (e is ControlFlowException) throw e
+    if (shouldIjPlatformExceptionBeRethrown(e)) throw e
     errorWithAttachment(
         buildString {
             val moduleData = firDeclarationToResolve.llFirModuleData
