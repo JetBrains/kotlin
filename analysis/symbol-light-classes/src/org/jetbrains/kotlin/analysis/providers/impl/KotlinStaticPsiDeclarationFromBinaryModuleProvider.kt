@@ -61,6 +61,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return clsClassImplsByFqName(classId.asSingleFqName(), isPackageName = false)
     }
 
+    // TODO(dimonchik0036): support 'is' accessor
     override fun getProperties(callableId: CallableId): Collection<PsiMember> {
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
