@@ -48,6 +48,7 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
 
     testApi(commonDependency("junit:junit"))
