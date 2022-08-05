@@ -895,6 +895,8 @@ if (disableVerificationTasks) {
     }
 }
 
+gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
+
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
         npmInstallTaskProvider?.configure {
