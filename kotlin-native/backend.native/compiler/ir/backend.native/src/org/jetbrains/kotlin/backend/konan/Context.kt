@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
+import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
 import org.jetbrains.kotlin.backend.konan.lower.InlineFunctionsSupport
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.konan.lower.InternalLoweredEnum
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
