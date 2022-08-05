@@ -124,5 +124,19 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
         )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,
+            "Cannot generate external serializer ''{0}'': class ''{1}'' have constructor parameters which are not properties and therefore it is not serializable automatically",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE,
+            "Cannot generate external serializer ''{0}'': class ''{1}'' is defined in another module",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
     }
 }

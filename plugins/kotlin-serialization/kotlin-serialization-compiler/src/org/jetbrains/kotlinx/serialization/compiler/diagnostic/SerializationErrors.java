@@ -42,6 +42,9 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_NOT_SERIALIZABLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_IN_ANOTHER_MODULE = DiagnosticFactory2.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

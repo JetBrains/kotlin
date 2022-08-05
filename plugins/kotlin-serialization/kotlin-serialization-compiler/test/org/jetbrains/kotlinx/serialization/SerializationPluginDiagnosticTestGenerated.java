@@ -34,6 +34,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
     }
 
+    @TestMetadata("ExternalSerializers.kt")
+    public void testExternalSerializers() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/ExternalSerializers.kt");
+    }
+
     @TestMetadata("IncorrectTransient.kt")
     public void testIncorrectTransient() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient.kt");

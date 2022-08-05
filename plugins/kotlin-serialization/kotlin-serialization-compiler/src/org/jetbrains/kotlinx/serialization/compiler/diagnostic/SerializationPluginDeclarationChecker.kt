@@ -41,6 +41,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
+        checkExternalSerializer(descriptor, declaration, context.trace)
+
         if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (declaration !is KtPureClassOrObject) return
         if (!isIde) {
@@ -56,6 +58,21 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
+    }
+
+    private fun checkExternalSerializer(classDescriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
+        val serializableKType = classDescriptor.serializerForClass ?: return
+        val serializableDescriptor = serializableKType.toClassDescriptor ?: return
+        val props = SerializableProperties(serializableDescriptor, trace.bindingContext)
+
+        if (!props.isExternallySerializable) {
+            val entry = classDescriptor.findAnnotationDeclaration(SerializationAnnotations.serializerAnnotationFqName)
+            val inSameModule =
+                trace.bindingContext[BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, serializableDescriptor.fqNameUnsafe] != null
+            val diagnostic = if (inSameModule) SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE else SerializationErrors.EXTERNAL_CLASS_IN_ANOTHER_MODULE
+
+            trace.report(diagnostic.on(entry ?: declaration, classDescriptor.defaultType, serializableKType))
+        }
     }
 
     private fun checkInheritedAnnotations(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
