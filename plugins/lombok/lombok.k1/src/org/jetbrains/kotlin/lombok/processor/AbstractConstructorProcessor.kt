@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.ConstructorAnnotation
 import org.jetbrains.kotlin.lombok.utils.LombokValueParameter
 import org.jetbrains.kotlin.lombok.utils.createFunction
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Processor {
 
+    context(LazyJavaResolverContext)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         getAnnotation(classDescriptor)?.let { annotation ->
             val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->

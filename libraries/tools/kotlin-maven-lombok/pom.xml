@@ -86,6 +86,7 @@
                 <configuration>
                     <args>
                         <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
+                        <arg>-Xcontext-receivers</arg>
                     </args>
                 </configuration>
             </plugin>

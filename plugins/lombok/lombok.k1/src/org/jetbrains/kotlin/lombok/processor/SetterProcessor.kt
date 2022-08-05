@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class SetterProcessor(private val config: LombokConfig) : Processor {
 
+    context(LazyJavaResolverContext)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         //lombok doesn't generate setters for enums
         if (classDescriptor.kind == ClassKind.ENUM_CLASS) return

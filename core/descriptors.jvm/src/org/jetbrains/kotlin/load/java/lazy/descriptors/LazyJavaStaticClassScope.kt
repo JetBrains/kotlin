@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForStaticMembers
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.utils.DFS
 class LazyJavaStaticClassScope(
     c: LazyJavaResolverContext,
     private val jClass: JavaClass,
-    override val ownerDescriptor: LazyJavaClassDescriptor
+    override val ownerDescriptor: JavaClassDescriptor
 ) : LazyJavaStaticScope(c) {
 
     override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass) { it.isStatic }
@@ -48,7 +49,7 @@ class LazyJavaStaticClassScope(
             if (jClass.isEnum) {
                 addAll(listOf(StandardNames.ENUM_VALUE_OF, StandardNames.ENUM_VALUES))
             }
-            addAll(c.components.syntheticPartsProvider.getStaticFunctionNames(ownerDescriptor))
+            with(c) { addAll(c.components.syntheticPartsProvider.getStaticFunctionNames(ownerDescriptor)) }
         }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
@@ -83,7 +84,7 @@ class LazyJavaStaticClassScope(
     }
 
     override fun computeImplicitlyDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        c.components.syntheticPartsProvider.generateStaticFunctions(ownerDescriptor, name, result)
+        with(c) { c.components.syntheticPartsProvider.generateStaticFunctions(ownerDescriptor, name, result) }
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {

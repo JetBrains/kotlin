@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.With
 import org.jetbrains.kotlin.lombok.config.toDescriptorVisibility
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 class WithProcessor : Processor {
+
+    context(LazyJavaResolverContext)
+    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
         val clWith = With.getOrNull(classDescriptor)
 

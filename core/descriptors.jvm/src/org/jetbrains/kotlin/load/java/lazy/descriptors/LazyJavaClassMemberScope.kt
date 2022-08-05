@@ -77,7 +77,7 @@ class LazyJavaClassMemberScope(
             addAll(declaredMemberIndex().getMethodNames())
             addAll(declaredMemberIndex().getRecordComponentNames())
             addAll(computeClassNames(kindFilter, nameFilter))
-            addAll(c.components.syntheticPartsProvider.getMethodNames(ownerDescriptor))
+            with(c) { addAll(c.components.syntheticPartsProvider.getMethodNames(ownerDescriptor)) }
         }
 
     internal val constructors = c.storageManager.createLazyValue {
@@ -98,7 +98,7 @@ class LazyJavaClassMemberScope(
             }
         }
 
-        c.components.syntheticPartsProvider.generateConstructors(ownerDescriptor, result)
+        with(c) { c.components.syntheticPartsProvider.generateConstructors(ownerDescriptor, result) }
 
         c.components.signatureEnhancement.enhanceSignatures(
             c,
@@ -496,7 +496,7 @@ class LazyJavaClassMemberScope(
             result.add(resolveRecordComponentToFunctionDescriptor(declaredMemberIndex().findRecordComponentByName(name)!!))
         }
 
-        c.components.syntheticPartsProvider.generateMethods(ownerDescriptor, name, result)
+        with(c) { c.components.syntheticPartsProvider.generateMethods(ownerDescriptor, name, result) }
     }
 
     private fun resolveRecordComponentToFunctionDescriptor(recordComponent: JavaRecordComponent): JavaMethodDescriptor {
@@ -803,31 +803,50 @@ class LazyJavaClassMemberScope(
         jClass.innerClassNames.toSet()
     }
 
+    private val generatedNestedClassNames = c.storageManager.createLazyValue {
+        with(c) { c.components.syntheticPartsProvider.getNestedClassNames(ownerDescriptor).toSet() }
+    }
+
     private val enumEntryIndex = c.storageManager.createLazyValue {
         jClass.fields.filter { it.isEnumEntry }.associateBy { f -> f.name }
     }
 
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues { name: Name ->
-        if (name !in nestedClassIndex()) {
-            val field = enumEntryIndex()[name]
-            if (field != null) {
-                val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
-                    getFunctionNames() + getVariableNames()
+        when (name) {
+            in nestedClassIndex() -> {
+                c.components.finder.findClass(
+                    JavaClassFinder.Request(
+                        ownerDescriptor.classId!!.createNestedClassId(name),
+                        outerClass = jClass
+                    )
+                )?.let {
+                    LazyJavaClassDescriptor(c, ownerDescriptor, it)
+                        .also(c.components.javaClassesTracker::reportClass)
                 }
-                EnumEntrySyntheticClassDescriptor.create(
-                    c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
-                    c.components.sourceElementFactory.source(field)
-                )
-            } else null
-        } else {
-            c.components.finder.findClass(
-                JavaClassFinder.Request(
-                    ownerDescriptor.classId!!.createNestedClassId(name),
-                    outerClass = jClass
-                )
-            )?.let {
-                LazyJavaClassDescriptor(c, ownerDescriptor, it)
-                    .also(c.components.javaClassesTracker::reportClass)
+            }
+
+            in generatedNestedClassNames() -> {
+                val classes = with(c) {
+                    buildList { c.components.syntheticPartsProvider.generateNestedClass(ownerDescriptor, name, this) }
+                }
+                when (classes.size) {
+                    0 -> null
+                    1 -> classes.single()
+                    else -> error("Multiple classes with same name are generated: $classes")
+                }
+            }
+
+            else -> {
+                val field = enumEntryIndex()[name]
+                if (field != null) {
+                    val enumMemberNames: NotNullLazyValue<Set<Name>> = c.storageManager.createLazyValue {
+                        getFunctionNames() + getVariableNames()
+                    }
+                    EnumEntrySyntheticClassDescriptor.create(
+                        c.storageManager, ownerDescriptor, name, enumMemberNames, c.resolveAnnotations(field),
+                        c.components.sourceElementFactory.source(field)
+                    )
+                } else null
             }
         }
     }
