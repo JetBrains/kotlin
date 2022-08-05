@@ -1,13 +1,20 @@
 fun box(): String {
-    try {
+    return try {
         bar()
-        return "FAIL1"
+        "FAIL"
     } catch (e: Throwable) {
-        if (!e.isLinkageError("/Foo.<init>")) return "FAIL2"
+        e.checkLinkageError("constructor Foo.<init> can not be called")
     }
-
-    return "OK"
 }
 
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked IR symbol $symbolName|") == true
+private fun Throwable.checkLinkageError(prefix: String): String {
+    if (this::class.simpleName != "IrLinkageError") return "Unexpected throwable: ${this::class}"
+
+    val expectedMessagePrefix = "$prefix because it uses unlinked symbols"
+    val actualMessage = message.orEmpty()
+
+    return if (actualMessage.startsWith(expectedMessagePrefix))
+        "OK"
+    else
+        "EXPECTED: $expectedMessagePrefix, ACTUAL: $actualMessage"
+}
