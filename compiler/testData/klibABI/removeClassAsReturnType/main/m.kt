@@ -1,11 +1,9 @@
 fun test1(d: D): String {
-    try {
+    return try {
         d.barF()
     } catch(e: Throwable) {
-        if (e.isLinkageError("/D.expF")) return "O"
+        e.checkLinkageError("function expF can not be called")
     }
-
-    return "FAIL3"
 }
 
 fun test2(d: D): String {
@@ -13,13 +11,11 @@ fun test2(d: D): String {
 }
 
 fun test3(d: D): String {
-    try {
+    return try {
         d.barP1
     } catch(e: Throwable) {
-        if (e.isLinkageError("/D.expP1.<get-expP1>")) return "O"
+        e.checkLinkageError("property accessor expP1.<get-expP1> can not be called")
     }
-
-    return "FAIL4"
 }
 
 fun test4(d: D): String {
@@ -27,20 +23,74 @@ fun test4(d: D): String {
 }
 
 fun test5(): String {
-    try {
+    return try {
         D2().barP2
     } catch(e: Throwable) {
-        if (e.isLinkageError("/D2.expP2.<get-expP2>")) return "OK"
-        else throw e
+        e.checkLinkageError("property accessor expP2.<get-expP2> can not be called")
     }
-
-    return "FAIL5"
 }
 
-fun box(): String {
-    val result = test1(D()) + test2(D()) + test3(D()) + test4(D()) + test5()
-    return if (result == "OKOKOK") "OK" else result
+fun test6(): String {
+    return try {
+        bar()
+        return "FAIL6"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo can not be called")
+    }
 }
 
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked type in signature of IR symbol $symbolName|") == true
+fun test7(): String {
+    return try {
+        baz()
+        return "FAIL7"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo can not be called")
+    }
+}
+
+fun test8(): String {
+    return try {
+        quux()
+        return "FAIL8"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo can not be called")
+    }
+}
+
+fun test9(): String {
+    return try {
+        grault()
+        return "FAIL9"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo can not be called")
+    }
+}
+
+fun test10(): String {
+    return try {
+        waldo()
+        return "FAIL10"
+    } catch (e: Throwable) {
+        e.checkLinkageError("function foo can not be called")
+    }
+}
+
+fun box(): String = checkResults(test1(D()), test2(D()), test3(D()), test4(D()), test5(), test6(), test7(), test8(), test9(), test10())
+
+private fun Throwable.checkLinkageError(prefix: String): String {
+    if (this::class.simpleName != "IrLinkageError") return "Unexpected throwable: ${this::class}"
+
+    val expectedMessagePrefix = "$prefix because it uses unlinked symbols"
+    val actualMessage = message.orEmpty()
+
+    return if (actualMessage.startsWith(expectedMessagePrefix))
+        "OK"
+    else
+        "EXPECTED: $expectedMessagePrefix, ACTUAL: $actualMessage"
+}
+
+private fun checkResults(vararg results: String): String = when {
+    results.isEmpty() -> "no results to check"
+    results.all { it == "OK" } -> "OK"
+    else -> results.joinToString("\n")
+}
