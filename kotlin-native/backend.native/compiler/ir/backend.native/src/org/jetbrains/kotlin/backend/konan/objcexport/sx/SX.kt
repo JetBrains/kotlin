@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
@@ -30,7 +29,7 @@ class SXClangModule() : SXNamespace, SXContainer {
 
     private val moduleDependencies: MutableList<SXClangModule> = mutableListOf()
 
-    val headers: MutableList<SXObjCHeader> = mutableListOf()
+    val headers: MutableSet<SXObjCHeader> = mutableSetOf()
 
     override val elements: List<SXElement>
         get() = headers.flatMap(SXObjCHeader::elements)
@@ -44,6 +43,14 @@ class SXClangModule() : SXNamespace, SXContainer {
     }
 }
 
+data class SXHeaderImport(val headerName: String, val local: Boolean) {
+    fun constructImportStatement(): String {
+        val lBracket = if (local) "\"" else "<"
+        val rBracket = if (local) "\"" else ">"
+        return "#import $lBracket$headerName$rBracket"
+    }
+}
+
 class SXObjCHeader(val name: String) : SXContainer, SXElement {
     override val elements: List<SXElement>
         get() = declarations
@@ -54,8 +61,7 @@ class SXObjCHeader(val name: String) : SXContainer, SXElement {
     val classForwardDeclarations = mutableListOf<ObjCClassForwardDeclaration>()
     val protocolForwardDeclarations = mutableListOf<String>()
 
-    val imports = mutableListOf<String>()
-    val headerImports = mutableListOf<SXObjCHeader>()
+    val headerImports = mutableListOf<SXHeaderImport>()
 
     private val declarations = mutableListOf<ObjCTopLevel<*>>()
 
@@ -73,11 +79,12 @@ class SXObjCHeader(val name: String) : SXContainer, SXElement {
 
     // TODO: Make it smarter, track in [module]
     fun addImport(header: String) {
-        imports += header
+        headerImports += SXHeaderImport(header, local = false)
     }
 
     fun addImport(header: SXObjCHeader) {
-        headerImports += header
+        if (header == this) return
+        headerImports += SXHeaderImport(header.name, local = true)
     }
 
     override fun toString(): String {
@@ -95,39 +102,64 @@ class SXClangModuleBuilder(
     private val theHeader = SXObjCHeader(umbrellaHeaderName)
     private val theStdlibHeader = SXObjCHeader("Kotlin.h")
 
+    private var umbrellaHeader: SXObjCHeader? = null
+
     private val moduleToHeader = mutableMapOf<ModuleDescriptor, SXObjCHeader>()
 
     init {
+        addStdlib()
         if (headerPerModule) {
-            theModule.addObjCHeader(theStdlibHeader)
             kotlinModules.forEach { module ->
-                val header = SXObjCHeader(inferHeaderName(module))
-                // Conservative, but ok.
-                header.addImport(theStdlibHeader)
-                theModule.addObjCHeader(header)
+                val header = addHeaderFor(module)
                 moduleToHeader[module] = header
+                if (header.name == umbrellaHeaderName) {
+                    umbrellaHeader = header
+                }
             }
         } else {
-            theModule.addObjCHeader(theHeader)
             kotlinModules.forEach {
                 moduleToHeader[it] = theHeader
             }
         }
+    }
+
+    private fun addStdlib() {
         val stdlib = kotlinModules.first().allDependencyModules.first { it.isNativeStdlib() }
         moduleToHeader[stdlib] = findHeaderForStdlib()
+        theModule.addObjCHeader(theStdlibHeader)
+    }
+
+    private fun addHeaderFor(module: ModuleDescriptor): SXObjCHeader {
+        val header = SXObjCHeader(inferHeaderName(module))
+        header.addImport(theStdlibHeader)
+        theModule.addObjCHeader(header)
+        return header
     }
 
     private fun inferHeaderName(module: ModuleDescriptor): String {
-        return "${module.name.asStringStripSpecialMarkers()}.h"
+        // TODO: Better normalization
+        val normalized = module.name.asStringStripSpecialMarkers()
+                .replace('.', '_')
+                .replace(':', '_')
+        return "$normalized.h"
     }
 
     fun build(): SXClangModule {
+        umbrellaHeader?.let { umbrellaHeader ->
+            theModule.headers
+                    .filter { it.name != umbrellaHeaderName }
+                    .forEach {
+                        umbrellaHeader.addImport(it)
+                    }
+        }
         return theModule
     }
 
     fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader {
-        return moduleToHeader[declarationDescriptor.module]
-                ?: error("Failed to find header for ${declarationDescriptor.fqNameSafe}")
+        if (!headerPerModule) return theHeader
+        return moduleToHeader.getOrPut(declarationDescriptor.module) {
+            addHeaderFor(declarationDescriptor.module)
+        }
     }
 
     fun findHeaderForStdlib(): SXObjCHeader {

@@ -21,6 +21,14 @@ class SXHeaderImportReferenceTracker(
         header.addImport(declarationHeader)
         println("$header depends on $declarationHeader because of ${declaration.name}")
     }
+
+    override fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration) {
+        header.addClassForwardDeclaration(forwardDeclaration)
+    }
+
+    override fun trackProtocolForwardDeclaration(objCName: String) {
+        header.addProtocolForwardDeclaration(objCName)
+    }
 }
 
 abstract class ObjCExportHeaderGenerator internal constructor(
@@ -172,19 +180,12 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
     }
 
-    private fun selectHeader(declaration: DeclarationDescriptor): SXObjCHeader {
-        val header = sxBuilder.findHeaderForDeclaration(declaration)
-        println("translating $header")
-        translator.state = getTracker(header)
-        return header
-    }
-
     private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.() -> Unit) {
         val header = sxBuilder.findHeaderForDeclaration(declaration)
-        val oldState = translator.state
-        translator.state = getTracker(header)
+        val oldState = translator.tracker
+        translator.tracker = getTracker(header)
         header.action()
-        translator.state = oldState
+        translator.tracker = oldState
     }
 
     private fun generateFile(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
@@ -222,10 +223,12 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     internal fun referenceClass(forwardDeclaration: ObjCClassForwardDeclaration) {
+        translator.tracker.trackClassForwardDeclaration(forwardDeclaration)
         classForwardDeclarations += forwardDeclaration
     }
 
     internal fun referenceProtocol(objCName: String) {
+        translator.tracker.trackProtocolForwardDeclaration(objCName)
         protocolForwardDeclarations += objCName
     }
 

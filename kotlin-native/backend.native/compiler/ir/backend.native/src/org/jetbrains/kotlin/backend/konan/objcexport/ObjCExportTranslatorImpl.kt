@@ -32,9 +32,19 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 interface ReferenceTracker {
     fun trackReference(declaration: DeclarationDescriptor)
 
+    fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration)
+
+    fun trackProtocolForwardDeclaration(objCName: String)
+
     companion object {
         val dummy: ReferenceTracker = object : ReferenceTracker {
             override fun trackReference(declaration: DeclarationDescriptor) {
+            }
+
+            override fun trackClassForwardDeclaration(forwardDeclaration: ObjCClassForwardDeclaration) {
+            }
+
+            override fun trackProtocolForwardDeclaration(objCName: String) {
             }
         }
     }
@@ -46,7 +56,7 @@ internal class ObjCExportTranslatorImpl(
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean,
-        var state: ReferenceTracker = ReferenceTracker.dummy
+        var tracker: ReferenceTracker = ReferenceTracker.dummy
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -191,7 +201,7 @@ internal class ObjCExportTranslatorImpl(
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
-        state.trackReference(descriptor)
+        tracker.trackReference(descriptor)
         return translateClassOrInterfaceName(descriptor).also { className ->
             val generics = mapTypeConstructorParameters(descriptor)
             val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
@@ -203,7 +213,7 @@ internal class ObjCExportTranslatorImpl(
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
-        state.trackReference(descriptor)
+        tracker.trackReference(descriptor)
         return translateClassOrInterfaceName(descriptor).also {
             generator?.referenceProtocol(it.objCName)
         }

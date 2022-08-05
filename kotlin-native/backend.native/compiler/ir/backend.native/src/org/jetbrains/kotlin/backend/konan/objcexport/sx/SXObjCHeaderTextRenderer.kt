@@ -81,12 +81,12 @@ class SXObjCHeaderTextRenderer(
         add("NS_ASSUME_NONNULL_END")
     }
 
-    private fun collectUniqueImports(header: SXObjCHeader): Set<String> =
-            (header.imports + header.headerImports.map { it.name }).toSet()
+    private fun collectUniqueImports(header: SXObjCHeader): Set<SXHeaderImport> =
+            (header.headerImports).toSet()
 
-    private fun renderImportsTo(imports: Set<String>, output: MutableList<String>) {
+    private fun renderImportsTo(imports: Set<SXHeaderImport>, output: MutableList<String>) {
         imports.map {
-            output += "#import <$it>"
+            output += it.constructImportStatement()
         }
     }
 }
