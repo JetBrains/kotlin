@@ -1,4 +1,4 @@
 fun test(b: Boolean): Int {
-    val a = <caret>54
+    val a = <expr>54</expr>
     return a
 }

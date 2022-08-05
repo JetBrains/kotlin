@@ -1,5 +1,5 @@
 fun test(b: Boolean) {
     run {
-        <caret>5
+        <expr>5</expr>
     }
 }

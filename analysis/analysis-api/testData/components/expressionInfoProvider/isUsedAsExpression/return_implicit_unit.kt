@@ -1,3 +1,3 @@
 fun test(): Unit = {
-    <caret>Unit
+   <expr>Unit</expr>
 }

@@ -1,3 +1,3 @@
 fun test(b: Boolean): Int {
-    return <caret>5
+    return <expr>5</expr>
 }

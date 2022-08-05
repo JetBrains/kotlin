@@ -1,5 +1,5 @@
 fun test(b: Boolean) {
-    <caret>when(b) {
+    <expr>when(b) {
         else -> {}
-    }
+    }</expr>
 }

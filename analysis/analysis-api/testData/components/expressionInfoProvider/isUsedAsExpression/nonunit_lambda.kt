@@ -8,5 +8,5 @@ fun intFunction(): Int {
 }
 
 fun test(b: Boolean) {
-    builder { intFunction<caret>() }
+    builder { <expr>intFunction()</expr> }
 }

@@ -1,6 +1,6 @@
 fun println(x: Boolean) {}
 
 fun test(b: Boolean): Int {
-    println(<caret>b)
+    println(<expr>b</expr>)
     return 54
 }

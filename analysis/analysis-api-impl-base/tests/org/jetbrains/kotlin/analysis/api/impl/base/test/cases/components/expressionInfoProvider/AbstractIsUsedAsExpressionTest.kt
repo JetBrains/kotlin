@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expression = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtExpression>(ktFile)
+        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(ktFile)
 
         val actual = analyseForTest(expression) {
             expression.isUsedAsExpression().toString()

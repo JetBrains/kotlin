@@ -1,5 +1,5 @@
 fun test(b: Boolean) {
-    when(<caret>b) {
+    when(<expr>b</expr>) {
         else -> {}
     }
 }

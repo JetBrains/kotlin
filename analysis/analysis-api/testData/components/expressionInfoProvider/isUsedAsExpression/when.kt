@@ -1,6 +1,6 @@
 fun test(b: Boolean) {
-    <caret>when(b) {
+    <expr>when(b) {
         true -> 5
         else -> 0
-    }
+    }</expr>
 }

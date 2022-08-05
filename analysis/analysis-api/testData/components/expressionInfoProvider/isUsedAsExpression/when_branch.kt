@@ -1,6 +1,6 @@
 fun test(b: Boolean) {
     when(b) {
-        true -> <caret>5
+        true -> <expr>5</expr>
         else -> 0
     }
 }

@@ -1,5 +1,5 @@
 fun test(b: Boolean): Int {
-    if (<caret>b) {
+    if (<expr>b</expr>) {
         return 54
     } else {
         return 45

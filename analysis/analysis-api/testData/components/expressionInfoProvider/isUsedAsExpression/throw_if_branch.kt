@@ -1,5 +1,5 @@
 import java.lang.Exception
 
 fun test(b: Boolean) {
-    throw if (b) { Exception<caret>() } else { Exception() }
+    throw if (b) { <expr>Exception()</expr> } else { Exception() }
 }

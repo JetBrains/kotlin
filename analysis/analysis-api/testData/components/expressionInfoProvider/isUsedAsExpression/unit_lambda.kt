@@ -8,5 +8,5 @@ fun unitFunction() {
 }
 
 fun test(b: Boolean) {
-    builder { unitFunction<caret>() }
+    builder { <expr>unitFunction()</expr> }
 }

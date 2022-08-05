@@ -8,5 +8,5 @@ fun nonunitFunction(): Int {
 }
 
 fun test(b: Boolean) {
-    builder { nonunitFunction<caret>() }
+    builder { <expr>nonunitFunction()</expr> }
 }

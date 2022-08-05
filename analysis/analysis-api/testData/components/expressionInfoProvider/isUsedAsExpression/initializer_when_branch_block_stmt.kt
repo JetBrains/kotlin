@@ -1,7 +1,7 @@
 fun test(b: Boolean) {
     val a = when(b) {
         true -> {
-            <caret>5
+            <expr>5</expr>
             45
         }
     }

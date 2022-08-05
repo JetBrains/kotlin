@@ -9,7 +9,7 @@ fun intFunction(): Int {
 
 fun test(b: Boolean) {
     builder {
-        intFunction<caret>()
+        <expr>intFunction()</expr>
         intFunction()
     }
 }
