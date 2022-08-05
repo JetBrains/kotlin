@@ -75,6 +75,38 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @DisplayName("Compilation via Kotlin daemon with fallback strategy")
+    @GradleTest
+    fun testDaemonFallbackStrategy(gradleVersion: GradleVersion) {
+        doTestExecutionStrategy(
+            gradleVersion,
+            KotlinCompilerExecutionStrategy.DAEMON,
+            addHeapDumpOptions = false,
+            testFallbackStrategy = true,
+        )
+    }
+
+    @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy")
+    @GradleTest
+    fun testDaemonFallbackStrategyDisabled(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinBuiltins",
+            gradleVersion = gradleVersion,
+            addHeapDumpOptions = false
+        ) {
+            setupProject(this)
+
+            buildAndFail(
+                "build",
+                "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.DAEMON}",
+                "-Pkotlin.daemon.jvmargs=-Xmxqwerty",
+                "-Pkotlin.daemon.useFallbackStrategy=false"
+            ) {
+                assertOutputContains("Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off.")
+            }
+        }
+    }
+
     @DisplayName("Compilation inside Gradle daemon")
     @GradleTest
     fun testInProcess(gradleVersion: GradleVersion) {
@@ -97,6 +129,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         gradleVersion: GradleVersion,
         executionStrategy: KotlinCompilerExecutionStrategy,
         addHeapDumpOptions: Boolean = true,
+        testFallbackStrategy: Boolean = false,
     ) {
         project(
             projectName = "kotlinBuiltins",
@@ -105,15 +138,25 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         ) {
             setupProject(this)
 
-            val strategyCLIArg = "-Pkotlin.compiler.execution.strategy=${executionStrategy.propertyValue}"
-            val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
+            @OptIn(kotlin.ExperimentalStdlibApi::class)
+            val args = buildList {
+                add("-Pkotlin.compiler.execution.strategy=${executionStrategy.propertyValue}")
+                if (testFallbackStrategy) {
+                    // add jvm option that JVM fails to parse
+                    add("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
+                }
+            }.toTypedArray()
+            val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
+            val finishMessage = "Finished executing kotlin compiler using $expectedFinishStrategy strategy"
 
-            build("build", strategyCLIArg) {
+            build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutput(this@project)
                 assertNoBuildWarnings()
 
-                if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+                if (testFallbackStrategy) {
+                    assertOutputContains("Using fallback strategy: Compile without Kotlin daemon")
+                } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
                     // 256m is the default value for Gradle 5.0+
                     assertKotlinDaemonJvmOptions(
                         listOf("-XX:MaxMetaspaceSize=256m", "-ea")
@@ -125,7 +168,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             classesKt.modify {
                 it.checkedReplace("class B", "//class B")
             }
-            build("build", strategyCLIArg) {
+            build("build", *args) {
                 assertOutputContains(finishMessage)
                 checkOutputAfterChange(this@project)
                 assertNoBuildWarnings()
