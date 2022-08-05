@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.getRefinedUnsubstitutedMemberScopeIfPossible
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
@@ -34,15 +34,16 @@ import org.jetbrains.kotlin.load.java.setMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 import kotlin.properties.Delegates
 
 fun canBePropertyAccessor(identifier: String): Boolean {
@@ -93,6 +94,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
 class JavaSyntheticPropertiesScope(
     storageManager: StorageManager,
     private val lookupTracker: LookupTracker,
+    private val typeRefiner: KotlinTypeRefiner,
     private val supportJavaRecords: Boolean,
 ) : SyntheticScope.Default() {
     private val syntheticPropertyInClass =
@@ -149,7 +151,7 @@ class JavaSyntheticPropertiesScope(
         val possibleGetMethodNames = possibleGetMethodNames(name)
         if (possibleGetMethodNames.isEmpty()) return SyntheticPropertyHolder.EMPTY
 
-        val memberScope = ownerClass.unsubstitutedMemberScope
+        val memberScope = ownerClass.getRefinedUnsubstitutedMemberScopeIfPossible(typeRefiner)
 
         val getMethod = possibleGetMethodNames
             .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
@@ -175,7 +177,7 @@ class JavaSyntheticPropertiesScope(
         if (!supportJavaRecords) return null
 
         val componentLikeMethod =
-            ownerClass.unsubstitutedMemberScope
+            ownerClass.getRefinedUnsubstitutedMemberScopeIfPossible(typeRefiner)
                 .getContributedFunctions(name, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
                 .singleOrNull(this::isGoodGetMethod) ?: return null
 
@@ -280,7 +282,9 @@ class JavaSyntheticPropertiesScope(
 
         val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
-            for (descriptor in classifier.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
+            val unsubstitutedMemberScope = classifier.getRefinedUnsubstitutedMemberScopeIfPossible(typeRefiner)
+
+            for (descriptor in unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName())
                     if (propertyName != null) {
