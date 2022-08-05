@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasses
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 object ClasspathSnapshotShrinker {
 
@@ -42,7 +42,12 @@ object ClasspathSnapshotShrinker {
         return shrinkClasses(allClasses, lookupSymbols, metrics)
     }
 
-    /** Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols. */
+    /**
+     * Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols.
+     *
+     * Note: We need to retain both directly and transitively referenced classes to compute the impact of classpath changes correctly (see
+     * [ClasspathChangesComputer.computeChangedAndImpactedSet]).
+     */
     fun shrinkClasses(
         allClasses: List<AccessibleClassSnapshot>,
         lookupSymbols: Collection<LookupSymbolKey>,
@@ -57,7 +62,7 @@ object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Finds classes that are referenced by the given lookup symbols.
+     * Finds classes that are *directly* referenced by the given lookup symbols.
      *
      * Note: It's okay to over-approximate the result.
      */
@@ -90,31 +95,19 @@ object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Finds classes that are transitively referenced. For example, if a subclass is referenced, its supertypes will potentially be
-     * referenced.
+     * Finds classes that are *transitively* referenced from the given classes. For example, if a subclass is referenced, its supertypes
+     * will be transitively referenced.
      *
-     * The returned list includes the given referenced classes plus the transitively referenced ones.
+     * The returned list is *inclusive* (it contains the given list + the transitively referenced ones).
      */
     private fun findTransitivelyReferencedClasses(
         allClasses: List<AccessibleClassSnapshot>,
         referencedClasses: List<AccessibleClassSnapshot>
     ): List<AccessibleClassSnapshot> {
-        val classIdToClassSnapshot = allClasses.associateBy { it.classId }
-        val classIds: Set<ClassId> = classIdToClassSnapshot.keys // Use Set for presence check
-        val classNameToClassId = classIds.associateBy { JvmClassName.byClassId(it) }
-        val classNameToClassIdResolver = { className: JvmClassName -> classNameToClassId[className] }
-
-        val supertypesResolver = { classId: ClassId ->
-            // No need to collect supertypes outside the given set of classes (e.g., "java/lang/Object")
-            @Suppress("SimpleRedundantLet")
-            classIdToClassSnapshot[classId]?.let {
-                it.getSupertypes(classNameToClassIdResolver).intersect(classIds)
-            } ?: emptySet()
-        }
-
-        val referencedClassIds = referencedClasses.mapTo(mutableSetOf()) { it.classId }
-        val transitivelyReferencedClassIds: Set<ClassId> = /* Use Set for presence check */
-            ImpactAnalysis.findImpactedClassesInclusive(referencedClassIds, supertypesResolver)
+        val referencedClassIds = referencedClasses.map { it.classId }
+        val impactingClassesResolver = AllImpacts.getReverseResolver(allClasses)
+        val transitivelyReferencedClassIds: Set<ClassId> = /* Must be a Set for the presence check below */
+            findReachableNodes(referencedClassIds, impactingClassesResolver::getImpactingClasses)
 
         return allClasses.filter { it.classId in transitivelyReferencedClassIds }
     }

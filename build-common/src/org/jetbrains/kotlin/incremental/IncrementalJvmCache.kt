@@ -455,26 +455,26 @@ open class IncrementalJvmCache(
             val allConstants = oldMap.keys + newMap.keys
             if (allConstants.isEmpty()) return
 
-            // If a constant is defined in a companion object, it will be found in the constantsMap of the containing class, not the
-            // companion object's class, so we will need to correct its scope.
-            // (See https://youtrack.jetbrains.com/issue/KT-44741#focus=Comments-27-5659564.0-0 for more details.)
-            // Note: This only applies to a *constant* defined in a *companion object* (it's not an issue for inline functions, or top-level
-            // constants, or constants in non-companion objects).
-            val companionObjectClassId = if (kotlinClassInfo.classKind == KotlinClassHeader.Kind.CLASS) {
-                val protoData = kotlinClassInfo.protoData as ClassProtoData
-                if (protoData.proto.hasCompanionObjectName()) {
-                    val companionObjectName = Name.identifier(protoData.nameResolver.getString(protoData.proto.companionObjectName))
-                    kotlinClassInfo.classId.createNestedClassId(companionObjectName)
-                } else null
-            } else null
-            val scope = companionObjectClassId?.asSingleFqName() ?: kotlinClassInfo.scopeFqName()
-
-            // Here we assume that the old and new classes have the same KotlinClassHeader.Kind, so that the scopes of the old and new
-            // constants are the same and their values can be compared.
-            // If the class kinds are different, the changes will be detected when comparing protos (in that case, the changes collected
-            // here will be a subset of those changes).
+            val scope = kotlinClassInfo.scopeFqName()
             for (const in allConstants) {
                 changesCollector.collectMemberIfValueWasChanged(scope, const, oldMap[const], newMap[const])
+            }
+
+            // If a constant is defined in a companion object of class A, its name and type will be found in the Kotlin metadata of
+            // `A$Companion.class`, but its value will only be found in the Java bytecode code of `A.class` (see
+            // `org.jetbrains.kotlin.incremental.classpathDiff.ConstantsInCompanionObjectImpact` for more details).
+            // Therefore, if the value of `CONSTANT` in `A.class` has changed, we will report that `A.CONSTANT` has changed in the code
+            // above, and report that `A.Companion.CONSTANT` is impacted in the code below.
+            kotlinClassInfo.companionObject?.let { companionObjectClassId ->
+                // Note that `companionObjectClassId` is the companion object of the current class. Here we assume that the previous class
+                // also has a companion object with the same name. If that is not the case, that change will be detected when comparing
+                // protos, and the report below will be imprecise/redundant, but it's okay to over-approximate the result.
+                val companionObjectFqName = companionObjectClassId.asSingleFqName()
+                for (const in allConstants) {
+                    changesCollector.collectMemberIfValueWasChanged(
+                        scope = companionObjectFqName, name = const, oldMap[const], newMap[const]
+                    )
+                }
             }
         }
 
@@ -688,7 +688,7 @@ class KotlinClassInfo constructor(
     }
 
     /**
-     * Returns the [ProtoData] of this class.
+     * The [ProtoData] of this class.
      *
      * NOTE: The caller needs to ensure `classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS` first, as the compiler doesn't write proto
      * data to [KotlinClassHeader.Kind.MULTIFILE_CLASS] classes.
@@ -698,6 +698,25 @@ class KotlinClassInfo constructor(
             "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
         }
         protoMapValue.toProtoData(classId.packageFqName)
+    }
+
+    /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
+    val companionObject: ClassId? by lazy {
+        if (classKind == KotlinClassHeader.Kind.CLASS) {
+            (protoData as ClassProtoData).getCompanionObjectName()?.let {
+                classId.createNestedClassId(Name.identifier(it))
+            }
+        } else null
+    }
+
+    /** List of constants defined in this class iff this class IS a companion object, or null otherwise. The list could be empty. */
+    val constantsInCompanionObject: List<String>? by lazy {
+        if (classKind == KotlinClassHeader.Kind.CLASS) {
+            val classProtoData = protoData as ClassProtoData
+            if (classProtoData.proto.isCompanionObject) {
+                classProtoData.getConstants()
+            } else null
+        } else null
     }
 
     companion object {
