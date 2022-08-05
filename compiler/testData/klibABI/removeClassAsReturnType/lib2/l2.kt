@@ -19,3 +19,45 @@ class D2 {
     val expP2: E = E()
     val barP2: String = expP2.ep
 }
+
+fun bar() {
+    fun foo(): E = E()
+    foo()
+}
+
+fun baz() {
+    fun qux() {
+        fun foo(): E = E()
+        foo()
+    }
+    qux()
+}
+
+fun quux() {
+    class Local {
+        fun corge() {
+            fun foo(): E = E()
+            foo()
+        }
+    }
+    Local().corge()
+}
+
+fun grault() {
+    object {
+        fun garply() {
+            fun foo(): E = E()
+            foo()
+        }
+    }.garply()
+}
+
+fun waldo() {
+    val fred = object {
+        fun garply() {
+            fun foo(): E = E()
+            foo()
+        }
+    }
+    fred.garply()
+}
