@@ -90,6 +90,7 @@ internal class KtFirExpressionTypeProvider(
         if (expression !is KtArrayAccessExpression) return null
         val assignment = expression.parent as? KtBinaryExpression ?: return null
         if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+        if (assignment.left != expression) return null
         val setTargetArgumentParameter = fir.argumentMapping?.entries?.last()?.value ?: return null
         return setTargetArgumentParameter.returnTypeRef.coneType.asKtType()
     }

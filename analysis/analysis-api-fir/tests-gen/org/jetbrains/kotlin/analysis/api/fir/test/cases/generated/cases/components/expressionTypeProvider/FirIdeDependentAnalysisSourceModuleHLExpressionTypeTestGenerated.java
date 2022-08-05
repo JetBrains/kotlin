@@ -258,5 +258,11 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
         public void testArrayCompoundAssignementTarget() throws Exception {
             runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayCompoundAssignementTarget.kt");
         }
+
+        @Test
+        @TestMetadata("readArrayElement.kt")
+        public void testReadArrayElement() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/readArrayElement.kt");
+        }
     }
 }
