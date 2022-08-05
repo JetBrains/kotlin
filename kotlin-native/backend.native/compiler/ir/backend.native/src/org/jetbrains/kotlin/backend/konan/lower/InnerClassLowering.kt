@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeMapping
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,6 +28,31 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+
+internal class InnerClassesSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
+    private val outerThisFields = mapping.outerThisFields
+
+    fun getOuterThisField(innerClass: IrClass): IrField {
+        require(innerClass.isInner) { "Expected an inner class: ${innerClass.render()}" }
+        return outerThisFields.getOrPut(innerClass) {
+            val outerClass = innerClass.parentClassOrNull ?: error("No containing class for inner class ${innerClass.render()}")
+
+            irFactory.buildField {
+                startOffset = innerClass.startOffset
+                endOffset = innerClass.endOffset
+                origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
+                name = "this$0".synthesizedName // TODO: other backends have "$this" here.
+                type = outerClass.defaultType
+                visibility = DescriptorVisibilities.PROTECTED
+                isFinal = true
+                isExternal = false
+                isStatic = false
+            }.also {
+                it.parent = innerClass
+            }
+        }
+    }
+}
 
 internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -95,7 +125,7 @@ internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
                     return expression
                 }
 
-                val outerThisField = context.specialDeclarationsFactory.getOuterThisField(innerClass)
+                val outerThisField = context.innerClassesSupport.getOuterThisField(innerClass)
                 irThis = IrGetFieldImpl(
                         startOffset, endOffset,
                         outerThisField.symbol, outerThisField.type,
@@ -130,7 +160,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val outerThisField = context.specialDeclarationsFactory.getOuterThisField(irClass)
+            val outerThisField = context.innerClassesSupport.getOuterThisField(irClass)
             irClass.declarations += outerThisField
             outerThisFieldSymbol = outerThisField.symbol
         }

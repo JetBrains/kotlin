@@ -421,7 +421,7 @@ internal val exportInternalAbiPhase = makeKonanModuleOpPhase(
                             function.body = irBlockBody {
                                 +irReturn(irGetField(
                                         irGet(function.valueParameters[0]),
-                                        context.specialDeclarationsFactory.getOuterThisField(declaration))
+                                        context.innerClassesSupport.getOuterThisField(declaration))
                                 )
                             }
                         }
@@ -507,7 +507,7 @@ internal val useInternalAbiPhase = makeKonanModuleOpPhase(
                     return when {
                         context.llvmModuleSpecification.containsDeclaration(field) -> expression
 
-                        irClass?.isInner == true && context.specialDeclarationsFactory.getOuterThisField(irClass) == field -> {
+                        irClass?.isInner == true && context.innerClassesSupport.getOuterThisField(irClass) == field -> {
                             val accessor = outerThisAccessors.getOrPut(irClass) {
                                 context.irFactory.buildFun {
                                     name = InternalAbi.getInnerClassOuterThisAccessorName(irClass)

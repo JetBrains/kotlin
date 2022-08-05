@@ -49,7 +49,7 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
 
     override val internalPackageFqn = KonanFqNames.internalPackageName
 
-    override val mapping: Mapping = DefaultMapping()
+    override val mapping: NativeMapping = NativeMapping()
 
     override val irFactory: IrFactory = IrFactoryImpl
 }

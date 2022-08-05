@@ -549,7 +549,7 @@ internal class KonanIrLinker(
                 protoFieldsMap[name] = it
             }
 
-            val outerThisIndex = fields.indexOfFirst { it.irField?.origin == SpecialDeclarationsFactory.DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS }
+            val outerThisIndex = fields.indexOfFirst { it.irField?.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS }
             val compatibleMode = CompatibilityMode(libraryAbiVersion).oldSignatures
             return SerializedClassFields(
                     fileDeserializationState.fileIndex,

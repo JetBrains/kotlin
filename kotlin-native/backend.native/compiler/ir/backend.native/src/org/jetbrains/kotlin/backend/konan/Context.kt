@@ -6,56 +6,56 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
+import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ExternalModulesDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
-import java.lang.System.out
-import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.reflect.KProperty
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import java.lang.System.out
+import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.reflect.KProperty
+
+internal class NativeMapping : DefaultMapping() {
+    val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
+}
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -65,7 +65,6 @@ internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: 
 
 internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
-    private val outerThisFields = mutableMapOf<IrClass, IrField>()
     private val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
     private val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
 
@@ -78,46 +77,6 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     fun getNonLoweredInlineFunction(function: IrFunction): IrFunction {
         return notLoweredInlineFunctions.getOrPut(function.symbol) {
             function.deepCopyWithVariables().also { it.patchDeclarationParents(function.parent) }
-        }
-    }
-
-    object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
-            IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
-
-    fun getOuterThisField(innerClass: IrClass): IrField {
-        assert(innerClass.isInner) { "Class is not inner: ${innerClass.render()}" }
-        return outerThisFields.getOrPut(innerClass) {
-            val outerClass = innerClass.parent as? IrClass
-                    ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
-
-            val receiver = ReceiverParameterDescriptorImpl(
-                    innerClass.descriptor,
-                    ImplicitClassReceiver(innerClass.descriptor, null),
-                    Annotations.EMPTY
-            )
-            val descriptor = PropertyDescriptorImpl.create(
-                    innerClass.descriptor, Annotations.EMPTY, Modality.FINAL,
-                    DescriptorVisibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    SourceElement.NO_SOURCE, false, false, false, false, false, false
-            ).apply {
-                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null, emptyList())
-                initialize(null, null)
-            }
-
-            IrFieldImpl(
-                    startOffset = innerClass.startOffset,
-                    endOffset = innerClass.endOffset,
-                    origin = DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
-                    symbol = IrFieldSymbolImpl(descriptor),
-                    name = descriptor.name,
-                    type = outerClass.defaultType,
-                    visibility = descriptor.visibility,
-                    isFinal = !descriptor.isVar,
-                    isExternal = descriptor.isEffectivelyExternal(),
-                    isStatic = descriptor.dispatchReceiverParameter == null
-            ).apply {
-                parent = innerClass
-            }
         }
     }
 
@@ -245,6 +204,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
+    val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
