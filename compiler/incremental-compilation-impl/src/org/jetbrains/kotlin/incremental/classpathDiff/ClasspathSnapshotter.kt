@@ -89,7 +89,12 @@ object ClassSnapshotter {
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }
 
         return when (kotlinClassInfo.classKind) {
-            CLASS -> RegularKotlinClassSnapshot(classId, classAbiHash, classMemberLevelSnapshot, classFile.classInfo.supertypes)
+            CLASS -> RegularKotlinClassSnapshot(
+                classId, classAbiHash, classMemberLevelSnapshot,
+                supertypes = classFile.classInfo.supertypes,
+                companionObjectName = kotlinClassInfo.companionObject?.shortClassName?.identifier,
+                constantsInCompanionObject = kotlinClassInfo.constantsInCompanionObject
+            )
             FILE_FACADE, MULTIFILE_CLASS_PART -> PackageFacadeKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
                 packageMemberNames = (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames()

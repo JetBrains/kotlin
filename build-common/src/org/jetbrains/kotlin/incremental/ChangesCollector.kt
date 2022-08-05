@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -203,9 +202,8 @@ class ChangesCollector {
 
     private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, isAdded: Boolean, collectAllMembersForNewClass: Boolean = false) {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
-        val kind = Flags.CLASS_KIND.get(proto.flags)
 
-        if (kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+        if (proto.isCompanionObject) {
             val memberNames = getNonPrivateMemberNames()
 
             val collectMember = if (isRemoved) this@ChangesCollector::collectRemovedMember else this@ChangesCollector::collectChangedMember

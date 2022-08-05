@@ -56,6 +56,14 @@
     "protoData$delegate": {
       "initializer": {},
       "_value": {}
+    },
+    "companionObject$delegate": {
+      "initializer": {},
+      "_value": {}
+    },
+    "constantsInCompanionObject$delegate": {
+      "initializer": {},
+      "_value": {}
     }
   },
   "supertypes": [
