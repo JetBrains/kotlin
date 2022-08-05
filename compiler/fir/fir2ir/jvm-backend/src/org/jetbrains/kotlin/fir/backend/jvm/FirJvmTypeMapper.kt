@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
@@ -218,7 +220,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable = false)
             is ConeClassLikeLookupTag -> {
                 val symbol = toSymbol(session) as? FirRegularClassSymbol
-                    ?: error("Class for $this not found")
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(classId))
                 symbol.fir.defaultType()
             }
             else -> error("Unsupported type constructor: $this")
@@ -261,12 +263,16 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     }
 
     override fun continuationTypeConstructor(): ConeClassLikeLookupTag {
-        return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Continuation)?.toLookupTag()
-            ?: error("Continuation class not found")
+        return possiblyErrorTypeConstructorByClassId(StandardClassIds.Continuation)
     }
 
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {
         return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.FunctionN(n))?.toLookupTag()
             ?: error("Function$n class not found")
+    }
+
+    private fun possiblyErrorTypeConstructorByClassId(classId: ClassId): ConeClassLikeLookupTag {
+        return symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
+            ?: ConeClassLikeErrorLookupTag(classId)
     }
 }

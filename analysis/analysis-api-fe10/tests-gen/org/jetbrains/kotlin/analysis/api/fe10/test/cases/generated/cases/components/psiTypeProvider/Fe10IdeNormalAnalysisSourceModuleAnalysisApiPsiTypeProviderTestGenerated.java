@@ -87,4 +87,16 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     public void testLocalClass_memberFunction() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/localClass_memberFunction.kt");
     }
+
+    @Test
+    @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
+    public void testSuspendFunctionValueParameterNoStdlib() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionValueParameterWithStdlib.kt")
+    public void testSuspendFunctionValueParameterWithStdlib() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterWithStdlib.kt");
+    }
 }
