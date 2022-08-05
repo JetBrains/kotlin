@@ -35,10 +35,6 @@ the Kotlin IntelliJ IDEA plugin:
      - License: BSD ([license/third_party/asm_license.txt][asm])
      - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
 
- - Path: core/reflection.jvm/src/kotlin.reflect/jvm/internal/pcollections
-     - License: MIT ([license/third_party/pcollections_LICENSE.txt][pcollections])
-     - Origin: Derived from PCollections, A Persistent Java Collections Library (https://pcollections.org/)
-
  - Path: eval4j/src/org/jetbrains/eval4j/interpreterLoop.kt
      - License: BSD ([license/third_party/asm_license.txt][asm])
      - Origin: Derived from ASM: a very small and fast Java bytecode manipulation framework, Copyright (c) 2000-2011 INRIA, France Telecom
@@ -284,7 +280,6 @@ any distributions of the compiler, libraries or plugin:
 [gwt]: third_party/gwt_license.txt
 [jquery]: third_party/jquery_license.txt
 [lombok]: third_party/testdata/lombok_license.txt
-[pcollections]: third_party/pcollections_LICENSE.txt
 [qunit]: third_party/qunit_license.txt
 [rhino]: third_party/rhino_LICENSE.txt
 [rxjava]: third_party/testdata/rxjava_license.txt

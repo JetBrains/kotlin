@@ -31,7 +31,6 @@ class CodeConformanceTest : TestCase() {
                 "compiler/testData/psi/kdoc",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
-                "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
                 "dependencies",
                 "dependencies/protobuf/protobuf-relocated/build",
                 "dist",
