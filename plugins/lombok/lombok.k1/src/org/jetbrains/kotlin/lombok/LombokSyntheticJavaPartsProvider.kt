@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.SyntheticJavaClassDescriptor
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.processor.*
 import org.jetbrains.kotlin.lombok.utils.getJavaClass
@@ -30,7 +32,8 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         WithProcessor(),
         NoArgsConstructorProcessor(),
         AllArgsConstructorProcessor(),
-        RequiredArgsConstructorProcessor()
+        RequiredArgsConstructorProcessor(),
+        BuilderProcessor(config)
     )
 
     /**
@@ -85,12 +88,12 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
     }
 
     context(LazyJavaResolverContext)
-    private fun getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts =
-        descriptor.getJavaClass()?.let {
-            partsCache.getOrPut(descriptor) {
-                computeSyntheticParts(descriptor)
-            }
-        } ?: SyntheticParts.Empty
+    private fun getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
+        if (descriptor !is LazyJavaClassDescriptor && descriptor !is SyntheticJavaClassDescriptor) return SyntheticParts.Empty
+        return partsCache.getOrPut(descriptor) {
+            computeSyntheticParts(descriptor)
+        }
+    }
 
     context(LazyJavaResolverContext)
     private fun computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {

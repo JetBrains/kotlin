@@ -19,6 +19,7 @@ object LombokNames {
     val NO_ARGS_CONSTRUCTOR = FqName("lombok.NoArgsConstructor")
     val ALL_ARGS_CONSTRUCTOR = FqName("lombok.AllArgsConstructor")
     val REQUIRED_ARGS_CONSTRUCTOR = FqName("lombok.RequiredArgsConstructor")
+    val BUILDER = FqName("lombok.Builder")
 
 
     val ACCESSORS_ID = ClassId.topLevel(ACCESSORS)

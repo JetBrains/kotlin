@@ -37,6 +37,18 @@ public class FirDiagnosticTestForLombokGenerated extends AbstractFirDiagnosticTe
     }
 
     @Test
+    @TestMetadata("builderAnnotationArguments.kt")
+    public void testBuilderAnnotationArguments() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderAnnotationArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("builderConfig.kt")
+    public void testBuilderConfig() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderConfig.kt");
+    }
+
+    @Test
     @TestMetadata("clashAccessors.kt")
     public void testClashAccessors() throws Exception {
         runTest("plugins/lombok/testData/diagnostics/clashAccessors.kt");

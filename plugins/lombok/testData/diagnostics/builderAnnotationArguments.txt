@@ -1,0 +1,25 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun testToBuilder(/*0*/ user: User): kotlin.Unit
+
+@lombok.Builder(access = AccessLevel.PACKAGE, buildMethodName = "execute", builderClassName = "SpecialUserBuilder", builderMethodName = "createBuilder", setterPrefix = "set", toBuilder = true) @lombok.Data public open class User {
+    public constructor User()
+    private final var age: kotlin.Int
+    @lombok.Builder.Default private final var created: kotlin.Int
+    private final var name: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getAge(): kotlin.Int
+    public open /*synthesized*/ fun getCreated(): kotlin.Int
+    public open /*synthesized*/ fun getName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
+    public open /*synthesized*/ fun setCreated(/*0*/ created: kotlin.Int): kotlin.Unit
+    public open /*synthesized*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public/*package*/ final /*synthesized*/ fun toBuilder(): User.SpecialUserBuilder
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ final /*synthesized*/ fun createBuilder(): User.SpecialUserBuilder
+}
