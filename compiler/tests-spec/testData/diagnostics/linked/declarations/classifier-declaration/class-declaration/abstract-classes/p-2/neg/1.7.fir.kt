@@ -26,16 +26,16 @@ import base.*
 
 // TESTCASE NUMBER: 1
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case1<!> : BaseKotlin() {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
+class Case1 : BaseKotlin() {
+    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case1() {
     val v = Case1()
     v.boo(true)
 
-    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>object<!> :  BaseKotlin() {
-        <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
+    val o = object :  BaseKotlin() {
+        <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
     }
 }
 
@@ -44,16 +44,16 @@ fun case1() {
 */
 abstract class AbstractClassCase2 : BaseKotlin() {}
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case2<!>: AbstractClassCase2() {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
+class Case2: AbstractClassCase2() {
+    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
 }
 
 fun case2() {
     val v = Case2()
     v.boo(true)
 
-    val o = <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>object<!> : AbstractClassCase2() {
-        <!NOTHING_TO_OVERRIDE!>override<!> fun foo(b: Boolean?) {}
+    val o = object : AbstractClassCase2() {
+        <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun foo(b: Boolean?) {}
     }
 }
 

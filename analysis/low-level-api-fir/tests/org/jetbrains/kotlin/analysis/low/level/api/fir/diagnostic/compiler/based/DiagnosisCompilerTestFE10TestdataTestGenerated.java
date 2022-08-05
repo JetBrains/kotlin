@@ -22867,12 +22867,6 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
-            @TestMetadata("InternalPotentialOverride.kt")
-            public void testInternalPotentialOverride() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/override/InternalPotentialOverride.kt");
-            }
-
-            @Test
             @TestMetadata("InvisiblePotentialOverride.kt")
             public void testInvisiblePotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InvisiblePotentialOverride.kt");

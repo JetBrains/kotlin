@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
@@ -28,7 +33,7 @@ class FirClassSubstitutionScope(
     key: ScopeSessionKey<*, *>,
     private val substitutor: ConeSubstitutor,
     private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,
-    private val skipInvisibleMembers: Boolean,
+    private val skipPrivateMembers: Boolean,
     private val makeExpect: Boolean = false
 ) : FirTypeScope() {
     companion object {
@@ -119,7 +124,7 @@ class FirClassSubstitutionScope(
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
-        if (skipInvisibleMembers && !member.isVisibleInThisScope()) return original
+        if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
@@ -219,7 +224,7 @@ class FirClassSubstitutionScope(
     fun createSubstitutionOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
-        if (skipInvisibleMembers && !member.isVisibleInThisScope()) return original
+        if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
@@ -305,7 +310,7 @@ class FirClassSubstitutionScope(
     fun createSubstitutionOverrideField(original: FirFieldSymbol): FirFieldSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
-        if (skipInvisibleMembers && !member.isVisibleInThisScope()) return original
+        if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
         member.symbol.ensureResolved(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
@@ -318,7 +323,7 @@ class FirClassSubstitutionScope(
     fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
-        if (skipInvisibleMembers && !member.isVisibleInThisScope()) return original
+        if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
 
         member.symbol.ensureResolved(FirResolvePhase.STATUS)
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
@@ -374,10 +379,6 @@ class FirClassSubstitutionScope(
 
     override fun toString(): String {
         return "Substitution scope for [$useSiteMemberScope] for type $dispatchReceiverTypeForSubstitutedMembers"
-    }
-
-    private fun FirCallableDeclaration.isVisibleInThisScope(): Boolean {
-        return isVisibleFromDerivedClass(this@FirClassSubstitutionScope.session.moduleData)
     }
 }
 

@@ -205,7 +205,7 @@ class FakeOverrideGenerator(
         // But they are treated differently in IR (real declarations have already been declared before) and such methods are present among realDeclarationSymbols
         if (originalSymbol in realDeclarationSymbols) return
 
-        if (!originalDeclaration.isVisibleFromDerivedClass(klass.moduleData)) return
+        if (originalDeclaration.visibility == Visibilities.Private) return
 
         val origin = IrDeclarationOrigin.FAKE_OVERRIDE
         val baseSymbol = originalSymbol.unwrapSubstitutionAndIntersectionOverrides() as S
