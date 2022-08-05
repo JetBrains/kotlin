@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
+import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorTypeConstructor
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -75,6 +77,9 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     }
 
     override fun TypeConstructorMarker.typeWithArguments(arguments: List<KotlinTypeMarker>): SimpleTypeMarker {
+        if (this is ErrorTypeConstructor) {
+            return ErrorUtils.createErrorType(kind, this, *formatParams)
+        }
         require(this is TypeConstructor)
         require(parameters.size == arguments.size)
 
@@ -110,10 +115,10 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
         val continuationFqName = StandardClassIds.Continuation.asSingleFqName()
         val foundClasses = resolveSession.getTopLevelClassifierDescriptors(continuationFqName, NoLookupLocation.FROM_IDE)
         return foundClasses.firstOrNull()?.typeConstructor
-            ?: ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.NOT_FOUND_FQNAME, continuationFqName.toString())
+            ?: FAKE_CONTINUATION_CLASS_DESCRIPTOR.typeConstructor
     }
 
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {
-        return builtIns.getKFunction(n).typeConstructor
+        return builtIns.getFunction(n).typeConstructor
     }
 }
