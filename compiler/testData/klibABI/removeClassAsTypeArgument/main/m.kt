@@ -1,20 +1,25 @@
 fun test1(d: D): String {
-    try {
+    return try {
         d.bar()
     } catch(e: Throwable) {
-        if (e.isLinkageError("/D.exp")) return "O"
+        e.checkLinkageError("function D.exp can not be called")
     }
-
-    return "FAIL2"
 }
 
 fun test2(d: D): String {
     return d.foo()
 }
 
-fun box(): String {
-    return test1(D()) + test2(D())
-}
+fun box(): String =checkResults(test1(D()), test2(D()))
 
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked type in signature of IR symbol $symbolName|") == true
+private fun Throwable.checkLinkageError(prefix: String): String =
+    if (this::class.simpleName == "IrLinkageError" && message?.startsWith("$prefix because it uses unlinked symbols") == true)
+        "OK"
+    else
+        message!!
+
+private fun checkResults(vararg results: String): String = when {
+    results.isEmpty() -> "no results to check"
+    results.all { it == "OK" } -> "OK"
+    else -> results.joinToString("\n")
+}

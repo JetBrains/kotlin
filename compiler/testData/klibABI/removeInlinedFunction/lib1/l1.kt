@@ -1,1 +1,1 @@
-fun foo() = "FAIL1"
+fun foo() = "FAIL"

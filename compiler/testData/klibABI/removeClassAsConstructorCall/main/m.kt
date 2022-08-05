@@ -1,13 +1,14 @@
 fun box(): String {
-    try {
+    return try {
         bar()
-        return "FAIL1"
+        "FAIL"
     } catch (e: Throwable) {
-        if (!e.isLinkageError("/Foo.<init>")) return "FAIL2"
+        e.checkLinkageError("constructor Foo.<init> can not be called")
     }
-
-    return "OK"
 }
 
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError" && message?.startsWith("Unlinked IR symbol $symbolName|") == true
+private fun Throwable.checkLinkageError(prefix: String): String =
+    if (this::class.simpleName == "IrLinkageError" && message?.startsWith("$prefix because it uses unlinked symbols") == true)
+        "OK"
+    else
+        message!!

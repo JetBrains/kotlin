@@ -4,16 +4,19 @@ import lib2.B
 fun box(): String {
     val a: A = B()
 
-    try {
+    return try {
         val answer: Int = a.foo // <-- should throw linkage error here
         println(answer)
+        "FAIL"
     } catch (e: Throwable) {
-        if (e.isLinkageError("lib2.B.<get-foo>")) return "OK"
+        e.checkLinkageError("lib2.B.foo.<get-foo>", "lib2.B")
     }
-
-    return "FAIL"
 }
 
-private fun Throwable.isLinkageError(symbolName: String): Boolean =
-    this::class.simpleName == "IrLinkageError"
-            && message == "Abstract property accessor $symbolName is not implemented in non-abstract class ${symbolName.substringBeforeLast(".")}"
+private fun Throwable.checkLinkageError(symbolName: String, className: String): String =
+    if (this::class.simpleName == "IrLinkageError"
+        && message == "Abstract property accessor $symbolName is not implemented in non-abstract class $className"
+    ) {
+        "OK"
+    } else
+        message!!

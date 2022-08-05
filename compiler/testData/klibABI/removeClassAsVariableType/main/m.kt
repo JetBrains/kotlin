@@ -1,13 +1,14 @@
 fun box(): String {
-    try {
+    return try {
         bar()
-        return "FAIL1"
+        return "FAIL"
     } catch (e: Throwable) {
-        if (!e.isLinkageError()) return "FAIL2"
+        e.checkLinkageError("var foo declared in function bar can not be read")
     }
-
-    return "OK"
 }
 
-private fun Throwable.isLinkageError(): Boolean =
-    this::class.simpleName == "IrLinkageError" && message == "Unlinked type of IR expression"
+private fun Throwable.checkLinkageError(prefix: String): String =
+    if (this::class.simpleName == "IrLinkageError" && message?.startsWith("$prefix because it uses unlinked symbols") == true)
+        "OK"
+    else
+        message!!
