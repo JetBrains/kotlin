@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -61,49 +60,8 @@ internal class NativeMapping : DefaultMapping() {
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-}
-
-/**
- * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
- */
-
-internal class SpecialDeclarationsFactory(val context: Context) {
-    private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
-    private val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
-    private val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
-
-    fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
-            externalLoweredEnums[enumClass]
-        } else {
-            internalLoweredEnums[enumClass]
-        }
-    }
-
-    fun getLoweredEnum(enumClass: IrClass): LoweredEnumAccess {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
-            externalLoweredEnums.getOrPut(enumClass) {
-                enumSpecialDeclarationsFactory.createExternalLoweredEnum(enumClass)
-            }
-        } else {
-            internalLoweredEnums.getOrPut(enumClass) {
-                enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
-            }
-        }
-    }
-
-    fun getInternalLoweredEnum(enumClass: IrClass): InternalLoweredEnum {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
-        assert(context.llvmModuleSpecification.containsDeclaration(enumClass)) { "Expected enum class from current module." }
-        return internalLoweredEnums.getOrPut(enumClass) {
-            enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
-        }
-    }
-
-    fun getEnumEntryOrdinal(enumEntry: IrEnumEntry) =
-            enumEntry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(enumEntry)
+    val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
+    val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
@@ -140,10 +98,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
     }
 
-    val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
+    val enumsSupport by lazy { EnumsSupport(this) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)

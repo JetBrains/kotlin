@@ -31,6 +31,44 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
+internal class EnumsSupport(private val context: Context) {
+    private val enumSpecialDeclarationsFactory = EnumSpecialDeclarationsFactory(context)
+    private val internalLoweredEnums = context.mapping.internalLoweredEnums
+    private val externalLoweredEnums = context.mapping.externalLoweredEnums
+
+    fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
+        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
+        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
+            externalLoweredEnums[enumClass]
+        } else {
+            internalLoweredEnums[enumClass]
+        }
+    }
+
+    fun getLoweredEnum(enumClass: IrClass): LoweredEnumAccess {
+        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
+        return if (!context.llvmModuleSpecification.containsDeclaration(enumClass)) {
+            externalLoweredEnums.getOrPut(enumClass) {
+                enumSpecialDeclarationsFactory.createExternalLoweredEnum(enumClass)
+            }
+        } else {
+            internalLoweredEnums.getOrPut(enumClass) {
+                enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
+            }
+        }
+    }
+
+    fun getInternalLoweredEnum(enumClass: IrClass): InternalLoweredEnum {
+        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
+        require(context.llvmModuleSpecification.containsDeclaration(enumClass)) { "Expected enum class from current module." }
+        return internalLoweredEnums.getOrPut(enumClass) {
+            enumSpecialDeclarationsFactory.createInternalLoweredEnum(enumClass)
+        }
+    }
+
+    fun getEnumEntryOrdinal(enumEntry: IrEnumEntry) =
+            enumEntry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(enumEntry)
+}
 
 internal object DECLARATION_ORIGIN_ENUM : IrDeclarationOriginImpl("ENUM")
 

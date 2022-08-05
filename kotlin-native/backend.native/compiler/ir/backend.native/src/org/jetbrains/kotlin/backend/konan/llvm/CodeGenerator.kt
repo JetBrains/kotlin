@@ -1349,7 +1349,7 @@ internal abstract class FunctionGenerationContext(
      */
     fun getEnumEntry(enumEntry: IrEnumEntry, exceptionHandler: ExceptionHandler): LLVMValueRef {
         val enumClass = enumEntry.parentAsClass
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)
+        val loweredEnum = context.enumsSupport.getLoweredEnum(enumClass)
 
         val getterId = loweredEnum.entriesMap[enumEntry.name]!!.getterId
         val values = call(
