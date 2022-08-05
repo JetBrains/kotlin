@@ -219,6 +219,20 @@ object LombokAnnotations {
             }
         }
     }
+
+    class Singular(
+        val singularName: String?,
+        val allowNull: Boolean,
+    ) {
+        companion object : AnnotationCompanion<Singular>(LombokNames.SINGULAR) {
+            override fun extract(annotation: AnnotationDescriptor): Singular {
+                return Singular(
+                    singularName = annotation.getStringArgument("value"),
+                    allowNull = annotation.getBooleanArgument("ignoreNullCollections") ?: false
+                )
+            }
+        }
+    }
 }
 
 

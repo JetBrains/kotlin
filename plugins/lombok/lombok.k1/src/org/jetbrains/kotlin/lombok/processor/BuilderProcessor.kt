@@ -5,16 +5,28 @@
 
 package org.jetbrains.kotlin.lombok.processor
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.SyntheticJavaClassDescriptor
+import org.jetbrains.kotlin.load.java.typeEnhancement.ENHANCED_NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Builder
+import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Singular
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.config.toDescriptorVisibility
 import org.jetbrains.kotlin.lombok.utils.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 class BuilderProcessor(private val config: LombokConfig) : Processor {
     companion object {
@@ -107,9 +119,13 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         builderClass: ClassDescriptor,
         partsBuilder: SyntheticPartsBuilder
     ) {
-        val prefix = builder.setterPrefix
+        Singular.getOrNull(field)?.let { singular ->
+            createMethodsForSingularField(builder, singular, field, builderClass, partsBuilder)
+            return
+        }
+
         val fieldName = field.name
-        val setterName = if (prefix.isNullOrBlank()) fieldName else Name.identifier("${prefix}${field.name.asString().capitalize()}")
+        val setterName = fieldName.toMethodName(builder)
         val setFunction = builderClass.createFunction(
             name = setterName,
             valueParameters = listOf(LombokValueParameter(fieldName, field.type)),
@@ -120,5 +136,107 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         partsBuilder.addMethod(setFunction)
     }
 
+    private fun createMethodsForSingularField(
+        builder: Builder,
+        singular: Singular,
+        field: PropertyDescriptor,
+        builderClass: ClassDescriptor,
+        partsBuilder: SyntheticPartsBuilder
+    ) {
+        val nameInSingularForm = (singular.singularName ?: field.name.identifier.singularForm)?.let(Name::identifier) ?: return
+        val typeName = field.type.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return
+
+        val useGuava = config.useGuava
+        val supportedCollections = LombokNames.getSupportedCollectionsForSingular(useGuava)
+        val supportedMaps = LombokNames.getSupportedMapsForSingular(useGuava)
+
+        val addMultipleParameterType: KotlinType
+        val valueParameters: List<LombokValueParameter>
+
+        when (typeName) {
+            in supportedCollections -> {
+                val parameterType = field.parameterType(0, singular.allowNull) ?: return
+                valueParameters = listOf(
+                    LombokValueParameter(nameInSingularForm, parameterType)
+                )
+
+                addMultipleParameterType = field.module.builtIns.collection.defaultType.replace(
+                    newArguments = listOf(TypeProjectionImpl(parameterType))
+                )
+            }
+
+            in supportedMaps -> {
+                val keyType = field.parameterType(0, singular.allowNull) ?: return
+                val valueType = field.parameterType(1, singular.allowNull) ?: return
+                valueParameters = listOf(
+                    LombokValueParameter(Name.identifier("key"), keyType),
+                    LombokValueParameter(Name.identifier("value"), valueType),
+                )
+
+                addMultipleParameterType = field.module.builtIns.map.defaultType.replace(
+                    newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType))
+                )
+            }
+
+            else -> return
+        }
+
+        val builderType = builderClass.defaultType
+        val visibility = builder.visibility.toDescriptorVisibility()
+
+        val addSingleFunction = builderClass.createFunction(
+            name = nameInSingularForm.toMethodName(builder),
+            valueParameters,
+            returnType = builderType,
+            modality = Modality.FINAL,
+            visibility = visibility
+        )
+        partsBuilder.addMethod(addSingleFunction)
+
+        val addMultipleFunction = builderClass.createFunction(
+            name = field.name.toMethodName(builder),
+            valueParameters = listOf(LombokValueParameter(field.name, addMultipleParameterType)),
+            returnType = builderType,
+            modality = Modality.FINAL,
+            visibility = visibility
+        )
+        partsBuilder.addMethod(addMultipleFunction)
+
+        val clearFunction = builderClass.createFunction(
+            name = Name.identifier("clear${field.name.identifier.capitalize()}"),
+            valueParameters = listOf(),
+            returnType = builderType,
+            modality = Modality.FINAL,
+            visibility = visibility
+        )
+        partsBuilder.addMethod(clearFunction)
+    }
+
+    private val String.singularForm: String?
+        get() = StringUtil.unpluralize(this)
+
     private class BuilderData(val builder: Builder, val constructingClass: ClassDescriptor)
+
+    private val LombokConfig.useGuava: Boolean
+        get() = getBoolean("lombok.singular.useGuava") ?: false
+
+    private fun PropertyDescriptor.parameterType(index: Int, allowNull: Boolean): KotlinType? {
+        val type = returnType?.arguments?.getOrNull(index)?.type ?: return null
+        val typeWithProperNullability =  if (allowNull) type.makeNullable() else type.makeNotNullable()
+        return typeWithProperNullability.replaceAnnotations(
+            CompositeAnnotations(
+                typeWithProperNullability.annotations,
+                ENHANCED_NULLABILITY_ANNOTATIONS
+            )
+        )
+    }
+
+    private fun Name.toMethodName(builder: Builder): Name {
+        val prefix = builder.setterPrefix
+        return if (prefix.isNullOrBlank()) {
+            this
+        } else {
+            Name.identifier("$prefix${identifier.capitalize()}")
+        }
+    }
 }

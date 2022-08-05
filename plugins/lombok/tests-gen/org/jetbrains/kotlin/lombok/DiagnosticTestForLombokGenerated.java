@@ -49,6 +49,12 @@ public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForL
     }
 
     @Test
+    @TestMetadata("builderSingularNullability.kt")
+    public void testBuilderSingularNullability() throws Exception {
+        runTest("plugins/lombok/testData/diagnostics/builderSingularNullability.kt");
+    }
+
+    @Test
     @TestMetadata("clashAccessors.kt")
     public void testClashAccessors() throws Exception {
         runTest("plugins/lombok/testData/diagnostics/clashAccessors.kt");
