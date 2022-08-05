@@ -245,6 +245,21 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     @Test
+    fun `test - main - default Manifest location - already changed by user - does not get overwritten`() {
+        /* First: Change manifest location to something non-default */
+        val customManifestFile = project.file("src/main/CustomAndroidManifest.xml")
+        android.sourceSets.main.manifest.srcFile(customManifestFile)
+
+        /* Then: Setup Kotlin/Android target */
+        kotlin.android()
+
+        assertEquals(
+            customManifestFile, android.sourceSets.main.manifest.srcFile,
+            "Expected location of Manifest file to retain user configuration."
+        )
+    }
+
+    @Test
     fun `test - defaultKotlinSourceSetName - is determined for all compilations`() {
         kotlin.android()
         android.flavorDimensions.add("market")

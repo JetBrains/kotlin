@@ -6,14 +6,28 @@
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
 import com.android.build.gradle.api.AndroidSourceSet
+import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal object MultiplatformLayoutV2DefaultManifestLocationConfigurator : KotlinAndroidSourceSetConfigurator {
+    private const val DEFAULT_FILE_NAME = "AndroidManifest.xml"
+    private val logger = Logging.getLogger(javaClass)
+
     override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
-        /* Default can only be set when the entity is created 'fresh'. Changes here in afterEvaluate might overwrite user setup */
-        if (!target.project.state.executed) {
-            androidSourceSet.manifest.srcFile("src/${kotlinSourceSet.name}/AndroidManifest.xml")
+        val defaultManifestLocation = target.project.file("src/${androidSourceSet.name}/$DEFAULT_FILE_NAME")
+        if (androidSourceSet.manifest.srcFile != defaultManifestLocation) {
+            logger.debug(
+                """
+                    ${androidSourceSet.name}: Default Manifest location was already changed
+                    Expected: $defaultManifestLocation, Found: ${androidSourceSet.manifest.srcFile}
+                """.trimIndent()
+            )
+            return
         }
+
+        val newManifestLocation = target.project.file("src/${kotlinSourceSet.name}/$DEFAULT_FILE_NAME")
+        androidSourceSet.manifest.srcFile(newManifestLocation)
+        logger.debug("${androidSourceSet.name}: Changed default Manifest location to $newManifestLocation")
     }
 }
