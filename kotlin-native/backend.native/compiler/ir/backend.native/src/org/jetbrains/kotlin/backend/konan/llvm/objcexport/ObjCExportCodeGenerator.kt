@@ -210,7 +210,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     return call(LlvmCallable(outlined, outlinedType), valuesToPass, resultLifetime, exceptionHandler)
 }
 
-internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen) {
+internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen), AutoCloseable {
     val symbols get() = context.ir.symbols
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
@@ -226,7 +226,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         ))
     }
 
-    fun dispose() {
+    override fun close() {
         rttiGenerator.dispose()
     }
 
@@ -293,7 +293,6 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
     fun generate() {
         emitFunctionConverters()
         emitBlockToKotlinFunctionConverters()
-        dispose()
     }
 }
 

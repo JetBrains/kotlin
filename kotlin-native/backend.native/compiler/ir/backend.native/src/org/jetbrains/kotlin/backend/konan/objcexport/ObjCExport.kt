@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.backend.konan.objcexport.sx.SXClangModuleDumper
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -23,18 +24,20 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isSubpackageOf
+import java.nio.file.Files.createTempDirectory
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
         val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
-        val headerLines: List<String>,
         val namer: ObjCExportNamer,
-        val mapper: ObjCExportMapper
+        val mapper: ObjCExportMapper,
+        val clangModule: SXClangModule
 )
 
 internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
@@ -42,6 +45,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
 
     private val exportedInterface = produceInterface()
+
     private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
 
     private fun produceInterface(): ObjCExportedInterface? {
@@ -80,7 +84,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         if (!target.family.isAppleFamily) return
 
         if (context.shouldDefineFunctionClasses) {
-            ObjCExportBlockCodeGenerator(codegen).generate()
+            ObjCExportBlockCodeGenerator(codegen).use { it.generate() }
         }
 
         if (!context.config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
@@ -94,12 +98,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                 local = false
         )
 
-        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
-
-        exportedInterface?.generateWorkaroundForSwiftSR10177()
-
-        objCCodeGenerator.generate(codeSpec)
-        objCCodeGenerator.dispose()
+        ObjCExportCodeGenerator(codegen, namer, mapper).use { objCCodeGenerator ->
+            exportedInterface?.generateWorkaroundForSwiftSR10177()
+            objCCodeGenerator.generate(codeSpec)
+        }
     }
 
     /**
@@ -107,16 +109,17 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
      */
     fun produceFrameworkInterface() {
         if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
+            produceFrameworkSpecific(exportedInterface.clangModule)
         }
     }
 
-    private fun produceFrameworkSpecific(headerLines: List<String>) {
+    private fun produceFrameworkSpecific(clangModule: SXClangModule) {
         val framework = File(context.config.outputFile)
-        val frameworkContents = when(target.family) {
+        val frameworkContents = when (target.family) {
             Family.IOS,
             Family.WATCHOS,
             Family.TVOS -> framework
+
             Family.OSX -> framework.child("Versions/A")
             else -> error(target)
         }
@@ -124,17 +127,16 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         val headers = frameworkContents.child("Headers")
 
         val frameworkName = framework.name.removeSuffix(".framework")
-        val headerName = frameworkName + ".h"
-        val header = headers.child(headerName)
         headers.mkdirs()
-        header.writeLines(headerLines)
+        SXClangModuleDumper(context.shouldExportKDoc())
+                .dumpHeaders(clangModule, headers, "$frameworkName.h")
 
         val modules = frameworkContents.child("Modules")
         modules.mkdirs()
 
         val moduleMap = """
             |framework module $frameworkName {
-            |    umbrella header "$headerName"
+            |    umbrella header "$frameworkName.h"
             |
             |    export *
             |    module * { export * }
@@ -161,6 +163,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             Family.IOS,
             Family.WATCHOS,
             Family.TVOS -> frameworkContents
+
             Family.OSX -> frameworkContents.child("Resources").also { it.mkdirs() }
             else -> error(target)
         }
@@ -268,18 +271,17 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                 "__attribute__((used)) static void __workaroundSwiftSR10177() {",
                 buildString {
                     append("    ")
-                    generatedClasses.forEach {
-                        if (it.isInterface) {
-                            val protocolName = namer.getClassOrProtocolName(it).objCName
-                            append("@protocol($protocolName); ")
-                        }
+                    generatedClasses.filter { it.isInterface }.forEach {
+                        val protocolName = namer.getClassOrProtocolName(it).objCName
+                        append("@protocol($protocolName); ")
                     }
                 },
                 "}"
         )
 
+
         val source = createTempFile("protocols", ".m").deleteOnExit()
-        source.writeLines(headerLines + protocolsStub)
+        source.writeLines(/*headerLines +*/ protocolsStub)
 
         val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
@@ -310,13 +312,13 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
 
         val nonEmptyPackages = allPackages
-            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-            .map { it.fqName }.distinct()
+                .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
+                .map { it.fqName }.distinct()
 
         return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
-            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxByOrNull { it.asString().length }
+                .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
+                // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
+                .maxByOrNull { it.asString().length }
     }
 
     private fun guessBundleID(bundleName: String): String {

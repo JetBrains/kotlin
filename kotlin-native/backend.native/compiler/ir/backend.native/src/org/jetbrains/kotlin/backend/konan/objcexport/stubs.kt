@@ -19,7 +19,7 @@ data class ObjCClassForwardDeclaration(
         val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList()
 )
 
-abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
+abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) : SXElement {
     abstract val descriptor: D?
     open val psi: PsiElement?
         get() = ((descriptor as? DeclarationDescriptorWithSource)?.source as? PsiSourceElement)?.psi
