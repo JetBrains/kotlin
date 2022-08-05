@@ -217,6 +217,9 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testConstantsAndInlineFunctions/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
+                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass"),
+
                 LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.CompanionObject"),
                 LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.CompanionObject"),
 

@@ -367,8 +367,23 @@ class DifferenceCalculatorForPackageFacade(
 private val ProtoBuf.Class.isSealed: Boolean
     get() = ProtoBuf.Modality.SEALED == Flags.MODALITY.get(flags)
 
+internal val ProtoBuf.Class.isCompanionObject: Boolean
+    get() = ProtoBuf.Class.Kind.COMPANION_OBJECT == Flags.CLASS_KIND.get(flags)
+
 val ProtoBuf.Class.typeTableOrNull: ProtoBuf.TypeTable?
     get() = if (hasTypeTable()) typeTable else null
 
 val ProtoBuf.Package.typeTableOrNull: ProtoBuf.TypeTable?
     get() = if (hasTypeTable()) typeTable else null
+
+internal fun ClassProtoData.getCompanionObjectName(): String? {
+    return if (proto.hasCompanionObjectName()) {
+        nameResolver.getString(proto.companionObjectName)
+    } else null
+}
+
+internal fun ClassProtoData.getConstants(): List<String> {
+    return proto.propertyList
+        .filter { Flags.IS_CONST.get(it.flags) }
+        .map { nameResolver.getString(it.name) }
+}

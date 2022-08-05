@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
+import org.jetbrains.kotlin.incremental.storage.fromByteArray
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -25,7 +27,11 @@ abstract class ClasspathSnapshotTestCommon {
 
     // Use Gson to compare objects
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
-    protected fun Any.toGson(): String = gson.toJson(this)
+    protected fun ClassSnapshot.toGson(): String = gson.toJson(
+        // Serialize and deserialize the object to unset lazy properties' values as they are not essential and can add noise when comparing
+        // objects
+        ClassSnapshotExternalizer.fromByteArray(ClassSnapshotExternalizer.toByteArray(this))
+    )
 
     sealed class SourceFile(val baseDir: File, relativePath: String) {
         val unixStyleRelativePath: String
