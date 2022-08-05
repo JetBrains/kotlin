@@ -5,8 +5,7 @@
 
 package kotlin
 
-import kotlin.annotation.AnnotationRetention.BINARY
-import kotlin.annotation.AnnotationRetention.SOURCE
+import kotlin.annotation.AnnotationRetention.*
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
@@ -57,7 +56,15 @@ public annotation class OptIn(
 )
 
 /**
- * Forbids creation of subclasses/sub-interfaces from the annotated class/interface without explicit OptIn.
+ * Opt-in marker annotation which allows to use [SubclassOptInRequired].
+ */
+@Target(CLASS)
+@Retention(BINARY)
+@SinceKotlin("1.8")
+public annotation class ExperimentalSubclassOptIn
+
+/**
+ * Forbids creation of subclasses/sub-interfaces from the annotated class/interface without explicit [OptIn].
  *
  * This annotation is devoted to specific case when we want subclassing to be experimental.
  * In this case we annotated the base class or interface with [SubclassOptInRequired].
@@ -76,6 +83,7 @@ public annotation class OptIn(
 @Target(CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.8")
+@ExperimentalSubclassOptIn
 public annotation class SubclassOptInRequired(
     val markerClass: KClass<out Annotation>
 )

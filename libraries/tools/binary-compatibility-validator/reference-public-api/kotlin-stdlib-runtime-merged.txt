@@ -66,6 +66,9 @@ public abstract interface annotation class kotlin/ExperimentalMultiplatform : ja
 public abstract interface annotation class kotlin/ExperimentalStdlibApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ExperimentalSubclassOptIn : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
 }
 
