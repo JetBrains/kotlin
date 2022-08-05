@@ -1,1 +1,1 @@
-val foo: String get() = "FAIL1"
+val foo: String get() = "FAIL"
