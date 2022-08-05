@@ -29,12 +29,24 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+interface ReferenceTracker {
+    fun trackReference(declaration: DeclarationDescriptor)
+
+    companion object {
+        val dummy: ReferenceTracker = object : ReferenceTracker {
+            override fun trackReference(declaration: DeclarationDescriptor) {
+            }
+        }
+    }
+}
+
 internal class ObjCExportTranslatorImpl(
         private val generator: ObjCExportHeaderGenerator?,
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val problemCollector: ObjCExportProblemCollector,
-        val objcGenerics: Boolean
+        val objcGenerics: Boolean,
+        var state: ReferenceTracker = ReferenceTracker.dummy
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -179,7 +191,7 @@ internal class ObjCExportTranslatorImpl(
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
-
+        state.trackReference(descriptor)
         return translateClassOrInterfaceName(descriptor).also { className ->
             val generics = mapTypeConstructorParameters(descriptor)
             val forwardDeclaration = ObjCClassForwardDeclaration(className.objCName, generics)
@@ -191,7 +203,7 @@ internal class ObjCExportTranslatorImpl(
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
         generator?.requireClassOrInterface(descriptor)
-
+        state.trackReference(descriptor)
         return translateClassOrInterfaceName(descriptor).also {
             generator?.referenceProtocol(it.objCName)
         }

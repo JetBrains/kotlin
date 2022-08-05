@@ -12,8 +12,9 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         namer: ObjCExportNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
-        private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
+        private val restrictToLocalModules: Boolean,
+        frameworkName: String
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector, frameworkName) {
 
     companion object {
         fun createInstance(
@@ -23,22 +24,25 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
-                restrictToLocalModules: Boolean = false): ObjCExportHeaderGenerator {
+                restrictToLocalModules: Boolean = false,
+                frameworkName: String,
+        ): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
             val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local)
 
             return ObjcExportHeaderGeneratorMobile(
-                moduleDescriptors,
-                mapper,
-                namer,
-                problemCollector,
-                configuration.objcGenerics,
-                restrictToLocalModules
+                    moduleDescriptors,
+                    mapper,
+                    namer,
+                    problemCollector,
+                    configuration.objcGenerics,
+                    restrictToLocalModules,
+                    frameworkName
             )
         }
     }
 
     override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
-        !restrictToLocalModules || descriptor.module in moduleDescriptors
+            !restrictToLocalModules || descriptor.module in moduleDescriptors
 }

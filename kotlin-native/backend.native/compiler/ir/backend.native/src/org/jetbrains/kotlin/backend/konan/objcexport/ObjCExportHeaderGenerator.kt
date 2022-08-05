@@ -10,36 +10,48 @@ import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isInterface
+
+class SXHeaderImportReferenceTracker(
+        val header: SXObjCHeader,
+        val sxBuilder: SXClangModuleBuilder,
+) : ReferenceTracker {
+    override fun trackReference(declaration: DeclarationDescriptor) {
+        val declarationHeader = sxBuilder.findHeaderForDeclaration(declaration)
+        header.addImport(declarationHeader)
+        println("$header depends on $declarationHeader because of ${declaration.name}")
+    }
+}
 
 abstract class ObjCExportHeaderGenerator internal constructor(
         val moduleDescriptors: List<ModuleDescriptor>,
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
-        problemCollector: ObjCExportProblemCollector
+        problemCollector: ObjCExportProblemCollector,
+        frameworkName: String
 ) {
-    private val stubs = mutableListOf<Stub<*>>()
-
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
-
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
     private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
+    private val trackersCache = mutableMapOf<SXObjCHeader, SXHeaderImportReferenceTracker>()
+
+    private fun getTracker(header: SXObjCHeader) = trackersCache.getOrPut(header) {
+        SXHeaderImportReferenceTracker(header, sxBuilder)
+    }
+
     open val shouldExportKDoc = false
 
-    private val sxBuilder = SXClangModuleBuilder(moduleDescriptors, namer, true)
-    internal fun sxBuild() {
+    private val sxBuilder = SXClangModuleBuilder(moduleDescriptors, namer, true, "$frameworkName.h")
 
+    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+
+    internal fun sxBuild() {
         foundationImports.forEach {
             sxBuilder.findHeaderForStdlib().addImport(it)
         }
@@ -55,7 +67,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     fun getExportStubs(): ObjCExportedStubs =
-        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, stubs)
+        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, emptyList())
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
@@ -71,7 +83,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         toplevels.forEach {
             sxBuilder.findHeaderForStdlib().addTopLevelDeclaration(it)
         }
-        stubs += toplevels
     }
 
     fun translateModuleDeclarations() {
@@ -112,10 +123,12 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
                             it.unsubstitutedMemberScope.translateClasses()
                         } else if (mapper.shouldBeVisible(it)) {
-                            stubs += if (it.isInterface) {
-                                translator.translateUnexposedInterfaceAsUnavailableStub(it)
-                            } else {
-                                translator.translateUnexposedClassAsUnavailableStub(it)
+                            inHeader(it) {
+                                addTopLevelDeclaration(if (it.isInterface) {
+                                    translator.translateUnexposedInterfaceAsUnavailableStub(it)
+                                } else {
+                                    translator.translateUnexposedClassAsUnavailableStub(it)
+                                })
                             }
                         }
                     }
@@ -159,12 +172,27 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
     }
 
+    private fun selectHeader(declaration: DeclarationDescriptor): SXObjCHeader {
+        val header = sxBuilder.findHeaderForDeclaration(declaration)
+        println("translating $header")
+        translator.state = getTracker(header)
+        return header
+    }
+
+    private inline fun inHeader(declaration: DeclarationDescriptor, action: SXObjCHeader.() -> Unit) {
+        val header = sxBuilder.findHeaderForDeclaration(declaration)
+        val oldState = translator.state
+        translator.state = getTracker(header)
+        header.action()
+        translator.state = oldState
+    }
+
     private fun generateFile(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
-        sxBuilder.findHeaderForDeclaration(declarations.first()).addTopLevelDeclaration(translator.translateFile(sourceFile, declarations))
+        inHeader(declarations.first()) { addTopLevelDeclaration(translator.translateFile(sourceFile, declarations)) }
     }
 
     private fun generateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>) {
-        sxBuilder.findHeaderForDeclaration(classDescriptor).addTopLevelDeclaration(translator.translateExtensions(classDescriptor, declarations))
+        inHeader(classDescriptor) { addTopLevelDeclaration(translator.translateExtensions(classDescriptor, declarations)) }
     }
 
     protected open fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean = true
@@ -179,12 +207,12 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     private fun generateClass(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
-        sxBuilder.findHeaderForDeclaration(descriptor).addTopLevelDeclaration(translator.translateClass(descriptor))
+        inHeader(descriptor) { addTopLevelDeclaration(translator.translateClass(descriptor)) }
     }
 
     private fun generateInterface(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
-        sxBuilder.findHeaderForDeclaration(descriptor).addTopLevelDeclaration(translator.translateInterface(descriptor))
+        inHeader(descriptor) { addTopLevelDeclaration(translator.translateInterface(descriptor)) }
     }
 
     internal fun requireClassOrInterface(descriptor: ClassDescriptor) {
@@ -211,12 +239,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             "Foundation/NSString.h",
             "Foundation/NSValue.h"
         )
-
-        private fun MutableList<String>.addImports(imports: Iterable<String>) {
-            imports.forEach {
-                add("#import <$it>")
-            }
-        }
     }
 }
 

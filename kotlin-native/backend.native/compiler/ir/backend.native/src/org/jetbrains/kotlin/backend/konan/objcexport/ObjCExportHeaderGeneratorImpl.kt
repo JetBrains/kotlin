@@ -21,8 +21,11 @@ internal class ObjCExportHeaderGeneratorImpl(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+        objcGenerics: Boolean,
+        frameworkName: String
+) : ObjCExportHeaderGenerator(
+        moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context), frameworkName,
+) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
 

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
  * SX — Swift Export. Represents both Objective-C and Swift declarations.
  */
-
 
 
 interface SXElement {
@@ -21,19 +23,6 @@ interface SXElement {
 interface SXContainer : SXElement {
     val elements: List<SXElement>
 }
-
-/**
- * Stores additional information about declaration
- */
-interface SXProps {
-    val props: Map<String, Any?>
-}
-
-/**
- * Unique identifier for [SXElement] to find it quickly.
- */
-@JvmInline
-value class SXId(val hash: Int)
 
 interface SXNamespace
 
@@ -55,7 +44,7 @@ class SXClangModule() : SXNamespace, SXContainer {
     }
 }
 
-class SXObjCHeader : SXContainer, SXElement {
+class SXObjCHeader(val name: String) : SXContainer, SXElement {
     override val elements: List<SXElement>
         get() = declarations
 
@@ -90,56 +79,58 @@ class SXObjCHeader : SXContainer, SXElement {
     fun addImport(header: SXObjCHeader) {
         headerImports += header
     }
+
+    override fun toString(): String {
+        return "SXHeader($name)"
+    }
 }
 
 class SXClangModuleBuilder(
         val kotlinModules: List<ModuleDescriptor>,
         val namer: ObjCExportNamer,
         val headerPerModule: Boolean,
+        val umbrellaHeaderName: String,
 ) {
     private val theModule = SXClangModule()
-    private val theHeader = SXObjCHeader()
+    private val theHeader = SXObjCHeader(umbrellaHeaderName)
+    private val theStdlibHeader = SXObjCHeader("Kotlin.h")
 
     private val moduleToHeader = mutableMapOf<ModuleDescriptor, SXObjCHeader>()
 
     init {
-        theModule.addObjCHeader(theHeader)
-        kotlinModules.forEach {
-            moduleToHeader[it] = theHeader
-        }
-    }
-
-    private fun wireup() {
-        // Conservative and redundant, but correct, so a good start.
-        moduleToHeader.entries.forEach { (ktModule, header) ->
-            ktModule.allDependencyModules.map { dependency ->
-                val headerDependency = moduleToHeader[dependency]
-                if (headerDependency == null) {
-                    // Some unknown header. If it wasn't present in mapping, then
-                    // probably we don't need it at all.
-                    println("Trying to link unexpected module ${dependency.name}")
-                } else {
-                    if (header != headerDependency) {
-                        header.addImport(headerDependency)
-                    }
-                }
+        if (headerPerModule) {
+            theModule.addObjCHeader(theStdlibHeader)
+            kotlinModules.forEach { module ->
+                val header = SXObjCHeader(inferHeaderName(module))
+                // Conservative, but ok.
+                header.addImport(theStdlibHeader)
+                theModule.addObjCHeader(header)
+                moduleToHeader[module] = header
+            }
+        } else {
+            theModule.addObjCHeader(theHeader)
+            kotlinModules.forEach {
+                moduleToHeader[it] = theHeader
             }
         }
+        val stdlib = kotlinModules.first().allDependencyModules.first { it.isNativeStdlib() }
+        moduleToHeader[stdlib] = findHeaderForStdlib()
+    }
+
+    private fun inferHeaderName(module: ModuleDescriptor): String {
+        return "${module.name.asStringStripSpecialMarkers()}.h"
     }
 
     fun build(): SXClangModule {
-        wireup()
         return theModule
     }
 
     fun findHeaderForDeclaration(declarationDescriptor: DeclarationDescriptor): SXObjCHeader {
-        declarationDescriptor.hashCode()
-        return theHeader
+        return moduleToHeader[declarationDescriptor.module]
+                ?: error("Failed to find header for ${declarationDescriptor.fqNameSafe}")
     }
 
     fun findHeaderForStdlib(): SXObjCHeader {
-        return theHeader
+        return if (headerPerModule) theStdlibHeader else theHeader
     }
 }
-
-class SXObjCHeaderBuilder(val kotlinModules: List<ModuleDescriptor>)

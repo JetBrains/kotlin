@@ -15,14 +15,10 @@ class SXClangModuleDumper(
     fun dumpHeaders(
             module: SXClangModule,
             headersDirectory: File,
-            umbrellaHeaderName: String,
     ) {
-        val headerNames: Map<SXObjCHeader, String> = module.headers.associateWith {
-            umbrellaHeaderName
-        }
         module.headers.forEach {
-            val headerFile = headersDirectory.child(headerNames.getValue(it))
-            val headerLines = SXObjCHeaderTextRenderer(shouldExportKDoc, headerNames::getValue).render(it)
+            val headerFile = headersDirectory.child(it.name)
+            val headerLines = SXObjCHeaderTextRenderer(shouldExportKDoc).render(it)
             headerFile.writeLines(headerLines)
         }
     }

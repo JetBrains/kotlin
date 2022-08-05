@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class SXObjCHeaderTextRenderer(
         private val shouldExportKDoc: Boolean,
-        private val headerNameProvider: (SXObjCHeader) -> String
 ) {
 
     fun render(header: SXObjCHeader): List<String> {
@@ -83,11 +82,11 @@ class SXObjCHeaderTextRenderer(
     }
 
     private fun collectUniqueImports(header: SXObjCHeader): Set<String> =
-            (header.imports + header.headerImports.map { headerNameProvider(it) }).toSet()
+            (header.imports + header.headerImports.map { it.name }).toSet()
 
     private fun renderImportsTo(imports: Set<String>, output: MutableList<String>) {
         imports.map {
-            output += "#import <$it.h>"
+            output += "#import <$it>"
         }
     }
 }

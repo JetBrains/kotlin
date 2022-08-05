@@ -70,7 +70,9 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
                     local = false,
                     objcGenerics = objcGenerics
             )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(
+                    context, moduleDescriptors, mapper, namer, objcGenerics, getFrameworkName()
+            )
             headerGenerator.translateModule()
             headerGenerator.buildInterface()
         } else {
@@ -113,6 +115,11 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
     }
 
+    private fun getFrameworkName(): String {
+        val framework = File(context.config.outputFile)
+        return framework.name.removeSuffix(".framework")
+    }
+
     private fun produceFrameworkSpecific(clangModule: SXClangModule) {
         val framework = File(context.config.outputFile)
         val frameworkContents = when (target.family) {
@@ -126,10 +133,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
         val headers = frameworkContents.child("Headers")
 
-        val frameworkName = framework.name.removeSuffix(".framework")
+        val frameworkName = getFrameworkName()
         headers.mkdirs()
         SXClangModuleDumper(context.shouldExportKDoc())
-                .dumpHeaders(clangModule, headers, "$frameworkName.h")
+                .dumpHeaders(clangModule, headers)
 
         val modules = frameworkContents.child("Modules")
         modules.mkdirs()
