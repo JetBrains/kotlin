@@ -1947,7 +1947,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock, val resultSlot: LLVMValueRef?) :
             FileScope(returnableBlock.inlineFunctionSymbol?.owner?.let {
-                context.specialDeclarationsFactory.loweredInlineFunctions[it]?.irFile ?: it.fileOrNull
+                context.mapping.loweredInlineFunctions[it]?.irFile ?: it.fileOrNull
             }
                     ?: (currentCodeContext.fileScope() as? FileScope)?.file
                     ?: error("returnable block should belong to current file at least")) {
@@ -1956,13 +1956,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         var resultPhi : LLVMValueRef? = null
         private val functionScope by lazy {
             returnableBlock.inlineFunctionSymbol?.owner?.let {
-                it.scope(file().fileEntry.line(context.specialDeclarationsFactory.loweredInlineFunctions[it]?.startOffset ?: it.startOffset))
+                it.scope(file().fileEntry.line(context.mapping.loweredInlineFunctions[it]?.startOffset ?: it.startOffset))
             }
         }
 
         private fun getExit(): LLVMBasicBlockRef {
             val location = returnableBlock.inlineFunctionSymbol?.owner?.let {
-                location(context.specialDeclarationsFactory.loweredInlineFunctions[it]?.endOffset ?: it.endOffset)
+                location(context.mapping.loweredInlineFunctions[it]?.endOffset ?: it.endOffset)
             } ?: returnableBlock.statements.lastOrNull()?.let {
                 location(it.endOffset)
             }

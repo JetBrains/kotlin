@@ -167,7 +167,7 @@ internal val inlinePhase = makeKonanFileOpPhase(
 
                 override fun visitFunction(declaration: IrFunction) {
                     if (declaration.isInline)
-                        context.specialDeclarationsFactory.getNonLoweredInlineFunction(declaration)
+                        context.inlineFunctionsSupport.getNonLoweredInlineFunction(declaration)
                     declaration.acceptChildrenVoid(this)
                 }
             })

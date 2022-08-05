@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
+import org.jetbrains.kotlin.backend.konan.lower.InlineFunctionsSupport
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -51,14 +52,16 @@ import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
+internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
+
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
+    val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 }
-
-internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -68,14 +71,6 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
     private val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
-
-    private val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
-    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
-    fun getNonLoweredInlineFunction(function: IrFunction): IrFunction {
-        return notLoweredInlineFunctions.getOrPut(function.symbol) {
-            function.deepCopyWithVariables().also { it.patchDeclarationParents(function.parent) }
-        }
-    }
 
     fun getLoweredEnumOrNull(enumClass: IrClass): LoweredEnumAccess? {
         assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
@@ -148,6 +143,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
+    val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)

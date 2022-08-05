@@ -10,25 +10,34 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InlineFunctionOriginInfo
+import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+
+internal class InlineFunctionsSupport(mapping: NativeMapping) {
+    private val notLoweredInlineFunctions = mapping.notLoweredInlineFunctions
+    fun getNonLoweredInlineFunction(function: IrFunction) = notLoweredInlineFunctions.getOrPut(function.symbol) {
+        function.deepCopyWithVariables().also { it.patchDeclarationParents(function.parent) }
+    }
+}
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(override val context: Context) : DefaultInlineFunctionResolver(context) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
 
-        context.specialDeclarationsFactory.loweredInlineFunctions[function]?.let { return it.irFunction }
+        context.mapping.loweredInlineFunctions[function]?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
         val notLoweredFunction = if (packageFragment !is IrExternalPackageFragment) {
-            context.specialDeclarationsFactory.getNonLoweredInlineFunction(function).also {
-                context.specialDeclarationsFactory.loweredInlineFunctions[function] =
+            context.inlineFunctionsSupport.getNonLoweredInlineFunction(function).also {
+                context.mapping.loweredInlineFunctions[function] =
                         InlineFunctionOriginInfo(it, packageFragment as IrFile, function.startOffset, function.endOffset)
             }
         } else {
@@ -39,13 +48,13 @@ internal class NativeInlineFunctionResolver(override val context: Context) : Def
             require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
                 "No IR and no cache for ${function.render()}"
             }
-            context.specialDeclarationsFactory.loweredInlineFunctions[function] = moduleDeserializer.deserializeInlineFunction(function)
+            context.mapping.loweredInlineFunctions[function] = moduleDeserializer.deserializeInlineFunction(function)
             function
         }
 
         val body = notLoweredFunction.body ?: return notLoweredFunction
 
-        PreInlineLowering(context).lower(body, notLoweredFunction, context.specialDeclarationsFactory.loweredInlineFunctions[function]!!.irFile)
+        PreInlineLowering(context).lower(body, notLoweredFunction, context.mapping.loweredInlineFunctions[function]!!.irFile)
 
         ArrayConstructorLowering(context).lower(body, notLoweredFunction)
 
