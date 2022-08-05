@@ -63,11 +63,10 @@ internal class GradleKotlinCompilerWorkArguments(
     val reportingSettings: ReportingSettings,
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
-    val daemonJvmArgs: List<String>?,
-    val compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
+    val compilerExecutionSettings: CompilerExecutionSettings,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 1
     }
 }
 
@@ -99,8 +98,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val buildDir = config.projectFiles.buildDir
     private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
-    private val daemonJvmArgs = config.daemonJvmArgs
-    private val compilerExecutionStrategy = config.compilerExecutionStrategy
+    private val compilerExecutionSettings = config.compilerExecutionSettings
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -146,10 +144,17 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 
-        if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
+        if (compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
+                if (!compilerExecutionSettings.useDaemonFallbackStrategy) {
+                    throw RuntimeException(
+                        "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +
+                                "Try ./gradlew --stop if this issue persists.",
+                        e
+                    )
+                }
                 log.warn(
                     "Failed to compile with Kotlin daemon: ${e.stackTraceToString().suffixIfNot("\n")}" +
                             "Using fallback strategy: Compile without Kotlin daemon\n" +
@@ -159,7 +164,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
-        return if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.IN_PROCESS || isGradleDaemonUsed == false) {
+        return if (compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.IN_PROCESS || isGradleDaemonUsed == false) {
             compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
             compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
@@ -178,7 +183,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     compilerFullClasspath,
                     daemonMessageCollector,
                     isDebugEnabled = isDebugEnabled,
-                    daemonJvmArgs = daemonJvmArgs
+                    daemonJvmArgs = compilerExecutionSettings.daemonJvmArgs
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 

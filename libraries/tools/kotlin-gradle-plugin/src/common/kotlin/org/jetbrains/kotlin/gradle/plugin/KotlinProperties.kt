@@ -429,6 +429,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
         get() = KotlinCompilerExecutionStrategy.fromProperty(property("kotlin.compiler.execution.strategy")?.toLowerCase())
 
+    val kotlinDaemonUseFallbackStrategy: Boolean
+        get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {

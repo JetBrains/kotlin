@@ -64,4 +64,12 @@ interface CompileUsingKotlinDaemon : Task {
      */
     @get:Internal
     val compilerExecutionStrategy: Property<KotlinCompilerExecutionStrategy>
+
+    /**
+     * Defines whether task execution should fail when [compilerExecutionStrategy] is set to [KotlinCompilerExecutionStrategy.DAEMON]
+     * and compilation via Kotlin daemon was not possible. If set to true then compilation in such case will be retried without the daemon.
+     * Default is `true`
+     */
+    @get:Internal
+    val useDaemonFallbackStrategy: Property<Boolean>
 }

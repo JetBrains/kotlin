@@ -60,9 +60,8 @@ is not assignable to 'org.gradle.api.tasks.TaskProvider'" exception
 internal open class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
     protected val jdkToolsJar: File?,
-    protected val kotlinDaemonJvmArgs: List<String>?,
+    protected val compilerExecutionSettings: CompilerExecutionSettings,
     protected val buildMetrics: BuildMetricsReporter,
-    protected val compilerExecutionStrategy: KotlinCompilerExecutionStrategy,
 ) {
 
     internal val pathProvider = taskProvider.path.get()
@@ -211,8 +210,7 @@ internal open class GradleCompilerRunner(
             reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
-            daemonJvmArgs = kotlinDaemonJvmArgs,
-            compilerExecutionStrategy = compilerExecutionStrategy,
+            compilerExecutionSettings = compilerExecutionSettings,
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(

@@ -342,9 +342,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                 GradleCompilerRunnerWithWorkers(
                                     taskProvider,
                                     toolsJar,
-                                    normalizedKotlinDaemonJvmArguments.orNull,
+                                    CompilerExecutionSettings(
+                                        normalizedKotlinDaemonJvmArguments.orNull,
+                                        params.second,
+                                        useDaemonFallbackStrategy.get()
+                                    ),
                                     params.first,
-                                    params.second,
                                     workerExecutor
                                 )
                             }
