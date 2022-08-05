@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-private val FAKE_CONTINUATION_CLASS_DESCRIPTOR =
+// Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.
+// While it must be somewhere in the dependencies, but here we don't have a reference to the module,
+// and it's rather complicated to inject it by now, so we just use a fake class descriptor.
+val FAKE_CONTINUATION_CLASS_DESCRIPTOR =
     MutableClassDescriptor(
         EmptyPackageFragmentDescriptor(ErrorUtils.errorModule, COROUTINES_PACKAGE_FQ_NAME),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
@@ -51,9 +54,6 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType): S
             suspendFunType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
                 KotlinTypeFactory.simpleType(
                     TypeAttributes.Empty,
-                    // Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.
-                    // While it must be somewhere in the dependencies, but here we don't have a reference to the module,
-                    // and it's rather complicated to inject it by now, so we just use a fake class descriptor.
                     FAKE_CONTINUATION_CLASS_DESCRIPTOR.typeConstructor,
                     listOf(suspendFunType.getReturnTypeFromFunctionType().asTypeProjection()), nullable = false
                 ),
