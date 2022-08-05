@@ -40023,6 +40023,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("anonymousObjectInCallChildren.kt")
+            public void testAnonymousObjectInCallChildren() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
+            }
+
+            @Test
             @TestMetadata("anonymousObjectInDefault.kt")
             public void testAnonymousObjectInDefault() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInDefault.kt");

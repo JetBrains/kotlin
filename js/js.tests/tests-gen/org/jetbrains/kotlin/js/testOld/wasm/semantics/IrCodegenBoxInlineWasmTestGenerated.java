@@ -65,6 +65,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("anonymousObjectInCallChildren.kt")
+        public void testAnonymousObjectInCallChildren() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInCallChildren.kt");
+        }
+
         @TestMetadata("anonymousObjectInDefault.kt")
         public void testAnonymousObjectInDefault() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/anonymousObjectInDefault.kt");
