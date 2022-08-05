@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val project: Project,
     override val scope: GlobalSearchScope,
+    override val packagePartProvider: PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     override val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProvider(), AbstractDeclarationFromBinaryModuleProvider {
@@ -36,7 +38,11 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     ): Collection<ClsClassImpl> {
         return binaryModules
             .flatMap {
-                virtualFilesFromModule(it, fqName, isPackageName)
+                val virtualFilesFromKotlinModule = if (isPackageName) virtualFilesFromKotlinModule(it, fqName) else emptySet()
+                // NB: this assumes Kotlin module has a valid `kotlin_module` info,
+                // i.e., package part info for the given `fqName` points to exact class paths we're looking for,
+                // and thus it's redundant to walk through the folders in an exhaustive way.
+                virtualFilesFromKotlinModule.ifEmpty { virtualFilesFromModule(it, fqName, isPackageName) }
             }
             .mapNotNull {
                 createClsJavaClassFromVirtualFile(it)
@@ -99,10 +105,17 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
 //  We need a session or facade that maintains such information
 class KotlinStaticPsiDeclarationProviderFactory(
     private val project: Project,
+    private val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     private val binaryModules: Collection<KtBinaryModule>,
     private val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProviderFactory() {
     override fun createPsiDeclarationProvider(searchScope: GlobalSearchScope): KotlinPsiDeclarationProvider {
-        return KotlinStaticPsiDeclarationFromBinaryModuleProvider(project, searchScope, binaryModules, jarFileSystem)
+        return KotlinStaticPsiDeclarationFromBinaryModuleProvider(
+            project,
+            searchScope,
+            createPackagePartProvider.invoke(searchScope),
+            binaryModules,
+            jarFileSystem,
+        )
     }
 }
