@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
-class ErrorTypeConstructor(val kind: ErrorTypeKind, private vararg val formatParams: String) : TypeConstructor {
+class ErrorTypeConstructor(val kind: ErrorTypeKind, vararg val formatParams: String) : TypeConstructor {
     private val debugText = ErrorEntity.ERROR_TYPE.debugText.format(kind.debugMessage.format(*formatParams))
 
     fun getParam(i: Int): String = formatParams[i]
