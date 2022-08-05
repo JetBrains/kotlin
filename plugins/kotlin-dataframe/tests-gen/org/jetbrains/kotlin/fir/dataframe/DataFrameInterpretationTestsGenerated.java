@@ -98,5 +98,11 @@ public class DataFrameInterpretationTestsGenerated extends AbstractDataFrameInte
         public void testType() throws Exception {
             runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/type.kt");
         }
+
+        @Test
+        @TestMetadata("typeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            runTest("plugins/kotlin-dataframe/testData/interpretation/atoms/typeParameter.kt");
+        }
     }
 }

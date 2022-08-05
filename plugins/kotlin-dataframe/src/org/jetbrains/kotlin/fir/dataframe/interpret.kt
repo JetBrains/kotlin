@@ -36,6 +36,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
     val refinedArguments: Arguments = functionCall.collectArgumentExpressions()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val expectedArgsMap = processor.expectedArguments
+        .filterNot { it.name.startsWith("typeArg") }
         .filter { it.defaultValue is Absent }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
@@ -138,7 +139,7 @@ fun <T> FirExpressionResolutionExtension.interpret(
                         SimpleCol(
                             it.name.identifier, TypeApproximationImpl(
                                 it.resolvedReturnType.classId!!.asFqNameString(),
-                                it.resolvedReturnType.isNullable
+                                it.resolvedReturnType.isMarkedNullable
                             )
                         )
                     }
@@ -149,6 +150,14 @@ fun <T> FirExpressionResolutionExtension.interpret(
         value?.let { value1 -> it.name.identifier to value1 }
     }
 
+    functionCall.typeArguments.mapIndexed { index, firTypeProjection ->
+        val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.type
+        val approximation = TypeApproximationImpl(
+            type.classId!!.asFqNameString(),
+            type.isMarkedNullable
+        )
+        arguments["typeArg$index"] = Interpreter.Success(approximation)
+    }
 
     return if (interpretationResults.size == refinedArguments.refinedArguments.size) {
         arguments.putAll(interpretationResults)
