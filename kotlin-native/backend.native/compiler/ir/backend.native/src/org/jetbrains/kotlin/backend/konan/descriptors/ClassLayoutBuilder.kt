@@ -57,7 +57,7 @@ internal class OverriddenFunctionInfo(
             } else {
                 function
             }
-            context.specialDeclarationsFactory.getBridge(OverriddenFunctionInfo(bridgeOwner, overriddenFunction))
+            context.bridgesSupport.getBridge(OverriddenFunctionInfo(bridgeOwner, overriddenFunction))
         }
         return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }

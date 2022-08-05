@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -54,7 +52,10 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
 internal class NativeMapping : DefaultMapping() {
+    data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
+
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
+    val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
 }
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
@@ -67,10 +68,6 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val internalLoweredEnums = mutableMapOf<IrClass, InternalLoweredEnum>()
     private val externalLoweredEnums = mutableMapOf<IrClass, ExternalLoweredEnum>()
-
-    private data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
-
-    private val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
 
     private val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
     val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
@@ -112,61 +109,6 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 
     fun getEnumEntryOrdinal(enumEntry: IrEnumEntry) =
             enumEntry.parentAsClass.declarations.filterIsInstance<IrEnumEntry>().indexOf(enumEntry)
-
-    fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
-        val irFunction = overriddenFunction.function
-        assert(overriddenFunction.needBridge) {
-            "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunction.overriddenFunction.descriptor}"
-        }
-        val key = BridgeKey(irFunction, overriddenFunction.bridgeDirections)
-        return bridges.getOrPut(key) { createBridge(key) }
-    }
-
-    private fun createBridge(key: BridgeKey): IrSimpleFunction {
-        val (function, bridgeDirections) = key
-        val startOffset = function.startOffset
-        val endOffset = function.endOffset
-
-        fun BridgeDirection.type() =
-                if (this.kind == BridgeDirectionKind.NONE)
-                    null
-                else this.irClass?.defaultType ?: context.irBuiltIns.anyNType
-
-        return IrFunctionImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_BRIDGE_METHOD(function),
-                IrSimpleFunctionSymbolImpl(),
-                "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName,
-                function.visibility,
-                function.modality,
-                isInline = false,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = function.isSuspend,
-                returnType = bridgeDirections.returnDirection.type() ?: function.returnType,
-                isExpect = false,
-                isFakeOverride = false,
-                isOperator = false,
-                isInfix = false
-        ).apply {
-            val bridge = this
-            parent = function.parent
-
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
-                it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
-            }
-            extensionReceiverParameter = function.extensionReceiverParameter?.let {
-                it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
-            }
-            valueParameters += function.valueParameters.map {
-                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
-            }
-
-            typeParameters += function.typeParameters.map { parameter ->
-                parameter.copyToWithoutSuperTypes(bridge).also { it.superTypes += parameter.superTypes }
-            }
-        }
-    }
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
@@ -205,6 +147,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
 
     open class LazyMember<T>(val initializer: Context.() -> T) {
         operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
