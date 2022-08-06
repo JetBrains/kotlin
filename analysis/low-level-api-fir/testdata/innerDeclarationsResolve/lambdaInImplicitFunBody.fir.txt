@@ -1,8 +1,8 @@
 FILE: lambdaInImplicitFunBody.kt
-    public final inline [BODY_RESOLVE] fun <T, R> with([BODY_RESOLVE] receiver: R|T|, [BODY_RESOLVE] block: R|T.() -> R|): R|R| {
+    public final inline [BODY_RESOLVE] fun <[BODY_RESOLVE] T, [BODY_RESOLVE] R> with([BODY_RESOLVE] receiver: R|T|, [BODY_RESOLVE] block: R|T.() -> R|): R|R| {
         ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
     }
-    public final inline [BODY_RESOLVE] fun <T, R> R|T|.let([BODY_RESOLVE] block: R|(T) -> R|): R|R| {
+    public final inline [BODY_RESOLVE] fun <[BODY_RESOLVE] T, [BODY_RESOLVE] R> R|T|.let([BODY_RESOLVE] block: R|(T) -> R|): R|R| {
         ^let R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(this@R|/let|)
     }
     public final [BODY_RESOLVE] class B : R|kotlin/Any| {
