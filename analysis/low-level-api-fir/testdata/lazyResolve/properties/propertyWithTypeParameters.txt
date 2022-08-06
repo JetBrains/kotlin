@@ -1,0 +1,75 @@
+
+RAW_FIR:
+FILE: propertyWithTypeParameters.kt
+    public? final? [RAW_FIR] val <[RAW_FIR] T : Int, [RAW_FIR] K> T.resolveMe: K
+        public? [RAW_FIR] get(): K { LAZY_BLOCK }
+
+IMPORTS:
+FILE: propertyWithTypeParameters.kt
+    public? final? [RAW_FIR] val <[RAW_FIR] T : Int, [RAW_FIR] K> T.resolveMe: K
+        public? [RAW_FIR] get(): K { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: propertyWithTypeParameters.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] val <[RAW_FIR] T : Int, [RAW_FIR] K> T.resolveMe: K
+        public? [COMPILER_REQUIRED_ANNOTATIONS] get(): K { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: propertyWithTypeParameters.kt
+    public? final? [COMPANION_GENERATION] val <[RAW_FIR] T : Int, [RAW_FIR] K> T.resolveMe: K
+        public? [COMPANION_GENERATION] get(): K { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: propertyWithTypeParameters.kt
+    public? final? [SUPER_TYPES] val <[RAW_FIR] T : Int, [RAW_FIR] K> T.resolveMe: K
+        public? [SUPER_TYPES] get(): K { LAZY_BLOCK }
+
+TYPES:
+FILE: propertyWithTypeParameters.kt
+    public? final? [TYPES] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public? [TYPES] get(): R|K| { LAZY_BLOCK }
+
+STATUS:
+FILE: propertyWithTypeParameters.kt
+    public final [STATUS] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public [STATUS] get(): R|K| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: propertyWithTypeParameters.kt
+    public final [ARGUMENTS_OF_ANNOTATIONS] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public [ARGUMENTS_OF_ANNOTATIONS] get(): R|K| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: propertyWithTypeParameters.kt
+    public final [CONTRACTS] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public [CONTRACTS] get(): R|K| {
+            ^ TODO#()
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: propertyWithTypeParameters.kt
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public [IMPLICIT_TYPES_BODY_RESOLVE] get(): R|K| {
+            ^ TODO#()
+        }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: propertyWithTypeParameters.kt
+    public final [EXPECT_ACTUAL_MATCHING] val <[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> R|T|.resolveMe: R|K|
+        public [EXPECT_ACTUAL_MATCHING] get(): R|K| {
+            ^ TODO#()
+        }
+
+BODY_RESOLVE:
+FILE: propertyWithTypeParameters.kt
+    public final [BODY_RESOLVE] val <[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> R|T|.resolveMe: R|K|
+        public [BODY_RESOLVE] get(): R|K| {
+            ^ R|kotlin/TODO|()
+        }
+
+FILE RAW TO BODY:
+FILE: propertyWithTypeParameters.kt
+    public final [BODY_RESOLVE] val <[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> R|T|.resolveMe: R|K|
+        public [BODY_RESOLVE] get(): R|K| {
+            ^ R|kotlin/TODO|()
+        }

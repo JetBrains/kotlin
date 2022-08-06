@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
@@ -39,7 +40,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             override fun visitElement(element: FirElement) {
                 if (result != null) return
                 val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name == "resolveMe") {
+                if (element is FirDeclaration && declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
                     result = element
                     return
                 }
