@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import java.nio.file.Path
 
-abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
+abstract class AbstractSymbolLightClassesParentingTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
     override val stopIfCompilationErrorDirectivePresent: Boolean,
@@ -28,18 +30,19 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
         val ktFile = ktFiles.first()
         val lightClass = findLightClass(fqName, ktFile.project)
 
-        lightClass?.accept(lightAnnotationVisitor)
+        lightClass?.accept(createLightAnnotationVisitor(testServices.assertions))
     }
 
     override fun getRenderResult(ktFile: KtFile, testDataFile: Path, module: TestModule, project: Project): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 
-    private val lightAnnotationVisitor = object : JavaElementVisitor() {
+    private fun createLightAnnotationVisitor(assertions: AssertionsService) = object : JavaElementVisitor() {
         private val declarationStack = ArrayDeque<PsiModifierListOwner>()
 
         override fun visitClass(aClass: PsiClass?) {
             if (aClass == null) return
+            checkDeclarationParent(aClass)
             declarationStack.addLast(aClass)
 
             aClass.annotations.forEach { it.accept(this) }
@@ -55,6 +58,7 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
 
         override fun visitField(field: PsiField?) {
             if (field == null) return
+            checkDeclarationParent(field)
             declarationStack.addLast(field)
 
             field.annotations.forEach { it.accept(this) }
@@ -66,6 +70,7 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
 
         override fun visitMethod(method: PsiMethod?) {
             if (method == null) return
+            checkDeclarationParent(method)
             declarationStack.addLast(method)
 
             method.annotations.forEach { it.accept(this) }
@@ -80,6 +85,7 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
 
         override fun visitParameter(parameter: PsiParameter?) {
             if (parameter == null) return
+            checkDeclarationParent(parameter)
             declarationStack.addLast(parameter)
 
             parameter.annotations.forEach { it.accept(this) }
@@ -89,11 +95,31 @@ abstract class AbstractSymbolLightClassesAnnotationOwnerTest(
 
         override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
             if (classParameter == null) return
+            checkDeclarationParent(classParameter)
             declarationStack.addLast(classParameter)
 
             classParameter.annotations.forEach { it.accept(this) }
 
             declarationStack.removeLast()
+        }
+
+        private fun checkDeclarationParent(declaration: PsiElement) {
+            val expectedParent = declarationStack.lastOrNull() ?: return
+            val parent = when (declaration) {
+                is PsiParameter -> {
+                    val parameterList = declaration.parent as PsiParameterList
+                    parameterList.parent
+                }
+                is PsiTypeParameter -> {
+                    val parameterList = declaration.parent as PsiTypeParameterList
+                    parameterList.parent
+                }
+                else -> declaration.parent
+            }
+            assertions.assertNotNull(parent) { "Parent should not be null for ${declaration::class} with text ${declaration.text} "}
+            assertions.assertEquals(expectedParent, parent) {
+                "Unexpected parent for ${declaration::class} with text ${declaration.text}"
+            }
         }
 
         override fun visitAnnotation(annotation: PsiAnnotation?) {
