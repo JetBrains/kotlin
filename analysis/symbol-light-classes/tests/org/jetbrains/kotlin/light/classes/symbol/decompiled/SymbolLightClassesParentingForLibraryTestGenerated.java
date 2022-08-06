@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.source;
+package org.jetbrains.kotlin.light.classes.symbol.decompiled;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/asJava/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
-public class SymbolLightClassesAnnotationOwnerForSourceTestGenerated extends AbstractSymbolLightClassesAnnotationOwnerForSourceTest {
+public class SymbolLightClassesParentingForLibraryTestGenerated extends AbstractSymbolLightClassesParentingForLibraryTest {
     @Test
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "compilationErrors");
     }
 
     @Test
@@ -214,130 +214,6 @@ public class SymbolLightClassesAnnotationOwnerForSourceTestGenerated extends Abs
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/VarArgs.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/compilationErrors")
-    @TestDataPath("$PROJECT_ROOT")
-    public class CompilationErrors {
-        @Test
-        @TestMetadata("ActualClass.kt")
-        public void testActualClass() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ActualClass.kt");
-        }
-
-        @Test
-        @TestMetadata("ActualTypeAlias.kt")
-        public void testActualTypeAlias() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAlias.kt");
-        }
-
-        @Test
-        @TestMetadata("ActualTypeAliasCustomJvmPackageName.kt")
-        public void testActualTypeAliasCustomJvmPackageName() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAliasCustomJvmPackageName.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInCompilationErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("AllInlineOnly.kt")
-        public void testAllInlineOnly() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/AllInlineOnly.kt");
-        }
-
-        @Test
-        @TestMetadata("AnnotationModifiers.kt")
-        public void testAnnotationModifiers() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
-        }
-
-        @Test
-        @TestMetadata("EnumNameOverride.kt")
-        public void testEnumNameOverride() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/EnumNameOverride.kt");
-        }
-
-        @Test
-        @TestMetadata("ExpectClass.kt")
-        public void testExpectClass() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
-        }
-
-        @Test
-        @TestMetadata("ExpectObject.kt")
-        public void testExpectObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectObject.kt");
-        }
-
-        @Test
-        @TestMetadata("ExpectedNestedClass.kt")
-        public void testExpectedNestedClass() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClass.kt");
-        }
-
-        @Test
-        @TestMetadata("ExpectedNestedClassInObject.kt")
-        public void testExpectedNestedClassInObject() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
-        }
-
-        @Test
-        @TestMetadata("JvmPackageName.kt")
-        public void testJvmPackageName() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
-        }
-
-        @Test
-        @TestMetadata("LocalInAnnotation.kt")
-        public void testLocalInAnnotation() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/LocalInAnnotation.kt");
-        }
-
-        @Test
-        @TestMetadata("PrivateInTrait.kt")
-        public void testPrivateInTrait() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
-        }
-
-        @Test
-        @TestMetadata("RepetableAnnotations.kt")
-        public void testRepetableAnnotations() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/RepetableAnnotations.kt");
-        }
-
-        @Test
-        @TestMetadata("SameName.kt")
-        public void testSameName() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/SameName.kt");
-        }
-
-        @Test
-        @TestMetadata("TopLevelDestructuring.kt")
-        public void testTopLevelDestructuring() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TopLevelDestructuring.kt");
-        }
-
-        @Test
-        @TestMetadata("TraitClassObjectField.kt")
-        public void testTraitClassObjectField() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TraitClassObjectField.kt");
-        }
-
-        @Test
-        @TestMetadata("TwoOverrides.kt")
-        public void testTwoOverrides() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TwoOverrides.kt");
-        }
-
-        @Test
-        @TestMetadata("WrongAnnotations.kt")
-        public void testWrongAnnotations() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/compilationErrors/WrongAnnotations.kt");
-        }
     }
 
     @Nested
