@@ -102,13 +102,13 @@ FILE: propertyWithGetterAndSetter.kt
         R|/receive|(R|/withGetterAndSetter|)
         R|/withGetterAndSetter| = Int(123)
     }
-    public final [CONTRACTS] fun receive([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [CONTRACTS] fun receive([CONTRACTS] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final [CONTRACTS] var withGetterAndSetter: R|kotlin/Int| = IntegerLiteral(42)
         public [CONTRACTS] get(): R|kotlin/Int| {
             ^ field#
         }
-        public [CONTRACTS] set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public [CONTRACTS] set([CONTRACTS] value: R|kotlin/Int|): R|kotlin/Unit| {
             field# = value#
         }
 
