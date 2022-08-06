@@ -1,0 +1,117 @@
+
+RAW_FIR:
+FILE: classWithTypeParameters.kt
+    public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+IMPORTS:
+FILE: classWithTypeParameters.kt
+    public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: classWithTypeParameters.kt
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: classWithTypeParameters.kt
+    public? final? [COMPANION_GENERATION] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [COMPANION_GENERATION] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: classWithTypeParameters.kt
+    public? final? [SUPER_TYPES] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [SUPER_TYPES] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+TYPES:
+FILE: classWithTypeParameters.kt
+    public? final? [TYPES] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public? [TYPES] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+STATUS:
+FILE: classWithTypeParameters.kt
+    public final [STATUS] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: classWithTypeParameters.kt
+    public final [ARGUMENTS_OF_ANNOTATIONS] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+CONTRACTS:
+FILE: classWithTypeParameters.kt
+    public final [CONTRACTS] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public [CONTRACTS] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: classWithTypeParameters.kt
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: classWithTypeParameters.kt
+    public final [EXPECT_ACTUAL_MATCHING] class ResolveMe<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K> : R|kotlin/Any| {
+        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : R|kotlin/Int|, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: classWithTypeParameters.kt
+    public final [BODY_RESOLVE] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
+        public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: classWithTypeParameters.kt
+    public final [BODY_RESOLVE] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
+        public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
