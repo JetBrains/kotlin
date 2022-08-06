@@ -81,6 +81,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             preprocessor.preprocessModuleStructure(moduleStructure)
         }
 
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            preprocessor.prepareSealedClassInheritors(moduleStructure)
+        }
+
         for (module in modules) {
             val shouldProcessNextModules = processModule(module, dependencyProvider)
             if (!shouldProcessNextModules) break

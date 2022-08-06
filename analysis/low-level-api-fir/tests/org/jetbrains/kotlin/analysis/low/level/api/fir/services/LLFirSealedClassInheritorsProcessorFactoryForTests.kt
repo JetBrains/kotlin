@@ -6,11 +6,32 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.name.ClassId
 
 internal class LLFirSealedClassInheritorsProcessorFactoryForTests : FirSealedClassInheritorsProcessorFactory() {
-    override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
-        return SealedClassInheritorsProviderImpl
+    private val inheritorsByModule = mutableMapOf<KtModule, Map<ClassId, List<ClassId>>>()
+
+    fun registerInheritors(ktModule: KtModule, inheritors: Map<ClassId, List<ClassId>>) {
+        inheritorsByModule[ktModule] = inheritors
     }
+
+    override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
+        return SealedClassInheritorsProviderForTests(inheritorsByModule)
+    }
+}
+
+private class SealedClassInheritorsProviderForTests(
+    private val inheritorsByModule: Map<KtModule, Map<ClassId, List<ClassId>>>
+) : SealedClassInheritorsProvider() {
+    override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
+        val ktModule = firClass.llFirModuleData.ktModule
+        val inheritorsForModuleMap = inheritorsByModule.getValue(ktModule)
+        return inheritorsForModuleMap[firClass.classId].orEmpty()
+    }
+
 }
