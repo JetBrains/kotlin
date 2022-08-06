@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.shouldIjPlatformExceptionBeRethrown
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 
 internal class KtFirCallResolver(
@@ -85,7 +86,7 @@ internal class KtFirCallResolver(
         result
     }
 
-    override fun resolveCall(psi: KtElement): KtCallInfo? {
+    override fun resolveCall(psi: KtElement): KtCallInfo? = wrapError(psi) {
         val ktCallInfos = getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             listOfNotNull(
                 toKtCallInfo(
@@ -96,7 +97,7 @@ internal class KtFirCallResolver(
             )
         }
         check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
-        return ktCallInfos.singleOrNull()
+        ktCallInfos.singleOrNull()
     }
 
     private inline fun <T> getCallInfo(
@@ -792,8 +793,8 @@ internal class KtFirCallResolver(
         return mapOf(typeParameter to elementType)
     }
 
-    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> {
-        return getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = wrapError(psi) {
+        getCallInfo(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
             collectCallCandidates(
                 psiToResolve,
                 resolveCalleeExpressionOfFunctionCall,
@@ -1171,5 +1172,18 @@ internal class KtFirCallResolver(
             withPsiEntry("psi", psi)
             psi.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
         }
+    }
+
+    private inline fun <R> wrapError(element: KtElement, action: () -> R): R {
+        return try {
+            action()
+        } catch (e: Throwable) {
+            if (shouldIjPlatformExceptionBeRethrown(e)) throw e
+            buildErrorWithAttachment("Error during resolving call ${element::class.java.name}", cause = e) {
+                withPsiEntry("psi", element)
+                element.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
+            }
+        }
+
     }
 }
